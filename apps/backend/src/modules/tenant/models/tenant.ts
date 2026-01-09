@@ -42,11 +42,6 @@ const Tenant = model.define("tenant", {
   // Configuration
   settings: model.json().nullable(),
   metadata: model.json().nullable(),
-  
-  // Timestamps
-  created_at: model.dateTime(),
-  updated_at: model.dateTime(),
-  deleted_at: model.dateTime().nullable(),
 })
 
 export default Tenant

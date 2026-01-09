@@ -37,10 +37,6 @@ const CompanyUser = model.define("company_user", {
   
   // Metadata
   metadata: model.json().nullable(),
-  
-  // Timestamps
-  created_at: model.dateTime().defaultNow(),
-  updated_at: model.dateTime().defaultNow(),
 });
 
 export default CompanyUser;

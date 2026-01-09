@@ -39,5 +39,79 @@ module.exports = defineConfig({
       cookieSecret: process.env.COOKIE_SECRET || "supersecret",
     },
   },
-  modules: [],
+  modules: [
+    {
+      resolve: "./src/modules/tenant",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/store",
+      key: "cityosStore",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/vendor",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/commission",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/payout",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/subscription",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/company",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/quote",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/volume-pricing",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+  ],
 });

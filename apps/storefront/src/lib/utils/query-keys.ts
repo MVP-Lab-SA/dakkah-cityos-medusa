@@ -65,6 +65,21 @@ export const queryKeys = {
     options: (cartId: string, regionId?: string) =>
       createDynamicKey("shipping", "options", cartId, regionId),
   },
+
+  pages: {
+    ...createDomainKeys("pages"),
+    bySlug: (slug: string) => createDynamicKey("pages", "bySlug", slug),
+  },
+
+  tenants: {
+    ...createDomainKeys("tenants"),
+    byHandle: (handle: string) => createDynamicKey("tenants", "byHandle", handle),
+  },
+
+  vendors: {
+    ...createDomainKeys("vendors"),
+    byHandle: (handle: string) => createDynamicKey("vendors", "byHandle", handle),
+  },
 } as const
 
 export type QueryKeys = typeof queryKeys

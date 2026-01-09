@@ -147,6 +147,27 @@ export const Stores: CollectionConfig = {
             userAgent: req.headers.get('user-agent'),
           }
         })
+        
+        // Sync branding updates to Medusa
+        if (operation === 'update' && doc.medusaVendorId) {
+          await req.payload.create({
+            collection: 'sync-jobs',
+            data: {
+              jobType: 'payload_to_medusa',
+              status: 'queued',
+              tenantId: doc.tenant,
+              storeId: doc.id,
+              sourceCollection: 'stores',
+              sourceDocId: doc.id,
+              targetSystem: 'medusa',
+              targetId: doc.medusaVendorId,
+              metadata: {
+                operation,
+                syncFields: ['branding', 'theme', 'logo'],
+              },
+            }
+          })
+        }
       }
     ]
   },
@@ -319,6 +340,14 @@ export const Stores: CollectionConfig = {
       ],
     },
     // Integration References
+    {
+      name: 'medusaVendorId',
+      type: 'text',
+      index: true,
+      admin: {
+        description: 'Reference to vendor ID in Medusa (for marketplace vendors)',
+      },
+    },
     {
       name: 'medusaStoreId',
       type: 'text',

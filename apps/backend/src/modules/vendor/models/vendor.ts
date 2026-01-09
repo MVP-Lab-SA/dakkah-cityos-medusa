@@ -65,7 +65,7 @@ const Vendor = model.define("vendor", {
     "tiered"
   ]).default("percentage"),
   commission_rate: model.number().nullable(), // Percentage (e.g., 15.5 for 15.5%)
-  commission_flat: model.bigInt().nullable(), // Flat amount in cents
+  commission_flat: model.bigNumber().nullable(), // Flat amount in cents
   commission_tiers: model.json().nullable(), // For tiered commission
   
   // Payout Settings
@@ -81,7 +81,7 @@ const Vendor = model.define("vendor", {
     "biweekly",
     "monthly"
   ]).default("weekly"),
-  payout_minimum: model.bigInt().default(5000), // Minimum payout in cents
+  payout_minimum: model.bigNumber().default(5000), // Minimum payout in cents
   
   // Stripe Connect
   stripe_account_id: model.text().nullable(),
@@ -90,10 +90,10 @@ const Vendor = model.define("vendor", {
   stripe_payouts_enabled: model.boolean().default(false),
   
   // Statistics
-  total_sales: model.bigInt().default(0),
+  total_sales: model.bigNumber().default(0),
   total_orders: model.number().default(0),
   total_products: model.number().default(0),
-  total_commission_paid: model.bigInt().default(0),
+  total_commission_paid: model.bigNumber().default(0),
   
   // Settings
   auto_approve_products: model.boolean().default(false),

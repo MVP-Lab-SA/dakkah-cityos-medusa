@@ -21,22 +21,22 @@ const CommissionTransaction = model.define("commission_transaction", {
   ]).default("sale"),
   
   // Amounts (all in cents)
-  order_subtotal: model.bigInt(), // Item subtotal
-  order_tax: model.bigInt().default(0),
-  order_shipping: model.bigInt().default(0),
-  order_total: model.bigInt(), // Total for this line item
+  order_subtotal: model.bigNumber(), // Item subtotal
+  order_tax: model.bigNumber().default(0),
+  order_shipping: model.bigNumber().default(0),
+  order_total: model.bigNumber(), // Total for this line item
   
   // Commission Calculation
   commission_rate: model.number(), // Percentage used
-  commission_flat: model.bigInt().nullable(), // Flat amount if applicable
-  commission_amount: model.bigInt(), // Final commission amount
+  commission_flat: model.bigNumber().nullable(), // Flat amount if applicable
+  commission_amount: model.bigNumber(), // Final commission amount
   
   // Platform Fee (if applicable)
   platform_fee_rate: model.number().nullable(),
-  platform_fee_amount: model.bigInt().nullable(),
+  platform_fee_amount: model.bigNumber().nullable(),
   
   // Net Amount (what vendor receives)
-  net_amount: model.bigInt(), // order_total - commission_amount - platform_fee_amount
+  net_amount: model.bigNumber(), // order_total - commission_amount - platform_fee_amount
   
   // Status
   status: model.enum([

@@ -8,6 +8,7 @@ import {
 } from "@tanstack/react-router"
 import { lazy } from "react"
 import appCss from "../styles/app.css?url"
+import { BrandingProvider } from "@/lib/context/branding-context"
 
 const NotFound = lazy(() => import("@/components/not-found"))
 
@@ -54,7 +55,9 @@ function RootComponent() {
       </head>
       <body>
         <QueryClientProvider client={queryClient}>
-          <Layout />
+          <BrandingProvider>
+            <Layout />
+          </BrandingProvider>
         </QueryClientProvider>
 
         <Scripts />

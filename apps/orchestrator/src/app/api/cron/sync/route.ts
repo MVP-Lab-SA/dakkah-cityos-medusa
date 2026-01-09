@@ -88,25 +88,14 @@ export async function POST(req: NextRequest) {
 }
 
 async function syncPayloadToMedusa(job: any, payload: any) {
-  // Get integration endpoint for Medusa
-  const integration = await payload.find({
-    collection: 'integration-endpoints',
-    where: {
-      and: [
-        { systemType: { equals: 'medusa' } },
-        { tenantId: { equals: job.tenantId } },
-        { enabled: { equals: true } },
-      ]
-    },
-    limit: 1,
-  })
+  const { syncContentToMedusa, syncPageToMedusa, syncBrandingToMedusa } = await import('@/lib/sync/payloadToMedusa')
   
-  if (integration.docs.length === 0) {
-    throw new Error('No Medusa integration endpoint found')
+  const context = {
+    job,
+    payload,
+    tenantId: job.tenantId,
+    storeId: job.storeId,
   }
-  
-  const endpoint = integration.docs[0]
-  const apiKey = process.env[endpoint.secretRef] || process.env.MEDUSA_API_KEY
   
   // Fetch source document
   const doc = await payload.findByID({
@@ -114,34 +103,130 @@ async function syncPayloadToMedusa(job: any, payload: any) {
     id: job.sourceDocId,
   })
   
-  // Sync to Medusa
-  const response = await fetch(`${endpoint.baseUrl}/admin/products/${job.targetId || doc.medusaProductId}`, {
-    method: job.targetId ? 'POST' : 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`,
-      'x-publishable-api-key': doc.store || '',
-    },
-    body: JSON.stringify({
-      // Map Payload fields to Medusa fields
-      metadata: {
-        payload_content_id: doc.id,
-        last_sync: new Date().toISOString(),
-      }
-    })
-  })
+  let result
   
-  if (!response.ok) {
-    throw new Error(`Medusa API error: ${response.statusText}`)
+  // Route to appropriate sync function based on collection
+  switch (job.sourceCollection) {
+    case 'product-content':
+      result = await syncContentToMedusa(context, doc)
+      break
+    case 'pages':
+      result = await syncPageToMedusa(context, doc)
+      break
+    case 'stores':
+      result = await syncBrandingToMedusa(context, doc)
+      break
+    default:
+      throw new Error(`Unsupported source collection: ${job.sourceCollection}`)
   }
+  
+  // Update job with result
+  await payload.update({
+    collection: 'sync-jobs',
+    id: job.id,
+    data: {
+      logs: [
+        ...(job.logs || []),
+        {
+          timestamp: new Date().toISOString(),
+          level: 'info',
+          message: `Successfully synced: ${JSON.stringify(result)}`,
+        }
+      ]
+    }
+  })
 }
 
 async function syncMedusaToPayload(job: any, payload: any) {
-  // TODO: Implement Medusa → Payload sync
-  console.log('Syncing from Medusa to Payload', job)
+  const { syncProductToPayload, syncVendorToPayload, syncTenantToPayload, syncOrderToPayload } = await import('@/lib/sync/medusaToPayload')
+  
+  const context = {
+    job,
+    payload,
+    tenantId: job.tenantId,
+    storeId: job.storeId,
+  }
+  
+  // Get the data from job metadata (passed from webhook)
+  const sourceData = job.metadata?.sourceData
+  
+  if (!sourceData) {
+    throw new Error('Missing source data in job metadata')
+  }
+  
+  let result
+  
+  // Route to appropriate sync function based on source collection
+  switch (job.sourceCollection) {
+    case 'products':
+      result = await syncProductToPayload(context, sourceData)
+      break
+    case 'vendors':
+      result = await syncVendorToPayload(context, sourceData)
+      break
+    case 'tenants':
+      result = await syncTenantToPayload(context, sourceData)
+      break
+    case 'orders':
+      result = await syncOrderToPayload(context, sourceData)
+      break
+    default:
+      throw new Error(`Unsupported source collection: ${job.sourceCollection}`)
+  }
+  
+  // Update job with result
+  await payload.update({
+    collection: 'sync-jobs',
+    id: job.id,
+    data: {
+      targetId: result.id,
+      logs: [
+        ...(job.logs || []),
+        {
+          timestamp: new Date().toISOString(),
+          level: 'info',
+          message: `Successfully synced: ${JSON.stringify(result)}`,
+        }
+      ]
+    }
+  })
 }
 
 async function reconcileData(job: any, payload: any) {
-  // TODO: Implement data reconciliation
-  console.log('Reconciling data', job)
+  const { reconcileProducts, reconcileVendors, reconcileTenants } = await import('@/lib/sync/reconciliation')
+  
+  let result
+  
+  // Route to appropriate reconciliation based on metadata
+  const entity = job.metadata?.entity || 'products'
+  
+  switch (entity) {
+    case 'products':
+      result = await reconcileProducts(payload, job.tenantId)
+      break
+    case 'vendors':
+      result = await reconcileVendors(payload, job.tenantId)
+      break
+    case 'tenants':
+      result = await reconcileTenants(payload)
+      break
+    default:
+      throw new Error(`Unsupported reconciliation entity: ${entity}`)
+  }
+  
+  // Update job with result
+  await payload.update({
+    collection: 'sync-jobs',
+    id: job.id,
+    data: {
+      logs: [
+        ...(job.logs || []),
+        {
+          timestamp: new Date().toISOString(),
+          level: 'info',
+          message: `Reconciliation complete: ${JSON.stringify(result)}`,
+        }
+      ]
+    }
+  })
 }

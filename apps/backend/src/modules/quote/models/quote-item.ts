@@ -35,10 +35,6 @@ const QuoteItem = model.define("quote_item", {
   
   // Metadata
   metadata: model.json().nullable(),
-  
-  // Timestamps
-  created_at: model.dateTime().defaultNow(),
-  updated_at: model.dateTime().defaultNow(),
 });
 
 export default QuoteItem;

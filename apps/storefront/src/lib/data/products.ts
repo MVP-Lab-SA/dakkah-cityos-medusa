@@ -53,10 +53,14 @@ export const listProducts = async ({
   page_param = 1,
   query_params,
   region_id,
+  tenant_id,
+  vendor_id,
 }: {
   page_param?: number;
   query_params?: HttpTypes.StoreProductListParams;
   region_id?: string;
+  tenant_id?: string;
+  vendor_id?: string;
 }): Promise<{
   products: HttpTypes.StoreProduct[];
   count: number;
@@ -66,11 +70,22 @@ export const listProducts = async ({
   const _page_param = Math.max(page_param, 1)
   const offset = _page_param === 1 ? 0 : (_page_param - 1) * limit
 
+  // Add tenant/vendor filtering via metadata
+  const filters: any = { ...query_params }
+  
+  if (tenant_id) {
+    filters['metadata.tenant_id'] = tenant_id
+  }
+  
+  if (vendor_id) {
+    filters['metadata.vendor_id'] = vendor_id
+  }
+
   const response = await sdk.store.product.list({
     limit,
     offset,
     region_id,
-    ...query_params,
+    ...filters,
   })
 
   const next_page = offset + limit < response.count ? _page_param + 1 : null
