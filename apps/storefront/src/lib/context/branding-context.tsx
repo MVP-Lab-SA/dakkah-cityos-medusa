@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { queryKeys } from '~/lib/utils/query-keys'
-import { unifiedClient } from '~/lib/api/unified-client'
+import { queryKeys } from '@/lib/utils/query-keys'
+import { unifiedClient } from '@/lib/api/unified-client'
 
 interface Branding {
   logo?: {

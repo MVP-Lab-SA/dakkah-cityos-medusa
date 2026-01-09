@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { queryKeys } from '~/lib/utils/query-keys'
-import { unifiedClient } from '~/lib/api/unified-client'
-import { StoreSelection } from '~/components/store/store-selection'
+import { queryKeys } from '@/lib/utils/query-keys'
+import { unifiedClient } from '@/lib/api/unified-client'
+import { StoreSelection } from '@/components/store/store-selection'
 
 export const Route = createFileRoute('/$countryCode/stores')({
   loader: async ({ context }) => {

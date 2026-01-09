@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router"
-import { VendorCommissions } from "~/components/vendor/vendor-commissions"
+import { VendorCommissions } from "@/components/vendor/vendor-commissions"
 
 export const Route = createFileRoute("/$countryCode/vendor/commissions")({
   component: VendorCommissionsRoute,

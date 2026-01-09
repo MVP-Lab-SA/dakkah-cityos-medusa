@@ -1,9 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { sdk } from "~/lib/sdk"
-import { formatPrice } from "~/lib/utils/prices"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card"
-import { Button } from "~/components/ui/button"
-import { Skeleton } from "~/components/ui/skeleton"
+import { sdk } from "@/lib/sdk"
+import { formatPrice } from "@/lib/utils/prices"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
 import { toast } from "sonner"
 
 export function VendorPayouts() {

@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { useBranding } from '~/lib/context/branding-context'
-import { queryKeys } from '~/lib/utils/query-keys'
-import { unifiedClient } from '~/lib/api/unified-client'
+import { useBranding } from '@/lib/context/branding-context'
+import { queryKeys } from '@/lib/utils/query-keys'
+import { unifiedClient } from '@/lib/api/unified-client'
 
 export const StoreSwitcher: React.FC = () => {
   const { branding, tenantHandle, setTenantHandle } = useBranding()

@@ -1,6 +1,6 @@
 import React from 'react'
-import { Link, useNavigate } from '@tantml:react-router'
-import { useBranding } from '~/lib/context/branding-context'
+import { Link, useNavigate } from '@tanstack/react-router'
+import { useBranding } from '@/lib/context/branding-context'
 
 interface Store {
   id: string

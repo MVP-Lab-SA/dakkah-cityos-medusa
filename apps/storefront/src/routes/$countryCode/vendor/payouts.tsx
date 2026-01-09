@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router"
-import { VendorPayouts } from "~/components/vendor/vendor-payouts"
+import { VendorPayouts } from "@/components/vendor/vendor-payouts"
 
 export const Route = createFileRoute("/$countryCode/vendor/payouts")({
   component: VendorPayoutsRoute,

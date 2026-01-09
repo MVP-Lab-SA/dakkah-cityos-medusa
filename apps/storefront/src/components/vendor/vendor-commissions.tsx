@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query"
-import { sdk } from "~/lib/sdk"
-import { formatPrice } from "~/lib/utils/prices"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card"
-import { Skeleton } from "~/components/ui/skeleton"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
+import { sdk } from "@/lib/sdk"
+import { formatPrice } from "@/lib/utils/prices"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export function VendorCommissions() {
   const { data, isLoading } = useQuery({

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router"
-import { VendorOrderList } from "~/components/vendor/vendor-order-list"
+import { VendorOrderList } from "@/components/vendor/vendor-order-list"
 
 export const Route = createFileRoute("/$countryCode/vendor/orders/")({
   component: VendorOrdersRoute,

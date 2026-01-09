@@ -1,7 +1,7 @@
 import { createFileRoute, notFound } from '@tanstack/react-router'
-import { queryKeys } from '~/lib/utils/query-keys'
-import { DynamicPage } from '~/components/pages/dynamic-page'
-import { unifiedClient } from '~/lib/api/unified-client'
+import { queryKeys } from '@/lib/utils/query-keys'
+import { DynamicPage } from '@/components/pages/dynamic-page'
+import { unifiedClient } from '@/lib/api/unified-client'
 
 export const Route = createFileRoute('/$countryCode/$slug')({
   loader: async ({ params, context }) => {
