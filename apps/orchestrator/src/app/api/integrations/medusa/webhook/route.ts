@@ -77,6 +77,17 @@ export async function POST(req: NextRequest) {
         await handleProductEvent(jsonBody, payload, tenantId, storeId)
         break
       
+      case 'vendor.created':
+      case 'vendor.updated':
+      case 'vendor.approved':
+        await handleVendorEvent(jsonBody, payload, tenantId, storeId)
+        break
+      
+      case 'tenant.created':
+      case 'tenant.updated':
+        await handleTenantEvent(jsonBody, payload, tenantId, storeId)
+        break
+      
       case 'inventory.low':
         await handleInventoryEvent(jsonBody, payload, tenantId, storeId)
         break
@@ -160,30 +171,109 @@ async function handleOrderEvent(data: any, payload: any, tenantId: string | null
 }
 
 async function handleProductEvent(data: any, payload: any, tenantId: string | null, storeId: string | null) {
-  // Update ProductContent in Payload
-  const existing = await payload.find({
-    collection: 'product-content',
-    where: {
-      medusaProductId: { equals: data.id }
-    },
-    limit: 1,
+  // Create sync job to sync product from Medusa to Payload
+  await payload.create({
+    collection: 'sync-jobs',
+    data: {
+      jobType: 'medusa_to_payload',
+      status: 'queued',
+      tenantId,
+      storeId,
+      sourceCollection: 'products',
+      sourceDocId: data.id,
+      targetSystem: 'payload',
+      metadata: {
+        event: data.event,
+        sourceData: {
+          id: data.id,
+          title: data.title,
+          handle: data.handle,
+          description: data.description,
+          metadata: data.metadata,
+        },
+      },
+    }
   })
-  
-  if (existing.docs.length > 0) {
-    // Update existing
-    await payload.update({
-      collection: 'product-content',
-      id: existing.docs[0].id,
-      data: {
-        lastSyncAt: new Date().toISOString(),
-        syncStatus: 'synced',
-      }
-    })
-  }
+}
+
+async function handleVendorEvent(data: any, payload: any, tenantId: string | null, storeId: string | null) {
+  // Create sync job to sync vendor from Medusa to Payload
+  await payload.create({
+    collection: 'sync-jobs',
+    data: {
+      jobType: 'medusa_to_payload',
+      status: 'queued',
+      tenantId,
+      storeId,
+      sourceCollection: 'vendors',
+      sourceDocId: data.id,
+      targetSystem: 'payload',
+      metadata: {
+        event: data.event,
+        sourceData: {
+          id: data.id,
+          name: data.name,
+          business_name: data.business_name,
+          handle: data.handle,
+          email: data.email,
+          phone: data.phone,
+          status: data.status,
+          metadata: data.metadata,
+        },
+      },
+    }
+  })
+}
+
+async function handleTenantEvent(data: any, payload: any, tenantId: string | null, storeId: string | null) {
+  // Create sync job to sync tenant from Medusa to Payload
+  await payload.create({
+    collection: 'sync-jobs',
+    data: {
+      jobType: 'medusa_to_payload',
+      status: 'queued',
+      tenantId,
+      storeId,
+      sourceCollection: 'tenants',
+      sourceDocId: data.id,
+      targetSystem: 'payload',
+      metadata: {
+        event: data.event,
+        sourceData: {
+          id: data.id,
+          name: data.name,
+          handle: data.handle,
+          code: data.code,
+          is_active: data.is_active,
+          default_currency: data.default_currency,
+          default_language: data.default_language,
+          metadata: data.metadata,
+        },
+      },
+    }
+  })
 }
 
 async function handleInventoryEvent(data: any, payload: any, tenantId: string | null, storeId: string | null) {
   // Log inventory alert
   console.log(`Low inventory alert for product: ${data.product_id}`)
+  
+  // Create audit log
+  await payload.create({
+    collection: 'audit-logs',
+    data: {
+      entityType: 'inventory',
+      entityId: data.product_id,
+      action: 'inventory.low',
+      tenantId,
+      timestamp: new Date().toISOString(),
+      metadata: {
+        quantity: data.quantity,
+        threshold: data.threshold,
+        locationId: data.location_id,
+      }
+    }
+  })
+  
   // TODO: Send notification via notification service
 }
