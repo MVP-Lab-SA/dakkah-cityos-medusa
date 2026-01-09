@@ -5,7 +5,7 @@ import {
   HeadContent,
   Scripts,
   createRootRouteWithContext,
-} from "@tantml:react-router"
+} from "@tanstack/react-router"
 import { lazy } from "react"
 import appCss from "../styles/app.css?url"
 import { BrandingProvider } from "@/lib/context/branding-context"
