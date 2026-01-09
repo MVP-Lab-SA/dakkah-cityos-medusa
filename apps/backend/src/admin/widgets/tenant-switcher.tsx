@@ -159,8 +159,9 @@ const TenantSwitcherWidget = () => {
   )
 }
 
-export const config = defineWidgetConfig({
-  zone: "product.details.before" as any,
-})
+// Temporarily disabled due to zone configuration issues
+// export const config = defineWidgetConfig({
+//   zone: "product.details.before" as any,
+// })
 
-export default TenantSwitcherWidget
+// export default TenantSwitcherWidget

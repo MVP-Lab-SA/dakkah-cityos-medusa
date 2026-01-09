@@ -83,8 +83,9 @@ export const SubscriptionStatsWidget = () => {
   );
 };
 
-export const config = defineWidgetConfig({
-  zone: "product.details.before",
-});
+// Temporarily disabled - zone configuration needs update
+// export const config = defineWidgetConfig({
+//   zone: "product.details.before",
+// });
 
-export default SubscriptionStatsWidget;
+// export default SubscriptionStatsWidget;
