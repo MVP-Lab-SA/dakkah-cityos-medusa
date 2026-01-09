@@ -16,6 +16,8 @@ export interface TenantContext {
   scope_id: string
   category_id: string
   subcategory_id?: string
+  vendor_id?: string
+  vendor_handle?: string
 }
 
 declare module "@medusajs/framework/http" {
@@ -135,6 +137,13 @@ export async function detectTenantMiddleware(
       tenantContext.store_id = store.id
       tenantContext.store_handle = store.handle
       tenantContext.sales_channel_id = store.sales_channel_id
+    }
+
+    // Check for vendor context (from user session or JWT)
+    const authUser = (req as any).auth?.user
+    if (authUser?.vendor_id) {
+      tenantContext.vendor_id = authUser.vendor_id
+      tenantContext.vendor_handle = authUser.vendor_handle
     }
 
     // Attach to request
