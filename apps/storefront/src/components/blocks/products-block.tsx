@@ -1,7 +1,7 @@
 import React from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/utils/query-keys'
-import { unifiedClient } from '@/lib/api/unified-client'
+import { getUnifiedClient } from '@/lib/api/unified-client'
 import { ProductCard } from '../product/product-card'
 
 interface ProductsBlockProps {
@@ -46,10 +46,10 @@ export const ProductsBlock: React.FC<ProductsBlockProps> = ({
         filters['metadata.vendor_id'] = vendor
       }
 
-      return unifiedClient.medusa.listProducts({
-        filters,
+      const client = getUnifiedClient()
+      return client.getMedusaProducts({
+        ...filters,
         limit,
-        fields: '*variants,*images,*metadata',
       })
     },
   })

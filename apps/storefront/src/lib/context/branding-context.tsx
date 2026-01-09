@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/utils/query-keys'
-import { unifiedClient } from '@/lib/api/unified-client'
+import { getUnifiedClient } from '@/lib/api/unified-client'
 
 interface Branding {
   logo?: {
@@ -55,16 +55,9 @@ export const BrandingProvider: React.FC<BrandingProviderProps> = ({
     queryFn: async () => {
       if (!tenantHandle) return null
 
-      const store = await unifiedClient.payload.getStores({
-        where: {
-          handle: {
-            equals: tenantHandle,
-          },
-        },
-        limit: 1,
-      })
-
-      return store?.docs?.[0] || null
+      const client = getUnifiedClient()
+      const stores = await client.getStores()
+      return stores.find(s => s.handle === tenantHandle) || null
     },
     enabled: !!tenantHandle,
   })

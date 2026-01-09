@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { queryKeys } from '@/lib/utils/query-keys'
-import { unifiedClient } from '@/lib/api/unified-client'
+import { getUnifiedClient } from '@/lib/api/unified-client'
 import { StoreSelection } from '@/components/store/store-selection'
 
 export const Route = createFileRoute('/$countryCode/stores')({
@@ -9,18 +9,12 @@ export const Route = createFileRoute('/$countryCode/stores')({
     const stores = await context.queryClient.ensureQueryData({
       queryKey: queryKeys.tenants.list(),
       queryFn: async () => {
-        return unifiedClient.payload.getStores({
-          where: {
-            status: {
-              equals: 'active',
-            },
-          },
-          limit: 100,
-        })
+        const client = getUnifiedClient()
+        return client.getStores()
       },
     })
 
-    return { stores: stores?.docs || [] }
+    return { stores: stores || [] }
   },
   component: StoreSelectionComponent,
   head: () => ({

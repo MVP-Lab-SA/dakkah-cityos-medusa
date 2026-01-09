@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useBranding } from '@/lib/context/branding-context'
 import { queryKeys } from '@/lib/utils/query-keys'
-import { unifiedClient } from '@/lib/api/unified-client'
+import { getUnifiedClient } from '@/lib/api/unified-client'
 
 export const StoreSwitcher: React.FC = () => {
   const { branding, tenantHandle, setTenantHandle } = useBranding()
@@ -11,14 +11,8 @@ export const StoreSwitcher: React.FC = () => {
   const { data: stores } = useQuery({
     queryKey: queryKeys.tenants.list(),
     queryFn: async () => {
-      return unifiedClient.payload.getStores({
-        where: {
-          status: {
-            equals: 'active',
-          },
-        },
-        limit: 100,
-      })
+      const client = getUnifiedClient()
+      return client.getStores()
     },
   })
 
@@ -28,7 +22,7 @@ export const StoreSwitcher: React.FC = () => {
     window.location.reload() // Reload to apply new branding
   }
 
-  if (!stores?.docs || stores.docs.length <= 1) {
+  if (!stores || stores.length <= 1) {
     return null
   }
 
@@ -68,7 +62,7 @@ export const StoreSwitcher: React.FC = () => {
             onClick={() => setIsOpen(false)}
           />
           <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl z-20 max-h-96 overflow-y-auto">
-            {stores.docs.map((store: any) => (
+            {stores.map((store: any) => (
               <button
                 key={store.id}
                 onClick={() => handleStoreChange(store.handle)}
