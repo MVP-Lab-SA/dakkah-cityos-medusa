@@ -5,7 +5,7 @@ import { model } from "@medusajs/framework/utils"
  * Represents a storefront/brand within a tenant
  * One tenant can have multiple stores (multi-brand strategy)
  */
-const Store = model.define("store", {
+const Store = model.define("cityosStore", {
   id: model.id().primaryKey(),
   
   // Tenant Relationship
@@ -61,11 +61,6 @@ const Store = model.define("store", {
   // Configuration
   settings: model.json().nullable(),
   metadata: model.json().nullable(),
-  
-  // Timestamps
-  created_at: model.dateTime(),
-  updated_at: model.dateTime(),
-  deleted_at: model.dateTime().nullable(),
 })
 
 export default Store

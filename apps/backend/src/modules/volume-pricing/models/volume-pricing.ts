@@ -53,10 +53,6 @@ const VolumePricing = model.define("volume_pricing", {
   
   // Metadata
   metadata: model.json().nullable(),
-  
-  // Timestamps
-  created_at: model.dateTime().defaultNow(),
-  updated_at: model.dateTime().defaultNow(),
 });
 
 export default VolumePricing;

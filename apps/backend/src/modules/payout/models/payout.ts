@@ -12,11 +12,11 @@ const Payout = model.define("payout", {
   payout_number: model.text().unique(), // e.g., PO-2024-001
   
   // Amounts (in cents)
-  gross_amount: model.bigInt(), // Total sales
-  commission_amount: model.bigInt(), // Platform commission
-  platform_fee_amount: model.bigInt().default(0), // Additional platform fees
-  adjustment_amount: model.bigInt().default(0), // Manual adjustments
-  net_amount: model.bigInt(), // Amount to be paid to vendor
+  gross_amount: model.bigNumber(), // Total sales
+  commission_amount: model.bigNumber(), // Platform commission
+  platform_fee_amount: model.bigNumber().default(0), // Additional platform fees
+  adjustment_amount: model.bigNumber().default(0), // Manual adjustments
+  net_amount: model.bigNumber(), // Amount to be paid to vendor
   
   // Period
   period_start: model.dateTime(),

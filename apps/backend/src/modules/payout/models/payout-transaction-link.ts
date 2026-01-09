@@ -8,7 +8,7 @@ const PayoutTransactionLink = model.define("payout_transaction_link", {
   commission_transaction_id: model.text(),
   
   // Amount included in payout (might differ from transaction if partial)
-  amount: model.bigInt(),
+  amount: model.bigNumber(),
 })
 
 export default PayoutTransactionLink

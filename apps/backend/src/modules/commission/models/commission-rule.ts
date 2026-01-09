@@ -26,7 +26,7 @@ const CommissionRule = model.define("commission_rule", {
   
   // Simple Commission (for percentage/flat)
   commission_percentage: model.number().nullable(), // e.g., 15.5 for 15.5%
-  commission_flat_amount: model.bigInt().nullable(), // In cents
+  commission_flat_amount: model.bigNumber().nullable(), // In cents
   
   // Tiered Commission
   tiers: model.json().nullable(), // [{min_amount: 0, max_amount: 10000, rate: 20}, ...]

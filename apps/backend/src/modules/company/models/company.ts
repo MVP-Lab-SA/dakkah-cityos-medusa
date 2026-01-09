@@ -49,11 +49,6 @@ const Company = model.define("company", {
   
   // Metadata
   metadata: model.json().nullable(),
-  
-  // Timestamps
-  created_at: model.dateTime().defaultNow(),
-  updated_at: model.dateTime().defaultNow(),
-  deleted_at: model.dateTime().nullable(),
 });
 
 export default Company;
