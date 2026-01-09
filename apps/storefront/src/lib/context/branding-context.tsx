@@ -46,7 +46,7 @@ export const BrandingProvider: React.FC<BrandingProviderProps> = ({
   initialTenantHandle = null,
 }) => {
   const [tenantHandle, setTenantHandle] = useState<string | null>(
-    initialTenantHandle || localStorage.getItem('tenant_handle')
+    initialTenantHandle || (typeof window !== 'undefined' ? localStorage.getItem('tenant_handle') : null)
   )
 
   // Fetch branding data when tenant is set
@@ -71,7 +71,7 @@ export const BrandingProvider: React.FC<BrandingProviderProps> = ({
 
   // Apply branding to document
   useEffect(() => {
-    if (branding) {
+    if (branding && typeof window !== 'undefined') {
       // Apply theme colors as CSS variables
       if (branding.theme?.primaryColor) {
         document.documentElement.style.setProperty(
@@ -111,10 +111,12 @@ export const BrandingProvider: React.FC<BrandingProviderProps> = ({
 
   // Persist tenant selection
   useEffect(() => {
-    if (tenantHandle) {
-      localStorage.setItem('tenant_handle', tenantHandle)
-    } else {
-      localStorage.removeItem('tenant_handle')
+    if (typeof window !== 'undefined') {
+      if (tenantHandle) {
+        localStorage.setItem('tenant_handle', tenantHandle)
+      } else {
+        localStorage.removeItem('tenant_handle')
+      }
     }
   }, [tenantHandle])
 
