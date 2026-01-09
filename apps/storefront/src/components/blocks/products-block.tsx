@@ -2,7 +2,7 @@ import React from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/utils/query-keys'
 import { getUnifiedClient } from '@/lib/api/unified-client'
-import { ProductCard } from '../product/product-card'
+import { ProductCard } from '../product-card'
 
 interface ProductsBlockProps {
   title?: string
