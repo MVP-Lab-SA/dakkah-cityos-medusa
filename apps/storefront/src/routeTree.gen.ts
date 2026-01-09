@@ -18,9 +18,11 @@ import { Route as CountryCodeRouteImport } from './routes/$countryCode'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CountryCodeIndexRouteImport } from './routes/$countryCode/index'
+import { Route as CountryCodeStoresRouteImport } from './routes/$countryCode/stores'
 import { Route as CountryCodeStoreRouteImport } from './routes/$countryCode/store'
 import { Route as CountryCodeCheckoutRouteImport } from './routes/$countryCode/checkout'
 import { Route as CountryCodeCartRouteImport } from './routes/$countryCode/cart'
+import { Route as CountryCodeSlugRouteImport } from './routes/$countryCode/$slug'
 import { Route as CountryCodeProductsHandleRouteImport } from './routes/$countryCode/products/$handle'
 import { Route as CountryCodeCategoriesHandleRouteImport } from './routes/$countryCode/categories/$handle'
 import { Route as CountryCodeOrderOrderIdConfirmedRouteImport } from './routes/$countryCode/order/$orderId/confirmed'
@@ -63,6 +65,11 @@ const CountryCodeIndexRoute = CountryCodeIndexRouteImport.update({
   path: '/',
   getParentRoute: () => CountryCodeRoute,
 } as any)
+const CountryCodeStoresRoute = CountryCodeStoresRouteImport.update({
+  id: '/stores',
+  path: '/stores',
+  getParentRoute: () => CountryCodeRoute,
+} as any)
 const CountryCodeStoreRoute = CountryCodeStoreRouteImport.update({
   id: '/store',
   path: '/store',
@@ -76,6 +83,11 @@ const CountryCodeCheckoutRoute = CountryCodeCheckoutRouteImport.update({
 const CountryCodeCartRoute = CountryCodeCartRouteImport.update({
   id: '/cart',
   path: '/cart',
+  getParentRoute: () => CountryCodeRoute,
+} as any)
+const CountryCodeSlugRoute = CountryCodeSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
   getParentRoute: () => CountryCodeRoute,
 } as any)
 const CountryCodeProductsHandleRoute =
@@ -109,9 +121,11 @@ export interface FileRoutesByFullPath {
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
   '/store': typeof StoreRoute
+  '/$countryCode/$slug': typeof CountryCodeSlugRoute
   '/$countryCode/cart': typeof CountryCodeCartRoute
   '/$countryCode/checkout': typeof CountryCodeCheckoutRoute
   '/$countryCode/store': typeof CountryCodeStoreRoute
+  '/$countryCode/stores': typeof CountryCodeStoresRoute
   '/$countryCode/': typeof CountryCodeIndexRoute
   '/$countryCode/categories/$handle': typeof CountryCodeCategoriesHandleRoute
   '/$countryCode/products/$handle': typeof CountryCodeProductsHandleRoute
@@ -123,9 +137,11 @@ export interface FileRoutesByTo {
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
   '/store': typeof StoreRoute
+  '/$countryCode/$slug': typeof CountryCodeSlugRoute
   '/$countryCode/cart': typeof CountryCodeCartRoute
   '/$countryCode/checkout': typeof CountryCodeCheckoutRoute
   '/$countryCode/store': typeof CountryCodeStoreRoute
+  '/$countryCode/stores': typeof CountryCodeStoresRoute
   '/$countryCode': typeof CountryCodeIndexRoute
   '/$countryCode/categories/$handle': typeof CountryCodeCategoriesHandleRoute
   '/$countryCode/products/$handle': typeof CountryCodeProductsHandleRoute
@@ -139,9 +155,11 @@ export interface FileRoutesById {
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
   '/store': typeof StoreRoute
+  '/$countryCode/$slug': typeof CountryCodeSlugRoute
   '/$countryCode/cart': typeof CountryCodeCartRoute
   '/$countryCode/checkout': typeof CountryCodeCheckoutRoute
   '/$countryCode/store': typeof CountryCodeStoreRoute
+  '/$countryCode/stores': typeof CountryCodeStoresRoute
   '/$countryCode/': typeof CountryCodeIndexRoute
   '/$countryCode/categories/$handle': typeof CountryCodeCategoriesHandleRoute
   '/$countryCode/products/$handle': typeof CountryCodeProductsHandleRoute
@@ -156,9 +174,11 @@ export interface FileRouteTypes {
     | '/cart'
     | '/checkout'
     | '/store'
+    | '/$countryCode/$slug'
     | '/$countryCode/cart'
     | '/$countryCode/checkout'
     | '/$countryCode/store'
+    | '/$countryCode/stores'
     | '/$countryCode/'
     | '/$countryCode/categories/$handle'
     | '/$countryCode/products/$handle'
@@ -170,9 +190,11 @@ export interface FileRouteTypes {
     | '/cart'
     | '/checkout'
     | '/store'
+    | '/$countryCode/$slug'
     | '/$countryCode/cart'
     | '/$countryCode/checkout'
     | '/$countryCode/store'
+    | '/$countryCode/stores'
     | '/$countryCode'
     | '/$countryCode/categories/$handle'
     | '/$countryCode/products/$handle'
@@ -185,9 +207,11 @@ export interface FileRouteTypes {
     | '/cart'
     | '/checkout'
     | '/store'
+    | '/$countryCode/$slug'
     | '/$countryCode/cart'
     | '/$countryCode/checkout'
     | '/$countryCode/store'
+    | '/$countryCode/stores'
     | '/$countryCode/'
     | '/$countryCode/categories/$handle'
     | '/$countryCode/products/$handle'
@@ -275,6 +299,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CountryCodeIndexRouteImport
       parentRoute: typeof CountryCodeRoute
     }
+    '/$countryCode/stores': {
+      id: '/$countryCode/stores'
+      path: '/stores'
+      fullPath: '/$countryCode/stores'
+      preLoaderRoute: typeof CountryCodeStoresRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
     '/$countryCode/store': {
       id: '/$countryCode/store'
       path: '/store'
@@ -294,6 +325,13 @@ declare module '@tanstack/react-router' {
       path: '/cart'
       fullPath: '/$countryCode/cart'
       preLoaderRoute: typeof CountryCodeCartRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
+    '/$countryCode/$slug': {
+      id: '/$countryCode/$slug'
+      path: '/$slug'
+      fullPath: '/$countryCode/$slug'
+      preLoaderRoute: typeof CountryCodeSlugRouteImport
       parentRoute: typeof CountryCodeRoute
     }
     '/$countryCode/products/$handle': {
@@ -332,9 +370,11 @@ declare module '@tanstack/react-start/server' {
 }
 
 interface CountryCodeRouteChildren {
+  CountryCodeSlugRoute: typeof CountryCodeSlugRoute
   CountryCodeCartRoute: typeof CountryCodeCartRoute
   CountryCodeCheckoutRoute: typeof CountryCodeCheckoutRoute
   CountryCodeStoreRoute: typeof CountryCodeStoreRoute
+  CountryCodeStoresRoute: typeof CountryCodeStoresRoute
   CountryCodeIndexRoute: typeof CountryCodeIndexRoute
   CountryCodeCategoriesHandleRoute: typeof CountryCodeCategoriesHandleRoute
   CountryCodeProductsHandleRoute: typeof CountryCodeProductsHandleRoute
@@ -342,9 +382,11 @@ interface CountryCodeRouteChildren {
 }
 
 const CountryCodeRouteChildren: CountryCodeRouteChildren = {
+  CountryCodeSlugRoute: CountryCodeSlugRoute,
   CountryCodeCartRoute: CountryCodeCartRoute,
   CountryCodeCheckoutRoute: CountryCodeCheckoutRoute,
   CountryCodeStoreRoute: CountryCodeStoreRoute,
+  CountryCodeStoresRoute: CountryCodeStoresRoute,
   CountryCodeIndexRoute: CountryCodeIndexRoute,
   CountryCodeCategoriesHandleRoute: CountryCodeCategoriesHandleRoute,
   CountryCodeProductsHandleRoute: CountryCodeProductsHandleRoute,
