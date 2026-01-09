@@ -1,0 +1,87 @@
+import { MedusaRequest, MedusaResponse } from "@medusajs/framework";
+import { z } from "zod";
+
+const updateSubscriptionSchema = z.object({
+  status: z.enum(["active", "paused", "canceled"]).optional(),
+  payment_method_id: z.string().optional(),
+  billing_interval: z.enum(["daily", "weekly", "monthly", "quarterly", "yearly"]).optional(),
+  billing_interval_count: z.number().optional(),
+  metadata: z.record(z.any()).optional(),
+});
+
+// GET /admin/subscriptions/:id - Get subscription
+export async function GET(req: MedusaRequest, res: MedusaResponse) {
+  const subscriptionModule = req.scope.resolve("subscription");
+  const tenantId = req.tenant?.id;
+  const { id } = req.params;
+  
+  if (!tenantId) {
+    return res.status(403).json({ message: "Tenant context required" });
+  }
+  
+  const subscription = await subscriptionModule.retrieveSubscription(id, {
+    relations: ["subscription_items", "billing_cycles"],
+  });
+  
+  if (!subscription || subscription.tenant_id !== tenantId) {
+    return res.status(404).json({ message: "Subscription not found" });
+  }
+  
+  res.json({ subscription });
+}
+
+// POST /admin/subscriptions/:id - Update subscription
+export async function POST(req: MedusaRequest, res: MedusaResponse) {
+  const subscriptionModule = req.scope.resolve("subscription");
+  const tenantId = req.tenant?.id;
+  const { id } = req.params;
+  
+  if (!tenantId) {
+    return res.status(403).json({ message: "Tenant context required" });
+  }
+  
+  const subscription = await subscriptionModule.retrieveSubscription(id);
+  
+  if (!subscription || subscription.tenant_id !== tenantId) {
+    return res.status(404).json({ message: "Subscription not found" });
+  }
+  
+  const validatedData = updateSubscriptionSchema.parse(req.body);
+  
+  // Handle status changes
+  if (validatedData.status && validatedData.status !== subscription.status) {
+    const now = new Date();
+    
+    if (validatedData.status === "canceled") {
+      validatedData.canceled_at = now;
+    }
+  }
+  
+  const updated = await subscriptionModule.updateSubscriptions(id, validatedData);
+  
+  res.json({ subscription: updated });
+}
+
+// DELETE /admin/subscriptions/:id - Cancel subscription
+export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
+  const subscriptionModule = req.scope.resolve("subscription");
+  const tenantId = req.tenant?.id;
+  const { id } = req.params;
+  
+  if (!tenantId) {
+    return res.status(403).json({ message: "Tenant context required" });
+  }
+  
+  const subscription = await subscriptionModule.retrieveSubscription(id);
+  
+  if (!subscription || subscription.tenant_id !== tenantId) {
+    return res.status(404).json({ message: "Subscription not found" });
+  }
+  
+  await subscriptionModule.updateSubscriptions(id, {
+    status: "canceled",
+    canceled_at: new Date(),
+  });
+  
+  res.json({ id, deleted: true });
+}

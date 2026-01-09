@@ -34,7 +34,8 @@
     "@medusajs/medusa": "2.11.4-snapshot-20251107212527",
     "@medusajs/types": "2.11.4-snapshot-20251107212527",
     "@medusajs/ui": "4.0.23",
-    "@tanstack/react-query": "5.64.2"
+    "@tanstack/react-query": "5.64.2",
+    "zod": "^4.3.5"
   },
   "devDependencies": {
     "@medusajs/test-utils": "2.11.4-snapshot-20251107212527",

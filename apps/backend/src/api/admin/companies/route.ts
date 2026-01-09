@@ -1,0 +1,68 @@
+import { MedusaRequest, MedusaResponse } from "@medusajs/framework";
+import { z } from "zod";
+
+// Validation schemas
+const createCompanySchema = z.object({
+  name: z.string().min(1),
+  legal_name: z.string().optional(),
+  email: z.string().email(),
+  phone: z.string().optional(),
+  tax_id: z.string().optional(),
+  industry: z.string().optional(),
+  customer_id: z.string(),
+  store_id: z.string().optional(),
+  credit_limit: z.string().optional(),
+  payment_terms_days: z.number().optional(),
+  tier: z.enum(["bronze", "silver", "gold", "platinum"]).optional(),
+});
+
+/**
+ * GET /admin/companies
+ * List all B2B companies
+ */
+export async function GET(req: MedusaRequest, res: MedusaResponse) {
+  const companyService = req.scope.resolve("companyModuleService");
+  const tenantId = req.scope.resolve("tenantId");
+
+  const { status, tier, limit = 20, offset = 0 } = req.query;
+
+  const filters: any = { tenant_id: tenantId };
+  
+  if (status) filters.status = status;
+  if (tier) filters.tier = tier;
+
+  const [companies, count] = await companyService.listAndCountCompanies(filters, {
+    skip: Number(offset),
+    take: Number(limit),
+    order: { created_at: "DESC" },
+  });
+
+  res.json({
+    companies,
+    count,
+    limit: Number(limit),
+    offset: Number(offset),
+  });
+}
+
+/**
+ * POST /admin/companies
+ * Create new B2B company
+ */
+export async function POST(req: MedusaRequest, res: MedusaResponse) {
+  const tenantId = req.scope.resolve("tenantId");
+  const parsed = createCompanySchema.parse(req.body);
+
+  const { createCompanyWorkflow } = await import(
+    "../../../workflows/b2b/create-company-workflow"
+  );
+
+  const { result } = await createCompanyWorkflow(req.scope).run({
+    input: {
+      ...parsed,
+      tenant_id: tenantId,
+    },
+  });
+
+  res.status(201).json({ company: result.company });
+}
