@@ -1,0 +1,39 @@
+import { MedusaRequest, MedusaResponse } from "@medusajs/framework";
+import { z } from "zod";
+
+const approveCompanySchema = z.object({
+  credit_limit: z.string().optional(),
+  payment_terms_days: z.number().optional(),
+});
+
+/**
+ * POST /admin/companies/:id/approve
+ * Approve a pending company application
+ */
+export async function POST(req: MedusaRequest, res: MedusaResponse) {
+  const companyService = req.scope.resolve("companyModuleService");
+  const { id } = req.params;
+  const adminUserId = req.auth_context?.actor_id;
+
+  const parsed = approveCompanySchema.parse(req.body);
+
+  // Get company
+  const company = await companyService.retrieveCompany(id);
+
+  if (company.status !== "pending") {
+    return res.status(400).json({
+      error: "Company must be in pending status to approve",
+    });
+  }
+
+  // Approve company
+  const updated = await companyService.updateCompanies(id, {
+    status: "active",
+    approved_at: new Date(),
+    approved_by: adminUserId,
+    credit_limit: parsed.credit_limit || company.credit_limit,
+    payment_terms_days: parsed.payment_terms_days || company.payment_terms_days,
+  });
+
+  res.json({ company: updated });
+}
