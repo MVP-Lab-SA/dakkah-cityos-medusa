@@ -293,6 +293,24 @@ class UnifiedAPIClient {
   }
   
   async getStores(tenantId?: string): Promise<StoreBranding[]> {
+    // Try Medusa backend first
+    try {
+      const response = await fetch(`${this.medusaUrl}/store/stores`, {
+        headers: {
+          'x-publishable-api-key': this.publishableKey,
+        },
+        next: { revalidate: 300 },
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        return data.stores || []
+      }
+    } catch (error) {
+      console.warn('Failed to fetch from Medusa, trying Payload:', error)
+    }
+    
+    // Fallback to Payload CMS
     const query = new URLSearchParams({
       where: JSON.stringify({
         status: { equals: 'active' },
