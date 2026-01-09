@@ -1,7 +1,7 @@
 import { Container, Heading, Table, Badge, Button } from "@medusajs/ui";
 import { defineRouteConfig } from "@medusajs/admin-sdk";
 import { useQuery } from "@tanstack/react-query";
-import { sdk } from "../../../lib/client";
+import { sdk } from "../../lib/client";
 
 export const SubscriptionsPage = () => {
   const { data, isLoading } = useQuery({

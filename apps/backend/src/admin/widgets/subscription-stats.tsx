@@ -1,7 +1,7 @@
 import { defineWidgetConfig } from "@medusajs/admin-sdk";
 import { Container, Heading } from "@medusajs/ui";
 import { useQuery } from "@tanstack/react-query";
-import { sdk } from "../../lib/client";
+import { sdk } from "../lib/client";
 
 export const SubscriptionStatsWidget = () => {
   const { data, isLoading } = useQuery({
