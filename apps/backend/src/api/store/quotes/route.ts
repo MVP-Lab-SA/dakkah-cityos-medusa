@@ -1,60 +1,64 @@
-import { MedusaRequest, MedusaResponse } from "@medusajs/framework";
-import { z } from "zod";
-
-const createQuoteSchema = z.object({
-  items: z.array(z.object({
-    product_id: z.string(),
-    variant_id: z.string(),
-    quantity: z.number().positive(),
-  })),
-  customer_notes: z.string().optional(),
-});
+import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
+import { Modules } from "@medusajs/framework/utils";
 
 /**
  * POST /store/quotes
- * Create a new quote request (B2B customer)
+ * Create a new quote request
  */
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const customerId = req.auth_context?.actor_id;
-  const tenantId = req.scope.resolve("tenantId");
-  const storeId = req.scope.resolve("storeId");
+  const quoteModuleService = req.scope.resolve("quoteModuleService");
+  const { items, customer_notes, company_id, tenant_id, region_id, store_id } = req.body;
 
-  if (!customerId) {
-    return res.status(401).json({ error: "Authentication required" });
+  // Validate authenticated customer
+  if (!req.auth_context?.actor_id) {
+    return res.status(401).json({ message: "Unauthorized" });
   }
 
-  const parsed = createQuoteSchema.parse(req.body);
+  const customerId = req.auth_context.actor_id;
 
-  // Get customer's company
-  const companyService = req.scope.resolve("companyModuleService");
-  const [companyUsers] = await companyService.listCompanyUsers({
+  // Generate quote number
+  const quoteNumber = await quoteModuleService.generateQuoteNumber();
+
+  // Create quote
+  const quote = await quoteModuleService.createQuotes({
+    quote_number: quoteNumber,
     customer_id: customerId,
-    status: "active",
+    company_id,
+    tenant_id,
+    store_id,
+    region_id,
+    status: "draft",
+    customer_notes,
+    currency_code: "usd",
   });
 
-  if (companyUsers.length === 0) {
-    return res.status(403).json({ error: "Not associated with a company" });
+  // Create quote items
+  const quoteItems = [];
+  for (const item of items) {
+    const quoteItem = await quoteModuleService.createQuoteItems({
+      quote_id: quote.id,
+      product_id: item.product_id,
+      variant_id: item.variant_id,
+      title: item.title,
+      sku: item.sku,
+      thumbnail: item.thumbnail,
+      quantity: item.quantity,
+      unit_price: item.unit_price,
+      subtotal: BigInt(item.unit_price) * BigInt(item.quantity),
+      total: BigInt(item.unit_price) * BigInt(item.quantity),
+    });
+    quoteItems.push(quoteItem);
   }
 
-  const companyUser = companyUsers[0];
+  // Calculate totals
+  await quoteModuleService.calculateQuoteTotals(quote.id);
 
-  const { createQuoteWorkflow } = await import(
-    "../../../workflows/b2b/create-quote-workflow"
-  );
-
-  const { result } = await createQuoteWorkflow(req.scope).run({
-    input: {
-      company_id: companyUser.company_id,
-      customer_id: customerId,
-      tenant_id: tenantId,
-      store_id: storeId,
-      items: parsed.items,
-      customer_notes: parsed.customer_notes,
-      valid_days: 30,
-    },
+  // Retrieve updated quote
+  const updatedQuote = await quoteModuleService.retrieveQuote(quote.id, {
+    relations: ["items"],
   });
 
-  res.status(201).json({ quote: result });
+  res.json({ quote: updatedQuote });
 }
 
 /**
@@ -62,18 +66,23 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
  * List customer's quotes
  */
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const customerId = req.auth_context?.actor_id;
-  const quoteService = req.scope.resolve("quoteModuleService");
+  const quoteModuleService = req.scope.resolve("quoteModuleService");
 
-  if (!customerId) {
-    return res.status(401).json({ error: "Authentication required" });
+  if (!req.auth_context?.actor_id) {
+    return res.status(401).json({ message: "Unauthorized" });
   }
 
-  const [quotes] = await quoteService.listQuotes({
-    customer_id: customerId,
-  }, {
-    order: { created_at: "DESC" },
-  });
+  const customerId = req.auth_context.actor_id;
 
-  res.json({ quotes });
+  const [quotes, count] = await quoteModuleService.listAndCountQuotes(
+    {
+      customer_id: customerId,
+    },
+    {
+      relations: ["items"],
+      order: { created_at: "DESC" },
+    }
+  );
+
+  res.json({ quotes, count });
 }
