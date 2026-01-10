@@ -96,6 +96,7 @@ module.exports = defineConfig({
       : []),
     {
       resolve: "./src/modules/tenant",
+      key: "tenant",
       options: {
         definition: {
           isQueryable: true
