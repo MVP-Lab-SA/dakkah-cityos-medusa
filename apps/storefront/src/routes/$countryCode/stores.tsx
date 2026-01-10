@@ -6,15 +6,22 @@ import { StoreSelection } from '@/components/store/store-selection'
 export const Route = createFileRoute('/$countryCode/stores')({
   loader: async ({ context }) => {
     // Load all available stores/tenants
-    const stores = await context.queryClient.ensureQueryData({
-      queryKey: queryKeys.tenants.list(),
-      queryFn: async () => {
-        const client = getUnifiedClient()
-        return client.getStores()
-      },
-    })
+    try {
+      const stores = await context.queryClient.ensureQueryData({
+        queryKey: queryKeys.tenants.list(),
+        queryFn: async () => {
+          const client = getUnifiedClient()
+          const result = await client.getStores()
+          console.log('Stores loaded in loader:', result)
+          return result
+        },
+      })
 
-    return { stores: stores || [] }
+      return { stores: stores || [] }
+    } catch (error) {
+      console.error('Error loading stores:', error)
+      return { stores: [] }
+    }
   },
   component: StoreSelectionComponent,
   head: () => ({

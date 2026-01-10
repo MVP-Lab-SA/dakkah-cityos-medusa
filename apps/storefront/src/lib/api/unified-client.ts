@@ -106,7 +106,7 @@ class UnifiedAPIClient {
       headers: {
         'x-publishable-api-key': this.publishableKey,
       },
-      next: { revalidate: 60 }, // Cache for 1 minute
+
     })
     
     if (!response.ok) {
@@ -122,7 +122,7 @@ class UnifiedAPIClient {
       headers: {
         'x-publishable-api-key': this.publishableKey,
       },
-      next: { revalidate: 60 },
+
     })
     
     if (!response.ok) {
@@ -141,7 +141,7 @@ class UnifiedAPIClient {
       headers: {
         'x-publishable-api-key': this.publishableKey,
       },
-      next: { revalidate: 60 },
+
     })
     
     if (!response.ok) {
@@ -157,7 +157,7 @@ class UnifiedAPIClient {
       headers: {
         'x-publishable-api-key': this.publishableKey,
       },
-      next: { revalidate: 3600 }, // Cache for 1 hour
+
     })
     
     if (!response.ok) {
@@ -173,7 +173,7 @@ class UnifiedAPIClient {
       headers: {
         'x-publishable-api-key': this.publishableKey,
       },
-      next: { revalidate: 300 }, // Cache for 5 minutes
+
     })
     
     if (!response.ok) {
@@ -189,7 +189,7 @@ class UnifiedAPIClient {
       headers: {
         'x-publishable-api-key': this.publishableKey,
       },
-      next: { revalidate: 300 },
+
     })
     
     if (!response.ok) {
@@ -213,7 +213,7 @@ class UnifiedAPIClient {
     })
     
     const response = await fetch(`${this.payloadUrl}/api/product-content?${query}`, {
-      next: { revalidate: 60 },
+
     })
     
     if (!response.ok) {
@@ -237,7 +237,7 @@ class UnifiedAPIClient {
     })
     
     const response = await fetch(`${this.payloadUrl}/api/pages?${query}`, {
-      next: { revalidate: 60 },
+
     })
     
     if (!response.ok) {
@@ -259,7 +259,7 @@ class UnifiedAPIClient {
     })
     
     const response = await fetch(`${this.payloadUrl}/api/pages?${query}`, {
-      next: { revalidate: 300 },
+
     })
     
     if (!response.ok) {
@@ -281,7 +281,7 @@ class UnifiedAPIClient {
     })
     
     const response = await fetch(`${this.payloadUrl}/api/stores?${query}`, {
-      next: { revalidate: 300 },
+
     })
     
     if (!response.ok) {
@@ -295,19 +295,25 @@ class UnifiedAPIClient {
   async getStores(tenantId?: string): Promise<StoreBranding[]> {
     // Try Medusa backend first
     try {
+      console.log('Fetching stores from:', `${this.medusaUrl}/store/stores`)
       const response = await fetch(`${this.medusaUrl}/store/stores`, {
         headers: {
           'x-publishable-api-key': this.publishableKey,
         },
-        next: { revalidate: 300 },
       })
+      
+      console.log('Stores API response status:', response.status)
       
       if (response.ok) {
         const data = await response.json()
+        console.log('Stores data:', data)
         return data.stores || []
+      } else {
+        const errorText = await response.text()
+        console.error('Stores API error:', response.status, errorText)
       }
     } catch (error) {
-      console.warn('Failed to fetch from Medusa, trying Payload:', error)
+      console.error('Failed to fetch from Medusa:', error)
     }
     
     // Fallback to Payload CMS
@@ -319,9 +325,7 @@ class UnifiedAPIClient {
       limit: '100',
     })
     
-    const response = await fetch(`${this.payloadUrl}/api/stores?${query}`, {
-      next: { revalidate: 300 },
-    })
+    const response = await fetch(`${this.payloadUrl}/api/stores?${query}`)
     
     if (!response.ok) {
       return []
