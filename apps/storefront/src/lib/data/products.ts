@@ -55,12 +55,14 @@ export const listProducts = async ({
   region_id,
   tenant_id,
   vendor_id,
+  sales_channel_id,
 }: {
   page_param?: number;
   query_params?: HttpTypes.StoreProductListParams;
   region_id?: string;
   tenant_id?: string;
   vendor_id?: string;
+  sales_channel_id?: string;
 }): Promise<{
   products: HttpTypes.StoreProduct[];
   count: number;
@@ -70,7 +72,7 @@ export const listProducts = async ({
   const _page_param = Math.max(page_param, 1)
   const offset = _page_param === 1 ? 0 : (_page_param - 1) * limit
 
-  // Add tenant/vendor filtering via metadata
+  // Add tenant/vendor/sales_channel filtering
   const filters: any = { ...query_params }
   
   if (tenant_id) {
@@ -79,6 +81,11 @@ export const listProducts = async ({
   
   if (vendor_id) {
     filters['metadata.vendor_id'] = vendor_id
+  }
+  
+  // Sales channel filtering for multi-store
+  if (sales_channel_id) {
+    filters.sales_channel_id = [sales_channel_id]
   }
 
   const response = await sdk.store.product.list({
