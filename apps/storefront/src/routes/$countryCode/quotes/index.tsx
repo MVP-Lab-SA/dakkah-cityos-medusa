@@ -1,9 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { sdk } from "@/lib/sdk";
+import { sdk } from "@/lib/utils/sdk";
 import { QuoteList } from "@/components/quotes/quote-list";
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
+
+interface Quote {
+  id: string;
+  quote_number: string;
+  status: string;
+  total: number;
+  created_at: string;
+  valid_until?: string;
+  items?: Array<{ id: string }>;
+}
 
 export const Route = createFileRoute("/$countryCode/quotes/")({
   component: QuotesPage,
@@ -15,10 +25,10 @@ function QuotesPage() {
   const { data, isLoading } = useQuery({
     queryKey: ["quotes"],
     queryFn: async () => {
-      const response = await sdk.client.fetch("/store/quotes", {
+      const response = await sdk.client.fetch<{ quotes: Quote[] }>("/store/quotes", {
         credentials: "include",
       });
-      return response.json();
+      return response;
     },
   });
 

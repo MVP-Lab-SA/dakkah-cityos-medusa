@@ -1,164 +1,160 @@
-import { useQuery } from "@tanstack/react-query"
-import { sdk } from "@/lib/sdk"
-import { formatPrice } from "@/lib/utils/prices"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Link } from "@tanstack/react-router"
-import { PencilSquare, Trash, Plus } from "@medusajs/icons"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
+import { sdk } from "@/lib/utils/sdk";
+import { Button } from "@/components/ui/button";
+import { Plus, Trash, PencilSquare } from "@medusajs/icons";
+
+interface VendorProduct {
+  id: string;
+  title: string;
+  description?: string;
+  thumbnail?: string;
+  status: string;
+  variants?: Array<{
+    id: string;
+    prices?: Array<{
+      amount: number;
+      currency_code: string;
+    }>;
+  }>;
+}
 
 export function VendorProductList() {
+  const countryCode = "us";
+  const queryClient = useQueryClient();
+
   const { data, isLoading } = useQuery({
-    queryKey: ["vendor", "products"],
+    queryKey: ["vendor-products"],
     queryFn: async () => {
-      const response = await sdk.client.fetch("/vendor/products", {
+      const response = await sdk.client.fetch<{ products: VendorProduct[] }>("/vendor/products", {
         credentials: "include",
-      })
-      return response.json()
+      });
+      return response;
     },
-  })
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (productId: string) => {
+      return sdk.client.fetch(`/vendor/products/${productId}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["vendor-products"] });
+    },
+  });
+
+  const products = data?.products || [];
 
   if (isLoading) {
-    return <ProductListSkeleton />
+    return (
+      <div className="space-y-4">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="border rounded-lg p-4 animate-pulse">
+            <div className="flex gap-4">
+              <div className="w-20 h-20 bg-muted rounded"></div>
+              <div className="flex-1">
+                <div className="h-4 bg-muted rounded w-1/3 mb-2"></div>
+                <div className="h-3 bg-muted rounded w-1/2"></div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
   }
-
-  const { products } = data
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Products</h1>
-          <p className="text-muted-foreground mt-2">
-            Manage your product listings
-          </p>
-        </div>
-        <Link to="/$countryCode/vendor/products/new">
+        <h1 className="text-2xl font-bold">Your Products</h1>
+        <Link to="/$countryCode/vendor/products" params={{ countryCode }}>
           <Button>
-            <Plus className="mr-2 h-4 w-4" />
+            <Plus className="w-4 h-4 mr-2" />
             Add Product
           </Button>
         </Link>
       </div>
 
       {products.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <Package className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No products yet</h3>
-            <p className="text-muted-foreground text-center mb-4">
-              Get started by creating your first product
-            </p>
-            <Link to="/$countryCode/vendor/products/new">
-              <Button>
-                <Plus className="mr-2 h-4 w-4" />
-                Add Product
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+        <div className="text-center py-12 border rounded-lg">
+          <p className="text-muted-foreground mb-4">You haven't added any products yet</p>
+          <Link to="/$countryCode/vendor/products" params={{ countryCode }}>
+            <Button>
+              <Plus className="w-4 h-4 mr-2" />
+              Add Your First Product
+            </Button>
+          </Link>
+        </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {products.map((product: any) => (
-            <Card key={product.id} className="overflow-hidden">
-              {product.thumbnail && (
-                <div className="aspect-square overflow-hidden">
+        <div className="grid gap-4">
+          {products.map((product) => (
+            <div key={product.id} className="border rounded-lg p-4">
+              <div className="flex items-start gap-4">
+                {product.thumbnail ? (
                   <img
                     src={product.thumbnail}
                     alt={product.title}
-                    className="h-full w-full object-cover"
+                    className="w-20 h-20 object-cover rounded"
                   />
-                </div>
-              )}
-              <CardContent className="p-4">
-                <h3 className="font-semibold line-clamp-1">{product.title}</h3>
-                <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
-                  {product.description}
-                </p>
-                
-                {product.variants && product.variants.length > 0 && (
-                  <p className="text-sm font-medium mt-2">
-                    {product.variants[0].prices && product.variants[0].prices[0]
-                      ? formatPrice(
-                          product.variants[0].prices[0].amount,
-                          product.variants[0].prices[0].currency_code
-                        )
-                      : "No price set"}
-                  </p>
+                ) : (
+                  <div className="w-20 h-20 bg-muted rounded flex items-center justify-center text-muted-foreground">
+                    No image
+                  </div>
                 )}
-
-                <div className="flex items-center justify-between mt-4">
-                  <span
-                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      product.status === "published"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-yellow-100 text-yellow-800"
-                    }`}
-                  >
-                    {product.status}
-                  </span>
-
-                  <div className="flex gap-2">
-                    <Link
-                      to="/$countryCode/vendor/products/$id/edit"
-                      params={{ id: product.id }}
-                    >
-                      <Button variant="ghost" size="sm">
-                        <PencilSquare className="h-4 w-4" />
+                <div className="flex-1">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h3 className="font-semibold">{product.title}</h3>
+                      {product.description && (
+                        <p className="text-sm text-muted-foreground line-clamp-2">
+                          {product.description}
+                        </p>
+                      )}
+                    </div>
+                    <ProductStatusBadge status={product.status} />
+                  </div>
+                  <div className="flex items-center gap-4 mt-3">
+                    {product.variants?.[0]?.prices?.[0] && (
+                      <span className="font-medium">
+                        ${(product.variants[0].prices[0].amount).toFixed(2)}
+                      </span>
+                    )}
+                    <div className="flex gap-2">
+                      <Button variant="secondary" className="h-8 px-3">
+                        <PencilSquare className="w-4 h-4 mr-1" />
+                        Edit
                       </Button>
-                    </Link>
-                    <Button variant="ghost" size="sm">
-                      <Trash className="h-4 w-4 text-destructive" />
-                    </Button>
+                      <Button
+                        variant="danger"
+                        className="h-8 px-3"
+                        onClick={() => deleteMutation.mutate(product.id)}
+                        disabled={deleteMutation.isPending}
+                      >
+                        <Trash className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ))}
         </div>
       )}
     </div>
-  )
+  );
 }
 
-function ProductListSkeleton() {
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <Skeleton className="h-8 w-64" />
-        <Skeleton className="h-10 w-32" />
-      </div>
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {[...Array(6)].map((_, i) => (
-          <Card key={i}>
-            <Skeleton className="aspect-square" />
-            <CardContent className="p-4">
-              <Skeleton className="h-5 w-full" />
-              <Skeleton className="h-4 w-full mt-2" />
-              <Skeleton className="h-4 w-24 mt-4" />
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    </div>
-  )
-}
+function ProductStatusBadge({ status }: { status: string }) {
+  const styles: Record<string, string> = {
+    published: "bg-green-100 text-green-800",
+    draft: "bg-gray-100 text-gray-800",
+  };
 
-function Package(props: any) {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={1.5}
-      stroke="currentColor"
-      {...props}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"
-      />
-    </svg>
-  )
+    <span className={`px-2 py-1 rounded text-xs font-medium ${styles[status] || "bg-gray-100"}`}>
+      {status.charAt(0).toUpperCase() + status.slice(1)}
+    </span>
+  );
 }

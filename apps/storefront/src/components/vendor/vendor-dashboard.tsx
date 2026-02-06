@@ -1,239 +1,208 @@
-import { useQuery } from "@tanstack/react-query"
-import { sdk } from "@/lib/sdk"
-import { formatPrice } from "@/lib/utils/prices"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
-import { DollarSign, Package, ShoppingCart, TrendingUp } from "@medusajs/icons"
-import { Link } from "@tanstack/react-router"
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
+import { sdk } from "@/lib/utils/sdk";
+import { Button } from "@/components/ui/button";
+import { ShoppingBag, CurrencyDollar, ClockSolid } from "@medusajs/icons";
+
+interface VendorStats {
+  total_earnings: number;
+  total_orders: number;
+  products_count: number;
+  pending_payout: number;
+  commission_rate: number;
+  commission_type: string;
+}
+
+interface Payout {
+  id: string;
+  amount: number;
+  status: string;
+  created_at: string;
+}
 
 export function VendorDashboard() {
-  const { data, isLoading } = useQuery({
-    queryKey: ["vendor", "dashboard"],
+  const countryCode = "us";
+
+  // Fetch vendor dashboard data
+  const { data: dashboardData, isLoading } = useQuery({
+    queryKey: ["vendor-dashboard"],
     queryFn: async () => {
-      const response = await sdk.client.fetch("/vendor/dashboard", {
+      const response = await sdk.client.fetch<{
+        stats: VendorStats;
+        recent_payouts: Payout[];
+      }>("/vendor/dashboard", {
         credentials: "include",
-      })
-      return response.json()
+      });
+      return response;
     },
-  })
+  });
 
   if (isLoading) {
-    return <DashboardSkeleton />
+    return (
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="border rounded-lg p-6 animate-pulse">
+              <div className="h-4 bg-muted rounded w-1/2 mb-2"></div>
+              <div className="h-8 bg-muted rounded w-3/4"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 
-  const { vendor, stats, recentPayouts } = data
+  const stats = dashboardData?.stats;
+  const recentPayouts = dashboardData?.recent_payouts || [];
 
   return (
     <div className="space-y-8">
-      {/* Header */}
       <div>
         <h1 className="text-3xl font-bold">Vendor Dashboard</h1>
-        <p className="text-muted-foreground mt-2">
-          Welcome back, {vendor.business_name}
-        </p>
+        <p className="text-muted-foreground">Manage your products, orders, and payouts</p>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Earnings</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {formatPrice(stats.totalEarnings, vendor.currency_code || "USD")}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              After commission
-            </p>
-          </CardContent>
-        </Card>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="border rounded-lg p-6">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-muted-foreground">Total Earnings</span>
+            <CurrencyDollar className="w-5 h-5 text-green-600" />
+          </div>
+          <p className="text-2xl font-bold">
+            ${(stats?.total_earnings || 0).toLocaleString()}
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            After commission
+          </p>
+        </div>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
-            <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalOrders}</div>
-            <p className="text-xs text-muted-foreground">
-              Lifetime orders
-            </p>
-          </CardContent>
-        </Card>
+        <div className="border rounded-lg p-6">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-muted-foreground">Total Orders</span>
+            <ShoppingBag className="w-5 h-5 text-blue-600" />
+          </div>
+          <p className="text-2xl font-bold">{stats?.total_orders || 0}</p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Lifetime orders
+          </p>
+        </div>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Products</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{vendor.total_products}</div>
-            <p className="text-xs text-muted-foreground">
-              <Link
-                to="/$countryCode/vendor/products"
-                className="text-primary hover:underline"
-              >
-                Manage products
-              </Link>
-            </p>
-          </CardContent>
-        </Card>
+        <div className="border rounded-lg p-6">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-muted-foreground">Products</span>
+            <ShoppingBag className="w-5 h-5 text-purple-600" />
+          </div>
+          <p className="text-2xl font-bold">{stats?.products_count || 0}</p>
+          <Link
+            to="/$countryCode/vendor/products"
+            params={{ countryCode }}
+            className="text-xs text-primary hover:underline"
+          >
+            Manage products
+          </Link>
+        </div>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Payout</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {formatPrice(stats.pendingPayout, vendor.currency_code || "USD")}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Available for payout
-            </p>
-          </CardContent>
-        </Card>
+        <div className="border rounded-lg p-6">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-muted-foreground">Pending Payout</span>
+            <ClockSolid className="w-5 h-5 text-orange-600" />
+          </div>
+          <p className="text-2xl font-bold">
+            ${(stats?.pending_payout || 0).toLocaleString()}
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Available to withdraw
+          </p>
+        </div>
       </div>
 
       {/* Quick Actions */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <Link to="/$countryCode/vendor/products/new">
-          <Card className="cursor-pointer hover:bg-accent transition-colors">
-            <CardHeader>
-              <CardTitle className="text-lg">Add Product</CardTitle>
-              <CardDescription>Create a new product listing</CardDescription>
-            </CardHeader>
-          </Card>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Link to="/$countryCode/vendor/products" params={{ countryCode }}>
+          <div className="border rounded-lg p-6 hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer">
+            <ShoppingBag className="w-8 h-8 text-primary mb-3" />
+            <h3 className="font-semibold mb-1">Manage Products</h3>
+            <p className="text-sm text-muted-foreground">
+              Add, edit, or remove your products
+            </p>
+          </div>
         </Link>
 
-        <Link to="/$countryCode/vendor/orders">
-          <Card className="cursor-pointer hover:bg-accent transition-colors">
-            <CardHeader>
-              <CardTitle className="text-lg">View Orders</CardTitle>
-              <CardDescription>Manage and fulfill orders</CardDescription>
-            </CardHeader>
-          </Card>
+        <Link to="/$countryCode/vendor/orders" params={{ countryCode }}>
+          <div className="border rounded-lg p-6 hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer">
+            <ShoppingBag className="w-8 h-8 text-primary mb-3" />
+            <h3 className="font-semibold mb-1">View Orders</h3>
+            <p className="text-sm text-muted-foreground">
+              Track and fulfill orders
+            </p>
+          </div>
         </Link>
 
-        <Link to="/$countryCode/vendor/payouts">
-          <Card className="cursor-pointer hover:bg-accent transition-colors">
-            <CardHeader>
-              <CardTitle className="text-lg">Payouts</CardTitle>
-              <CardDescription>View payment history</CardDescription>
-            </CardHeader>
-          </Card>
+        <Link to="/$countryCode/vendor/payouts" params={{ countryCode }}>
+          <div className="border rounded-lg p-6 hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer">
+            <CurrencyDollar className="w-8 h-8 text-primary mb-3" />
+            <h3 className="font-semibold mb-1">Payouts</h3>
+            <p className="text-sm text-muted-foreground">
+              View earnings and request payouts
+            </p>
+          </div>
         </Link>
       </div>
 
       {/* Recent Payouts */}
-      {recentPayouts && recentPayouts.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Payouts</CardTitle>
-            <CardDescription>Your latest payment transactions</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {recentPayouts.map((payout: any) => (
-                <div
-                  key={payout.id}
-                  className="flex items-center justify-between py-2 border-b last:border-0"
-                >
-                  <div>
-                    <p className="font-medium">
-                      {formatPrice(payout.amount, payout.currency_code)}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {new Date(payout.created_at).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        payout.status === "completed"
-                          ? "bg-green-100 text-green-800"
-                          : payout.status === "pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
-                      {payout.status}
-                    </span>
-                  </div>
+      <div className="border rounded-lg">
+        <div className="p-6 border-b">
+          <h2 className="text-xl font-semibold">Recent Payouts</h2>
+        </div>
+        {recentPayouts.length === 0 ? (
+          <div className="p-6 text-center text-muted-foreground">
+            No payouts yet
+          </div>
+        ) : (
+          <div className="divide-y">
+            {recentPayouts.slice(0, 5).map((payout) => (
+              <div key={payout.id} className="p-4 flex items-center justify-between">
+                <div>
+                  <p className="font-medium">${Number(payout.amount).toFixed(2)}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {new Date(payout.created_at).toLocaleDateString()}
+                  </p>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+                <PayoutStatusBadge status={payout.status} />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
-      {/* Vendor Status */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Vendor Status</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Verification Status</span>
-            <span
-              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                vendor.verification_status === "approved"
-                  ? "bg-green-100 text-green-800"
-                  : vendor.verification_status === "pending"
-                  ? "bg-yellow-100 text-yellow-800"
-                  : "bg-red-100 text-red-800"
-              }`}
-            >
-              {vendor.verification_status}
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Account Status</span>
-            <span
-              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                vendor.status === "active"
-                  ? "bg-green-100 text-green-800"
-                  : "bg-gray-100 text-gray-800"
-              }`}
-            >
-              {vendor.status}
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Commission Rate</span>
-            <span className="text-sm font-medium">
-              {vendor.commission_type === "percentage"
-                ? `${vendor.commission_rate}%`
-                : formatPrice(vendor.commission_flat, vendor.currency_code || "USD")}
-            </span>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Commission Info */}
+      {stats && (
+        <div className="border rounded-lg p-6 bg-muted/20">
+          <h3 className="font-semibold mb-2">Commission Rate</h3>
+          <p className="text-muted-foreground">
+            {stats.commission_type === "percentage" 
+              ? `${stats.commission_rate}% of each sale`
+              : `$${stats.commission_rate.toFixed(2)} per sale`
+            }
+          </p>
+        </div>
+      )}
     </div>
-  )
+  );
 }
 
-function DashboardSkeleton() {
+function PayoutStatusBadge({ status }: { status: string }) {
+  const styles: Record<string, string> = {
+    pending: "bg-yellow-100 text-yellow-800",
+    processing: "bg-blue-100 text-blue-800",
+    completed: "bg-green-100 text-green-800",
+    failed: "bg-red-100 text-red-800",
+  };
+
   return (
-    <div className="space-y-8">
-      <div>
-        <Skeleton className="h-8 w-64" />
-        <Skeleton className="h-4 w-96 mt-2" />
-      </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {[...Array(4)].map((_, i) => (
-          <Card key={i}>
-            <CardHeader>
-              <Skeleton className="h-4 w-24" />
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-8 w-32" />
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    </div>
-  )
+    <span className={`px-2 py-1 rounded text-xs font-medium ${styles[status] || "bg-gray-100"}`}>
+      {status.charAt(0).toUpperCase() + status.slice(1)}
+    </span>
+  );
 }

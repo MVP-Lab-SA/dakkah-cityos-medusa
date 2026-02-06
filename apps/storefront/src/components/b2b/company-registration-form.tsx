@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
-import { sdk } from "@/lib/sdk";
+import { sdk } from "@/lib/utils/sdk";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 export function CompanyRegistrationForm() {
   const navigate = useNavigate();
@@ -27,14 +26,13 @@ export function CompanyRegistrationForm() {
   });
 
   const registerMutation = useMutation({
-    mutationFn: async (data: any) => {
-      const response = await sdk.client.fetch("/store/companies", {
+    mutationFn: async (data: Record<string, unknown>) => {
+      const response = await sdk.client.fetch<{ company: unknown }>("/store/companies", {
         method: "POST",
         credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: data,
       });
-      return response.json();
+      return response;
     },
     onSuccess: () => {
       navigate({ to: "/$countryCode", params: { countryCode: "us" } });
@@ -68,7 +66,7 @@ export function CompanyRegistrationForm() {
         
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="name">Company Name *</Label>
+            <label htmlFor="name" className="text-sm font-medium">Company Name *</label>
             <Input
               id="name"
               required
@@ -77,7 +75,7 @@ export function CompanyRegistrationForm() {
             />
           </div>
           <div>
-            <Label htmlFor="legal_name">Legal Name</Label>
+            <label htmlFor="legal_name" className="text-sm font-medium">Legal Name</label>
             <Input
               id="legal_name"
               value={formData.legal_name}
@@ -88,7 +86,7 @@ export function CompanyRegistrationForm() {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="email">Email *</Label>
+            <label htmlFor="email" className="text-sm font-medium">Email *</label>
             <Input
               id="email"
               type="email"
@@ -98,7 +96,7 @@ export function CompanyRegistrationForm() {
             />
           </div>
           <div>
-            <Label htmlFor="phone">Phone</Label>
+            <label htmlFor="phone" className="text-sm font-medium">Phone</label>
             <Input
               id="phone"
               type="tel"
@@ -110,7 +108,7 @@ export function CompanyRegistrationForm() {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="tax_id">Tax ID / EIN</Label>
+            <label htmlFor="tax_id" className="text-sm font-medium">Tax ID / EIN</label>
             <Input
               id="tax_id"
               value={formData.tax_id}
@@ -118,7 +116,7 @@ export function CompanyRegistrationForm() {
             />
           </div>
           <div>
-            <Label htmlFor="industry">Industry</Label>
+            <label htmlFor="industry" className="text-sm font-medium">Industry</label>
             <Input
               id="industry"
               value={formData.industry}
@@ -133,7 +131,7 @@ export function CompanyRegistrationForm() {
         <h2 className="text-xl font-semibold mb-4">Billing Address</h2>
         
         <div>
-          <Label htmlFor="address">Street Address *</Label>
+          <label htmlFor="address" className="text-sm font-medium">Street Address *</label>
           <Input
             id="address"
             required
@@ -144,7 +142,7 @@ export function CompanyRegistrationForm() {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="city">City *</Label>
+            <label htmlFor="city" className="text-sm font-medium">City *</label>
             <Input
               id="city"
               required
@@ -153,7 +151,7 @@ export function CompanyRegistrationForm() {
             />
           </div>
           <div>
-            <Label htmlFor="province">State / Province *</Label>
+            <label htmlFor="province" className="text-sm font-medium">State / Province *</label>
             <Input
               id="province"
               required
@@ -165,7 +163,7 @@ export function CompanyRegistrationForm() {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="postal_code">Postal Code *</Label>
+            <label htmlFor="postal_code" className="text-sm font-medium">Postal Code *</label>
             <Input
               id="postal_code"
               required
@@ -174,7 +172,7 @@ export function CompanyRegistrationForm() {
             />
           </div>
           <div>
-            <Label htmlFor="country">Country</Label>
+            <label htmlFor="country" className="text-sm font-medium">Country</label>
             <Input
               id="country"
               disabled
@@ -195,7 +193,7 @@ export function CompanyRegistrationForm() {
         </Button>
         <Button
           type="button"
-          variant="outline"
+          variant="secondary"
           onClick={() => navigate({ to: "/$countryCode", params: { countryCode: "us" } })}
         >
           Cancel

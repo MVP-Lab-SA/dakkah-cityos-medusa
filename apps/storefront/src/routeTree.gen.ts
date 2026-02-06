@@ -32,6 +32,7 @@ import { Route as CountryCodeQuotesIdRouteImport } from './routes/$countryCode/q
 import { Route as CountryCodeProductsHandleRouteImport } from './routes/$countryCode/products/$handle'
 import { Route as CountryCodeCategoriesHandleRouteImport } from './routes/$countryCode/categories/$handle'
 import { Route as CountryCodeB2bRegisterRouteImport } from './routes/$countryCode/b2b/register'
+import { Route as CountryCodeB2bDashboardRouteImport } from './routes/$countryCode/b2b/dashboard'
 import { Route as CountryCodeVendorProductsIndexRouteImport } from './routes/$countryCode/vendor/products/index'
 import { Route as CountryCodeVendorOrdersIndexRouteImport } from './routes/$countryCode/vendor/orders/index'
 import { Route as CountryCodeOrderOrderIdConfirmedRouteImport } from './routes/$countryCode/order/$orderId/confirmed'
@@ -149,6 +150,11 @@ const CountryCodeB2bRegisterRoute = CountryCodeB2bRegisterRouteImport.update({
   path: '/b2b/register',
   getParentRoute: () => CountryCodeRoute,
 } as any)
+const CountryCodeB2bDashboardRoute = CountryCodeB2bDashboardRouteImport.update({
+  id: '/b2b/dashboard',
+  path: '/b2b/dashboard',
+  getParentRoute: () => CountryCodeRoute,
+} as any)
 const CountryCodeVendorProductsIndexRoute =
   CountryCodeVendorProductsIndexRouteImport.update({
     id: '/vendor/products/',
@@ -186,6 +192,7 @@ export interface FileRoutesByFullPath {
   '/$countryCode/store': typeof CountryCodeStoreRoute
   '/$countryCode/stores': typeof CountryCodeStoresRoute
   '/$countryCode/': typeof CountryCodeIndexRoute
+  '/$countryCode/b2b/dashboard': typeof CountryCodeB2bDashboardRoute
   '/$countryCode/b2b/register': typeof CountryCodeB2bRegisterRoute
   '/$countryCode/categories/$handle': typeof CountryCodeCategoriesHandleRoute
   '/$countryCode/products/$handle': typeof CountryCodeProductsHandleRoute
@@ -211,6 +218,7 @@ export interface FileRoutesByTo {
   '/$countryCode/store': typeof CountryCodeStoreRoute
   '/$countryCode/stores': typeof CountryCodeStoresRoute
   '/$countryCode': typeof CountryCodeIndexRoute
+  '/$countryCode/b2b/dashboard': typeof CountryCodeB2bDashboardRoute
   '/$countryCode/b2b/register': typeof CountryCodeB2bRegisterRoute
   '/$countryCode/categories/$handle': typeof CountryCodeCategoriesHandleRoute
   '/$countryCode/products/$handle': typeof CountryCodeProductsHandleRoute
@@ -238,6 +246,7 @@ export interface FileRoutesById {
   '/$countryCode/store': typeof CountryCodeStoreRoute
   '/$countryCode/stores': typeof CountryCodeStoresRoute
   '/$countryCode/': typeof CountryCodeIndexRoute
+  '/$countryCode/b2b/dashboard': typeof CountryCodeB2bDashboardRoute
   '/$countryCode/b2b/register': typeof CountryCodeB2bRegisterRoute
   '/$countryCode/categories/$handle': typeof CountryCodeCategoriesHandleRoute
   '/$countryCode/products/$handle': typeof CountryCodeProductsHandleRoute
@@ -266,6 +275,7 @@ export interface FileRouteTypes {
     | '/$countryCode/store'
     | '/$countryCode/stores'
     | '/$countryCode/'
+    | '/$countryCode/b2b/dashboard'
     | '/$countryCode/b2b/register'
     | '/$countryCode/categories/$handle'
     | '/$countryCode/products/$handle'
@@ -291,6 +301,7 @@ export interface FileRouteTypes {
     | '/$countryCode/store'
     | '/$countryCode/stores'
     | '/$countryCode'
+    | '/$countryCode/b2b/dashboard'
     | '/$countryCode/b2b/register'
     | '/$countryCode/categories/$handle'
     | '/$countryCode/products/$handle'
@@ -317,6 +328,7 @@ export interface FileRouteTypes {
     | '/$countryCode/store'
     | '/$countryCode/stores'
     | '/$countryCode/'
+    | '/$countryCode/b2b/dashboard'
     | '/$countryCode/b2b/register'
     | '/$countryCode/categories/$handle'
     | '/$countryCode/products/$handle'
@@ -510,6 +522,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CountryCodeB2bRegisterRouteImport
       parentRoute: typeof CountryCodeRoute
     }
+    '/$countryCode/b2b/dashboard': {
+      id: '/$countryCode/b2b/dashboard'
+      path: '/b2b/dashboard'
+      fullPath: '/$countryCode/b2b/dashboard'
+      preLoaderRoute: typeof CountryCodeB2bDashboardRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
     '/$countryCode/vendor/products/': {
       id: '/$countryCode/vendor/products/'
       path: '/vendor/products'
@@ -552,6 +571,7 @@ interface CountryCodeRouteChildren {
   CountryCodeStoreRoute: typeof CountryCodeStoreRoute
   CountryCodeStoresRoute: typeof CountryCodeStoresRoute
   CountryCodeIndexRoute: typeof CountryCodeIndexRoute
+  CountryCodeB2bDashboardRoute: typeof CountryCodeB2bDashboardRoute
   CountryCodeB2bRegisterRoute: typeof CountryCodeB2bRegisterRoute
   CountryCodeCategoriesHandleRoute: typeof CountryCodeCategoriesHandleRoute
   CountryCodeProductsHandleRoute: typeof CountryCodeProductsHandleRoute
@@ -573,6 +593,7 @@ const CountryCodeRouteChildren: CountryCodeRouteChildren = {
   CountryCodeStoreRoute: CountryCodeStoreRoute,
   CountryCodeStoresRoute: CountryCodeStoresRoute,
   CountryCodeIndexRoute: CountryCodeIndexRoute,
+  CountryCodeB2bDashboardRoute: CountryCodeB2bDashboardRoute,
   CountryCodeB2bRegisterRoute: CountryCodeB2bRegisterRoute,
   CountryCodeCategoriesHandleRoute: CountryCodeCategoriesHandleRoute,
   CountryCodeProductsHandleRoute: CountryCodeProductsHandleRoute,
