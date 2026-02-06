@@ -1,16 +1,23 @@
-import type { MedusaRequest, MedusaResponse } from "@medusajs/framework"
+import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import type { VendorModuleService } from "../../types"
+
+interface CityOSContext {
+  vendorId?: string
+  tenantId?: string
+  storeId?: string
+}
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const query = req.scope.resolve("query")
-  const context = (req as any).cityosContext
+  const context = (req as any).cityosContext as CityOSContext | undefined
 
   if (!context?.vendorId) {
     return res.status(403).json({ message: "Vendor context required" })
   }
 
-  const { limit = 20, offset = 0, status, q } = req.query
+  const { limit = 20, offset = 0, status } = req.query as Record<string, string>
 
-  const filters: any = {
+  const filters: Record<string, unknown> = {
     "metadata.vendor_id": context.vendorId,
   }
 
@@ -53,22 +60,23 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const context = (req as any).cityosContext
+  const context = (req as any).cityosContext as CityOSContext | undefined
 
   if (!context?.vendorId) {
     return res.status(403).json({ message: "Vendor context required" })
   }
 
-  const vendorModule = req.scope.resolve("vendor")
+  const vendorModule = req.scope.resolve("vendor") as VendorModuleService
   const vendor = await vendorModule.retrieveVendor(context.vendorId)
 
   // Import workflow
   const { createProductsWorkflow } = await import("@medusajs/medusa/core-flows")
 
+  const body = req.body as Record<string, any>
   const productData = {
-    ...req.body,
+    ...body,
     metadata: {
-      ...req.body.metadata,
+      ...body.metadata,
       vendor_id: context.vendorId,
       tenant_id: vendor.tenant_id,
     },

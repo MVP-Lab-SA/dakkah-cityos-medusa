@@ -1,5 +1,6 @@
-import { MedusaRequest, MedusaResponse } from "@medusajs/framework";
+import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
 import { z } from "zod";
+import type { SubscriptionModuleService, ExtendedRequest } from "../../types";
 import { createSubscriptionWorkflow } from "../../../workflows/subscription/create-subscription-workflow";
 
 const createSubscriptionSchema = z.object({
@@ -22,16 +23,14 @@ const createSubscriptionSchema = z.object({
 
 // GET /admin/subscriptions - List subscriptions
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const subscriptionModule = req.scope.resolve("subscription");
-  const tenantId = req.tenant?.id;
+  const subscriptionModule = req.scope.resolve("subscription") as SubscriptionModuleService;
+  const extReq = req as ExtendedRequest;
+  const tenantId = extReq.tenant?.id;
   
-  if (!tenantId) {
-    return res.status(403).json({ message: "Tenant context required" });
-  }
+  const { offset = 0, limit = 20, status, customer_id } = req.query as Record<string, string>;
   
-  const { offset = 0, limit = 20, status, customer_id } = req.query;
-  
-  const filters: any = { tenant_id: tenantId };
+  const filters: Record<string, unknown> = {};
+  if (tenantId) filters.tenant_id = tenantId;
   if (status) filters.status = status;
   if (customer_id) filters.customer_id = customer_id;
   
@@ -52,12 +51,9 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
 // POST /admin/subscriptions - Create subscription
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const tenantId = req.tenant?.id;
-  const storeId = req.store?.id;
-  
-  if (!tenantId) {
-    return res.status(403).json({ message: "Tenant context required" });
-  }
+  const extReq = req as ExtendedRequest;
+  const tenantId = extReq.tenant?.id;
+  const storeId = extReq.store?.id;
   
   const validatedData = createSubscriptionSchema.parse(req.body);
   

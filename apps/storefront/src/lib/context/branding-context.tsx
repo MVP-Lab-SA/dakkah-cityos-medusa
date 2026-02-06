@@ -4,6 +4,9 @@ import { queryKeys } from '@/lib/utils/query-keys'
 import { getUnifiedClient } from '@/lib/api/unified-client'
 
 interface Branding {
+  id?: string
+  name?: string
+  handle?: string
   logo?: {
     url: string
     alt?: string
@@ -11,13 +14,16 @@ interface Branding {
   favicon?: {
     url: string
   }
-  theme?: {
+  themeConfig?: {
     primaryColor?: string
     secondaryColor?: string
     fontFamily?: string
   }
-  storeName?: string
-  storeDescription?: string
+  seo?: {
+    title?: string
+    description?: string
+    ogImage?: any
+  }
 }
 
 interface BrandingContextType {
@@ -66,28 +72,28 @@ export const BrandingProvider: React.FC<BrandingProviderProps> = ({
   useEffect(() => {
     if (branding && typeof window !== 'undefined') {
       // Apply theme colors as CSS variables
-      if (branding.theme?.primaryColor) {
+      if (branding.themeConfig?.primaryColor) {
         document.documentElement.style.setProperty(
           '--color-primary',
-          branding.theme.primaryColor
+          branding.themeConfig.primaryColor
         )
       }
-      if (branding.theme?.secondaryColor) {
+      if (branding.themeConfig?.secondaryColor) {
         document.documentElement.style.setProperty(
           '--color-secondary',
-          branding.theme.secondaryColor
+          branding.themeConfig.secondaryColor
         )
       }
-      if (branding.theme?.fontFamily) {
+      if (branding.themeConfig?.fontFamily) {
         document.documentElement.style.setProperty(
           '--font-family',
-          branding.theme.fontFamily
+          branding.themeConfig.fontFamily
         )
       }
 
       // Update page title
-      if (branding.storeName) {
-        document.title = branding.storeName
+      if (branding.name) {
+        document.title = branding.name
       }
 
       // Update favicon
@@ -116,7 +122,7 @@ export const BrandingProvider: React.FC<BrandingProviderProps> = ({
   return (
     <BrandingContext.Provider
       value={{
-        branding,
+        branding: branding ?? null,
         tenantHandle,
         setTenantHandle,
         isLoading,

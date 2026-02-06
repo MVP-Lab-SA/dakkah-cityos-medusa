@@ -1,7 +1,7 @@
-import type { MedusaRequest, MedusaResponse } from "@medusajs/framework"
+import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { z } from "zod"
+import type { VendorModuleService } from "../../types"
 import { createVendorWorkflow } from "../../../workflows/vendor/create-vendor-workflow"
-import { approveVendorWorkflow } from "../../../workflows/vendor/approve-vendor-workflow"
 
 const createVendorSchema = z.object({
   handle: z.string().min(2),
@@ -21,15 +21,20 @@ const createVendorSchema = z.object({
   metadata: z.record(z.any()).optional(),
 })
 
+interface CityOSContext {
+  tenantId?: string
+  storeId?: string
+}
+
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const vendorModule = req.scope.resolve("vendor")
-  const context = (req as any).cityosContext
+  const vendorModule = req.scope.resolve("vendor") as VendorModuleService
+  const context = (req as any).cityosContext as CityOSContext | undefined
 
   if (!context?.tenantId) {
     return res.status(403).json({ message: "Tenant context required" })
   }
 
-  const { limit = 20, offset = 0 } = req.query
+  const { limit = 20, offset = 0 } = req.query as Record<string, string>
 
   const [vendors, count] = await vendorModule.listAndCountVendors(
     {
@@ -52,7 +57,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const context = (req as any).cityosContext
+  const context = (req as any).cityosContext as CityOSContext | undefined
 
   if (!context?.tenantId) {
     return res.status(403).json({ message: "Tenant context required" })

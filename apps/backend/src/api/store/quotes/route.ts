@@ -1,20 +1,21 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
-import { Modules } from "@medusajs/framework/utils";
+import type { QuoteModuleService, ExtendedRequest } from "../../types";
 
 /**
  * POST /store/quotes
  * Create a new quote request
  */
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const quoteModuleService = req.scope.resolve("quoteModuleService");
-  const { items, customer_notes, company_id, tenant_id, region_id, store_id } = req.body;
+  const quoteModuleService = req.scope.resolve("quoteModuleService") as QuoteModuleService;
+  const { items, customer_notes, company_id, tenant_id, region_id, store_id } = req.body as Record<string, any>;
 
   // Validate authenticated customer
-  if (!req.auth_context?.actor_id) {
+  const extReq = req as ExtendedRequest;
+  if (!extReq.auth_context?.actor_id) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  const customerId = req.auth_context.actor_id;
+  const customerId = extReq.auth_context.actor_id;
 
   // Generate quote number
   const quoteNumber = await quoteModuleService.generateQuoteNumber();
@@ -66,13 +67,14 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
  * List customer's quotes
  */
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const quoteModuleService = req.scope.resolve("quoteModuleService");
+  const quoteModuleService = req.scope.resolve("quoteModuleService") as QuoteModuleService;
 
-  if (!req.auth_context?.actor_id) {
+  const extReq = req as ExtendedRequest;
+  if (!extReq.auth_context?.actor_id) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  const customerId = req.auth_context.actor_id;
+  const customerId = extReq.auth_context.actor_id;
 
   const [quotes, count] = await quoteModuleService.listAndCountQuotes(
     {

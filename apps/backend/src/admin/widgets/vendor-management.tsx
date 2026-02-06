@@ -137,7 +137,7 @@ const VendorManagementWidget = () => {
 }
 
 export const config = defineWidgetConfig({
-  zone: "order.list.before",
+  zone: "order.details.side.before",
 })
 
 export default VendorManagementWidget

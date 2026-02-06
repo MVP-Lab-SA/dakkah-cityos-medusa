@@ -151,7 +151,7 @@ const QuoteManagementWidget = () => {
 }
 
 export const config = defineWidgetConfig({
-  zone: "order.list.before",
+  zone: "order.details.side.before",
 })
 
 export default QuoteManagementWidget

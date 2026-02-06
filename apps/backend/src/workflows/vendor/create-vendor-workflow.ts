@@ -2,8 +2,9 @@ import {
   createWorkflow,
   WorkflowResponse,
   transform,
+  createStep,
+  StepResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { createStep } from "@medusajs/framework/workflows-sdk"
 
 // Step: Create vendor
 const createVendorStep = createStep(
@@ -53,9 +54,9 @@ const createVendorStep = createStep(
       metadata: input.metadata,
     })
 
-    return { vendor }
+    return new StepResponse({ vendor }, { vendor })
   },
-  async ({ vendor }, { container }) => {
+  async ({ vendor }: { vendor: any }, { container }) => {
     const vendorModule = container.resolve("vendor")
     await vendorModule.deleteVendors(vendor.id)
   }
@@ -87,9 +88,9 @@ const createDefaultCommissionRuleStep = createStep(
       applies_to: "all_products",
     })
 
-    return { rule }
+    return new StepResponse({ rule }, { rule })
   },
-  async ({ rule }, { container }) => {
+  async ({ rule }: { rule: any }, { container }) => {
     const commissionModule = container.resolve("commission")
     await commissionModule.deleteCommissionRules(rule.id)
   }

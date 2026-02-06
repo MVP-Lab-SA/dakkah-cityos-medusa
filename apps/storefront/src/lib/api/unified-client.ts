@@ -43,15 +43,21 @@ export interface PayloadPage {
   id: string
   title: string
   slug: string
+  description?: string
   layout: any[]
   seo?: {
     title?: string
     description?: string
     ogImage?: any
   }
+  meta?: {
+    title?: string
+    description?: string
+    image?: { url?: string }
+  }
   status: 'draft' | 'published'
   publishAt?: string
-  tenant: string
+  tenant: string | { id: string; name?: string }
   store?: string
 }
 

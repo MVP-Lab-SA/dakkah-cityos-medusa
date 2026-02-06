@@ -1,11 +1,12 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
+import type { CompanyModuleService, ExtendedRequest } from "../../types";
 
 /**
  * POST /store/companies
  * Register a new B2B company account
  */
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const companyService = req.scope.resolve("companyModuleService");
+  const companyService = req.scope.resolve("companyModuleService") as CompanyModuleService;
   const {
     name,
     legal_name,
@@ -18,14 +19,15 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     billing_address,
     tenant_id,
     store_id,
-  } = req.body;
+  } = req.body as Record<string, any>;
 
   // Validate authenticated customer
-  if (!req.auth_context?.actor_id) {
+  const extReq = req as ExtendedRequest;
+  if (!extReq.auth_context?.actor_id) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  const customerId = req.auth_context.actor_id;
+  const customerId = extReq.auth_context.actor_id;
 
   // Create company
   const company = await companyService.createCompanies({
@@ -62,22 +64,23 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
  * Get customer's companies
  */
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const companyService = req.scope.resolve("companyModuleService");
+  const companyService = req.scope.resolve("companyModuleService") as CompanyModuleService;
 
-  if (!req.auth_context?.actor_id) {
+  const extReq = req as ExtendedRequest;
+  if (!extReq.auth_context?.actor_id) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  const customerId = req.auth_context.actor_id;
+  const customerId = extReq.auth_context.actor_id;
 
   // Find company users for this customer
-  const [companyUsers] = await companyService.listCompanyUsers({
+  const companyUsers = await companyService.listCompanyUsers({
     customer_id: customerId,
   });
 
   // Get companies
   const companyIds = companyUsers.map((cu: any) => cu.company_id);
-  const [companies] = await companyService.listCompanies({
+  const companies = await companyService.listCompanies({
     id: companyIds,
   });
 

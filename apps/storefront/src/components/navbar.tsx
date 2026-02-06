@@ -82,10 +82,10 @@ export const Navbar = () => {
               <NavigationMenu.Item className="h-full flex items-center">
                 <NavigationMenu.Link asChild>
                   <Link
-                    to={`${baseHref}/stores`}
+                    to={`${baseHref}/store` as any}
                     className="text-zinc-600 hover:text-zinc-500 h-full flex items-center"
                   >
-                    Stores
+                    Store
                   </Link>
                 </NavigationMenu.Link>
               </NavigationMenu.Item>
@@ -138,17 +138,17 @@ export const Navbar = () => {
                   ))}
                 </div>
                 
-                {/* Stores Section */}
+                {/* Store Section */}
                 <div className="px-6 py-4 text-zinc-900 text-lg font-medium mt-4">
-                  Marketplace
+                  Shop
                 </div>
                 <div className="flex flex-col">
                   <DrawerClose asChild>
                     <Link
-                      to={`${baseHref}/stores`}
+                      to={`${baseHref}/store` as any}
                       className="px-10 py-3 text-zinc-600 hover:bg-zinc-50 transition-colors"
                     >
-                      Browse Stores
+                      All Products
                     </Link>
                   </DrawerClose>
                 </div>

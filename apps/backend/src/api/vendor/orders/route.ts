@@ -1,14 +1,20 @@
-import type { MedusaRequest, MedusaResponse } from "@medusajs/framework"
+import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+
+interface CityOSContext {
+  vendorId?: string
+  tenantId?: string
+  storeId?: string
+}
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const query = req.scope.resolve("query")
-  const context = (req as any).cityosContext
+  const context = (req as any).cityosContext as CityOSContext | undefined
 
   if (!context?.vendorId) {
     return res.status(403).json({ message: "Vendor context required" })
   }
 
-  const { limit = 20, offset = 0, status } = req.query
+  const { limit = 20, offset = 0, status } = req.query as Record<string, string>
 
   // Query orders that contain items from this vendor
   const { data: orders } = await query.graph({

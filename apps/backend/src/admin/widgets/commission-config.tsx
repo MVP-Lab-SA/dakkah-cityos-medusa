@@ -222,7 +222,7 @@ const CommissionConfigWidget = () => {
 }
 
 export const config = defineWidgetConfig({
-  zone: "settings.page.before",
+  zone: "product.details.side.before",
 })
 
 export default CommissionConfigWidget

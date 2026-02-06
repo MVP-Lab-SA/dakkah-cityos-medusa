@@ -3,8 +3,9 @@ import {
   WorkflowResponse,
   transform,
   when,
+  createStep,
+  StepResponse,
 } from "@medusajs/framework/workflows-sdk";
-import { createStep } from "@medusajs/framework/workflows-sdk";
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
 
 interface CreateSubscriptionInput {
@@ -54,7 +55,7 @@ const validateSubscriptionDataStep = createStep(
       throw new Error("One or more product variants not found");
     }
     
-    return { variants };
+    return new StepResponse({ variants });
   }
 );
 
@@ -99,10 +100,10 @@ const calculateSubscriptionAmountsStep = createStep(
     // Get currency from first variant price
     const currency_code = variants[0].prices[0].currency_code;
     
-    return {
+    return new StepResponse({
       items,
       amounts: { subtotal, tax_total, total, currency_code },
-    };
+    });
   }
 );
 
@@ -155,9 +156,9 @@ const createSubscriptionStep = createStep(
       }))
     );
     
-    return { subscription, items: subscriptionItems };
+    return new StepResponse({ subscription, items: subscriptionItems }, { subscription });
   },
-  async ({ subscription }, { container }) => {
+  async ({ subscription }: { subscription: any }, { container }) => {
     // Rollback: delete subscription
     const subscriptionModule = container.resolve("subscription");
     await subscriptionModule.deleteSubscriptions(subscription.id);
@@ -169,7 +170,7 @@ const activateSubscriptionStep = createStep(
   "activate-subscription",
   async ({ subscription, skipActivation }: any, { container }) => {
     if (skipActivation) {
-      return { subscription };
+      return new StepResponse({ subscription });
     }
     
     const subscriptionModule = container.resolve("subscription");
@@ -216,7 +217,7 @@ const activateSubscriptionStep = createStep(
       total: subscription.total,
     });
     
-    return { subscription: updated };
+    return new StepResponse({ subscription: updated });
   }
 );
 
