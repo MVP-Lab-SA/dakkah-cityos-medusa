@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/utils/query-keys'
-import { unifiedClient } from '@/lib/api/unified-client'
+import { getUnifiedClient } from '@/lib/api/unified-client'
 
 interface Branding {
   logo?: {
@@ -46,7 +46,7 @@ export const BrandingProvider: React.FC<BrandingProviderProps> = ({
   initialTenantHandle = null,
 }) => {
   const [tenantHandle, setTenantHandle] = useState<string | null>(
-    initialTenantHandle || localStorage.getItem('tenant_handle')
+    initialTenantHandle || (typeof window !== 'undefined' ? localStorage.getItem('tenant_handle') : null)
   )
 
   // Fetch branding data when tenant is set
@@ -55,23 +55,16 @@ export const BrandingProvider: React.FC<BrandingProviderProps> = ({
     queryFn: async () => {
       if (!tenantHandle) return null
 
-      const store = await unifiedClient.payload.getStores({
-        where: {
-          handle: {
-            equals: tenantHandle,
-          },
-        },
-        limit: 1,
-      })
-
-      return store?.docs?.[0] || null
+      const client = getUnifiedClient()
+      const stores = await client.getStores()
+      return stores.find(s => s.handle === tenantHandle) || null
     },
     enabled: !!tenantHandle,
   })
 
   // Apply branding to document
   useEffect(() => {
-    if (branding) {
+    if (branding && typeof window !== 'undefined') {
       // Apply theme colors as CSS variables
       if (branding.theme?.primaryColor) {
         document.documentElement.style.setProperty(
@@ -111,10 +104,12 @@ export const BrandingProvider: React.FC<BrandingProviderProps> = ({
 
   // Persist tenant selection
   useEffect(() => {
-    if (tenantHandle) {
-      localStorage.setItem('tenant_handle', tenantHandle)
-    } else {
-      localStorage.removeItem('tenant_handle')
+    if (typeof window !== 'undefined') {
+      if (tenantHandle) {
+        localStorage.setItem('tenant_handle', tenantHandle)
+      } else {
+        localStorage.removeItem('tenant_handle')
+      }
     }
   }, [tenantHandle])
 

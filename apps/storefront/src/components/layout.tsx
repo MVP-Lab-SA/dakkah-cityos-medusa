@@ -3,9 +3,13 @@ import Footer from "@/components/footer"
 import { Navbar } from "@/components/navbar"
 import { CartProvider } from "@/lib/context/cart"
 import { ToastProvider } from "@/lib/context/toast-context"
-import { Outlet } from "@tanstack/react-router"
+import { useStoreTheme } from "@/lib/hooks/use-store-theme"
+import { Outlet } from "@tantml:router"
 
 const Layout = () => {
+  // Apply store-specific theme
+  useStoreTheme()
+  
   return (
     <ToastProvider>
       <CartProvider>

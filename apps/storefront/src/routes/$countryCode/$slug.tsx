@@ -1,7 +1,7 @@
 import { createFileRoute, notFound } from '@tanstack/react-router'
 import { queryKeys } from '@/lib/utils/query-keys'
 import { DynamicPage } from '@/components/pages/dynamic-page'
-import { unifiedClient } from '@/lib/api/unified-client'
+import { getUnifiedClient } from '@/lib/api/unified-client'
 
 export const Route = createFileRoute('/$countryCode/$slug')({
   loader: async ({ params, context }) => {
@@ -11,23 +11,14 @@ export const Route = createFileRoute('/$countryCode/$slug')({
     const page = await context.queryClient.ensureQueryData({
       queryKey: queryKeys.pages.bySlug(slug),
       queryFn: async () => {
-        const pages = await unifiedClient.payload.getPages({
-          where: {
-            slug: {
-              equals: slug,
-            },
-            status: {
-              equals: 'published',
-            },
-          },
-          limit: 1,
-        })
+        const client = getUnifiedClient()
+        const page = await client.getPayloadPage(slug)
 
-        if (!pages?.docs?.[0]) {
+        if (!page) {
           throw notFound()
         }
 
-        return pages.docs[0]
+        return page
       },
     })
 
@@ -39,9 +30,10 @@ export const Route = createFileRoute('/$countryCode/$slug')({
           typeof page.tenant === 'string' ? page.tenant : page.tenant.id
         ),
         queryFn: async () => {
-          return unifiedClient.payload.getStore(
-            typeof page.tenant === 'string' ? page.tenant : page.tenant.id
-          )
+          const client = getUnifiedClient()
+          const tenantId = typeof page.tenant === 'string' ? page.tenant : page.tenant.id
+          const stores = await client.getStores()
+          return stores.find(s => s.id === tenantId) || null
         },
       })
     }
