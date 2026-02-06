@@ -1,178 +1,157 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { sdk } from "@/lib/sdk"
-import { formatPrice } from "@/lib/utils/prices"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton"
-import { toast } from "sonner"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { sdk } from "@/lib/utils/sdk";
+import { Button } from "@/components/ui/button";
+
+interface Payout {
+  id: string;
+  amount: number;
+  status: string;
+  created_at: string;
+  processed_at?: string;
+  method?: string;
+}
+
+interface PayoutSummary {
+  available_balance: number;
+  pending_balance: number;
+  total_paid: number;
+}
 
 export function VendorPayouts() {
-  const queryClient = useQueryClient()
-
-  const { data: dashboardData } = useQuery({
-    queryKey: ["vendor", "dashboard"],
-    queryFn: async () => {
-      const response = await sdk.client.fetch("/vendor/dashboard", {
-        credentials: "include",
-      })
-      return response.json()
-    },
-  })
+  const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
-    queryKey: ["vendor", "payouts"],
+    queryKey: ["vendor-payouts"],
     queryFn: async () => {
-      const response = await sdk.client.fetch("/vendor/payouts", {
+      const response = await sdk.client.fetch<{
+        payouts: Payout[];
+        summary: PayoutSummary;
+      }>("/vendor/payouts", {
         credentials: "include",
-      })
-      return response.json()
+      });
+      return response;
     },
-  })
+  });
 
   const requestPayoutMutation = useMutation({
     mutationFn: async () => {
-      const response = await sdk.client.fetch("/vendor/payouts/request", {
+      return sdk.client.fetch("/vendor/payouts/request", {
         method: "POST",
         credentials: "include",
-        headers: { "Content-Type": "application/json" },
-      })
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || "Failed to request payout")
-      }
-      return response.json()
+      });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["vendor", "payouts"] })
-      queryClient.invalidateQueries({ queryKey: ["vendor", "dashboard"] })
-      toast.success("Payout request submitted successfully")
+      queryClient.invalidateQueries({ queryKey: ["vendor-payouts"] });
     },
-    onError: (error: Error) => {
-      toast.error(error.message || "Failed to request payout")
-    },
-  })
+  });
+
+  const payouts = data?.payouts || [];
+  const summary = data?.summary;
 
   if (isLoading) {
-    return <PayoutsSkeleton />
+    return (
+      <div className="space-y-6">
+        <div className="grid grid-cols-3 gap-4">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="border rounded-lg p-4 animate-pulse">
+              <div className="h-4 bg-muted rounded w-1/2 mb-2"></div>
+              <div className="h-8 bg-muted rounded w-3/4"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 
-  const { payouts } = data
-  const pendingPayout = dashboardData?.stats?.pendingPayout || 0
-  const vendor = dashboardData?.vendor
-
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Payouts</h1>
-        <p className="text-muted-foreground mt-2">
-          Manage your payout requests and history
-        </p>
+    <div className="space-y-8">
+      <h1 className="text-2xl font-bold">Payouts</h1>
+
+      {/* Summary */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="border rounded-lg p-6">
+          <p className="text-sm text-muted-foreground mb-1">Available Balance</p>
+          <p className="text-3xl font-bold text-green-700">
+            ${(summary?.available_balance || 0).toFixed(2)}
+          </p>
+        </div>
+        <div className="border rounded-lg p-6">
+          <p className="text-sm text-muted-foreground mb-1">Pending</p>
+          <p className="text-3xl font-bold text-yellow-700">
+            ${(summary?.pending_balance || 0).toFixed(2)}
+          </p>
+        </div>
+        <div className="border rounded-lg p-6">
+          <p className="text-sm text-muted-foreground mb-1">Total Paid</p>
+          <p className="text-3xl font-bold">
+            ${(summary?.total_paid || 0).toFixed(2)}
+          </p>
+        </div>
       </div>
 
-      {/* Pending Payout Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Available Balance</CardTitle>
-          <CardDescription>
-            Your current balance available for payout
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+      {/* Request Payout */}
+      {(summary?.available_balance || 0) > 0 && (
+        <div className="border rounded-lg p-6 bg-green-50">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-3xl font-bold">
-                {formatPrice(pendingPayout, vendor?.currency_code || "USD")}
-              </p>
-              <p className="text-sm text-muted-foreground mt-1">
-                Minimum payout: {formatPrice(vendor?.payout_minimum || 5000, vendor?.currency_code || "USD")}
+              <h3 className="font-semibold text-green-800">Request Payout</h3>
+              <p className="text-sm text-green-700">
+                You have ${summary?.available_balance.toFixed(2)} available for withdrawal
               </p>
             </div>
             <Button
               onClick={() => requestPayoutMutation.mutate()}
-              disabled={
-                requestPayoutMutation.isPending ||
-                pendingPayout < (vendor?.payout_minimum || 5000)
-              }
+              disabled={requestPayoutMutation.isPending}
             >
-              Request Payout
+              {requestPayoutMutation.isPending ? "Processing..." : "Request Payout"}
             </Button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      )}
 
       {/* Payout History */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Payout History</CardTitle>
-          <CardDescription>Your recent payout transactions</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {payouts.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12">
-              <p className="text-muted-foreground">No payouts yet</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {payouts.map((payout: any) => (
-                <div
-                  key={payout.id}
-                  className="flex items-center justify-between py-3 border-b last:border-0"
-                >
-                  <div>
-                    <p className="font-medium">
-                      {formatPrice(payout.amount, payout.currency_code)}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {new Date(payout.created_at).toLocaleDateString()} -{" "}
-                      {payout.payout_method}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        payout.status === "completed"
-                          ? "bg-green-100 text-green-800"
-                          : payout.status === "pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : payout.status === "processing"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {payout.status}
-                    </span>
-                    {payout.completed_at && (
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Completed: {new Date(payout.completed_at).toLocaleDateString()}
-                      </p>
+      <div className="border rounded-lg">
+        <div className="p-6 border-b">
+          <h2 className="text-xl font-semibold">Payout History</h2>
+        </div>
+        {payouts.length === 0 ? (
+          <div className="p-6 text-center text-muted-foreground">
+            No payouts yet
+          </div>
+        ) : (
+          <div className="divide-y">
+            {payouts.map((payout) => (
+              <div key={payout.id} className="p-4 flex items-center justify-between">
+                <div>
+                  <p className="font-semibold">${Number(payout.amount).toFixed(2)}</p>
+                  <p className="text-sm text-muted-foreground">
+                    Requested: {new Date(payout.created_at).toLocaleDateString()}
+                    {payout.processed_at && (
+                      <> - Processed: {new Date(payout.processed_at).toLocaleDateString()}</>
                     )}
-                  </div>
+                  </p>
                 </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                <PayoutStatusBadge status={payout.status} />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
-  )
+  );
 }
 
-function PayoutsSkeleton() {
+function PayoutStatusBadge({ status }: { status: string }) {
+  const styles: Record<string, string> = {
+    pending: "bg-yellow-100 text-yellow-800",
+    processing: "bg-blue-100 text-blue-800",
+    completed: "bg-green-100 text-green-800",
+    failed: "bg-red-100 text-red-800",
+  };
+
   return (
-    <div className="space-y-6">
-      <div>
-        <Skeleton className="h-8 w-64" />
-        <Skeleton className="h-4 w-96 mt-2" />
-      </div>
-      <Card>
-        <CardHeader>
-          <Skeleton className="h-6 w-48" />
-          <Skeleton className="h-4 w-64 mt-2" />
-        </CardHeader>
-        <CardContent>
-          <Skeleton className="h-24 w-full" />
-        </CardContent>
-      </Card>
-    </div>
-  )
+    <span className={`px-2 py-1 rounded text-xs font-medium ${styles[status] || "bg-gray-100"}`}>
+      {status.charAt(0).toUpperCase() + status.slice(1)}
+    </span>
+  );
 }

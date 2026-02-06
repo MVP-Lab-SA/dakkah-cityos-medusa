@@ -1,6 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
-import { sdk } from "@/lib/sdk";
-import { Badge } from "@/components/ui/badge";
+import { sdk } from "@/lib/utils/sdk";
+
+interface VolumePricingTier {
+  id: string;
+  min_quantity: number;
+  max_quantity?: number | null;
+  discount_percentage?: number;
+  fixed_price?: number;
+  discount_amount?: number;
+}
+
+interface VolumePricingRule {
+  tiers: VolumePricingTier[];
+}
 
 interface VolumePricingDisplayProps {
   productId: string;
@@ -14,10 +26,10 @@ export function VolumePricingDisplay({
   const { data, isLoading } = useQuery({
     queryKey: ["volume-pricing", productId],
     queryFn: async () => {
-      const response = await sdk.client.fetch(
+      const response = await sdk.client.fetch<{ rules: VolumePricingRule[] }>(
         `/store/volume-pricing/${productId}`
       );
-      return response.json();
+      return response;
     },
   });
 
@@ -31,9 +43,9 @@ export function VolumePricingDisplay({
   if (tiers.length === 0) return null;
 
   // Find active tier based on current quantity
-  const activeTier = tiers.find((tier: any) => {
+  const activeTier = tiers.find((tier) => {
     const inRange = tier.min_quantity <= currentQuantity;
-    const noMax = tier.max_quantity === null;
+    const noMax = tier.max_quantity === null || tier.max_quantity === undefined;
     const belowMax = tier.max_quantity && currentQuantity <= tier.max_quantity;
     return inRange && (noMax || belowMax);
   });
@@ -59,7 +71,7 @@ export function VolumePricingDisplay({
       </div>
 
       <div className="space-y-2">
-        {tiers.map((tier: any, index: number) => {
+        {tiers.map((tier, index) => {
           const isActive = activeTier?.id === tier.id;
           const quantityText = tier.max_quantity
             ? `${tier.min_quantity}-${tier.max_quantity}`
@@ -76,7 +88,7 @@ export function VolumePricingDisplay({
 
           return (
             <div
-              key={tier.id}
+              key={tier.id || `tier-${index}`}
               className={`flex justify-between items-center p-3 rounded ${
                 isActive ? "bg-green-100 border border-green-300" : "bg-background"
               }`}
@@ -84,7 +96,7 @@ export function VolumePricingDisplay({
               <div className="flex items-center gap-3">
                 <span className="font-medium">{quantityText} units</span>
                 {isActive && (
-                  <Badge className="bg-green-600">Current</Badge>
+                  <span className="bg-green-600 text-white text-xs px-2 py-0.5 rounded">Current</span>
                 )}
               </div>
               <span className="font-semibold text-green-700">
@@ -95,7 +107,7 @@ export function VolumePricingDisplay({
         })}
       </div>
 
-      {activeTier && (
+      {activeTier && activeTier.discount_percentage && (
         <p className="text-sm text-muted-foreground mt-3">
           You're getting{" "}
           <span className="font-semibold text-green-700">

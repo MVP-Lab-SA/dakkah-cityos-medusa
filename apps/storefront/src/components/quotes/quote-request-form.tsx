@@ -1,32 +1,30 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { sdk } from "@/lib/sdk";
+import { useMutation } from "@tanstack/react-query";
+import { sdk } from "@/lib/utils/sdk";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { useCart } from "@/lib/context/cart-context";
+import { useCart } from "@/lib/hooks/use-cart";
 
 export function QuoteRequestForm() {
   const navigate = useNavigate();
-  const { cart } = useCart();
+  const { data: cart } = useCart();
   const [notes, setNotes] = useState("");
 
   const createQuoteMutation = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: Record<string, unknown>) => {
       const response = await sdk.client.fetch("/store/quotes", {
         method: "POST",
         credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: data,
       });
-      return response.json();
+      return response as { quote: { id: string } };
     },
     onSuccess: (data) => {
+      const countryCode = cart?.region?.countries?.[0]?.iso_2 || "us";
       navigate({
         to: "/$countryCode/quotes/$id",
-        params: { countryCode: cart?.region?.countries?.[0]?.iso_2 || "us", id: data.quote.id },
+        params: { countryCode, id: data.quote.id },
       });
     },
   });
@@ -39,7 +37,7 @@ export function QuoteRequestForm() {
       return;
     }
 
-    const items = cart.items.map((item: any) => ({
+    const items = cart.items.map((item) => ({
       product_id: item.product_id,
       variant_id: item.variant_id,
       title: item.title,
@@ -52,10 +50,10 @@ export function QuoteRequestForm() {
     createQuoteMutation.mutate({
       items,
       customer_notes: notes,
-      company_id: cart.metadata?.company_id || null,
-      tenant_id: cart.metadata?.tenant_id || null,
+      company_id: (cart.metadata as Record<string, string>)?.company_id || null,
+      tenant_id: (cart.metadata as Record<string, string>)?.tenant_id || null,
       region_id: cart.region_id,
-      store_id: cart.metadata?.store_id || null,
+      store_id: (cart.metadata as Record<string, string>)?.store_id || null,
     });
   };
 
@@ -67,7 +65,7 @@ export function QuoteRequestForm() {
           <p className="text-muted-foreground">No items in cart</p>
         ) : (
           <div className="space-y-3">
-            {cart.items.map((item: any) => (
+            {cart.items.map((item) => (
               <div key={item.id} className="flex justify-between items-center">
                 <div className="flex items-center gap-4">
                   {item.thumbnail && (
@@ -96,13 +94,15 @@ export function QuoteRequestForm() {
       </div>
 
       <div>
-        <Label htmlFor="notes">Additional Notes (Optional)</Label>
-        <Textarea
+        <label htmlFor="notes" className="text-sm font-medium block mb-2">
+          Additional Notes (Optional)
+        </label>
+        <textarea
           id="notes"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="Tell us about your needs, timeline, or any special requirements..."
-          className="min-h-32 mt-2"
+          className="w-full min-h-32 p-3 border rounded-lg resize-none"
         />
       </div>
 
@@ -116,7 +116,7 @@ export function QuoteRequestForm() {
         </Button>
         <Button
           type="button"
-          variant="outline"
+          variant="secondary"
           onClick={() => navigate({ to: "/$countryCode", params: { countryCode: "us" } })}
         >
           Cancel

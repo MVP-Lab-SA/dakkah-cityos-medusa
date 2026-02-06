@@ -1,37 +1,51 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { sdk } from "@/lib/sdk";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
-import { Textarea } from "@/components/ui/textarea";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { sdk } from "@/lib/utils/sdk";
+import { Button } from "@/components/ui/button";
 
-interface QuoteDetailsProps {
-  quote: any;
+interface QuoteItem {
+  id: string;
+  product_id: string;
+  variant_id?: string;
+  title: string;
+  sku?: string;
+  thumbnail?: string;
+  quantity: number;
+  unit_price: number;
+  custom_price?: number;
 }
 
-const statusColors: Record<string, string> = {
-  draft: "bg-gray-500",
-  submitted: "bg-blue-500",
-  under_review: "bg-yellow-500",
-  approved: "bg-green-500",
-  rejected: "bg-red-500",
-  accepted: "bg-green-700",
-  declined: "bg-gray-600",
-  expired: "bg-gray-400",
-};
+interface Quote {
+  id: string;
+  quote_number: string;
+  status: string;
+  subtotal: number;
+  discount_total: number;
+  tax_total: number;
+  total: number;
+  customer_notes?: string;
+  internal_notes?: string;
+  discount_reason?: string;
+  created_at: string;
+  valid_until?: string;
+  items: QuoteItem[];
+}
+
+interface QuoteDetailsProps {
+  quote: Quote;
+}
 
 export function QuoteDetails({ quote }: QuoteDetailsProps) {
-  const queryClient = useQueryClient();
-  const [declineReason, setDeclineReason] = useState("");
   const [showDeclineForm, setShowDeclineForm] = useState(false);
+  const [declineReason, setDeclineReason] = useState("");
+  const queryClient = useQueryClient();
 
   const acceptMutation = useMutation({
     mutationFn: async () => {
-      const response = await sdk.client.fetch(`/store/quotes/${quote.id}/accept`, {
+      return sdk.client.fetch(`/store/quotes/${quote.id}/accept`, {
         method: "POST",
         credentials: "include",
       });
-      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["quote", quote.id] });
@@ -40,13 +54,11 @@ export function QuoteDetails({ quote }: QuoteDetailsProps) {
 
   const declineMutation = useMutation({
     mutationFn: async (reason: string) => {
-      const response = await sdk.client.fetch(`/store/quotes/${quote.id}/decline`, {
+      return sdk.client.fetch(`/store/quotes/${quote.id}/decline`, {
         method: "POST",
         credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reason }),
+        body: { reason },
       });
-      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["quote", quote.id] });
@@ -54,60 +66,73 @@ export function QuoteDetails({ quote }: QuoteDetailsProps) {
     },
   });
 
-  const handleDecline = () => {
-    declineMutation.mutate(declineReason);
-  };
-
-  if (!quote) return <div>Quote not found</div>;
+  const isExpired = quote.valid_until && new Date(quote.valid_until) < new Date();
+  const canAccept = quote.status === "approved" && !isExpired;
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-start">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold mb-2">{quote.quote_number}</h1>
+          <h1 className="text-2xl font-bold">{quote.quote_number}</h1>
           <p className="text-muted-foreground">
             Created {new Date(quote.created_at).toLocaleDateString()}
           </p>
         </div>
-        <Badge className={statusColors[quote.status] + " text-lg px-4 py-2"}>
-          {quote.status.replace("_", " ").toUpperCase()}
-        </Badge>
+        <QuoteStatusBadge status={quote.status} />
       </div>
 
+      {/* Expiration Warning */}
+      {quote.valid_until && (
+        <div className={`p-4 rounded-lg ${isExpired ? "bg-red-50 border-red-200" : "bg-blue-50 border-blue-200"} border`}>
+          <p className={isExpired ? "text-red-800" : "text-blue-800"}>
+            {isExpired 
+              ? `This quote expired on ${new Date(quote.valid_until).toLocaleDateString()}`
+              : `Valid until ${new Date(quote.valid_until).toLocaleDateString()}`
+            }
+          </p>
+        </div>
+      )}
+
       {/* Items */}
-      <div className="border rounded-lg p-6">
-        <h2 className="text-xl font-semibold mb-4">Items</h2>
-        <div className="space-y-4">
-          {quote.items?.map((item: any) => (
-            <div key={item.id} className="flex justify-between items-center pb-4 border-b last:border-0">
-              <div className="flex items-center gap-4">
-                {item.thumbnail && (
-                  <img
-                    src={item.thumbnail}
-                    alt={item.title}
-                    className="w-20 h-20 object-cover rounded"
-                  />
+      <div className="border rounded-lg">
+        <div className="p-4 border-b bg-muted/20">
+          <h2 className="font-semibold">Quote Items</h2>
+        </div>
+        <div className="divide-y">
+          {quote.items.map((item) => (
+            <div key={item.id} className="p-4 flex items-center gap-4">
+              {item.thumbnail && (
+                <img
+                  src={item.thumbnail}
+                  alt={item.title}
+                  className="w-16 h-16 object-cover rounded"
+                />
+              )}
+              <div className="flex-1">
+                <p className="font-medium">{item.title}</p>
+                {item.sku && (
+                  <p className="text-sm text-muted-foreground">SKU: {item.sku}</p>
                 )}
-                <div>
-                  <p className="font-medium">{item.title}</p>
-                  {item.sku && (
-                    <p className="text-sm text-muted-foreground">SKU: {item.sku}</p>
-                  )}
-                  <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
-                  {item.custom_unit_price && (
-                    <Badge variant="secondary" className="mt-1">
-                      Custom Price
-                    </Badge>
-                  )}
-                </div>
+                <p className="text-sm">Qty: {item.quantity}</p>
               </div>
               <div className="text-right">
-                <p className="font-semibold">
-                  ${Number(item.total).toFixed(2)}
-                </p>
+                {item.custom_price && item.custom_price !== item.unit_price ? (
+                  <>
+                    <p className="font-semibold text-green-700">
+                      ${Number(item.custom_price).toFixed(2)}
+                    </p>
+                    <p className="text-sm text-muted-foreground line-through">
+                      ${Number(item.unit_price).toFixed(2)}
+                    </p>
+                  </>
+                ) : (
+                  <p className="font-semibold">
+                    ${Number(item.unit_price).toFixed(2)}
+                  </p>
+                )}
                 <p className="text-sm text-muted-foreground">
-                  ${Number(item.custom_unit_price || item.unit_price).toFixed(2)} each
+                  Total: ${(Number(item.custom_price || item.unit_price) * item.quantity).toFixed(2)}
                 </p>
               </div>
             </div>
@@ -115,107 +140,118 @@ export function QuoteDetails({ quote }: QuoteDetailsProps) {
         </div>
       </div>
 
-      {/* Totals */}
-      <div className="border rounded-lg p-6 bg-muted/20">
-        <div className="space-y-2">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Subtotal</span>
-            <span>${Number(quote.subtotal).toFixed(2)}</span>
+      {/* Summary */}
+      <div className="border rounded-lg p-4 space-y-2">
+        <div className="flex justify-between">
+          <span>Subtotal</span>
+          <span>${Number(quote.subtotal).toFixed(2)}</span>
+        </div>
+        {quote.discount_total > 0 && (
+          <div className="flex justify-between text-green-700">
+            <span>Discount</span>
+            <span>-${Number(quote.discount_total).toFixed(2)}</span>
           </div>
-          {Number(quote.discount_total) > 0 && (
-            <div className="flex justify-between text-green-600">
-              <span>Discount</span>
-              <span>-${Number(quote.discount_total).toFixed(2)}</span>
-            </div>
-          )}
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Tax</span>
-            <span>${Number(quote.tax_total).toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between text-xl font-bold pt-2 border-t">
-            <span>Total</span>
-            <span>${Number(quote.total).toFixed(2)}</span>
-          </div>
+        )}
+        <div className="flex justify-between">
+          <span>Tax</span>
+          <span>${Number(quote.tax_total).toFixed(2)}</span>
+        </div>
+        <div className="flex justify-between font-bold text-lg pt-2 border-t">
+          <span>Total</span>
+          <span>${Number(quote.total).toFixed(2)}</span>
         </div>
       </div>
 
       {/* Notes */}
       {quote.customer_notes && (
-        <div className="border rounded-lg p-6">
+        <div className="border rounded-lg p-4">
           <h3 className="font-semibold mb-2">Your Notes</h3>
           <p className="text-muted-foreground">{quote.customer_notes}</p>
         </div>
       )}
 
       {quote.discount_reason && (
-        <div className="border rounded-lg p-6 bg-green-50">
-          <h3 className="font-semibold mb-2">Special Discount Applied</h3>
-          <p className="text-muted-foreground">{quote.discount_reason}</p>
+        <div className="border rounded-lg p-4 bg-green-50">
+          <h3 className="font-semibold mb-2 text-green-800">Discount Reason</h3>
+          <p className="text-green-700">{quote.discount_reason}</p>
         </div>
       )}
 
       {/* Actions */}
-      {quote.status === "approved" && (
-        <div className="border rounded-lg p-6 bg-blue-50">
-          <h3 className="font-semibold mb-2">Quote Approved!</h3>
-          <p className="text-muted-foreground mb-4">
-            Your quote has been approved. You can now accept or decline this offer.
-            {quote.valid_until && (
-              <span className="block mt-1">
-                Valid until {new Date(quote.valid_until).toLocaleDateString()}
-              </span>
-            )}
-          </p>
-          
-          {!showDeclineForm ? (
-            <div className="flex gap-4">
-              <Button
-                onClick={() => acceptMutation.mutate()}
-                disabled={acceptMutation.isPending}
-              >
-                {acceptMutation.isPending ? "Accepting..." : "Accept Quote"}
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => setShowDeclineForm(true)}
-              >
-                Decline Quote
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <Textarea
-                value={declineReason}
-                onChange={(e) => setDeclineReason(e.target.value)}
-                placeholder="Please let us know why you're declining (optional)"
-                className="min-h-24"
-              />
-              <div className="flex gap-4">
-                <Button
-                  onClick={handleDecline}
-                  disabled={declineMutation.isPending}
-                  variant="destructive"
-                >
-                  {declineMutation.isPending ? "Declining..." : "Confirm Decline"}
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setShowDeclineForm(false)}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          )}
+      {canAccept && (
+        <div className="flex gap-4">
+          <Button
+            onClick={() => acceptMutation.mutate()}
+            disabled={acceptMutation.isPending}
+            className="flex-1"
+          >
+            {acceptMutation.isPending ? "Processing..." : "Accept Quote"}
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => setShowDeclineForm(true)}
+          >
+            Decline
+          </Button>
         </div>
       )}
 
-      {quote.status === "rejected" && quote.rejection_reason && (
-        <div className="border rounded-lg p-6 bg-red-50">
-          <h3 className="font-semibold mb-2">Quote Rejected</h3>
-          <p className="text-muted-foreground">{quote.rejection_reason}</p>
+      {showDeclineForm && (
+        <div className="border rounded-lg p-4 space-y-4">
+          <h3 className="font-semibold">Decline Quote</h3>
+          <textarea
+            value={declineReason}
+            onChange={(e) => setDeclineReason(e.target.value)}
+            placeholder="Please let us know why you're declining this quote (optional)"
+            className="w-full min-h-24 p-3 border rounded-lg resize-none"
+          />
+          <div className="flex gap-4">
+            <Button
+              variant="danger"
+              onClick={() => declineMutation.mutate(declineReason)}
+              disabled={declineMutation.isPending}
+            >
+              {declineMutation.isPending ? "Declining..." : "Confirm Decline"}
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => setShowDeclineForm(false)}
+            >
+              Cancel
+            </Button>
+          </div>
         </div>
       )}
     </div>
+  );
+}
+
+function QuoteStatusBadge({ status }: { status: string }) {
+  const styles: Record<string, string> = {
+    draft: "bg-gray-100 text-gray-800",
+    submitted: "bg-blue-100 text-blue-800",
+    under_review: "bg-yellow-100 text-yellow-800",
+    approved: "bg-green-100 text-green-800",
+    rejected: "bg-red-100 text-red-800",
+    accepted: "bg-emerald-100 text-emerald-800",
+    declined: "bg-orange-100 text-orange-800",
+    expired: "bg-gray-100 text-gray-800",
+  };
+
+  const labels: Record<string, string> = {
+    draft: "Draft",
+    submitted: "Submitted",
+    under_review: "Under Review",
+    approved: "Approved",
+    rejected: "Rejected",
+    accepted: "Accepted",
+    declined: "Declined",
+    expired: "Expired",
+  };
+
+  return (
+    <span className={`px-3 py-1.5 rounded text-sm font-medium ${styles[status] || "bg-gray-100"}`}>
+      {labels[status] || status}
+    </span>
   );
 }

@@ -2,14 +2,17 @@ import { DEFAULT_CART_DROPDOWN_FIELDS } from "@/components/cart"
 import ProductOptionSelect from "@/components/product-option-select"
 import ProductPrice from "@/components/product-price"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { useCartDrawer } from "@/lib/context/cart"
 import { useAddToCart } from "@/lib/hooks/use-cart"
 import { getVariantOptionsKeymap, isVariantInStock } from "@/lib/utils/product"
 import { getCountryCodeFromPath } from "@/lib/utils/region"
 import { HttpTypes } from "@medusajs/types"
-import { useLocation } from "@tanstack/react-router"
+import { useLocation, Link } from "@tanstack/react-router"
 import { isEqual } from "lodash-es"
 import { useEffect, useMemo, useRef, useState, memo } from "react"
+import { VolumePricingDisplay } from "@/components/products/volume-pricing-display"
+import { Minus, Plus } from "@medusajs/icons"
 
 type ProductActionsProps = {
   product: HttpTypes.StoreProduct;
@@ -25,6 +28,7 @@ const ProductActions = memo(function ProductActions({
   const [selectedOptions, setSelectedOptions] = useState<
     Record<string, string | undefined>
   >({});
+  const [quantity, setQuantity] = useState(1);
   const location = useLocation();
   const countryCode = getCountryCodeFromPath(location.pathname) || "dk";
 
@@ -98,6 +102,10 @@ const ProductActions = memo(function ProductActions({
     return isVariantInStock(selectedVariant);
   }, [selectedVariant]);
 
+  // Quantity handlers
+  const incrementQuantity = () => setQuantity((q) => q + 1);
+  const decrementQuantity = () => setQuantity((q) => Math.max(1, q - 1));
+
   // add the selected variant to the cart
   const handleAddToCart = async () => {
     if (!selectedVariant?.id) return null;
@@ -105,7 +113,7 @@ const ProductActions = memo(function ProductActions({
     addToCartMutation.mutateAsync(
       {
         variant_id: selectedVariant.id,
-        quantity: 1,
+        quantity: quantity,
         country_code: countryCode,
         product,
         variant: selectedVariant,
@@ -114,6 +122,7 @@ const ProductActions = memo(function ProductActions({
       {
         onSuccess: () => {
           console.log("Item added to cart");
+          setQuantity(1); // Reset quantity after adding
           openCart();
         },
         onError: () => {
@@ -151,6 +160,55 @@ const ProductActions = memo(function ProductActions({
           })}
         </div>
       )}
+
+      {/* Quantity Selector */}
+      <div className="flex flex-col gap-2">
+        <span className="text-sm font-medium">Quantity</span>
+        <div className="flex items-center gap-2">
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={decrementQuantity}
+            disabled={quantity <= 1 || !!disabled}
+            className="h-10 w-10 p-0"
+          >
+            <Minus className="h-4 w-4" />
+          </Button>
+          <Input
+            type="number"
+            min={1}
+            value={quantity}
+            onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+            className="w-20 text-center h-10"
+            disabled={!!disabled}
+          />
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={incrementQuantity}
+            disabled={!!disabled}
+            className="h-10 w-10 p-0"
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+
+      {/* Volume Pricing Display */}
+      {product.id && (
+        <VolumePricingDisplay productId={product.id} currentQuantity={quantity} />
+      )}
+
+      {/* B2B Quote Link */}
+      <div className="text-sm text-muted-foreground">
+        <Link
+          to="/$countryCode/quotes/request"
+          params={{ countryCode }}
+          className="text-primary hover:underline"
+        >
+          Need a custom quote for larger orders?
+        </Link>
+      </div>
 
       <Button
         onClick={handleAddToCart}

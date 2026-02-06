@@ -1,187 +1,162 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { sdk } from "@/lib/sdk"
-import { formatPrice } from "@/lib/utils/prices"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton"
-import { CheckCircle } from "@medusajs/icons"
-import { toast } from "sonner"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { sdk } from "@/lib/utils/sdk";
+import { Button } from "@/components/ui/button";
+
+interface VendorOrderItem {
+  id: string;
+  title: string;
+  quantity: number;
+  unit_price: number;
+  thumbnail?: string;
+}
+
+interface VendorOrder {
+  id: string;
+  display_id: number;
+  status: string;
+  created_at: string;
+  email: string;
+  items: VendorOrderItem[];
+  vendor_total: number;
+  shipping_address?: {
+    address_1?: string;
+    city?: string;
+    province?: string;
+    postal_code?: string;
+    country_code?: string;
+  };
+}
 
 export function VendorOrderList() {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
-    queryKey: ["vendor", "orders"],
+    queryKey: ["vendor-orders"],
     queryFn: async () => {
-      const response = await sdk.client.fetch("/vendor/orders", {
+      const response = await sdk.client.fetch<{ orders: VendorOrder[] }>("/vendor/orders", {
         credentials: "include",
-      })
-      return response.json()
+      });
+      return response;
     },
-  })
+  });
 
   const fulfillMutation = useMutation({
     mutationFn: async (orderId: string) => {
-      const response = await sdk.client.fetch(`/vendor/orders/${orderId}/fulfill`, {
+      return sdk.client.fetch(`/vendor/orders/${orderId}/fulfill`, {
         method: "POST",
         credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}),
-      })
-      return response.json()
+      });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["vendor", "orders"] })
-      toast.success("Order fulfilled successfully")
+      queryClient.invalidateQueries({ queryKey: ["vendor-orders"] });
     },
-    onError: () => {
-      toast.error("Failed to fulfill order")
-    },
-  })
+  });
+
+  const orders = data?.orders || [];
 
   if (isLoading) {
-    return <OrderListSkeleton />
+    return (
+      <div className="space-y-4">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="border rounded-lg p-4 animate-pulse">
+            <div className="h-4 bg-muted rounded w-1/4 mb-2"></div>
+            <div className="h-3 bg-muted rounded w-1/2"></div>
+          </div>
+        ))}
+      </div>
+    );
   }
-
-  const { orders } = data
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Orders</h1>
-        <p className="text-muted-foreground mt-2">
-          Manage and fulfill customer orders
-        </p>
-      </div>
+      <h1 className="text-2xl font-bold">Your Orders</h1>
 
       {orders.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <h3 className="text-lg font-semibold mb-2">No orders yet</h3>
-            <p className="text-muted-foreground text-center">
-              Orders containing your products will appear here
-            </p>
-          </CardContent>
-        </Card>
+        <div className="text-center py-12 border rounded-lg">
+          <p className="text-muted-foreground">No orders yet</p>
+        </div>
       ) : (
         <div className="space-y-4">
-          {orders.map((order: any) => (
-            <Card key={order.id}>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-lg">
-                      Order #{order.display_id}
-                    </CardTitle>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {new Date(order.created_at).toLocaleDateString()} - {order.email}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span
-                      className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ${
-                        order.status === "completed"
-                          ? "bg-green-100 text-green-800"
-                          : order.status === "pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-blue-100 text-blue-800"
-                      }`}
-                    >
-                      {order.status}
-                    </span>
-                    {order.status === "pending" && (
-                      <Button
-                        onClick={() => fulfillMutation.mutate(order.id)}
-                        disabled={fulfillMutation.isPending}
-                      >
-                        <CheckCircle className="mr-2 h-4 w-4" />
-                        Fulfill
-                      </Button>
-                    )}
-                  </div>
+          {orders.map((order) => (
+            <div key={order.id} className="border rounded-lg">
+              <div className="p-4 border-b bg-muted/20 flex items-center justify-between">
+                <div>
+                  <span className="font-semibold">Order #{order.display_id}</span>
+                  <span className="text-muted-foreground ml-4">
+                    {new Date(order.created_at).toLocaleDateString()}
+                  </span>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {order.items.map((item: any) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center justify-between py-2 border-b last:border-0"
+                <div className="flex items-center gap-3">
+                  <OrderStatusBadge status={order.status} />
+                  {order.status === "pending" && (
+                    <Button
+                      size="fit"
+                      onClick={() => fulfillMutation.mutate(order.id)}
+                      disabled={fulfillMutation.isPending}
                     >
-                      <div className="flex items-center gap-3">
-                        {item.variant?.product?.thumbnail && (
-                          <img
-                            src={item.variant.product.thumbnail}
-                            alt={item.variant.product.title}
-                            className="h-12 w-12 rounded object-cover"
-                          />
-                        )}
-                        <div>
-                          <p className="font-medium">
-                            {item.variant?.product?.title || item.title}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            Quantity: {item.quantity}
-                          </p>
-                        </div>
+                      Fulfill
+                    </Button>
+                  )}
+                </div>
+              </div>
+
+              <div className="p-4">
+                <p className="text-sm text-muted-foreground mb-3">
+                  Customer: {order.email}
+                </p>
+
+                <div className="space-y-2">
+                  {order.items.map((item) => (
+                    <div key={item.id} className="flex items-center gap-3">
+                      {item.thumbnail && (
+                        <img
+                          src={item.thumbnail}
+                          alt={item.title}
+                          className="w-12 h-12 object-cover rounded"
+                        />
+                      )}
+                      <div className="flex-1">
+                        <p className="font-medium">{item.title}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Qty: {item.quantity} x ${Number(item.unit_price).toFixed(2)}
+                        </p>
                       </div>
-                      <p className="font-medium">
-                        {formatPrice(item.subtotal, order.currency_code)}
-                      </p>
                     </div>
                   ))}
                 </div>
 
-                <div className="flex items-center justify-between mt-4 pt-4 border-t">
-                  <span className="font-semibold">Vendor Total</span>
-                  <span className="text-lg font-bold">
-                    {formatPrice(order.vendor_total, order.currency_code)}
-                  </span>
-                </div>
-
-                {order.shipping_address && (
-                  <div className="mt-4 pt-4 border-t">
-                    <p className="text-sm font-medium mb-2">Shipping Address</p>
-                    <p className="text-sm text-muted-foreground">
-                      {order.shipping_address.address_1}
-                      {order.shipping_address.address_2 && `, ${order.shipping_address.address_2}`}
-                      <br />
-                      {order.shipping_address.city}, {order.shipping_address.province}{" "}
-                      {order.shipping_address.postal_code}
-                      <br />
-                      {order.shipping_address.country_code?.toUpperCase()}
-                    </p>
+                <div className="mt-4 pt-4 border-t flex justify-between items-center">
+                  <div>
+                    {order.shipping_address && (
+                      <p className="text-sm text-muted-foreground">
+                        Ship to: {order.shipping_address.city}, {order.shipping_address.country_code?.toUpperCase()}
+                      </p>
+                    )}
                   </div>
-                )}
-              </CardContent>
-            </Card>
+                  <p className="font-bold">
+                    Your Total: ${Number(order.vendor_total).toFixed(2)}
+                  </p>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       )}
     </div>
-  )
+  );
 }
 
-function OrderListSkeleton() {
+function OrderStatusBadge({ status }: { status: string }) {
+  const styles: Record<string, string> = {
+    pending: "bg-yellow-100 text-yellow-800",
+    processing: "bg-blue-100 text-blue-800",
+    completed: "bg-green-100 text-green-800",
+    cancelled: "bg-red-100 text-red-800",
+  };
+
   return (
-    <div className="space-y-6">
-      <div>
-        <Skeleton className="h-8 w-64" />
-        <Skeleton className="h-4 w-96 mt-2" />
-      </div>
-      <div className="space-y-4">
-        {[...Array(3)].map((_, i) => (
-          <Card key={i}>
-            <CardHeader>
-              <Skeleton className="h-6 w-48" />
-              <Skeleton className="h-4 w-64 mt-2" />
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-24 w-full" />
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    </div>
-  )
+    <span className={`px-2 py-1 rounded text-xs font-medium ${styles[status] || "bg-gray-100"}`}>
+      {status.charAt(0).toUpperCase() + status.slice(1)}
+    </span>
+  );
 }
