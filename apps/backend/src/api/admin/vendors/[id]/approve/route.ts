@@ -1,6 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework"
 import { z } from "zod"
-import { approveVendorWorkflow } from "../../../../../workflows/vendor/approve-vendor-workflow.js"
+import { approveVendorWorkflow } from "../../../../../workflows/vendor/approve-vendor-workflow"
 
 const approveVendorSchema = z.object({
   notes: z.string().optional(),

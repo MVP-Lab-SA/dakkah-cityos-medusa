@@ -1,6 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
 import { z } from "zod";
-import { createSubscriptionWorkflow } from "../../../workflows/subscription/create-subscription-workflow.js";
+import { createSubscriptionWorkflow } from "../../../workflows/subscription/create-subscription-workflow";
 
 const createSubscriptionSchema = z.object({
   customer_id: z.string(),

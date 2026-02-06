@@ -1,6 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework"
 import { z } from "zod"
-import { processPayoutWorkflow } from "../../../workflows/vendor/process-payout-workflow.js"
+import { processPayoutWorkflow } from "../../../workflows/vendor/process-payout-workflow"
 
 const createPayoutSchema = z.object({
   vendorId: z.string(),
