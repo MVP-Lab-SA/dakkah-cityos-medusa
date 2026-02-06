@@ -26,7 +26,7 @@ interface CreateQuoteInput {
 const generateQuoteNumberStep = createStep(
   "generate-quote-number",
   async (input: CreateQuoteInput, { container }) => {
-    const quoteService = container.resolve("quote") as Record<string, Function>;
+    const quoteService = container.resolve("quote") as any;
     const quoteNumber = await quoteService.generateQuoteNumber();
     return new StepResponse({ quoteNumber, input });
   }
@@ -36,7 +36,7 @@ const generateQuoteNumberStep = createStep(
 const getProductInfoStep = createStep(
   "get-product-info",
   async ({ input }: { input: CreateQuoteInput }, { container }) => {
-    const productService = container.resolve(Modules.PRODUCT) as Record<string, Function>;
+    const productService = container.resolve(Modules.PRODUCT) as any;
     const products: Record<string, unknown>[] = [];
 
     for (const item of input.items) {
@@ -69,7 +69,7 @@ const createQuoteStep = createStep(
     { input, quoteNumber, products }: { input: CreateQuoteInput; quoteNumber: string; products: Record<string, unknown>[] },
     { container }
   ) => {
-    const quoteService = container.resolve("quote") as Record<string, Function>;
+    const quoteService = container.resolve("quote") as any;
     
     const validUntil = input.valid_days
       ? new Date(Date.now() + input.valid_days * 24 * 60 * 60 * 1000)
@@ -90,7 +90,7 @@ const createQuoteStep = createStep(
     return new StepResponse({ quote }, { quote });
   },
   async ({ quote }: { quote: Record<string, unknown> }, { container }) => {
-    const quoteService = container.resolve("quote") as Record<string, Function>;
+    const quoteService = container.resolve("quote") as any;
     await quoteService.deleteQuotes(quote.id);
   }
 );
@@ -102,7 +102,7 @@ const createQuoteItemsStep = createStep(
     { quote, products }: { quote: Record<string, unknown>; products: Record<string, unknown>[] },
     { container }
   ) => {
-    const quoteService = container.resolve("quote") as Record<string, Function>;
+    const quoteService = container.resolve("quote") as any;
 
     const items: Record<string, unknown>[] = [];
     for (const item of products) {
@@ -135,7 +135,7 @@ const createQuoteItemsStep = createStep(
 const calculateQuoteTotalsStep = createStep(
   "calculate-quote-totals",
   async ({ quote }: { quote: Record<string, unknown> }, { container }) => {
-    const quoteService = container.resolve("quote") as Record<string, Function>;
+    const quoteService = container.resolve("quote") as any;
     await quoteService.calculateQuoteTotals(quote.id as string);
     return new StepResponse({ success: true });
   }

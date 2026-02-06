@@ -18,7 +18,7 @@ interface ApproveQuoteInput {
 const validateQuoteStep = createStep(
   "validate-quote",
   async (input: ApproveQuoteInput, { container }) => {
-    const quoteService = container.resolve("quote") as Record<string, Function>;
+    const quoteService = container.resolve("quote") as any;
     const quote = await quoteService.retrieveQuote(input.quote_id);
 
     if (!["submitted", "under_review"].includes(quote.status)) {
@@ -34,7 +34,7 @@ const applyDiscountStep = createStep(
   "apply-discount",
   async ({ input, quote }: { input: ApproveQuoteInput; quote: Record<string, unknown> }, { container }) => {
     if (input.custom_discount_percentage || input.custom_discount_amount) {
-      const quoteService = container.resolve("quote") as Record<string, Function>;
+      const quoteService = container.resolve("quote") as any;
       
       await quoteService.applyCustomDiscount(
         input.quote_id,
@@ -51,7 +51,7 @@ const applyDiscountStep = createStep(
 const updateQuoteStatusStep = createStep(
   "update-quote-status",
   async ({ input, quote }: { input: ApproveQuoteInput; quote: Record<string, unknown> }, { container }) => {
-    const quoteService = container.resolve("quote") as Record<string, Function>;
+    const quoteService = container.resolve("quote") as any;
     
     const validUntil = input.valid_days
       ? new Date(Date.now() + input.valid_days * 24 * 60 * 60 * 1000)

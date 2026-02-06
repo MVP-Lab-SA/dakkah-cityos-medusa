@@ -76,7 +76,7 @@ const createDefaultCommissionRuleStep = createStep(
   ) => {
     const commissionModule = container.resolve("commission")
 
-    const rule = await commissionModule.createCommissionRules({
+    const rule = await (commissionModule as any).createCommissions({
       tenant_id: input.tenantId,
       store_id: input.storeId,
       vendor_id: input.vendorId,
@@ -92,7 +92,7 @@ const createDefaultCommissionRuleStep = createStep(
   },
   async ({ rule }: { rule: any }, { container }) => {
     const commissionModule = container.resolve("commission")
-    await commissionModule.deleteCommissionRules(rule.id)
+    await (commissionModule as any).deleteCommissions(rule.id)
   }
 )
 
@@ -120,12 +120,12 @@ export const createVendorWorkflow = createWorkflow(
       metadata?: Record<string, any>
     }
   ) => {
-    const { vendor } = createVendorStep(input)
+    const vendorResult = createVendorStep(input)
 
     const commissionRateTransformed = transform(
-      { vendor, input },
-      ({ vendor, input }) => ({
-        vendorId: vendor.id,
+      { vendorResult, input },
+      ({ vendorResult, input }) => ({
+        vendorId: (vendorResult as any).vendor.id,
         tenantId: input.tenantId,
         storeId: input.storeId,
         commissionRate: input.commissionRate || 15,
@@ -135,7 +135,7 @@ export const createVendorWorkflow = createWorkflow(
     const { rule } = createDefaultCommissionRuleStep(commissionRateTransformed)
 
     return new WorkflowResponse({
-      vendor,
+      vendor: (vendorResult as any).vendor,
       commissionRule: rule,
     })
   }

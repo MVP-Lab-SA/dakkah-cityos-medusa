@@ -1,4 +1,5 @@
 import { ExecArgs } from "@medusajs/framework/types"
+import { ProductStatus } from "@medusajs/framework/utils"
 import {
   createProductCategoriesWorkflow,
   createProductsWorkflow,
@@ -98,7 +99,7 @@ export default async function ({ container }: ExecArgs) {
           title: "Classic White Thobe",
           handle: "classic-white-thobe-sa",
           description: "Premium cotton thobe perfect for daily wear and special occasions.",
-          status: "published",
+          status: ProductStatus.PUBLISHED,
           options: [
             {
               title: "Size",
@@ -135,7 +136,7 @@ export default async function ({ container }: ExecArgs) {
               manage_inventory: true,
             },
           ],
-          categories: [{ id: traditionalWearId }],
+          category_ids: traditionalWearId ? [traditionalWearId] : [],
           collection_id: eidCollectionId,
           tags: [{ id: bestsellerTagId }],
         },
@@ -143,7 +144,7 @@ export default async function ({ container }: ExecArgs) {
           title: "Elegant Black Abaya",
           handle: "elegant-black-abaya-sa",
           description: "Beautiful black abaya with elegant design.",
-          status: "published",
+          status: ProductStatus.PUBLISHED,
           options: [
             {
               title: "Size",
@@ -180,7 +181,7 @@ export default async function ({ container }: ExecArgs) {
               manage_inventory: true,
             },
           ],
-          categories: [{ id: traditionalWearId }],
+          category_ids: traditionalWearId ? [traditionalWearId] : [],
           tags: [{ id: bestsellerTagId }],
         },
         // Fragrances
@@ -188,7 +189,7 @@ export default async function ({ container }: ExecArgs) {
           title: "Royal Oud Oil",
           handle: "royal-oud-oil-sa",
           description: "Premium aged oud oil with rich, complex aroma.",
-          status: "published",
+          status: ProductStatus.PUBLISHED,
           options: [
             {
               title: "Size",
@@ -218,14 +219,14 @@ export default async function ({ container }: ExecArgs) {
               manage_inventory: true,
             },
           ],
-          categories: [{ id: fragrancesId }],
+          category_ids: fragrancesId ? [fragrancesId] : [],
           tags: [{ id: newArrivalTagId }],
         },
         {
           title: "Arabian Bakhoor",
           handle: "arabian-bakhoor-sa",
           description: "Traditional incense blend made from natural wood and oud.",
-          status: "published",
+          status: ProductStatus.PUBLISHED,
           options: [
             {
               title: "Default option",
@@ -241,7 +242,7 @@ export default async function ({ container }: ExecArgs) {
               manage_inventory: true,
             },
           ],
-          categories: [{ id: fragrancesId }],
+          category_ids: fragrancesId ? [fragrancesId] : [],
           collection_id: ramadanCollectionId,
           tags: [{ id: bestsellerTagId }],
         },
@@ -250,7 +251,7 @@ export default async function ({ container }: ExecArgs) {
           title: "Islamic Calligraphy Wall Art",
           handle: "islamic-wall-art-sa",
           description: "Beautiful Arabic calligraphy canvas print.",
-          status: "published",
+          status: ProductStatus.PUBLISHED,
           options: [
             {
               title: "Size",
@@ -273,14 +274,14 @@ export default async function ({ container }: ExecArgs) {
               manage_inventory: true,
             },
           ],
-          categories: [{ id: homeDecorId }],
+          category_ids: homeDecorId ? [homeDecorId] : [],
           tags: [{ id: newArrivalTagId }],
         },
         {
           title: "Premium Prayer Mat",
           handle: "premium-prayer-mat-sa",
           description: "Memory foam prayer mat with beautiful Islamic pattern.",
-          status: "published",
+          status: ProductStatus.PUBLISHED,
           options: [
             {
               title: "Color",
@@ -310,7 +311,7 @@ export default async function ({ container }: ExecArgs) {
               manage_inventory: true,
             },
           ],
-          categories: [{ id: homeDecorId }],
+          category_ids: homeDecorId ? [homeDecorId] : [],
           collection_id: ramadanCollectionId,
           tags: [{ id: bestsellerTagId }],
         },

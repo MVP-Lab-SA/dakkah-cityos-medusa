@@ -13,7 +13,7 @@ export default async function({ container }: ExecArgs) {
   // Step 1: Create Saudi Arabia Sales Channel
   const { result: channels } = await createSalesChannelsWorkflow(container).run({
     input: {
-      sales_channels: [{
+      salesChannelsData: [{
         name: "Saudi Arabia Store",
         description: "Sales channel for Saudi Arabian market with SAR pricing",
       }],

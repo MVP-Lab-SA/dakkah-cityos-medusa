@@ -125,7 +125,7 @@ const createSubscriptionStep = createStep(
     },
     { container }
   ) => {
-    const subscriptionModule = container.resolve("subscription") as Record<string, Function>;
+    const subscriptionModule = container.resolve("subscription") as any;
     
     const now = new Date();
     const trial_end = input.trial_days
@@ -163,7 +163,7 @@ const createSubscriptionStep = createStep(
   },
   async ({ subscription }: { subscription: Record<string, unknown> }, { container }) => {
     // Rollback: delete subscription
-    const subscriptionModule = container.resolve("subscription") as Record<string, Function>;
+    const subscriptionModule = container.resolve("subscription") as any;
     await subscriptionModule.deleteSubscriptions(subscription.id);
   }
 );
@@ -176,7 +176,7 @@ const activateSubscriptionStep = createStep(
       return new StepResponse({ subscription });
     }
     
-    const subscriptionModule = container.resolve("subscription") as Record<string, Function>;
+    const subscriptionModule = container.resolve("subscription") as any;
     const now = new Date();
     
     // Calculate first billing period

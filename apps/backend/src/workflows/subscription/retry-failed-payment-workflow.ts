@@ -14,7 +14,7 @@ interface RetryFailedPaymentInput {
 const checkRetryEligibilityStep = createStep(
   "check-retry-eligibility",
   async (input: RetryFailedPaymentInput, { container }) => {
-    const subscriptionModule = container.resolve("subscription") as Record<string, Function>;
+    const subscriptionModule = container.resolve("subscription") as any;
     
     const subscription = await subscriptionModule.retrieveSubscription(input.subscription_id);
     
@@ -45,7 +45,7 @@ const retryPaymentStep = createStep(
       entity: "billing_cycle",
       fields: ["*"],
       filters: {
-        subscription_id: subscription.id,
+        subscription_id: subscription.id as string,
         status: "failed",
       },
       pagination: {
@@ -89,7 +89,7 @@ const retryPaymentStep = createStep(
 const updateSubscriptionStatusStep = createStep(
   "update-subscription-status",
   async ({ subscription, retryResult }: { subscription: Record<string, unknown>; retryResult: Record<string, unknown> }, { container }) => {
-    const subscriptionModule = container.resolve("subscription") as Record<string, Function>;
+    const subscriptionModule = container.resolve("subscription") as any;
     
     if (retryResult.success) {
       // Payment succeeded - reactivate subscription

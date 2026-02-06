@@ -24,7 +24,7 @@ interface CreateCompanyInput {
 const createCompanyStep = createStep(
   "create-company",
   async (input: CreateCompanyInput, { container }) => {
-    const companyService = container.resolve("company") as Record<string, Function>;
+    const companyService = container.resolve("company") as any;
 
     const company = await companyService.createCompanies({
       name: input.name,
@@ -46,7 +46,7 @@ const createCompanyStep = createStep(
     return new StepResponse({ company, input }, { company });
   },
   async ({ company }: { company: Record<string, unknown> }, { container }) => {
-    const companyService = container.resolve("company") as Record<string, Function>;
+    const companyService = container.resolve("company") as any;
     await companyService.deleteCompanies(company.id);
   }
 );
@@ -55,7 +55,7 @@ const createCompanyStep = createStep(
 const addCompanyAdminStep = createStep(
   "add-company-admin",
   async ({ input, company }: { input: CreateCompanyInput; company: Record<string, unknown> }, { container }) => {
-    const companyService = container.resolve("company") as Record<string, Function>;
+    const companyService = container.resolve("company") as any;
 
     const companyUser = await companyService.createCompanyUsers({
       company_id: company.id,
