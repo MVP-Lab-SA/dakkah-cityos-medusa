@@ -4,7 +4,7 @@ import { Navbar } from "@/components/navbar"
 import { CartProvider } from "@/lib/context/cart"
 import { ToastProvider } from "@/lib/context/toast-context"
 import { useStoreTheme } from "@/lib/hooks/use-store-theme"
-import { Outlet } from "@tantml:router"
+import { Outlet } from "@tanstack/react-router"
 
 const Layout = () => {
   // Apply store-specific theme
