@@ -10,11 +10,8 @@ import { lazy } from "react"
 import appCss from "../styles/app.css?url"
 import { BrandingProvider } from "@/lib/context/branding-context"
 import { StoreProvider, type StoreConfig } from "@/lib/store-context"
-import { detectAndFetchStore } from "@/lib/store-detector"
 
 const NotFound = lazy(() => import("@/components/not-found"))
-
-const BACKEND_URL = import.meta.env.VITE_MEDUSA_BACKEND_URL || 'http://localhost:9000'
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -22,22 +19,14 @@ export const Route = createRootRouteWithContext<{
   loader: async ({ context }) => {
     const { queryClient } = context
     
-    // Detect store from hostname (SSR-safe)
-    let storeConfig: StoreConfig | null = null
-    
-    if (typeof window !== 'undefined') {
-      const hostname = window.location.hostname
-      const { store } = await detectAndFetchStore(hostname, BACKEND_URL)
-      storeConfig = store
-    }
-    
     // Pre-populate regions cache
     await queryClient.ensureQueryData({
       queryKey: ["regions"],
       queryFn: () => listRegions({ fields: "id, name, currency_code, *countries" }),
     })
     
-    return { store: storeConfig }
+    // Single-store mode - no multi-tenant detection needed
+    return { store: null as StoreConfig | null }
   },
   head: () => ({
     links: [
