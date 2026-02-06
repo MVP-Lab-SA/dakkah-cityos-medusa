@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from "axios";
-import { MedusaError } from "@medusajs/utils";
+import { MedusaError } from "@medusajs/framework/utils";
 
 export interface FleetbaseConfig {
   apiKey: string;

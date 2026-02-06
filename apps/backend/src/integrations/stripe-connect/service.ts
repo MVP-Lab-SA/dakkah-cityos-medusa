@@ -1,5 +1,5 @@
 import Stripe from "stripe";
-import { MedusaError } from "@medusajs/utils";
+import { MedusaError } from "@medusajs/framework/utils";
 
 export interface StripeConnectConfig {
   secretKey: string;

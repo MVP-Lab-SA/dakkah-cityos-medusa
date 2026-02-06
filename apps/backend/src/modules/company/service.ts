@@ -16,7 +16,7 @@ class CompanyModuleService extends MedusaService({
    */
   async hasAvailableCredit(companyId: string, amount: bigint): Promise<boolean> {
     const company = await this.retrieveCompany(companyId);
-    const available = BigInt(company.credit_limit) - BigInt(company.credit_used);
+    const available = BigInt(company.credit_limit || 0) - BigInt(company.credit_used || 0);
     return available >= amount;
   }
 
@@ -25,14 +25,15 @@ class CompanyModuleService extends MedusaService({
    */
   async reserveCredit(companyId: string, amount: bigint): Promise<void> {
     const company = await this.retrieveCompany(companyId);
-    const available = BigInt(company.credit_limit) - BigInt(company.credit_used);
+    const available = BigInt(company.credit_limit || 0) - BigInt(company.credit_used || 0);
     
     if (available < amount) {
       throw new Error(`Insufficient credit. Available: ${available}, Required: ${amount}`);
     }
 
-    await this.updateCompanies(companyId, {
-      credit_used: (BigInt(company.credit_used) + amount).toString(),
+    await this.updateCompanies({
+      id: companyId,
+      credit_used: (BigInt(company.credit_used || 0) + amount).toString(),
     });
   }
 
@@ -41,9 +42,10 @@ class CompanyModuleService extends MedusaService({
    */
   async releaseCredit(companyId: string, amount: bigint): Promise<void> {
     const company = await this.retrieveCompany(companyId);
-    const newUsed = BigInt(company.credit_used) - amount;
+    const newUsed = BigInt(company.credit_used || 0) - amount;
     
-    await this.updateCompanies(companyId, {
+    await this.updateCompanies({
+      id: companyId,
       credit_used: (newUsed > 0n ? newUsed : 0n).toString(),
     });
   }
@@ -81,7 +83,7 @@ class CompanyModuleService extends MedusaService({
 
     // Check period spend
     const limit = BigInt(companyUser.spending_limit);
-    const spent = BigInt(companyUser.current_period_spend);
+    const spent = BigInt(companyUser.current_period_spend || 0);
     
     return (limit - spent) >= amount;
   }
@@ -92,8 +94,9 @@ class CompanyModuleService extends MedusaService({
   async recordSpending(companyUserId: string, amount: bigint): Promise<void> {
     const companyUser = await this.retrieveCompanyUser(companyUserId);
     
-    await this.updateCompanyUsers(companyUserId, {
-      current_period_spend: (BigInt(companyUser.current_period_spend) + amount).toString(),
+    await this.updateCompanyUsers({
+      id: companyUserId,
+      current_period_spend: (BigInt(companyUser.current_period_spend || 0) + amount).toString(),
     });
   }
 

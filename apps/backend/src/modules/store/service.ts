@@ -11,7 +11,7 @@ class StoreModuleService extends MedusaService({
   /**
    * Retrieve stores by tenant
    */
-  async listStoresByTenant(tenant_id: string, filters?: any) {
+  async listStoresByTenant(tenant_id: string, filters?: Record<string, unknown>) {
     return await this.listStores({
       tenant_id,
       ...filters,

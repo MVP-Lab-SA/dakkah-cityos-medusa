@@ -97,6 +97,9 @@ importers:
       jest:
         specifier: 29.7.0
         version: 29.7.0(@types/node@20.0.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.5.7(@swc/helpers@0.5.17))(@types/node@20.0.0)(typescript@5.8.3))
+      logform:
+        specifier: ^2.7.0
+        version: 2.7.0
       meilisearch:
         specifier: ^0.55.0
         version: 0.55.0
@@ -112,6 +115,9 @@ importers:
       react-dom:
         specifier: 19.1.1
         version: 19.1.1(react@19.1.1)
+      stripe:
+        specifier: ^20.3.1
+        version: 20.3.1(@types/node@20.0.0)
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.5.7(@swc/helpers@0.5.17))(@types/node@20.0.0)(typescript@5.8.3)
@@ -10750,6 +10756,15 @@ packages:
 
   stripe@19.1.0:
     resolution: {integrity: sha512-FjgIiE98dMMTNssfdjMvFdD4eZyEzdWAOwPYqzhPRNZeg9ggFWlPXmX1iJKD5pPIwZBaPlC3SayQQkwsPo6/YQ==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      '@types/node': '>=16'
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+
+  stripe@20.3.1:
+    resolution: {integrity: sha512-k990yOT5G5rhX3XluRPw5Y8RLdJDW4dzQ29wWT66piHrbnM2KyamJ1dKgPsw4HzGHRWjDiSSdcI2WdxQUPV3aQ==}
     engines: {node: '>=16'}
     peerDependencies:
       '@types/node': '>=16'
@@ -25230,6 +25245,10 @@ snapshots:
   stripe@19.1.0(@types/node@20.0.0):
     dependencies:
       qs: 6.14.0
+    optionalDependencies:
+      '@types/node': 20.0.0
+
+  stripe@20.3.1(@types/node@20.0.0):
     optionalDependencies:
       '@types/node': 20.0.0
 

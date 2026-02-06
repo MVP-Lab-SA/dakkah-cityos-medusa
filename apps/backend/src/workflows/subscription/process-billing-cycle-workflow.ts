@@ -1,9 +1,9 @@
 import {
   createWorkflow,
   WorkflowResponse,
-  transform,
+  createStep,
+  StepResponse,
 } from "@medusajs/framework/workflows-sdk";
-import { createStep } from "@medusajs/framework/workflows-sdk";
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
 import { createCartWorkflow } from "@medusajs/medusa/core-flows";
 
@@ -15,12 +15,15 @@ interface ProcessBillingCycleInput {
 const loadBillingCycleStep = createStep(
   "load-billing-cycle",
   async (input: ProcessBillingCycleInput, { container }) => {
-    const subscriptionModule = container.resolve("subscription");
+    const subscriptionModule = container.resolve("subscription") as Record<string, Function>;
     const query = container.resolve(ContainerRegistrationKeys.QUERY);
     
-    const cycle = await subscriptionModule.retrieveBillingCycle(input.billing_cycle_id, {
-      relations: ["subscription"],
-    });
+    const [cycles] = await subscriptionModule.listBillingCycles(
+      { id: input.billing_cycle_id },
+      { relations: ["subscription"] }
+    );
+    
+    const cycle = cycles?.[0] as Record<string, unknown>;
     
     if (!cycle) {
       throw new Error(`Billing cycle ${input.billing_cycle_id} not found`);
@@ -37,52 +40,64 @@ const loadBillingCycleStep = createStep(
       filters: { subscription_id: cycle.subscription_id },
     });
     
-    return { cycle, subscription: cycle.subscription, items };
+    return new StepResponse({ cycle, subscription: cycle.subscription, items });
   }
 );
 
 // Step 2: Update billing cycle to processing
 const markCycleProcessingStep = createStep(
   "mark-cycle-processing",
-  async ({ cycle }: any, { container }) => {
-    const subscriptionModule = container.resolve("subscription");
+  async ({ cycle }: { cycle: Record<string, unknown> }, { container }) => {
+    const subscriptionModule = container.resolve("subscription") as Record<string, Function>;
     
-    return await subscriptionModule.updateBillingCycles(cycle.id, {
+    const updated = await subscriptionModule.updateBillingCycles({
+      id: cycle.id,
       status: "processing",
-      attempt_count: cycle.attempt_count + 1,
+      attempt_count: ((cycle.attempt_count as number) || 0) + 1,
       last_attempt_at: new Date(),
     });
+    
+    return new StepResponse(updated);
   }
 );
 
 // Step 3: Create order from subscription
 const createOrderFromSubscriptionStep = createStep(
   "create-order-from-subscription",
-  async ({ cycle, subscription, items }: any, { container }) => {
+  async ({ cycle, subscription, items }: { cycle: Record<string, unknown>; subscription: Record<string, unknown>; items: Record<string, unknown>[] }, { container }) => {
     const query = container.resolve(ContainerRegistrationKeys.QUERY);
     
     // Get region for customer
     const { data: customers } = await query.graph({
       entity: "customer",
-      fields: ["id", "region_id", "email"],
+      fields: ["id", "email"],
       filters: { id: subscription.customer_id },
     });
     
-    const customer = customers[0];
+    const customer = customers[0] as Record<string, unknown>;
     if (!customer) {
       throw new Error(`Customer ${subscription.customer_id} not found`);
     }
     
+    // Get default region
+    const { data: regions } = await query.graph({
+      entity: "region",
+      fields: ["id"],
+      pagination: { take: 1 },
+    });
+    
+    const region = regions[0] as Record<string, unknown>;
+    
     // Create cart
     const { result: cart } = await createCartWorkflow(container).run({
       input: {
-        region_id: customer.region_id,
-        customer_id: subscription.customer_id,
-        email: customer.email,
-        currency_code: subscription.currency_code,
-        items: items.map((item: any) => ({
-          variant_id: item.variant_id,
-          quantity: item.quantity,
+        region_id: region?.id as string,
+        customer_id: subscription.customer_id as string,
+        email: customer.email as string,
+        currency_code: subscription.currency_code as string,
+        items: items.map((item: Record<string, unknown>) => ({
+          variant_id: item.variant_id as string,
+          quantity: item.quantity as number,
         })),
         metadata: {
           subscription_id: subscription.id,
@@ -92,12 +107,12 @@ const createOrderFromSubscriptionStep = createStep(
       },
     });
     
-    return { cart };
+    return new StepResponse({ cart }, { cart });
   },
-  async ({ cart }, { container }) => {
+  async ({ cart }: { cart: Record<string, unknown> }, { container }) => {
     // Rollback: delete cart
     if (cart?.id) {
-      const cartModule = container.resolve("cart");
+      const cartModule = container.resolve("cart") as Record<string, Function>;
       await cartModule.deleteCarts(cart.id);
     }
   }
@@ -106,7 +121,7 @@ const createOrderFromSubscriptionStep = createStep(
 // Step 4: Process payment
 const processSubscriptionPaymentStep = createStep(
   "process-subscription-payment",
-  async ({ cart, subscription }: any, { container }) => {
+  async ({ cart, subscription }: { cart: Record<string, unknown>; subscription: Record<string, unknown> }, { container }) => {
     // This would integrate with payment provider
     // For now, we'll simulate payment processing
     
@@ -120,7 +135,7 @@ const processSubscriptionPaymentStep = createStep(
       // });
     }
     
-    return { payment_status: "captured" };
+    return new StepResponse({ payment_status: "captured" });
   }
 );
 
@@ -128,43 +143,44 @@ const processSubscriptionPaymentStep = createStep(
 const completeBillingCycleStep = createStep(
   "complete-billing-cycle",
   async (
-    { cycle, cart, subscription }: any,
+    { cycle, cart, subscription }: { cycle: Record<string, unknown>; cart: Record<string, unknown>; subscription: Record<string, unknown> },
     { container }
   ) => {
-    const subscriptionModule = container.resolve("subscription");
+    const subscriptionModule = container.resolve("subscription") as Record<string, Function>;
     
     // Update billing cycle
-    await subscriptionModule.updateBillingCycles(cycle.id, {
+    await subscriptionModule.updateBillingCycles({
+      id: cycle.id,
       status: "completed",
       order_id: cart.id,
       completed_at: new Date(),
     });
     
     // Update subscription period
-    const nextPeriodStart = new Date(cycle.period_end);
-    let nextPeriodEnd = new Date(nextPeriodStart);
+    const nextPeriodStart = new Date(cycle.period_end as string);
+    const nextPeriodEnd = new Date(nextPeriodStart);
+    const intervalCount = subscription.billing_interval_count as number || 1;
     
     switch (subscription.billing_interval) {
       case "daily":
-        nextPeriodEnd.setDate(nextPeriodEnd.getDate() + subscription.billing_interval_count);
+        nextPeriodEnd.setDate(nextPeriodEnd.getDate() + intervalCount);
         break;
       case "weekly":
-        nextPeriodEnd.setDate(nextPeriodEnd.getDate() + 7 * subscription.billing_interval_count);
+        nextPeriodEnd.setDate(nextPeriodEnd.getDate() + 7 * intervalCount);
         break;
       case "monthly":
-        nextPeriodEnd.setMonth(nextPeriodEnd.getMonth() + subscription.billing_interval_count);
+        nextPeriodEnd.setMonth(nextPeriodEnd.getMonth() + intervalCount);
         break;
       case "quarterly":
-        nextPeriodEnd.setMonth(nextPeriodEnd.getMonth() + 3 * subscription.billing_interval_count);
+        nextPeriodEnd.setMonth(nextPeriodEnd.getMonth() + 3 * intervalCount);
         break;
       case "yearly":
-        nextPeriodEnd.setFullYear(
-          nextPeriodEnd.getFullYear() + subscription.billing_interval_count
-        );
+        nextPeriodEnd.setFullYear(nextPeriodEnd.getFullYear() + intervalCount);
         break;
     }
     
-    await subscriptionModule.updateSubscriptions(subscription.id, {
+    await subscriptionModule.updateSubscriptions({
+      id: subscription.id,
       current_period_start: nextPeriodStart,
       current_period_end: nextPeriodEnd,
       retry_count: 0, // Reset retry count on success
@@ -183,30 +199,7 @@ const completeBillingCycleStep = createStep(
       total: subscription.total,
     });
     
-    return { success: true };
-  }
-);
-
-// Step 6: Handle failure
-const handleBillingFailureStep = createStep(
-  "handle-billing-failure",
-  async ({ cycle, error }: any, { container }) => {
-    const subscriptionModule = container.resolve("subscription");
-    
-    // Calculate next retry time (exponential backoff)
-    const retryDelays = [1, 3, 7]; // days
-    const nextRetryDelay = retryDelays[cycle.attempt_count] || 7;
-    const nextAttempt = new Date();
-    nextAttempt.setDate(nextAttempt.getDate() + nextRetryDelay);
-    
-    await subscriptionModule.updateBillingCycles(cycle.id, {
-      status: "failed",
-      failed_at: new Date(),
-      failure_reason: error.message,
-      next_attempt_at: nextAttempt,
-    });
-    
-    return { retryScheduled: true, nextAttempt };
+    return new StepResponse({ success: true });
   }
 );
 

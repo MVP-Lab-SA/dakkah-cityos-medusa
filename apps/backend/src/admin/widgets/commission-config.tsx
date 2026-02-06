@@ -1,5 +1,5 @@
 import { defineWidgetConfig } from "@medusajs/admin-sdk"
-import { Container, Heading, Text, Input, Button, Select } from "@medusajs/ui"
+import { Container, Heading, Text, Input, Button } from "@medusajs/ui"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import { sdk } from "../lib/client"
@@ -111,21 +111,16 @@ const CommissionConfigWidget = () => {
               <Text size="small" weight="plus" className="mb-1">
                 Type
               </Text>
-              <Select
-                size="small"
+              <select
+                className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                 value={formData.type}
-                onValueChange={(value) =>
-                  setFormData({ ...formData, type: value as "percentage" | "flat" })
+                onChange={(e) =>
+                  setFormData({ ...formData, type: e.target.value as "percentage" | "flat" })
                 }
               >
-                <Select.Trigger>
-                  <Select.Value placeholder="Select type" />
-                </Select.Trigger>
-                <Select.Content>
-                  <Select.Item value="percentage">Percentage</Select.Item>
-                  <Select.Item value="flat">Flat Amount</Select.Item>
-                </Select.Content>
-              </Select>
+                <option value="percentage">Percentage</option>
+                <option value="flat">Flat Amount</option>
+              </select>
             </div>
 
             {formData.type === "percentage" ? (
@@ -140,7 +135,7 @@ const CommissionConfigWidget = () => {
                   max="100"
                   value={formData.rate}
                   onChange={(e) =>
-                    setFormData({ ...formData, rate: parseFloat(e.target.value) || 0 })
+                    setFormData({ ...formData, rate: parseFloat(e.target.value) })
                   }
                 />
               </div>
@@ -155,61 +150,65 @@ const CommissionConfigWidget = () => {
                   min="0"
                   value={formData.flat_amount}
                   onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      flat_amount: parseFloat(e.target.value) || 0,
-                    })
+                    setFormData({ ...formData, flat_amount: parseFloat(e.target.value) })
                   }
                 />
               </div>
             )}
 
-            <label className="flex items-center gap-x-2">
+            <div className="flex items-center gap-2">
               <input
                 type="checkbox"
+                id="is_default"
                 checked={formData.is_default}
-                onChange={(e) => setFormData({ ...formData, is_default: e.target.checked })}
-                className="rounded"
+                onChange={(e) =>
+                  setFormData({ ...formData, is_default: e.target.checked })
+                }
               />
-              <Text size="small">Set as default rule</Text>
-            </label>
+              <label htmlFor="is_default">
+                <Text size="small">Set as default rule</Text>
+              </label>
+            </div>
 
             <Button
               size="small"
               onClick={() => createMutation.mutate(formData)}
-              disabled={createMutation.isPending || !formData.name}
+              isLoading={createMutation.isPending}
             >
-              {createMutation.isPending ? "Creating..." : "Create Rule"}
+              Create Rule
             </Button>
           </div>
         </div>
       )}
 
       <div className="px-6 py-4">
+        <Text size="small" weight="plus" className="mb-3">
+          Commission Rules
+        </Text>
         {rules.length === 0 ? (
-          <Text className="text-ui-fg-subtle">No commission rules configured</Text>
+          <Text size="small" className="text-ui-fg-subtle">
+            No commission rules configured
+          </Text>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {rules.map((rule) => (
               <div
                 key={rule.id}
                 className="flex items-center justify-between p-3 border rounded-lg"
               >
                 <div>
-                  <div className="flex items-center gap-x-2">
-                    <Text size="small" weight="plus">
-                      {rule.name}
-                    </Text>
+                  <Text size="small" weight="plus">
+                    {rule.name}
                     {rule.is_default && (
-                      <span className="text-xs bg-ui-bg-subtle px-2 py-0.5 rounded">
+                      <span className="ml-2 text-xs bg-ui-tag-green-bg text-ui-tag-green-text px-2 py-0.5 rounded">
                         Default
                       </span>
                     )}
-                  </div>
+                  </Text>
                   <Text size="small" className="text-ui-fg-subtle">
                     {rule.type === "percentage"
-                      ? `${rule.rate}% of sale`
-                      : `$${rule.flat_amount} per sale`}
+                      ? `${rule.rate}% of order total`
+                      : `$${rule.flat_amount} per order`}
                   </Text>
                 </div>
               </div>
@@ -222,7 +221,7 @@ const CommissionConfigWidget = () => {
 }
 
 export const config = defineWidgetConfig({
-  zone: "product.details.side.before",
+  zone: "order.details.before",
 })
 
 export default CommissionConfigWidget

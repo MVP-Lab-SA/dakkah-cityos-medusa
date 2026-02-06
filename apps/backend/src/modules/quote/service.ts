@@ -41,11 +41,12 @@ class QuoteModuleService extends MedusaService({
         : BigInt(item.unit_price);
       
       const itemSubtotal = itemPrice * BigInt(item.quantity);
-      const itemDiscount = BigInt(item.discount_total);
-      const itemTax = BigInt(item.tax_total);
+      const itemDiscount = BigInt(item.discount_total || 0);
+      const itemTax = BigInt(item.tax_total || 0);
       const itemTotal = itemSubtotal - itemDiscount + itemTax;
 
-      await this.updateQuoteItems(item.id, {
+      await this.updateQuoteItems({
+        id: item.id,
         subtotal: itemSubtotal.toString(),
         total: itemTotal.toString(),
       });
@@ -56,7 +57,8 @@ class QuoteModuleService extends MedusaService({
       total += itemTotal;
     }
 
-    await this.updateQuotes(quoteId, {
+    await this.updateQuotes({
+      id: quoteId,
       subtotal: subtotal.toString(),
       discount_total: discountTotal.toString(),
       tax_total: taxTotal.toString(),
@@ -85,9 +87,9 @@ class QuoteModuleService extends MedusaService({
     reason?: string
   ): Promise<void> {
     const quote = await this.retrieveQuote(quoteId);
-    const subtotal = BigInt(quote.subtotal);
+    const subtotal = BigInt(quote.subtotal || 0);
     
-    let finalDiscount = BigInt(quote.discount_total);
+    let finalDiscount = BigInt(quote.discount_total || 0);
 
     if (discountPercentage) {
       finalDiscount += (subtotal * BigInt(Math.floor(discountPercentage * 100))) / 10000n;
@@ -97,7 +99,8 @@ class QuoteModuleService extends MedusaService({
       finalDiscount += discountAmount;
     }
 
-    await this.updateQuotes(quoteId, {
+    await this.updateQuotes({
+      id: quoteId,
       custom_discount_percentage: discountPercentage,
       custom_discount_amount: discountAmount?.toString(),
       discount_total: finalDiscount.toString(),
@@ -118,7 +121,8 @@ class QuoteModuleService extends MedusaService({
     });
 
     for (const quote of quotes) {
-      await this.updateQuotes(quote.id, {
+      await this.updateQuotes({
+        id: quote.id,
         status: "expired",
       });
     }

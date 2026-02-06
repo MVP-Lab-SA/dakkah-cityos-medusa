@@ -1,11 +1,26 @@
 import type { MedusaRequest } from "@medusajs/framework/http"
-import type { AuthContext } from "@medusajs/framework/types"
+
+/**
+ * Auth context type
+ */
+export interface AuthContext {
+  actor_id: string
+  auth_identity_id: string
+  actor_type: string
+  app_metadata?: Record<string, unknown>
+}
 
 /**
  * Extended request type with custom properties for multi-tenant support
  */
 export interface ExtendedRequest extends MedusaRequest {
   auth_context?: AuthContext
+  auth?: {
+    actor_id: string
+    auth_identity_id: string
+    actor_type: string
+    scope: string
+  }
   tenant?: {
     id: string
     name: string
@@ -43,92 +58,107 @@ export function getStore(req: MedusaRequest) {
 
 /**
  * Module service types for container resolution
+ * These use Record<string, unknown> for flexibility with MedusaService methods
  */
 export interface QuoteModuleService {
-  listQuotes(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<any[]>
-  listAndCountQuotes(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<[any[], number]>
-  retrieveQuote(id: string, config?: Record<string, unknown>): Promise<any>
-  createQuotes(data: any): Promise<any>
-  updateQuotes(idOrSelector: string | Record<string, unknown>, data: Record<string, unknown>): Promise<any[]>
+  listQuotes(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<[unknown[], number]>
+  retrieveQuote(id: string, config?: Record<string, unknown>): Promise<unknown>
+  createQuotes(data: unknown): Promise<unknown>
+  updateQuotes(data: unknown): Promise<unknown[]>
   deleteQuotes(ids: string | string[]): Promise<void>
-  createQuoteItems(data: any): Promise<any>
+  createQuoteItems(data: unknown): Promise<unknown>
+  listQuoteItems(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<[unknown[], number]>
+  updateQuoteItems(data: unknown): Promise<unknown[]>
   generateQuoteNumber(): Promise<string>
   calculateQuoteTotals(quoteId: string): Promise<void>
+  applyCustomDiscount(quoteId: string, percentage?: number, amount?: bigint, reason?: string): Promise<void>
 }
 
 export interface CompanyModuleService {
-  listCompanies(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<any[]>
-  listAndCountCompanies(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<[any[], number]>
-  retrieveCompany(id: string, config?: Record<string, unknown>): Promise<any>
-  createCompanies(data: any): Promise<any>
-  updateCompanies(idOrSelector: string | Record<string, unknown>, data: Record<string, unknown>): Promise<any[]>
+  listCompanies(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<[unknown[], number]>
+  retrieveCompany(id: string, config?: Record<string, unknown>): Promise<unknown>
+  createCompanies(data: unknown): Promise<unknown>
+  updateCompanies(data: unknown): Promise<unknown[]>
   deleteCompanies(ids: string | string[]): Promise<void>
-  listCompanyUsers(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<any[]>
-  createCompanyUsers(data: any): Promise<any>
+  listCompanyUsers(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<[unknown[], number]>
+  retrieveCompanyUser(id: string, config?: Record<string, unknown>): Promise<unknown>
+  createCompanyUsers(data: unknown): Promise<unknown>
+  updateCompanyUsers(data: unknown): Promise<unknown[]>
 }
 
 export interface VendorModuleService {
-  listVendors(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<any[]>
-  listAndCountVendors(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<[any[], number]>
-  retrieveVendor(id: string, config?: Record<string, unknown>): Promise<any>
-  createVendors(data: any): Promise<any>
-  updateVendors(idOrSelector: string | Record<string, unknown>, data: Record<string, unknown>): Promise<any[]>
+  listVendors(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<[unknown[], number]>
+  retrieveVendor(id: string, config?: Record<string, unknown>): Promise<unknown>
+  createVendors(data: unknown): Promise<unknown>
+  updateVendors(data: unknown): Promise<unknown[]>
   deleteVendors(ids: string | string[]): Promise<void>
-  listVendorUsers(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<any[]>
-  createVendorUsers(data: any): Promise<any>
+  listVendorUsers(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<[unknown[], number]>
+  createVendorUsers(data: unknown): Promise<unknown>
 }
 
 export interface StoreModuleService {
-  listStores(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<any[]>
-  listAndCountStores(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<[any[], number]>
-  retrieveStore(id: string, config?: Record<string, unknown>): Promise<any>
-  createStores(data: any): Promise<any>
-  updateStores(idOrSelector: string | Record<string, unknown>, data: Record<string, unknown>): Promise<any[]>
+  listStores(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<[unknown[], number]>
+  retrieveStore(id: string, config?: Record<string, unknown>): Promise<unknown>
+  createStores(data: unknown): Promise<unknown>
+  updateStores(data: unknown): Promise<unknown[]>
   deleteStores(ids: string | string[]): Promise<void>
+  retrieveStoreBySubdomain(subdomain: string): Promise<unknown>
+  retrieveStoreByDomain(domain: string): Promise<unknown>
+  listStoresByTenant(tenantId: string, filters?: Record<string, unknown>): Promise<[unknown[], number]>
 }
 
 export interface TenantModuleService {
-  listTenants(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<any[]>
-  listAndCountTenants(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<[any[], number]>
-  retrieveTenant(id: string, config?: Record<string, unknown>): Promise<any>
-  createTenants(data: any): Promise<any>
-  updateTenants(idOrSelector: string | Record<string, unknown>, data: Record<string, unknown>): Promise<any[]>
+  listTenants(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<[unknown[], number]>
+  retrieveTenant(id: string, config?: Record<string, unknown>): Promise<unknown>
+  createTenants(data: unknown): Promise<unknown>
+  updateTenants(data: unknown): Promise<unknown[]>
   deleteTenants(ids: string | string[]): Promise<void>
 }
 
 export interface SubscriptionModuleService {
-  listSubscriptions(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<any[]>
-  listAndCountSubscriptions(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<[any[], number]>
-  retrieveSubscription(id: string, config?: Record<string, unknown>): Promise<any>
-  createSubscriptions(data: any): Promise<any>
-  updateSubscriptions(idOrSelector: string | Record<string, unknown>, data: Record<string, unknown>): Promise<any[]>
+  listSubscriptions(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<[unknown[], number]>
+  retrieveSubscription(id: string, config?: Record<string, unknown>): Promise<unknown>
+  createSubscriptions(data: unknown): Promise<unknown>
+  updateSubscriptions(data: unknown): Promise<unknown[]>
   deleteSubscriptions(ids: string | string[]): Promise<void>
-  listBillingCycles(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<any[]>
-  createBillingCycles(data: any): Promise<any>
+  listBillingCycles(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<[unknown[], number]>
+  createBillingCycles(data: unknown): Promise<unknown>
+  updateBillingCycles(data: unknown): Promise<unknown[]>
+  createSubscriptionItems(data: unknown): Promise<unknown>
 }
 
 export interface CommissionModuleService {
-  listCommissions(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<any[]>
-  listAndCountCommissions(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<[any[], number]>
-  retrieveCommission(id: string, config?: Record<string, unknown>): Promise<any>
-  createCommissions(data: any): Promise<any>
-  updateCommissions(idOrSelector: string | Record<string, unknown>, data: Record<string, unknown>): Promise<any[]>
-  deleteCommissions(ids: string | string[]): Promise<void>
+  listCommissionRules(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<[unknown[], number]>
+  retrieveCommissionRule(id: string, config?: Record<string, unknown>): Promise<unknown>
+  createCommissionRules(data: unknown): Promise<unknown>
+  updateCommissionRules(data: unknown): Promise<unknown[]>
+  deleteCommissionRules(ids: string | string[]): Promise<void>
+  listCommissionTransactions(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<[unknown[], number]>
+  createCommissionTransactions(data: unknown): Promise<unknown>
+  calculateCommission(data: unknown): Promise<unknown>
+  createCommissionTransaction(data: unknown): Promise<unknown>
 }
 
 export interface PayoutModuleService {
-  listPayouts(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<any[]>
-  listAndCountPayouts(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<[any[], number]>
-  retrievePayout(id: string, config?: Record<string, unknown>): Promise<any>
-  createPayouts(data: any): Promise<any>
-  updatePayouts(idOrSelector: string | Record<string, unknown>, data: Record<string, unknown>): Promise<any[]>
+  listPayouts(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<[unknown[], number]>
+  retrievePayout(id: string, config?: Record<string, unknown>): Promise<unknown>
+  createPayouts(data: unknown): Promise<unknown>
+  updatePayouts(data: unknown): Promise<unknown[]>
   deletePayouts(ids: string | string[]): Promise<void>
+  createVendorPayout(data: unknown): Promise<unknown>
+  processStripeConnectPayout(payoutId: string): Promise<unknown>
+  listPayoutTransactionLinks(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<[unknown[], number]>
+  createPayoutTransactionLinks(data: unknown): Promise<unknown>
 }
 
 export interface VolumePricingModuleService {
-  listVolumePricingRules(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<any[]>
-  retrieveVolumePricingRule(id: string, config?: Record<string, unknown>): Promise<any>
-  createVolumePricingRules(data: any): Promise<any>
-  updateVolumePricingRules(idOrSelector: string | Record<string, unknown>, data: Record<string, unknown>): Promise<any[]>
-  deleteVolumePricingRules(ids: string | string[]): Promise<void>
+  listVolumePricings(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<[unknown[], number]>
+  retrieveVolumePricing(id: string, config?: Record<string, unknown>): Promise<unknown>
+  createVolumePricings(data: unknown): Promise<unknown>
+  updateVolumePricings(data: unknown): Promise<unknown[]>
+  deleteVolumePricings(ids: string | string[]): Promise<void>
+  listVolumePricingTiers(filters?: Record<string, unknown>, config?: Record<string, unknown>): Promise<[unknown[], number]>
+  createVolumePricingTiers(data: unknown): Promise<unknown>
+  getApplicableTier(data: unknown): Promise<unknown>
+  calculatePrice(data: unknown): Promise<unknown>
 }
