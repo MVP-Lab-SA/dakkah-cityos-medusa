@@ -1,6 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework"
 import { z } from "zod"
-import { processPayoutWorkflow } from "../../../workflows/vendor/process-payout-workflow"
+import { processPayoutWorkflow } from "../../../workflows/vendor/process-payout-workflow.js"
 
 const createPayoutSchema = z.object({
   vendorId: z.string(),
@@ -10,7 +10,7 @@ const createPayoutSchema = z.object({
 })
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const payoutModule = req.scope.resolve("payout")
+  const payoutModule = req.scope.resolve("payout") as any
   const context = (req as any).cityosContext
 
   if (!context?.tenantId) {
@@ -27,18 +27,17 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   if (vendor_id) filters.vendor_id = vendor_id
   if (status) filters.status = status
 
-  const [payouts, count] = await payoutModule.listAndCountPayouts(
+  const payouts = await payoutModule.listPayouts(
     filters,
     {
       skip: Number(offset),
       take: Number(limit),
-      relations: [],
     }
   )
 
   return res.json({
     payouts,
-    count,
+    count: Array.isArray(payouts) ? payouts.length : 0,
     limit: Number(limit),
     offset: Number(offset),
   })
@@ -56,7 +55,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   if (!validation.success) {
     return res.status(400).json({
       message: "Validation failed",
-      errors: validation.error.errors,
+      errors: validation.error.issues,
     })
   }
 

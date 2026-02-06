@@ -1,5 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
-import { StripeConnectService } from "../../../../../integrations/stripe-connect";
+import { StripeConnectService } from "../../../../../integrations/stripe-connect/index.js";
 import Stripe from "stripe";
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -38,7 +38,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         await handleTransferCreated(event.data.object as Stripe.Transfer, req);
         break;
 
-      case "transfer.failed":
+      case "transfer.reversed":
+        // Handle transfer failures via reversed event
         await handleTransferFailed(event.data.object as Stripe.Transfer, req);
         break;
 
@@ -65,7 +66,7 @@ async function handleAccountUpdated(
   account: Stripe.Account,
   req: MedusaRequest
 ) {
-  const vendorModuleService = req.scope.resolve("vendorModuleService");
+  const vendorModuleService = req.scope.resolve("vendorModuleService") as any;
 
   // Find vendor by stripe_account_id
   const vendors = await vendorModuleService.listVendors({
@@ -86,7 +87,8 @@ async function handleAccountUpdated(
     account.details_submitted;
 
   if (isOnboarded && vendor.status === "pending") {
-    await vendorModuleService.updateVendors(vendor.id, {
+    await vendorModuleService.updateVendors({
+      id: vendor.id,
       status: "approved",
       stripe_onboarding_completed: true,
     });
@@ -97,11 +99,12 @@ async function handleTransferCreated(
   transfer: Stripe.Transfer,
   req: MedusaRequest
 ) {
-  const payoutModuleService = req.scope.resolve("payoutModuleService");
+  const payoutModuleService = req.scope.resolve("payoutModuleService") as any;
 
   // Update payout with transfer ID
   if (transfer.metadata?.payout_id) {
-    await payoutModuleService.updatePayouts(transfer.metadata.payout_id, {
+    await payoutModuleService.updatePayouts({
+      id: transfer.metadata.payout_id,
       stripe_transfer_id: transfer.id,
       status: "completed",
       processed_at: new Date(),
@@ -113,18 +116,19 @@ async function handleTransferFailed(
   transfer: Stripe.Transfer,
   req: MedusaRequest
 ) {
-  const payoutModuleService = req.scope.resolve("payoutModuleService");
+  const payoutModuleService = req.scope.resolve("payoutModuleService") as any;
 
   if (transfer.metadata?.payout_id) {
-    await payoutModuleService.updatePayouts(transfer.metadata.payout_id, {
+    await payoutModuleService.updatePayouts({
+      id: transfer.metadata.payout_id,
       status: "failed",
-      failure_reason: transfer.failure_message || "Transfer failed",
+      failure_reason: (transfer as any).failure_message || "Transfer failed",
     });
   }
 }
 
 async function handlePayoutPaid(payout: Stripe.Payout, req: MedusaRequest) {
-  const payoutModuleService = req.scope.resolve("payoutModuleService");
+  const payoutModuleService = req.scope.resolve("payoutModuleService") as any;
 
   // Find payout by stripe_payout_id
   const payouts = await payoutModuleService.listPayouts({
@@ -132,7 +136,8 @@ async function handlePayoutPaid(payout: Stripe.Payout, req: MedusaRequest) {
   });
 
   if (payouts.length > 0) {
-    await payoutModuleService.updatePayouts(payouts[0].id, {
+    await payoutModuleService.updatePayouts({
+      id: payouts[0].id,
       status: "completed",
       processed_at: new Date(),
     });
@@ -140,14 +145,15 @@ async function handlePayoutPaid(payout: Stripe.Payout, req: MedusaRequest) {
 }
 
 async function handlePayoutFailed(payout: Stripe.Payout, req: MedusaRequest) {
-  const payoutModuleService = req.scope.resolve("payoutModuleService");
+  const payoutModuleService = req.scope.resolve("payoutModuleService") as any;
 
   const payouts = await payoutModuleService.listPayouts({
     stripe_payout_id: payout.id,
   });
 
   if (payouts.length > 0) {
-    await payoutModuleService.updatePayouts(payouts[0].id, {
+    await payoutModuleService.updatePayouts({
+      id: payouts[0].id,
       status: "failed",
       failure_reason: payout.failure_message || "Payout failed",
     });

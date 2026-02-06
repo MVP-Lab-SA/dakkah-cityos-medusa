@@ -1,9 +1,10 @@
 import {
   createWorkflow,
   WorkflowResponse,
-  transform,
+  createStep,
+  StepResponse,
 } from "@medusajs/framework/workflows-sdk";
-import { createStep } from "@medusajs/framework/workflows-sdk";
+import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
 
 interface RetryFailedPaymentInput {
   subscription_id: string;
@@ -13,7 +14,7 @@ interface RetryFailedPaymentInput {
 const checkRetryEligibilityStep = createStep(
   "check-retry-eligibility",
   async (input: RetryFailedPaymentInput, { container }) => {
-    const subscriptionModule = container.resolve("subscription");
+    const subscriptionModule = container.resolve("subscription") as any;
     
     const subscription = await subscriptionModule.retrieveSubscription(input.subscription_id);
     
@@ -25,26 +26,26 @@ const checkRetryEligibilityStep = createStep(
       throw new Error(`Subscription ${input.subscription_id} is not in past_due status`);
     }
     
-    if (subscription.retry_count >= subscription.max_retry_attempts) {
+    if (subscription.retry_count >= (subscription.max_retry_attempts || 3)) {
       throw new Error(`Subscription ${input.subscription_id} has exceeded max retry attempts`);
     }
     
-    return { subscription };
+    return new StepResponse({ subscription });
   }
 );
 
 // Step 2: Attempt payment retry
 const retryPaymentStep = createStep(
   "retry-payment",
-  async ({ subscription }: any, { container }) => {
-    const subscriptionModule = container.resolve("subscription");
+  async ({ subscription }: { subscription: Record<string, unknown> }, { container }) => {
+    const query = container.resolve(ContainerRegistrationKeys.QUERY);
     
     // Find the most recent failed billing cycle
-    const { data: failedCycles } = await container.resolve("query").graph({
+    const { data: failedCycles } = await query.graph({
       entity: "billing_cycle",
       fields: ["*"],
       filters: {
-        subscription_id: subscription.id,
+        subscription_id: subscription.id as string,
         status: "failed",
       },
       pagination: {
@@ -57,7 +58,7 @@ const retryPaymentStep = createStep(
       throw new Error(`No failed billing cycle found for subscription ${subscription.id}`);
     }
     
-    const cycle = failedCycles[0];
+    const cycle = failedCycles[0] as Record<string, unknown>;
     
     // Attempt to process the billing cycle again
     // This would call the payment provider
@@ -76,9 +77,10 @@ const retryPaymentStep = createStep(
         throw new Error("Payment failed");
       }
       
-      return { success: true, cycle };
+      return new StepResponse({ success: true, cycle });
     } catch (error) {
-      return { success: false, error: error.message, cycle };
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      return new StepResponse({ success: false, error: errorMessage, cycle });
     }
   }
 );
@@ -86,28 +88,33 @@ const retryPaymentStep = createStep(
 // Step 3: Update subscription based on retry result
 const updateSubscriptionStatusStep = createStep(
   "update-subscription-status",
-  async ({ subscription, retryResult }: any, { container }) => {
-    const subscriptionModule = container.resolve("subscription");
+  async ({ subscription, retryResult }: { subscription: Record<string, unknown>; retryResult: Record<string, unknown> }, { container }) => {
+    const subscriptionModule = container.resolve("subscription") as any;
     
     if (retryResult.success) {
       // Payment succeeded - reactivate subscription
-      await subscriptionModule.updateBillingCycles(retryResult.cycle.id, {
+      const cycle = retryResult.cycle as Record<string, unknown>;
+      
+      await subscriptionModule.updateBillingCycles({
+        id: cycle.id,
         status: "completed",
         completed_at: new Date(),
       });
       
-      await subscriptionModule.updateSubscriptions(subscription.id, {
+      await subscriptionModule.updateSubscriptions({
+        id: subscription.id,
         status: "active",
         retry_count: 0,
         last_retry_at: new Date(),
         next_retry_at: null,
       });
       
-      return { status: "active", message: "Payment retry successful" };
+      return new StepResponse({ status: "active", message: "Payment retry successful" });
     } else {
       // Payment failed - update retry count
-      const newRetryCount = subscription.retry_count + 1;
-      const maxReached = newRetryCount >= subscription.max_retry_attempts;
+      const newRetryCount = ((subscription.retry_count as number) || 0) + 1;
+      const maxRetryAttempts = (subscription.max_retry_attempts as number) || 3;
+      const maxReached = newRetryCount >= maxRetryAttempts;
       
       // Calculate next retry (exponential backoff)
       const retryDelays = [1, 3, 7]; // days
@@ -115,7 +122,8 @@ const updateSubscriptionStatusStep = createStep(
       const nextRetryDate = new Date();
       nextRetryDate.setDate(nextRetryDate.getDate() + nextRetryDelay);
       
-      await subscriptionModule.updateSubscriptions(subscription.id, {
+      await subscriptionModule.updateSubscriptions({
+        id: subscription.id,
         status: maxReached ? "canceled" : "past_due",
         retry_count: newRetryCount,
         last_retry_at: new Date(),
@@ -123,12 +131,12 @@ const updateSubscriptionStatusStep = createStep(
         canceled_at: maxReached ? new Date() : null,
       });
       
-      return {
+      return new StepResponse({
         status: maxReached ? "canceled" : "past_due",
         message: maxReached
           ? "Max retry attempts reached, subscription canceled"
           : `Payment retry failed, will retry on ${nextRetryDate.toISOString()}`,
-      };
+      });
     }
   }
 );
@@ -136,7 +144,7 @@ const updateSubscriptionStatusStep = createStep(
 // Step 4: Send dunning notification
 const sendDunningNotificationStep = createStep(
   "send-dunning-notification",
-  async ({ subscription, result }: any, { container }) => {
+  async ({ subscription, result }: { subscription: Record<string, unknown>; result: Record<string, unknown> }, { container }) => {
     // Send email notification to customer
     // const notificationService = container.resolve("notification");
     
@@ -157,7 +165,7 @@ const sendDunningNotificationStep = createStep(
     //   },
     // });
     
-    return { notificationSent: true };
+    return new StepResponse({ notificationSent: true });
   }
 );
 

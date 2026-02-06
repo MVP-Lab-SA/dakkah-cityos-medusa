@@ -47,7 +47,7 @@ importers:
         version: 2.11.4-snapshot-20251107212527
       '@medusajs/medusa':
         specifier: 2.11.4-snapshot-20251107212527
-        version: 2.11.4-snapshot-20251107212527(@medusajs/admin-sdk@2.11.4-snapshot-20251107212527)(@medusajs/cli@2.11.4-snapshot-20251107212527(@types/node@20.0.0))(@medusajs/framework@2.11.4-snapshot-20251107212527(@medusajs/cli@2.11.4-snapshot-20251107212527(@types/node@20.0.0))(@types/node@20.0.0)(ioredis@5.9.1)(vite@5.2.11(@types/node@20.0.0)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)))(@medusajs/icons@2.11.4-snapshot-20251107212527(react@19.1.1))(@medusajs/test-utils@2.11.4-snapshot-20251107212527)(@medusajs/ui@4.0.23(@types/react-dom@19.1.1(@types/react@19.1.1))(@types/react@19.1.1)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3))(@swc/core@1.5.7(@swc/helpers@0.5.17))(@types/node@20.0.0)(@types/react-dom@19.1.1(@types/react@19.1.1))(@types/react@19.1.1)(awilix@8.0.1)(lightningcss@1.29.2)(posthog-node@5.11.2)(react-dom@19.1.1(react@19.1.1))(react-router-dom@6.20.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6)(typescript@5.8.3)(yalc@1.0.0-pre.53)
+        version: 2.11.4-snapshot-20251107212527(fd7b16fcc34928bdd945c55ee395de3b)
       '@medusajs/types':
         specifier: 2.11.4-snapshot-20251107212527
         version: 2.11.4-snapshot-20251107212527(ioredis@5.9.1)(vite@5.2.11(@types/node@20.0.0)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0))
@@ -57,9 +57,6 @@ importers:
       '@tanstack/react-query':
         specifier: 5.64.2
         version: 5.64.2(react@19.1.1)
-      meilisearch:
-        specifier: ^0.55.0
-        version: 0.55.0
       zod:
         specifier: ^4.3.5
         version: 4.3.5
@@ -73,6 +70,9 @@ importers:
       '@swc/jest':
         specifier: ^0.2.36
         version: 0.2.39(@swc/core@1.5.7(@swc/helpers@0.5.17))
+      '@types/ioredis':
+        specifier: ^5.0.0
+        version: 5.0.0
       '@types/jest':
         specifier: 29.5.13
         version: 29.5.13
@@ -85,9 +85,27 @@ importers:
       '@types/react-dom':
         specifier: 19.1.1
         version: 19.1.1(@types/react@19.1.1)
+      '@vitest/coverage-v8':
+        specifier: ^4.0.18
+        version: 4.0.18(vitest@4.0.16)
+      axios:
+        specifier: ^1.13.4
+        version: 1.13.4
+      ioredis:
+        specifier: ^5.9.1
+        version: 5.9.1
       jest:
         specifier: 29.7.0
         version: 29.7.0(@types/node@20.0.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.5.7(@swc/helpers@0.5.17))(@types/node@20.0.0)(typescript@5.8.3))
+      logform:
+        specifier: ^2.7.0
+        version: 2.7.0
+      meilisearch:
+        specifier: ^0.55.0
+        version: 0.55.0
+      prom-client:
+        specifier: ^15.1.3
+        version: 15.1.3
       prop-types:
         specifier: 15.8.1
         version: 15.8.1
@@ -97,6 +115,9 @@ importers:
       react-dom:
         specifier: 19.1.1
         version: 19.1.1(react@19.1.1)
+      stripe:
+        specifier: ^20.3.1
+        version: 20.3.1(@types/node@20.0.0)
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.5.7(@swc/helpers@0.5.17))(@types/node@20.0.0)(typescript@5.8.3)
@@ -106,6 +127,12 @@ importers:
       vite:
         specifier: 5.2.11
         version: 5.2.11(@types/node@20.0.0)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)
+      vitest:
+        specifier: ^4.0.16
+        version: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@20.0.0)(@vitest/ui@4.0.16)(jiti@1.21.7)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6)
+      winston:
+        specifier: ^3.19.0
+        version: 3.19.0
       yalc:
         specifier: 1.0.0-pre.53
         version: 1.0.0-pre.53
@@ -251,7 +278,7 @@ importers:
         version: 0.0.2-next-20251118141357(vite@7.1.2(@types/node@22.18.13)(jiti@2.6.1)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6))
       '@medusajs/types':
         specifier: 2.11.3-preview-20251103060142
-        version: 2.11.3-preview-20251103060142(ioredis@5.8.2)(vite@7.1.2(@types/node@22.18.13)(jiti@2.6.1)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6))
+        version: 2.11.3-preview-20251103060142(ioredis@5.9.1)(vite@7.1.2(@types/node@22.18.13)(jiti@2.6.1)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6))
       '@playwright/test':
         specifier: ^1.57.0
         version: 1.57.0
@@ -861,6 +888,10 @@ packages:
 
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
+
+  '@bcoe/v8-coverage@1.0.2':
+    resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
+    engines: {node: '>=18'}
 
   '@borewit/text-codec@0.2.1':
     resolution: {integrity: sha512-k7vvKPbf7J2fZ5klGRD9AeKfUvojuZIQ3BT5u7Jfv+puwXkUBUT5PVyMDfJZpy30CBDXGMgw7fguK/lpOMBvgw==}
@@ -1889,9 +1920,6 @@ packages:
 
   '@internationalized/string@3.2.7':
     resolution: {integrity: sha512-D4OHBjrinH+PFZPvfCXvG28n2LSykWcJ7GIioQL+ok0LON15SdfoUssoHzzOUmVZLbRoREsQXVzA6r8JKsbP6A==}
-
-  '@ioredis/commands@1.4.0':
-    resolution: {integrity: sha512-aFT2yemJJo+TZCmieA7qnYGQooOS7QfNmYrzGtsYd3g9j5iDP8AimYYAesf79ohjbLG12XxC4nG5DyEnC88AsQ==}
 
   '@ioredis/commands@1.5.0':
     resolution: {integrity: sha512-eUgLqrMf8nJkZxT24JvVRrQya1vZkQh8BBeYNwGDqa5I0VUi8ACx7uFvAaLxintokpTenkK6DASvo/bvNbBGow==}
@@ -5853,6 +5881,10 @@ packages:
   '@types/http-errors@2.0.5':
     resolution: {integrity: sha512-r8Tayk8HJnX0FztbZN7oVqGccWgw98T/0neJphO91KkmOzug1KkofZURD4UaD5uH8AqcFLfdPErnBod0u71/qg==}
 
+  '@types/ioredis@5.0.0':
+    resolution: {integrity: sha512-zJbJ3FVE17CNl5KXzdeSPtdltc4tMT3TzC6fxQS0sQngkbFZ6h+0uTafsRqu+eSLIugf6Yb0Ea0SUuRr42Nk9g==}
+    deprecated: This is a stub types definition. ioredis provides its own type definitions, so you do not need this installed.
+
   '@types/istanbul-lib-coverage@2.0.6':
     resolution: {integrity: sha512-2QF/t/auWm0lsy8XtKVPG19v3sSOQlJe/YHZgfjb/KBBHOGSV+J2q/S671rcq9uTBrLAXmZpqJiaQbMT+zNU1w==}
 
@@ -6149,6 +6181,15 @@ packages:
     peerDependencies:
       vite: ^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
 
+  '@vitest/coverage-v8@4.0.18':
+    resolution: {integrity: sha512-7i+N2i0+ME+2JFZhfuz7Tg/FqKtilHjGyGvoHYQ6iLV0zahbsJ9sljC9OcFcPDbhYKCet+sG8SsVqlyGvPflZg==}
+    peerDependencies:
+      '@vitest/browser': 4.0.18
+      vitest: 4.0.18
+    peerDependenciesMeta:
+      '@vitest/browser':
+        optional: true
+
   '@vitest/expect@4.0.16':
     resolution: {integrity: sha512-eshqULT2It7McaJkQGLkPjPjNph+uevROGuIMJdG3V+0BSR2w9u6J9Lwu+E8cK5TETlfou8GRijhafIMhXsimA==}
 
@@ -6166,6 +6207,9 @@ packages:
   '@vitest/pretty-format@4.0.16':
     resolution: {integrity: sha512-eNCYNsSty9xJKi/UdVD8Ou16alu7AYiS2fCPRs0b1OdhJiV89buAXQLpTbe+X8V9L6qrs9CqyvU7OaAopJYPsA==}
 
+  '@vitest/pretty-format@4.0.18':
+    resolution: {integrity: sha512-P24GK3GulZWC5tz87ux0m8OADrQIUVDPIjjj65vBXYG17ZeU3qD7r+MNZ1RNv4l8CGU2vtTRqixrOi9fYk/yKw==}
+
   '@vitest/runner@4.0.16':
     resolution: {integrity: sha512-VWEDm5Wv9xEo80ctjORcTQRJ539EGPB3Pb9ApvVRAY1U/WkHXmmYISqU5E79uCwcW7xYUV38gwZD+RV755fu3Q==}
 
@@ -6182,6 +6226,9 @@ packages:
 
   '@vitest/utils@4.0.16':
     resolution: {integrity: sha512-h8z9yYhV3e1LEfaQ3zdypIrnAg/9hguReGZoS7Gl0aBG5xgA410zBqECqmaF/+RkTggRsfnzc1XaAHA6bmUufA==}
+
+  '@vitest/utils@4.0.18':
+    resolution: {integrity: sha512-msMRKLMVLWygpK3u2Hybgi4MNjcYJvwTb0Ru09+fOyCXIgT5raYP041DRRdiJiI3k/2U6SEbAETB3YtBrUkCFA==}
 
   '@whatwg-node/promise-helpers@1.3.2':
     resolution: {integrity: sha512-Nst5JdK47VIl9UcGwtv2Rcgyn5lWtZ0/mhRQ4G8NN2isxpq2TO30iqHzmwoJycjWuyUfg3GFXqP/gFHXeV57IA==}
@@ -6347,6 +6394,9 @@ packages:
     resolution: {integrity: sha512-6t10qk83GOG8p0vKmaCr8eiilZwO171AvbROMtvvNiwrTly62t+7XkA8RdIIVbpMhCASAsxgAzdRSwh6nw/5Dg==}
     engines: {node: '>=4'}
 
+  ast-v8-to-istanbul@0.3.11:
+    resolution: {integrity: sha512-Qya9fkoofMjCBNVdWINMjB5KZvkYfaO9/anwkWnjxibpWUxo5iHl2sOdP7/uAqaRuUYuoo8rDwnbaaKVFxoUvw==}
+
   async-sema@3.1.1:
     resolution: {integrity: sha512-tLRNUXati5MFePdAk8dw7Qt7DpxPB60ofAgn8WRhW6a2rcimZnYBP9oxHiv0OHy+Wz7kPMG+t4LGdt31+4EmGg==}
 
@@ -6382,8 +6432,8 @@ packages:
   axios-retry@3.9.1:
     resolution: {integrity: sha512-8PJDLJv7qTTMMwdnbMvrLYuvB47M81wRtxQmEdV5w4rgbTXTt+vtPkXwajOfOdSyv/wZICJOC+/UhXH4aQ/R+w==}
 
-  axios@1.13.1:
-    resolution: {integrity: sha512-hU4EGxxt+j7TQijx1oYdAjw4xuIp1wRQSsbMFwSthCWeBQur1eF+qJ5iQ5sN3Tw8YRzQNKb8jszgBdMDVqwJcw==}
+  axios@1.13.4:
+    resolution: {integrity: sha512-1wVkUaAO6WyaYtCkcYCOx12ZgpGf9Zif+qXa4n+oYzK558YryKqiL6UWwd5DqiH3VRW0GYhTZQ/vlgJrCoNQlg==}
 
   b4a@1.7.3:
     resolution: {integrity: sha512-5Q2mfq2WfGuFp3uS//0s6baOJLMoVduPYVeNmDYxu5OUA1/cBfvr2RIS7vi62LdNj/urk1hfmj867I3qt6uZ7Q==}
@@ -6456,6 +6506,9 @@ packages:
 
   bindings@1.5.0:
     resolution: {integrity: sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==}
+
+  bintrees@1.0.2:
+    resolution: {integrity: sha512-VOMgTMwjAaUG580SXn3LacVgjurrbMme7ZZNYGSSV7mmtY6QQRh0Eg3pwIcntQ77DErK1L0NxkbetjcoXzVwKw==}
 
   bl@4.1.0:
     resolution: {integrity: sha512-1W07cM9gS6DcLperZfFSj+bWLtaPGSOHWhPiGzXmvVJbRLdG82sH/Kn8EtW1VqWVA54AKf2h5k5BbnIbwF3h6w==}
@@ -7954,11 +8007,12 @@ packages:
 
   glob@10.4.5:
     resolution: {integrity: sha512-7Bv8RF0k6xjo7d4A/PxYLbUCfb6c+Vpd2/mB2yRDlew7Jb5hEXiCD9ibfO7wpk8i4sevK6DFny9h7EYbM3/sHg==}
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
     hasBin: true
 
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
-    deprecated: Glob versions prior to v9 are no longer supported
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   global-modules@1.0.0:
     resolution: {integrity: sha512-sKzpEkf11GpOFuw0Zzjzmt4B4UZwjOcG757PPvrfhxcLFbq0wpsgpOqxpxtxFiCG4DtG93M6XRVbF2oGdev7bg==}
@@ -8242,10 +8296,6 @@ packages:
 
   invariant@2.2.4:
     resolution: {integrity: sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==}
-
-  ioredis@5.8.2:
-    resolution: {integrity: sha512-C6uC+kleiIMmjViJINWk80sOQw5lEzse1ZmvD+S/s8p8CWapftSaC+kocGTx6xrbrJ4WmYQGC08ffHLr6ToR6Q==}
-    engines: {node: '>=12.22.0'}
 
   ioredis@5.9.1:
     resolution: {integrity: sha512-BXNqFQ66oOsR82g9ajFFsR8ZKrjVvYCLyeML9IvSMAsP56XH2VXBdZjmI11p65nXXJxTEt1hie3J2QeFJVgrtQ==}
@@ -8642,6 +8692,9 @@ packages:
 
   js-cookie@2.2.1:
     resolution: {integrity: sha512-HvdH2LzI/EAZcUwA8+0nKNtWHqS+ZmijLA30RwZA0bo7ToCckjK5MkGhjED9KoRcXO6BaGI3I9UIzSA1FKFPOQ==}
+
+  js-tokens@10.0.0:
+    resolution: {integrity: sha512-lM/UBzQmfJRo9ABXbPWemivdCW8V2G8FHaHdypQaIy523snUjog0W71ayWXTjiR+ixeMyVHN2XcpnTd/liPg/Q==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -9944,6 +9997,10 @@ packages:
     resolution: {integrity: sha512-cdGef/drWFoydD1JsMzuFf8100nZl+GT+yacc2bEced5f9Rjk4z+WtFUTBu9PhOi9j/jfmBPu0mMEY4wIdAF8A==}
     engines: {node: '>= 0.6.0'}
 
+  prom-client@15.1.3:
+    resolution: {integrity: sha512-6ZiOBfCywsD4k1BN9IX0uZhF+tJkV8q8llP64G5Hajs4JOeVLPCwpPVcpXy3BwYiUGgyJzsJJQeOIv7+hDSq8g==}
+    engines: {node: ^16 || ^18 || >=20}
+
   promise@7.3.1:
     resolution: {integrity: sha512-nolQXZ/4L+bP/UGlkfaIujX9BKxGwmQ9OT4mOt5yvy8iK1h3wqTEJCijzGANTCCl9nWjY41juyAn2K3Q1hLLTg==}
 
@@ -10706,6 +10763,15 @@ packages:
       '@types/node':
         optional: true
 
+  stripe@20.3.1:
+    resolution: {integrity: sha512-k990yOT5G5rhX3XluRPw5Y8RLdJDW4dzQ29wWT66piHrbnM2KyamJ1dKgPsw4HzGHRWjDiSSdcI2WdxQUPV3aQ==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      '@types/node': '>=16'
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+
   strnum@2.1.1:
     resolution: {integrity: sha512-7ZvoFTiCnGxBtDqJ//Cu6fWtZtc7Y3x+QOirG15wztbdngGSkht27o2pyGWrVy0b4WAy3jbKmnoK6g5VlVNUUw==}
 
@@ -10797,10 +10863,14 @@ packages:
   tar@7.5.2:
     resolution: {integrity: sha512-7NyxrTE4Anh8km8iEy7o0QYPs+0JKBTj5ZaqHg6B39erLg0qYXN3BijtShwbsNSvQ+LN75+KV+C4QR/f6Gwnpg==}
     engines: {node: '>=18'}
+    deprecated: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   tarn@3.0.2:
     resolution: {integrity: sha512-51LAVKUSZSVfI05vjPESNc5vwqqZpbXCsU+/+wxlOrUjk2SnFTt97v9ZgQrD4YmxYW1Px6w2KjaDitCfkvgxMQ==}
     engines: {node: '>=8.0.0'}
+
+  tdigest@0.1.2:
+    resolution: {integrity: sha512-+G0LLgjjo9BZX2MfdvPfH+MKLCrxlXSYec5DaPYP1fe6Iyhf0/fSmJ0bFiZ1F8BT6cGXl2LpltQptzjXKWEkKA==}
 
   terser@5.44.0:
     resolution: {integrity: sha512-nIVck8DK+GM/0Frwd+nIhZ84pR/BX7rmXMfYwyg+Sri5oGVE99/E3KvXqpC2xHFxyqXyGHTKBSioxxplrO4I4w==}
@@ -10846,9 +10916,6 @@ packages:
 
   tinybench@2.9.0:
     resolution: {integrity: sha512-0+DUvqWMValLmha6lr4kD8iAMK1HzV0/aKnCtWb9v9641TnP/MFb7Pc2bxoxQjTXAErryXVgUOfv2YqNllqGeg==}
-
-  tinyexec@1.0.1:
-    resolution: {integrity: sha512-5uC6DDlmeqiOwCPmK9jMSdOuZTh8bU39Ys6yidB+UTt5hfZUPGAypSgFRiEp+jbi9qH40BLDvy85jIU88wKSqw==}
 
   tinyexec@1.0.2:
     resolution: {integrity: sha512-W/KYk+NFhkmsYpuHq5JykngiOCnxeVL8v8dFnqxSD8qEEdRfXk1SDM6JzNqcERbcGYj9tMrDQBYV9cjgnunFIg==}
@@ -11572,8 +11639,8 @@ packages:
     resolution: {integrity: sha512-8drMJ4rkgaPo1Me4zD/3WLfI/zPdA9o2IipKODunnGDcuqbHwjsbB79ylv04LCGGzU0xQ6vTznOMpQGaLhhm6A==}
     engines: {node: '>= 12.0.0'}
 
-  winston@3.18.3:
-    resolution: {integrity: sha512-NoBZauFNNWENgsnC9YpgyYwOVrl2m58PpQ8lNHjV3kosGs7KJ7Npk9pCUE+WJlawVSe8mykWDKWFSVfs3QO9ww==}
+  winston@3.19.0:
+    resolution: {integrity: sha512-LZNJgPzfKR+/J3cHkxcpHKpKKvGfDZVPS4hfJCc4cCG0CgYzvlD6yE/S3CIL/Yt91ak327YCpiF/0MyeZHEHKA==}
     engines: {node: '>= 12.0.0'}
 
   word-wrap@1.2.5:
@@ -12942,6 +13009,8 @@ snapshots:
 
   '@bcoe/v8-coverage@0.2.3': {}
 
+  '@bcoe/v8-coverage@1.0.2': {}
+
   '@borewit/text-codec@0.2.1': {}
 
   '@cloudflare/kv-asset-handler@0.4.0':
@@ -13757,8 +13826,6 @@ snapshots:
     dependencies:
       '@swc/helpers': 0.5.17
 
-  '@ioredis/commands@1.4.0': {}
-
   '@ioredis/commands@1.5.0': {}
 
   '@isaacs/cliui@8.0.2':
@@ -14180,10 +14247,10 @@ snapshots:
       magic-string: 0.30.21
       vite: 7.1.2(@types/node@22.18.13)(jiti@2.6.1)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6)
 
-  '@medusajs/admin-bundler@2.11.4-snapshot-20251107212527(@types/node@20.0.0)(@types/react-dom@19.1.1(@types/react@19.1.1))(@types/react@19.1.1)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6)(typescript@5.8.3)':
+  '@medusajs/admin-bundler@2.11.4-snapshot-20251107212527(@types/node@20.0.0)(@types/react-dom@19.1.1(@types/react@19.1.1))(@types/react@19.1.1)(lightningcss@1.29.2)(picomatch@4.0.3)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6)(typescript@5.8.3)':
     dependencies:
       '@medusajs/admin-shared': 2.11.4-snapshot-20251107212527
-      '@medusajs/admin-vite-plugin': 2.11.4-snapshot-20251107212527(vite@5.4.21(@types/node@20.0.0)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0))
+      '@medusajs/admin-vite-plugin': 2.11.4-snapshot-20251107212527(picomatch@4.0.3)(vite@5.4.21(@types/node@20.0.0)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0))
       '@medusajs/dashboard': 2.11.4-snapshot-20251107212527(@types/react-dom@19.1.1(@types/react@19.1.1))(@types/react@19.1.1)(typescript@5.8.3)
       '@vitejs/plugin-react': 4.7.0(vite@5.4.21(@types/node@20.0.0)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0))
       autoprefixer: 10.4.21(postcss@8.5.6)
@@ -14222,14 +14289,14 @@ snapshots:
 
   '@medusajs/admin-shared@2.11.4-snapshot-20251107212527': {}
 
-  '@medusajs/admin-vite-plugin@2.11.4-snapshot-20251107212527(vite@5.4.21(@types/node@20.0.0)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0))':
+  '@medusajs/admin-vite-plugin@2.11.4-snapshot-20251107212527(picomatch@4.0.3)(vite@5.4.21(@types/node@20.0.0)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0))':
     dependencies:
       '@babel/parser': 7.25.6
       '@babel/traverse': 7.25.6
       '@babel/types': 7.25.6
       '@medusajs/admin-shared': 2.11.4-snapshot-20251107212527
       chokidar: 3.6.0
-      fdir: 6.1.1
+      fdir: 6.1.1(picomatch@4.0.3)
       magic-string: 0.30.5
       outdent: 0.8.0
       picocolors: 1.1.1
@@ -14280,14 +14347,14 @@ snapshots:
   '@medusajs/cache-redis@2.11.4-snapshot-20251107212527(@medusajs/framework@2.11.4-snapshot-20251107212527(@medusajs/cli@2.11.4-snapshot-20251107212527(@types/node@20.0.0))(@types/node@20.0.0)(ioredis@5.9.1)(vite@5.2.11(@types/node@20.0.0)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)))':
     dependencies:
       '@medusajs/framework': 2.11.4-snapshot-20251107212527(@medusajs/cli@2.11.4-snapshot-20251107212527(@types/node@20.0.0))(@types/node@20.0.0)(ioredis@5.9.1)(vite@5.2.11(@types/node@20.0.0)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0))
-      ioredis: 5.8.2
+      ioredis: 5.9.1
     transitivePeerDependencies:
       - supports-color
 
   '@medusajs/caching-redis@2.11.4-snapshot-20251107212527(@medusajs/framework@2.11.4-snapshot-20251107212527(@medusajs/cli@2.11.4-snapshot-20251107212527(@types/node@20.0.0))(@types/node@20.0.0)(ioredis@5.9.1)(vite@5.2.11(@types/node@20.0.0)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)))':
     dependencies:
       '@medusajs/framework': 2.11.4-snapshot-20251107212527(@medusajs/cli@2.11.4-snapshot-20251107212527(@types/node@20.0.0))(@types/node@20.0.0)(ioredis@5.9.1)(vite@5.2.11(@types/node@20.0.0)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0))
-      ioredis: 5.8.2
+      ioredis: 5.9.1
       xxhash-wasm: 1.1.0
     transitivePeerDependencies:
       - supports-color
@@ -14328,7 +14395,7 @@ snapshots:
       resolve-cwd: 3.0.0
       stack-trace: 0.0.10
       ulid: 2.4.0
-      winston: 3.18.3
+      winston: 3.19.0
       yargs: 17.7.2
     transitivePeerDependencies:
       - '@types/node'
@@ -14471,7 +14538,7 @@ snapshots:
     dependencies:
       '@medusajs/framework': 2.11.4-snapshot-20251107212527(@medusajs/cli@2.11.4-snapshot-20251107212527(@types/node@20.0.0))(@types/node@20.0.0)(ioredis@5.9.1)(vite@5.2.11(@types/node@20.0.0)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0))
       bullmq: 5.13.0
-      ioredis: 5.8.2
+      ioredis: 5.9.1
     transitivePeerDependencies:
       - supports-color
 
@@ -14585,7 +14652,7 @@ snapshots:
   '@medusajs/locking-redis@2.11.4-snapshot-20251107212527(@medusajs/framework@2.11.4-snapshot-20251107212527(@medusajs/cli@2.11.4-snapshot-20251107212527(@types/node@20.0.0))(@types/node@20.0.0)(ioredis@5.9.1)(vite@5.2.11(@types/node@20.0.0)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)))':
     dependencies:
       '@medusajs/framework': 2.11.4-snapshot-20251107212527(@medusajs/cli@2.11.4-snapshot-20251107212527(@types/node@20.0.0))(@types/node@20.0.0)(ioredis@5.9.1)(vite@5.2.11(@types/node@20.0.0)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0))
-      ioredis: 5.8.2
+      ioredis: 5.9.1
     transitivePeerDependencies:
       - supports-color
 
@@ -14593,11 +14660,11 @@ snapshots:
     dependencies:
       '@medusajs/framework': 2.11.4-snapshot-20251107212527(@medusajs/cli@2.11.4-snapshot-20251107212527(@types/node@20.0.0))(@types/node@20.0.0)(ioredis@5.9.1)(vite@5.2.11(@types/node@20.0.0)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0))
 
-  ? '@medusajs/medusa@2.11.4-snapshot-20251107212527(@medusajs/admin-sdk@2.11.4-snapshot-20251107212527)(@medusajs/cli@2.11.4-snapshot-20251107212527(@types/node@20.0.0))(@medusajs/framework@2.11.4-snapshot-20251107212527(@medusajs/cli@2.11.4-snapshot-20251107212527(@types/node@20.0.0))(@types/node@20.0.0)(ioredis@5.9.1)(vite@5.2.11(@types/node@20.0.0)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)))(@medusajs/icons@2.11.4-snapshot-20251107212527(react@19.1.1))(@medusajs/test-utils@2.11.4-snapshot-20251107212527)(@medusajs/ui@4.0.23(@types/react-dom@19.1.1(@types/react@19.1.1))(@types/react@19.1.1)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3))(@swc/core@1.5.7(@swc/helpers@0.5.17))(@types/node@20.0.0)(@types/react-dom@19.1.1(@types/react@19.1.1))(@types/react@19.1.1)(awilix@8.0.1)(lightningcss@1.29.2)(posthog-node@5.11.2)(react-dom@19.1.1(react@19.1.1))(react-router-dom@6.20.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6)(typescript@5.8.3)(yalc@1.0.0-pre.53)'
-  : dependencies:
+  '@medusajs/medusa@2.11.4-snapshot-20251107212527(fd7b16fcc34928bdd945c55ee395de3b)':
+    dependencies:
       '@inquirer/checkbox': 2.5.0
       '@inquirer/input': 2.3.0
-      '@medusajs/admin-bundler': 2.11.4-snapshot-20251107212527(@types/node@20.0.0)(@types/react-dom@19.1.1(@types/react@19.1.1))(@types/react@19.1.1)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6)(typescript@5.8.3)
+      '@medusajs/admin-bundler': 2.11.4-snapshot-20251107212527(@types/node@20.0.0)(@types/react-dom@19.1.1(@types/react@19.1.1))(@types/react@19.1.1)(lightningcss@1.29.2)(picomatch@4.0.3)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6)(typescript@5.8.3)
       '@medusajs/analytics': 2.11.4-snapshot-20251107212527(@medusajs/framework@2.11.4-snapshot-20251107212527(@medusajs/cli@2.11.4-snapshot-20251107212527(@types/node@20.0.0))(@types/node@20.0.0)(ioredis@5.9.1)(vite@5.2.11(@types/node@20.0.0)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)))
       '@medusajs/analytics-local': 2.11.4-snapshot-20251107212527(@medusajs/framework@2.11.4-snapshot-20251107212527(@medusajs/cli@2.11.4-snapshot-20251107212527(@types/node@20.0.0))(@types/node@20.0.0)(ioredis@5.9.1)(vite@5.2.11(@types/node@20.0.0)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)))
       '@medusajs/analytics-posthog': 2.11.4-snapshot-20251107212527(@medusajs/framework@2.11.4-snapshot-20251107212527(@medusajs/cli@2.11.4-snapshot-20251107212527(@types/node@20.0.0))(@types/node@20.0.0)(ioredis@5.9.1)(vite@5.2.11(@types/node@20.0.0)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)))(posthog-node@5.11.2)
@@ -14805,7 +14872,7 @@ snapshots:
   '@medusajs/telemetry@2.11.4-snapshot-20251107212527':
     dependencies:
       '@babel/runtime': 7.28.4
-      axios: 1.13.1
+      axios: 1.13.4
       axios-retry: 3.9.1
       boxen: 5.1.2
       ci-info: 3.9.0
@@ -14821,21 +14888,21 @@ snapshots:
     dependencies:
       '@medusajs/framework': 2.11.4-snapshot-20251107212527(@medusajs/cli@2.11.4-snapshot-20251107212527(@types/node@20.0.0))(@types/node@20.0.0)(ioredis@5.9.1)(vite@5.2.11(@types/node@20.0.0)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0))
       '@types/express': 4.17.25
-      axios: 1.13.1
+      axios: 1.13.4
       express: 4.21.2
       get-port: 5.1.1
       ulid: 2.4.0
     optionalDependencies:
-      '@medusajs/medusa': 2.11.4-snapshot-20251107212527(@medusajs/admin-sdk@2.11.4-snapshot-20251107212527)(@medusajs/cli@2.11.4-snapshot-20251107212527(@types/node@20.0.0))(@medusajs/framework@2.11.4-snapshot-20251107212527(@medusajs/cli@2.11.4-snapshot-20251107212527(@types/node@20.0.0))(@types/node@20.0.0)(ioredis@5.9.1)(vite@5.2.11(@types/node@20.0.0)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)))(@medusajs/icons@2.11.4-snapshot-20251107212527(react@19.1.1))(@medusajs/test-utils@2.11.4-snapshot-20251107212527)(@medusajs/ui@4.0.23(@types/react-dom@19.1.1(@types/react@19.1.1))(@types/react@19.1.1)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.8.3))(@swc/core@1.5.7(@swc/helpers@0.5.17))(@types/node@20.0.0)(@types/react-dom@19.1.1(@types/react@19.1.1))(@types/react@19.1.1)(awilix@8.0.1)(lightningcss@1.29.2)(posthog-node@5.11.2)(react-dom@19.1.1(react@19.1.1))(react-router-dom@6.20.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6)(typescript@5.8.3)(yalc@1.0.0-pre.53)
+      '@medusajs/medusa': 2.11.4-snapshot-20251107212527(fd7b16fcc34928bdd945c55ee395de3b)
     transitivePeerDependencies:
       - debug
       - supports-color
 
-  '@medusajs/types@2.11.3-preview-20251103060142(ioredis@5.8.2)(vite@7.1.2(@types/node@22.18.13)(jiti@2.6.1)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6))':
+  '@medusajs/types@2.11.3-preview-20251103060142(ioredis@5.9.1)(vite@7.1.2(@types/node@22.18.13)(jiti@2.6.1)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6))':
     dependencies:
       bignumber.js: 9.3.1
     optionalDependencies:
-      ioredis: 5.8.2
+      ioredis: 5.9.1
       vite: 7.1.2(@types/node@22.18.13)(jiti@2.6.1)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6)
 
   '@medusajs/types@2.11.4-snapshot-20251107212527(ioredis@5.9.1)(vite@5.2.11(@types/node@20.0.0)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0))':
@@ -14945,7 +15012,7 @@ snapshots:
     dependencies:
       '@medusajs/framework': 2.11.4-snapshot-20251107212527(@medusajs/cli@2.11.4-snapshot-20251107212527(@types/node@20.0.0))(@types/node@20.0.0)(ioredis@5.9.1)(vite@5.2.11(@types/node@20.0.0)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0))
       bullmq: 5.13.0
-      ioredis: 5.8.2
+      ioredis: 5.9.1
       ulid: 2.4.0
     transitivePeerDependencies:
       - supports-color
@@ -18183,7 +18250,7 @@ snapshots:
   '@sendgrid/client@8.1.6':
     dependencies:
       '@sendgrid/helpers': 8.0.0
-      axios: 1.13.1
+      axios: 1.13.4
     transitivePeerDependencies:
       - debug
 
@@ -19405,6 +19472,12 @@ snapshots:
 
   '@types/http-errors@2.0.5': {}
 
+  '@types/ioredis@5.0.0':
+    dependencies:
+      ioredis: 5.9.1
+    transitivePeerDependencies:
+      - supports-color
+
   '@types/istanbul-lib-coverage@2.0.6': {}
 
   '@types/istanbul-lib-report@3.0.3':
@@ -19725,6 +19798,20 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@vitest/coverage-v8@4.0.18(vitest@4.0.16)':
+    dependencies:
+      '@bcoe/v8-coverage': 1.0.2
+      '@vitest/utils': 4.0.18
+      ast-v8-to-istanbul: 0.3.11
+      istanbul-lib-coverage: 3.2.2
+      istanbul-lib-report: 3.0.1
+      istanbul-reports: 3.2.0
+      magicast: 0.5.1
+      obug: 2.1.1
+      std-env: 3.10.0
+      tinyrainbow: 3.0.3
+      vitest: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@20.0.0)(@vitest/ui@4.0.16)(jiti@1.21.7)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6)
+
   '@vitest/expect@4.0.16':
     dependencies:
       '@standard-schema/spec': 1.1.0
@@ -19733,6 +19820,14 @@ snapshots:
       '@vitest/utils': 4.0.16
       chai: 6.2.2
       tinyrainbow: 3.0.3
+
+  '@vitest/mocker@4.0.16(vite@7.1.2(@types/node@20.0.0)(jiti@1.21.7)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6))':
+    dependencies:
+      '@vitest/spy': 4.0.16
+      estree-walker: 3.0.3
+      magic-string: 0.30.21
+    optionalDependencies:
+      vite: 7.1.2(@types/node@20.0.0)(jiti@1.21.7)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6)
 
   '@vitest/mocker@4.0.16(vite@7.1.2(@types/node@22.18.13)(jiti@2.6.1)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6))':
     dependencies:
@@ -19743,6 +19838,10 @@ snapshots:
       vite: 7.1.2(@types/node@22.18.13)(jiti@2.6.1)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6)
 
   '@vitest/pretty-format@4.0.16':
+    dependencies:
+      tinyrainbow: 3.0.3
+
+  '@vitest/pretty-format@4.0.18':
     dependencies:
       tinyrainbow: 3.0.3
 
@@ -19768,11 +19867,16 @@ snapshots:
       sirv: 3.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.0.3
-      vitest: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@22.18.13)(@vitest/ui@4.0.16)(jiti@2.6.1)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6)
+      vitest: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@20.0.0)(@vitest/ui@4.0.16)(jiti@1.21.7)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6)
 
   '@vitest/utils@4.0.16':
     dependencies:
       '@vitest/pretty-format': 4.0.16
+      tinyrainbow: 3.0.3
+
+  '@vitest/utils@4.0.18':
+    dependencies:
+      '@vitest/pretty-format': 4.0.18
       tinyrainbow: 3.0.3
 
   '@whatwg-node/promise-helpers@1.3.2':
@@ -19943,6 +20047,12 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
+  ast-v8-to-istanbul@0.3.11:
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.31
+      estree-walker: 3.0.3
+      js-tokens: 10.0.0
+
   async-sema@3.1.1: {}
 
   async@3.2.6: {}
@@ -19977,7 +20087,7 @@ snapshots:
       '@babel/runtime': 7.28.4
       is-retry-allowed: 2.2.0
 
-  axios@1.13.1:
+  axios@1.13.4:
     dependencies:
       follow-redirects: 1.15.11
       form-data: 4.0.4
@@ -20076,6 +20186,8 @@ snapshots:
   bindings@1.5.0:
     dependencies:
       file-uri-to-path: 1.0.0
+
+  bintrees@1.0.2: {}
 
   bl@4.1.0:
     dependencies:
@@ -20244,7 +20356,7 @@ snapshots:
   bullmq@5.13.0:
     dependencies:
       cron-parser: 4.9.0
-      ioredis: 5.8.2
+      ioredis: 5.9.1
       msgpackr: 1.11.5
       node-abort-controller: 3.1.1
       semver: 7.7.3
@@ -21487,7 +21599,9 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  fdir@6.1.1: {}
+  fdir@6.1.1(picomatch@4.0.3):
+    optionalDependencies:
+      picomatch: 4.0.3
 
   fdir@6.5.0(picomatch@4.0.3):
     optionalDependencies:
@@ -22029,20 +22143,6 @@ snapshots:
   invariant@2.2.4:
     dependencies:
       loose-envify: 1.4.0
-
-  ioredis@5.8.2:
-    dependencies:
-      '@ioredis/commands': 1.4.0
-      cluster-key-slot: 1.1.2
-      debug: 4.4.3(supports-color@8.1.1)
-      denque: 2.1.0
-      lodash.defaults: 4.2.0
-      lodash.isarguments: 3.1.0
-      redis-errors: 1.2.0
-      redis-parser: 3.0.0
-      standard-as-callback: 2.1.0
-    transitivePeerDependencies:
-      - supports-color
 
   ioredis@5.9.1:
     dependencies:
@@ -22634,6 +22734,8 @@ snapshots:
   joycon@3.1.1: {}
 
   js-cookie@2.2.1: {}
+
+  js-tokens@10.0.0: {}
 
   js-tokens@4.0.0: {}
 
@@ -23469,7 +23571,7 @@ snapshots:
       h3: 1.15.4
       hookable: 5.5.3
       httpxy: 0.1.7
-      ioredis: 5.8.2
+      ioredis: 5.9.1
       jiti: 2.6.1
       klona: 2.0.6
       knitwork: 1.2.0
@@ -23502,7 +23604,7 @@ snapshots:
       unenv: 2.0.0-rc.24
       unimport: 5.5.0
       unplugin-utils: 0.3.1
-      unstorage: 1.17.2(db0@0.3.4(drizzle-orm@0.44.7(@opentelemetry/api@1.9.0)(@types/pg@8.10.2)(knex@3.1.0(pg@8.16.3))(pg@8.16.3)))(ioredis@5.8.2)
+      unstorage: 1.17.2(db0@0.3.4(drizzle-orm@0.44.7(@opentelemetry/api@1.9.0)(@types/pg@8.10.2)(knex@3.1.0(pg@8.16.3))(pg@8.16.3)))(ioredis@5.9.1)
       untyped: 2.0.0
       unwasm: 0.3.11
       youch: 4.1.0-beta.11
@@ -23650,7 +23752,7 @@ snapshots:
       consola: 3.4.2
       pathe: 2.0.3
       pkg-types: 2.3.0
-      tinyexec: 1.0.1
+      tinyexec: 1.0.2
 
   object-assign@4.1.1: {}
 
@@ -24189,6 +24291,11 @@ snapshots:
   process-warning@5.0.0: {}
 
   process@0.11.10: {}
+
+  prom-client@15.1.3:
+    dependencies:
+      '@opentelemetry/api': 1.9.0
+      tdigest: 0.1.2
 
   promise@7.3.1:
     dependencies:
@@ -25141,6 +25248,10 @@ snapshots:
     optionalDependencies:
       '@types/node': 20.0.0
 
+  stripe@20.3.1(@types/node@20.0.0):
+    optionalDependencies:
+      '@types/node': 20.0.0
+
   strnum@2.1.1: {}
 
   strtok3@8.1.0:
@@ -25251,6 +25362,10 @@ snapshots:
 
   tarn@3.0.2: {}
 
+  tdigest@0.1.2:
+    dependencies:
+      bintrees: 1.0.2
+
   terser@5.44.0:
     dependencies:
       '@jridgewell/source-map': 0.3.11
@@ -25297,8 +25412,6 @@ snapshots:
   tiny-warning@1.0.3: {}
 
   tinybench@2.9.0: {}
-
-  tinyexec@1.0.1: {}
 
   tinyexec@1.0.2: {}
 
@@ -25645,7 +25758,7 @@ snapshots:
       '@unrs/resolver-binding-win32-ia32-msvc': 1.11.1
       '@unrs/resolver-binding-win32-x64-msvc': 1.11.1
 
-  unstorage@1.17.2(db0@0.3.4(drizzle-orm@0.44.7(@opentelemetry/api@1.9.0)(@types/pg@8.10.2)(knex@3.1.0(pg@8.16.3))(pg@8.16.3)))(ioredis@5.8.2):
+  unstorage@1.17.2(db0@0.3.4(drizzle-orm@0.44.7(@opentelemetry/api@1.9.0)(@types/pg@8.10.2)(knex@3.1.0(pg@8.16.3))(pg@8.16.3)))(ioredis@5.9.1):
     dependencies:
       anymatch: 3.1.3
       chokidar: 4.0.3
@@ -25657,7 +25770,7 @@ snapshots:
       ufo: 1.6.1
     optionalDependencies:
       db0: 0.3.4(drizzle-orm@0.44.7(@opentelemetry/api@1.9.0)(@types/pg@8.10.2)(knex@3.1.0(pg@8.16.3))(pg@8.16.3))
-      ioredis: 5.8.2
+      ioredis: 5.9.1
 
   untun@0.1.3:
     dependencies:
@@ -25821,6 +25934,23 @@ snapshots:
       sass: 1.77.4
       terser: 5.44.0
 
+  vite@7.1.2(@types/node@20.0.0)(jiti@1.21.7)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6):
+    dependencies:
+      esbuild: 0.25.12
+      fdir: 6.5.0(picomatch@4.0.3)
+      picomatch: 4.0.3
+      postcss: 8.5.6
+      rollup: 4.52.5
+      tinyglobby: 0.2.15
+    optionalDependencies:
+      '@types/node': 20.0.0
+      fsevents: 2.3.3
+      jiti: 1.21.7
+      lightningcss: 1.29.2
+      sass: 1.77.4
+      terser: 5.44.0
+      tsx: 4.20.6
+
   vite@7.1.2(@types/node@22.18.13)(jiti@2.6.1)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6):
     dependencies:
       esbuild: 0.25.12
@@ -25841,6 +25971,45 @@ snapshots:
   vitefu@1.1.1(vite@7.1.2(@types/node@22.18.13)(jiti@2.6.1)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6)):
     optionalDependencies:
       vite: 7.1.2(@types/node@22.18.13)(jiti@2.6.1)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6)
+
+  vitest@4.0.16(@opentelemetry/api@1.9.0)(@types/node@20.0.0)(@vitest/ui@4.0.16)(jiti@1.21.7)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6):
+    dependencies:
+      '@vitest/expect': 4.0.16
+      '@vitest/mocker': 4.0.16(vite@7.1.2(@types/node@20.0.0)(jiti@1.21.7)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6))
+      '@vitest/pretty-format': 4.0.16
+      '@vitest/runner': 4.0.16
+      '@vitest/snapshot': 4.0.16
+      '@vitest/spy': 4.0.16
+      '@vitest/utils': 4.0.16
+      es-module-lexer: 1.7.0
+      expect-type: 1.3.0
+      magic-string: 0.30.21
+      obug: 2.1.1
+      pathe: 2.0.3
+      picomatch: 4.0.3
+      std-env: 3.10.0
+      tinybench: 2.9.0
+      tinyexec: 1.0.2
+      tinyglobby: 0.2.15
+      tinyrainbow: 3.0.3
+      vite: 7.1.2(@types/node@20.0.0)(jiti@1.21.7)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6)
+      why-is-node-running: 2.3.0
+    optionalDependencies:
+      '@opentelemetry/api': 1.9.0
+      '@types/node': 20.0.0
+      '@vitest/ui': 4.0.16(vitest@4.0.16)
+    transitivePeerDependencies:
+      - jiti
+      - less
+      - lightningcss
+      - msw
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
+      - terser
+      - tsx
+      - yaml
 
   vitest@4.0.16(@opentelemetry/api@1.9.0)(@types/node@22.18.13)(@vitest/ui@4.0.16)(jiti@2.6.1)(lightningcss@1.29.2)(sass@1.77.4)(terser@5.44.0)(tsx@4.20.6):
     dependencies:
@@ -25941,7 +26110,7 @@ snapshots:
       readable-stream: 3.6.2
       triple-beam: 1.4.1
 
-  winston@3.18.3:
+  winston@3.19.0:
     dependencies:
       '@colors/colors': 1.6.0
       '@dabh/diagnostics': 2.0.8

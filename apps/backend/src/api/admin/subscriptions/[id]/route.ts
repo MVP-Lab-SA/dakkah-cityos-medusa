@@ -11,17 +11,15 @@ const updateSubscriptionSchema = z.object({
 
 // GET /admin/subscriptions/:id - Get subscription
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const subscriptionModule = req.scope.resolve("subscription");
-  const tenantId = req.tenant?.id;
+  const subscriptionModule = req.scope.resolve("subscription") as any;
+  const tenantId = (req as any).tenant?.id;
   const { id } = req.params;
   
   if (!tenantId) {
     return res.status(403).json({ message: "Tenant context required" });
   }
   
-  const subscription = await subscriptionModule.retrieveSubscription(id, {
-    relations: ["subscription_items", "billing_cycles"],
-  });
+  const subscription = await subscriptionModule.retrieveSubscription(id);
   
   if (!subscription || subscription.tenant_id !== tenantId) {
     return res.status(404).json({ message: "Subscription not found" });
@@ -32,8 +30,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
 // POST /admin/subscriptions/:id - Update subscription
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const subscriptionModule = req.scope.resolve("subscription");
-  const tenantId = req.tenant?.id;
+  const subscriptionModule = req.scope.resolve("subscription") as any;
+  const tenantId = (req as any).tenant?.id;
   const { id } = req.params;
   
   if (!tenantId) {
@@ -49,23 +47,22 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const validatedData = updateSubscriptionSchema.parse(req.body);
   
   // Handle status changes
+  const updateData: any = { ...validatedData };
   if (validatedData.status && validatedData.status !== subscription.status) {
-    const now = new Date();
-    
     if (validatedData.status === "canceled") {
-      validatedData.canceled_at = now;
+      updateData.canceled_at = new Date();
     }
   }
   
-  const updated = await subscriptionModule.updateSubscriptions(id, validatedData);
+  const updated = await subscriptionModule.updateSubscriptions({ id, ...updateData });
   
   res.json({ subscription: updated });
 }
 
 // DELETE /admin/subscriptions/:id - Cancel subscription
 export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
-  const subscriptionModule = req.scope.resolve("subscription");
-  const tenantId = req.tenant?.id;
+  const subscriptionModule = req.scope.resolve("subscription") as any;
+  const tenantId = (req as any).tenant?.id;
   const { id } = req.params;
   
   if (!tenantId) {
@@ -78,7 +75,8 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
     return res.status(404).json({ message: "Subscription not found" });
   }
   
-  await subscriptionModule.updateSubscriptions(id, {
+  await subscriptionModule.updateSubscriptions({
+    id,
     status: "canceled",
     canceled_at: new Date(),
   });

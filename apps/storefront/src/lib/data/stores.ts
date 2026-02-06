@@ -1,4 +1,4 @@
-import { sdk } from "../config"
+import { sdk } from "@/lib/utils/sdk"
 import type { StoreConfig } from "../store-context"
 
 /**

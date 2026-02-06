@@ -35,11 +35,11 @@ export const StoreSwitcher: React.FC = () => {
         {branding?.logo?.url && (
           <img
             src={branding.logo.url}
-            alt={branding.storeName}
+            alt={branding.name}
             className="h-6 w-auto"
           />
         )}
-        <span className="font-medium">{branding?.storeName || 'Select Store'}</span>
+        <span className="font-medium">{branding?.name || 'Select Store'}</span>
         <svg
           className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
@@ -73,15 +73,15 @@ export const StoreSwitcher: React.FC = () => {
                 {store.logo?.url && (
                   <img
                     src={store.logo.url}
-                    alt={store.storeName}
+                    alt={store.name}
                     className="h-8 w-8 object-contain"
                   />
                 )}
                 <div className="flex-1">
-                  <div className="font-medium">{store.storeName}</div>
-                  {store.storeDescription && (
+                  <div className="font-medium">{store.name}</div>
+                  {store.seo?.description && (
                     <div className="text-sm text-gray-500 truncate">
-                      {store.storeDescription}
+                      {store.seo.description}
                     </div>
                   )}
                 </div>

@@ -1,8 +1,9 @@
 import {
   createWorkflow,
   WorkflowResponse,
+  createStep,
+  StepResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { createStep } from "@medusajs/framework/workflows-sdk"
 
 // Step: Approve vendor
 const approveVendorStep = createStep(
@@ -15,9 +16,9 @@ const approveVendorStep = createStep(
     },
     { container }
   ) => {
-    const vendorModule = container.resolve("vendor")
+    const vendorModule = container.resolve("vendor") as any
 
-    const vendor = await vendorModule.updateVendors({
+    const [vendor] = await vendorModule.updateVendors({
       id: input.vendorId,
       verification_status: "approved",
       status: "active",
@@ -27,10 +28,10 @@ const approveVendorStep = createStep(
       onboarded_at: new Date(),
     })
 
-    return { vendor }
+    return new StepResponse({ vendor }, { vendor })
   },
-  async ({ vendor }, { container }) => {
-    const vendorModule = container.resolve("vendor")
+  async ({ vendor }: { vendor: any }, { container }) => {
+    const vendorModule = container.resolve("vendor") as any
     await vendorModule.updateVendors({
       id: vendor.id,
       verification_status: "pending",

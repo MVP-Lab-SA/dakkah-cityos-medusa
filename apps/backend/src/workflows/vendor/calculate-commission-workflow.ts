@@ -1,8 +1,9 @@
 import {
   createWorkflow,
   WorkflowResponse,
+  createStep,
+  StepResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { createStep } from "@medusajs/framework/workflows-sdk"
 
 // Step: Calculate and create commission transaction
 const calculateCommissionStep = createStep(
@@ -19,14 +20,14 @@ const calculateCommissionStep = createStep(
     },
     { container }
   ) => {
-    const commissionModule = container.resolve("commission")
+    const commissionModule = container.resolve("commission") as any
 
     const transaction = await commissionModule.createCommissionTransaction(input)
 
-    return { transaction }
+    return new StepResponse({ transaction }, { transaction })
   },
-  async ({ transaction }, { container }) => {
-    const commissionModule = container.resolve("commission")
+  async ({ transaction }: { transaction: any }, { container }) => {
+    const commissionModule = container.resolve("commission") as any
     await commissionModule.deleteCommissionTransactions(transaction.id)
   }
 )

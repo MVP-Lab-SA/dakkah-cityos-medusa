@@ -198,7 +198,7 @@ export default async function ({ container }: ExecArgs) {
       handle: "classic-white-thobe",
       is_giftcard: false,
       status: "published",
-      categories: [{ id: getCategoryId("mens-thobes") }],
+      category_ids: [getCategoryId("mens-thobes")].filter(Boolean),
       sales_channels: [{ id: salesChannels[0].id }],
       variants: [
         {
@@ -236,7 +236,7 @@ export default async function ({ container }: ExecArgs) {
       description: "High-end thobe with intricate embroidery and premium fabric. Ideal for weddings and formal events.",
       handle: "premium-emirati-thobe",
       status: "published",
-      categories: [{ id: getCategoryId("mens-thobes") }],
+      category_ids: [getCategoryId("mens-thobes")].filter(Boolean),
       sales_channels: [{ id: salesChannels[0].id }],
       variants: [
         {
@@ -266,7 +266,7 @@ export default async function ({ container }: ExecArgs) {
       description: "Elegant black abaya made from premium fabric. Features flowing design with comfortable fit.",
       handle: "classic-black-abaya",
       status: "published",
-      categories: [{ id: getCategoryId("womens-abayas") }],
+      category_ids: [getCategoryId("womens-abayas")].filter(Boolean),
       sales_channels: [{ id: salesChannels[1].id }],
       variants: [
         {
@@ -295,7 +295,7 @@ export default async function ({ container }: ExecArgs) {
       description: "Stunning designer abaya featuring hand embroidery and premium materials. Perfect for special occasions.",
       handle: "designer-embroidery-abaya",
       status: "published",
-      categories: [{ id: getCategoryId("womens-abayas") }],
+      category_ids: [getCategoryId("womens-abayas")].filter(Boolean),
       sales_channels: [{ id: salesChannels[1].id }],
       variants: [
         {
@@ -316,7 +316,7 @@ export default async function ({ container }: ExecArgs) {
       description: "Authentic red and white checkered shemagh. Made from premium cotton for comfort and style.",
       handle: "red-white-shemagh",
       status: "published",
-      categories: [{ id: getCategoryId("shemagh-ghutra") }],
+      category_ids: [getCategoryId("shemagh-ghutra")].filter(Boolean),
       sales_channels: [{ id: salesChannels[0].id }],
       variants: [
         {
@@ -336,7 +336,7 @@ export default async function ({ container }: ExecArgs) {
       description: "Pure white ghutra perfect for formal occasions and daily wear.",
       handle: "white-ghutra",
       status: "published",
-      categories: [{ id: getCategoryId("shemagh-ghutra") }],
+      category_ids: [getCategoryId("shemagh-ghutra")].filter(Boolean),
       sales_channels: [{ id: salesChannels[0].id }],
       variants: [
         {
@@ -357,7 +357,7 @@ export default async function ({ container }: ExecArgs) {
       description: "Rare Cambodian oud oil. Aged for 10 years for rich, complex aroma. 10ml bottle.",
       handle: "cambodian-oud-oil",
       status: "published",
-      categories: [{ id: getCategoryId("oud-oil") }],
+      category_ids: [getCategoryId("oud-oil")].filter(Boolean),
       sales_channels: [{ id: salesChannels[0].id }, { id: salesChannels[1].id }],
       variants: [
         {
@@ -377,7 +377,7 @@ export default async function ({ container }: ExecArgs) {
       description: "Premium bakhoor chips for traditional incense burning. Mixed blend of oud, sandalwood, and spices.",
       handle: "bakhoor-incense-chips",
       status: "published",
-      categories: [{ id: getCategoryId("bakhoor-incense") }],
+      category_ids: [getCategoryId("bakhoor-incense")].filter(Boolean),
       sales_channels: [{ id: salesChannels[0].id }, { id: salesChannels[1].id }],
       variants: [
         {
@@ -398,7 +398,7 @@ export default async function ({ container }: ExecArgs) {
       description: "Beautiful Ayat al-Kursi written in elegant Arabic calligraphy on premium canvas. 60x80cm.",
       handle: "ayat-kursi-canvas",
       status: "published",
-      categories: [{ id: getCategoryId("islamic-wall-art") }],
+      category_ids: [getCategoryId("islamic-wall-art")].filter(Boolean),
       sales_channels: [{ id: salesChannels[0].id }],
       variants: [
         {
@@ -418,7 +418,7 @@ export default async function ({ container }: ExecArgs) {
       description: "Stunning artwork depicting the Holy Kaaba in Mecca. Gold leaf accents on black canvas.",
       handle: "kaaba-painting",
       status: "published",
-      categories: [{ id: getCategoryId("islamic-wall-art") }],
+      category_ids: [getCategoryId("islamic-wall-art")].filter(Boolean),
       sales_channels: [{ id: salesChannels[0].id }],
       variants: [
         {
@@ -439,7 +439,7 @@ export default async function ({ container }: ExecArgs) {
       description: "Luxurious velvet prayer mat with compass for qibla direction. Portable and easy to carry.",
       handle: "premium-prayer-mat",
       status: "published",
-      categories: [{ id: getCategoryId("prayer-items") }],
+      category_ids: [getCategoryId("prayer-items")].filter(Boolean),
       sales_channels: [{ id: salesChannels[0].id }],
       variants: [
         {
@@ -459,7 +459,7 @@ export default async function ({ container }: ExecArgs) {
       description: "Digital Quran player with audio recitations and translations in multiple languages.",
       handle: "digital-quran-player",
       status: "published",
-      categories: [{ id: getCategoryId("prayer-items") }],
+      category_ids: [getCategoryId("prayer-items")].filter(Boolean),
       sales_channels: [{ id: salesChannels[0].id }],
       variants: [
         {
@@ -480,7 +480,7 @@ export default async function ({ container }: ExecArgs) {
       description: "Authentic Ajwa dates from Al-Madinah. Known for their health benefits and spiritual significance. 500g package.",
       handle: "ajwa-dates-madinah",
       status: "published",
-      categories: [{ id: getCategoryId("premium-dates") }],
+      category_ids: [getCategoryId("premium-dates")].filter(Boolean),
       sales_channels: [{ id: salesChannels[0].id }, { id: salesChannels[1].id }],
       variants: [
         {
@@ -509,7 +509,7 @@ export default async function ({ container }: ExecArgs) {
       description: "Premium Medjool dates in elegant gift box. Perfect for gifting during Ramadan and special occasions.",
       handle: "medjool-dates-gift-box",
       status: "published",
-      categories: [{ id: getCategoryId("premium-dates") }],
+      category_ids: [getCategoryId("premium-dates")].filter(Boolean),
       sales_channels: [{ id: salesChannels[0].id }],
       variants: [
         {
@@ -530,7 +530,7 @@ export default async function ({ container }: ExecArgs) {
       description: "Assorted baklava with pistachios, walnuts, and almonds. Made fresh daily. 1kg box.",
       handle: "baklava-assortment",
       status: "published",
-      categories: [{ id: getCategoryId("arabic-sweets") }],
+      category_ids: [getCategoryId("arabic-sweets")].filter(Boolean),
       sales_channels: [{ id: salesChannels[1].id }],
       variants: [
         {
@@ -559,7 +559,7 @@ export default async function ({ container }: ExecArgs) {
       description: "Fresh kunafa filled with sweet cream. Baked to golden perfection. Serves 4-6 people.",
       handle: "kunafa-cream",
       status: "published",
-      categories: [{ id: getCategoryId("arabic-sweets") }],
+      category_ids: [getCategoryId("arabic-sweets")].filter(Boolean),
       sales_channels: [{ id: salesChannels[1].id }],
       variants: [
         {
@@ -580,7 +580,7 @@ export default async function ({ container }: ExecArgs) {
       description: "Finest Khawlani coffee beans from the mountains of Saudi Arabia. Ground with cardamom.",
       handle: "saudi-khawlani-coffee",
       status: "published",
-      categories: [{ id: getCategoryId("arabic-coffee") }],
+      category_ids: [getCategoryId("arabic-coffee")].filter(Boolean),
       sales_channels: [{ id: salesChannels[0].id }, { id: salesChannels[3].id }],
       variants: [
         {
@@ -611,7 +611,7 @@ export default async function ({ container }: ExecArgs) {
       description: "Luxury black tea infused with saffron. Perfect for hospitality and special occasions.",
       handle: "saffron-tea",
       status: "published",
-      categories: [{ id: getCategoryId("traditional-tea") }],
+      category_ids: [getCategoryId("traditional-tea")].filter(Boolean),
       sales_channels: [{ id: salesChannels[0].id }],
       variants: [
         {
@@ -632,7 +632,7 @@ export default async function ({ container }: ExecArgs) {
   for (const product of productsToCreate) {
     try {
       await createProductsWorkflow(container).run({
-        input: { products: [product] },
+        input: { products: [product as any] },
       })
       createdProducts++
       console.log(`  ✅ Created product: ${product.title}`)

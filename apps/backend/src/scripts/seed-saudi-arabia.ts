@@ -1,4 +1,5 @@
 import { ExecArgs } from "@medusajs/framework/types"
+import { ProductStatus } from "@medusajs/framework/utils"
 import {
   createRegionsWorkflow,
   createTaxRegionsWorkflow,
@@ -263,7 +264,7 @@ export default async function ({ container }: ExecArgs) {
           subtitle: "Classic Saudi style with modern comfort",
           handle: "premium-white-thobe",
           description: "Elegant white thobe crafted from premium cotton fabric. Perfect for daily wear and special occasions.",
-          status: "published",
+          status: ProductStatus.PUBLISHED,
           options: [
             {
               title: "Size",
@@ -307,16 +308,16 @@ export default async function ({ container }: ExecArgs) {
               manage_inventory: true,
             },
           ],
-          categories: [{ id: mensThobeCategoryId }],
+          category_ids: mensThobeCategoryId ? [mensThobeCategoryId] : [],
           collection_id: eidCollectionId,
-          tags: [{ id: featuredTagId }],
+          // Tags are handled separately via product tags workflow
         },
         {
           title: "Luxury Bisht",
           subtitle: "Traditional ceremonial cloak",
           handle: "luxury-bisht",
           description: "Handcrafted bisht with golden embroidery. Perfect for weddings and formal occasions.",
-          status: "published",
+          status: ProductStatus.PUBLISHED,
           options: [
             {
               title: "Size",
@@ -346,9 +347,9 @@ export default async function ({ container }: ExecArgs) {
               manage_inventory: true,
             },
           ],
-          categories: [{ id: mensThobeCategoryId }],
+          category_ids: mensThobeCategoryId ? [mensThobeCategoryId] : [],
           collection_id: premiumCollectionId,
-          tags: [{ id: premiumTagId }, { id: featuredTagId }],
+          // Tags managed separately via product tags workflow
         },
         // Women's Abayas
         {
@@ -356,7 +357,7 @@ export default async function ({ container }: ExecArgs) {
           subtitle: "Classic design with modern touch",
           handle: "elegant-black-abaya",
           description: "Beautiful black abaya with subtle embellishments. Comfortable and stylish for everyday wear.",
-          status: "published",
+          status: ProductStatus.PUBLISHED,
           options: [
             {
               title: "Size",
@@ -393,15 +394,15 @@ export default async function ({ container }: ExecArgs) {
               manage_inventory: true,
             },
           ],
-          categories: [{ id: womensAbayaCategoryId }],
-          tags: [{ id: featuredTagId }],
+          category_ids: womensAbayaCategoryId ? [womensAbayaCategoryId] : [],
+          // Tags are handled separately via product tags workflow
         },
         {
           title: "Designer Abaya with Pearl Details",
           subtitle: "Luxurious handcrafted design",
           handle: "designer-pearl-abaya",
           description: "Premium abaya featuring delicate pearl embellishments. Perfect for special occasions.",
-          status: "published",
+          status: ProductStatus.PUBLISHED,
           options: [
             {
               title: "Size",
@@ -438,9 +439,9 @@ export default async function ({ container }: ExecArgs) {
               manage_inventory: true,
             },
           ],
-          categories: [{ id: womensAbayaCategoryId }],
+          category_ids: womensAbayaCategoryId ? [womensAbayaCategoryId] : [],
           collection_id: premiumCollectionId,
-          tags: [{ id: premiumTagId }, { id: featuredTagId }],
+          // Tags managed separately via product tags workflow
         },
         // Shemagh & Ghutra
         {
@@ -448,7 +449,7 @@ export default async function ({ container }: ExecArgs) {
           subtitle: "Traditional Saudi headwear",
           handle: "red-white-shemagh",
           description: "Authentic red and white checkered shemagh. High-quality cotton fabric.",
-          status: "published",
+          status: ProductStatus.PUBLISHED,
           options: [
             {
               title: "Default option",
@@ -464,15 +465,15 @@ export default async function ({ container }: ExecArgs) {
               manage_inventory: true,
             },
           ],
-          categories: [{ id: shemaghCategoryId }],
-          tags: [{ id: featuredTagId }],
+          category_ids: shemaghCategoryId ? [shemaghCategoryId] : [],
+          // Tags are handled separately via product tags workflow
         },
         {
           title: "White Ghutra",
           subtitle: "Pure white traditional headscarf",
           handle: "white-ghutra",
           description: "Classic white ghutra made from premium cotton. Essential for traditional attire.",
-          status: "published",
+          status: ProductStatus.PUBLISHED,
           options: [
             {
               title: "Default option",
@@ -488,7 +489,7 @@ export default async function ({ container }: ExecArgs) {
               manage_inventory: true,
             },
           ],
-          categories: [{ id: shemaghCategoryId }],
+          category_ids: shemaghCategoryId ? [shemaghCategoryId] : [],
         },
         // Fragrances & Oud
         {
@@ -496,7 +497,7 @@ export default async function ({ container }: ExecArgs) {
           subtitle: "Premium aged oud from Southeast Asia",
           handle: "royal-oud-oil-12ml",
           description: "Exquisite oud oil aged for years. Rich, complex aroma perfect for special occasions.",
-          status: "published",
+          status: ProductStatus.PUBLISHED,
           options: [
             {
               title: "Size",
@@ -526,16 +527,16 @@ export default async function ({ container }: ExecArgs) {
               manage_inventory: true,
             },
           ],
-          categories: [{ id: oudOilCategoryId }],
+          category_ids: oudOilCategoryId ? [oudOilCategoryId] : [],
           collection_id: premiumCollectionId,
-          tags: [{ id: premiumTagId }, { id: featuredTagId }],
+          // Tags managed separately via product tags workflow
         },
         {
           title: "Arabian Bakhoor Box",
           subtitle: "Traditional incense blend",
           handle: "arabian-bakhoor-box",
           description: "Premium bakhoor made from natural wood, oud, and essential oils. Creates a warm, inviting atmosphere.",
-          status: "published",
+          status: ProductStatus.PUBLISHED,
           options: [
             {
               title: "Default option",
@@ -551,16 +552,16 @@ export default async function ({ container }: ExecArgs) {
               manage_inventory: true,
             },
           ],
-          categories: [{ id: bakhoorCategoryId }],
+          category_ids: bakhoorCategoryId ? [bakhoorCategoryId] : [],
           collection_id: ramadanCollectionId,
-          tags: [{ id: featuredTagId }],
+          // Tags are handled separately via product tags workflow
         },
         {
           title: "Musk Al Tahara",
           subtitle: "Traditional white musk",
           handle: "musk-al-tahara",
           description: "Pure white musk, traditionally used after ablution. Light, clean fragrance.",
-          status: "published",
+          status: ProductStatus.PUBLISHED,
           options: [
             {
               title: "Default option",
@@ -576,7 +577,7 @@ export default async function ({ container }: ExecArgs) {
               manage_inventory: true,
             },
           ],
-          categories: [{ id: oudOilCategoryId }],
+          category_ids: oudOilCategoryId ? [oudOilCategoryId] : [],
           collection_id: ramadanCollectionId,
         },
         // Home & Decor
@@ -585,7 +586,7 @@ export default async function ({ container }: ExecArgs) {
           subtitle: "Islamic calligraphy canvas print",
           handle: "ayat-al-kursi-wall-art",
           description: "Beautiful Arabic calligraphy featuring Ayat Al-Kursi. Premium canvas print with wooden frame.",
-          status: "published",
+          status: ProductStatus.PUBLISHED,
           options: [
             {
               title: "Size",
@@ -615,15 +616,15 @@ export default async function ({ container }: ExecArgs) {
               manage_inventory: true,
             },
           ],
-          categories: [{ id: islamicArtCategoryId }],
-          tags: [{ id: featuredTagId }],
+          category_ids: islamicArtCategoryId ? [islamicArtCategoryId] : [],
+          // Tags are handled separately via product tags workflow
         },
         {
           title: "Luxury Prayer Mat",
           subtitle: "Memory foam prayer rug",
           handle: "luxury-prayer-mat",
           description: "Premium prayer mat with memory foam cushioning. Beautiful Islamic pattern design.",
-          status: "published",
+          status: ProductStatus.PUBLISHED,
           options: [
             {
               title: "Color",
@@ -653,16 +654,16 @@ export default async function ({ container }: ExecArgs) {
               manage_inventory: true,
             },
           ],
-          categories: [{ id: prayerItemsCategoryId }],
+          category_ids: prayerItemsCategoryId ? [prayerItemsCategoryId] : [],
           collection_id: ramadanCollectionId,
-          tags: [{ id: featuredTagId }],
+          // Tags are handled separately via product tags workflow
         },
         {
           title: "Electronic Tasbih Counter",
           subtitle: "Digital dhikr counter",
           handle: "electronic-tasbih-counter",
           description: "Convenient digital tasbih counter with LED display. Perfect for daily dhikr.",
-          status: "published",
+          status: ProductStatus.PUBLISHED,
           options: [
             {
               title: "Default option",
@@ -678,7 +679,7 @@ export default async function ({ container }: ExecArgs) {
               manage_inventory: true,
             },
           ],
-          categories: [{ id: prayerItemsCategoryId }],
+          category_ids: prayerItemsCategoryId ? [prayerItemsCategoryId] : [],
           collection_id: ramadanCollectionId,
         },
       ],

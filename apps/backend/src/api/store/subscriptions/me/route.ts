@@ -2,8 +2,8 @@ import { MedusaRequest, MedusaResponse } from "@medusajs/framework";
 
 // GET /store/subscriptions/me - List customer's subscriptions
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const subscriptionModule = req.scope.resolve("subscription");
-  const customerId = req.auth?.actor_id;
+  const subscriptionModule = req.scope.resolve("subscription") as any;
+  const customerId = req.auth_context?.actor_id;
   
   if (!customerId) {
     return res.status(401).json({ message: "Authentication required" });
@@ -14,16 +14,15 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const filters: any = { customer_id: customerId };
   if (status) filters.status = status;
   
-  const [subscriptions, count] = await subscriptionModule.listAndCountSubscriptions(filters, {
+  const subscriptions = await subscriptionModule.listSubscriptions(filters, {
     skip: Number(offset),
     take: Number(limit),
-    relations: ["subscription_items"],
     order: { created_at: "DESC" },
   });
   
   res.json({
     subscriptions,
-    count,
+    count: Array.isArray(subscriptions) ? subscriptions.length : 0,
     offset: Number(offset),
     limit: Number(limit),
   });

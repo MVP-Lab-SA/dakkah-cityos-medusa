@@ -2,8 +2,9 @@ import {
   createWorkflow,
   WorkflowResponse,
   transform,
+  createStep,
+  StepResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { createStep } from "@medusajs/framework/workflows-sdk"
 
 // Step: Get unpaid transactions for vendor
 const getUnpaidTransactionsStep = createStep(
@@ -18,7 +19,7 @@ const getUnpaidTransactionsStep = createStep(
     },
     { container }
   ) => {
-    const commissionModule = container.resolve("commission")
+    const commissionModule = container.resolve("commission") as any
 
     const transactions = await commissionModule.listCommissionTransactions({
       filters: {
@@ -34,16 +35,16 @@ const getUnpaidTransactionsStep = createStep(
     })
 
     // Calculate totals
-    const grossAmount = transactions.reduce((sum, tx) => sum + Number(tx.order_total), 0)
-    const commissionAmount = transactions.reduce((sum, tx) => sum + Number(tx.commission_amount), 0)
-    const platformFeeAmount = transactions.reduce((sum, tx) => sum + Number(tx.platform_fee_amount || 0), 0)
+    const grossAmount = transactions.reduce((sum: number, tx: any) => sum + Number(tx.order_total), 0)
+    const commissionAmount = transactions.reduce((sum: number, tx: any) => sum + Number(tx.commission_amount), 0)
+    const platformFeeAmount = transactions.reduce((sum: number, tx: any) => sum + Number(tx.platform_fee_amount || 0), 0)
 
-    return {
+    return new StepResponse({
       transactions,
       grossAmount,
       commissionAmount,
       platformFeeAmount,
-    }
+    })
   }
 )
 
@@ -65,14 +66,14 @@ const createPayoutStep = createStep(
     },
     { container }
   ) => {
-    const payoutModule = container.resolve("payout")
+    const payoutModule = container.resolve("payout") as any
 
     const payout = await payoutModule.createVendorPayout(input)
 
-    return { payout }
+    return new StepResponse({ payout }, { payout })
   },
-  async ({ payout }, { container }) => {
-    const payoutModule = container.resolve("payout")
+  async ({ payout }: { payout: any }, { container }) => {
+    const payoutModule = container.resolve("payout") as any
     await payoutModule.deletePayouts(payout.id)
   }
 )
@@ -87,7 +88,7 @@ const markTransactionsPaidStep = createStep(
     },
     { container }
   ) => {
-    const commissionModule = container.resolve("commission")
+    const commissionModule = container.resolve("commission") as any
 
     await commissionModule.updateCommissionTransactions(
       input.transactionIds.map(id => ({
@@ -98,13 +99,13 @@ const markTransactionsPaidStep = createStep(
       }))
     )
 
-    return { updated: true }
+    return new StepResponse({ updated: true }, { transactionIds: input.transactionIds })
   },
-  async (input: { transactionIds: string[] }, { container }) => {
-    const commissionModule = container.resolve("commission")
+  async ({ transactionIds }: { transactionIds: string[] }, { container }) => {
+    const commissionModule = container.resolve("commission") as any
     
     await commissionModule.updateCommissionTransactions(
-      input.transactionIds.map(id => ({
+      transactionIds.map(id => ({
         id,
         payout_id: null,
         payout_status: "unpaid",

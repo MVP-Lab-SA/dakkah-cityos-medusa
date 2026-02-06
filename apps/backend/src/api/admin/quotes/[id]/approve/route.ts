@@ -17,6 +17,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const adminUserId = req.auth_context?.actor_id;
   const parsed = approveQuoteSchema.parse(req.body);
 
+  // @ts-ignore - Dynamic import
   const { approveQuoteWorkflow } = await import(
     "../../../../workflows/b2b/approve-quote-workflow"
   );

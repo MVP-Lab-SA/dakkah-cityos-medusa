@@ -10,7 +10,7 @@ export default async function({ container }: ExecArgs) {
   try {
     const { result: customerGroups } = await createCustomerGroupsWorkflow(container).run({
       input: {
-        customerGroupsData: [
+        customersData: [
           {
             name: "VIP",
             metadata: {

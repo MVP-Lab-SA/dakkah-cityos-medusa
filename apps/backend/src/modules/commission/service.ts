@@ -50,7 +50,7 @@ class CommissionModuleService extends MedusaService({
 
     let commissionAmount = 0
     let commissionRate = 0
-    let commissionFlat = null
+    let commissionFlat: number | null = null
 
     // Calculate based on commission type
     switch (rule.commission_type) {
@@ -60,13 +60,13 @@ class CommissionModuleService extends MedusaService({
         break
         
       case "flat":
-        commissionFlat = rule.commission_flat_amount || 0
+        commissionFlat = Number(rule.commission_flat_amount || 0)
         commissionAmount = commissionFlat
         break
         
       case "tiered_percentage":
         // Find applicable tier
-        const tiers = rule.tiers as Array<{ min_amount: number; max_amount: number; rate: number }> || []
+        const tiers = (rule.tiers as unknown as Array<{ min_amount: number; max_amount: number; rate: number }>) || []
         const tier = tiers.find(t => orderTotal >= t.min_amount && orderTotal <= t.max_amount)
         if (tier) {
           commissionRate = tier.rate
@@ -100,7 +100,10 @@ class CommissionModuleService extends MedusaService({
     tenantId: string
     storeId?: string | null
   }) {
-    const calculation = await this.calculateCommission(data)
+    const calculation = await this.calculateCommission({
+      ...data,
+      lineItemId: data.lineItemId || "",
+    })
 
     return await this.createCommissionTransactions({
       tenant_id: data.tenantId,

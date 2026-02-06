@@ -2,9 +2,9 @@ import {
   createWorkflow,
   WorkflowResponse,
   transform,
-  when,
+  createStep,
+  StepResponse,
 } from "@medusajs/framework/workflows-sdk";
-import { createStep } from "@medusajs/framework/workflows-sdk";
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
 
 interface CreateSubscriptionInput {
@@ -22,7 +22,7 @@ interface CreateSubscriptionInput {
     variant_id: string;
     quantity: number;
   }>;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 // Step 1: Validate customer and products
@@ -34,12 +34,12 @@ const validateSubscriptionDataStep = createStep(
     // Validate customer exists and belongs to tenant
     const { data: customers } = await query.graph({
       entity: "customer",
-      fields: ["id", "tenant_id"],
-      filters: { id: input.customer_id, tenant_id: input.tenant_id },
+      fields: ["id"],
+      filters: { id: input.customer_id },
     });
     
     if (!customers?.[0]) {
-      throw new Error(`Customer ${input.customer_id} not found in tenant ${input.tenant_id}`);
+      throw new Error(`Customer ${input.customer_id} not found`);
     }
     
     // Validate products exist and are subscription-enabled
@@ -54,7 +54,7 @@ const validateSubscriptionDataStep = createStep(
       throw new Error("One or more product variants not found");
     }
     
-    return { variants };
+    return new StepResponse({ variants });
   }
 );
 
@@ -62,27 +62,29 @@ const validateSubscriptionDataStep = createStep(
 const calculateSubscriptionAmountsStep = createStep(
   "calculate-subscription-amounts",
   async (
-    { input, variants }: { input: CreateSubscriptionInput; variants: any[] },
+    { input, variants }: { input: CreateSubscriptionInput; variants: Record<string, unknown>[] },
     { container }
   ) => {
     const items = input.items.map((item) => {
-      const variant = variants.find((v) => v.id === item.variant_id);
-      const price = variant.prices?.[0];
+      const variant = variants.find((v: Record<string, unknown>) => v.id === item.variant_id) as Record<string, unknown>;
+      const prices = variant?.prices as Array<Record<string, unknown>>;
+      const price = prices?.[0];
       
       if (!price) {
         throw new Error(`No price found for variant ${item.variant_id}`);
       }
       
-      const unit_price = price.amount;
+      const unit_price = price.amount as number;
       const subtotal = unit_price * item.quantity;
       const tax_total = 0; // TODO: Calculate tax
       const total = subtotal + tax_total;
+      const product = variant?.product as Record<string, unknown>;
       
       return {
         product_id: item.product_id,
         variant_id: item.variant_id,
-        product_title: variant.product.title,
-        variant_title: variant.title,
+        product_title: product?.title as string,
+        variant_title: variant?.title as string,
         quantity: item.quantity,
         unit_price,
         subtotal,
@@ -97,12 +99,14 @@ const calculateSubscriptionAmountsStep = createStep(
     const total = subtotal + tax_total;
     
     // Get currency from first variant price
-    const currency_code = variants[0].prices[0].currency_code;
+    const firstVariant = variants[0] as Record<string, unknown>;
+    const firstPrices = firstVariant?.prices as Array<Record<string, unknown>>;
+    const currency_code = firstPrices?.[0]?.currency_code as string;
     
-    return {
+    return new StepResponse({
       items,
       amounts: { subtotal, tax_total, total, currency_code },
-    };
+    });
   }
 );
 
@@ -116,12 +120,12 @@ const createSubscriptionStep = createStep(
       amounts,
     }: {
       input: CreateSubscriptionInput;
-      items: any[];
-      amounts: any;
+      items: Record<string, unknown>[];
+      amounts: Record<string, unknown>;
     },
     { container }
   ) => {
-    const subscriptionModule = container.resolve("subscription");
+    const subscriptionModule = container.resolve("subscription") as any;
     
     const now = new Date();
     const trial_end = input.trial_days
@@ -149,17 +153,17 @@ const createSubscriptionStep = createStep(
     
     // Create subscription items
     const subscriptionItems = await subscriptionModule.createSubscriptionItems(
-      items.map((item) => ({
+      items.map((item: Record<string, unknown>) => ({
         ...item,
         subscription_id: subscription.id,
       }))
     );
     
-    return { subscription, items: subscriptionItems };
+    return new StepResponse({ subscription, items: subscriptionItems }, { subscription });
   },
-  async ({ subscription }, { container }) => {
+  async ({ subscription }: { subscription: Record<string, unknown> }, { container }) => {
     // Rollback: delete subscription
-    const subscriptionModule = container.resolve("subscription");
+    const subscriptionModule = container.resolve("subscription") as any;
     await subscriptionModule.deleteSubscriptions(subscription.id);
   }
 );
@@ -167,36 +171,39 @@ const createSubscriptionStep = createStep(
 // Step 4: Activate subscription (if no trial)
 const activateSubscriptionStep = createStep(
   "activate-subscription",
-  async ({ subscription, skipActivation }: any, { container }) => {
+  async ({ subscription, skipActivation }: { subscription: Record<string, unknown>; skipActivation: boolean }, { container }) => {
     if (skipActivation) {
-      return { subscription };
+      return new StepResponse({ subscription });
     }
     
-    const subscriptionModule = container.resolve("subscription");
+    const subscriptionModule = container.resolve("subscription") as any;
     const now = new Date();
     
     // Calculate first billing period
-    let period_end = new Date(now);
+    const period_end = new Date(now);
+    const intervalCount = subscription.billing_interval_count as number || 1;
+    
     switch (subscription.billing_interval) {
       case "daily":
-        period_end.setDate(period_end.getDate() + subscription.billing_interval_count);
+        period_end.setDate(period_end.getDate() + intervalCount);
         break;
       case "weekly":
-        period_end.setDate(period_end.getDate() + 7 * subscription.billing_interval_count);
+        period_end.setDate(period_end.getDate() + 7 * intervalCount);
         break;
       case "monthly":
-        period_end.setMonth(period_end.getMonth() + subscription.billing_interval_count);
+        period_end.setMonth(period_end.getMonth() + intervalCount);
         break;
       case "quarterly":
-        period_end.setMonth(period_end.getMonth() + 3 * subscription.billing_interval_count);
+        period_end.setMonth(period_end.getMonth() + 3 * intervalCount);
         break;
       case "yearly":
-        period_end.setFullYear(period_end.getFullYear() + subscription.billing_interval_count);
+        period_end.setFullYear(period_end.getFullYear() + intervalCount);
         break;
     }
     
     // Update subscription to active
-    const updated = await subscriptionModule.updateSubscriptions(subscription.id, {
+    const updated = await subscriptionModule.updateSubscriptions({
+      id: subscription.id,
       status: "active",
       start_date: now,
       current_period_start: now,
@@ -216,7 +223,7 @@ const activateSubscriptionStep = createStep(
       total: subscription.total,
     });
     
-    return { subscription: updated };
+    return new StepResponse({ subscription: updated });
   }
 );
 

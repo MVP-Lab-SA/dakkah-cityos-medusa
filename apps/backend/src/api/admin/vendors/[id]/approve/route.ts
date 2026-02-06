@@ -1,6 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework"
 import { z } from "zod"
-import { approveVendorWorkflow } from "../../../../../workflows/vendor/approve-vendor-workflow"
+import { approveVendorWorkflow } from "../../../../../workflows/vendor/approve-vendor-workflow.js"
 
 const approveVendorSchema = z.object({
   notes: z.string().optional(),
@@ -18,7 +18,7 @@ export async function POST(
   if (!validation.success) {
     return res.status(400).json({
       message: "Validation failed",
-      errors: validation.error.errors,
+      errors: validation.error.issues,
     })
   }
 

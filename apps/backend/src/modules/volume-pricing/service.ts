@@ -98,10 +98,10 @@ class VolumePricingModuleService extends MedusaService({
 
     filters.$or = [...(filters.$or || []), ...scopeConditions];
 
-    const [rules] = await this.listVolumePricings(filters);
+    const rules = await this.listVolumePricings(filters);
     
     // Sort by priority (highest first)
-    return rules.sort((a, b) => b.priority - a.priority);
+    return (rules || []).sort((a: any, b: any) => (b.priority || 0) - (a.priority || 0));
   }
 
   /**
@@ -120,13 +120,13 @@ class VolumePricingModuleService extends MedusaService({
     tier?: any;
   }> {
     const rule = await this.retrieveVolumePricing(ruleId);
-    const [tiers] = await this.listVolumePricingTiers({
+    const tiers = await this.listVolumePricingTiers({
       volume_pricing_id: ruleId,
     });
 
     // Find matching tier
-    const matchingTier = tiers
-      .sort((a, b) => a.min_quantity - b.min_quantity)
+    const matchingTier = (tiers || [])
+      .sort((a: any, b: any) => a.min_quantity - b.min_quantity)
       .find(tier => {
         const inRange = quantity >= tier.min_quantity;
         const belowMax = tier.max_quantity === null || quantity <= tier.max_quantity;

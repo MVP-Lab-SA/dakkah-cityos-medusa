@@ -2,8 +2,9 @@ import {
   createWorkflow,
   WorkflowResponse,
   transform,
+  createStep,
+  StepResponse,
 } from "@medusajs/framework/workflows-sdk"
-import { createStep } from "@medusajs/framework/workflows-sdk"
 
 // Step: Create vendor
 const createVendorStep = createStep(
@@ -53,9 +54,9 @@ const createVendorStep = createStep(
       metadata: input.metadata,
     })
 
-    return { vendor }
+    return new StepResponse({ vendor }, { vendor })
   },
-  async ({ vendor }, { container }) => {
+  async ({ vendor }: { vendor: any }, { container }) => {
     const vendorModule = container.resolve("vendor")
     await vendorModule.deleteVendors(vendor.id)
   }
@@ -75,7 +76,7 @@ const createDefaultCommissionRuleStep = createStep(
   ) => {
     const commissionModule = container.resolve("commission")
 
-    const rule = await commissionModule.createCommissionRules({
+    const rule = await (commissionModule as any).createCommissions({
       tenant_id: input.tenantId,
       store_id: input.storeId,
       vendor_id: input.vendorId,
@@ -87,11 +88,11 @@ const createDefaultCommissionRuleStep = createStep(
       applies_to: "all_products",
     })
 
-    return { rule }
+    return new StepResponse({ rule }, { rule })
   },
-  async ({ rule }, { container }) => {
+  async ({ rule }: { rule: any }, { container }) => {
     const commissionModule = container.resolve("commission")
-    await commissionModule.deleteCommissionRules(rule.id)
+    await (commissionModule as any).deleteCommissions(rule.id)
   }
 )
 
@@ -119,12 +120,12 @@ export const createVendorWorkflow = createWorkflow(
       metadata?: Record<string, any>
     }
   ) => {
-    const { vendor } = createVendorStep(input)
+    const vendorResult = createVendorStep(input)
 
     const commissionRateTransformed = transform(
-      { vendor, input },
-      ({ vendor, input }) => ({
-        vendorId: vendor.id,
+      { vendorResult, input },
+      ({ vendorResult, input }) => ({
+        vendorId: (vendorResult as any).vendor.id,
         tenantId: input.tenantId,
         storeId: input.storeId,
         commissionRate: input.commissionRate || 15,
@@ -134,7 +135,7 @@ export const createVendorWorkflow = createWorkflow(
     const { rule } = createDefaultCommissionRuleStep(commissionRateTransformed)
 
     return new WorkflowResponse({
-      vendor,
+      vendor: (vendorResult as any).vendor,
       commissionRule: rule,
     })
   }

@@ -11,7 +11,7 @@ const approveCompanySchema = z.object({
  * Approve a pending company application
  */
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const companyService = req.scope.resolve("companyModuleService");
+  const companyService = req.scope.resolve("companyModuleService") as any;
   const { id } = req.params;
   const adminUserId = req.auth_context?.actor_id;
 
@@ -27,7 +27,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   }
 
   // Approve company
-  const updated = await companyService.updateCompanies(id, {
+  const updated = await companyService.updateCompanies({
+    id,
     status: "active",
     approved_at: new Date(),
     approved_by: adminUserId,

@@ -1,5 +1,6 @@
 import { ExecArgs } from "@medusajs/framework/types";
 import { Modules } from "@medusajs/framework/utils";
+import { linkProductsToSalesChannelWorkflow } from "@medusajs/medusa/core-flows";
 
 /**
  * Seed script for multi-tenant multi-store setup
@@ -12,9 +13,9 @@ import { Modules } from "@medusajs/framework/utils";
 export default async function({ container }: ExecArgs) {
   console.log("Starting multi-tenant seed...\n");
   
-  const tenantModuleService = container.resolve("tenant");
-  const storeModuleService = container.resolve("cityosStore");
-  const salesChannelModule = container.resolve(Modules.SALES_CHANNEL);
+  const tenantModuleService = container.resolve("tenant") as any;
+  const storeModuleService = container.resolve("cityosStore") as any;
+  const salesChannelModule = container.resolve(Modules.SALES_CHANNEL) as any;
   const query = container.resolve("query");
   
   // Step 1: Create or Retrieve Main Tenant
@@ -97,7 +98,7 @@ export default async function({ container }: ExecArgs) {
   });
   console.log(`Created store: ${saudiStore.name} (subdomain: ${saudiStore.subdomain})`);
   
-  const modernStore = await storeModuleService.createCityosStores({
+  const modernStore = await storeModuleService.createStores({
     tenant_id: tenant.id,
     handle: "modern-fashion",
     name: "Modern Fashion",
@@ -116,7 +117,7 @@ export default async function({ container }: ExecArgs) {
   });
   console.log(`Created store: ${modernStore.name} (subdomain: ${modernStore.subdomain})`);
   
-  const homeStore = await storeModuleService.createCityosStores({
+  const homeStore = await storeModuleService.createStores({
     tenant_id: tenant.id,
     handle: "home-decor",
     name: "Home Decor",
@@ -146,9 +147,14 @@ export default async function({ container }: ExecArgs) {
   
   console.log(`Found ${products.data.length} products to distribute`);
   
+  // Collect products for each channel
+  const saudiProducts: string[] = [];
+  const modernProducts: string[] = [];
+  const homeProducts: string[] = [];
+  
   // Distribute products to stores based on tags/collections
   for (const product of products.data) {
-    const productTitle = product.title.toLowerCase();
+    const productTitle = (product.title || "").toLowerCase();
     const tags = product.tags?.map((t: any) => t.value?.toLowerCase() || "") || [];
     
     // Saudi Traditional Store: traditional wear, abayas, cultural items
@@ -158,11 +164,8 @@ export default async function({ container }: ExecArgs) {
       productTitle.includes("thobe") ||
       productTitle.includes("traditional")
     ) {
-      await salesChannelModule.addProductsToSalesChannel({
-        id: saudiChannel.id,
-        add: [product.id]
-      });
-      console.log(`  - Linked "${product.title}" to Saudi Traditional Store`);
+      saudiProducts.push(product.id);
+      console.log(`  - Will link "${product.title}" to Saudi Traditional Store`);
     }
     
     // Modern Fashion Store: contemporary fashion
@@ -172,11 +175,8 @@ export default async function({ container }: ExecArgs) {
       productTitle.includes("shirt") ||
       productTitle.includes("casual")
     ) {
-      await salesChannelModule.addProductsToSalesChannel({
-        id: modernChannel.id,
-        add: [product.id]
-      });
-      console.log(`  - Linked "${product.title}" to Modern Fashion Store`);
+      modernProducts.push(product.id);
+      console.log(`  - Will link "${product.title}" to Modern Fashion Store`);
     }
     
     // Home Decor Store: home items, decor
@@ -187,12 +187,31 @@ export default async function({ container }: ExecArgs) {
       productTitle.includes("cushion") ||
       productTitle.includes("decor")
     ) {
-      await salesChannelModule.addProductsToSalesChannel({
-        id: homeChannel.id,
-        add: [product.id]
-      });
-      console.log(`  - Linked "${product.title}" to Home Decor Store`);
+      homeProducts.push(product.id);
+      console.log(`  - Will link "${product.title}" to Home Decor Store`);
     }
+  }
+
+  // Link products using workflow
+  if (saudiProducts.length > 0) {
+    await linkProductsToSalesChannelWorkflow(container).run({
+      input: { id: saudiChannel.id, add: saudiProducts }
+    });
+    console.log(`Linked ${saudiProducts.length} products to Saudi Traditional Store`);
+  }
+
+  if (modernProducts.length > 0) {
+    await linkProductsToSalesChannelWorkflow(container).run({
+      input: { id: modernChannel.id, add: modernProducts }
+    });
+    console.log(`Linked ${modernProducts.length} products to Modern Fashion Store`);
+  }
+
+  if (homeProducts.length > 0) {
+    await linkProductsToSalesChannelWorkflow(container).run({
+      input: { id: homeChannel.id, add: homeProducts }
+    });
+    console.log(`Linked ${homeProducts.length} products to Home Decor Store`);
   }
   
   // Summary
@@ -204,8 +223,4 @@ export default async function({ container }: ExecArgs) {
   console.log(`  - Home Decor (${homeStore.subdomain}.dakkah.com)`);
   console.log(`Sales Channels: 3`);
   console.log(`Products distributed across stores based on categories`);
-  console.log("\nNext steps:");
-  console.log("1. Visit subdomain routes (Phase 2)");
-  console.log("2. Setup PayloadCMS orchestrator (Phase 3)");
-  console.log("3. Implement RBAC (Phase 7)");
 }
