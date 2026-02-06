@@ -138,7 +138,7 @@ export default async function ({ container }: ExecArgs) {
           ],
           category_ids: traditionalWearId ? [traditionalWearId] : [],
           collection_id: eidCollectionId,
-          tags: [{ id: bestsellerTagId }],
+          // Tags handled via product tags workflow
         },
         {
           title: "Elegant Black Abaya",
@@ -182,7 +182,7 @@ export default async function ({ container }: ExecArgs) {
             },
           ],
           category_ids: traditionalWearId ? [traditionalWearId] : [],
-          tags: [{ id: bestsellerTagId }],
+          // Tags handled via product tags workflow
         },
         // Fragrances
         {
@@ -220,7 +220,7 @@ export default async function ({ container }: ExecArgs) {
             },
           ],
           category_ids: fragrancesId ? [fragrancesId] : [],
-          tags: [{ id: newArrivalTagId }],
+          // Tags handled via product tags workflow
         },
         {
           title: "Arabian Bakhoor",
@@ -244,7 +244,7 @@ export default async function ({ container }: ExecArgs) {
           ],
           category_ids: fragrancesId ? [fragrancesId] : [],
           collection_id: ramadanCollectionId,
-          tags: [{ id: bestsellerTagId }],
+          // Tags handled via product tags workflow
         },
         // Home Decor
         {
@@ -275,7 +275,7 @@ export default async function ({ container }: ExecArgs) {
             },
           ],
           category_ids: homeDecorId ? [homeDecorId] : [],
-          tags: [{ id: newArrivalTagId }],
+          // Tags handled via product tags workflow
         },
         {
           title: "Premium Prayer Mat",
@@ -313,7 +313,7 @@ export default async function ({ container }: ExecArgs) {
           ],
           category_ids: homeDecorId ? [homeDecorId] : [],
           collection_id: ramadanCollectionId,
-          tags: [{ id: bestsellerTagId }],
+          // Tags handled via product tags workflow
         },
       ],
     },

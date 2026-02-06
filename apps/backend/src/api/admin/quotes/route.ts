@@ -1,12 +1,11 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
-import type { QuoteModuleService } from "../../types";
 
 /**
  * GET /admin/quotes
  * List all quotes
  */
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const quoteService = req.scope.resolve("quoteModuleService") as QuoteModuleService;
+  const quoteService = req.scope.resolve("quoteModuleService") as any;
   
   // Get tenant context - may be undefined in some environments
   let tenantId: string | undefined;
@@ -23,7 +22,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   if (status) filters.status = status;
   if (company_id) filters.company_id = company_id;
 
-  const [quotes, count] = await quoteService.listAndCountQuotes(filters, {
+  const quotes = await quoteService.listQuotes(filters, {
     skip: Number(offset),
     take: Number(limit),
     order: { created_at: "DESC" },
@@ -31,7 +30,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
   res.json({
     quotes,
-    count,
+    count: Array.isArray(quotes) ? quotes.length : 0,
     limit: Number(limit),
     offset: Number(offset),
   });

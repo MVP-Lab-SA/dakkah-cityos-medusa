@@ -1,21 +1,19 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
-import type { QuoteModuleService, ExtendedRequest } from "../../types";
 
 /**
  * POST /store/quotes
  * Create a new quote request
  */
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const quoteModuleService = req.scope.resolve("quoteModuleService") as QuoteModuleService;
+  const quoteModuleService = req.scope.resolve("quoteModuleService") as any;
   const { items, customer_notes, company_id, tenant_id, region_id, store_id } = req.body as Record<string, any>;
 
   // Validate authenticated customer
-  const extReq = req as ExtendedRequest;
-  if (!extReq.auth_context?.actor_id) {
+  if (!req.auth_context?.actor_id) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  const customerId = extReq.auth_context.actor_id;
+  const customerId = req.auth_context.actor_id;
 
   // Generate quote number
   const quoteNumber = await quoteModuleService.generateQuoteNumber();
@@ -35,7 +33,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
   // Create quote items
   const quoteItems = [];
-  for (const item of items) {
+  for (const item of ((items || []) as any[])) {
     const quoteItem = await quoteModuleService.createQuoteItems({
       quote_id: quote.id,
       product_id: item.product_id,
@@ -67,24 +65,22 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
  * List customer's quotes
  */
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const quoteModuleService = req.scope.resolve("quoteModuleService") as QuoteModuleService;
+  const quoteModuleService = req.scope.resolve("quoteModuleService") as any;
 
-  const extReq = req as ExtendedRequest;
-  if (!extReq.auth_context?.actor_id) {
+  if (!req.auth_context?.actor_id) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  const customerId = extReq.auth_context.actor_id;
+  const customerId = req.auth_context.actor_id;
 
-  const [quotes, count] = await quoteModuleService.listAndCountQuotes(
+  const quotes = await quoteModuleService.listQuotes(
     {
       customer_id: customerId,
     },
     {
-      relations: ["items"],
       order: { created_at: "DESC" },
     }
   );
 
-  res.json({ quotes, count });
+  res.json({ quotes, count: Array.isArray(quotes) ? quotes.length : 0 });
 }

@@ -1,7 +1,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework"
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
-  const storeModuleService = req.scope.resolve("cityosStoreService")
+  const storeModuleService = req.scope.resolve("cityosStoreService") as any
 
   try {
     // Fetch the first active store as default
@@ -17,7 +17,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     // Return the first store (or you could have an is_default flag)
     res.json({ store: stores[0] })
-  } catch (error) {
+  } catch (error: any) {
     res.status(500).json({
       message: "Failed to fetch default store",
       error: error.message,

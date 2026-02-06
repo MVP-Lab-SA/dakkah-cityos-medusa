@@ -31,7 +31,7 @@ class CompanyModuleService extends MedusaService({
       throw new Error(`Insufficient credit. Available: ${available}, Required: ${amount}`);
     }
 
-    await this.updateCompanies({
+    await (this as any).updateCompanies({
       id: companyId,
       credit_used: (BigInt(company.credit_used || 0) + amount).toString(),
     });
@@ -44,7 +44,7 @@ class CompanyModuleService extends MedusaService({
     const company = await this.retrieveCompany(companyId);
     const newUsed = BigInt(company.credit_used || 0) - amount;
     
-    await this.updateCompanies({
+    await (this as any).updateCompanies({
       id: companyId,
       credit_used: (newUsed > 0n ? newUsed : 0n).toString(),
     });
@@ -94,7 +94,7 @@ class CompanyModuleService extends MedusaService({
   async recordSpending(companyUserId: string, amount: bigint): Promise<void> {
     const companyUser = await this.retrieveCompanyUser(companyUserId);
     
-    await this.updateCompanyUsers({
+    await (this as any).updateCompanyUsers({
       id: companyUserId,
       current_period_spend: (BigInt(companyUser.current_period_spend || 0) + amount).toString(),
     });
@@ -115,13 +115,15 @@ class CompanyModuleService extends MedusaService({
    * Get potential approvers for an amount
    */
   async getPotentialApprovers(companyId: string, amount: bigint) {
-    const [users] = await this.listCompanyUsers({
+    const users = await this.listCompanyUsers({
       company_id: companyId,
       role: ["admin", "approver"],
       status: "active",
-    });
+    }) as any[];
 
-    return users.filter(user => {
+    const usersArray = Array.isArray(users) ? users : [users].filter(Boolean);
+
+    return usersArray.filter((user: any) => {
       if (!user.approval_limit) return true;
       return BigInt(user.approval_limit) >= amount;
     });

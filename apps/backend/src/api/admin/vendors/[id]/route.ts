@@ -1,6 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework"
 import { z } from "zod"
-import { approveVendorWorkflow } from "../../../../workflows/vendor/approve-vendor-workflow"
 
 const updateVendorSchema = z.object({
   businessName: z.string().min(2).optional(),
@@ -11,20 +10,14 @@ const updateVendorSchema = z.object({
   metadata: z.record(z.any()).optional(),
 })
 
-const approveVendorSchema = z.object({
-  notes: z.string().optional(),
-})
-
 export async function GET(
   req: MedusaRequest,
   res: MedusaResponse
 ) {
-  const vendorModule = req.scope.resolve("vendor")
+  const vendorModule = req.scope.resolve("vendor") as any
   const { id } = req.params
 
-  const vendor = await vendorModule.retrieveVendor(id, {
-    relations: [],
-  })
+  const vendor = await vendorModule.retrieveVendor(id)
 
   if (!vendor) {
     return res.status(404).json({ message: "Vendor not found" })
@@ -37,7 +30,7 @@ export async function POST(
   req: MedusaRequest,
   res: MedusaResponse
 ) {
-  const vendorModule = req.scope.resolve("vendor")
+  const vendorModule = req.scope.resolve("vendor") as any
   const { id } = req.params
 
   const validation = updateVendorSchema.safeParse(req.body)
@@ -45,7 +38,7 @@ export async function POST(
   if (!validation.success) {
     return res.status(400).json({
       message: "Validation failed",
-      errors: validation.error.errors,
+      errors: validation.error.issues,
     })
   }
 
@@ -66,10 +59,10 @@ export async function DELETE(
   req: MedusaRequest,
   res: MedusaResponse
 ) {
-  const vendorModule = req.scope.resolve("vendor")
+  const vendorModule = req.scope.resolve("vendor") as any
   const { id } = req.params
 
-  await vendorModule.softDeleteVendors([id])
+  await vendorModule.deleteVendors([id])
 
   return res.status(204).send()
 }

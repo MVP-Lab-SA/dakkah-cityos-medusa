@@ -3,7 +3,7 @@ import type { MedusaRequest, MedusaResponse } from "@medusajs/framework"
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const context = (req as any).cityosContext
   const { id: orderId } = req.params
-  const { items } = req.body // Array of line item IDs to fulfill
+  const { items } = req.body as { items?: Array<{ id: string; quantity: number }> }
 
   if (!context?.vendorId) {
     return res.status(403).json({ message: "Vendor context required" })
@@ -43,7 +43,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     input: {
       order_id: orderId,
       items: items || vendorItems.map((item: any) => ({ id: item.id, quantity: item.quantity })),
-      no_notification: req.body.no_notification || false,
+      no_notification: (req.body as any)?.no_notification || false,
     },
   })
 

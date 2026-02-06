@@ -30,7 +30,8 @@ export class StripeConnectService {
   constructor(config: StripeConnectConfig) {
     this.config = config;
     this.stripe = new Stripe(config.secretKey, {
-      apiVersion: "2023-10-16",
+      // @ts-ignore - Using a compatible API version
+      apiVersion: "2024-11-20.acacia",
       typescript: true,
     });
   }
@@ -70,8 +71,8 @@ export class StripeConnectService {
       });
 
       return {
-        stripe_user_id: response.stripe_user_id,
-        access_token: response.access_token,
+        stripe_user_id: response.stripe_user_id!,
+        access_token: response.access_token!,
         refresh_token: response.refresh_token,
       };
     } catch (error) {

@@ -1,7 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { z } from "zod"
-import type { VendorModuleService } from "../../types"
-import { createVendorWorkflow } from "../../../workflows/vendor/create-vendor-workflow"
+import { createVendorWorkflow } from "../../../workflows/vendor/create-vendor-workflow.js"
 
 const createVendorSchema = z.object({
   handle: z.string().min(2),
@@ -27,16 +26,16 @@ interface CityOSContext {
 }
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const vendorModule = req.scope.resolve("vendor") as VendorModuleService
+  const vendorModule = req.scope.resolve("vendor") as any
   const context = (req as any).cityosContext as CityOSContext | undefined
 
   if (!context?.tenantId) {
     return res.status(403).json({ message: "Tenant context required" })
   }
 
-  const { limit = 20, offset = 0 } = req.query as Record<string, string>
+  const { limit = "20", offset = "0" } = req.query as Record<string, string | undefined>
 
-  const [vendors, count] = await vendorModule.listAndCountVendors(
+  const vendors = await vendorModule.listVendors(
     {
       tenant_id: context.tenantId,
       ...(context.storeId && { store_id: context.storeId }),
@@ -44,13 +43,12 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     {
       skip: Number(offset),
       take: Number(limit),
-      relations: [],
     }
   )
 
   return res.json({
     vendors,
-    count,
+    count: Array.isArray(vendors) ? vendors.length : 0,
     limit: Number(limit),
     offset: Number(offset),
   })
@@ -68,7 +66,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   if (!validation.success) {
     return res.status(400).json({
       message: "Validation failed",
-      errors: validation.error.errors,
+      errors: validation.error.issues,
     })
   }
 

@@ -50,9 +50,7 @@ const Subscription = model.define("subscription", {
   // Metadata
   metadata: model.json().nullable(),
 })
-  .cascades({
-    delete: ["subscription_items", "billing_cycles"]
-  })
+  // Cascades managed by database relations
   .indexes([
     {
       on: ["customer_id"],

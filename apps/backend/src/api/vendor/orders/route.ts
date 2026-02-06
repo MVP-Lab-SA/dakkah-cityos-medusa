@@ -34,7 +34,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       "items.variant.product.metadata",
       "shipping_address.*",
     ],
-    filters: status ? { status } : {},
+    filters: status ? { status: status as any } : undefined,
     pagination: {
       skip: Number(offset),
       take: Number(limit),

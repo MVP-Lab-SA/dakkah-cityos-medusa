@@ -5,9 +5,9 @@ import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
  * Decline an approved quote
  */
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const quoteModuleService = req.scope.resolve("quoteModuleService");
+  const quoteModuleService = req.scope.resolve("quoteModuleService") as any;
   const { id } = req.params;
-  const { reason } = req.body;
+  const { reason } = req.body as { reason?: string };
 
   if (!req.auth_context?.actor_id) {
     return res.status(401).json({ message: "Unauthorized" });
@@ -21,7 +21,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   }
 
   // Update status to declined
-  const updatedQuote = await quoteModuleService.updateQuotes(id, {
+  const updatedQuote = await quoteModuleService.updateQuotes({
+    id,
     status: "declined",
     declined_at: new Date(),
     declined_reason: reason,

@@ -310,7 +310,7 @@ export default async function ({ container }: ExecArgs) {
           ],
           category_ids: mensThobeCategoryId ? [mensThobeCategoryId] : [],
           collection_id: eidCollectionId,
-          tags: [{ id: featuredTagId }],
+          // Tags are handled separately via product tags workflow
         },
         {
           title: "Luxury Bisht",
@@ -349,7 +349,7 @@ export default async function ({ container }: ExecArgs) {
           ],
           category_ids: mensThobeCategoryId ? [mensThobeCategoryId] : [],
           collection_id: premiumCollectionId,
-          tags: [{ id: premiumTagId }, { id: featuredTagId }],
+          // Tags managed separately via product tags workflow
         },
         // Women's Abayas
         {
@@ -395,7 +395,7 @@ export default async function ({ container }: ExecArgs) {
             },
           ],
           category_ids: womensAbayaCategoryId ? [womensAbayaCategoryId] : [],
-          tags: [{ id: featuredTagId }],
+          // Tags are handled separately via product tags workflow
         },
         {
           title: "Designer Abaya with Pearl Details",
@@ -441,7 +441,7 @@ export default async function ({ container }: ExecArgs) {
           ],
           category_ids: womensAbayaCategoryId ? [womensAbayaCategoryId] : [],
           collection_id: premiumCollectionId,
-          tags: [{ id: premiumTagId }, { id: featuredTagId }],
+          // Tags managed separately via product tags workflow
         },
         // Shemagh & Ghutra
         {
@@ -466,7 +466,7 @@ export default async function ({ container }: ExecArgs) {
             },
           ],
           category_ids: shemaghCategoryId ? [shemaghCategoryId] : [],
-          tags: [{ id: featuredTagId }],
+          // Tags are handled separately via product tags workflow
         },
         {
           title: "White Ghutra",
@@ -529,7 +529,7 @@ export default async function ({ container }: ExecArgs) {
           ],
           category_ids: oudOilCategoryId ? [oudOilCategoryId] : [],
           collection_id: premiumCollectionId,
-          tags: [{ id: premiumTagId }, { id: featuredTagId }],
+          // Tags managed separately via product tags workflow
         },
         {
           title: "Arabian Bakhoor Box",
@@ -554,7 +554,7 @@ export default async function ({ container }: ExecArgs) {
           ],
           category_ids: bakhoorCategoryId ? [bakhoorCategoryId] : [],
           collection_id: ramadanCollectionId,
-          tags: [{ id: featuredTagId }],
+          // Tags are handled separately via product tags workflow
         },
         {
           title: "Musk Al Tahara",
@@ -617,7 +617,7 @@ export default async function ({ container }: ExecArgs) {
             },
           ],
           category_ids: islamicArtCategoryId ? [islamicArtCategoryId] : [],
-          tags: [{ id: featuredTagId }],
+          // Tags are handled separately via product tags workflow
         },
         {
           title: "Luxury Prayer Mat",
@@ -656,7 +656,7 @@ export default async function ({ container }: ExecArgs) {
           ],
           category_ids: prayerItemsCategoryId ? [prayerItemsCategoryId] : [],
           collection_id: ramadanCollectionId,
-          tags: [{ id: featuredTagId }],
+          // Tags are handled separately via product tags workflow
         },
         {
           title: "Electronic Tasbih Counter",

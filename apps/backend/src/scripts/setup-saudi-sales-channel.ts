@@ -28,6 +28,7 @@ export default async function({ container }: ExecArgs) {
       api_keys: [{
         title: "Saudi Arabia Storefront",
         type: "publishable",
+        created_by: "system",
       }],
     },
   })

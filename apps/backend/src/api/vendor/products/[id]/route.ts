@@ -24,14 +24,16 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       "images.*",
       "options.*",
     ],
-    filters: {
-      id,
-      "metadata.vendor_id": context.vendorId,
-    },
+    filters: { id },
   })
 
   if (!products || products.length === 0) {
     return res.status(404).json({ message: "Product not found" })
+  }
+
+  // Verify vendor ownership
+  if (products[0].metadata?.vendor_id !== context.vendorId) {
+    return res.status(403).json({ message: "Not authorized to access this product" })
   }
 
   return res.json({ product: products[0] })
@@ -50,25 +52,27 @@ export async function PATCH(req: MedusaRequest, res: MedusaResponse) {
   const { data: products } = await query.graph({
     entity: "product",
     fields: ["id", "metadata"],
-    filters: {
-      id,
-      "metadata.vendor_id": context.vendorId,
-    },
+    filters: { id },
   })
 
   if (!products || products.length === 0) {
     return res.status(404).json({ message: "Product not found" })
   }
 
+  if (products[0].metadata?.vendor_id !== context.vendorId) {
+    return res.status(403).json({ message: "Not authorized to update this product" })
+  }
+
   // Import workflow
   const { updateProductsWorkflow } = await import("@medusajs/medusa/core-flows")
 
+  const body = req.body as Record<string, any>
   const { result } = await updateProductsWorkflow(req.scope).run({
     input: {
       products: [
         {
           id,
-          ...req.body,
+          ...body,
         },
       ],
     },
@@ -90,14 +94,15 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
   const { data: products } = await query.graph({
     entity: "product",
     fields: ["id", "metadata"],
-    filters: {
-      id,
-      "metadata.vendor_id": context.vendorId,
-    },
+    filters: { id },
   })
 
   if (!products || products.length === 0) {
     return res.status(404).json({ message: "Product not found" })
+  }
+
+  if (products[0].metadata?.vendor_id !== context.vendorId) {
+    return res.status(403).json({ message: "Not authorized to delete this product" })
   }
 
   // Import workflow

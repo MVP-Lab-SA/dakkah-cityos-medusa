@@ -1,12 +1,11 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
-import type { CompanyModuleService, ExtendedRequest } from "../../types";
 
 /**
  * POST /store/companies
  * Register a new B2B company account
  */
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const companyService = req.scope.resolve("companyModuleService") as CompanyModuleService;
+  const companyService = req.scope.resolve("companyModuleService") as any;
   const {
     name,
     legal_name,
@@ -22,12 +21,11 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   } = req.body as Record<string, any>;
 
   // Validate authenticated customer
-  const extReq = req as ExtendedRequest;
-  if (!extReq.auth_context?.actor_id) {
+  if (!req.auth_context?.actor_id) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  const customerId = extReq.auth_context.actor_id;
+  const customerId = req.auth_context.actor_id;
 
   // Create company
   const company = await companyService.createCompanies({
@@ -64,14 +62,13 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
  * Get customer's companies
  */
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const companyService = req.scope.resolve("companyModuleService") as CompanyModuleService;
+  const companyService = req.scope.resolve("companyModuleService") as any;
 
-  const extReq = req as ExtendedRequest;
-  if (!extReq.auth_context?.actor_id) {
+  if (!req.auth_context?.actor_id) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  const customerId = extReq.auth_context.actor_id;
+  const customerId = req.auth_context.actor_id;
 
   // Find company users for this customer
   const companyUsers = await companyService.listCompanyUsers({

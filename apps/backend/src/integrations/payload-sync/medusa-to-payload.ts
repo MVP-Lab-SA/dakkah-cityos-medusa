@@ -125,11 +125,9 @@ export class MedusaToPayloadSync {
    * Sync store to Payload
    */
   async syncStore(storeId: string): Promise<void> {
-    const storeModuleService = this.container.resolve("storeModuleService");
+    const storeModuleService = this.container.resolve("storeModuleService") as any;
 
-    const store = await storeModuleService.retrieveStore(storeId, {
-      relations: ["tenant"],
-    });
+    const store = await storeModuleService.retrieveStore(storeId);
 
     const existingStore = await this.findStore(store.id);
 
@@ -183,7 +181,7 @@ export class MedusaToPayloadSync {
     // Send to Payload analytics collection
     await this.client.post("/api/order-analytics", {
       medusaOrderId: order.id,
-      displayId: order.display_id,
+      displayId: (order as any).display_id,
       status: order.status,
       total: order.total,
       currencyCode: order.currency_code,

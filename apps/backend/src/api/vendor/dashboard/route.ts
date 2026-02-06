@@ -1,5 +1,4 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import type { VendorModuleService, CommissionModuleService, PayoutModuleService } from "../../types"
 
 interface CityOSContext {
   vendorId?: string
@@ -8,9 +7,9 @@ interface CityOSContext {
 }
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const vendorModule = req.scope.resolve("vendor") as VendorModuleService
-  const commissionModule = req.scope.resolve("commission") as CommissionModuleService
-  const payoutModule = req.scope.resolve("payout") as PayoutModuleService
+  const vendorModule = req.scope.resolve("vendor") as any
+  const commissionModule = req.scope.resolve("commission") as any
+  const payoutModule = req.scope.resolve("payout") as any
   
   const context = (req as any).cityosContext as CityOSContext | undefined
 
@@ -22,22 +21,22 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const vendor = await vendorModule.retrieveVendor(context.vendorId)
 
   // Get commission stats
-  const [transactions, transactionCount] = await commissionModule.listAndCountCommissions({
+  const transactions = await commissionModule.listCommissions({
     vendor_id: context.vendorId,
     status: "approved",
   })
 
-  const totalEarnings = transactions.reduce((sum: number, tx: any) => sum + Number(tx.net_amount || 0), 0)
-  const totalCommission = transactions.reduce((sum: number, tx: any) => sum + Number(tx.commission_amount || 0), 0)
+  const transactionCount = Array.isArray(transactions) ? transactions.length : 0
+  const totalEarnings = (transactions || []).reduce((sum: number, tx: any) => sum + Number(tx.net_amount || 0), 0)
+  const totalCommission = (transactions || []).reduce((sum: number, tx: any) => sum + Number(tx.commission_amount || 0), 0)
 
   // Get recent payouts
-  const [payouts] = await payoutModule.listAndCountPayouts(
+  const payouts = await payoutModule.listPayouts(
     {
       vendor_id: context.vendorId,
     },
     {
       take: 5,
-      relations: [],
     }
   )
 
@@ -47,7 +46,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       totalOrders: transactionCount,
       totalEarnings,
       totalCommission,
-      pendingPayout: (vendor.total_sales || 0) - (vendor.total_commission_paid || 0),
+      pendingPayout: (vendor?.total_sales || 0) - (vendor?.total_commission_paid || 0),
     },
     recentPayouts: payouts,
   })

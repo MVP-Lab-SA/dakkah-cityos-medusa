@@ -21,7 +21,7 @@ const createCompanySchema = z.object({
  * List all B2B companies
  */
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const companyService = req.scope.resolve("companyModuleService");
+  const companyService = req.scope.resolve("companyModuleService") as any;
   const tenantId = req.scope.resolve("tenantId");
 
   const { status, tier, limit = 20, offset = 0 } = req.query;
@@ -31,7 +31,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   if (status) filters.status = status;
   if (tier) filters.tier = tier;
 
-  const [companies, count] = await companyService.listAndCountCompanies(filters, {
+  const [companies, count] = await companyService.listCompanies(filters, {
     skip: Number(offset),
     take: Number(limit),
     order: { created_at: "DESC" },
@@ -39,7 +39,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
   res.json({
     companies,
-    count,
+    count: Array.isArray(companies) ? companies.length : 0,
     limit: Number(limit),
     offset: Number(offset),
   });
@@ -54,15 +54,15 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const parsed = createCompanySchema.parse(req.body);
 
   const { createCompanyWorkflow } = await import(
-    "../../../workflows/b2b/create-company-workflow"
+    "../../../workflows/b2b/create-company-workflow.js"
   );
 
   const { result } = await createCompanyWorkflow(req.scope).run({
     input: {
       ...parsed,
-      tenant_id: tenantId,
+      tenant_id: tenantId as string,
     },
   });
 
-  res.status(201).json({ company: result.company });
+  res.json({ company: (result as any).company });
 }

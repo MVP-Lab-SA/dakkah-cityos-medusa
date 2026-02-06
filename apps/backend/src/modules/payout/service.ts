@@ -45,7 +45,7 @@ class PayoutModuleService extends MedusaService({
     const netAmount = grossAmount - commissionAmount - platformFeeAmount + adjustmentAmount
 
     // Create payout
-    const payout = await this.createPayouts({
+    const payout = await (this as any).createPayouts({
       payout_number: this.generatePayoutNumber(),
       tenant_id: tenantId,
       store_id: storeId,
@@ -58,7 +58,7 @@ class PayoutModuleService extends MedusaService({
       period_start: periodStart,
       period_end: periodEnd,
       transaction_count: transactionIds.length,
-      payment_method: paymentMethod,
+      payment_method: paymentMethod as any,
       status: scheduledFor ? "pending" : "processing",
       scheduled_for: scheduledFor,
     })
@@ -85,7 +85,7 @@ class PayoutModuleService extends MedusaService({
 
     // Here we would integrate with Stripe Connect
     // For now, mark as processing
-    return await this.updatePayouts({
+    return await (this as any).updatePayouts({
       id: payoutId,
       status: "processing",
       processing_started_at: new Date(),

@@ -49,9 +49,9 @@ export class PayloadToMedusaSync {
     // Update product metadata with enhanced content
     const productModuleService = this.container.resolve(
       "productModuleService"
-    );
+    ) as any;
 
-    await productModuleService.updateProducts(content.medusaProductId, {
+    await productModuleService.updateProducts({ id: content.medusaProductId,
       metadata: {
         ...products[0].metadata,
         payload_content_id: content.id,
@@ -73,7 +73,7 @@ export class PayloadToMedusaSync {
     const page = response.data;
 
     // Store in custom page module or as store metadata
-    const storeModuleService = this.container.resolve("storeModuleService");
+    const storeModuleService = this.container.resolve("storeModuleService") as any;
 
     // Find store associated with page tenant
     const stores = await storeModuleService.listStores({
@@ -84,7 +84,7 @@ export class PayloadToMedusaSync {
       const store = stores[0];
 
       // Update store metadata with page info
-      await storeModuleService.updateStores(store.id, {
+      await storeModuleService.updateStores({ id: store.id,
         metadata: {
           ...store.metadata,
           pages: {
@@ -139,9 +139,9 @@ export class PayloadToMedusaSync {
     );
 
     // Upload to Medusa file service
-    const fileModuleService = this.container.resolve("fileModuleService");
+    const fileModuleService = this.container.resolve("fileModuleService") as any;
 
-    const file = await fileModuleService.uploadFile({
+    const file = await fileModuleService.createFiles({
       filename: media.filename,
       mimeType: media.mimeType,
       content: Buffer.from(fileResponse.data),

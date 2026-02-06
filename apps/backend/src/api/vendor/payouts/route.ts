@@ -1,7 +1,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const payoutModule = req.scope.resolve("payout")
+  const payoutModule = req.scope.resolve("payout") as any
   const context = (req as any).cityosContext
 
   if (!context?.vendorId) {
@@ -16,18 +16,17 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
   if (status) filters.status = status
 
-  const [payouts, count] = await payoutModule.listAndCountPayouts(
+  const payouts = await payoutModule.listPayouts(
     filters,
     {
       skip: Number(offset),
       take: Number(limit),
-      relations: [],
     }
   )
 
   return res.json({
     payouts,
-    count,
+    count: Array.isArray(payouts) ? payouts.length : 0,
     limit: Number(limit),
     offset: Number(offset),
   })

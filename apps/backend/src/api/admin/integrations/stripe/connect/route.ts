@@ -1,6 +1,6 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
 import { z } from "zod";
-import { StripeConnectService } from "../../../../../integrations/stripe-connect";
+import { StripeConnectService } from "../../../../../integrations/stripe-connect/index.js";
 
 const createConnectAccountSchema = z.object({
   vendor_id: z.string(),
@@ -38,8 +38,9 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   );
 
   // Update vendor with Stripe account ID
-  const vendorModuleService = req.scope.resolve("vendorModuleService");
-  await vendorModuleService.updateVendors(validated.vendor_id, {
+  const vendorModuleService = req.scope.resolve("vendorModuleService") as any;
+  await vendorModuleService.updateVendors({
+    id: validated.vendor_id,
     stripe_account_id: account.id,
   });
 

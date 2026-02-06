@@ -5,7 +5,7 @@ import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
  * Accept an approved quote
  */
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const quoteModuleService = req.scope.resolve("quoteModuleService");
+  const quoteModuleService = req.scope.resolve("quoteModuleService") as any;
   const { id } = req.params;
 
   if (!req.auth_context?.actor_id) {
@@ -35,7 +35,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   }
 
   // Update status to accepted
-  const updatedQuote = await quoteModuleService.updateQuotes(id, {
+  const updatedQuote = await quoteModuleService.updateQuotes({
+    id,
     status: "accepted",
     accepted_at: new Date(),
   });
