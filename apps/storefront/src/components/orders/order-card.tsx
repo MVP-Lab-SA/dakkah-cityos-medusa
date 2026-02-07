@@ -59,7 +59,7 @@ export function OrderCard({
 
   return (
     <Link
-      to={`/${countryCode}/account/orders/${id}`}
+      to={`/${countryCode}/account/orders/${id}` as any}
       className="block bg-white rounded-xl border border-zinc-200 p-6 hover:border-zinc-300 hover:shadow-sm transition-all"
     >
       <div className="flex items-start justify-between mb-4">

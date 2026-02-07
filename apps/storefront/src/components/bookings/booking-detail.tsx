@@ -91,15 +91,15 @@ export function BookingDetail({ booking }: BookingDetailProps) {
           </div>
         </div>
 
-        {/* Provider/Resource */}
-        {booking.resource && (
+        {/* Provider */}
+        {booking.provider && (
           <div className="flex items-start gap-3">
             <div className="w-10 h-10 rounded-lg bg-zinc-100 flex items-center justify-center">
               <User className="w-5 h-5 text-zinc-600" />
             </div>
             <div>
               <p className="text-xs text-zinc-400 uppercase tracking-wider">Provider</p>
-              <p className="text-sm text-zinc-900 mt-1">{booking.resource.name}</p>
+              <p className="text-sm text-zinc-900 mt-1">{booking.provider.name}</p>
             </div>
           </div>
         )}
@@ -112,10 +112,7 @@ export function BookingDetail({ booking }: BookingDetailProps) {
             </div>
             <div>
               <p className="text-xs text-zinc-400 uppercase tracking-wider">Location</p>
-              <p className="text-sm text-zinc-900 mt-1">{booking.location.name}</p>
-              {booking.location.address && (
-                <p className="text-sm text-zinc-500">{booking.location.address}</p>
-              )}
+              <p className="text-sm text-zinc-900 mt-1">{booking.location}</p>
             </div>
           </div>
         )}

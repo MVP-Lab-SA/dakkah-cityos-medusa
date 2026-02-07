@@ -47,7 +47,7 @@ export function OrderActions({
 
         {/* Track Order */}
         {canTrack && (
-          <Link to={`/${countryCode}/account/orders/${orderId}/track`}>
+          <Link to={`/${countryCode}/account/orders/${orderId}/track` as any}>
             <Button variant="outline" className="w-full justify-start">
               <DocumentText className="w-4 h-4 mr-2" />
               Track Shipment
@@ -57,7 +57,7 @@ export function OrderActions({
 
         {/* Return Request */}
         {canReturn && (
-          <Link to={`/${countryCode}/account/orders/${orderId}/return`}>
+          <Link to={`/${countryCode}/account/orders/${orderId}/return` as any}>
             <Button variant="outline" className="w-full justify-start">
               <ArrowUturnLeft className="w-4 h-4 mr-2" />
               Request Return

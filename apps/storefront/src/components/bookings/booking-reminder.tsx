@@ -55,7 +55,7 @@ export function BookingReminder({ booking, countryCode }: BookingReminderProps) 
 
   return (
     <Link
-      to={`/${countryCode}/account/bookings/${booking.id}`}
+      to={`/${countryCode}/account/bookings/${booking.id}` as any}
       className={`block rounded-xl border p-4 transition-all hover:shadow-sm ${
         isToday 
           ? "bg-blue-50 border-blue-200 hover:border-blue-300" 
@@ -92,9 +92,9 @@ export function BookingReminder({ booking, countryCode }: BookingReminderProps) 
             </span>
           </div>
 
-          {booking.resource && (
+          {booking.provider && (
             <p className="text-sm text-zinc-500 mt-1">
-              With: {booking.resource.name}
+              With: {booking.provider.name}
             </p>
           )}
         </div>

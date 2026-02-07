@@ -51,7 +51,7 @@ function ReturnRequestPage() {
       <div className="max-w-2xl">
         {/* Back Link */}
         <Link
-          to={`/${countryCode}/account/orders/${id}`}
+          to={`/${countryCode}/account/orders/${id}` as any}
           className="inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-zinc-900 mb-6"
         >
           <ArrowLeft className="w-4 h-4" />

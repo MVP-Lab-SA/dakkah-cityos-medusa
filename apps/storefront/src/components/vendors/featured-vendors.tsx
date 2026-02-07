@@ -29,7 +29,7 @@ export function FeaturedVendors({
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-2xl font-bold text-zinc-900">{title}</h2>
         <Link
-          to={`/${countryCode}/vendors`}
+          to={`/${countryCode}/vendors` as any}
           className="text-sm font-medium text-zinc-600 hover:text-zinc-900 flex items-center gap-1"
         >
           View All Sellers
@@ -41,7 +41,7 @@ export function FeaturedVendors({
         {vendors.slice(0, 4).map((vendor) => (
           <Link
             key={vendor.id}
-            to={`/${countryCode}/vendors/${vendor.handle}`}
+            to={`/${countryCode}/vendors/${vendor.handle}` as any}
             className="group bg-white rounded-xl border border-zinc-200 p-6 text-center hover:border-zinc-300 hover:shadow-md transition-all"
           >
             {/* Logo */}

@@ -36,7 +36,7 @@ export function SubscriptionList({
         <CreditCard className="w-12 h-12 text-zinc-300 mx-auto mb-4" />
         <p className="text-zinc-500">{emptyMessage}</p>
         <Link
-          to={`/${countryCode}/subscriptions`}
+          to={`/${countryCode}/subscriptions` as any}
           className="inline-block mt-4 text-sm font-medium text-zinc-900 hover:underline"
         >
           Browse subscription plans
@@ -50,7 +50,7 @@ export function SubscriptionList({
       {subscriptions.map((subscription) => (
         <Link
           key={subscription.id}
-          to={`/${countryCode}/account/subscriptions/${subscription.id}`}
+          to={`/${countryCode}/account/subscriptions/${subscription.id}` as any}
           className="block bg-white rounded-xl border border-zinc-200 p-6 hover:border-zinc-300 hover:shadow-sm transition-all"
         >
           <div className="flex items-start justify-between mb-4">

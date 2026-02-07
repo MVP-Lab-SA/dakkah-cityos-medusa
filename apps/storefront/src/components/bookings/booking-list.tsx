@@ -46,7 +46,7 @@ export function BookingList({
         <Calendar className="w-12 h-12 text-zinc-300 mx-auto mb-4" />
         <p className="text-zinc-500">{emptyMessage}</p>
         <Link
-          to={`/${countryCode}/bookings`}
+          to={`/${countryCode}/bookings` as any}
           className="inline-block mt-4 text-sm font-medium text-zinc-900 hover:underline"
         >
           Browse available services
@@ -60,7 +60,7 @@ export function BookingList({
       {bookings.map((booking) => (
         <Link
           key={booking.id}
-          to={`/${countryCode}/account/bookings/${booking.id}`}
+          to={`/${countryCode}/account/bookings/${booking.id}` as any}
           className="block bg-white rounded-xl border border-zinc-200 p-6 hover:border-zinc-300 hover:shadow-sm transition-all"
         >
           <div className="flex items-start justify-between mb-4">
@@ -78,9 +78,9 @@ export function BookingList({
             </span>
           </div>
 
-          {booking.resource && (
+          {booking.provider && (
             <p className="text-sm text-zinc-600 mb-4">
-              With: {booking.resource.name}
+              With: {booking.provider.name}
             </p>
           )}
 

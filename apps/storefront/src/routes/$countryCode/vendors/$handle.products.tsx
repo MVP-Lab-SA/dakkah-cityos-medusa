@@ -40,7 +40,7 @@ function VendorProductsPage() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Back Link */}
         <Link
-          to={`/${countryCode}/vendors/${handle}`}
+          to={`/${countryCode}/vendors/${handle}` as any}
           className="inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-zinc-900 mb-6"
         >
           <ArrowLeft className="w-4 h-4" />

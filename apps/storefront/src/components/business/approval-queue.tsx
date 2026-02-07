@@ -111,7 +111,7 @@ export function ApprovalQueue({
             <div className="flex items-center justify-between pt-4 border-t border-zinc-100">
               {item.type === "purchase_order" && (
                 <Link
-                  to={`/${countryCode}/account/purchase-orders/${item.id}`}
+                  to={`/${countryCode}/account/purchase-orders/${item.id}` as any}
                   className="text-sm text-zinc-600 hover:text-zinc-900"
                 >
                   View Details

@@ -77,7 +77,7 @@ export function VendorProducts({ products, countryCode, vendorHandle }: VendorPr
           {sortedProducts.map((product) => (
             <Link
               key={product.id}
-              to={`/${countryCode}/products/${product.handle}`}
+              to={`/${countryCode}/products/${product.handle}` as any}
               className="group"
             >
               <div className="aspect-square rounded-xl bg-zinc-100 overflow-hidden mb-3">

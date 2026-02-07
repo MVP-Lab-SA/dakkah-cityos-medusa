@@ -39,7 +39,7 @@ export function CartVendorGroup({
       <div className="px-6 py-4 border-b border-zinc-200 bg-zinc-50">
         <div className="flex items-center justify-between">
           <Link
-            to={`/${countryCode}/vendors/${vendorHandle}`}
+            to={`/${countryCode}/vendors/${vendorHandle}` as any}
             className="font-semibold text-zinc-900 hover:text-zinc-600 transition-colors"
           >
             {vendorName}

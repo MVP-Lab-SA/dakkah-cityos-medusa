@@ -32,7 +32,7 @@ export function POCard({ purchaseOrder: po, countryCode, compact = false }: POCa
   if (compact) {
     return (
       <Link
-        to={`/${countryCode}/account/purchase-orders/${po.id}`}
+        to={`/${countryCode}/account/purchase-orders/${po.id}` as any}
         className="flex items-center justify-between p-4 bg-white rounded-lg border border-zinc-200 hover:border-zinc-300 transition-colors"
       >
         <div>
@@ -56,7 +56,7 @@ export function POCard({ purchaseOrder: po, countryCode, compact = false }: POCa
       <div className="flex items-start justify-between mb-4">
         <div>
           <Link
-            to={`/${countryCode}/account/purchase-orders/${po.id}`}
+            to={`/${countryCode}/account/purchase-orders/${po.id}` as any}
             className="font-semibold text-zinc-900 hover:text-zinc-600"
           >
             {po.po_number}

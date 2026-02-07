@@ -81,14 +81,7 @@ export function VendorDirectory({ vendors, countryCode }: VendorDirectoryProps) 
               {paginatedVendors.map((vendor) => (
                 <VendorCard
                   key={vendor.id}
-                  name={vendor.name}
-                  handle={vendor.handle}
-                  logo={vendor.logo}
-                  description={vendor.description}
-                  rating={vendor.rating}
-                  productCount={vendor.productCount}
-                  location={vendor.location}
-                  countryCode={countryCode}
+                  vendor={vendor}
                 />
               ))}
             </div>

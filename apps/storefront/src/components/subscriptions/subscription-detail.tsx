@@ -68,7 +68,7 @@ export function SubscriptionDetail({ subscription }: SubscriptionDetailProps) {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-xs text-zinc-400 uppercase tracking-wider">Start Date</p>
-              <p className="text-sm text-zinc-900 mt-1">{formatDate(subscription.start_date)}</p>
+              <p className="text-sm text-zinc-900 mt-1">{formatDate(subscription.current_period_start)}</p>
             </div>
             <div>
               <p className="text-xs text-zinc-400 uppercase tracking-wider">Next Billing</p>

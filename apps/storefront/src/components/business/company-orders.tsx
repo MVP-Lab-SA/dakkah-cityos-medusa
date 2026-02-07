@@ -103,7 +103,7 @@ export function CompanyOrders({ orders, countryCode }: CompanyOrdersProps) {
                 </td>
                 <td className="px-6 py-4">
                   <Link
-                    to={`/${countryCode}/account/orders/${order.id}`}
+                    to={`/${countryCode}/account/orders/${order.id}` as any}
                     className="text-zinc-400 hover:text-zinc-600"
                   >
                     <ChevronRight className="w-5 h-5" />

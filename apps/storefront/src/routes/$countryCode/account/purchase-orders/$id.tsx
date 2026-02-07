@@ -45,7 +45,7 @@ function PurchaseOrderDetailPage() {
         <div className="text-center py-12">
           <p className="text-zinc-500">Purchase order not found</p>
           <Link
-            to={`/${countryCode}/account/purchase-orders`}
+            to={`/${countryCode}/account/purchase-orders` as any}
             className="text-zinc-900 hover:underline mt-2 inline-block"
           >
             Back to Purchase Orders
@@ -59,7 +59,7 @@ function PurchaseOrderDetailPage() {
     <AccountLayout>
       {/* Back Link */}
       <Link
-        to={`/${countryCode}/account/purchase-orders`}
+        to={`/${countryCode}/account/purchase-orders` as any}
         className="inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-zinc-900 mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
