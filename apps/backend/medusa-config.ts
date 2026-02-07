@@ -203,5 +203,13 @@ module.exports = defineConfig({
         }
       }
     },
+    {
+      resolve: "./src/modules/review",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
   ],
 });

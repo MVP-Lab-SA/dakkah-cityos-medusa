@@ -20,6 +20,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CountryCodeIndexRouteImport } from './routes/$countryCode/index'
 import { Route as CountryCodeStoresRouteImport } from './routes/$countryCode/stores'
 import { Route as CountryCodeStoreRouteImport } from './routes/$countryCode/store'
+import { Route as CountryCodeSearchRouteImport } from './routes/$countryCode/search'
 import { Route as CountryCodeResetPasswordRouteImport } from './routes/$countryCode/reset-password'
 import { Route as CountryCodeRegisterRouteImport } from './routes/$countryCode/register'
 import { Route as CountryCodeLoginRouteImport } from './routes/$countryCode/login'
@@ -119,6 +120,11 @@ const CountryCodeStoresRoute = CountryCodeStoresRouteImport.update({
 const CountryCodeStoreRoute = CountryCodeStoreRouteImport.update({
   id: '/store',
   path: '/store',
+  getParentRoute: () => CountryCodeRoute,
+} as any)
+const CountryCodeSearchRoute = CountryCodeSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
   getParentRoute: () => CountryCodeRoute,
 } as any)
 const CountryCodeResetPasswordRoute =
@@ -439,6 +445,7 @@ export interface FileRoutesByFullPath {
   '/$countryCode/login': typeof CountryCodeLoginRoute
   '/$countryCode/register': typeof CountryCodeRegisterRoute
   '/$countryCode/reset-password': typeof CountryCodeResetPasswordRoute
+  '/$countryCode/search': typeof CountryCodeSearchRoute
   '/$countryCode/store': typeof CountryCodeStoreRoute
   '/$countryCode/stores': typeof CountryCodeStoresRoute
   '/$countryCode/': typeof CountryCodeIndexRoute
@@ -501,6 +508,7 @@ export interface FileRoutesByTo {
   '/$countryCode/login': typeof CountryCodeLoginRoute
   '/$countryCode/register': typeof CountryCodeRegisterRoute
   '/$countryCode/reset-password': typeof CountryCodeResetPasswordRoute
+  '/$countryCode/search': typeof CountryCodeSearchRoute
   '/$countryCode/store': typeof CountryCodeStoreRoute
   '/$countryCode/stores': typeof CountryCodeStoresRoute
   '/$countryCode': typeof CountryCodeIndexRoute
@@ -564,6 +572,7 @@ export interface FileRoutesById {
   '/$countryCode/login': typeof CountryCodeLoginRoute
   '/$countryCode/register': typeof CountryCodeRegisterRoute
   '/$countryCode/reset-password': typeof CountryCodeResetPasswordRoute
+  '/$countryCode/search': typeof CountryCodeSearchRoute
   '/$countryCode/store': typeof CountryCodeStoreRoute
   '/$countryCode/stores': typeof CountryCodeStoresRoute
   '/$countryCode/': typeof CountryCodeIndexRoute
@@ -629,6 +638,7 @@ export interface FileRouteTypes {
     | '/$countryCode/login'
     | '/$countryCode/register'
     | '/$countryCode/reset-password'
+    | '/$countryCode/search'
     | '/$countryCode/store'
     | '/$countryCode/stores'
     | '/$countryCode/'
@@ -691,6 +701,7 @@ export interface FileRouteTypes {
     | '/$countryCode/login'
     | '/$countryCode/register'
     | '/$countryCode/reset-password'
+    | '/$countryCode/search'
     | '/$countryCode/store'
     | '/$countryCode/stores'
     | '/$countryCode'
@@ -753,6 +764,7 @@ export interface FileRouteTypes {
     | '/$countryCode/login'
     | '/$countryCode/register'
     | '/$countryCode/reset-password'
+    | '/$countryCode/search'
     | '/$countryCode/store'
     | '/$countryCode/stores'
     | '/$countryCode/'
@@ -897,6 +909,13 @@ declare module '@tanstack/react-router' {
       path: '/store'
       fullPath: '/$countryCode/store'
       preLoaderRoute: typeof CountryCodeStoreRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
+    '/$countryCode/search': {
+      id: '/$countryCode/search'
+      path: '/search'
+      fullPath: '/$countryCode/search'
+      preLoaderRoute: typeof CountryCodeSearchRouteImport
       parentRoute: typeof CountryCodeRoute
     }
     '/$countryCode/reset-password': {
@@ -1347,6 +1366,7 @@ interface CountryCodeRouteChildren {
   CountryCodeLoginRoute: typeof CountryCodeLoginRoute
   CountryCodeRegisterRoute: typeof CountryCodeRegisterRoute
   CountryCodeResetPasswordRoute: typeof CountryCodeResetPasswordRoute
+  CountryCodeSearchRoute: typeof CountryCodeSearchRoute
   CountryCodeStoreRoute: typeof CountryCodeStoreRoute
   CountryCodeStoresRoute: typeof CountryCodeStoresRoute
   CountryCodeIndexRoute: typeof CountryCodeIndexRoute
@@ -1399,6 +1419,7 @@ const CountryCodeRouteChildren: CountryCodeRouteChildren = {
   CountryCodeLoginRoute: CountryCodeLoginRoute,
   CountryCodeRegisterRoute: CountryCodeRegisterRoute,
   CountryCodeResetPasswordRoute: CountryCodeResetPasswordRoute,
+  CountryCodeSearchRoute: CountryCodeSearchRoute,
   CountryCodeStoreRoute: CountryCodeStoreRoute,
   CountryCodeStoresRoute: CountryCodeStoresRoute,
   CountryCodeIndexRoute: CountryCodeIndexRoute,
