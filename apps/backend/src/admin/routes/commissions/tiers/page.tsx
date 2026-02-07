@@ -43,7 +43,7 @@ const CommissionTiersPage = () => {
 
   const fetchTiers = async () => {
     try {
-      const response = await client("/admin/commissions/tiers")
+      const response = await client("/admin/commissions/tiers") as { tiers?: CommissionTier[] }
       setTiers(response.tiers || [])
     } catch (error) {
       console.error("Error fetching tiers:", error)

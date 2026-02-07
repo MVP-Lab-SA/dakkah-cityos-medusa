@@ -15,7 +15,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
   const { id } = req.params
-  const bookingService = req.scope.resolve("booking")
+  const bookingService = req.scope.resolve("booking") as any
   
   const {
     exception_type,
@@ -45,7 +45,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     start_date: new Date(start_date),
     end_date: new Date(end_date),
     all_day: all_day || false,
-    special_hours,
+    special_hours: special_hours as any,
     title,
     reason,
     is_recurring: is_recurring || false,

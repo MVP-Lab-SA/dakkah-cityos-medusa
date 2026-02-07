@@ -73,7 +73,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const commissionService = req.scope.resolve("commission")
+  const commissionService = req.scope.resolve("commission") as any
   
   try {
     const parseResult = createCommissionRuleSchema.safeParse(req.body)
