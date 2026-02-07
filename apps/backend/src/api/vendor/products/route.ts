@@ -1,94 +1,110 @@
-import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
 
-interface CityOSContext {
-  vendorId?: string
-  tenantId?: string
-  storeId?: string
-}
-
+// GET /vendor/products - List vendor's products
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const query = req.scope.resolve("query")
-  const context = (req as any).cityosContext as CityOSContext | undefined
-
-  if (!context?.vendorId) {
-    return res.status(403).json({ message: "Vendor context required" })
+  const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
+  
+  // Get vendor from authenticated user
+  const vendorId = (req as any).vendor_id
+  if (!vendorId) {
+    return res.status(401).json({ message: "Vendor authentication required" })
   }
 
-  const { limit = 20, offset = 0, status } = req.query as Record<string, string>
-
-  // Note: metadata filtering may need custom implementation
-  const { data: products } = await query.graph({
-    entity: "product",
+  const { data: vendorProducts } = await query.graph({
+    entity: "vendor_product",
     fields: [
       "id",
-      "title",
-      "handle",
+      "vendor_id",
+      "product_id",
+      "is_primary_vendor",
+      "vendor_sku",
+      "vendor_cost",
+      "commission_override",
       "status",
-      "thumbnail",
-      "description",
-      "metadata",
-      "variants.*",
-      "variants.prices.*",
-      "images.*",
+      "inventory_quantity",
+      "created_at",
+      "product.*",
+      "product.variants.*",
+      "product.images.*",
     ],
-    filters: status ? { status: status as any } : undefined,
-    pagination: {
-      skip: Number(offset),
-      take: Number(limit),
+    filters: {
+      vendor_id: vendorId,
     },
   })
 
-  // Filter by vendor_id in metadata (client-side for now)
-  const vendorProducts = products.filter(
-    (p: any) => p.metadata?.vendor_id === context.vendorId
-  )
+  const products = vendorProducts.map((vp: any) => ({
+    id: vp.id,
+    product_id: vp.product_id,
+    vendor_sku: vp.vendor_sku,
+    vendor_cost: vp.vendor_cost,
+    commission_override: vp.commission_override,
+    status: vp.status,
+    inventory_quantity: vp.inventory_quantity,
+    is_primary_vendor: vp.is_primary_vendor,
+    title: vp.product?.title,
+    handle: vp.product?.handle,
+    thumbnail: vp.product?.thumbnail,
+    variants: vp.product?.variants || [],
+    images: vp.product?.images || [],
+    created_at: vp.created_at,
+  }))
 
-  return res.json({
-    products: vendorProducts,
-    count: vendorProducts.length,
-    limit: Number(limit),
-    offset: Number(offset),
-  })
+  res.json({ products })
 }
 
+// POST /vendor/products - Create a new product for vendor
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const context = (req as any).cityosContext as CityOSContext | undefined
-
-  if (!context?.vendorId) {
-    return res.status(403).json({ message: "Vendor context required" })
+  const vendorId = (req as any).vendor_id
+  if (!vendorId) {
+    return res.status(401).json({ message: "Vendor authentication required" })
   }
 
-  const vendorModule = req.scope.resolve("vendor") as any
-  const vendor = await vendorModule.retrieveVendor(context.vendorId)
+  const { 
+    title, 
+    description, 
+    handle,
+    vendor_sku,
+    vendor_cost,
+    variants,
+    images,
+    options,
+    status = "draft",
+  } = req.body as any
 
-  // Import workflow
-  const { createProductsWorkflow } = await import("@medusajs/medusa/core-flows")
+  const vendorModule = req.scope.resolve("vendor")
+  const productModule = req.scope.resolve("product")
 
-  const body = req.body as Record<string, any>
-  const productData: any = {
-    title: body.title,
-    handle: body.handle,
-    description: body.description,
-    thumbnail: body.thumbnail,
-    images: body.images,
-    options: body.options,
-    variants: body.variants,
-    category_ids: body.category_ids,
-    collection_id: body.collection_id,
-    type_id: body.type_id,
-    metadata: {
-      ...body.metadata,
-      vendor_id: context.vendorId,
-      tenant_id: vendor?.tenant_id,
-    },
-    status: vendor?.auto_approve_products ? "published" : "draft",
+  try {
+    // Create the product first
+    const [product] = await productModule.createProducts([{
+      title,
+      description,
+      handle,
+      status: "draft", // Products start as draft, need admin approval
+      options: options || [],
+      variants: variants || [],
+      images: images || [],
+    }])
+
+    // Link product to vendor
+    const vendorProduct = await vendorModule.createVendorProducts({
+      vendor_id: vendorId,
+      product_id: product.id,
+      vendor_sku,
+      vendor_cost,
+      status: "pending_approval",
+      is_primary_vendor: true,
+    })
+
+    res.status(201).json({ 
+      product: {
+        ...vendorProduct,
+        title: product.title,
+        handle: product.handle,
+      }
+    })
+  } catch (error: any) {
+    res.status(400).json({ message: error.message })
   }
-
-  const { result } = await createProductsWorkflow(req.scope).run({
-    input: {
-      products: [productData],
-    },
-  })
-
-  return res.status(201).json({ product: result[0] })
 }

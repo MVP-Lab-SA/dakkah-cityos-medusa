@@ -1,0 +1,160 @@
+import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+
+// GET /vendor/products/:productId - Get vendor product details
+export async function GET(req: MedusaRequest, res: MedusaResponse) {
+  const vendorId = (req as any).vendor_id
+  if (!vendorId) {
+    return res.status(401).json({ message: "Vendor authentication required" })
+  }
+
+  const { productId } = req.params
+  const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
+
+  const { data: vendorProducts } = await query.graph({
+    entity: "vendor_product",
+    fields: [
+      "id",
+      "vendor_id",
+      "product_id",
+      "is_primary_vendor",
+      "vendor_sku",
+      "vendor_cost",
+      "commission_override",
+      "status",
+      "inventory_quantity",
+      "created_at",
+      "product.*",
+      "product.variants.*",
+      "product.options.*",
+      "product.images.*",
+    ],
+    filters: {
+      id: productId,
+      vendor_id: vendorId,
+    },
+  })
+
+  if (!vendorProducts.length) {
+    return res.status(404).json({ message: "Product not found" })
+  }
+
+  const vp = vendorProducts[0]
+  res.json({
+    product: {
+      id: vp.id,
+      product_id: vp.product_id,
+      vendor_sku: vp.vendor_sku,
+      vendor_cost: vp.vendor_cost,
+      commission_override: vp.commission_override,
+      status: vp.status,
+      inventory_quantity: vp.inventory_quantity,
+      is_primary_vendor: vp.is_primary_vendor,
+      title: vp.product?.title,
+      description: vp.product?.description,
+      handle: vp.product?.handle,
+      thumbnail: vp.product?.thumbnail,
+      variants: vp.product?.variants || [],
+      options: vp.product?.options || [],
+      images: vp.product?.images || [],
+      created_at: vp.created_at,
+    }
+  })
+}
+
+// PUT /vendor/products/:productId - Update vendor product
+export async function PUT(req: MedusaRequest, res: MedusaResponse) {
+  const vendorId = (req as any).vendor_id
+  if (!vendorId) {
+    return res.status(401).json({ message: "Vendor authentication required" })
+  }
+
+  const { productId } = req.params
+  const { 
+    title, 
+    description, 
+    vendor_sku,
+    vendor_cost,
+    inventory_quantity,
+    variants,
+    images,
+  } = req.body as any
+
+  const vendorModule = req.scope.resolve("vendor")
+  const productModule = req.scope.resolve("product")
+  const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
+
+  // Verify ownership
+  const { data: vendorProducts } = await query.graph({
+    entity: "vendor_product",
+    fields: ["id", "product_id", "vendor_id"],
+    filters: {
+      id: productId,
+      vendor_id: vendorId,
+    },
+  })
+
+  if (!vendorProducts.length) {
+    return res.status(404).json({ message: "Product not found" })
+  }
+
+  const vp = vendorProducts[0]
+
+  try {
+    // Update product details
+    if (title || description || variants || images) {
+      await productModule.updateProducts(vp.product_id, {
+        ...(title && { title }),
+        ...(description && { description }),
+        ...(images && { images }),
+      })
+    }
+
+    // Update vendor product details
+    const updates: any = {}
+    if (vendor_sku !== undefined) updates.vendor_sku = vendor_sku
+    if (vendor_cost !== undefined) updates.vendor_cost = vendor_cost
+    if (inventory_quantity !== undefined) updates.inventory_quantity = inventory_quantity
+
+    if (Object.keys(updates).length > 0) {
+      await vendorModule.updateVendorProducts(productId, updates)
+    }
+
+    res.json({ success: true })
+  } catch (error: any) {
+    res.status(400).json({ message: error.message })
+  }
+}
+
+// DELETE /vendor/products/:productId - Delete/deactivate vendor product
+export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
+  const vendorId = (req as any).vendor_id
+  if (!vendorId) {
+    return res.status(401).json({ message: "Vendor authentication required" })
+  }
+
+  const { productId } = req.params
+  const vendorModule = req.scope.resolve("vendor")
+  const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
+
+  // Verify ownership
+  const { data: vendorProducts } = await query.graph({
+    entity: "vendor_product",
+    fields: ["id", "vendor_id"],
+    filters: {
+      id: productId,
+      vendor_id: vendorId,
+    },
+  })
+
+  if (!vendorProducts.length) {
+    return res.status(404).json({ message: "Product not found" })
+  }
+
+  // Soft delete - mark as inactive
+  await vendorModule.updateVendorProducts(productId, {
+    status: "inactive",
+  })
+
+  res.json({ success: true })
+}
