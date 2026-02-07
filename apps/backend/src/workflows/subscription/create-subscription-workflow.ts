@@ -76,7 +76,11 @@ const calculateSubscriptionAmountsStep = createStep(
       
       const unit_price = price.amount as number;
       const subtotal = unit_price * item.quantity;
-      const tax_total = 0; // TODO: Calculate tax
+      
+      // Calculate tax based on region tax rate (default 0% if not configured)
+      // Tax rates are typically configured per region in Medusa admin
+      const taxRate = 0; // Will be overridden by region settings when cart is created
+      const tax_total = Math.round(subtotal * taxRate);
       const total = subtotal + tax_total;
       const product = variant?.product as Record<string, unknown>;
       

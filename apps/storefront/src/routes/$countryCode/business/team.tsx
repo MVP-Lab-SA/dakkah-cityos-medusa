@@ -2,6 +2,9 @@ import { createFileRoute } from "@tanstack/react-router"
 import { AccountLayout } from "@/components/account"
 import { TeamMembers } from "@/components/business"
 import { useAuth } from "@/lib/context/auth-context"
+import { useCompanyTeam, useInviteTeamMember, useRemoveTeamMember } from "@/lib/hooks/use-companies"
+import { Spinner } from "@medusajs/icons"
+import { useToast } from "@/components/ui/toast"
 
 export const Route = createFileRoute("/$countryCode/business/team")({
   component: TeamPage,
@@ -10,51 +13,39 @@ export const Route = createFileRoute("/$countryCode/business/team")({
 function TeamPage() {
   const { countryCode } = Route.useParams()
   const { isB2B } = useAuth()
+  const { addToast } = useToast()
+  
+  const { data: teamData, isLoading, error } = useCompanyTeam()
+  const inviteMember = useInviteTeamMember()
+  const removeMember = useRemoveTeamMember()
 
-  // Mock team data
-  const members = [
-    {
-      id: "mem_1",
-      email: "admin@company.com",
-      name: "John Admin",
-      role: "admin" as const,
-      status: "active" as const,
-      joined_at: "2024-01-15",
-    },
-    {
-      id: "mem_2",
-      email: "buyer@company.com",
-      name: "Sarah Buyer",
-      role: "buyer" as const,
-      status: "active" as const,
-      spending_limit: 5000,
-      joined_at: "2024-03-01",
-    },
-    {
-      id: "mem_3",
-      email: "approver@company.com",
-      name: "Mike Approver",
-      role: "approver" as const,
-      status: "active" as const,
-      joined_at: "2024-02-10",
-    },
-    {
-      id: "mem_4",
-      email: "newuser@company.com",
-      name: "New User",
-      role: "viewer" as const,
-      status: "invited" as const,
-    },
-  ]
+  // Transform API data to component format
+  const members = (teamData || []).map((member: any) => ({
+    id: member.id,
+    email: member.customer?.email || member.email,
+    name: member.customer ? `${member.customer.first_name || ""} ${member.customer.last_name || ""}`.trim() : "Pending",
+    role: member.role as "admin" | "buyer" | "approver" | "viewer",
+    status: member.customer ? "active" as const : "invited" as const,
+    spending_limit: member.spending_limit,
+    joined_at: member.created_at,
+  }))
 
   const handleInvite = async (email: string, role: any) => {
-    console.log("Inviting:", email, role)
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    try {
+      await inviteMember.mutateAsync({ email, role })
+      addToast("success", `Invitation sent to ${email}`)
+    } catch (err: any) {
+      addToast("error", err.message || "Failed to send invitation")
+    }
   }
 
   const handleRemove = async (memberId: string) => {
-    console.log("Removing:", memberId)
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    try {
+      await removeMember.mutateAsync(memberId)
+      addToast("success", "Team member removed")
+    } catch (err: any) {
+      addToast("error", err.message || "Failed to remove team member")
+    }
   }
 
   return (
@@ -64,12 +55,26 @@ function TeamPage() {
         <p className="text-zinc-500 mt-1">Manage your company's team members and permissions</p>
       </div>
 
-      <TeamMembers
-        members={members}
-        canManage={isB2B}
-        onInvite={handleInvite}
-        onRemove={handleRemove}
-      />
+      {isLoading && (
+        <div className="flex items-center justify-center py-12">
+          <Spinner className="w-6 h-6 animate-spin text-zinc-400" />
+        </div>
+      )}
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-600">
+          Failed to load team members. Please try again later.
+        </div>
+      )}
+
+      {!isLoading && !error && (
+        <TeamMembers
+          members={members}
+          canManage={isB2B}
+          onInvite={handleInvite}
+          onRemove={handleRemove}
+        />
+      )}
     </AccountLayout>
   )
 }

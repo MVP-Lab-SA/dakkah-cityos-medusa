@@ -1,6 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { AccountLayout } from "@/components/account"
 import { ApprovalQueue } from "@/components/business"
+import { Spinner } from "@medusajs/icons"
+import { useToast } from "@/components/ui/toast"
+import { getBackendUrl } from "@/lib/utils/env"
 
 export const Route = createFileRoute("/$countryCode/business/approvals")({
   component: ApprovalsPage,
@@ -8,49 +12,122 @@ export const Route = createFileRoute("/$countryCode/business/approvals")({
 
 function ApprovalsPage() {
   const { countryCode } = Route.useParams()
+  const backendUrl = getBackendUrl()
+  const { addToast } = useToast()
+  const queryClient = useQueryClient()
 
-  // Mock pending approvals
-  const pendingApprovals = [
-    {
-      id: "po_1",
-      type: "purchase_order" as const,
-      title: "PO-123456",
-      requestedBy: "Sarah Buyer",
-      requestedAt: "2024-12-18T10:30:00Z",
-      amount: 2500,
-      currencyCode: "usd",
-      details: "Office supplies and equipment for Q1",
+  // Fetch pending approvals from multiple sources
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["pending-approvals"],
+    queryFn: async () => {
+      // Fetch pending purchase orders
+      const [poResponse, quotesResponse] = await Promise.all([
+        fetch(`${backendUrl}/store/purchase-orders?status=pending_approval`, {
+          credentials: "include",
+        }),
+        fetch(`${backendUrl}/store/quotes?status=pending_approval`, {
+          credentials: "include",
+        }),
+      ])
+
+      const [poData, quotesData] = await Promise.all([
+        poResponse.ok ? poResponse.json() : { purchase_orders: [] },
+        quotesResponse.ok ? quotesResponse.json() : { quotes: [] },
+      ])
+
+      // Transform to approval items
+      const purchaseOrderApprovals = (poData.purchase_orders || []).map((po: any) => ({
+        id: po.id,
+        type: "purchase_order" as const,
+        title: `PO-${po.display_id || po.id.slice(0, 8)}`,
+        requestedBy: po.customer?.first_name
+          ? `${po.customer.first_name} ${po.customer.last_name || ""}`
+          : "Unknown",
+        requestedAt: po.created_at,
+        amount: po.total,
+        currencyCode: po.currency_code || "usd",
+        details: po.notes || `${po.items?.length || 0} items`,
+      }))
+
+      const quoteApprovals = (quotesData.quotes || []).map((quote: any) => ({
+        id: quote.id,
+        type: "quote_request" as const,
+        title: `Quote REQ-${quote.display_id || quote.id.slice(0, 8)}`,
+        requestedBy: quote.customer?.first_name
+          ? `${quote.customer.first_name} ${quote.customer.last_name || ""}`
+          : "Unknown",
+        requestedAt: quote.created_at,
+        amount: quote.total,
+        currencyCode: quote.currency_code || "usd",
+        details: quote.notes || `${quote.items?.length || 0} items`,
+      }))
+
+      return [...purchaseOrderApprovals, ...quoteApprovals]
     },
-    {
-      id: "limit_1",
-      type: "limit_increase" as const,
-      title: "Spending Limit Increase",
-      requestedBy: "Mike Jones",
-      requestedAt: "2024-12-17T14:00:00Z",
-      amount: 10000,
-      currencyCode: "usd",
-      details: "Request to increase monthly spending limit from $5,000 to $10,000",
+  })
+
+  // Approve mutation
+  const approveMutation = useMutation({
+    mutationFn: async ({ id, type }: { id: string; type: string }) => {
+      const endpoint =
+        type === "purchase_order"
+          ? `${backendUrl}/store/purchase-orders/${id}/approve`
+          : `${backendUrl}/store/quotes/${id}/approve`
+
+      const response = await fetch(endpoint, {
+        method: "POST",
+        credentials: "include",
+      })
+
+      if (!response.ok) throw new Error("Failed to approve")
+      return response.json()
     },
-    {
-      id: "quote_1",
-      type: "quote_request" as const,
-      title: "Quote REQ-789",
-      requestedBy: "Sarah Buyer",
-      requestedAt: "2024-12-16T09:15:00Z",
-      amount: 15000,
-      currencyCode: "usd",
-      details: "Bulk order quote for 500 units",
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["pending-approvals"] })
+      addToast("success", "Request approved successfully")
     },
-  ]
+    onError: (err: any) => {
+      addToast("error", err.message || "Failed to approve request")
+    },
+  })
+
+  // Reject mutation
+  const rejectMutation = useMutation({
+    mutationFn: async ({ id, type }: { id: string; type: string }) => {
+      const endpoint =
+        type === "purchase_order"
+          ? `${backendUrl}/store/purchase-orders/${id}/reject`
+          : `${backendUrl}/store/quotes/${id}/decline`
+
+      const response = await fetch(endpoint, {
+        method: "POST",
+        credentials: "include",
+      })
+
+      if (!response.ok) throw new Error("Failed to reject")
+      return response.json()
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["pending-approvals"] })
+      addToast("success", "Request rejected")
+    },
+    onError: (err: any) => {
+      addToast("error", err.message || "Failed to reject request")
+    },
+  })
 
   const handleApprove = async (id: string) => {
-    console.log("Approving:", id)
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    const item = data?.find((i: any) => i.id === id)
+    if (item) {
+      await approveMutation.mutateAsync({ id, type: item.type })
+    }
   }
 
   const handleReject = async (id: string) => {
-    console.log("Rejecting:", id)
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    const item = data?.find((i: any) => i.id === id)
+    if (item) {
+      await rejectMutation.mutateAsync({ id, type: item.type })
+    }
   }
 
   return (
@@ -60,12 +137,26 @@ function ApprovalsPage() {
         <p className="text-zinc-500 mt-1">Review and approve pending requests</p>
       </div>
 
-      <ApprovalQueue
-        items={pendingApprovals}
-        countryCode={countryCode}
-        onApprove={handleApprove}
-        onReject={handleReject}
-      />
+      {isLoading && (
+        <div className="flex items-center justify-center py-12">
+          <Spinner className="w-6 h-6 animate-spin text-zinc-400" />
+        </div>
+      )}
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-600">
+          Failed to load pending approvals. Please try again later.
+        </div>
+      )}
+
+      {!isLoading && !error && (
+        <ApprovalQueue
+          items={data || []}
+          countryCode={countryCode}
+          onApprove={handleApprove}
+          onReject={handleReject}
+        />
+      )}
     </AccountLayout>
   )
 }

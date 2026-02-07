@@ -211,5 +211,13 @@ module.exports = defineConfig({
         }
       }
     },
+    {
+      resolve: "./src/modules/invoice",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
   ],
 });

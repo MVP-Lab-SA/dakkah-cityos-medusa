@@ -5,8 +5,9 @@ import {
   StepResponse,
   transform,
 } from "@medusajs/framework/workflows-sdk";
-import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
+import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils";
 import { createCartWorkflow } from "@medusajs/medusa/core-flows";
+import Stripe from "stripe";
 
 interface ProcessBillingCycleInput {
   billing_cycle_id: string;
@@ -41,7 +42,19 @@ const loadBillingCycleStep = createStep(
       filters: { subscription_id: cycle.subscription_id as string },
     });
     
-    return new StepResponse({ cycle, subscription: cycle.subscription, items });
+    // Load customer with payment method
+    const { data: [customer] } = await query.graph({
+      entity: "customer",
+      fields: ["id", "email", "metadata"],
+      filters: { id: cycle.subscription.customer_id as string },
+    });
+    
+    return new StepResponse({ 
+      cycle, 
+      subscription: cycle.subscription, 
+      items,
+      customer 
+    });
   }
 );
 
@@ -114,25 +127,105 @@ const createOrderFromSubscriptionStep = createStep(
   }
 );
 
-// Step 4: Process payment
+// Step 4: Process payment with Stripe
 const processSubscriptionPaymentStep = createStep(
   "process-subscription-payment",
-  async ({ cart, subscription }: { cart: any; subscription: any }, { container }) => {
-    // In real implementation, would process payment using saved payment method
-    // For now, mark as paid
-    const paymentStatus = "paid";
+  async ({ cart, subscription, customer }: { cart: any; subscription: any; customer: any }, { container }) => {
+    const logger = container.resolve(ContainerRegistrationKeys.LOGGER);
     
-    console.log(`Processing payment for subscription ${subscription.id}, cart ${cart.id}`);
+    // Check if Stripe is configured
+    const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+    if (!stripeSecretKey) {
+      logger.warn("STRIPE_SECRET_KEY not configured - marking payment as simulated");
+      return new StepResponse({ 
+        payment_status: "paid",
+        payment_method: "simulated",
+        payment_id: null 
+      });
+    }
     
-    return new StepResponse({ payment_status: paymentStatus });
+    const stripe = new Stripe(stripeSecretKey, { apiVersion: "2023-10-16" });
+    
+    // Get customer's Stripe customer ID
+    const stripeCustomerId = customer?.metadata?.stripe_customer_id;
+    
+    // Get saved payment method from subscription
+    const paymentMethodId = subscription.payment_method_id;
+    
+    if (!stripeCustomerId || !paymentMethodId) {
+      logger.warn(`Missing payment details for subscription ${subscription.id}`);
+      return new StepResponse({ 
+        payment_status: "failed",
+        payment_method: null,
+        payment_id: null,
+        error: "No saved payment method" 
+      });
+    }
+    
+    try {
+      // Calculate amount in cents
+      const amount = Math.round(cart.total * 100);
+      
+      // Create payment intent and confirm immediately
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount,
+        currency: subscription.currency_code || "usd",
+        customer: stripeCustomerId,
+        payment_method: paymentMethodId,
+        confirm: true,
+        off_session: true,
+        metadata: {
+          subscription_id: subscription.id,
+          billing_cycle_id: cart.id,
+          type: "subscription_renewal"
+        }
+      });
+      
+      if (paymentIntent.status === "succeeded") {
+        logger.info(`Payment succeeded for subscription ${subscription.id}`);
+        return new StepResponse({ 
+          payment_status: "paid",
+          payment_method: paymentMethodId,
+          payment_id: paymentIntent.id 
+        });
+      } else {
+        logger.warn(`Payment status ${paymentIntent.status} for subscription ${subscription.id}`);
+        return new StepResponse({ 
+          payment_status: "pending",
+          payment_method: paymentMethodId,
+          payment_id: paymentIntent.id 
+        });
+      }
+    } catch (error: any) {
+      logger.error(`Payment failed for subscription ${subscription.id}: ${error.message}`);
+      
+      // Handle specific Stripe errors
+      if (error.type === "StripeCardError") {
+        return new StepResponse({ 
+          payment_status: "failed",
+          payment_method: paymentMethodId,
+          payment_id: null,
+          error: error.message 
+        });
+      }
+      
+      throw error;
+    }
   }
 );
 
 // Step 5: Complete billing cycle
 const completeBillingCycleStep = createStep(
   "complete-billing-cycle",
-  async ({ cycle, cart, payment_status, subscription }: { cycle: any; cart: any; payment_status: string; subscription: any }, { container }) => {
+  async ({ cycle, cart, payment_status, payment_id, subscription }: { 
+    cycle: any; 
+    cart: any; 
+    payment_status: string; 
+    payment_id: string | null;
+    subscription: any 
+  }, { container }) => {
     const subscriptionModule = container.resolve("subscription") as any;
+    const eventBus = container.resolve(Modules.EVENT_BUS);
     
     const isPaid = payment_status === "paid";
     
@@ -142,6 +235,7 @@ const completeBillingCycleStep = createStep(
       status: isPaid ? "completed" : "failed",
       paid_at: isPaid ? new Date() : null,
       order_id: cart.id,
+      payment_id: payment_id,
     });
     
     // If successful, create next billing cycle
@@ -156,6 +250,8 @@ const completeBillingCycleStep = createStep(
         nextBillingDate.setDate(nextBillingDate.getDate() + 7);
       } else if (interval === "year") {
         nextBillingDate.setFullYear(nextBillingDate.getFullYear() + 1);
+      } else if (interval === "quarter") {
+        nextBillingDate.setMonth(nextBillingDate.getMonth() + 3);
       }
       
       // Create next cycle
@@ -170,11 +266,32 @@ const completeBillingCycleStep = createStep(
       await subscriptionModule.updateSubscriptions({
         id: subscription.id,
         next_billing_date: nextBillingDate,
+        payment_status: "paid",
+      });
+      
+      // Emit success event
+      await eventBus.emit("subscription.billing_cycle_completed", {
+        subscription_id: subscription.id,
+        billing_cycle_id: cycle.id,
+        amount: cart.total,
+      });
+    } else {
+      // Update subscription payment status
+      await subscriptionModule.updateSubscriptions({
+        id: subscription.id,
+        payment_status: "failed",
+      });
+      
+      // Emit failure event for retry handling
+      await eventBus.emit("subscription.payment_failed", {
+        subscription_id: subscription.id,
+        billing_cycle_id: cycle.id,
+        attempt_count: cycle.attempt_count,
       });
     }
     
     return new StepResponse({ 
-      success: true,
+      success: isPaid,
       cycle: updatedCycle,
       payment_status 
     });
@@ -209,6 +326,7 @@ export const processBillingCycleWorkflow = createWorkflow(
     const paymentInput = transform({ orderResult, loadResult }, ({ orderResult, loadResult }) => ({
       cart: orderResult.cart,
       subscription: loadResult.subscription,
+      customer: loadResult.customer,
     }));
     
     // Process payment
@@ -219,6 +337,7 @@ export const processBillingCycleWorkflow = createWorkflow(
       cycle: markResult.updatedCycle,
       cart: orderResult.cart,
       payment_status: paymentResult.payment_status,
+      payment_id: paymentResult.payment_id,
       subscription: loadResult.subscription,
     }));
     

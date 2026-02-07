@@ -5,11 +5,13 @@ import { sdk } from "@/lib/utils/sdk";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/lib/hooks/use-cart";
+import { useToast } from "@/components/ui/toast";
 
 export function QuoteRequestForm() {
   const navigate = useNavigate();
   const { data: cart } = useCart();
   const [notes, setNotes] = useState("");
+  const { addToast } = useToast();
 
   const createQuoteMutation = useMutation({
     mutationFn: async (data: Record<string, unknown>) => {
@@ -33,7 +35,7 @@ export function QuoteRequestForm() {
     e.preventDefault();
 
     if (!cart?.items || cart.items.length === 0) {
-      alert("Your cart is empty. Add items before requesting a quote.");
+      addToast("warning", "Your cart is empty. Add items before requesting a quote.");
       return;
     }
 

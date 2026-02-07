@@ -1,4 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
 
 /**
  * GET /store/vendors/:handle/reviews
@@ -6,6 +7,8 @@ import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
  */
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const vendorModule = req.scope.resolve("vendor") as any
+  const reviewModule = req.scope.resolve("review") as any
+  const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
   const { handle } = req.params
   
   const { 
@@ -31,11 +34,64 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       return res.status(404).json({ message: "Vendor not found" })
     }
     
-    // For now, return mock review structure
-    // In a real implementation, this would fetch from a reviews module
-    const reviews: any[] = []
+    // Build filters for reviews
+    const filters: any = {
+      vendor_id: vendor.id,
+      is_approved: true, // Only show approved reviews
+    }
     
-    // Calculate rating breakdown
+    if (rating) {
+      filters.rating = Number(rating)
+    }
+    
+    // Fetch reviews from review module
+    const { data: reviews, metadata } = await query.graph({
+      entity: "review",
+      fields: [
+        "id",
+        "rating",
+        "title",
+        "content",
+        "is_verified",
+        "helpful_count",
+        "created_at",
+        "customer.first_name",
+        "customer.last_name",
+      ],
+      filters,
+      pagination: {
+        skip: Number(offset),
+        take: Number(limit),
+        order: {
+          [sort_by as string]: order === "ASC" ? "ASC" : "DESC"
+        }
+      }
+    })
+    
+    // Format reviews for response
+    const formattedReviews = reviews.map((review: any) => ({
+      id: review.id,
+      rating: review.rating,
+      title: review.title,
+      content: review.content,
+      is_verified: review.is_verified,
+      helpful_count: review.helpful_count || 0,
+      created_at: review.created_at,
+      author: review.customer
+        ? `${review.customer.first_name || ""} ${review.customer.last_name?.charAt(0) || ""}.`.trim()
+        : "Anonymous",
+    }))
+    
+    // Calculate rating breakdown from all vendor reviews
+    const { data: allReviews } = await query.graph({
+      entity: "review",
+      fields: ["rating"],
+      filters: {
+        vendor_id: vendor.id,
+        is_approved: true,
+      }
+    })
+    
     const ratingBreakdown = {
       5: 0,
       4: 0,
@@ -44,17 +100,30 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       1: 0,
     }
     
+    let totalRating = 0
+    for (const review of allReviews) {
+      const r = review.rating as 1 | 2 | 3 | 4 | 5
+      if (r >= 1 && r <= 5) {
+        ratingBreakdown[r]++
+        totalRating += r
+      }
+    }
+    
+    const averageRating = allReviews.length > 0 
+      ? Math.round((totalRating / allReviews.length) * 10) / 10 
+      : 0
+    
     res.json({
-      reviews,
+      reviews: formattedReviews,
       vendor: {
         id: vendor.id,
         handle: vendor.handle,
         business_name: vendor.business_name,
-        rating: vendor.rating || 0,
-        review_count: vendor.review_count || 0,
+        rating: averageRating,
+        review_count: allReviews.length,
       },
       rating_breakdown: ratingBreakdown,
-      count: reviews.length,
+      count: metadata?.count || formattedReviews.length,
       offset: Number(offset),
       limit: Number(limit),
     })
