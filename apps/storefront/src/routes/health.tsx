@@ -1,4 +1,7 @@
 import { createServerFileRoute } from "@tanstack/react-start/server"
+import { createFileRoute } from "@tanstack/react-router"
+
+export const Route = createFileRoute("/health")({})
 
 export const ServerRoute = createServerFileRoute("/health").methods({
   GET: async () => {
