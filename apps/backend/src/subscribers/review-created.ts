@@ -1,70 +1,48 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
+import { subscriberLogger } from "../lib/logger"
+import { config } from "../lib/config"
+
+const logger = subscriberLogger
 
 export default async function reviewCreatedHandler({
   event: { data },
   container,
-}: SubscriberArgs<{ id: string; product_id?: string; vendor_id?: string; rating: number }>) {
+}: SubscriberArgs<{ id: string; product_id?: string; rating?: number }>) {
   const notificationService = container.resolve(Modules.NOTIFICATION)
   const query = container.resolve("query")
   
   try {
-    // Get review details
-    const reviewService = container.resolve("review")
-    const review = await reviewService.retrieveReviews(data.id)
+    let productName = "Product"
     
-    // Admin notification for moderation
-    await notificationService.createNotifications({
-      to: "",
-      channel: "feed",
-      template: "admin-ui",
-      data: {
-        title: "New Review Submitted",
-        description: `${data.rating} star review submitted${data.product_id ? " for product" : ""}${data.vendor_id ? " for vendor" : ""}`,
-      }
-    })
+    if (data.product_id) {
+      const { data: products } = await query.graph({
+        entity: "product",
+        fields: ["title"],
+        filters: { id: data.product_id }
+      })
+      productName = products?.[0]?.title || productName
+    }
     
-    // If it's a low rating, escalate
-    if (data.rating <= 2) {
+    if (config.features.enableAdminNotifications) {
       await notificationService.createNotifications({
         to: "",
         channel: "feed",
         template: "admin-ui",
         data: {
-          title: "Low Rating Alert",
-          description: `A ${data.rating}-star review requires attention`,
+          title: "New Review",
+          description: `New ${data.rating || 5}-star review for "${productName}"`,
         }
       })
     }
     
-    // Notify vendor if vendor review
-    if (data.vendor_id) {
-      const { data: vendors } = await query.graph({
-        entity: "vendor",
-        fields: ["contact_email", "name"],
-        filters: { id: data.vendor_id }
-      })
-      
-      const vendor = vendors?.[0]
-      
-      if (vendor?.contact_email) {
-        await notificationService.createNotifications({
-          to: vendor.contact_email,
-          channel: "email",
-          template: "vendor-new-review",
-          data: {
-            vendor_name: vendor.name,
-            rating: data.rating,
-            review_content: review?.content,
-            dashboard_url: `${process.env.STOREFRONT_URL || ""}/vendor/reviews`,
-          }
-        })
-      }
-    }
-    
-    console.log(`[Review Created] ${data.id} - ${data.rating} stars`)
+    logger.info("Review created notification sent", { 
+      reviewId: data.id, 
+      productId: data.product_id,
+      rating: data.rating 
+    })
   } catch (error) {
-    console.error("[Review Created] Error:", error)
+    logger.error("Review created handler error", error, { reviewId: data.id })
   }
 }
 

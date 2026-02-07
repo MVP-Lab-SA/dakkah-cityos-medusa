@@ -1,5 +1,9 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
+import { subscriberLogger } from "../lib/logger"
+import { config } from "../lib/config"
+
+const logger = subscriberLogger
 
 export default async function payoutFailedHandler({
   event: { data },
@@ -25,7 +29,7 @@ export default async function payoutFailedHandler({
     
     const payout = payouts?.[0]
     
-    if (vendor?.contact_email) {
+    if (vendor?.contact_email && config.features.enableEmailNotifications) {
       await notificationService.createNotifications({
         to: vendor.contact_email,
         channel: "email",
@@ -36,25 +40,31 @@ export default async function payoutFailedHandler({
           amount: payout?.net_amount,
           error: data.error || "Payout could not be processed",
           retry_info: "We will automatically retry in 24 hours",
-          update_payment_url: `${process.env.STOREFRONT_URL || ""}/vendor/settings/payments`,
-          support_email: process.env.SUPPORT_EMAIL || "support@example.com",
+          update_payment_url: `${config.storefrontUrl}/vendor/settings/payments`,
+          support_email: config.emails.support,
         }
       })
     }
     
-    await notificationService.createNotifications({
-      to: "",
-      channel: "feed",
-      template: "admin-ui",
-      data: {
-        title: "Payout Failed",
-        description: `Payout ${payout?.payout_number} failed for ${vendor?.name}: ${data.error}`,
-      }
-    })
+    if (config.features.enableAdminNotifications) {
+      await notificationService.createNotifications({
+        to: "",
+        channel: "feed",
+        template: "admin-ui",
+        data: {
+          title: "Payout Failed",
+          description: `Payout ${payout?.payout_number} failed for ${vendor?.name}: ${data.error}`,
+        }
+      })
+    }
     
-    console.log(`[Payout Failed] ${payout?.payout_number} - ${data.error}`)
+    logger.info("Payout failed notification sent", { 
+      payoutId: data.id, 
+      vendorId: data.vendor_id,
+      error: data.error 
+    })
   } catch (error) {
-    console.error("[Payout Failed] Error:", error)
+    logger.error("Payout failed handler error", error, { payoutId: data.id })
   }
 }
 

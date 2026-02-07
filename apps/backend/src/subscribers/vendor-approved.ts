@@ -1,49 +1,61 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
+import { subscriberLogger } from "../lib/logger"
+import { config } from "../lib/config"
+
+const logger = subscriberLogger
 
 export default async function vendorApprovedHandler({
   event: { data },
   container,
 }: SubscriberArgs<{ id: string }>) {
-  const notificationModuleService = container.resolve(Modules.NOTIFICATION)
-  const vendorService = container.resolve("vendor")
+  const notificationService = container.resolve(Modules.NOTIFICATION)
+  const query = container.resolve("query")
 
   try {
-    // Fetch vendor details
-    const vendor = await vendorService.retrieveVendor(data.id)
-    
-    if (!vendor || !vendor.email) {
-      console.log("[vendor-approved] Vendor not found or no email:", data.id)
+    const { data: vendors } = await query.graph({
+      entity: "vendor",
+      fields: ["*"],
+      filters: { id: data.id },
+    })
+
+    const vendor = vendors[0]
+    if (!vendor) {
+      logger.warn("Vendor not found", { vendorId: data.id })
       return
     }
 
-    // Send approval notification email
-    await notificationModuleService.createNotifications({
-      to: vendor.email,
-      channel: "email",
-      template: "vendor-approved",
-      data: {
-        vendor_id: vendor.id,
-        vendor_name: vendor.name,
-        email: vendor.email,
-        store_url: process.env.STOREFRONT_URL || "",
-      },
-    })
+    if (vendor.contact_email && config.features.enableEmailNotifications) {
+      await notificationService.createNotifications({
+        to: vendor.contact_email,
+        channel: "email",
+        template: "vendor-approved",
+        data: {
+          vendor_name: vendor.name,
+          dashboard_url: `${config.storefrontUrl}/vendor/dashboard`,
+          next_steps: "You can now start adding products to your store",
+        },
+      })
+    }
 
-    console.log("[vendor-approved] Approval email sent to:", vendor.email)
+    if (config.features.enableAdminNotifications) {
+      await notificationService.createNotifications({
+        to: "",
+        channel: "feed",
+        template: "admin-ui",
+        data: {
+          title: "Vendor Approved",
+          description: `Vendor "${vendor.name}" has been approved`,
+        },
+      })
+    }
 
-    // Send admin notification
-    await notificationModuleService.createNotifications({
-      to: "",
-      channel: "feed",
-      template: "admin-ui",
-      data: {
-        title: "Vendor Approved",
-        description: `${vendor.name} has been approved as a vendor`,
-      },
+    logger.info("Vendor approved notification sent", { 
+      vendorId: data.id, 
+      email: vendor.contact_email 
     })
   } catch (error) {
-    console.error("[vendor-approved] Failed to send notification:", error)
+    logger.error("Vendor approved handler error", error, { vendorId: data.id })
   }
 }
 

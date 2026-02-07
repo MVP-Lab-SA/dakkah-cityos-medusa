@@ -1,73 +1,53 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
+import { subscriberLogger } from "../lib/logger"
+import { config } from "../lib/config"
+
+const logger = subscriberLogger
 
 export default async function purchaseOrderSubmittedHandler({
   event: { data },
   container,
-}: SubscriberArgs<{ id: string; company_id?: string; submitted_by?: string }>) {
+}: SubscriberArgs<{ id: string; company_id?: string }>) {
   const notificationService = container.resolve(Modules.NOTIFICATION)
-  const query = container.resolve("query")
+  const purchaseOrderService = container.resolve("purchaseOrder")
   
   try {
-    const { data: purchaseOrders } = await query.graph({
-      entity: "purchase_order",
-      fields: ["*", "company.*", "customer.*"],
-      filters: { id: data.id }
-    })
+    const po = await purchaseOrderService.retrievePurchaseOrder(data.id)
     
-    const po = purchaseOrders?.[0]
-    const company = po?.company
-    const customer = po?.customer
-    
-    // Notify admin for approval
-    await notificationService.createNotifications({
-      to: "",
-      channel: "feed",
-      template: "admin-ui",
-      data: {
-        title: "Purchase Order Submitted",
-        description: `PO #${po?.po_number || po?.id?.slice(0, 8)} from ${company?.name} requires approval`,
-      }
-    })
-    
-    // Confirm submission to customer
-    if (customer?.email) {
+    if (po?.company?.email && config.features.enableEmailNotifications) {
       await notificationService.createNotifications({
-        to: customer.email,
+        to: po.company.email,
         channel: "email",
         template: "purchase-order-submitted",
         data: {
-          customer_name: customer.first_name || "Customer",
-          po_number: po.po_number || po.id.slice(0, 8).toUpperCase(),
-          company_name: company?.name,
+          po_number: po.po_number,
+          company_name: po.company.name,
           total: po.total,
-          currency: po.currency_code || "usd",
-          status: "Pending Approval",
-          approval_info: "Your purchase order has been submitted and is pending approval.",
-          track_url: `${process.env.STOREFRONT_URL || ""}/business/purchase-orders/${po.id}`,
+          status: po.status,
+          view_url: `${config.storefrontUrl}/business/purchase-orders/${po.id}`,
         }
       })
     }
     
-    // Notify company admin if different from submitter
-    if (company?.email && company.email !== customer?.email) {
+    if (config.features.enableAdminNotifications) {
       await notificationService.createNotifications({
-        to: company.email,
-        channel: "email",
-        template: "purchase-order-approval-needed",
+        to: "",
+        channel: "feed",
+        template: "admin-ui",
         data: {
-          company_name: company.name,
-          po_number: po.po_number || po.id.slice(0, 8).toUpperCase(),
-          submitted_by: customer?.email,
-          total: po.total,
-          approve_url: `${process.env.STOREFRONT_URL || ""}/business/purchase-orders/${po.id}/approve`,
+          title: "New Purchase Order",
+          description: `PO ${po?.po_number} submitted by ${po?.company?.name}`,
         }
       })
     }
     
-    console.log(`[Purchase Order Submitted] ${po?.po_number || po?.id}`)
+    logger.info("Purchase order submitted notification sent", { 
+      poId: data.id, 
+      companyId: data.company_id 
+    })
   } catch (error) {
-    console.error("[Purchase Order Submitted] Error:", error)
+    logger.error("Purchase order submitted handler error", error, { poId: data.id })
   }
 }
 

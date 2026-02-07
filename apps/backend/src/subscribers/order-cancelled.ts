@@ -1,24 +1,28 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
+import { subscriberLogger } from "../lib/logger"
+import { config } from "../lib/config"
+
+const logger = subscriberLogger
 
 export default async function orderCancelledHandler({
   event: { data },
   container,
-}: SubscriberArgs<{ id: string }>) {
+}: SubscriberArgs<{ id: string; reason?: string }>) {
   const notificationService = container.resolve(Modules.NOTIFICATION)
   const query = container.resolve("query")
   
   try {
     const { data: orders } = await query.graph({
       entity: "order",
-      fields: ["*", "customer.*", "items.*"],
+      fields: ["*", "customer.*"],
       filters: { id: data.id }
     })
     
     const order = orders?.[0]
     const customer = order?.customer
     
-    if (customer?.email) {
+    if (customer?.email && config.features.enableEmailNotifications) {
       await notificationService.createNotifications({
         to: customer.email,
         channel: "email",
@@ -26,26 +30,31 @@ export default async function orderCancelledHandler({
         data: {
           order_id: order.id,
           order_display_id: order.display_id,
+          reason: data.reason || "Order cancelled per your request",
           customer_name: customer.first_name || "Customer",
-          cancellation_reason: order.metadata?.cancellation_reason || "Order was cancelled",
-          refund_info: "Any payments will be refunded within 5-10 business days",
+          refund_info: "Your refund will be processed within 5-10 business days",
         }
       })
     }
     
-    await notificationService.createNotifications({
-      to: "",
-      channel: "feed",
-      template: "admin-ui",
-      data: {
-        title: "Order Cancelled",
-        description: `Order #${order?.display_id} has been cancelled`,
-      }
-    })
+    if (config.features.enableAdminNotifications) {
+      await notificationService.createNotifications({
+        to: "",
+        channel: "feed",
+        template: "admin-ui",
+        data: {
+          title: "Order Cancelled",
+          description: `Order #${order?.display_id} has been cancelled: ${data.reason || "No reason provided"}`,
+        }
+      })
+    }
     
-    console.log(`[Order Cancelled] Order ${order?.id}`)
+    logger.info("Order cancelled notification sent", { 
+      orderId: data.id, 
+      reason: data.reason 
+    })
   } catch (error) {
-    console.error("[Order Cancelled] Error:", error)
+    logger.error("Order cancelled handler error", error, { orderId: data.id })
   }
 }
 

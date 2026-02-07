@@ -1,51 +1,54 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
+import { subscriberLogger } from "../lib/logger"
+import { config } from "../lib/config"
+
+const logger = subscriberLogger
 
 export default async function subscriptionPausedHandler({
   event: { data },
   container,
-}: SubscriberArgs<{ id: string; customer_id: string; reason?: string }>) {
+}: SubscriberArgs<{ id: string; reason?: string }>) {
   const notificationService = container.resolve(Modules.NOTIFICATION)
-  const query = container.resolve("query")
+  const subscriptionService = container.resolve("subscription")
   
   try {
-    const { data: subscriptions } = await query.graph({
-      entity: "subscription",
-      fields: ["*", "customer.*", "plan.*"],
-      filters: { id: data.id }
-    })
+    const subscription = await subscriptionService.retrieveSubscription(data.id)
+    const customerEmail = subscription?.customer?.email || subscription?.metadata?.email
     
-    const subscription = subscriptions?.[0]
-    const customer = subscription?.customer
-    
-    if (customer?.email) {
+    if (customerEmail && config.features.enableEmailNotifications) {
       await notificationService.createNotifications({
-        to: customer.email,
+        to: customerEmail,
         channel: "email",
         template: "subscription-paused",
         data: {
           subscription_id: subscription.id,
-          customer_name: customer.first_name || "Customer",
           plan_name: subscription.plan?.name || "Subscription",
-          pause_reason: data.reason || "At your request",
-          resume_url: `${process.env.STOREFRONT_URL || ""}/account/subscriptions/${subscription.id}`,
+          pause_reason: data.reason || "Paused by request",
+          resume_url: `${config.storefrontUrl}/account/subscriptions/${subscription.id}`,
+          customer_name: subscription.customer?.first_name || "Customer",
         }
       })
     }
     
-    await notificationService.createNotifications({
-      to: "",
-      channel: "feed",
-      template: "admin-ui",
-      data: {
-        title: "Subscription Paused",
-        description: `Subscription for ${customer?.email} has been paused`,
-      }
-    })
+    if (config.features.enableAdminNotifications) {
+      await notificationService.createNotifications({
+        to: "",
+        channel: "feed",
+        template: "admin-ui",
+        data: {
+          title: "Subscription Paused",
+          description: `Subscription ${subscription?.id} paused: ${data.reason || "Customer request"}`,
+        }
+      })
+    }
     
-    console.log(`[Subscription Paused] ${subscription?.id}`)
+    logger.info("Subscription paused notification sent", { 
+      subscriptionId: data.id, 
+      reason: data.reason 
+    })
   } catch (error) {
-    console.error("[Subscription Paused] Error:", error)
+    logger.error("Subscription paused handler error", error, { subscriptionId: data.id })
   }
 }
 

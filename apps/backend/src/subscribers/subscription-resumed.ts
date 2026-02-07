@@ -1,41 +1,50 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
+import { subscriberLogger } from "../lib/logger"
+import { config } from "../lib/config"
+
+const logger = subscriberLogger
 
 export default async function subscriptionResumedHandler({
   event: { data },
   container,
-}: SubscriberArgs<{ id: string; customer_id: string; new_billing_date?: Date }>) {
+}: SubscriberArgs<{ id: string }>) {
   const notificationService = container.resolve(Modules.NOTIFICATION)
-  const query = container.resolve("query")
+  const subscriptionService = container.resolve("subscription")
   
   try {
-    const { data: subscriptions } = await query.graph({
-      entity: "subscription",
-      fields: ["*", "customer.*", "plan.*"],
-      filters: { id: data.id }
-    })
+    const subscription = await subscriptionService.retrieveSubscription(data.id)
+    const customerEmail = subscription?.customer?.email || subscription?.metadata?.email
     
-    const subscription = subscriptions?.[0]
-    const customer = subscription?.customer
-    
-    if (customer?.email) {
+    if (customerEmail && config.features.enableEmailNotifications) {
       await notificationService.createNotifications({
-        to: customer.email,
+        to: customerEmail,
         channel: "email",
         template: "subscription-resumed",
         data: {
           subscription_id: subscription.id,
-          customer_name: customer.first_name || "Customer",
           plan_name: subscription.plan?.name || "Subscription",
-          next_billing_date: data.new_billing_date || subscription.next_billing_date,
-          manage_url: `${process.env.STOREFRONT_URL || ""}/account/subscriptions/${subscription.id}`,
+          next_billing_date: subscription.next_billing_date,
+          customer_name: subscription.customer?.first_name || "Customer",
         }
       })
     }
     
-    console.log(`[Subscription Resumed] ${subscription?.id}`)
+    if (config.features.enableAdminNotifications) {
+      await notificationService.createNotifications({
+        to: "",
+        channel: "feed",
+        template: "admin-ui",
+        data: {
+          title: "Subscription Resumed",
+          description: `Subscription ${subscription?.id} has been resumed`,
+        }
+      })
+    }
+    
+    logger.info("Subscription resumed notification sent", { subscriptionId: data.id })
   } catch (error) {
-    console.error("[Subscription Resumed] Error:", error)
+    logger.error("Subscription resumed handler error", error, { subscriptionId: data.id })
   }
 }
 

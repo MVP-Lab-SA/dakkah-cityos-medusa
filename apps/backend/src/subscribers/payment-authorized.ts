@@ -1,5 +1,9 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
+import { subscriberLogger } from "../lib/logger"
+import { config } from "../lib/config"
+
+const logger = subscriberLogger
 
 export default async function paymentAuthorizedHandler({
   event: { data },
@@ -18,20 +22,24 @@ export default async function paymentAuthorizedHandler({
     const payment = payments?.[0]
     const order = payment?.payment_collection?.order
     
-    // Admin notification for manual capture workflows
-    await notificationService.createNotifications({
-      to: "",
-      channel: "feed",
-      template: "admin-ui",
-      data: {
-        title: "Payment Authorized",
-        description: `Payment of ${payment?.amount} ${payment?.currency_code} authorized for order #${order?.display_id}. Ready for capture.`,
-      }
-    })
+    if (config.features.enableAdminNotifications) {
+      await notificationService.createNotifications({
+        to: "",
+        channel: "feed",
+        template: "admin-ui",
+        data: {
+          title: "Payment Authorized",
+          description: `Payment of ${payment?.amount} ${payment?.currency_code} authorized for order #${order?.display_id}`,
+        }
+      })
+    }
     
-    console.log(`[Payment Authorized] Order ${order?.id} - ${payment?.amount} ${payment?.currency_code}`)
+    logger.info("Payment authorized", { 
+      paymentId: data.id, 
+      orderId: order?.id 
+    })
   } catch (error) {
-    console.error("[Payment Authorized] Error:", error)
+    logger.error("Payment authorized handler error", error, { paymentId: data.id })
   }
 }
 

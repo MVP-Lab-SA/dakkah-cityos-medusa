@@ -1,44 +1,46 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
+import { subscriberLogger } from "../lib/logger"
+import { config } from "../lib/config"
+
+const logger = subscriberLogger
 
 export default async function subscriptionRenewalUpcomingHandler({
   event: { data },
   container,
-}: SubscriberArgs<{ id: string; days_until_renewal: number }>) {
+}: SubscriberArgs<{ id: string; days_until_renewal?: number }>) {
   const notificationService = container.resolve(Modules.NOTIFICATION)
-  const query = container.resolve("query")
+  const subscriptionService = container.resolve("subscription")
   
   try {
-    const { data: subscriptions } = await query.graph({
-      entity: "subscription",
-      fields: ["*", "customer.*", "plan.*"],
-      filters: { id: data.id }
+    const subscription = await subscriptionService.retrieveSubscription(data.id)
+    const customerEmail = subscription?.customer?.email || subscription?.metadata?.email
+    
+    const daysUntilRenewal = data.days_until_renewal || 7
+    
+    if (customerEmail && config.features.enableEmailNotifications) {
+      await notificationService.createNotifications({
+        to: customerEmail,
+        channel: "email",
+        template: "subscription-renewal-upcoming",
+        data: {
+          subscription_id: subscription.id,
+          plan_name: subscription.plan?.name || "Subscription",
+          renewal_date: subscription.next_billing_date,
+          days_until_renewal: daysUntilRenewal,
+          renewal_amount: subscription.plan?.price,
+          manage_url: `${config.storefrontUrl}/account/subscriptions/${subscription.id}`,
+          customer_name: subscription.customer?.first_name || "Customer",
+        }
+      })
+    }
+    
+    logger.info("Subscription renewal reminder sent", { 
+      subscriptionId: data.id,
+      daysUntilRenewal 
     })
-    
-    const subscription = subscriptions?.[0]
-    const customer = subscription?.customer
-    
-    if (!customer?.email) return
-    
-    await notificationService.createNotifications({
-      to: customer.email,
-      channel: "email",
-      template: "subscription-renewal-reminder",
-      data: {
-        customer_name: customer.first_name || "Customer",
-        plan_name: subscription.plan?.name || "Subscription",
-        renewal_date: subscription.next_billing_date,
-        amount: subscription.price,
-        currency: subscription.currency_code || "usd",
-        days_until_renewal: data.days_until_renewal,
-        manage_url: `${process.env.STOREFRONT_URL || ""}/account/subscriptions/${subscription.id}`,
-        cancel_url: `${process.env.STOREFRONT_URL || ""}/account/subscriptions/${subscription.id}?action=cancel`,
-      }
-    })
-    
-    console.log(`[Subscription Renewal Upcoming] ${subscription?.id} - ${data.days_until_renewal} days`)
   } catch (error) {
-    console.error("[Subscription Renewal Upcoming] Error:", error)
+    logger.error("Subscription renewal upcoming handler error", error, { subscriptionId: data.id })
   }
 }
 

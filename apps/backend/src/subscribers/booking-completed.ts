@@ -1,42 +1,39 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
+import { subscriberLogger } from "../lib/logger"
+import { config } from "../lib/config"
+
+const logger = subscriberLogger
 
 export default async function bookingCompletedHandler({
   event: { data },
   container,
-}: SubscriberArgs<{ id: string; customer_id?: string }>) {
+}: SubscriberArgs<{ id: string }>) {
   const notificationService = container.resolve(Modules.NOTIFICATION)
-  const query = container.resolve("query")
+  const bookingService = container.resolve("booking")
   
   try {
-    const { data: bookings } = await query.graph({
-      entity: "booking",
-      fields: ["*", "customer.*", "service.*"],
-      filters: { id: data.id }
-    })
+    const booking = await bookingService.retrieveBooking(data.id)
+    const customerEmail = booking?.customer?.email || booking?.metadata?.email
     
-    const booking = bookings?.[0]
-    const customer = booking?.customer
-    const service = booking?.service
-    
-    if (customer?.email) {
+    if (customerEmail && config.features.enableEmailNotifications) {
       await notificationService.createNotifications({
-        to: customer.email,
+        to: customerEmail,
         channel: "email",
         template: "booking-completed",
         data: {
-          customer_name: customer.first_name || "Customer",
-          service_name: service?.name || "Service",
-          booking_date: booking.scheduled_at,
-          review_url: `${process.env.STOREFRONT_URL || ""}/account/bookings/${booking.id}/review`,
-          rebook_url: `${process.env.STOREFRONT_URL || ""}/book/${service?.handle}`,
+          booking_id: booking.id,
+          service_name: booking.service?.title || "Service",
+          customer_name: booking.customer?.first_name || "Customer",
+          review_url: `${config.storefrontUrl}/account/bookings/${booking.id}/review`,
+          rebook_url: `${config.storefrontUrl}/services/${booking.service?.handle || ""}`,
         }
       })
     }
     
-    console.log(`[Booking Completed] ${booking?.id}`)
+    logger.info("Booking completed notification sent", { bookingId: data.id })
   } catch (error) {
-    console.error("[Booking Completed] Error:", error)
+    logger.error("Booking completed handler error", error, { bookingId: data.id })
   }
 }
 

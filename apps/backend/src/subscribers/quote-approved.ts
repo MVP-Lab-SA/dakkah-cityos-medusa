@@ -1,52 +1,60 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
+import { subscriberLogger } from "../lib/logger"
+import { config } from "../lib/config"
+
+const logger = subscriberLogger
 
 export default async function quoteApprovedHandler({
   event: { data },
   container,
 }: SubscriberArgs<{ id: string }>) {
-  const notificationModuleService = container.resolve(Modules.NOTIFICATION)
+  const notificationService = container.resolve(Modules.NOTIFICATION)
   const quoteService = container.resolve("quote")
 
   try {
-    // Fetch quote details
     const quote = await quoteService.retrieveQuote(data.id)
     
-    if (!quote || !quote.customer_email) {
-      console.log("[quote-approved] Quote not found or no email:", data.id)
+    if (!quote) {
+      logger.warn("Quote not found", { quoteId: data.id })
       return
     }
 
-    // Send approval notification email
-    await notificationModuleService.createNotifications({
-      to: quote.customer_email,
-      channel: "email",
-      template: "quote-approved",
-      data: {
-        quote_id: quote.id,
-        quote_number: quote.quote_number,
-        total: quote.total,
-        currency_code: quote.currency_code,
-        valid_until: quote.valid_until,
-        customer_name: quote.customer_name || "Customer",
-        items: quote.items,
-      },
-    })
+    const customerEmail = quote.company?.email || quote.metadata?.email
 
-    console.log("[quote-approved] Approval email sent to:", quote.customer_email)
+    if (customerEmail && config.features.enableEmailNotifications) {
+      await notificationService.createNotifications({
+        to: customerEmail,
+        channel: "email",
+        template: "quote-approved",
+        data: {
+          quote_number: quote.quote_number,
+          company_name: quote.company?.name || "Customer",
+          total: quote.total,
+          valid_until: quote.valid_until,
+          view_url: `${config.storefrontUrl}/business/quotes/${quote.id}`,
+        },
+      })
+    }
 
-    // Send admin notification
-    await notificationModuleService.createNotifications({
-      to: "",
-      channel: "feed",
-      template: "admin-ui",
-      data: {
-        title: "Quote Approved",
-        description: `Quote #${quote.quote_number} has been approved`,
-      },
+    if (config.features.enableAdminNotifications) {
+      await notificationService.createNotifications({
+        to: "",
+        channel: "feed",
+        template: "admin-ui",
+        data: {
+          title: "Quote Approved",
+          description: `Quote ${quote.quote_number} has been approved and sent to customer`,
+        },
+      })
+    }
+
+    logger.info("Quote approved notification sent", { 
+      quoteId: data.id, 
+      email: customerEmail 
     })
   } catch (error) {
-    console.error("[quote-approved] Failed to send notification:", error)
+    logger.error("Quote approved handler error", error, { quoteId: data.id })
   }
 }
 

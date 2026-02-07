@@ -1,4 +1,7 @@
 import { MedusaContainer } from "@medusajs/framework/types"
+import { jobLogger } from "../lib/logger"
+
+const logger = jobLogger
 
 export default async function commissionSettlementJob(container: MedusaContainer) {
   const query = container.resolve("query")
@@ -6,7 +9,7 @@ export default async function commissionSettlementJob(container: MedusaContainer
   const payoutService = container.resolve("payout")
   const eventBus = container.resolve("event_bus")
   
-  console.log("[Commission Settlement] Starting daily settlement...")
+  logger.info("Starting daily commission settlement")
   
   try {
     // Get all unsettled commissions older than 7 days (hold period)
@@ -23,25 +26,25 @@ export default async function commissionSettlementJob(container: MedusaContainer
     })
     
     if (!pendingTransactions || pendingTransactions.length === 0) {
-      console.log("[Commission Settlement] No pending commissions to settle")
+      logger.info("No pending commissions to settle")
       return
     }
     
     // Group by vendor
     const vendorCommissions: Record<string, {
-      vendor: any
-      transactions: any[]
+      vendor: Record<string, unknown>
+      transactions: Record<string, unknown>[]
       totalGross: number
       totalCommission: number
     }> = {}
     
     for (const tx of pendingTransactions) {
-      const vendorId = tx.vendor_id
+      const vendorId = tx.vendor_id as string
       if (!vendorId) continue
       
       if (!vendorCommissions[vendorId]) {
         vendorCommissions[vendorId] = {
-          vendor: tx.vendor,
+          vendor: tx.vendor as Record<string, unknown>,
           transactions: [],
           totalGross: 0,
           totalCommission: 0
@@ -62,25 +65,25 @@ export default async function commissionSettlementJob(container: MedusaContainer
         const netAmount = data.totalGross - data.totalCommission
         
         if (netAmount <= 0) {
-          console.log(`[Commission Settlement] Skipping vendor ${vendorId} - no positive balance`)
+          logger.debug("Skipping vendor - no positive balance", { vendorId })
           continue
         }
         
         // Get period dates
         const oldestTx = data.transactions.reduce((oldest, tx) => 
-          new Date(tx.created_at) < new Date(oldest.created_at) ? tx : oldest
+          new Date(tx.created_at as string) < new Date(oldest.created_at as string) ? tx : oldest
         )
         const newestTx = data.transactions.reduce((newest, tx) => 
-          new Date(tx.created_at) > new Date(newest.created_at) ? tx : newest
+          new Date(tx.created_at as string) > new Date(newest.created_at as string) ? tx : newest
         )
         
         // Create payout
         const payout = await payoutService.createVendorPayout({
           vendorId,
-          tenantId: data.vendor?.tenant_id || "default",
-          periodStart: new Date(oldestTx.created_at),
-          periodEnd: new Date(newestTx.created_at),
-          transactionIds: data.transactions.map((tx: any) => tx.id),
+          tenantId: (data.vendor?.tenant_id as string) || "default",
+          periodStart: new Date(oldestTx.created_at as string),
+          periodEnd: new Date(newestTx.created_at as string),
+          transactionIds: data.transactions.map((tx) => tx.id as string),
           grossAmount: data.totalGross,
           commissionAmount: data.totalCommission,
           paymentMethod: "stripe_connect",
@@ -99,14 +102,14 @@ export default async function commissionSettlementJob(container: MedusaContainer
         // Process the payout if vendor has Stripe account
         if (data.vendor?.stripe_account_id) {
           try {
-            await payoutService.processStripeConnectPayout(payout.id, data.vendor.stripe_account_id)
+            await payoutService.processStripeConnectPayout(payout.id, data.vendor.stripe_account_id as string)
             await eventBus.emit("payout.completed", { 
               id: payout.id, 
               vendor_id: vendorId,
               amount: netAmount 
             })
           } catch (stripeError) {
-            console.error(`[Commission Settlement] Stripe payout failed for ${vendorId}:`, stripeError)
+            logger.error("Stripe payout failed", stripeError, { vendorId })
             await eventBus.emit("payout.failed", { 
               id: payout.id, 
               vendor_id: vendorId,
@@ -116,16 +119,20 @@ export default async function commissionSettlementJob(container: MedusaContainer
         }
         
         successCount++
-        console.log(`[Commission Settlement] Settled $${netAmount.toFixed(2)} for vendor ${data.vendor?.name || vendorId}`)
+        logger.info("Commission settled", { 
+          vendorId, 
+          vendorName: data.vendor?.name,
+          amount: netAmount 
+        })
       } catch (error) {
         failCount++
-        console.error(`[Commission Settlement] Failed for vendor ${vendorId}:`, error)
+        logger.error("Commission settlement failed for vendor", error, { vendorId })
       }
     }
     
-    console.log(`[Commission Settlement] Completed - Success: ${successCount}, Failed: ${failCount}`)
+    logger.info("Commission settlement completed", { successCount, failCount })
   } catch (error) {
-    console.error("[Commission Settlement] Job failed:", error)
+    logger.error("Commission settlement job failed", error)
   }
 }
 

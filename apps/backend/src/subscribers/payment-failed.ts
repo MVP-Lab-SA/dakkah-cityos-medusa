@@ -1,5 +1,9 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
+import { subscriberLogger } from "../lib/logger"
+import { config } from "../lib/config"
+
+const logger = subscriberLogger
 
 export default async function paymentFailedHandler({
   event: { data },
@@ -19,7 +23,7 @@ export default async function paymentFailedHandler({
     const order = payment?.payment_collection?.order
     const customer = order?.customer
     
-    if (customer?.email) {
+    if (customer?.email && config.features.enableEmailNotifications) {
       await notificationService.createNotifications({
         to: customer.email,
         channel: "email",
@@ -28,26 +32,31 @@ export default async function paymentFailedHandler({
           order_id: order?.id,
           order_display_id: order?.display_id,
           error: data.error || "Payment could not be processed",
-          retry_url: `${process.env.STOREFRONT_URL || "http://localhost:8000"}/checkout?retry=true`,
+          retry_url: `${config.storefrontUrl}/checkout?retry=true`,
           customer_name: customer.first_name || "Customer",
         }
       })
     }
     
-    // Admin notification
-    await notificationService.createNotifications({
-      to: "",
-      channel: "feed",
-      template: "admin-ui",
-      data: {
-        title: "Payment Failed",
-        description: `Payment failed for order #${order?.display_id}: ${data.error || "Unknown error"}`,
-      }
-    })
+    if (config.features.enableAdminNotifications) {
+      await notificationService.createNotifications({
+        to: "",
+        channel: "feed",
+        template: "admin-ui",
+        data: {
+          title: "Payment Failed",
+          description: `Payment failed for order #${order?.display_id}: ${data.error || "Unknown error"}`,
+        }
+      })
+    }
     
-    console.log(`[Payment Failed] Order ${order?.id} - Error: ${data.error}`)
+    logger.info("Payment failed notification sent", { 
+      paymentId: data.id, 
+      orderId: order?.id,
+      error: data.error 
+    })
   } catch (error) {
-    console.error("[Payment Failed] Handler error:", error)
+    logger.error("Payment failed handler error", error, { paymentId: data.id })
   }
 }
 

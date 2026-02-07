@@ -1,10 +1,14 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
+import { subscriberLogger } from "../lib/logger"
+import { config } from "../lib/config"
+
+const logger = subscriberLogger
 
 export default async function paymentRefundedHandler({
   event: { data },
   container,
-}: SubscriberArgs<{ id: string; refund_id?: string; amount?: number }>) {
+}: SubscriberArgs<{ id: string; amount?: number }>) {
   const notificationService = container.resolve(Modules.NOTIFICATION)
   const query = container.resolve("query")
   
@@ -19,9 +23,7 @@ export default async function paymentRefundedHandler({
     const order = payment?.payment_collection?.order
     const customer = order?.customer
     
-    const refundAmount = data.amount || payment?.amount
-    
-    if (customer?.email) {
+    if (customer?.email && config.features.enableEmailNotifications) {
       await notificationService.createNotifications({
         to: customer.email,
         channel: "email",
@@ -29,28 +31,33 @@ export default async function paymentRefundedHandler({
         data: {
           order_id: order?.id,
           order_display_id: order?.display_id,
-          refund_amount: refundAmount,
+          refund_amount: data.amount || payment?.amount,
           currency: payment?.currency_code,
           customer_name: customer.first_name || "Customer",
-          refund_reason: "Your refund has been processed",
+          refund_timeline: "5-10 business days",
         }
       })
     }
     
-    // Admin notification
-    await notificationService.createNotifications({
-      to: "",
-      channel: "feed",
-      template: "admin-ui",
-      data: {
-        title: "Payment Refunded",
-        description: `Refund of ${refundAmount} ${payment?.currency_code} processed for order #${order?.display_id}`,
-      }
-    })
+    if (config.features.enableAdminNotifications) {
+      await notificationService.createNotifications({
+        to: "",
+        channel: "feed",
+        template: "admin-ui",
+        data: {
+          title: "Payment Refunded",
+          description: `Refund of ${data.amount || payment?.amount} ${payment?.currency_code} issued for order #${order?.display_id}`,
+        }
+      })
+    }
     
-    console.log(`[Payment Refunded] Order ${order?.id} - ${refundAmount} ${payment?.currency_code}`)
+    logger.info("Payment refunded notification sent", { 
+      paymentId: data.id, 
+      orderId: order?.id,
+      amount: data.amount 
+    })
   } catch (error) {
-    console.error("[Payment Refunded] Error:", error)
+    logger.error("Payment refunded handler error", error, { paymentId: data.id })
   }
 }
 

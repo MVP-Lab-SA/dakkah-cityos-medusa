@@ -1,37 +1,38 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
+import { subscriberLogger } from "../lib/logger"
+import { config } from "../lib/config"
+
+const logger = subscriberLogger
 
 export default async function quoteDeclinedHandler({
   event: { data },
   container,
-}: SubscriberArgs<{ id: string; customer_id?: string; reason?: string }>) {
+}: SubscriberArgs<{ id: string; reason?: string }>) {
   const notificationService = container.resolve(Modules.NOTIFICATION)
-  const query = container.resolve("query")
+  const quoteService = container.resolve("quote")
   
   try {
-    const { data: quotes } = await query.graph({
-      entity: "quote",
-      fields: ["*", "customer.*"],
-      filters: { id: data.id }
+    const quote = await quoteService.retrieveQuote(data.id)
+    
+    if (config.features.enableAdminNotifications) {
+      await notificationService.createNotifications({
+        to: "",
+        channel: "feed",
+        template: "admin-ui",
+        data: {
+          title: "Quote Declined",
+          description: `Quote ${quote?.quote_number} declined: ${data.reason || "No reason provided"}`,
+        }
+      })
+    }
+    
+    logger.info("Quote declined notification sent", { 
+      quoteId: data.id, 
+      reason: data.reason 
     })
-    
-    const quote = quotes?.[0]
-    const customer = quote?.customer
-    
-    // Notify admin
-    await notificationService.createNotifications({
-      to: "",
-      channel: "feed",
-      template: "admin-ui",
-      data: {
-        title: "Quote Declined",
-        description: `Quote #${quote?.display_id || quote?.id?.slice(0, 8)} declined: ${data.reason || "No reason provided"}`,
-      }
-    })
-    
-    console.log(`[Quote Declined] ${quote?.id} - ${data.reason}`)
   } catch (error) {
-    console.error("[Quote Declined] Error:", error)
+    logger.error("Quote declined handler error", error, { quoteId: data.id })
   }
 }
 

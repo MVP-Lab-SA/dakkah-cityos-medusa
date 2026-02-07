@@ -1,45 +1,55 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
+import { subscriberLogger } from "../lib/logger"
+import { config } from "../lib/config"
+
+const logger = subscriberLogger
 
 export default async function subscriptionCancelledHandler({
   event: { data },
   container,
-}: SubscriberArgs<{ id: string }>) {
-  const notificationModuleService = container.resolve(Modules.NOTIFICATION)
+}: SubscriberArgs<{ id: string; reason?: string }>) {
+  const notificationService = container.resolve(Modules.NOTIFICATION)
   const subscriptionService = container.resolve("subscription")
 
   try {
-    // Fetch subscription details
     const subscription = await subscriptionService.retrieveSubscription(data.id)
-    
-    if (!subscription) {
-      console.log("[subscription-cancelled] Subscription not found:", data.id)
-      return
+    const customerEmail = subscription?.customer?.email || subscription?.metadata?.email
+
+    if (customerEmail && config.features.enableEmailNotifications) {
+      await notificationService.createNotifications({
+        to: customerEmail,
+        channel: "email",
+        template: "subscription-cancelled",
+        data: {
+          subscription_id: subscription.id,
+          plan_name: subscription.plan?.name || "Subscription",
+          cancel_reason: data.reason || "Cancelled by request",
+          end_date: subscription.current_period_end,
+          customer_name: subscription.customer?.first_name || "Customer",
+          resubscribe_url: `${config.storefrontUrl}/subscriptions`,
+        },
+      })
     }
 
-    const customerEmail = subscription.customer?.email || subscription.metadata?.email
-    
-    if (!customerEmail) {
-      console.log("[subscription-cancelled] No customer email found")
-      return
+    if (config.features.enableAdminNotifications) {
+      await notificationService.createNotifications({
+        to: "",
+        channel: "feed",
+        template: "admin-ui",
+        data: {
+          title: "Subscription Cancelled",
+          description: `Subscription cancelled: ${subscription.plan?.name || "Plan"}`,
+        },
+      })
     }
 
-    // Send cancellation confirmation email
-    await notificationModuleService.createNotifications({
-      to: customerEmail,
-      channel: "email",
-      template: "subscription-cancelled",
-      data: {
-        subscription_id: subscription.id,
-        plan_name: subscription.plan?.name || "Subscription Plan",
-        end_date: subscription.cancelled_at || new Date(),
-        customer_name: subscription.customer?.first_name || "Customer",
-      },
+    logger.info("Subscription cancelled notification sent", { 
+      subscriptionId: data.id, 
+      reason: data.reason 
     })
-
-    console.log("[subscription-cancelled] Cancellation email sent to:", customerEmail)
   } catch (error) {
-    console.error("[subscription-cancelled] Failed to send notification:", error)
+    logger.error("Subscription cancelled handler error", error, { subscriptionId: data.id })
   }
 }
 

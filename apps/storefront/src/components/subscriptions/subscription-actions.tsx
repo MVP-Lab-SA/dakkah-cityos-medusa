@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
+import { useToast } from "@/components/ui/toast"
 import { PauseSolid, PlaySolid, XMark, ArrowUpDown } from "@medusajs/icons"
 
 interface SubscriptionActionsProps {
@@ -20,14 +21,16 @@ export function SubscriptionActions({
   onChangePlan,
 }: SubscriptionActionsProps) {
   const [isProcessing, setIsProcessing] = useState<string | null>(null)
+  const toast = useToast()
 
   const handleAction = async (action: string, callback?: () => Promise<void>) => {
     if (!callback) return
     setIsProcessing(action)
     try {
       await callback()
+      toast.success(`Subscription ${action}d successfully`)
     } catch (error) {
-      console.error(`Failed to ${action}:`, error)
+      toast.error(`Failed to ${action} subscription. Please try again.`)
     } finally {
       setIsProcessing(null)
     }

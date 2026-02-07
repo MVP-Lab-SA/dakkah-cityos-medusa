@@ -1,19 +1,33 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import { z } from "zod"
+import { apiLogger } from "../../../../../lib/logger"
+import { formatZodErrors } from "../../../../../lib/validation"
+
+const logger = apiLogger
+
+const changePlanSchema = z.object({
+  plan_id: z.string().min(1, "plan_id is required"),
+  prorate: z.boolean().default(true),
+})
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const { id } = req.params
-  const { plan_id, prorate = true } = req.body
   const customerId = req.auth_context?.actor_id
   
   if (!customerId) {
     return res.status(401).json({ message: "Unauthorized" })
   }
   
-  if (!plan_id) {
-    return res.status(400).json({ message: "plan_id is required" })
+  const parseResult = changePlanSchema.safeParse(req.body)
+  if (!parseResult.success) {
+    return res.status(400).json({
+      message: "Validation failed",
+      errors: formatZodErrors(parseResult.error)
+    })
   }
   
+  const { plan_id, prorate } = parseResult.data
   const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
   const subscriptionService = req.scope.resolve("subscription")
   
@@ -57,8 +71,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     let proratedCredit = 0
     
     if (prorate && subscription.plan) {
-      const currentPlan = subscription.plan
-      const nextBillingDate = new Date(subscription.next_billing_date)
+      const currentPlan = subscription.plan as { price: number }
+      const nextBillingDate = new Date(subscription.next_billing_date as string)
       const now = new Date()
       
       // Calculate days remaining in current period
@@ -91,7 +105,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       plan_id: newPlan.id,
       price: newPlan.price,
       metadata: {
-        ...subscription.metadata,
+        ...(subscription.metadata as Record<string, unknown> || {}),
         previous_plan_id: subscription.plan_id,
         plan_changed_at: new Date().toISOString(),
         prorated_amount: proratedAmount,
@@ -110,6 +124,13 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       prorated_credit: proratedCredit,
     })
     
+    logger.info("Subscription plan changed", { 
+      subscriptionId: id, 
+      customerId,
+      oldPlanId: subscription.plan_id,
+      newPlanId: newPlan.id 
+    })
+    
     res.json({ 
       subscription: updated,
       proration: {
@@ -118,8 +139,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         credit: proratedCredit,
       }
     })
-  } catch (error: any) {
-    console.error("[Subscription Change Plan] Error:", error)
-    res.status(500).json({ message: error.message || "Failed to change plan" })
+  } catch (error) {
+    logger.error("Failed to change subscription plan", error, { subscriptionId: id })
+    res.status(500).json({ message: "Failed to change plan" })
   }
 }

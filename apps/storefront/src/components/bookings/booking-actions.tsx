@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
+import { useToast } from "@/components/ui/toast"
 import { Calendar, XMark, ChatBubbleLeftRight } from "@medusajs/icons"
 
 interface BookingActionsProps {
@@ -20,14 +21,16 @@ export function BookingActions({
   canCancel = true,
 }: BookingActionsProps) {
   const [isCancelling, setIsCancelling] = useState(false)
+  const toast = useToast()
 
   const handleCancel = async () => {
     if (!onCancel) return
     setIsCancelling(true)
     try {
       await onCancel()
+      toast.success("Booking cancelled successfully")
     } catch (error) {
-      console.error("Failed to cancel booking:", error)
+      toast.error("Failed to cancel booking. Please try again.")
     } finally {
       setIsCancelling(false)
     }

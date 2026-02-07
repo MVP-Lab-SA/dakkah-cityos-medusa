@@ -1,53 +1,62 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
+import { subscriberLogger } from "../lib/logger"
+import { config } from "../lib/config"
+
+const logger = subscriberLogger
 
 export default async function bookingCreatedHandler({
   event: { data },
   container,
 }: SubscriberArgs<{ id: string }>) {
-  const notificationModuleService = container.resolve(Modules.NOTIFICATION)
+  const notificationService = container.resolve(Modules.NOTIFICATION)
   const bookingService = container.resolve("booking")
 
   try {
-    // Fetch booking details
     const booking = await bookingService.retrieveBooking(data.id)
     
-    if (!booking || !booking.customer_email) {
-      console.log("[booking-created] Booking not found or no email:", data.id)
+    if (!booking) {
+      logger.warn("Booking not found", { bookingId: data.id })
       return
     }
 
-    // Send booking confirmation email
-    await notificationModuleService.createNotifications({
-      to: booking.customer_email,
-      channel: "email",
-      template: "booking-confirmation",
-      data: {
-        booking_id: booking.id,
-        service_name: booking.service?.name || "Service",
-        provider_name: booking.provider?.name || "Provider",
-        start_time: booking.start_time,
-        end_time: booking.end_time,
-        location: booking.location,
-        customer_name: booking.customer_name,
-        notes: booking.notes,
-      },
-    })
+    const customerEmail = booking.customer?.email || booking.metadata?.email
 
-    console.log("[booking-created] Confirmation sent to:", booking.customer_email)
+    if (customerEmail && config.features.enableEmailNotifications) {
+      await notificationService.createNotifications({
+        to: customerEmail,
+        channel: "email",
+        template: "booking-confirmation",
+        data: {
+          booking_id: booking.id,
+          service_name: booking.service?.title || "Service",
+          start_time: booking.start_time,
+          end_time: booking.end_time,
+          location: booking.service?.location || "TBD",
+          customer_name: booking.customer?.first_name || "Customer",
+          manage_url: `${config.storefrontUrl}/account/bookings/${booking.id}`,
+        },
+      })
+    }
 
-    // Send admin notification
-    await notificationModuleService.createNotifications({
-      to: "",
-      channel: "feed",
-      template: "admin-ui",
-      data: {
-        title: "New Booking",
-        description: `New booking for ${booking.service?.name || "service"} on ${new Date(booking.start_time).toLocaleDateString()}`,
-      },
+    if (config.features.enableAdminNotifications) {
+      await notificationService.createNotifications({
+        to: "",
+        channel: "feed",
+        template: "admin-ui",
+        data: {
+          title: "New Booking",
+          description: `New booking for ${booking.service?.title || "service"} on ${new Date(booking.start_time).toLocaleDateString()}`,
+        },
+      })
+    }
+
+    logger.info("Booking created notification sent", { 
+      bookingId: data.id, 
+      email: customerEmail 
     })
   } catch (error) {
-    console.error("[booking-created] Failed to send notification:", error)
+    logger.error("Booking created handler error", error, { bookingId: data.id })
   }
 }
 

@@ -1,74 +1,68 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
+import { subscriberLogger } from "../lib/logger"
+import { config } from "../lib/config"
+
+const logger = subscriberLogger
 
 export default async function subscriptionPlanChangedHandler({
   event: { data },
   container,
-}: SubscriberArgs<{ 
-  id: string
-  customer_id: string
-  old_plan_id: string
-  new_plan_id: string
-  prorated_amount?: number
-  prorated_credit?: number
-}>) {
+}: SubscriberArgs<{ id: string; old_plan_id?: string; new_plan_id?: string }>) {
   const notificationService = container.resolve(Modules.NOTIFICATION)
-  const query = container.resolve("query")
+  const subscriptionService = container.resolve("subscription")
   
   try {
-    const { data: subscriptions } = await query.graph({
-      entity: "subscription",
-      fields: ["*", "customer.*", "plan.*"],
-      filters: { id: data.id }
-    })
+    const subscription = await subscriptionService.retrieveSubscription(data.id)
+    const customerEmail = subscription?.customer?.email || subscription?.metadata?.email
     
-    const subscription = subscriptions?.[0]
-    const customer = subscription?.customer
-    const newPlan = subscription?.plan
+    let oldPlanName = "Previous Plan"
+    let newPlanName = subscription?.plan?.name || "New Plan"
     
-    // Get old plan details
-    const { data: oldPlans } = await query.graph({
-      entity: "subscription_plan",
-      fields: ["name", "price"],
-      filters: { id: data.old_plan_id }
-    })
-    const oldPlan = oldPlans?.[0]
+    if (data.old_plan_id) {
+      try {
+        const oldPlan = await subscriptionService.retrieveSubscriptionPlan(data.old_plan_id)
+        oldPlanName = oldPlan?.name || oldPlanName
+      } catch {
+        // Old plan may have been deleted
+      }
+    }
     
-    if (customer?.email) {
-      const isUpgrade = (newPlan?.price || 0) > (oldPlan?.price || 0)
-      
+    if (customerEmail && config.features.enableEmailNotifications) {
       await notificationService.createNotifications({
-        to: customer.email,
+        to: customerEmail,
         channel: "email",
         template: "subscription-plan-changed",
         data: {
           subscription_id: subscription.id,
-          customer_name: customer.first_name || "Customer",
-          old_plan_name: oldPlan?.name || "Previous Plan",
-          new_plan_name: newPlan?.name || "New Plan",
-          is_upgrade: isUpgrade,
-          prorated_amount: data.prorated_amount || 0,
-          prorated_credit: data.prorated_credit || 0,
-          new_price: newPlan?.price,
-          effective_date: new Date().toISOString(),
-          manage_url: `${process.env.STOREFRONT_URL || ""}/account/subscriptions/${subscription.id}`,
+          old_plan_name: oldPlanName,
+          new_plan_name: newPlanName,
+          new_price: subscription.plan?.price,
+          effective_date: subscription.current_period_end,
+          customer_name: subscription.customer?.first_name || "Customer",
         }
       })
     }
     
-    await notificationService.createNotifications({
-      to: "",
-      channel: "feed",
-      template: "admin-ui",
-      data: {
-        title: "Plan Changed",
-        description: `${customer?.email} changed from ${oldPlan?.name} to ${newPlan?.name}`,
-      }
-    })
+    if (config.features.enableAdminNotifications) {
+      await notificationService.createNotifications({
+        to: "",
+        channel: "feed",
+        template: "admin-ui",
+        data: {
+          title: "Subscription Plan Changed",
+          description: `Subscription ${subscription?.id} changed from ${oldPlanName} to ${newPlanName}`,
+        }
+      })
+    }
     
-    console.log(`[Subscription Plan Changed] ${subscription?.id}: ${oldPlan?.name} -> ${newPlan?.name}`)
+    logger.info("Subscription plan changed notification sent", { 
+      subscriptionId: data.id,
+      oldPlanId: data.old_plan_id,
+      newPlanId: data.new_plan_id 
+    })
   } catch (error) {
-    console.error("[Subscription Plan Changed] Error:", error)
+    logger.error("Subscription plan changed handler error", error, { subscriptionId: data.id })
   }
 }
 

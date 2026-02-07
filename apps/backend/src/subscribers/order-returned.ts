@@ -1,5 +1,9 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
+import { subscriberLogger } from "../lib/logger"
+import { config } from "../lib/config"
+
+const logger = subscriberLogger
 
 export default async function orderReturnedHandler({
   event: { data },
@@ -18,37 +22,42 @@ export default async function orderReturnedHandler({
     const order = orders?.[0]
     const customer = order?.customer
     
-    if (customer?.email) {
+    if (customer?.email && config.features.enableEmailNotifications) {
       await notificationService.createNotifications({
         to: customer.email,
         channel: "email",
-        template: "order-return-received",
+        template: "order-returned",
         data: {
           order_id: order.id,
           order_display_id: order.display_id,
-          customer_name: customer.first_name || "Customer",
           return_id: data.return_id,
-          refund_info: "Your refund will be processed within 5-10 business days",
+          customer_name: customer.first_name || "Customer",
+          refund_timeline: "5-10 business days after we receive your return",
         }
       })
     }
     
-    await notificationService.createNotifications({
-      to: "",
-      channel: "feed",
-      template: "admin-ui",
-      data: {
-        title: "Return Received",
-        description: `Return received for order #${order?.display_id}`,
-      }
-    })
+    if (config.features.enableAdminNotifications) {
+      await notificationService.createNotifications({
+        to: "",
+        channel: "feed",
+        template: "admin-ui",
+        data: {
+          title: "Order Return Processed",
+          description: `Return processed for order #${order?.display_id}`,
+        }
+      })
+    }
     
-    console.log(`[Order Returned] Order ${order?.id}`)
+    logger.info("Order returned notification sent", { 
+      orderId: data.id, 
+      returnId: data.return_id 
+    })
   } catch (error) {
-    console.error("[Order Returned] Error:", error)
+    logger.error("Order returned handler error", error, { orderId: data.id })
   }
 }
 
 export const config: SubscriberConfig = {
-  event: "order.return_received",
+  event: "order.return.received",
 }

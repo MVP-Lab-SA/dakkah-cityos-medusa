@@ -1,54 +1,35 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
+import { subscriberLogger } from "../lib/logger"
+import { config } from "../lib/config"
+
+const logger = subscriberLogger
 
 export default async function quoteAcceptedHandler({
   event: { data },
   container,
-}: SubscriberArgs<{ id: string; customer_id?: string }>) {
+}: SubscriberArgs<{ id: string }>) {
   const notificationService = container.resolve(Modules.NOTIFICATION)
-  const query = container.resolve("query")
+  const quoteService = container.resolve("quote")
   
   try {
-    const { data: quotes } = await query.graph({
-      entity: "quote",
-      fields: ["*", "customer.*"],
-      filters: { id: data.id }
-    })
+    const quote = await quoteService.retrieveQuote(data.id)
     
-    const quote = quotes?.[0]
-    const customer = quote?.customer
-    
-    // Notify admin
-    await notificationService.createNotifications({
-      to: "",
-      channel: "feed",
-      template: "admin-ui",
-      data: {
-        title: "Quote Accepted",
-        description: `Quote #${quote?.display_id || quote?.id?.slice(0, 8)} accepted by ${customer?.email}`,
-      }
-    })
-    
-    // Confirm to customer
-    if (customer?.email) {
+    if (config.features.enableAdminNotifications) {
       await notificationService.createNotifications({
-        to: customer.email,
-        channel: "email",
-        template: "quote-accepted-confirmation",
+        to: "",
+        channel: "feed",
+        template: "admin-ui",
         data: {
-          customer_name: customer.first_name || "Customer",
-          quote_id: quote.id,
-          quote_number: quote.display_id || quote.id.slice(0, 8).toUpperCase(),
-          total: quote.total,
-          currency: quote.currency_code,
-          next_steps: "Your order will be processed shortly. You will receive an order confirmation email.",
+          title: "Quote Accepted",
+          description: `Quote ${quote?.quote_number} accepted by ${quote?.company?.name || "customer"}`,
         }
       })
     }
     
-    console.log(`[Quote Accepted] ${quote?.id}`)
+    logger.info("Quote accepted notification sent", { quoteId: data.id })
   } catch (error) {
-    console.error("[Quote Accepted] Error:", error)
+    logger.error("Quote accepted handler error", error, { quoteId: data.id })
   }
 }
 

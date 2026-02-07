@@ -1,5 +1,9 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
+import { subscriberLogger } from "../lib/logger"
+import { config } from "../lib/config"
+
+const logger = subscriberLogger
 
 export default async function vendorSuspendedHandler({
   event: { data },
@@ -17,7 +21,7 @@ export default async function vendorSuspendedHandler({
     
     const vendor = vendors?.[0]
     
-    if (vendor?.contact_email) {
+    if (vendor?.contact_email && config.features.enableEmailNotifications) {
       await notificationService.createNotifications({
         to: vendor.contact_email,
         channel: "email",
@@ -25,25 +29,31 @@ export default async function vendorSuspendedHandler({
         data: {
           vendor_name: vendor.name,
           reason: data.reason || "Policy violation",
-          appeal_url: `${process.env.STOREFRONT_URL || ""}/vendor/appeal`,
-          support_email: process.env.SUPPORT_EMAIL || "support@example.com",
+          appeal_url: `${config.storefrontUrl}/vendor/appeal`,
+          support_email: config.emails.support,
         }
       })
     }
     
-    await notificationService.createNotifications({
-      to: "",
-      channel: "feed",
-      template: "admin-ui",
-      data: {
-        title: "Vendor Suspended",
-        description: `Vendor "${vendor?.name}" has been suspended: ${data.reason || "Policy violation"}`,
-      }
-    })
+    if (config.features.enableAdminNotifications) {
+      await notificationService.createNotifications({
+        to: "",
+        channel: "feed",
+        template: "admin-ui",
+        data: {
+          title: "Vendor Suspended",
+          description: `Vendor "${vendor?.name}" has been suspended: ${data.reason || "Policy violation"}`,
+        }
+      })
+    }
     
-    console.log(`[Vendor Suspended] ${vendor?.id} - ${vendor?.name}`)
+    logger.info("Vendor suspended notification sent", { 
+      vendorId: data.id, 
+      vendorName: vendor?.name,
+      reason: data.reason 
+    })
   } catch (error) {
-    console.error("[Vendor Suspended] Error:", error)
+    logger.error("Vendor suspended handler error", error, { vendorId: data.id })
   }
 }
 

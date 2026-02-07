@@ -11,6 +11,7 @@ import appCss from "../styles/app.css?url"
 import { BrandingProvider } from "@/lib/context/branding-context"
 import { AuthProvider } from "@/lib/context/auth-context"
 import { StoreProvider, type StoreConfig } from "@/lib/store-context"
+import { ToastProvider } from "@/components/ui/toast"
 
 const NotFound = lazy(() => import("@/components/not-found"))
 
@@ -62,7 +63,9 @@ function RootComponent() {
           <StoreProvider initialStore={loaderData.store}>
             <AuthProvider>
               <BrandingProvider>
-                <Layout />
+                <ToastProvider>
+                  <Layout />
+                </ToastProvider>
               </BrandingProvider>
             </AuthProvider>
           </StoreProvider>

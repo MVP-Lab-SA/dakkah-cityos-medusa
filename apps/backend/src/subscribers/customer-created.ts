@@ -1,15 +1,18 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
+import { subscriberLogger } from "../lib/logger"
+import { config } from "../lib/config"
+
+const logger = subscriberLogger
 
 export default async function customerCreatedHandler({
   event: { data },
   container,
 }: SubscriberArgs<{ id: string }>) {
-  const notificationModuleService = container.resolve(Modules.NOTIFICATION)
+  const notificationService = container.resolve(Modules.NOTIFICATION)
   const query = container.resolve("query")
 
   try {
-    // Fetch customer details
     const { data: customers } = await query.graph({
       entity: "customer",
       fields: ["id", "email", "first_name", "last_name"],
@@ -17,37 +20,42 @@ export default async function customerCreatedHandler({
     })
 
     const customer = customers[0]
-    if (!customer || !customer.email) {
-      console.log("[customer-created] Customer not found or no email:", data.id)
+    if (!customer?.email) {
+      logger.warn("Customer not found or no email", { customerId: data.id })
       return
     }
 
-    // Send welcome email
-    await notificationModuleService.createNotifications({
-      to: customer.email,
-      channel: "email",
-      template: "customer-welcome",
-      data: {
-        customer_id: customer.id,
-        customer_name: customer.first_name || "Customer",
-        email: customer.email,
-      },
-    })
+    if (config.features.enableEmailNotifications) {
+      await notificationService.createNotifications({
+        to: customer.email,
+        channel: "email",
+        template: "customer-welcome",
+        data: {
+          customer_name: customer.first_name || "there",
+          shop_url: config.storefrontUrl,
+          account_url: `${config.storefrontUrl}/account`,
+        },
+      })
+    }
 
-    console.log("[customer-created] Welcome email sent to:", customer.email)
+    if (config.features.enableAdminNotifications) {
+      await notificationService.createNotifications({
+        to: "",
+        channel: "feed",
+        template: "admin-ui",
+        data: {
+          title: "New Customer",
+          description: `New customer registered: ${customer.email}`,
+        },
+      })
+    }
 
-    // Send admin notification
-    await notificationModuleService.createNotifications({
-      to: "",
-      channel: "feed",
-      template: "admin-ui",
-      data: {
-        title: "New Customer",
-        description: `${customer.first_name || ""} ${customer.last_name || ""} (${customer.email}) has registered`,
-      },
+    logger.info("Customer created notification sent", { 
+      customerId: data.id, 
+      email: customer.email 
     })
   } catch (error) {
-    console.error("[customer-created] Failed to send notification:", error)
+    logger.error("Customer created handler error", error, { customerId: data.id })
   }
 }
 

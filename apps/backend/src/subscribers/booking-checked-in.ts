@@ -1,37 +1,35 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
+import { subscriberLogger } from "../lib/logger"
+import { config } from "../lib/config"
+
+const logger = subscriberLogger
 
 export default async function bookingCheckedInHandler({
   event: { data },
   container,
-}: SubscriberArgs<{ id: string; customer_id?: string; service_id?: string }>) {
+}: SubscriberArgs<{ id: string }>) {
   const notificationService = container.resolve(Modules.NOTIFICATION)
-  const query = container.resolve("query")
+  const bookingService = container.resolve("booking")
   
   try {
-    const { data: bookings } = await query.graph({
-      entity: "booking",
-      fields: ["*", "service.*"],
-      filters: { id: data.id }
-    })
+    const booking = await bookingService.retrieveBooking(data.id)
     
-    const booking = bookings?.[0]
-    const service = booking?.service
+    if (config.features.enableAdminNotifications) {
+      await notificationService.createNotifications({
+        to: "",
+        channel: "feed",
+        template: "admin-ui",
+        data: {
+          title: "Customer Checked In",
+          description: `Customer checked in for booking ${booking?.id}`,
+        }
+      })
+    }
     
-    // Admin notification that customer has arrived
-    await notificationService.createNotifications({
-      to: "",
-      channel: "feed",
-      template: "admin-ui",
-      data: {
-        title: "Customer Checked In",
-        description: `Customer checked in for ${service?.name} appointment`,
-      }
-    })
-    
-    console.log(`[Booking Checked In] ${booking?.id}`)
+    logger.info("Booking checked in notification sent", { bookingId: data.id })
   } catch (error) {
-    console.error("[Booking Checked In] Error:", error)
+    logger.error("Booking checked in handler error", error, { bookingId: data.id })
   }
 }
 

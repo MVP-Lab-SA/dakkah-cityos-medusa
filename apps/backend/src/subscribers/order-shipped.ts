@@ -1,55 +1,75 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
+import { subscriberLogger } from "../lib/logger"
+import { config } from "../lib/config"
+
+const logger = subscriberLogger
 
 export default async function orderShippedHandler({
   event: { data },
   container,
-}: SubscriberArgs<{ id: string; fulfillment_id: string }>) {
-  const notificationModuleService = container.resolve(Modules.NOTIFICATION)
+}: SubscriberArgs<{ id: string; fulfillment_id?: string }>) {
+  const notificationService = container.resolve(Modules.NOTIFICATION)
   const query = container.resolve("query")
 
-  // Fetch order details
-  const { data: orders } = await query.graph({
-    entity: "order",
-    fields: [
-      "id",
-      "display_id",
-      "email",
-      "customer.first_name",
-      "fulfillments.tracking_links.*",
-      "fulfillments.shipped_at",
-    ],
-    filters: { id: data.id },
-  })
-
-  const order = orders[0]
-  if (!order || !order.email) {
-    console.log("[order-shipped] Order not found or no email:", data.id)
-    return
-  }
-
-  // Find the fulfillment that was just shipped
-  const fulfillment = order.fulfillments?.find(
-    (f: any) => f.id === data.fulfillment_id
-  )
-
   try {
-    await notificationModuleService.createNotifications({
-      to: order.email,
-      channel: "email",
-      template: "order-shipped",
-      data: {
-        order_id: order.id,
-        display_id: order.display_id,
-        customer_name: order.customer?.first_name || "Customer",
-        tracking_links: fulfillment?.tracking_links || [],
-        shipped_at: fulfillment?.shipped_at,
-      },
+    const { data: orders } = await query.graph({
+      entity: "order",
+      fields: [
+        "id",
+        "display_id",
+        "email",
+        "items.*",
+        "shipping_address.*",
+        "customer.first_name",
+        "fulfillments.*",
+      ],
+      filters: { id: data.id },
     })
 
-    console.log("[order-shipped] Shipping notification sent to:", order.email)
+    const order = orders[0]
+    if (!order?.email) {
+      logger.warn("Order not found or no email", { orderId: data.id })
+      return
+    }
+
+    const fulfillment = order.fulfillments?.find((f: { id: string }) => f.id === data.fulfillment_id) || order.fulfillments?.[0]
+
+    if (config.features.enableEmailNotifications) {
+      await notificationService.createNotifications({
+        to: order.email,
+        channel: "email",
+        template: "order-shipped",
+        data: {
+          order_id: order.id,
+          display_id: order.display_id,
+          customer_name: order.customer?.first_name || "Customer",
+          tracking_number: fulfillment?.tracking_numbers?.[0] || "N/A",
+          tracking_url: fulfillment?.tracking_links?.[0] || null,
+          carrier: fulfillment?.provider_id || "Standard Shipping",
+          items: order.items,
+        },
+      })
+    }
+
+    if (config.features.enableAdminNotifications) {
+      await notificationService.createNotifications({
+        to: "",
+        channel: "feed",
+        template: "admin-ui",
+        data: {
+          title: "Order Shipped",
+          description: `Order #${order.display_id} has been shipped`,
+        },
+      })
+    }
+
+    logger.info("Order shipped notification sent", { 
+      orderId: order.id, 
+      email: order.email 
+    })
   } catch (error) {
-    console.error("[order-shipped] Failed to send notification:", error)
+    logger.error("Order shipped handler error", error, { orderId: data.id })
   }
 }
 

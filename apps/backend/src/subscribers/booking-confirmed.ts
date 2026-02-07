@@ -1,45 +1,53 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
+import { subscriberLogger } from "../lib/logger"
+import { config } from "../lib/config"
+
+const logger = subscriberLogger
 
 export default async function bookingConfirmedHandler({
   event: { data },
   container,
-}: SubscriberArgs<{ id: string; customer_id?: string; service_id?: string }>) {
+}: SubscriberArgs<{ id: string }>) {
   const notificationService = container.resolve(Modules.NOTIFICATION)
-  const query = container.resolve("query")
+  const bookingService = container.resolve("booking")
   
   try {
-    const { data: bookings } = await query.graph({
-      entity: "booking",
-      fields: ["*", "customer.*", "service.*"],
-      filters: { id: data.id }
-    })
+    const booking = await bookingService.retrieveBooking(data.id)
+    const customerEmail = booking?.customer?.email || booking?.metadata?.email
     
-    const booking = bookings?.[0]
-    const customer = booking?.customer
-    const service = booking?.service
-    
-    if (customer?.email) {
+    if (customerEmail && config.features.enableEmailNotifications) {
       await notificationService.createNotifications({
-        to: customer.email,
+        to: customerEmail,
         channel: "email",
         template: "booking-confirmed",
         data: {
-          customer_name: customer.first_name || "Customer",
-          service_name: service?.name || "Service",
-          booking_date: booking.scheduled_at,
-          duration: service?.duration_minutes || 60,
-          location: booking.location || "Our wellness center",
-          preparation_notes: service?.metadata?.preparation || "Please arrive 10 minutes early",
-          manage_url: `${process.env.STOREFRONT_URL || ""}/account/bookings/${booking.id}`,
-          calendar_link: `${process.env.STOREFRONT_URL || ""}/api/bookings/${booking.id}/calendar`,
+          booking_id: booking.id,
+          service_name: booking.service?.title || "Service",
+          start_time: booking.start_time,
+          end_time: booking.end_time,
+          location: booking.service?.location || "TBD",
+          customer_name: booking.customer?.first_name || "Customer",
+          check_in_url: `${config.storefrontUrl}/account/bookings/${booking.id}/check-in`,
         }
       })
     }
     
-    console.log(`[Booking Confirmed] ${booking?.id}`)
+    if (config.features.enableAdminNotifications) {
+      await notificationService.createNotifications({
+        to: "",
+        channel: "feed",
+        template: "admin-ui",
+        data: {
+          title: "Booking Confirmed",
+          description: `Booking ${booking?.id} has been confirmed`,
+        }
+      })
+    }
+    
+    logger.info("Booking confirmed notification sent", { bookingId: data.id })
   } catch (error) {
-    console.error("[Booking Confirmed] Error:", error)
+    logger.error("Booking confirmed handler error", error, { bookingId: data.id })
   }
 }
 

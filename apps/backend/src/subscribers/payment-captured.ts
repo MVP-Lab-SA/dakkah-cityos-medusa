@@ -1,5 +1,9 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
+import { subscriberLogger } from "../lib/logger"
+import { config } from "../lib/config"
+
+const logger = subscriberLogger
 
 export default async function paymentCapturedHandler({
   event: { data },
@@ -9,7 +13,6 @@ export default async function paymentCapturedHandler({
   const query = container.resolve("query")
   
   try {
-    // Get payment with order details
     const { data: payments } = await query.graph({
       entity: "payment",
       fields: ["*", "payment_collection.order.*", "payment_collection.order.customer.*"],
@@ -20,7 +23,7 @@ export default async function paymentCapturedHandler({
     const order = payment?.payment_collection?.order
     const customer = order?.customer
     
-    if (customer?.email) {
+    if (customer?.email && config.features.enableEmailNotifications) {
       await notificationService.createNotifications({
         to: customer.email,
         channel: "email",
@@ -35,20 +38,25 @@ export default async function paymentCapturedHandler({
       })
     }
     
-    // Admin notification
-    await notificationService.createNotifications({
-      to: "",
-      channel: "feed",
-      template: "admin-ui",
-      data: {
-        title: "Payment Captured",
-        description: `Payment of ${payment.amount} ${payment.currency_code} captured for order #${order?.display_id}`,
-      }
-    })
+    if (config.features.enableAdminNotifications) {
+      await notificationService.createNotifications({
+        to: "",
+        channel: "feed",
+        template: "admin-ui",
+        data: {
+          title: "Payment Captured",
+          description: `Payment of ${payment.amount} ${payment.currency_code} captured for order #${order?.display_id}`,
+        }
+      })
+    }
     
-    console.log(`[Payment Captured] Order ${order?.id} - ${payment.amount} ${payment.currency_code}`)
+    logger.info("Payment captured", { 
+      paymentId: data.id, 
+      orderId: order?.id,
+      amount: payment?.amount 
+    })
   } catch (error) {
-    console.error("[Payment Captured] Error:", error)
+    logger.error("Payment captured handler error", error, { paymentId: data.id })
   }
 }
 
