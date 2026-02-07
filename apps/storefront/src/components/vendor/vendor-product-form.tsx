@@ -4,6 +4,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { sdk } from "@/lib/utils/sdk";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "@medusajs/icons";
+import { useCountryCode } from "@/lib/hooks/use-country-code";
 
 interface ProductFormData {
   title: string;
@@ -43,7 +44,7 @@ interface VendorProductFormProps {
 export function VendorProductForm({ initialData, mode = "create" }: VendorProductFormProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const countryCode = "us";
+  const countryCode = useCountryCode();
 
   const [formData, setFormData] = useState<ProductFormData>({
     title: initialData?.title || "",

@@ -4,6 +4,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { sdk } from "@/lib/utils/sdk";
 import { Button } from "@/components/ui/button";
 import { CheckCircleSolid } from "@medusajs/icons";
+import { useCountryCode } from "@/lib/hooks/use-country-code";
 
 interface VendorRegistrationData {
   business_name: string;
@@ -27,7 +28,7 @@ interface VendorRegistrationData {
 
 export function VendorRegistrationForm() {
   const navigate = useNavigate();
-  const countryCode = "us";
+  const countryCode = useCountryCode();
 
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);

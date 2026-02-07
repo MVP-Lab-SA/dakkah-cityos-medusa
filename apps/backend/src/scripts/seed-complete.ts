@@ -4,105 +4,71 @@ import { ExecArgs } from "@medusajs/framework/types"
 const VENDORS = [
   {
     handle: "nordic-wellness-co",
-    name: "Nordic Wellness Co",
-    description: "Premium Scandinavian wellness products crafted with pure Arctic ingredients",
-    contact_email: "contact@nordicwellness.co",
-    contact_phone: "+1-555-0101",
-    is_verified: true,
-    is_featured: true,
+    tenant_id: "default",
+    business_name: "Nordic Wellness Co",
+    legal_name: "Nordic Wellness Company LLC",
+    business_type: "llc" as const,
+    email: "contact@nordicwellness.co",
+    phone: "+1-555-0101",
+    address_line1: "123 Wellness Way",
+    city: "Stockholm",
+    postal_code: "11122",
+    country_code: "se",
+    verification_status: "approved" as const,
+    status: "active" as const,
     commission_rate: 15,
-    status: "active",
+    description: "Premium Scandinavian wellness products crafted with pure Arctic ingredients",
   },
   {
     handle: "arctic-botanicals",
-    name: "Arctic Botanicals",
-    description: "Wild-harvested botanical skincare from the Arctic Circle",
-    contact_email: "hello@arcticbotanicals.com",
-    contact_phone: "+1-555-0102",
-    is_verified: true,
-    is_featured: true,
+    tenant_id: "default",
+    business_name: "Arctic Botanicals",
+    legal_name: "Arctic Botanicals Oy",
+    business_type: "corporation" as const,
+    email: "hello@arcticbotanicals.com",
+    phone: "+1-555-0102",
+    address_line1: "45 Arctic Circle Road",
+    city: "Helsinki",
+    postal_code: "00100",
+    country_code: "fi",
+    verification_status: "approved" as const,
+    status: "active" as const,
     commission_rate: 12,
-    status: "active",
+    description: "Wild-harvested botanical skincare from the Arctic Circle",
   },
   {
     handle: "fjord-essentials",
-    name: "Fjord Essentials",
-    description: "Essential oils and aromatherapy inspired by Norwegian fjords",
-    contact_email: "info@fjordessentials.no",
-    contact_phone: "+1-555-0103",
-    is_verified: true,
-    is_featured: false,
+    tenant_id: "default",
+    business_name: "Fjord Essentials",
+    legal_name: "Fjord Essentials AS",
+    business_type: "corporation" as const,
+    email: "info@fjordessentials.no",
+    phone: "+1-555-0103",
+    address_line1: "78 Fjord Street",
+    city: "Bergen",
+    postal_code: "5003",
+    country_code: "no",
+    verification_status: "approved" as const,
+    status: "active" as const,
     commission_rate: 18,
-    status: "active",
+    description: "Essential oils and aromatherapy inspired by Norwegian fjords",
   },
   {
     handle: "hygge-home-spa",
-    name: "Hygge Home Spa",
-    description: "Cozy self-care products for the perfect home spa experience",
-    contact_email: "care@hyggehomespa.dk",
-    contact_phone: "+1-555-0104",
-    is_verified: true,
-    is_featured: false,
+    tenant_id: "default",
+    business_name: "Hygge Home Spa",
+    legal_name: "Hygge Home Spa ApS",
+    business_type: "llc" as const,
+    email: "care@hyggehomespa.dk",
+    phone: "+1-555-0104",
+    address_line1: "22 Cozy Lane",
+    city: "Copenhagen",
+    postal_code: "1000",
+    country_code: "dk",
+    verification_status: "approved" as const,
+    status: "active" as const,
     commission_rate: 15,
-    status: "active",
-  },
-]
-
-const SERVICES = [
-  {
-    handle: "swedish-massage-60",
-    name: "Swedish Massage",
-    description: "Classic relaxation massage using long, flowing strokes to ease tension and promote circulation",
-    duration_minutes: 60,
-    price: 120,
-    category: "massage",
-    is_active: true,
-    max_capacity: 1,
-    buffer_time_minutes: 15,
-  },
-  {
-    handle: "deep-tissue-massage-90",
-    name: "Deep Tissue Massage",
-    description: "Intensive massage targeting deep muscle layers to release chronic tension",
-    duration_minutes: 90,
-    price: 160,
-    category: "massage",
-    is_active: true,
-    max_capacity: 1,
-    buffer_time_minutes: 15,
-  },
-  {
-    handle: "nordic-glow-facial",
-    name: "Nordic Glow Facial",
-    description: "Rejuvenating facial treatment using Arctic berry extracts and birch sap",
-    duration_minutes: 75,
-    price: 145,
-    category: "facial",
-    is_active: true,
-    max_capacity: 1,
-    buffer_time_minutes: 10,
-  },
-  {
-    handle: "hot-stone-therapy",
-    name: "Hot Stone Therapy",
-    description: "Heated basalt stones combined with massage for deep muscle relaxation",
-    duration_minutes: 90,
-    price: 175,
-    category: "massage",
-    is_active: true,
-    max_capacity: 1,
-    buffer_time_minutes: 20,
-  },
-  {
-    handle: "aromatherapy-session",
-    name: "Aromatherapy Session",
-    description: "Custom essential oil blend session with relaxation techniques",
-    duration_minutes: 45,
-    price: 85,
-    category: "wellness",
-    is_active: true,
-    max_capacity: 2,
-    buffer_time_minutes: 10,
+    description: "Cozy self-care products for the perfect home spa experience",
   },
 ]
 
@@ -111,73 +77,108 @@ const SUBSCRIPTION_PLANS = [
     handle: "wellness-essentials",
     name: "Wellness Essentials",
     description: "Monthly curated box with 3-5 premium wellness products",
-    price: 49,
-    billing_interval: "month",
-    is_active: true,
-    is_featured: true,
-    trial_days: 7,
+    price: 4900, // in cents
+    currency_code: "usd",
+    billing_interval: "monthly" as const,
+    status: "active" as const,
+    trial_period_days: 7,
+    features: [
+      "3-5 full-size products monthly",
+      "Free shipping",
+      "10% member discount on store",
+      "Early access to new products"
+    ],
   },
   {
     handle: "premium-ritual",
     name: "Premium Ritual",
     description: "Quarterly luxury wellness experience with 8-10 premium products",
-    price: 149,
-    billing_interval: "quarter",
-    is_active: true,
-    is_featured: true,
-    trial_days: 0,
+    price: 14900, // in cents
+    currency_code: "usd",
+    billing_interval: "quarterly" as const,
+    status: "active" as const,
+    trial_period_days: 0,
+    features: [
+      "8-10 premium products quarterly",
+      "Exclusive limited-edition items",
+      "Personal wellness consultation",
+      "20% member discount on store",
+      "Priority customer support"
+    ],
   },
   {
     handle: "self-care-starter",
     name: "Self-Care Starter",
     description: "Perfect introduction to Nordic wellness with 2-3 products",
-    price: 29,
-    billing_interval: "month",
-    is_active: true,
-    is_featured: false,
-    trial_days: 14,
+    price: 2900, // in cents
+    currency_code: "usd",
+    billing_interval: "monthly" as const,
+    status: "active" as const,
+    trial_period_days: 14,
+    features: [
+      "2-3 curated products monthly",
+      "Free shipping on orders over $35",
+      "5% member discount on store"
+    ],
+  },
+  {
+    handle: "annual-wellness",
+    name: "Annual Wellness Membership",
+    description: "Best value - full year of wellness with exclusive perks",
+    price: 44900, // in cents
+    currency_code: "usd",
+    billing_interval: "yearly" as const,
+    status: "active" as const,
+    trial_period_days: 0,
+    features: [
+      "12 monthly boxes (save $139)",
+      "Annual bonus box worth $100",
+      "25% member discount on store",
+      "Free expedited shipping",
+      "Exclusive member events"
+    ],
   },
 ]
 
 const B2B_COMPANIES = [
   {
-    name: "Serenity Spa & Resort",
     handle: "serenity-spa",
+    name: "Serenity Spa & Resort",
+    tenant_id: "default",
     email: "procurement@serenityresort.com",
     phone: "+1-555-1001",
     tax_id: "12-3456789",
     industry: "hospitality",
-    company_size: "medium",
-    credit_limit: 50000,
-    payment_terms: "net_30",
-    tier: "gold",
-    is_verified: true,
+    credit_limit: 5000000, // in cents
+    payment_terms_days: 30,
+    tier: "gold" as const,
+    status: "active" as const,
   },
   {
-    name: "Wellness First Clinics",
     handle: "wellness-first",
+    name: "Wellness First Clinics",
+    tenant_id: "default",
     email: "orders@wellnessfirst.com",
     phone: "+1-555-1002",
     tax_id: "23-4567890",
     industry: "healthcare",
-    company_size: "large",
-    credit_limit: 100000,
-    payment_terms: "net_45",
-    tier: "platinum",
-    is_verified: true,
+    credit_limit: 10000000, // in cents
+    payment_terms_days: 45,
+    tier: "platinum" as const,
+    status: "active" as const,
   },
   {
-    name: "Harmony Yoga Studios",
     handle: "harmony-yoga",
+    name: "Harmony Yoga Studios",
+    tenant_id: "default",
     email: "supplies@harmonyyoga.com",
     phone: "+1-555-1003",
     tax_id: "34-5678901",
     industry: "fitness",
-    company_size: "small",
-    credit_limit: 15000,
-    payment_terms: "net_15",
-    tier: "silver",
-    is_verified: true,
+    credit_limit: 1500000, // in cents
+    payment_terms_days: 15,
+    tier: "silver" as const,
+    status: "active" as const,
   },
 ]
 
@@ -220,49 +221,20 @@ export default async function seedComplete({ container }: ExecArgs) {
         if (!existing || existing.length === 0) {
           await vendorService.createVendors(vendorData)
           vendorCount++
-          console.log(`   Created vendor: ${vendorData.name}`)
+          console.log(`   Created vendor: ${vendorData.business_name}`)
         } else {
-          console.log(`   Skipped (exists): ${vendorData.name}`)
+          console.log(`   Skipped (exists): ${vendorData.business_name}`)
         }
       } catch (error: any) {
-        console.log(`   Error with vendor ${vendorData.name}: ${error.message}`)
+        console.log(`   Error with vendor ${vendorData.business_name}: ${error.message}`)
       }
     }
   } catch (error: any) {
     console.log(`   Vendor service not available: ${error.message}`)
   }
   
-  // 2. Seed Services
-  console.log("\n2. Seeding Bookable Services...")
-  let serviceCount = 0
-  try {
-    const bookingService = container.resolve("booking")
-    
-    for (const serviceData of SERVICES) {
-      try {
-        const { data: existing } = await query.graph({
-          entity: "service",
-          fields: ["id"],
-          filters: { handle: serviceData.handle }
-        })
-        
-        if (!existing || existing.length === 0) {
-          await bookingService.createServices(serviceData)
-          serviceCount++
-          console.log(`   Created service: ${serviceData.name}`)
-        } else {
-          console.log(`   Skipped (exists): ${serviceData.name}`)
-        }
-      } catch (error: any) {
-        console.log(`   Error with service ${serviceData.name}: ${error.message}`)
-      }
-    }
-  } catch (error: any) {
-    console.log(`   Booking service not available: ${error.message}`)
-  }
-  
-  // 3. Seed Subscription Plans
-  console.log("\n3. Seeding Subscription Plans...")
+  // 2. Seed Subscription Plans
+  console.log("\n2. Seeding Subscription Plans...")
   let planCount = 0
   try {
     const subscriptionService = container.resolve("subscription")
@@ -290,8 +262,8 @@ export default async function seedComplete({ container }: ExecArgs) {
     console.log(`   Subscription service not available: ${error.message}`)
   }
   
-  // 4. Seed B2B Companies
-  console.log("\n4. Seeding B2B Companies...")
+  // 3. Seed B2B Companies
+  console.log("\n3. Seeding B2B Companies...")
   let companyCount = 0
   try {
     const companyService = container.resolve("company")
@@ -301,7 +273,7 @@ export default async function seedComplete({ container }: ExecArgs) {
         const { data: existing } = await query.graph({
           entity: "company",
           fields: ["id"],
-          filters: { handle: companyData.handle }
+          filters: { email: companyData.email }
         })
         
         if (!existing || existing.length === 0) {
@@ -319,8 +291,8 @@ export default async function seedComplete({ container }: ExecArgs) {
     console.log(`   Company service not available: ${error.message}`)
   }
   
-  // 5. Seed Volume Pricing
-  console.log("\n5. Seeding Volume Pricing Tiers...")
+  // 4. Seed Volume Pricing
+  console.log("\n4. Seeding Volume Pricing Tiers...")
   let volumePricingCount = 0
   try {
     const volumePricingService = container.resolve("volumePricing")
@@ -355,8 +327,8 @@ export default async function seedComplete({ container }: ExecArgs) {
     console.log(`   Volume pricing service not available: ${error.message}`)
   }
   
-  // 6. Seed Sample Reviews
-  console.log("\n6. Seeding Sample Reviews...")
+  // 5. Seed Sample Reviews
+  console.log("\n5. Seeding Sample Reviews...")
   let reviewCount = 0
   try {
     const reviewService = container.resolve("review")
@@ -401,7 +373,6 @@ export default async function seedComplete({ container }: ExecArgs) {
   console.log(`
 Summary:
 - Vendors: ${vendorCount} created
-- Services: ${serviceCount} created
 - Subscription Plans: ${planCount} created
 - B2B Companies: ${companyCount} created
 - Volume Pricing: ${volumePricingCount} products updated

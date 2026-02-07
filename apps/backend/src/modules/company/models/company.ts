@@ -10,6 +10,7 @@ const Company = model.define("company", {
   id: model.id().primaryKey(),
   
   // Basic Info
+  handle: model.text().unique(),
   name: model.text(),
   legal_name: model.text().nullable(),
   tax_id: model.text().nullable(),

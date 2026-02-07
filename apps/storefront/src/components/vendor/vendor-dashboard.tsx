@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { sdk } from "@/lib/utils/sdk";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, CurrencyDollar, ClockSolid } from "@medusajs/icons";
+import { useCountryCode } from "@/lib/hooks/use-country-code";
 
 interface VendorStats {
   total_earnings: number;
@@ -21,7 +22,7 @@ interface Payout {
 }
 
 export function VendorDashboard() {
-  const countryCode = "us";
+  const countryCode = useCountryCode();
 
   // Fetch vendor dashboard data
   const { data: dashboardData, isLoading } = useQuery({
