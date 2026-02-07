@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react"
-import { sdk } from "../sdk"
+import { sdk } from "../utils/sdk"
 
 /**
  * Feature Flags Context

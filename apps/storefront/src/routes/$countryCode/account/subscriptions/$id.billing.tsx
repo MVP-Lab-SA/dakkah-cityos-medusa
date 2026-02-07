@@ -2,7 +2,10 @@ import { createFileRoute, Link } from "@tanstack/react-router"
 import { AccountLayout } from "@/components/account"
 import { BillingHistory } from "@/components/subscriptions/billing-history"
 import { PaymentMethodCard } from "@/components/subscriptions/payment-method-card"
-import { ArrowLeft } from "@medusajs/icons"
+import { ArrowLeft, Spinner } from "@medusajs/icons"
+import { useSubscription } from "@/lib/hooks/use-subscriptions"
+import { useQuery, useMutation } from "@tanstack/react-query"
+import { sdk } from "@/lib/utils/sdk"
 
 export const Route = createFileRoute("/$countryCode/account/subscriptions/$id/billing")({
   component: BillingPage,
@@ -11,26 +14,118 @@ export const Route = createFileRoute("/$countryCode/account/subscriptions/$id/bi
 function BillingPage() {
   const { countryCode, id } = Route.useParams()
 
-  // Mock data - would come from API
-  const invoices = [
-    { id: "inv_1", date: "2024-12-01", amount: 29, currency_code: "usd", status: "paid" as const },
-    { id: "inv_2", date: "2024-11-01", amount: 29, currency_code: "usd", status: "paid" as const },
-    { id: "inv_3", date: "2024-10-01", amount: 29, currency_code: "usd", status: "paid" as const },
-    { id: "inv_4", date: "2024-09-01", amount: 29, currency_code: "usd", status: "paid" as const },
-  ]
+  // Fetch real subscription data
+  const { data: subscriptionData, isLoading: subLoading } = useSubscription(id)
+  const subscription = (subscriptionData as any)?.subscription || subscriptionData
 
-  const paymentMethod = {
-    id: "pm_1",
-    type: "card" as const,
-    last4: "4242",
-    brand: "Visa",
-    expiryMonth: 12,
-    expiryYear: 2025,
-  }
+  // Fetch billing history
+  const { data: billingData, isLoading: billingLoading } = useQuery({
+    queryKey: ["subscription-billing", id],
+    queryFn: async () => {
+      const response = await sdk.client.fetch<{ 
+        invoices: Array<{
+          id: string
+          date: string
+          amount: number
+          currency_code: string
+          status: "paid" | "pending" | "failed"
+          invoice_url?: string
+        }>
+      }>(`/store/subscriptions/${id}/billing-history`, {
+        method: "GET",
+      })
+      return response
+    },
+    enabled: !!id,
+  })
+
+  // Fetch payment method
+  const { data: paymentData, isLoading: paymentLoading } = useQuery({
+    queryKey: ["subscription-payment-method", id],
+    queryFn: async () => {
+      const response = await sdk.client.fetch<{
+        payment_method: {
+          id: string
+          type: "card" | "bank"
+          last4: string
+          brand?: string
+          expiryMonth?: number
+          expiryYear?: number
+        } | null
+      }>(`/store/subscriptions/${id}/payment-method`, {
+        method: "GET",
+      })
+      return response
+    },
+    enabled: !!id,
+  })
+
+  // Update payment method mutation
+  const updatePaymentMutation = useMutation({
+    mutationFn: async () => {
+      const response = await sdk.client.fetch<{ url: string }>(`/store/subscriptions/${id}/payment-method`, {
+        method: "PUT",
+      })
+      return response
+    },
+    onSuccess: (data) => {
+      if (data.url) {
+        // Redirect to Stripe payment method update page
+        window.location.href = data.url
+      }
+    },
+    onError: () => {
+      alert("Failed to update payment method")
+    },
+  })
+
+  const isLoading = subLoading || billingLoading || paymentLoading
+
+  const invoices = (billingData?.invoices || []).map((inv: any) => ({
+    id: inv.id,
+    date: inv.date,
+    amount: inv.amount,
+    currency_code: inv.currency_code,
+    status: inv.status,
+    invoice_url: inv.invoice_url,
+  }))
+
+  const paymentMethod = paymentData?.payment_method || null
 
   const handleDownloadInvoice = async (invoiceId: string) => {
-    console.log("Downloading invoice:", invoiceId)
-    // Would trigger PDF download
+    const invoice = invoices.find((inv: any) => inv.id === invoiceId)
+    if (invoice?.invoice_url) {
+      window.open(invoice.invoice_url, "_blank")
+    } else {
+      alert("Invoice not available for download")
+    }
+  }
+
+  const handleUpdatePayment = () => {
+    updatePaymentMutation.mutate()
+  }
+
+  if (isLoading) {
+    return (
+      <AccountLayout>
+        <div className="flex items-center justify-center py-12">
+          <Spinner className="w-8 h-8 animate-spin text-zinc-400" />
+        </div>
+      </AccountLayout>
+    )
+  }
+
+  if (!subscription) {
+    return (
+      <AccountLayout>
+        <div className="text-center py-12">
+          <h1 className="text-2xl font-bold text-zinc-900 mb-2">Subscription not found</h1>
+          <Link to={`/${countryCode}/account/subscriptions` as any} className="text-blue-600 hover:underline">
+            View all subscriptions
+          </Link>
+        </div>
+      </AccountLayout>
+    )
   }
 
   return (
@@ -48,15 +143,35 @@ function BillingPage() {
         <h1 className="text-2xl font-bold text-zinc-900 mb-6">Billing & Payments</h1>
 
         <div className="space-y-6">
-          <PaymentMethodCard 
-            paymentMethod={paymentMethod} 
-            onUpdate={() => console.log("Update payment method")}
-          />
+          {paymentMethod ? (
+            <PaymentMethodCard 
+              paymentMethod={paymentMethod} 
+              onUpdate={handleUpdatePayment}
+            />
+          ) : (
+            <div className="bg-white rounded-xl border border-zinc-200 p-6">
+              <h3 className="font-semibold text-zinc-900 mb-2">Payment Method</h3>
+              <p className="text-zinc-500 text-sm mb-4">No payment method on file</p>
+              <button
+                onClick={handleUpdatePayment}
+                className="px-4 py-2 bg-zinc-900 text-white rounded-lg hover:bg-zinc-800 transition-colors text-sm"
+              >
+                Add Payment Method
+              </button>
+            </div>
+          )}
           
-          <BillingHistory 
-            invoices={invoices} 
-            onDownload={handleDownloadInvoice}
-          />
+          {invoices.length > 0 ? (
+            <BillingHistory 
+              invoices={invoices} 
+              onDownload={handleDownloadInvoice}
+            />
+          ) : (
+            <div className="bg-white rounded-xl border border-zinc-200 p-6">
+              <h3 className="font-semibold text-zinc-900 mb-2">Billing History</h3>
+              <p className="text-zinc-500 text-sm">No invoices yet</p>
+            </div>
+          )}
         </div>
       </div>
     </AccountLayout>

@@ -37,7 +37,7 @@ export function FeaturedProductsSection({ countryCode, products, config }: Featu
             {config.title || "Featured Products"}
           </h2>
           <Link
-            to={`/${countryCode}/products`}
+            to={`/${countryCode}/store` as any}
             className="text-sm font-medium text-gray-600 hover:text-gray-900"
           >
             View All
@@ -51,7 +51,7 @@ export function FeaturedProductsSection({ countryCode, products, config }: Featu
             return (
               <Link
                 key={product.id}
-                to={`/${countryCode}/products/${product.handle}`}
+                to={`/${countryCode}/products/${product.handle}` as any}
                 className="group"
               >
                 <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-4">

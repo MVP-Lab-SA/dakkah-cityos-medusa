@@ -1,4 +1,4 @@
-import { Star } from "lucide-react"
+import { Star } from "@medusajs/icons"
 
 interface Review {
   id: string

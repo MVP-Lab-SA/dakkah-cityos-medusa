@@ -98,7 +98,7 @@ export function DynamicFooter({ countryCode, categories = [] }: DynamicFooterPro
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
           {/* Brand column */}
           <div className="col-span-2 md:col-span-1">
-            <Link to={`/${countryCode}`} className="text-xl font-bold">
+            <Link to={`/${countryCode}` as any} className="text-xl font-bold">
               Store
             </Link>
             <p className="mt-4 text-gray-400 text-sm">
@@ -135,10 +135,10 @@ export function DynamicFooter({ countryCode, categories = [] }: DynamicFooterPro
               {new Date().getFullYear()} Store. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <Link to={`/${countryCode}/privacy`} className="text-gray-400 hover:text-white text-sm">
+              <Link to={`/${countryCode}/privacy` as any} className="text-gray-400 hover:text-white text-sm">
                 Privacy Policy
               </Link>
-              <Link to={`/${countryCode}/terms`} className="text-gray-400 hover:text-white text-sm">
+              <Link to={`/${countryCode}/terms` as any} className="text-gray-400 hover:text-white text-sm">
                 Terms of Service
               </Link>
             </div>

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { VendorProducts } from "@/components/vendors/vendor-products"
-import { VendorHeader } from "@/components/vendors/vendor-header"
-import { ArrowLeft } from "@medusajs/icons"
+import { ArrowLeft, Spinner } from "@medusajs/icons"
+import { useVendor, useVendorProducts } from "@/lib/hooks/use-vendors"
 
 export const Route = createFileRoute("/$countryCode/vendors/$handle/products")({
   component: VendorProductsPage,
@@ -10,29 +10,46 @@ export const Route = createFileRoute("/$countryCode/vendors/$handle/products")({
 function VendorProductsPage() {
   const { countryCode, handle } = Route.useParams()
 
-  // Mock data - would come from API
-  const vendor = {
-    id: "vendor_1",
-    name: "Artisan Crafts Co.",
-    handle,
-    logo: undefined,
-    banner: undefined,
-    description: "Handcrafted goods made with love and care.",
-    rating: 4.8,
-    reviewCount: 156,
-    productCount: 48,
-    location: "Portland, OR",
-    badges: ["verified", "top_seller"] as const,
+  // Fetch real vendor data
+  const { data: vendorData, isLoading: vendorLoading } = useVendor(handle)
+  const vendor = (vendorData as any)?.vendor || vendorData
+  const { data: productsData, isLoading: productsLoading } = useVendorProducts(vendor?.id || "", {
+    limit: 100,
+  })
+
+  const isLoading = vendorLoading || productsLoading
+  const products = (productsData as any)?.products || []
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
+        <Spinner className="w-8 h-8 animate-spin text-zinc-400" />
+      </div>
+    )
   }
 
-  const products = Array.from({ length: 24 }, (_, i) => ({
-    id: `prod_${i + 1}`,
-    title: `Handcrafted Product ${i + 1}`,
-    handle: `product-${i + 1}`,
-    thumbnail: undefined,
-    price: 25 + Math.floor(Math.random() * 75),
-    currency_code: "usd",
-    collection: i % 3 === 0 ? "New Arrivals" : i % 3 === 1 ? "Best Sellers" : "Classics",
+  if (!vendor) {
+    return (
+      <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-zinc-900 mb-2">Vendor not found</h1>
+          <Link to={`/${countryCode}/vendors` as any} className="text-blue-600 hover:underline">
+            Browse all vendors
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  // Transform products for the VendorProducts component
+  const transformedProducts = products.map((p: any) => ({
+    id: p.id,
+    title: p.title,
+    handle: p.handle,
+    thumbnail: p.thumbnail,
+    price: p.variants?.[0]?.prices?.[0]?.amount || 0,
+    currency_code: p.variants?.[0]?.prices?.[0]?.currency_code || "usd",
+    collection: p.collection?.title || null,
   }))
 
   return (
@@ -55,20 +72,20 @@ function VendorProductsPage() {
                 <img src={vendor.logo} alt={vendor.name} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-zinc-400">
-                  {vendor.name[0]}
+                  {vendor.name?.[0] || "V"}
                 </div>
               )}
             </div>
             <div>
               <h1 className="text-2xl font-bold text-zinc-900">{vendor.name}</h1>
-              <p className="text-zinc-500">{products.length} products</p>
+              <p className="text-zinc-500">{transformedProducts.length} products</p>
             </div>
           </div>
         </div>
 
         {/* Products */}
         <VendorProducts
-          products={products}
+          products={transformedProducts}
           countryCode={countryCode}
           vendorHandle={handle}
         />

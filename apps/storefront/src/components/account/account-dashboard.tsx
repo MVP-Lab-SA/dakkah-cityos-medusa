@@ -1,19 +1,16 @@
 import { Link } from "@tanstack/react-router"
 import { useFeatures } from "../../lib/context/feature-context"
 import { 
-  Package, 
-  Heart, 
-  CreditCard, 
-  User, 
-  MapPin, 
-  Repeat, 
-  FileText, 
-  Building2, 
-  Calendar,
   ShoppingBag,
-  Store,
-  Star
-} from "lucide-react"
+  User,
+  CreditCard,
+  Star,
+  Buildings,
+  Calendar,
+  MapPin,
+  DocumentText,
+  ArrowRightMini
+} from "@medusajs/icons"
 
 interface AccountDashboardProps {
   countryCode: string
@@ -34,7 +31,7 @@ interface DashboardLink {
   description: string
   href: string
   icon: React.ComponentType<{ className?: string }>
-  feature?: string // Optional feature flag requirement
+  feature?: string
 }
 
 export function AccountDashboard({ countryCode, customer, stats }: AccountDashboardProps) {
@@ -47,7 +44,7 @@ export function AccountDashboard({ countryCode, customer, stats }: AccountDashbo
       label: "Orders",
       description: "View and track your orders",
       href: `/${countryCode}/account/orders`,
-      icon: Package
+      icon: ShoppingBag
     },
     {
       label: "Profile",
@@ -70,22 +67,12 @@ export function AccountDashboard({ countryCode, customer, stats }: AccountDashbo
   ]
 
   // Conditional links based on features
-  if (isEnabled('wishlists')) {
-    dashboardLinks.push({
-      label: "Wishlist",
-      description: "View your saved items",
-      href: `/${countryCode}/account/wishlist`,
-      icon: Heart,
-      feature: 'wishlists'
-    })
-  }
-
   if (isEnabled('subscriptions')) {
     dashboardLinks.push({
       label: "Subscriptions",
       description: "Manage your subscriptions",
       href: `/${countryCode}/account/subscriptions`,
-      icon: Repeat,
+      icon: ArrowRightMini,
       feature: 'subscriptions'
     })
   }
@@ -115,7 +102,7 @@ export function AccountDashboard({ countryCode, customer, stats }: AccountDashbo
       label: "Business Portal",
       description: "Access B2B features",
       href: `/${countryCode}/business`,
-      icon: Building2,
+      icon: Buildings,
       feature: 'b2b'
     })
   }
@@ -125,7 +112,7 @@ export function AccountDashboard({ countryCode, customer, stats }: AccountDashbo
       label: "Quotes",
       description: "View your quote requests",
       href: `/${countryCode}/account/quotes`,
-      icon: FileText,
+      icon: DocumentText,
       feature: 'quotes'
     })
   }
@@ -135,18 +122,8 @@ export function AccountDashboard({ countryCode, customer, stats }: AccountDashbo
       label: "Invoices",
       description: "View your invoices",
       href: `/${countryCode}/account/invoices`,
-      icon: FileText,
+      icon: DocumentText,
       feature: 'invoices'
-    })
-  }
-
-  if (isEnabled('marketplace')) {
-    dashboardLinks.push({
-      label: "Vendor Dashboard",
-      description: "Manage your vendor account",
-      href: `/${countryCode}/vendor/dashboard`,
-      icon: Store,
-      feature: 'marketplace'
     })
   }
 
@@ -165,25 +142,13 @@ export function AccountDashboard({ countryCode, customer, stats }: AccountDashbo
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-white rounded-lg border border-gray-200 p-4">
             <div className="flex items-center gap-3">
-              <Package className="h-8 w-8 text-gray-400" />
+              <ShoppingBag className="h-8 w-8 text-gray-400" />
               <div>
                 <p className="text-2xl font-bold">{stats.orderCount || 0}</p>
                 <p className="text-sm text-gray-600">Orders</p>
               </div>
             </div>
           </div>
-          
-          {isEnabled('wishlists') && (
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <div className="flex items-center gap-3">
-                <Heart className="h-8 w-8 text-gray-400" />
-                <div>
-                  <p className="text-2xl font-bold">{stats.wishlistCount || 0}</p>
-                  <p className="text-sm text-gray-600">Wishlist Items</p>
-                </div>
-              </div>
-            </div>
-          )}
           
           {isEnabled('reviews') && (
             <div className="bg-white rounded-lg border border-gray-200 p-4">
@@ -206,7 +171,7 @@ export function AccountDashboard({ countryCode, customer, stats }: AccountDashbo
           return (
             <Link
               key={index}
-              to={link.href}
+              to={link.href as any}
               className="group bg-white rounded-lg border border-gray-200 p-6 hover:border-gray-300 hover:shadow-sm transition-all"
             >
               <div className="flex items-start gap-4">
@@ -232,7 +197,7 @@ export function AccountDashboard({ countryCode, customer, stats }: AccountDashbo
         <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
         <div className="flex flex-wrap gap-3">
           <Link
-            to={`/${countryCode}/products`}
+            to={`/${countryCode}/store` as any}
             className="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-800"
           >
             <ShoppingBag className="h-4 w-4" />
@@ -241,17 +206,16 @@ export function AccountDashboard({ countryCode, customer, stats }: AccountDashbo
           
           {isEnabled('subscriptions') && (
             <Link
-              to={`/${countryCode}/subscriptions`}
+              to={`/${countryCode}/subscriptions` as any}
               className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
             >
-              <Repeat className="h-4 w-4" />
               Start a Subscription
             </Link>
           )}
           
           {isEnabled('bookings') && (
             <Link
-              to={`/${countryCode}/services`}
+              to={`/${countryCode}/bookings` as any}
               className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
             >
               <Calendar className="h-4 w-4" />

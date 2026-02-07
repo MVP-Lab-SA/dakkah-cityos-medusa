@@ -227,13 +227,21 @@ export function useRescheduleBooking() {
   })
 }
 
-// Legacy providers hook - returns empty since we don't have a dedicated providers endpoint
+// Service providers hook - fetches providers for a specific service
 export function useServiceProviders(serviceId?: string) {
   return useQuery({
-    queryKey: bookingKeys.providers(),
+    queryKey: [...bookingKeys.providers(), serviceId],
     queryFn: async () => {
-      // Providers are embedded in services/bookings responses
-      return [] as ServiceProvider[]
+      if (!serviceId) return [] as ServiceProvider[]
+      
+      const response = await fetchApi<{ 
+        providers: ServiceProvider[]
+        count: number 
+      }>(`/store/bookings/services/${serviceId}/providers`)
+      
+      return response.providers
     },
+    enabled: !!serviceId,
+    staleTime: 5 * 60 * 1000,
   })
 }

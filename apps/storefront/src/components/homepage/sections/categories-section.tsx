@@ -35,7 +35,7 @@ export function CategoriesSection({ countryCode, categories, config }: Categorie
           {categories.map(category => (
             <Link
               key={category.id}
-              to={`/${countryCode}/categories/${category.handle}`}
+              to={`/${countryCode}/categories/${category.handle}` as any}
               className="group"
             >
               <div className="aspect-square bg-white rounded-lg shadow-sm overflow-hidden mb-3 group-hover:shadow-md transition-shadow">

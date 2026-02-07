@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router"
 import { useFeatures } from "../../lib/context/feature-context"
-import { ShoppingBag, User, Menu, X, ChevronDown } from "lucide-react"
+import { ShoppingBag, User, XMark, ChevronDownMini } from "@medusajs/icons"
 import { useState } from "react"
 
 interface DynamicHeaderProps {
@@ -75,7 +75,7 @@ export function DynamicHeader({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to={`/${countryCode}`} className="flex-shrink-0">
+          <Link to={`/${countryCode}` as any} className="flex-shrink-0">
             <span className="text-xl font-bold">Store</span>
           </Link>
 
@@ -93,7 +93,7 @@ export function DynamicHeader({
                   className="flex items-center text-gray-700 hover:text-gray-900 text-sm font-medium"
                 >
                   {item.label}
-                  {item.children && <ChevronDown className="ml-1 h-4 w-4" />}
+                  {item.children && <ChevronDownMini className="ml-1 h-4 w-4" />}
                 </Link>
                 
                 {/* Dropdown */}
@@ -118,7 +118,7 @@ export function DynamicHeader({
           <div className="flex items-center space-x-4">
             {/* Account */}
             <Link
-              to={isLoggedIn ? `/${countryCode}/account` : `/${countryCode}/login`}
+              to={(isLoggedIn ? `/${countryCode}/account` : `/${countryCode}/login`) as any}
               className="text-gray-700 hover:text-gray-900"
             >
               <User className="h-6 w-6" />
@@ -126,7 +126,7 @@ export function DynamicHeader({
 
             {/* Cart */}
             <Link
-              to={`/${countryCode}/cart`}
+              to={`/${countryCode}/cart` as any}
               className="text-gray-700 hover:text-gray-900 relative"
             >
               <ShoppingBag className="h-6 w-6" />
@@ -142,7 +142,7 @@ export function DynamicHeader({
               className="md:hidden text-gray-700"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
-              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {mobileMenuOpen ? <XMark className="h-6 w-6" /> : <span className="text-2xl">&#9776;</span>}
             </button>
           </div>
         </div>

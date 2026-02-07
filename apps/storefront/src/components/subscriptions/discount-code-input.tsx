@@ -98,7 +98,7 @@ export function DiscountCodeInput({
           </div>
           <Button
             variant="secondary"
-            size="small"
+            size="sm"
             onClick={handleRemove}
           >
             Remove

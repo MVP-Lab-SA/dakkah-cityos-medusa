@@ -103,7 +103,7 @@ export function EarlyPaymentBanner({
               <>
                 <p className="text-sm text-green-700">Apply discount and pay now?</p>
                 <Button
-                  size="small"
+                  size="sm"
                   onClick={() => applyMutation.mutate()}
                   disabled={applyMutation.isPending}
                 >
@@ -111,7 +111,7 @@ export function EarlyPaymentBanner({
                 </Button>
                 <Button
                   variant="secondary"
-                  size="small"
+                  size="sm"
                   onClick={() => setShowConfirm(false)}
                 >
                   Cancel
@@ -119,7 +119,7 @@ export function EarlyPaymentBanner({
               </>
             ) : (
               <Button
-                size="small"
+                size="sm"
                 onClick={() => setShowConfirm(true)}
               >
                 Apply Discount

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router"
-import { Clock, MapPin } from "lucide-react"
+import { Clock, MapPin } from "@medusajs/icons"
 
 interface Service {
   id: string
@@ -48,7 +48,7 @@ export function ServicesSection({ countryCode, services, config }: ServicesSecti
             </p>
           </div>
           <Link
-            to={`/${countryCode}/services`}
+            to={`/${countryCode}/bookings` as any}
             className="text-sm font-medium text-gray-600 hover:text-gray-900"
           >
             View All Services
@@ -59,7 +59,7 @@ export function ServicesSection({ countryCode, services, config }: ServicesSecti
           {services.map(service => (
             <Link
               key={service.id}
-              to={`/${countryCode}/services/${service.handle}`}
+              to={`/${countryCode}/bookings/${service.handle}` as any}
               className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
             >
               {service.image ? (

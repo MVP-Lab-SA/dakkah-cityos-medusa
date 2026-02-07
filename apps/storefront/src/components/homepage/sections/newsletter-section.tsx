@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Mail, ArrowRight } from "lucide-react"
+import { ArrowRightMini } from "@medusajs/icons"
 
 interface NewsletterSectionProps {
   config: Record<string, any>
@@ -42,7 +42,7 @@ export function NewsletterSection({ config }: NewsletterSectionProps) {
     <section className="py-16 bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl mx-auto text-center">
-          <Mail className="h-12 w-12 mx-auto mb-6 text-gray-400" />
+          <div className="h-12 w-12 mx-auto mb-6 text-gray-400 flex items-center justify-center text-4xl">&#9993;</div>
           <h2 className="text-2xl md:text-3xl font-bold mb-4">
             {config.title || "Stay in the Loop"}
           </h2>
@@ -74,7 +74,7 @@ export function NewsletterSection({ config }: NewsletterSectionProps) {
                 ) : (
                   <>
                     Subscribe
-                    <ArrowRight className="h-4 w-4" />
+                    <ArrowRightMini className="h-4 w-4" />
                   </>
                 )}
               </button>
