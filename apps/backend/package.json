@@ -41,6 +41,7 @@
     "@rsc-labs/medusa-wishlist": "^0.0.6",
     "@tanstack/react-query": "5.64.2",
     "meilisearch": "^0.55.0",
+    "react-router-dom": "^7.13.0",
     "zod": "^4.3.5"
   },
   "devDependencies": {

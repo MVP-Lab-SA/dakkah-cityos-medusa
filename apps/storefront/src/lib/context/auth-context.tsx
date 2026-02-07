@@ -92,24 +92,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Register mutation
   const registerMutation = useMutation({
     mutationFn: async (data: RegisterData) => {
-      // First create the auth identity
-      const token = await sdk.auth.register("customer", "emailpass", {
-        email: data.email,
-        password: data.password,
-      })
+      try {
+        // First create the auth identity and get registration token
+        await sdk.auth.register("customer", "emailpass", {
+          email: data.email,
+          password: data.password,
+        })
+      } catch (error: any) {
+        // Handle "identity already exists" case - try to login instead
+        if (error?.message?.includes("Identity with email already exists")) {
+          // Try to login with these credentials
+          await sdk.auth.login("customer", "emailpass", {
+            email: data.email,
+            password: data.password,
+          })
+        } else {
+          throw error
+        }
+      }
 
-      // Then create the customer profile
-      await sdk.store.customer.create({
+      // Create the customer profile using the auth/registration token
+      const { customer } = await sdk.store.customer.create({
         email: data.email,
         first_name: data.first_name,
         last_name: data.last_name,
         phone: data.phone,
       })
 
-      return token
+      return customer
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.customer.current() })
+      queryClient.invalidateQueries({ queryKey: queryKeys.cart.all })
     },
   })
 

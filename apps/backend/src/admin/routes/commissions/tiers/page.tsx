@@ -2,7 +2,19 @@ import { defineRouteConfig } from "@medusajs/admin-sdk"
 import { Container, Heading, Text, Button, Badge, Input, Table } from "@medusajs/ui"
 import { useEffect, useState } from "react"
 import { PlusMini, Trash, PencilSquare, CurrencyDollar } from "@medusajs/icons"
-import { client } from "../../lib/client"
+import { sdk } from "../../../lib/client"
+
+// Helper to make API calls using the Medusa SDK
+async function client(path: string, options?: { method?: string; body?: any }) {
+  const method = options?.method || "GET"
+  const body = options?.body
+  
+  if (method === "GET") {
+    return await sdk.client.fetch(path)
+  } else {
+    return await sdk.client.fetch(path, { method, body })
+  }
+}
 
 type CommissionTier = {
   id: string

@@ -1,5 +1,5 @@
 import { defineRouteConfig } from "@medusajs/admin-sdk"
-import { Container, Heading, Text, Button, Badge, Input, Label, Textarea, toast } from "@medusajs/ui"
+import { Container, Heading, Text, Button, Badge, Input, Label, toast } from "@medusajs/ui"
 import { Buildings, CurrencyDollar, DocumentText, Users, Check, XMark, Plus, Trash } from "@medusajs/icons"
 import { useState } from "react"
 import { useParams } from "react-router-dom"
