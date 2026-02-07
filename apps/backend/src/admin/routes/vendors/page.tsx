@@ -1,264 +1,252 @@
 import { defineRouteConfig } from "@medusajs/admin-sdk"
-import { Container, Heading, Text, Badge, Button, Table, Input } from "@medusajs/ui"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { sdk } from "../../lib/client"
-import { Buildings } from "@medusajs/icons"
+import { Container, Heading, Text, Button, Badge, Input, toast, Label } from "@medusajs/ui"
+import { Buildings, Plus, PencilSquare, CheckCircle, XCircle, CurrencyDollar } from "@medusajs/icons"
 import { useState } from "react"
-
-interface Vendor {
-  id: string
-  business_name: string
-  email: string
-  phone?: string
-  status: string
-  verification_status: string
-  tier: string
-  total_products: number
-  total_sales: number
-  commission_rate: number
-  bank_account_holder?: string
-  bank_account_number?: string
-  created_at: string
-}
+import { useVendors, useCreateVendor, useUpdateVendor, useApproveVendor, useRejectVendor, Vendor } from "../../hooks/use-vendors"
+import { usePayouts, useProcessPayout, Payout } from "../../hooks/use-vendors"
+import { DataTable } from "../../components/tables/data-table"
+import { StatusBadge, TierBadge } from "../../components/common"
+import { StatsGrid } from "../../components/charts/stats-grid"
+import { ConfirmModal } from "../../components/modals/confirm-modal"
+import { FormDrawer } from "../../components/forms/form-drawer"
 
 const VendorsPage = () => {
-  const queryClient = useQueryClient()
-  const [search, setSearch] = useState("")
-  const [statusFilter, setStatusFilter] = useState<string>("all")
+  const [activeTab, setActiveTab] = useState<"vendors" | "payouts">("vendors")
+  const [showCreateDrawer, setShowCreateDrawer] = useState(false)
+  const [editingVendor, setEditingVendor] = useState<Vendor | null>(null)
+  const [approvingVendor, setApprovingVendor] = useState<Vendor | null>(null)
+  const [rejectingVendor, setRejectingVendor] = useState<Vendor | null>(null)
+  const [processingPayout, setProcessingPayout] = useState<Payout | null>(null)
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["admin-vendors-list"],
-    queryFn: async () => {
-      const response = await sdk.client.fetch<{ vendors: Vendor[]; count: number }>(
-        "/admin/vendors",
-        { credentials: "include" }
-      )
-      return response
-    },
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    description: "",
+    commission_rate: 15,
+    tier: "bronze" as "bronze" | "silver" | "gold" | "platinum",
   })
 
-  const approveMutation = useMutation({
-    mutationFn: async (vendorId: string) => {
-      return sdk.client.fetch(`/admin/vendors/${vendorId}/approve`, {
-        method: "POST",
-        credentials: "include",
-      })
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-vendors-list"] })
-    },
-  })
+  const { data: vendorsData, isLoading: loadingVendors } = useVendors()
+  const { data: payoutsData, isLoading: loadingPayouts } = usePayouts()
 
-  const rejectMutation = useMutation({
-    mutationFn: async (vendorId: string) => {
-      return sdk.client.fetch(`/admin/vendors/${vendorId}/reject`, {
-        method: "POST",
-        credentials: "include",
-        body: { reason: "Does not meet requirements" },
-      })
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-vendors-list"] })
-    },
-  })
+  const createVendor = useCreateVendor()
+  const updateVendor = useUpdateVendor()
+  const approveVendor = useApproveVendor()
+  const rejectVendor = useRejectVendor()
+  const processPayout = useProcessPayout()
 
-  const vendors = data?.vendors || []
-  const filteredVendors = vendors.filter((v) => {
-    const matchesSearch =
-      v.business_name.toLowerCase().includes(search.toLowerCase()) ||
-      v.email.toLowerCase().includes(search.toLowerCase())
-    const matchesStatus =
-      statusFilter === "all" || v.verification_status === statusFilter
-    return matchesSearch && matchesStatus
-  })
+  const vendors = vendorsData?.vendors || []
+  const payouts = payoutsData?.payouts || []
 
-  const pendingCount = vendors.filter((v) => v.verification_status === "pending").length
-  const approvedCount = vendors.filter((v) => v.verification_status === "approved").length
+  const stats = [
+    { label: "Total Vendors", value: vendors.length, icon: <Buildings className="w-5 h-5" /> },
+    { label: "Active", value: vendors.filter(v => v.status === "active").length, color: "green" as const },
+    { label: "Pending Approval", value: vendors.filter(v => v.status === "pending").length, color: "orange" as const },
+    { label: "Pending Payouts", value: payouts.filter(p => p.status === "pending").length, icon: <CurrencyDollar className="w-5 h-5" /> },
+  ]
 
-  const getTierColor = (tier: string) => {
-    switch (tier) {
-      case "platinum":
-        return "purple"
-      case "gold":
-        return "orange"
-      case "silver":
-        return "grey"
-      default:
-        return "blue"
+  const handleCreateVendor = async () => {
+    try {
+      await createVendor.mutateAsync(formData)
+      toast.success("Vendor created successfully")
+      setShowCreateDrawer(false)
+      resetForm()
+    } catch (error) {
+      toast.error("Failed to create vendor")
     }
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "approved":
-        return "green"
-      case "rejected":
-        return "red"
-      case "pending":
-        return "orange"
-      default:
-        return "grey"
+  const handleUpdateVendor = async () => {
+    if (!editingVendor) return
+    try {
+      await updateVendor.mutateAsync({ id: editingVendor.id, ...formData })
+      toast.success("Vendor updated successfully")
+      setEditingVendor(null)
+      resetForm()
+    } catch (error) {
+      toast.error("Failed to update vendor")
     }
   }
 
-  if (isLoading) {
-    return (
-      <Container className="divide-y p-0">
-        <div className="px-6 py-4">
-          <Heading level="h1">Marketplace Vendors</Heading>
-        </div>
-        <div className="px-6 py-4">
-          <Text className="text-ui-fg-subtle">Loading vendors...</Text>
-        </div>
-      </Container>
-    )
+  const handleApproveVendor = async () => {
+    if (!approvingVendor) return
+    try {
+      await approveVendor.mutateAsync(approvingVendor.id)
+      toast.success("Vendor approved")
+      setApprovingVendor(null)
+    } catch (error) {
+      toast.error("Failed to approve vendor")
+    }
   }
+
+  const handleRejectVendor = async () => {
+    if (!rejectingVendor) return
+    try {
+      await rejectVendor.mutateAsync({ id: rejectingVendor.id, reason: "Rejected by admin" })
+      toast.success("Vendor rejected")
+      setRejectingVendor(null)
+    } catch (error) {
+      toast.error("Failed to reject vendor")
+    }
+  }
+
+  const handleProcessPayout = async () => {
+    if (!processingPayout) return
+    try {
+      await processPayout.mutateAsync({ id: processingPayout.id, method: "manual" })
+      toast.success("Payout processed")
+      setProcessingPayout(null)
+    } catch (error) {
+      toast.error("Failed to process payout")
+    }
+  }
+
+  const resetForm = () => {
+    setFormData({ name: "", email: "", phone: "", description: "", commission_rate: 15, tier: "bronze" })
+  }
+
+  const openEditDrawer = (vendor: Vendor) => {
+    setFormData({
+      name: vendor.name,
+      email: vendor.email,
+      phone: vendor.phone || "",
+      description: vendor.description || "",
+      commission_rate: vendor.commission_rate,
+      tier: vendor.tier,
+    })
+    setEditingVendor(vendor)
+  }
+
+  const vendorColumns = [
+    { key: "name", header: "Vendor", sortable: true, cell: (v: Vendor) => (
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 rounded-full bg-ui-bg-subtle flex items-center justify-center">
+          <Buildings className="w-4 h-4 text-ui-fg-muted" />
+        </div>
+        <div>
+          <Text className="font-medium">{v.name}</Text>
+          <Text className="text-ui-fg-muted text-sm">{v.email}</Text>
+        </div>
+      </div>
+    )},
+    { key: "tier", header: "Tier", cell: (v: Vendor) => <TierBadge tier={v.tier} /> },
+    { key: "status", header: "Status", cell: (v: Vendor) => <StatusBadge status={v.status} /> },
+    { key: "commission_rate", header: "Commission", cell: (v: Vendor) => `${v.commission_rate}%` },
+    { key: "actions", header: "", width: "120px", cell: (v: Vendor) => (
+      <div className="flex gap-1">
+        {v.status === "pending" && (
+          <>
+            <Button variant="secondary" size="small" onClick={() => setApprovingVendor(v)}>
+              <CheckCircle className="w-4 h-4 text-ui-tag-green-icon" />
+            </Button>
+            <Button variant="secondary" size="small" onClick={() => setRejectingVendor(v)}>
+              <XCircle className="w-4 h-4 text-ui-tag-red-icon" />
+            </Button>
+          </>
+        )}
+        <Button variant="transparent" size="small" onClick={() => openEditDrawer(v)}>
+          <PencilSquare className="w-4 h-4" />
+        </Button>
+      </div>
+    )},
+  ]
+
+  const payoutColumns = [
+    { key: "vendor", header: "Vendor", cell: (p: Payout) => p.vendor?.name || "-" },
+    { key: "amount", header: "Amount", sortable: true, cell: (p: Payout) => `$${p.amount.toLocaleString()}` },
+    { key: "status", header: "Status", cell: (p: Payout) => <StatusBadge status={p.status} /> },
+    { key: "payout_method", header: "Method", cell: (p: Payout) => p.payout_method || "-" },
+    { key: "created_at", header: "Created", sortable: true, cell: (p: Payout) => new Date(p.created_at).toLocaleDateString() },
+    { key: "actions", header: "", width: "80px", cell: (p: Payout) => p.status === "pending" ? (
+      <Button variant="secondary" size="small" onClick={() => setProcessingPayout(p)}>Process</Button>
+    ) : null },
+  ]
 
   return (
-    <Container className="divide-y p-0">
-      <div className="flex items-center justify-between px-6 py-4">
-        <div>
-          <Heading level="h1">Marketplace Vendors</Heading>
-          <Text size="small" className="text-ui-fg-subtle">
-            Manage vendor applications, approvals, and performance
-          </Text>
-        </div>
-        <div className="flex items-center gap-x-4">
-          <div className="text-right">
-            <Text size="small" weight="plus">
-              {pendingCount} pending
-            </Text>
-            <Text size="xsmall" className="text-ui-fg-subtle">
-              {approvedCount} approved
-            </Text>
+    <Container className="p-0">
+      <div className="p-6 border-b border-ui-border-base">
+        <div className="flex items-center justify-between">
+          <div>
+            <Heading level="h1">Marketplace</Heading>
+            <Text className="text-ui-fg-muted">Manage vendors, commissions, and payouts</Text>
           </div>
-        </div>
-      </div>
-
-      <div className="flex items-center gap-x-4 px-6 py-4">
-        <Input
-          size="small"
-          placeholder="Search vendors..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="max-w-xs"
-        />
-        <div className="flex items-center gap-x-2">
-          <Button
-            size="small"
-            variant={statusFilter === "all" ? "primary" : "secondary"}
-            onClick={() => setStatusFilter("all")}
-          >
-            All
-          </Button>
-          <Button
-            size="small"
-            variant={statusFilter === "pending" ? "primary" : "secondary"}
-            onClick={() => setStatusFilter("pending")}
-          >
-            Pending
-          </Button>
-          <Button
-            size="small"
-            variant={statusFilter === "approved" ? "primary" : "secondary"}
-            onClick={() => setStatusFilter("approved")}
-          >
-            Approved
+          <Button onClick={() => setShowCreateDrawer(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Vendor
           </Button>
         </div>
       </div>
 
-      <div className="px-6 py-4">
-        {filteredVendors.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12">
-            <Buildings className="text-ui-fg-muted mb-4" />
-            <Text className="text-ui-fg-subtle">No vendors found</Text>
-          </div>
-        ) : (
-          <Table>
-            <Table.Header>
-              <Table.Row>
-                <Table.HeaderCell>Vendor</Table.HeaderCell>
-                <Table.HeaderCell>Status</Table.HeaderCell>
-                <Table.HeaderCell>Tier</Table.HeaderCell>
-                <Table.HeaderCell>Products</Table.HeaderCell>
-                <Table.HeaderCell>Total Sales</Table.HeaderCell>
-                <Table.HeaderCell>Commission</Table.HeaderCell>
-                <Table.HeaderCell>Actions</Table.HeaderCell>
-              </Table.Row>
-            </Table.Header>
-            <Table.Body>
-              {filteredVendors.map((vendor) => (
-                <Table.Row key={vendor.id}>
-                  <Table.Cell>
-                    <div>
-                      <Text size="small" weight="plus">
-                        {vendor.business_name}
-                      </Text>
-                      <Text size="small" className="text-ui-fg-subtle">
-                        {vendor.email}
-                      </Text>
-                    </div>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Badge
-                      size="2xsmall"
-                      color={getStatusColor(vendor.verification_status)}
-                    >
-                      {vendor.verification_status}
-                    </Badge>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Badge size="2xsmall" color={getTierColor(vendor.tier)}>
-                      {vendor.tier}
-                    </Badge>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Text size="small">{vendor.total_products}</Text>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Text size="small">
-                      ${(vendor.total_sales || 0).toLocaleString()}
-                    </Text>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Text size="small">{vendor.commission_rate}%</Text>
-                  </Table.Cell>
-                  <Table.Cell>
-                    {vendor.verification_status === "pending" && (
-                      <div className="flex items-center gap-x-2">
-                        <Button
-                          size="small"
-                          variant="secondary"
-                          onClick={() => approveMutation.mutate(vendor.id)}
-                          disabled={approveMutation.isPending}
-                        >
-                          Approve
-                        </Button>
-                        <Button
-                          size="small"
-                          variant="secondary"
-                          onClick={() => rejectMutation.mutate(vendor.id)}
-                          disabled={rejectMutation.isPending}
-                        >
-                          Reject
-                        </Button>
-                      </div>
-                    )}
-                  </Table.Cell>
-                </Table.Row>
-              ))}
-            </Table.Body>
-          </Table>
+      <div className="p-6">
+        <StatsGrid stats={stats} columns={4} />
+      </div>
+
+      <div className="px-6 pb-6">
+        <div className="flex gap-4 border-b border-ui-border-base mb-4">
+          <button
+            className={`pb-2 px-1 ${activeTab === "vendors" ? "border-b-2 border-ui-fg-base font-medium" : "text-ui-fg-muted"}`}
+            onClick={() => setActiveTab("vendors")}
+          >
+            <div className="flex items-center gap-2">
+              <Buildings className="w-4 h-4" />
+              Vendors ({vendors.length})
+            </div>
+          </button>
+          <button
+            className={`pb-2 px-1 ${activeTab === "payouts" ? "border-b-2 border-ui-fg-base font-medium" : "text-ui-fg-muted"}`}
+            onClick={() => setActiveTab("payouts")}
+          >
+            <div className="flex items-center gap-2">
+              <CurrencyDollar className="w-4 h-4" />
+              Payouts ({payouts.length})
+            </div>
+          </button>
+        </div>
+
+        {activeTab === "vendors" && (
+          <DataTable data={vendors} columns={vendorColumns} searchable searchPlaceholder="Search vendors..." searchKeys={["name", "email"]} loading={loadingVendors} emptyMessage="No vendors found" />
+        )}
+
+        {activeTab === "payouts" && (
+          <DataTable data={payouts} columns={payoutColumns} searchable={false} loading={loadingPayouts} emptyMessage="No payouts found" />
         )}
       </div>
+
+      <FormDrawer
+        open={showCreateDrawer || !!editingVendor}
+        onOpenChange={(open) => {
+          if (!open) { setShowCreateDrawer(false); setEditingVendor(null); resetForm() }
+        }}
+        title={editingVendor ? "Edit Vendor" : "Create Vendor"}
+        onSubmit={editingVendor ? handleUpdateVendor : handleCreateVendor}
+        submitLabel={editingVendor ? "Update" : "Create"}
+        loading={createVendor.isPending || updateVendor.isPending}
+      >
+        <div className="space-y-4">
+          <div><Label htmlFor="name">Vendor Name</Label><Input id="name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} /></div>
+          <div><Label htmlFor="email">Email</Label><Input id="email" type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} /></div>
+          <div><Label htmlFor="phone">Phone</Label><Input id="phone" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} /></div>
+          <div><Label htmlFor="description">Description</Label><Input id="description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} /></div>
+          <div>
+            <Label htmlFor="tier">Tier</Label>
+            <select id="tier" value={formData.tier} onChange={(e) => setFormData({ ...formData, tier: e.target.value as any })} className="w-full border border-ui-border-base rounded-md px-3 py-2 bg-ui-bg-base">
+              <option value="bronze">Bronze</option>
+              <option value="silver">Silver</option>
+              <option value="gold">Gold</option>
+              <option value="platinum">Platinum</option>
+            </select>
+          </div>
+          <div><Label htmlFor="commission_rate">Commission Rate (%)</Label><Input id="commission_rate" type="number" value={formData.commission_rate} onChange={(e) => setFormData({ ...formData, commission_rate: Number(e.target.value) })} /></div>
+        </div>
+      </FormDrawer>
+
+      <ConfirmModal open={!!approvingVendor} onOpenChange={() => setApprovingVendor(null)} title="Approve Vendor" description={`Approve ${approvingVendor?.name}?`} onConfirm={handleApproveVendor} confirmLabel="Approve" loading={approveVendor.isPending} />
+      <ConfirmModal open={!!rejectingVendor} onOpenChange={() => setRejectingVendor(null)} title="Reject Vendor" description={`Reject ${rejectingVendor?.name}?`} onConfirm={handleRejectVendor} confirmLabel="Reject" variant="danger" loading={rejectVendor.isPending} />
+      <ConfirmModal open={!!processingPayout} onOpenChange={() => setProcessingPayout(null)} title="Process Payout" description={`Process payout of $${processingPayout?.amount.toLocaleString()}?`} onConfirm={handleProcessPayout} confirmLabel="Process" loading={processPayout.isPending} />
     </Container>
   )
 }
 
-export const config = defineRouteConfig({
-  label: "Vendors",
-  icon: Buildings,
-})
-
+export const config = defineRouteConfig({ label: "Vendors", icon: Buildings })
 export default VendorsPage

@@ -1,368 +1,230 @@
 import { defineRouteConfig } from "@medusajs/admin-sdk"
-import { Container, Heading, Text, Badge, Button, Table, Input } from "@medusajs/ui"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { sdk } from "../../lib/client"
-import { ReceiptPercent } from "@medusajs/icons"
+import { Container, Heading, Text, Button, Badge, Input, toast, Label } from "@medusajs/ui"
+import { ReceiptPercent, Plus, PencilSquare, XCircle, CurrencyDollar } from "@medusajs/icons"
 import { useState } from "react"
-
-interface Subscription {
-  id: string
-  customer_id: string
-  customer_email?: string
-  plan_id?: string
-  plan_name?: string
-  status: string
-  billing_interval: string
-  current_period_start: string
-  current_period_end: string
-  next_billing_date: string
-  amount: number
-  currency_code: string
-  cancel_at_period_end: boolean
-  created_at: string
-}
-
-interface SubscriptionPlan {
-  id: string
-  name: string
-  description?: string
-  billing_interval: string
-  billing_interval_count: number
-  amount: number
-  currency_code: string
-  trial_days: number
-  is_active: boolean
-  created_at: string
-}
+import { 
+  useSubscriptionPlans, useCreateSubscriptionPlan, useUpdateSubscriptionPlan, SubscriptionPlan,
+  useSubscriptions, usePauseSubscription, useResumeSubscription, useCancelSubscription, Subscription
+} from "../../hooks/use-subscriptions"
+import { DataTable } from "../../components/tables/data-table"
+import { StatusBadge } from "../../components/common"
+import { StatsGrid } from "../../components/charts/stats-grid"
+import { ConfirmModal } from "../../components/modals/confirm-modal"
+import { FormDrawer } from "../../components/forms/form-drawer"
 
 const SubscriptionsPage = () => {
-  const queryClient = useQueryClient()
-  const [search, setSearch] = useState("")
   const [activeTab, setActiveTab] = useState<"subscriptions" | "plans">("subscriptions")
+  const [showCreatePlanDrawer, setShowCreatePlanDrawer] = useState(false)
+  const [editingPlan, setEditingPlan] = useState<SubscriptionPlan | null>(null)
+  const [pausingSubscription, setPausingSubscription] = useState<Subscription | null>(null)
+  const [cancelingSubscription, setCancelingSubscription] = useState<Subscription | null>(null)
 
-  const { data: subscriptionsData, isLoading: subsLoading } = useQuery({
-    queryKey: ["admin-subscriptions"],
-    queryFn: async () => {
-      const response = await sdk.client.fetch<{
-        subscriptions: Subscription[]
-        count: number
-      }>("/admin/subscriptions", { credentials: "include" })
-      return response
-    },
+  const [planFormData, setPlanFormData] = useState({
+    name: "",
+    handle: "",
+    description: "",
+    billing_interval: "month" as "day" | "week" | "month" | "year",
+    billing_interval_count: 1,
+    price: 0,
+    currency_code: "usd",
+    trial_days: 0,
+    is_active: true,
   })
 
-  const { data: plansData, isLoading: plansLoading } = useQuery({
-    queryKey: ["admin-subscription-plans"],
-    queryFn: async () => {
-      const response = await sdk.client.fetch<{
-        plans: SubscriptionPlan[]
-        count: number
-      }>("/admin/subscription-plans", { credentials: "include" })
-      return response
-    },
-  })
+  const { data: plansData, isLoading: loadingPlans } = useSubscriptionPlans()
+  const { data: subscriptionsData, isLoading: loadingSubscriptions } = useSubscriptions()
 
-  const cancelMutation = useMutation({
-    mutationFn: async (subscriptionId: string) => {
-      return sdk.client.fetch(`/admin/subscriptions/${subscriptionId}`, {
-        method: "PUT",
-        credentials: "include",
-        body: { status: "cancelled" },
-      })
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-subscriptions"] })
-    },
-  })
+  const createPlan = useCreateSubscriptionPlan()
+  const updatePlan = useUpdateSubscriptionPlan()
+  const pauseSubscription = usePauseSubscription()
+  const resumeSubscription = useResumeSubscription()
+  const cancelSubscription = useCancelSubscription()
 
-  const pauseMutation = useMutation({
-    mutationFn: async (subscriptionId: string) => {
-      return sdk.client.fetch(`/admin/subscriptions/${subscriptionId}`, {
-        method: "PUT",
-        credentials: "include",
-        body: { status: "paused" },
-      })
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-subscriptions"] })
-    },
-  })
-
-  const resumeMutation = useMutation({
-    mutationFn: async (subscriptionId: string) => {
-      return sdk.client.fetch(`/admin/subscriptions/${subscriptionId}`, {
-        method: "PUT",
-        credentials: "include",
-        body: { status: "active" },
-      })
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-subscriptions"] })
-    },
-  })
-
-  const subscriptions = subscriptionsData?.subscriptions || []
   const plans = plansData?.plans || []
+  const subscriptions = subscriptionsData?.subscriptions || []
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active":
-        return "green"
-      case "paused":
-        return "orange"
-      case "cancelled":
-        return "red"
-      case "past_due":
-        return "red"
-      case "trialing":
-        return "blue"
-      default:
-        return "grey"
+  const activeSubs = subscriptions.filter(s => s.status === "active" || s.status === "trialing")
+  const mrr = activeSubs.reduce((sum, sub) => {
+    const plan = plans.find(p => p.id === sub.plan_id)
+    if (!plan) return sum
+    return sum + (plan.billing_interval === "year" ? plan.price / 12 : plan.billing_interval === "month" ? plan.price : plan.price * 30)
+  }, 0)
+
+  const stats = [
+    { label: "MRR", value: `$${mrr.toLocaleString()}`, icon: <CurrencyDollar className="w-5 h-5" />, color: "green" as const },
+    { label: "Active Subscriptions", value: subscriptions.filter(s => s.status === "active").length, color: "green" as const },
+    { label: "Trialing", value: subscriptions.filter(s => s.status === "trialing").length, color: "blue" as const },
+    { label: "Active Plans", value: plans.filter(p => p.is_active).length },
+  ]
+
+  const handleCreatePlan = async () => {
+    try {
+      await createPlan.mutateAsync(planFormData)
+      toast.success("Plan created successfully")
+      setShowCreatePlanDrawer(false)
+      resetPlanForm()
+    } catch (error) {
+      toast.error("Failed to create plan")
     }
   }
 
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString()
+  const handleUpdatePlan = async () => {
+    if (!editingPlan) return
+    try {
+      await updatePlan.mutateAsync({ id: editingPlan.id, ...planFormData })
+      toast.success("Plan updated successfully")
+      setEditingPlan(null)
+      resetPlanForm()
+    } catch (error) {
+      toast.error("Failed to update plan")
+    }
   }
 
-  const formatMoney = (amount: number, currency: string) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currency.toUpperCase(),
-    }).format(amount)
+  const handlePauseSubscription = async () => {
+    if (!pausingSubscription) return
+    try {
+      await pauseSubscription.mutateAsync({ id: pausingSubscription.id })
+      toast.success("Subscription paused")
+      setPausingSubscription(null)
+    } catch (error) {
+      toast.error("Failed to pause subscription")
+    }
   }
 
-  const activeCount = subscriptions.filter((s) => s.status === "active").length
-  const mrr = subscriptions
-    .filter((s) => s.status === "active")
-    .reduce((sum, s) => sum + (s.amount || 0), 0)
-
-  const isLoading = subsLoading || plansLoading
-
-  if (isLoading) {
-    return (
-      <Container className="divide-y p-0">
-        <div className="px-6 py-4">
-          <Heading level="h1">Subscriptions</Heading>
-        </div>
-        <div className="px-6 py-4">
-          <Text className="text-ui-fg-subtle">Loading subscriptions...</Text>
-        </div>
-      </Container>
-    )
+  const handleResumeSubscription = async (id: string) => {
+    try {
+      await resumeSubscription.mutateAsync(id)
+      toast.success("Subscription resumed")
+    } catch (error) {
+      toast.error("Failed to resume subscription")
+    }
   }
+
+  const handleCancelSubscription = async () => {
+    if (!cancelingSubscription) return
+    try {
+      await cancelSubscription.mutateAsync({ id: cancelingSubscription.id, immediate: false })
+      toast.success("Subscription will be canceled at period end")
+      setCancelingSubscription(null)
+    } catch (error) {
+      toast.error("Failed to cancel subscription")
+    }
+  }
+
+  const resetPlanForm = () => {
+    setPlanFormData({ name: "", handle: "", description: "", billing_interval: "month", billing_interval_count: 1, price: 0, currency_code: "usd", trial_days: 0, is_active: true })
+  }
+
+  const openEditPlanDrawer = (plan: SubscriptionPlan) => {
+    setPlanFormData({
+      name: plan.name, handle: plan.handle, description: plan.description || "",
+      billing_interval: plan.billing_interval, billing_interval_count: plan.billing_interval_count,
+      price: plan.price, currency_code: plan.currency_code, trial_days: plan.trial_days, is_active: plan.is_active,
+    })
+    setEditingPlan(plan)
+  }
+
+  const subscriptionColumns = [
+    { key: "customer", header: "Customer", cell: (s: Subscription) => (
+      <div>
+        <Text className="font-medium">{s.customer?.first_name} {s.customer?.last_name}</Text>
+        <Text className="text-ui-fg-muted text-sm">{s.customer?.email}</Text>
+      </div>
+    )},
+    { key: "plan", header: "Plan", cell: (s: Subscription) => s.plan?.name || "-" },
+    { key: "status", header: "Status", cell: (s: Subscription) => <StatusBadge status={s.status} /> },
+    { key: "current_period_end", header: "Renews", cell: (s: Subscription) => new Date(s.current_period_end).toLocaleDateString() },
+    { key: "actions", header: "", width: "120px", cell: (s: Subscription) => (
+      <div className="flex gap-1">
+        {s.status === "active" && (
+          <>
+            <Button variant="secondary" size="small" onClick={() => setPausingSubscription(s)}>Pause</Button>
+            <Button variant="secondary" size="small" onClick={() => setCancelingSubscription(s)}>
+              <XCircle className="w-4 h-4 text-ui-tag-red-icon" />
+            </Button>
+          </>
+        )}
+        {s.status === "paused" && (
+          <Button variant="secondary" size="small" onClick={() => handleResumeSubscription(s.id)}>Resume</Button>
+        )}
+      </div>
+    )},
+  ]
+
+  const planColumns = [
+    { key: "name", header: "Plan Name", sortable: true, cell: (p: SubscriptionPlan) => (
+      <div><Text className="font-medium">{p.name}</Text><Text className="text-ui-fg-muted text-sm">{p.handle}</Text></div>
+    )},
+    { key: "price", header: "Price", sortable: true, cell: (p: SubscriptionPlan) => `$${p.price}/${p.billing_interval}` },
+    { key: "trial_days", header: "Trial", cell: (p: SubscriptionPlan) => p.trial_days > 0 ? `${p.trial_days} days` : "-" },
+    { key: "is_active", header: "Active", cell: (p: SubscriptionPlan) => <Badge color={p.is_active ? "green" : "grey"}>{p.is_active ? "Active" : "Inactive"}</Badge> },
+    { key: "actions", header: "", width: "80px", cell: (p: SubscriptionPlan) => (
+      <Button variant="transparent" size="small" onClick={() => openEditPlanDrawer(p)}><PencilSquare className="w-4 h-4" /></Button>
+    )},
+  ]
 
   return (
-    <Container className="divide-y p-0">
-      <div className="flex items-center justify-between px-6 py-4">
-        <div>
-          <Heading level="h1">Subscriptions</Heading>
-          <Text size="small" className="text-ui-fg-subtle">
-            Manage recurring subscriptions and plans
-          </Text>
-        </div>
-        <div className="flex items-center gap-x-6">
-          <div className="text-right">
-            <Text size="small" weight="plus">
-              {activeCount} active
-            </Text>
-            <Text size="xsmall" className="text-ui-fg-subtle">
-              MRR: {formatMoney(mrr, "usd")}
-            </Text>
+    <Container className="p-0">
+      <div className="p-6 border-b border-ui-border-base">
+        <div className="flex items-center justify-between">
+          <div>
+            <Heading level="h1">Subscriptions</Heading>
+            <Text className="text-ui-fg-muted">Manage subscription plans and active subscriptions</Text>
           </div>
+          <Button onClick={() => setShowCreatePlanDrawer(true)}><Plus className="w-4 h-4 mr-2" />Create Plan</Button>
         </div>
       </div>
 
-      <div className="flex items-center gap-x-4 px-6 py-4">
-        <Button
-          size="small"
-          variant={activeTab === "subscriptions" ? "primary" : "secondary"}
-          onClick={() => setActiveTab("subscriptions")}
-        >
-          Subscriptions ({subscriptions.length})
-        </Button>
-        <Button
-          size="small"
-          variant={activeTab === "plans" ? "primary" : "secondary"}
-          onClick={() => setActiveTab("plans")}
-        >
-          Plans ({plans.length})
-        </Button>
+      <div className="p-6"><StatsGrid stats={stats} columns={4} /></div>
+
+      <div className="px-6 pb-6">
+        <div className="flex gap-4 border-b border-ui-border-base mb-4">
+          <button className={`pb-2 px-1 ${activeTab === "subscriptions" ? "border-b-2 border-ui-fg-base font-medium" : "text-ui-fg-muted"}`} onClick={() => setActiveTab("subscriptions")}>
+            <div className="flex items-center gap-2"><ReceiptPercent className="w-4 h-4" />Subscriptions ({subscriptions.length})</div>
+          </button>
+          <button className={`pb-2 px-1 ${activeTab === "plans" ? "border-b-2 border-ui-fg-base font-medium" : "text-ui-fg-muted"}`} onClick={() => setActiveTab("plans")}>
+            <div className="flex items-center gap-2"><CurrencyDollar className="w-4 h-4" />Plans ({plans.length})</div>
+          </button>
+        </div>
+
+        {activeTab === "subscriptions" && <DataTable data={subscriptions} columns={subscriptionColumns} searchable searchPlaceholder="Search subscriptions..." searchKeys={[]} loading={loadingSubscriptions} emptyMessage="No subscriptions found" />}
+        {activeTab === "plans" && <DataTable data={plans} columns={planColumns} searchable searchPlaceholder="Search plans..." searchKeys={["name", "handle"]} loading={loadingPlans} emptyMessage="No plans found" />}
       </div>
 
-      {activeTab === "subscriptions" && (
-        <>
-          <div className="px-6 py-4">
-            <Input
-              size="small"
-              placeholder="Search by customer..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="max-w-xs"
-            />
-          </div>
-
-          <div className="px-6 py-4">
-            {subscriptions.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12">
-                <ReceiptPercent className="text-ui-fg-muted mb-4" />
-                <Text className="text-ui-fg-subtle">No subscriptions yet</Text>
-              </div>
-            ) : (
-              <Table>
-                <Table.Header>
-                  <Table.Row>
-                    <Table.HeaderCell>Customer</Table.HeaderCell>
-                    <Table.HeaderCell>Plan</Table.HeaderCell>
-                    <Table.HeaderCell>Status</Table.HeaderCell>
-                    <Table.HeaderCell>Amount</Table.HeaderCell>
-                    <Table.HeaderCell>Next Billing</Table.HeaderCell>
-                    <Table.HeaderCell>Actions</Table.HeaderCell>
-                  </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                  {subscriptions.map((sub) => (
-                    <Table.Row key={sub.id}>
-                      <Table.Cell>
-                        <Text size="small">{sub.customer_email || sub.customer_id}</Text>
-                      </Table.Cell>
-                      <Table.Cell>
-                        <Text size="small">{sub.plan_name || "-"}</Text>
-                        <Text size="xsmall" className="text-ui-fg-subtle">
-                          {sub.billing_interval}
-                        </Text>
-                      </Table.Cell>
-                      <Table.Cell>
-                        <Badge size="2xsmall" color={getStatusColor(sub.status)}>
-                          {sub.status}
-                        </Badge>
-                        {sub.cancel_at_period_end && (
-                          <Text size="xsmall" className="text-ui-fg-error">
-                            Cancels at period end
-                          </Text>
-                        )}
-                      </Table.Cell>
-                      <Table.Cell>
-                        <Text size="small">
-                          {formatMoney(sub.amount, sub.currency_code)}
-                        </Text>
-                      </Table.Cell>
-                      <Table.Cell>
-                        <Text size="small">{formatDate(sub.next_billing_date)}</Text>
-                      </Table.Cell>
-                      <Table.Cell>
-                        <div className="flex items-center gap-x-2">
-                          {sub.status === "active" && (
-                            <>
-                              <Button
-                                size="small"
-                                variant="secondary"
-                                onClick={() => pauseMutation.mutate(sub.id)}
-                                disabled={pauseMutation.isPending}
-                              >
-                                Pause
-                              </Button>
-                              <Button
-                                size="small"
-                                variant="secondary"
-                                onClick={() => cancelMutation.mutate(sub.id)}
-                                disabled={cancelMutation.isPending}
-                              >
-                                Cancel
-                              </Button>
-                            </>
-                          )}
-                          {sub.status === "paused" && (
-                            <Button
-                              size="small"
-                              variant="secondary"
-                              onClick={() => resumeMutation.mutate(sub.id)}
-                              disabled={resumeMutation.isPending}
-                            >
-                              Resume
-                            </Button>
-                          )}
-                        </div>
-                      </Table.Cell>
-                    </Table.Row>
-                  ))}
-                </Table.Body>
-              </Table>
-            )}
-          </div>
-        </>
-      )}
-
-      {activeTab === "plans" && (
-        <div className="px-6 py-4">
-          {plans.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12">
-              <ReceiptPercent className="text-ui-fg-muted mb-4" />
-              <Text className="text-ui-fg-subtle">No subscription plans configured</Text>
+      <FormDrawer
+        open={showCreatePlanDrawer || !!editingPlan}
+        onOpenChange={(open) => { if (!open) { setShowCreatePlanDrawer(false); setEditingPlan(null); resetPlanForm() } }}
+        title={editingPlan ? "Edit Plan" : "Create Plan"}
+        onSubmit={editingPlan ? handleUpdatePlan : handleCreatePlan}
+        submitLabel={editingPlan ? "Update" : "Create"}
+        loading={createPlan.isPending || updatePlan.isPending}
+      >
+        <div className="space-y-4">
+          <div><Label htmlFor="name">Plan Name</Label><Input id="name" value={planFormData.name} onChange={(e) => setPlanFormData({ ...planFormData, name: e.target.value })} placeholder="Pro Plan" /></div>
+          <div><Label htmlFor="handle">Handle</Label><Input id="handle" value={planFormData.handle} onChange={(e) => setPlanFormData({ ...planFormData, handle: e.target.value })} placeholder="pro-plan" /></div>
+          <div><Label htmlFor="description">Description</Label><Input id="description" value={planFormData.description} onChange={(e) => setPlanFormData({ ...planFormData, description: e.target.value })} /></div>
+          <div className="grid grid-cols-2 gap-4">
+            <div><Label htmlFor="price">Price ($)</Label><Input id="price" type="number" value={planFormData.price} onChange={(e) => setPlanFormData({ ...planFormData, price: Number(e.target.value) })} /></div>
+            <div>
+              <Label htmlFor="billing_interval">Billing Interval</Label>
+              <select id="billing_interval" value={planFormData.billing_interval} onChange={(e) => setPlanFormData({ ...planFormData, billing_interval: e.target.value as any })} className="w-full border border-ui-border-base rounded-md px-3 py-2 bg-ui-bg-base">
+                <option value="day">Daily</option><option value="week">Weekly</option><option value="month">Monthly</option><option value="year">Yearly</option>
+              </select>
             </div>
-          ) : (
-            <Table>
-              <Table.Header>
-                <Table.Row>
-                  <Table.HeaderCell>Plan Name</Table.HeaderCell>
-                  <Table.HeaderCell>Billing</Table.HeaderCell>
-                  <Table.HeaderCell>Price</Table.HeaderCell>
-                  <Table.HeaderCell>Trial</Table.HeaderCell>
-                  <Table.HeaderCell>Status</Table.HeaderCell>
-                </Table.Row>
-              </Table.Header>
-              <Table.Body>
-                {plans.map((plan) => (
-                  <Table.Row key={plan.id}>
-                    <Table.Cell>
-                      <div>
-                        <Text size="small" weight="plus">
-                          {plan.name}
-                        </Text>
-                        {plan.description && (
-                          <Text size="xsmall" className="text-ui-fg-subtle">
-                            {plan.description}
-                          </Text>
-                        )}
-                      </div>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <Text size="small">
-                        Every {plan.billing_interval_count} {plan.billing_interval}
-                      </Text>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <Text size="small">
-                        {formatMoney(plan.amount, plan.currency_code)}
-                      </Text>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <Text size="small">
-                        {plan.trial_days > 0 ? `${plan.trial_days} days` : "None"}
-                      </Text>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <Badge
-                        size="2xsmall"
-                        color={plan.is_active ? "green" : "grey"}
-                      >
-                        {plan.is_active ? "Active" : "Inactive"}
-                      </Badge>
-                    </Table.Cell>
-                  </Table.Row>
-                ))}
-              </Table.Body>
-            </Table>
-          )}
+          </div>
+          <div><Label htmlFor="trial_days">Trial Days</Label><Input id="trial_days" type="number" value={planFormData.trial_days} onChange={(e) => setPlanFormData({ ...planFormData, trial_days: Number(e.target.value) })} /></div>
+          <div className="flex items-center gap-2">
+            <input type="checkbox" id="is_active" checked={planFormData.is_active} onChange={(e) => setPlanFormData({ ...planFormData, is_active: e.target.checked })} />
+            <Label htmlFor="is_active">Active</Label>
+          </div>
         </div>
-      )}
+      </FormDrawer>
+
+      <ConfirmModal open={!!pausingSubscription} onOpenChange={() => setPausingSubscription(null)} title="Pause Subscription" description={`Pause subscription for ${pausingSubscription?.customer?.email}?`} onConfirm={handlePauseSubscription} confirmLabel="Pause" variant="warning" loading={pauseSubscription.isPending} />
+      <ConfirmModal open={!!cancelingSubscription} onOpenChange={() => setCancelingSubscription(null)} title="Cancel Subscription" description={`Cancel subscription for ${cancelingSubscription?.customer?.email}?`} onConfirm={handleCancelSubscription} confirmLabel="Cancel Subscription" variant="danger" loading={cancelSubscription.isPending} />
     </Container>
   )
 }
 
-export const config = defineRouteConfig({
-  label: "Subscriptions",
-  icon: ReceiptPercent,
-})
-
+export const config = defineRouteConfig({ label: "Subscriptions", icon: ReceiptPercent })
 export default SubscriptionsPage

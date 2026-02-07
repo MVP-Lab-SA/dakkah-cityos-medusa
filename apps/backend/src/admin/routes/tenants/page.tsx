@@ -1,305 +1,176 @@
 import { defineRouteConfig } from "@medusajs/admin-sdk"
-import { Container, Heading, Text, Badge, Button, Table, Input } from "@medusajs/ui"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { sdk } from "../../lib/client"
-import { ServerStack } from "@medusajs/icons"
+import { Container, Heading, Text, Button, Badge, Input, toast, Label } from "@medusajs/ui"
+import { ServerStack, Plus, PencilSquare, CheckCircle, XCircle, CurrencyDollar } from "@medusajs/icons"
 import { useState } from "react"
-
-interface Tenant {
-  id: string
-  name: string
-  slug: string
-  domain?: string
-  email: string
-  status: string
-  plan: string
-  monthly_revenue: number
-  users_count: number
-  storage_used_mb: number
-  api_calls_count: number
-  created_at: string
-}
+import { useTenants, useCreateTenant, useUpdateTenant, useSuspendTenant, useActivateTenant, Tenant } from "../../hooks/use-tenants"
+import { DataTable } from "../../components/tables/data-table"
+import { StatusBadge } from "../../components/common"
+import { StatsGrid } from "../../components/charts/stats-grid"
+import { ConfirmModal } from "../../components/modals/confirm-modal"
+import { FormDrawer } from "../../components/forms/form-drawer"
 
 const TenantsPage = () => {
-  const queryClient = useQueryClient()
-  const [search, setSearch] = useState("")
-  const [statusFilter, setStatusFilter] = useState<string>("all")
+  const [showCreateDrawer, setShowCreateDrawer] = useState(false)
+  const [editingTenant, setEditingTenant] = useState<Tenant | null>(null)
+  const [suspendingTenant, setSuspendingTenant] = useState<Tenant | null>(null)
+  const [activatingTenant, setActivatingTenant] = useState<Tenant | null>(null)
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["admin-tenants"],
-    queryFn: async () => {
-      const response = await sdk.client.fetch<{
-        tenants: Tenant[]
-        count: number
-      }>("/admin/tenants", { credentials: "include" })
-      return response
-    },
+  const [formData, setFormData] = useState({
+    name: "", slug: "", email: "", phone: "", domain: "",
+    plan: "starter" as "free" | "starter" | "professional" | "enterprise",
   })
 
-  const suspendMutation = useMutation({
-    mutationFn: async (tenantId: string) => {
-      return sdk.client.fetch(`/admin/tenants/${tenantId}`, {
-        method: "PUT",
-        credentials: "include",
-        body: { status: "suspended" },
-      })
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-tenants"] })
-    },
-  })
+  const { data: tenantsData, isLoading } = useTenants()
 
-  const activateMutation = useMutation({
-    mutationFn: async (tenantId: string) => {
-      return sdk.client.fetch(`/admin/tenants/${tenantId}`, {
-        method: "PUT",
-        credentials: "include",
-        body: { status: "active" },
-      })
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-tenants"] })
-    },
-  })
+  const createTenant = useCreateTenant()
+  const updateTenant = useUpdateTenant()
+  const suspendTenant = useSuspendTenant()
+  const activateTenant = useActivateTenant()
 
-  const tenants = data?.tenants || []
+  const tenants = tenantsData?.tenants || []
 
-  const filteredTenants = tenants.filter((t) => {
-    const matchesSearch =
-      t.name.toLowerCase().includes(search.toLowerCase()) ||
-      t.email.toLowerCase().includes(search.toLowerCase()) ||
-      t.slug.toLowerCase().includes(search.toLowerCase())
-    const matchesStatus = statusFilter === "all" || t.status === statusFilter
-    return matchesSearch && matchesStatus
-  })
+  const planPrices: Record<string, number> = { free: 0, starter: 29, professional: 99, enterprise: 299 }
+  const mrr = tenants.filter(t => t.status === "active").reduce((sum, t) => sum + (planPrices[t.plan] || 0), 0)
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active":
-        return "green"
-      case "suspended":
-        return "red"
-      case "trial":
-        return "orange"
-      case "pending":
-        return "orange"
-      default:
-        return "grey"
+  const stats = [
+    { label: "Total Tenants", value: tenants.length, icon: <ServerStack className="w-5 h-5" /> },
+    { label: "Active", value: tenants.filter(t => t.status === "active").length, color: "green" as const },
+    { label: "MRR", value: `$${mrr.toLocaleString()}`, icon: <CurrencyDollar className="w-5 h-5" />, color: "green" as const },
+    { label: "Enterprise", value: tenants.filter(t => t.plan === "enterprise").length, color: "purple" as const },
+  ]
+
+  const handleCreateTenant = async () => {
+    try {
+      await createTenant.mutateAsync(formData)
+      toast.success("Tenant created successfully")
+      setShowCreateDrawer(false)
+      resetForm()
+    } catch (error) {
+      toast.error("Failed to create tenant")
     }
   }
 
-  const getPlanColor = (plan: string) => {
+  const handleUpdateTenant = async () => {
+    if (!editingTenant) return
+    try {
+      await updateTenant.mutateAsync({ id: editingTenant.id, ...formData })
+      toast.success("Tenant updated successfully")
+      setEditingTenant(null)
+      resetForm()
+    } catch (error) {
+      toast.error("Failed to update tenant")
+    }
+  }
+
+  const handleSuspendTenant = async () => {
+    if (!suspendingTenant) return
+    try {
+      await suspendTenant.mutateAsync({ id: suspendingTenant.id })
+      toast.success("Tenant suspended")
+      setSuspendingTenant(null)
+    } catch (error) {
+      toast.error("Failed to suspend tenant")
+    }
+  }
+
+  const handleActivateTenant = async () => {
+    if (!activatingTenant) return
+    try {
+      await activateTenant.mutateAsync(activatingTenant.id)
+      toast.success("Tenant activated")
+      setActivatingTenant(null)
+    } catch (error) {
+      toast.error("Failed to activate tenant")
+    }
+  }
+
+  const resetForm = () => {
+    setFormData({ name: "", slug: "", email: "", phone: "", domain: "", plan: "starter" })
+  }
+
+  const openEditDrawer = (tenant: Tenant) => {
+    setFormData({
+      name: tenant.name, slug: tenant.slug, email: tenant.email,
+      phone: tenant.phone || "", domain: tenant.domain || "", plan: tenant.plan,
+    })
+    setEditingTenant(tenant)
+  }
+
+  const getPlanBadgeColor = (plan: string) => {
     switch (plan) {
-      case "enterprise":
-        return "purple"
-      case "professional":
-        return "blue"
-      case "starter":
-        return "green"
-      default:
-        return "grey"
+      case "free": return "grey"
+      case "starter": return "blue"
+      case "professional": return "green"
+      case "enterprise": return "purple"
+      default: return "grey"
     }
   }
 
-  const formatMoney = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount)
-  }
-
-  const formatStorage = (mb: number) => {
-    if (mb >= 1024) {
-      return `${(mb / 1024).toFixed(1)} GB`
-    }
-    return `${mb} MB`
-  }
-
-  const formatNumber = (num: number) => {
-    if (num >= 1000000) {
-      return `${(num / 1000000).toFixed(1)}M`
-    }
-    if (num >= 1000) {
-      return `${(num / 1000).toFixed(1)}K`
-    }
-    return num.toString()
-  }
-
-  const activeCount = tenants.filter((t) => t.status === "active").length
-  const totalMRR = tenants
-    .filter((t) => t.status === "active")
-    .reduce((sum, t) => sum + (t.monthly_revenue || 0), 0)
-
-  if (isLoading) {
-    return (
-      <Container className="divide-y p-0">
-        <div className="px-6 py-4">
-          <Heading level="h1">Tenants</Heading>
-        </div>
-        <div className="px-6 py-4">
-          <Text className="text-ui-fg-subtle">Loading tenants...</Text>
-        </div>
-      </Container>
-    )
-  }
+  const columns = [
+    { key: "name", header: "Tenant", sortable: true, cell: (t: Tenant) => (
+      <div><Text className="font-medium">{t.name}</Text><Text className="text-ui-fg-muted text-sm">{t.slug}</Text></div>
+    )},
+    { key: "email", header: "Contact", cell: (t: Tenant) => (
+      <div><Text>{t.email}</Text>{t.domain && <Text className="text-ui-fg-muted text-sm">{t.domain}</Text>}</div>
+    )},
+    { key: "plan", header: "Plan", cell: (t: Tenant) => <Badge color={getPlanBadgeColor(t.plan)}>{t.plan.charAt(0).toUpperCase() + t.plan.slice(1)}</Badge> },
+    { key: "status", header: "Status", cell: (t: Tenant) => <StatusBadge status={t.status} /> },
+    { key: "created_at", header: "Created", sortable: true, cell: (t: Tenant) => new Date(t.created_at).toLocaleDateString() },
+    { key: "actions", header: "", width: "120px", cell: (t: Tenant) => (
+      <div className="flex gap-1">
+        {t.status === "active" && <Button variant="secondary" size="small" onClick={() => setSuspendingTenant(t)}><XCircle className="w-4 h-4 text-ui-tag-red-icon" /></Button>}
+        {t.status === "suspended" && <Button variant="secondary" size="small" onClick={() => setActivatingTenant(t)}><CheckCircle className="w-4 h-4 text-ui-tag-green-icon" /></Button>}
+        <Button variant="transparent" size="small" onClick={() => openEditDrawer(t)}><PencilSquare className="w-4 h-4" /></Button>
+      </div>
+    )},
+  ]
 
   return (
-    <Container className="divide-y p-0">
-      <div className="flex items-center justify-between px-6 py-4">
-        <div>
-          <Heading level="h1">Multi-Tenant Management</Heading>
-          <Text size="small" className="text-ui-fg-subtle">
-            Manage tenant accounts, plans, and usage
-          </Text>
-        </div>
-        <div className="flex items-center gap-x-6">
-          <div className="text-right">
-            <Text size="small" weight="plus">
-              {activeCount} active tenants
-            </Text>
-            <Text size="xsmall" className="text-ui-fg-subtle">
-              Platform MRR: {formatMoney(totalMRR)}
-            </Text>
-          </div>
+    <Container className="p-0">
+      <div className="p-6 border-b border-ui-border-base">
+        <div className="flex items-center justify-between">
+          <div><Heading level="h1">Multi-Tenant Platform</Heading><Text className="text-ui-fg-muted">Manage tenants, plans, and billing</Text></div>
+          <Button onClick={() => setShowCreateDrawer(true)}><Plus className="w-4 h-4 mr-2" />Add Tenant</Button>
         </div>
       </div>
 
-      <div className="flex items-center gap-x-4 px-6 py-4">
-        <Input
-          size="small"
-          placeholder="Search tenants..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="max-w-xs"
-        />
-        <div className="flex items-center gap-x-2">
-          <Button
-            size="small"
-            variant={statusFilter === "all" ? "primary" : "secondary"}
-            onClick={() => setStatusFilter("all")}
-          >
-            All
-          </Button>
-          <Button
-            size="small"
-            variant={statusFilter === "active" ? "primary" : "secondary"}
-            onClick={() => setStatusFilter("active")}
-          >
-            Active
-          </Button>
-          <Button
-            size="small"
-            variant={statusFilter === "trial" ? "primary" : "secondary"}
-            onClick={() => setStatusFilter("trial")}
-          >
-            Trial
-          </Button>
-          <Button
-            size="small"
-            variant={statusFilter === "suspended" ? "primary" : "secondary"}
-            onClick={() => setStatusFilter("suspended")}
-          >
-            Suspended
-          </Button>
-        </div>
+      <div className="p-6"><StatsGrid stats={stats} columns={4} /></div>
+
+      <div className="px-6 pb-6">
+        <DataTable data={tenants} columns={columns} searchable searchPlaceholder="Search tenants..." searchKeys={["name", "email", "slug"]} loading={isLoading} emptyMessage="No tenants found" />
       </div>
 
-      <div className="px-6 py-4">
-        {filteredTenants.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12">
-            <ServerStack className="text-ui-fg-muted mb-4" />
-            <Text className="text-ui-fg-subtle">No tenants found</Text>
+      <FormDrawer
+        open={showCreateDrawer || !!editingTenant}
+        onOpenChange={(open) => { if (!open) { setShowCreateDrawer(false); setEditingTenant(null); resetForm() } }}
+        title={editingTenant ? "Edit Tenant" : "Create Tenant"}
+        onSubmit={editingTenant ? handleUpdateTenant : handleCreateTenant}
+        submitLabel={editingTenant ? "Update" : "Create"}
+        loading={createTenant.isPending || updateTenant.isPending}
+      >
+        <div className="space-y-4">
+          <div><Label htmlFor="name">Tenant Name</Label><Input id="name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} placeholder="Acme Inc." /></div>
+          <div><Label htmlFor="slug">Slug</Label><Input id="slug" value={formData.slug} onChange={(e) => setFormData({ ...formData, slug: e.target.value })} placeholder="acme-inc" /></div>
+          <div><Label htmlFor="email">Email</Label><Input id="email" type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} placeholder="admin@acme.com" /></div>
+          <div><Label htmlFor="phone">Phone</Label><Input id="phone" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} /></div>
+          <div><Label htmlFor="domain">Custom Domain</Label><Input id="domain" value={formData.domain} onChange={(e) => setFormData({ ...formData, domain: e.target.value })} placeholder="store.acme.com" /></div>
+          <div>
+            <Label htmlFor="plan">Plan</Label>
+            <select id="plan" value={formData.plan} onChange={(e) => setFormData({ ...formData, plan: e.target.value as any })} className="w-full border border-ui-border-base rounded-md px-3 py-2 bg-ui-bg-base">
+              <option value="free">Free ($0/mo)</option>
+              <option value="starter">Starter ($29/mo)</option>
+              <option value="professional">Professional ($99/mo)</option>
+              <option value="enterprise">Enterprise ($299/mo)</option>
+            </select>
           </div>
-        ) : (
-          <Table>
-            <Table.Header>
-              <Table.Row>
-                <Table.HeaderCell>Tenant</Table.HeaderCell>
-                <Table.HeaderCell>Status</Table.HeaderCell>
-                <Table.HeaderCell>Plan</Table.HeaderCell>
-                <Table.HeaderCell>Users</Table.HeaderCell>
-                <Table.HeaderCell>Storage</Table.HeaderCell>
-                <Table.HeaderCell>API Calls</Table.HeaderCell>
-                <Table.HeaderCell>MRR</Table.HeaderCell>
-                <Table.HeaderCell>Actions</Table.HeaderCell>
-              </Table.Row>
-            </Table.Header>
-            <Table.Body>
-              {filteredTenants.map((tenant) => (
-                <Table.Row key={tenant.id}>
-                  <Table.Cell>
-                    <div>
-                      <Text size="small" weight="plus">
-                        {tenant.name}
-                      </Text>
-                      <Text size="xsmall" className="text-ui-fg-subtle">
-                        {tenant.slug}
-                        {tenant.domain && ` / ${tenant.domain}`}
-                      </Text>
-                      <Text size="xsmall" className="text-ui-fg-muted">
-                        {tenant.email}
-                      </Text>
-                    </div>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Badge size="2xsmall" color={getStatusColor(tenant.status)}>
-                      {tenant.status}
-                    </Badge>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Badge size="2xsmall" color={getPlanColor(tenant.plan)}>
-                      {tenant.plan}
-                    </Badge>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Text size="small">{tenant.users_count}</Text>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Text size="small">{formatStorage(tenant.storage_used_mb)}</Text>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Text size="small">{formatNumber(tenant.api_calls_count)}</Text>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Text size="small">{formatMoney(tenant.monthly_revenue)}</Text>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <div className="flex items-center gap-x-2">
-                      {tenant.status === "active" && (
-                        <Button
-                          size="small"
-                          variant="secondary"
-                          onClick={() => suspendMutation.mutate(tenant.id)}
-                          disabled={suspendMutation.isPending}
-                        >
-                          Suspend
-                        </Button>
-                      )}
-                      {(tenant.status === "suspended" || tenant.status === "pending") && (
-                        <Button
-                          size="small"
-                          variant="secondary"
-                          onClick={() => activateMutation.mutate(tenant.id)}
-                          disabled={activateMutation.isPending}
-                        >
-                          Activate
-                        </Button>
-                      )}
-                    </div>
-                  </Table.Cell>
-                </Table.Row>
-              ))}
-            </Table.Body>
-          </Table>
-        )}
-      </div>
+        </div>
+      </FormDrawer>
+
+      <ConfirmModal open={!!suspendingTenant} onOpenChange={() => setSuspendingTenant(null)} title="Suspend Tenant" description={`Suspend ${suspendingTenant?.name}?`} onConfirm={handleSuspendTenant} confirmLabel="Suspend" variant="danger" loading={suspendTenant.isPending} />
+      <ConfirmModal open={!!activatingTenant} onOpenChange={() => setActivatingTenant(null)} title="Activate Tenant" description={`Activate ${activatingTenant?.name}?`} onConfirm={handleActivateTenant} confirmLabel="Activate" loading={activateTenant.isPending} />
     </Container>
   )
 }
 
-export const config = defineRouteConfig({
-  label: "Tenants",
-  icon: ServerStack,
-})
-
+export const config = defineRouteConfig({ label: "Tenants", icon: ServerStack })
 export default TenantsPage

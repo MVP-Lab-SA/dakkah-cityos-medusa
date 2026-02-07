@@ -1,373 +1,159 @@
 import { defineRouteConfig } from "@medusajs/admin-sdk"
 import { Container, Heading, Text, Badge } from "@medusajs/ui"
-import { useQuery } from "@tanstack/react-query"
-import { sdk } from "../../lib/client"
-import { ChartBar, ArrowUpRightMini, ArrowDownRightMini } from "@medusajs/icons"
-
-interface AnalyticsData {
-  revenue: {
-    total: number
-    change: number
-    trend: "up" | "down" | "flat"
-  }
-  orders: {
-    total: number
-    change: number
-    trend: "up" | "down" | "flat"
-  }
-  customers: {
-    total: number
-    change: number
-    trend: "up" | "down" | "flat"
-  }
-  vendors: {
-    total: number
-    pending: number
-    active: number
-  }
-  subscriptions: {
-    active: number
-    mrr: number
-    churn: number
-  }
-  bookings: {
-    total: number
-    today: number
-    pending: number
-  }
-  companies: {
-    total: number
-    active: number
-  }
-  tenants: {
-    total: number
-    active: number
-    mrr: number
-  }
-}
-
-const StatsCard = ({
-  title,
-  value,
-  change,
-  trend,
-  subtitle,
-}: {
-  title: string
-  value: string
-  change?: number
-  trend?: "up" | "down" | "flat"
-  subtitle?: string
-}) => (
-  <div className="rounded-lg border border-ui-border-base bg-ui-bg-base p-4">
-    <Text size="small" className="text-ui-fg-subtle mb-1">
-      {title}
-    </Text>
-    <div className="flex items-baseline gap-x-2">
-      <Heading level="h2">{value}</Heading>
-      {change !== undefined && trend && (
-        <div
-          className={`flex items-center text-sm ${
-            trend === "up"
-              ? "text-ui-fg-success"
-              : trend === "down"
-              ? "text-ui-fg-error"
-              : "text-ui-fg-subtle"
-          }`}
-        >
-          {trend === "up" && <ArrowUpRightMini />}
-          {trend === "down" && <ArrowDownRightMini />}
-          <span>{Math.abs(change)}%</span>
-        </div>
-      )}
-    </div>
-    {subtitle && (
-      <Text size="xsmall" className="text-ui-fg-muted mt-1">
-        {subtitle}
-      </Text>
-    )}
-  </div>
-)
+import { ChartBar, CurrencyDollar, Buildings, ReceiptPercent, Calendar, ServerStack } from "@medusajs/icons"
+import { useCompanies, usePurchaseOrders } from "../../hooks/use-companies"
+import { useVendors, usePayouts } from "../../hooks/use-vendors"
+import { useSubscriptions, useSubscriptionPlans } from "../../hooks/use-subscriptions"
+import { useBookings, useServiceProviders } from "../../hooks/use-bookings"
+import { useTenants } from "../../hooks/use-tenants"
+import { StatsGrid } from "../../components/charts/stats-grid"
 
 const AnalyticsPage = () => {
-  const { data: vendorsData } = useQuery({
-    queryKey: ["analytics-vendors"],
-    queryFn: async () => {
-      const response = await sdk.client.fetch<{ vendors: any[]; count: number }>(
-        "/admin/vendors",
-        { credentials: "include" }
-      )
-      return response
-    },
-  })
+  const { data: companiesData } = useCompanies()
+  const { data: posData } = usePurchaseOrders()
+  const { data: vendorsData } = useVendors()
+  const { data: payoutsData } = usePayouts()
+  const { data: subscriptionsData } = useSubscriptions()
+  const { data: plansData } = useSubscriptionPlans()
+  const { data: bookingsData } = useBookings()
+  const { data: providersData } = useServiceProviders()
+  const { data: tenantsData } = useTenants()
 
-  const { data: subscriptionsData } = useQuery({
-    queryKey: ["analytics-subscriptions"],
-    queryFn: async () => {
-      const response = await sdk.client.fetch<{ subscriptions: any[]; count: number }>(
-        "/admin/subscriptions",
-        { credentials: "include" }
-      )
-      return response
-    },
-  })
-
-  const { data: bookingsData } = useQuery({
-    queryKey: ["analytics-bookings"],
-    queryFn: async () => {
-      const response = await sdk.client.fetch<{ bookings: any[]; count: number }>(
-        "/admin/bookings",
-        { credentials: "include" }
-      )
-      return response
-    },
-  })
-
-  const { data: companiesData } = useQuery({
-    queryKey: ["analytics-companies"],
-    queryFn: async () => {
-      const response = await sdk.client.fetch<{ companies: any[]; count: number }>(
-        "/admin/companies",
-        { credentials: "include" }
-      )
-      return response
-    },
-  })
-
-  const { data: tenantsData } = useQuery({
-    queryKey: ["analytics-tenants"],
-    queryFn: async () => {
-      const response = await sdk.client.fetch<{ tenants: any[]; count: number }>(
-        "/admin/tenants",
-        { credentials: "include" }
-      )
-      return response
-    },
-  })
-
-  const vendors = vendorsData?.vendors || []
-  const subscriptions = subscriptionsData?.subscriptions || []
-  const bookings = bookingsData?.bookings || []
   const companies = companiesData?.companies || []
+  const purchaseOrders = posData?.purchase_orders || []
+  const vendors = vendorsData?.vendors || []
+  const payouts = payoutsData?.payouts || []
+  const subscriptions = subscriptionsData?.subscriptions || []
+  const plans = plansData?.plans || []
+  const bookings = bookingsData?.bookings || []
+  const providers = providersData?.providers || []
   const tenants = tenantsData?.tenants || []
 
-  const formatMoney = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount)
-  }
-
-  // Calculate metrics
-  const activeVendors = vendors.filter((v) => v.verification_status === "approved").length
-  const pendingVendors = vendors.filter((v) => v.verification_status === "pending").length
-
-  const activeSubscriptions = subscriptions.filter((s) => s.status === "active").length
   const subscriptionMRR = subscriptions
-    .filter((s) => s.status === "active")
-    .reduce((sum, s) => sum + (s.amount || 0), 0)
+    .filter(s => s.status === "active" || s.status === "trialing")
+    .reduce((sum, sub) => {
+      const plan = plans.find(p => p.id === sub.plan_id)
+      if (!plan) return sum
+      return sum + (plan.billing_interval === "year" ? plan.price / 12 : plan.billing_interval === "month" ? plan.price : plan.price * 30)
+    }, 0)
 
-  const todayBookings = bookings.filter((b) => {
-    const today = new Date().toDateString()
-    return new Date(b.booking_date).toDateString() === today
-  }).length
-  const pendingBookings = bookings.filter((b) => b.status === "pending").length
+  const tenantPlanPrices: Record<string, number> = { free: 0, starter: 29, professional: 99, enterprise: 299 }
+  const tenantMRR = tenants.filter(t => t.status === "active").reduce((sum, t) => sum + (tenantPlanPrices[t.plan] || 0), 0)
+  const totalMRR = subscriptionMRR + tenantMRR
 
-  const activeCompanies = companies.filter((c) => c.status === "active").length
+  const poTotal = purchaseOrders.reduce((sum, po) => sum + po.total, 0)
+  const pendingPayouts = payouts.filter(p => p.status === "pending").reduce((sum, p) => sum + p.amount, 0)
 
-  const activeTenants = tenants.filter((t) => t.status === "active").length
-  const tenantMRR = tenants
-    .filter((t) => t.status === "active")
-    .reduce((sum, t) => sum + (t.monthly_revenue || 0), 0)
+  const overviewStats = [
+    { label: "Total MRR", value: `$${totalMRR.toLocaleString()}`, icon: <CurrencyDollar className="w-5 h-5" />, color: "green" as const, change: 12.5, changeLabel: "vs last month" },
+    { label: "Active Subscriptions", value: subscriptions.filter(s => s.status === "active").length, icon: <ReceiptPercent className="w-5 h-5" />, color: "blue" as const, change: 8.2, changeLabel: "vs last month" },
+    { label: "Active Vendors", value: vendors.filter(v => v.status === "active").length, icon: <Buildings className="w-5 h-5" />, change: 5.0, changeLabel: "vs last month" },
+    { label: "Active Tenants", value: tenants.filter(t => t.status === "active").length, icon: <ServerStack className="w-5 h-5" />, color: "purple" as const, change: 15.3, changeLabel: "vs last month" },
+  ]
+
+  const b2bStats = [
+    { label: "Companies", value: companies.length, icon: <Buildings className="w-5 h-5" /> },
+    { label: "Active", value: companies.filter(c => c.status === "active").length, color: "green" as const },
+    { label: "PO Volume", value: `$${poTotal.toLocaleString()}` },
+    { label: "Pending POs", value: purchaseOrders.filter(po => po.status === "pending_approval").length, color: "orange" as const },
+  ]
+
+  const marketplaceStats = [
+    { label: "Vendors", value: vendors.length, icon: <Buildings className="w-5 h-5" /> },
+    { label: "Active", value: vendors.filter(v => v.status === "active").length, color: "green" as const },
+    { label: "Pending Payouts", value: `$${pendingPayouts.toLocaleString()}`, color: "orange" as const },
+    { label: "Pending Approval", value: vendors.filter(v => v.status === "pending").length },
+  ]
+
+  const subscriptionStats = [
+    { label: "MRR", value: `$${subscriptionMRR.toLocaleString()}`, icon: <CurrencyDollar className="w-5 h-5" />, color: "green" as const },
+    { label: "Active", value: subscriptions.filter(s => s.status === "active").length, color: "green" as const },
+    { label: "Trialing", value: subscriptions.filter(s => s.status === "trialing").length, color: "blue" as const },
+    { label: "Plans", value: plans.filter(p => p.is_active).length },
+  ]
+
+  const bookingStats = [
+    { label: "Total Bookings", value: bookings.length, icon: <Calendar className="w-5 h-5" /> },
+    { label: "Confirmed", value: bookings.filter(b => b.status === "confirmed").length, color: "green" as const },
+    { label: "Pending", value: bookings.filter(b => b.status === "pending").length, color: "orange" as const },
+    { label: "Providers", value: providers.filter(p => p.is_active).length },
+  ]
+
+  const tenantStats = [
+    { label: "Tenants", value: tenants.length, icon: <ServerStack className="w-5 h-5" /> },
+    { label: "Active", value: tenants.filter(t => t.status === "active").length, color: "green" as const },
+    { label: "Platform MRR", value: `$${tenantMRR.toLocaleString()}`, color: "green" as const },
+    { label: "Enterprise", value: tenants.filter(t => t.plan === "enterprise").length, color: "purple" as const },
+  ]
+
+  const today = new Date().toISOString().split("T")[0]
 
   return (
-    <Container className="divide-y p-0">
-      <div className="px-6 py-4">
-        <Heading level="h1">Platform Analytics</Heading>
-        <Text size="small" className="text-ui-fg-subtle">
-          Overview of all business metrics across all modules
-        </Text>
+    <Container className="p-0">
+      <div className="p-6 border-b border-ui-border-base">
+        <div><Heading level="h1">Analytics Dashboard</Heading><Text className="text-ui-fg-muted">Platform-wide metrics and insights</Text></div>
       </div>
 
-      {/* Marketplace Stats */}
-      <div className="px-6 py-4">
-        <div className="mb-4 flex items-center gap-x-2">
-          <Heading level="h2">Marketplace</Heading>
-          <Badge size="2xsmall" color="blue">
-            Vendors
-          </Badge>
-        </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <StatsCard
-            title="Total Vendors"
-            value={vendors.length.toString()}
-            subtitle={`${activeVendors} active, ${pendingVendors} pending`}
-          />
-          <StatsCard
-            title="Active Vendors"
-            value={activeVendors.toString()}
-            change={12}
-            trend="up"
-          />
-          <StatsCard
-            title="Pending Approvals"
-            value={pendingVendors.toString()}
-            subtitle="Awaiting review"
-          />
-          <StatsCard
-            title="Total Sales (Vendors)"
-            value={formatMoney(
-              vendors.reduce((sum, v) => sum + (v.total_sales || 0), 0)
-            )}
-            change={8}
-            trend="up"
-          />
-        </div>
-      </div>
+      <div className="p-6 space-y-8">
+        <div><Heading level="h2" className="mb-4">Overview</Heading><StatsGrid stats={overviewStats} columns={4} /></div>
 
-      {/* Subscription Stats */}
-      <div className="px-6 py-4">
-        <div className="mb-4 flex items-center gap-x-2">
-          <Heading level="h2">Subscriptions</Heading>
-          <Badge size="2xsmall" color="green">
-            Recurring
-          </Badge>
-        </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <StatsCard
-            title="Total Subscriptions"
-            value={subscriptions.length.toString()}
-            subtitle={`${activeSubscriptions} active`}
-          />
-          <StatsCard
-            title="Active Subscriptions"
-            value={activeSubscriptions.toString()}
-            change={5}
-            trend="up"
-          />
-          <StatsCard
-            title="Monthly Recurring Revenue"
-            value={formatMoney(subscriptionMRR)}
-            change={15}
-            trend="up"
-          />
-          <StatsCard
-            title="Annual Run Rate"
-            value={formatMoney(subscriptionMRR * 12)}
-            subtitle="Projected ARR"
-          />
-        </div>
-      </div>
+        <div className="grid grid-cols-2 gap-6">
+          <div className="bg-ui-bg-base rounded-lg border border-ui-border-base p-4">
+            <div className="flex items-center gap-2 mb-4"><Buildings className="w-5 h-5 text-ui-fg-subtle" /><Heading level="h3">B2B Commerce</Heading></div>
+            <StatsGrid stats={b2bStats} columns={2} />
+          </div>
 
-      {/* Booking Stats */}
-      <div className="px-6 py-4">
-        <div className="mb-4 flex items-center gap-x-2">
-          <Heading level="h2">Bookings</Heading>
-          <Badge size="2xsmall" color="orange">
-            Services
-          </Badge>
-        </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <StatsCard
-            title="Total Bookings"
-            value={bookings.length.toString()}
-          />
-          <StatsCard
-            title="Today's Bookings"
-            value={todayBookings.toString()}
-            subtitle="Scheduled for today"
-          />
-          <StatsCard
-            title="Pending Confirmation"
-            value={pendingBookings.toString()}
-            subtitle="Need attention"
-          />
-          <StatsCard
-            title="Booking Revenue"
-            value={formatMoney(
-              bookings.reduce((sum, b) => sum + (b.total_amount || 0), 0)
-            )}
-          />
-        </div>
-      </div>
+          <div className="bg-ui-bg-base rounded-lg border border-ui-border-base p-4">
+            <div className="flex items-center gap-2 mb-4"><Buildings className="w-5 h-5 text-ui-fg-subtle" /><Heading level="h3">Marketplace</Heading></div>
+            <StatsGrid stats={marketplaceStats} columns={2} />
+          </div>
 
-      {/* B2B Stats */}
-      <div className="px-6 py-4">
-        <div className="mb-4 flex items-center gap-x-2">
-          <Heading level="h2">B2B Commerce</Heading>
-          <Badge size="2xsmall" color="purple">
-            Companies
-          </Badge>
-        </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <StatsCard
-            title="Total Companies"
-            value={companies.length.toString()}
-            subtitle={`${activeCompanies} active`}
-          />
-          <StatsCard
-            title="Active Companies"
-            value={activeCompanies.toString()}
-            change={3}
-            trend="up"
-          />
-          <StatsCard
-            title="Total Credit Extended"
-            value={formatMoney(
-              companies.reduce((sum, c) => sum + (c.credit_limit || 0), 0)
-            )}
-          />
-          <StatsCard
-            title="Outstanding Balance"
-            value={formatMoney(
-              companies.reduce((sum, c) => sum + (c.credit_balance || 0), 0)
-            )}
-          />
-        </div>
-      </div>
+          <div className="bg-ui-bg-base rounded-lg border border-ui-border-base p-4">
+            <div className="flex items-center gap-2 mb-4"><ReceiptPercent className="w-5 h-5 text-ui-fg-subtle" /><Heading level="h3">Subscriptions</Heading></div>
+            <StatsGrid stats={subscriptionStats} columns={2} />
+          </div>
 
-      {/* Multi-Tenant Stats */}
-      <div className="px-6 py-4">
-        <div className="mb-4 flex items-center gap-x-2">
-          <Heading level="h2">Multi-Tenant Platform</Heading>
-          <Badge size="2xsmall" color="grey">
-            SaaS
-          </Badge>
+          <div className="bg-ui-bg-base rounded-lg border border-ui-border-base p-4">
+            <div className="flex items-center gap-2 mb-4"><Calendar className="w-5 h-5 text-ui-fg-subtle" /><Heading level="h3">Bookings</Heading></div>
+            <StatsGrid stats={bookingStats} columns={2} />
+          </div>
         </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <StatsCard
-            title="Total Tenants"
-            value={tenants.length.toString()}
-            subtitle={`${activeTenants} active`}
-          />
-          <StatsCard
-            title="Active Tenants"
-            value={activeTenants.toString()}
-            change={10}
-            trend="up"
-          />
-          <StatsCard
-            title="Platform MRR"
-            value={formatMoney(tenantMRR)}
-            change={20}
-            trend="up"
-          />
-          <StatsCard
-            title="Platform ARR"
-            value={formatMoney(tenantMRR * 12)}
-            subtitle="Projected annual"
-          />
+
+        <div className="bg-ui-bg-base rounded-lg border border-ui-border-base p-4">
+          <div className="flex items-center gap-2 mb-4"><ServerStack className="w-5 h-5 text-ui-fg-subtle" /><Heading level="h3">Multi-Tenant Platform</Heading></div>
+          <StatsGrid stats={tenantStats} columns={4} />
+        </div>
+
+        <div className="bg-ui-bg-subtle rounded-lg p-6">
+          <Heading level="h3" className="mb-4">Quick Insights</Heading>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="bg-ui-bg-base rounded-lg p-4 border border-ui-border-base">
+              <Text className="text-ui-fg-muted text-sm">Pending Approvals</Text>
+              <div className="flex items-center gap-2 mt-2">
+                <Text className="text-2xl font-semibold">{vendors.filter(v => v.status === "pending").length + purchaseOrders.filter(po => po.status === "pending_approval").length}</Text>
+                <Badge color="orange">Needs action</Badge>
+              </div>
+            </div>
+            <div className="bg-ui-bg-base rounded-lg p-4 border border-ui-border-base">
+              <Text className="text-ui-fg-muted text-sm">Today's Bookings</Text>
+              <div className="flex items-center gap-2 mt-2">
+                <Text className="text-2xl font-semibold">{bookings.filter(b => b.booking_date === today).length}</Text>
+                <Badge color="blue">Scheduled</Badge>
+              </div>
+            </div>
+            <div className="bg-ui-bg-base rounded-lg p-4 border border-ui-border-base">
+              <Text className="text-ui-fg-muted text-sm">Churn Risk</Text>
+              <div className="flex items-center gap-2 mt-2">
+                <Text className="text-2xl font-semibold">{subscriptions.filter(s => s.status === "past_due").length + tenants.filter(t => t.status === "suspended").length}</Text>
+                <Badge color="red">At risk</Badge>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </Container>
   )
 }
 
-export const config = defineRouteConfig({
-  label: "Analytics",
-  icon: ChartBar,
-})
-
+export const config = defineRouteConfig({ label: "Analytics", icon: ChartBar })
 export default AnalyticsPage
