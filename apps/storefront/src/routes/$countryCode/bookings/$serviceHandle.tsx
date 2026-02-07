@@ -18,14 +18,26 @@ import {
   Users,
   CheckCircleSolid,
 } from "@medusajs/icons"
+import { useToast } from "@/components/ui/toast"
 
 export const Route = createFileRoute("/$countryCode/bookings/$serviceHandle")({
   component: ServiceBookingPage,
 })
 
+const MAX_NOTES_LENGTH = 500
+
+interface FormErrors {
+  attendees?: string
+  notes?: string
+  date?: string
+  provider?: string
+  slot?: string
+}
+
 function ServiceBookingPage() {
   const { countryCode, serviceHandle } = Route.useParams()
   const navigate = useNavigate()
+  const { addToast } = useToast()
 
   const { data: service, isLoading: serviceLoading } = useService(serviceHandle)
   const { data: providers, isLoading: providersLoading } = useServiceProviders(
@@ -42,6 +54,7 @@ function ServiceBookingPage() {
     "provider"
   )
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errors, setErrors] = useState<FormErrors>({})
 
   const {
     data: slots,
@@ -71,30 +84,122 @@ function ServiceBookingPage() {
     return providers?.find((p) => p.id === selectedProvider)
   }, [providers, selectedProvider])
 
+  const validateDate = (date: string): string | undefined => {
+    const selectedDateObj = new Date(date)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    
+    if (selectedDateObj < today) {
+      return "Cannot book a date in the past"
+    }
+    return undefined
+  }
+
+  const validateAttendees = (count: number): string | undefined => {
+    if (count < 1) {
+      return "At least 1 attendee is required"
+    }
+    if (service?.capacity && count > service.capacity) {
+      return `Maximum ${service.capacity} attendees allowed`
+    }
+    return undefined
+  }
+
+  const validateNotes = (notesText: string): string | undefined => {
+    if (notesText.length > MAX_NOTES_LENGTH) {
+      return `Notes must be less than ${MAX_NOTES_LENGTH} characters`
+    }
+    return undefined
+  }
+
+  const validateConfirmStep = (): boolean => {
+    const newErrors: FormErrors = {}
+
+    if (!selectedProvider) {
+      newErrors.provider = "Please select a provider"
+    }
+
+    if (!selectedDate) {
+      newErrors.date = "Please select a date"
+    } else {
+      const dateError = validateDate(selectedDate)
+      if (dateError) newErrors.date = dateError
+    }
+
+    if (!selectedSlot) {
+      newErrors.slot = "Please select a time slot"
+    }
+
+    const attendeesError = validateAttendees(attendees)
+    if (attendeesError) newErrors.attendees = attendeesError
+
+    const notesError = validateNotes(notes)
+    if (notesError) newErrors.notes = notesError
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
   const handleProviderSelect = (providerId: string) => {
     setSelectedProvider(providerId)
     setSelectedDate(null)
     setSelectedSlot(null)
+    setErrors({})
     setStep("datetime")
   }
 
   const handleDateSelect = (date: string) => {
+    const dateError = validateDate(date)
+    if (dateError) {
+      setErrors(prev => ({ ...prev, date: dateError }))
+      addToast("warning", dateError)
+      return
+    }
     setSelectedDate(date)
     setSelectedSlot(null)
+    setErrors(prev => ({ ...prev, date: undefined }))
   }
 
   const handleSlotSelect = (slot: string) => {
     setSelectedSlot(slot)
+    setErrors(prev => ({ ...prev, slot: undefined }))
+  }
+
+  const handleNotesChange = (value: string) => {
+    setNotes(value)
+    const notesError = validateNotes(value)
+    setErrors(prev => ({ ...prev, notes: notesError }))
+  }
+
+  const handleAttendeesChange = (value: number) => {
+    setAttendees(value)
+    const attendeesError = validateAttendees(value)
+    setErrors(prev => ({ ...prev, attendees: attendeesError }))
   }
 
   const handleContinueToConfirm = () => {
-    if (selectedProvider && selectedDate && selectedSlot) {
-      setStep("confirm")
+    if (!selectedProvider) {
+      addToast("warning", "Please select a provider")
+      return
     }
+    if (!selectedDate) {
+      addToast("warning", "Please select a date")
+      return
+    }
+    if (!selectedSlot) {
+      addToast("warning", "Please select a time slot")
+      return
+    }
+    setStep("confirm")
   }
 
   const handleSubmit = async () => {
     if (!service || !selectedProvider || !selectedSlot) return
+
+    if (!validateConfirmStep()) {
+      addToast("warning", "Please fix the errors before confirming")
+      return
+    }
 
     setIsSubmitting(true)
     try {
@@ -102,16 +207,18 @@ function ServiceBookingPage() {
         service_id: service.id,
         provider_id: selectedProvider,
         start_time: selectedSlot,
-        notes: notes || undefined,
+        notes: notes.trim() || undefined,
         attendees,
       })
 
+      addToast("success", "Booking confirmed successfully!")
       navigate({
         to: `/${countryCode}/bookings/confirmation`,
         search: { id: booking.id },
       })
     } catch (error) {
-      console.error("Failed to create booking:", error)
+      const errorMessage = error instanceof Error ? error.message : "Failed to create booking"
+      addToast("error", errorMessage)
     } finally {
       setIsSubmitting(false)
     }
@@ -245,6 +352,9 @@ function ServiceBookingPage() {
                         selectedDate={selectedDate}
                         onDateSelect={handleDateSelect}
                       />
+                      {errors.date && (
+                        <p className="text-sm text-red-500 mt-2">{errors.date}</p>
+                      )}
                     </div>
 
                     {/* Time Slots */}
@@ -263,6 +373,9 @@ function ServiceBookingPage() {
                         <div className="text-center py-8 text-slate-400">
                           Select a date to see available times
                         </div>
+                      )}
+                      {errors.slot && (
+                        <p className="text-sm text-red-500 mt-2">{errors.slot}</p>
                       )}
                     </div>
                   </div>
@@ -299,8 +412,8 @@ function ServiceBookingPage() {
                       </label>
                       <select
                         value={attendees}
-                        onChange={(e) => setAttendees(Number(e.target.value))}
-                        className="input-enterprise max-w-xs"
+                        onChange={(e) => handleAttendeesChange(Number(e.target.value))}
+                        className={`input-enterprise max-w-xs ${errors.attendees ? "border-red-500" : ""}`}
                       >
                         {[...Array(service.capacity)].map((_, i) => (
                           <option key={i + 1} value={i + 1}>
@@ -308,6 +421,9 @@ function ServiceBookingPage() {
                           </option>
                         ))}
                       </select>
+                      {errors.attendees && (
+                        <p className="text-sm text-red-500 mt-1">{errors.attendees}</p>
+                      )}
                     </div>
                   )}
 
@@ -318,11 +434,20 @@ function ServiceBookingPage() {
                     </label>
                     <textarea
                       value={notes}
-                      onChange={(e) => setNotes(e.target.value)}
+                      onChange={(e) => handleNotesChange(e.target.value)}
                       placeholder="Any specific topics you'd like to discuss?"
                       rows={3}
-                      className="input-enterprise resize-none"
+                      className={`input-enterprise resize-none ${errors.notes ? "border-red-500" : ""}`}
+                      maxLength={MAX_NOTES_LENGTH + 50}
                     />
+                    <div className="flex justify-between mt-1">
+                      {errors.notes && (
+                        <p className="text-sm text-red-500">{errors.notes}</p>
+                      )}
+                      <span className={`text-sm ml-auto ${notes.length > MAX_NOTES_LENGTH ? "text-red-500" : "text-slate-400"}`}>
+                        {notes.length}/{MAX_NOTES_LENGTH}
+                      </span>
+                    </div>
                   </div>
 
                   {/* Submit Button */}

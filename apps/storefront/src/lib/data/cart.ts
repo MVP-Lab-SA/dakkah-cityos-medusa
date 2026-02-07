@@ -277,7 +277,7 @@ export const deleteLineItem = async ({
     throw new Error("No cart found")
   }
 
-  // TODO pass fields when supported
+  // Note: Fields parameter for selective response is not yet supported by SDK
   await sdk.store.cart.deleteLineItem(cartId, line_id)
 }
 
