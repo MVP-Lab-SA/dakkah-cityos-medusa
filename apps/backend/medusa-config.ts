@@ -40,31 +40,12 @@ module.exports = defineConfig({
     },
   },
   plugins: [
-    // RSC-Labs Store Analytics - Admin dashboard analytics
-    {
-      resolve: "@rsc-labs/medusa-store-analytics-v2",
-      options: {},
-    },
-    // RSC-Labs Documents - PDF invoice generation
-    {
-      resolve: "@rsc-labs/medusa-documents-v2",
-      options: {},
-    },
-    // RSC-Labs Wishlist - Customer wishlist functionality
-    {
-      resolve: "@rsc-labs/medusa-wishlist",
-      options: {},
-    },
-    // RSC-Labs Booking System disabled - using custom booking module instead
-    // {
-    //   resolve: "@rsc-labs/medusa-booking-system",
-    //   options: {},
-    // },
-    // RSC-Labs RBAC - Role-based access control
-    {
-      resolve: "@rsc-labs/medusa-rbac",
-      options: {},
-    },
+    // NOTE: RSC-Labs plugins disabled due to installation issues
+    // Re-enable when properly installed:
+    // - @rsc-labs/medusa-store-analytics-v2
+    // - @rsc-labs/medusa-documents-v2
+    // - @rsc-labs/medusa-wishlist
+    // - @rsc-labs/medusa-rbac
   ],
   modules: [
     // Notification Module (SendGrid) - only enabled if API key is set
