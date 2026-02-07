@@ -1,7 +1,7 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
 import { subscriberLogger } from "../lib/logger"
-import { config } from "../lib/config"
+import { appConfig } from "../lib/config"
 
 const logger = subscriberLogger
 
@@ -17,10 +17,10 @@ export default async function subscriptionPaymentFailedHandler({
     const customerEmail = subscription?.customer?.email || subscription?.metadata?.email
     
     const retryCount = data.retry_count || 1
-    const maxRetries = config.subscription.maxPaymentRetries
+    const maxRetries = appConfig.subscription.maxPaymentRetries
     const willRetry = retryCount < maxRetries
     
-    if (customerEmail && config.features.enableEmailNotifications) {
+    if (customerEmail && appConfig.features.enableEmailNotifications) {
       await notificationService.createNotifications({
         to: customerEmail,
         channel: "email",
@@ -32,14 +32,14 @@ export default async function subscriptionPaymentFailedHandler({
           retry_count: retryCount,
           max_retries: maxRetries,
           will_retry: willRetry,
-          update_payment_url: `${config.storefrontUrl}/account/subscriptions/${subscription.id}/payment`,
+          update_payment_url: `${appConfig.storefrontUrl}/account/subscriptions/${subscription.id}/payment`,
           customer_name: subscription.customer?.first_name || "Customer",
-          grace_period_days: config.subscription.gracePeriodDays,
+          grace_period_days: appConfig.subscription.gracePeriodDays,
         }
       })
     }
     
-    if (config.features.enableAdminNotifications) {
+    if (appConfig.features.enableAdminNotifications) {
       await notificationService.createNotifications({
         to: "",
         channel: "feed",

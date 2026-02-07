@@ -1,7 +1,7 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
 import { subscriberLogger } from "../lib/logger"
-import { config } from "../lib/config"
+import { appConfig } from "../lib/config"
 
 const logger = subscriberLogger
 
@@ -29,7 +29,7 @@ export default async function payoutCompletedHandler({
     
     const payout = payouts?.[0]
     
-    if (vendor?.contact_email && config.features.enableEmailNotifications) {
+    if (vendor?.contact_email && appConfig.features.enableEmailNotifications) {
       await notificationService.createNotifications({
         to: vendor.contact_email,
         channel: "email",
@@ -44,7 +44,7 @@ export default async function payoutCompletedHandler({
       })
     }
     
-    if (config.features.enableAdminNotifications) {
+    if (appConfig.features.enableAdminNotifications) {
       await notificationService.createNotifications({
         to: "",
         channel: "feed",

@@ -1,7 +1,7 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
 import { subscriberLogger } from "../lib/logger"
-import { config } from "../lib/config"
+import { appConfig } from "../lib/config"
 
 const logger = subscriberLogger
 
@@ -22,7 +22,7 @@ export default async function paymentAuthorizedHandler({
     const payment = payments?.[0]
     const order = payment?.payment_collection?.order
     
-    if (config.features.enableAdminNotifications) {
+    if (appConfig.features.enableAdminNotifications) {
       await notificationService.createNotifications({
         to: "",
         channel: "feed",

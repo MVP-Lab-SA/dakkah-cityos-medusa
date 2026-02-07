@@ -1,7 +1,7 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
 import { subscriberLogger } from "../lib/logger"
-import { config } from "../lib/config"
+import { appConfig } from "../lib/config"
 
 const logger = subscriberLogger
 
@@ -21,7 +21,7 @@ export default async function vendorSuspendedHandler({
     
     const vendor = vendors?.[0]
     
-    if (vendor?.contact_email && config.features.enableEmailNotifications) {
+    if (vendor?.contact_email && appConfig.features.enableEmailNotifications) {
       await notificationService.createNotifications({
         to: vendor.contact_email,
         channel: "email",
@@ -29,13 +29,13 @@ export default async function vendorSuspendedHandler({
         data: {
           vendor_name: vendor.name,
           reason: data.reason || "Policy violation",
-          appeal_url: `${config.storefrontUrl}/vendor/appeal`,
-          support_email: config.emails.support,
+          appeal_url: `${appConfig.storefrontUrl}/vendor/appeal`,
+          support_email: appConfig.emails.support,
         }
       })
     }
     
-    if (config.features.enableAdminNotifications) {
+    if (appConfig.features.enableAdminNotifications) {
       await notificationService.createNotifications({
         to: "",
         channel: "feed",

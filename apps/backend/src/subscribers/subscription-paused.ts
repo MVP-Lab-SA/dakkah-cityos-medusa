@@ -1,7 +1,7 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
 import { subscriberLogger } from "../lib/logger"
-import { config } from "../lib/config"
+import { appConfig } from "../lib/config"
 
 const logger = subscriberLogger
 
@@ -16,7 +16,7 @@ export default async function subscriptionPausedHandler({
     const subscription = await subscriptionService.retrieveSubscription(data.id)
     const customerEmail = subscription?.customer?.email || subscription?.metadata?.email
     
-    if (customerEmail && config.features.enableEmailNotifications) {
+    if (customerEmail && appConfig.features.enableEmailNotifications) {
       await notificationService.createNotifications({
         to: customerEmail,
         channel: "email",
@@ -25,13 +25,13 @@ export default async function subscriptionPausedHandler({
           subscription_id: subscription.id,
           plan_name: subscription.plan?.name || "Subscription",
           pause_reason: data.reason || "Paused by request",
-          resume_url: `${config.storefrontUrl}/account/subscriptions/${subscription.id}`,
+          resume_url: `${appConfig.storefrontUrl}/account/subscriptions/${subscription.id}`,
           customer_name: subscription.customer?.first_name || "Customer",
         }
       })
     }
     
-    if (config.features.enableAdminNotifications) {
+    if (appConfig.features.enableAdminNotifications) {
       await notificationService.createNotifications({
         to: "",
         channel: "feed",

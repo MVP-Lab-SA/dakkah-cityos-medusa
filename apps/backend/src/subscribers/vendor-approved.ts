@@ -1,7 +1,7 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
 import { subscriberLogger } from "../lib/logger"
-import { config } from "../lib/config"
+import { appConfig } from "../lib/config"
 
 const logger = subscriberLogger
 
@@ -25,20 +25,20 @@ export default async function vendorApprovedHandler({
       return
     }
 
-    if (vendor.contact_email && config.features.enableEmailNotifications) {
+    if (vendor.contact_email && appConfig.features.enableEmailNotifications) {
       await notificationService.createNotifications({
         to: vendor.contact_email,
         channel: "email",
         template: "vendor-approved",
         data: {
           vendor_name: vendor.name,
-          dashboard_url: `${config.storefrontUrl}/vendor/dashboard`,
+          dashboard_url: `${appConfig.storefrontUrl}/vendor/dashboard`,
           next_steps: "You can now start adding products to your store",
         },
       })
     }
 
-    if (config.features.enableAdminNotifications) {
+    if (appConfig.features.enableAdminNotifications) {
       await notificationService.createNotifications({
         to: "",
         channel: "feed",

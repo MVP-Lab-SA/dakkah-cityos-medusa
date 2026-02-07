@@ -1,7 +1,7 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
 import { subscriberLogger } from "../lib/logger"
-import { config } from "../lib/config"
+import { appConfig } from "../lib/config"
 
 const logger = subscriberLogger
 
@@ -16,7 +16,7 @@ export default async function bookingCancelledHandler({
     const booking = await bookingService.retrieveBooking(data.id)
     const customerEmail = booking?.customer?.email || booking?.metadata?.email
     
-    if (customerEmail && config.features.enableEmailNotifications) {
+    if (customerEmail && appConfig.features.enableEmailNotifications) {
       await notificationService.createNotifications({
         to: customerEmail,
         channel: "email",
@@ -28,12 +28,12 @@ export default async function bookingCancelledHandler({
           cancellation_reason: data.reason || "Booking cancelled",
           customer_name: booking.customer?.first_name || "Customer",
           refund_info: "Any applicable refund will be processed within 5-10 business days",
-          rebook_url: `${config.storefrontUrl}/services`,
+          rebook_url: `${appConfig.storefrontUrl}/services`,
         }
       })
     }
     
-    if (config.features.enableAdminNotifications) {
+    if (appConfig.features.enableAdminNotifications) {
       await notificationService.createNotifications({
         to: "",
         channel: "feed",

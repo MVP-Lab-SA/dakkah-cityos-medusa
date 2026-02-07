@@ -1,7 +1,7 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
 import { subscriberLogger } from "../lib/logger"
-import { config } from "../lib/config"
+import { appConfig } from "../lib/config"
 
 const logger = subscriberLogger
 
@@ -18,7 +18,7 @@ export default async function subscriptionRenewalUpcomingHandler({
     
     const daysUntilRenewal = data.days_until_renewal || 7
     
-    if (customerEmail && config.features.enableEmailNotifications) {
+    if (customerEmail && appConfig.features.enableEmailNotifications) {
       await notificationService.createNotifications({
         to: customerEmail,
         channel: "email",
@@ -29,7 +29,7 @@ export default async function subscriptionRenewalUpcomingHandler({
           renewal_date: subscription.next_billing_date,
           days_until_renewal: daysUntilRenewal,
           renewal_amount: subscription.plan?.price,
-          manage_url: `${config.storefrontUrl}/account/subscriptions/${subscription.id}`,
+          manage_url: `${appConfig.storefrontUrl}/account/subscriptions/${subscription.id}`,
           customer_name: subscription.customer?.first_name || "Customer",
         }
       })

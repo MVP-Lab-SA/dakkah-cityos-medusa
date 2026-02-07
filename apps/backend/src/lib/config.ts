@@ -3,7 +3,7 @@
  * All environment variables and constants in one place
  */
 
-export const config = {
+export const appConfig = {
   // URLs
   storefrontUrl: process.env.STOREFRONT_URL || "",
   backendUrl: process.env.MEDUSA_BACKEND_URL || "",
@@ -59,11 +59,11 @@ export const config = {
 export function validateConfig(): string[] {
   const errors: string[] = []
   
-  if (!config.storefrontUrl && process.env.NODE_ENV === "production") {
+  if (!appConfig.storefrontUrl && process.env.NODE_ENV === "production") {
     errors.push("STOREFRONT_URL is required in production")
   }
   
-  if (config.features.enableStripConnect && !config.stripe.secretKey) {
+  if (appConfig.features.enableStripConnect && !appConfig.stripe.secretKey) {
     errors.push("STRIPE_SECRET_KEY is required when Stripe Connect is enabled")
   }
   

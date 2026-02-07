@@ -1,7 +1,7 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
 import { subscriberLogger } from "../lib/logger"
-import { config } from "../lib/config"
+import { appConfig } from "../lib/config"
 
 const logger = subscriberLogger
 
@@ -22,7 +22,7 @@ export default async function quoteApprovedHandler({
 
     const customerEmail = quote.company?.email || quote.metadata?.email
 
-    if (customerEmail && config.features.enableEmailNotifications) {
+    if (customerEmail && appConfig.features.enableEmailNotifications) {
       await notificationService.createNotifications({
         to: customerEmail,
         channel: "email",
@@ -32,12 +32,12 @@ export default async function quoteApprovedHandler({
           company_name: quote.company?.name || "Customer",
           total: quote.total,
           valid_until: quote.valid_until,
-          view_url: `${config.storefrontUrl}/business/quotes/${quote.id}`,
+          view_url: `${appConfig.storefrontUrl}/business/quotes/${quote.id}`,
         },
       })
     }
 
-    if (config.features.enableAdminNotifications) {
+    if (appConfig.features.enableAdminNotifications) {
       await notificationService.createNotifications({
         to: "",
         channel: "feed",

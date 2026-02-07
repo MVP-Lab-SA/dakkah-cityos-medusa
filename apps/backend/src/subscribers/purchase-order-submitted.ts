@@ -1,7 +1,7 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
 import { subscriberLogger } from "../lib/logger"
-import { config } from "../lib/config"
+import { appConfig } from "../lib/config"
 
 const logger = subscriberLogger
 
@@ -15,7 +15,7 @@ export default async function purchaseOrderSubmittedHandler({
   try {
     const po = await purchaseOrderService.retrievePurchaseOrder(data.id)
     
-    if (po?.company?.email && config.features.enableEmailNotifications) {
+    if (po?.company?.email && appConfig.features.enableEmailNotifications) {
       await notificationService.createNotifications({
         to: po.company.email,
         channel: "email",
@@ -25,12 +25,12 @@ export default async function purchaseOrderSubmittedHandler({
           company_name: po.company.name,
           total: po.total,
           status: po.status,
-          view_url: `${config.storefrontUrl}/business/purchase-orders/${po.id}`,
+          view_url: `${appConfig.storefrontUrl}/business/purchase-orders/${po.id}`,
         }
       })
     }
     
-    if (config.features.enableAdminNotifications) {
+    if (appConfig.features.enableAdminNotifications) {
       await notificationService.createNotifications({
         to: "",
         channel: "feed",

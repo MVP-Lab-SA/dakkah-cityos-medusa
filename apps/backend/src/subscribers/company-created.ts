@@ -1,7 +1,7 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
 import { subscriberLogger } from "../lib/logger"
-import { config } from "../lib/config"
+import { appConfig } from "../lib/config"
 
 const logger = subscriberLogger
 
@@ -15,20 +15,20 @@ export default async function companyCreatedHandler({
   try {
     const company = await companyService.retrieveCompany(data.id)
     
-    if (company?.email && config.features.enableEmailNotifications) {
+    if (company?.email && appConfig.features.enableEmailNotifications) {
       await notificationService.createNotifications({
         to: company.email,
         channel: "email",
         template: "company-welcome",
         data: {
           company_name: company.name,
-          dashboard_url: `${config.storefrontUrl}/business/dashboard`,
+          dashboard_url: `${appConfig.storefrontUrl}/business/dashboard`,
           features: ["Request quotes", "Manage team", "Track orders", "Volume pricing"],
         }
       })
     }
     
-    if (config.features.enableAdminNotifications) {
+    if (appConfig.features.enableAdminNotifications) {
       await notificationService.createNotifications({
         to: "",
         channel: "feed",

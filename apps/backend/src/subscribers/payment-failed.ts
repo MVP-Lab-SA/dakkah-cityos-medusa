@@ -1,7 +1,7 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
 import { subscriberLogger } from "../lib/logger"
-import { config } from "../lib/config"
+import { appConfig } from "../lib/config"
 
 const logger = subscriberLogger
 
@@ -23,7 +23,7 @@ export default async function paymentFailedHandler({
     const order = payment?.payment_collection?.order
     const customer = order?.customer
     
-    if (customer?.email && config.features.enableEmailNotifications) {
+    if (customer?.email && appConfig.features.enableEmailNotifications) {
       await notificationService.createNotifications({
         to: customer.email,
         channel: "email",
@@ -32,13 +32,13 @@ export default async function paymentFailedHandler({
           order_id: order?.id,
           order_display_id: order?.display_id,
           error: data.error || "Payment could not be processed",
-          retry_url: `${config.storefrontUrl}/checkout?retry=true`,
+          retry_url: `${appConfig.storefrontUrl}/checkout?retry=true`,
           customer_name: customer.first_name || "Customer",
         }
       })
     }
     
-    if (config.features.enableAdminNotifications) {
+    if (appConfig.features.enableAdminNotifications) {
       await notificationService.createNotifications({
         to: "",
         channel: "feed",

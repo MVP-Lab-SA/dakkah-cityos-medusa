@@ -1,7 +1,7 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
 import { subscriberLogger } from "../lib/logger"
-import { config } from "../lib/config"
+import { appConfig } from "../lib/config"
 
 const logger = subscriberLogger
 
@@ -16,7 +16,7 @@ export default async function bookingCompletedHandler({
     const booking = await bookingService.retrieveBooking(data.id)
     const customerEmail = booking?.customer?.email || booking?.metadata?.email
     
-    if (customerEmail && config.features.enableEmailNotifications) {
+    if (customerEmail && appConfig.features.enableEmailNotifications) {
       await notificationService.createNotifications({
         to: customerEmail,
         channel: "email",
@@ -25,8 +25,8 @@ export default async function bookingCompletedHandler({
           booking_id: booking.id,
           service_name: booking.service?.title || "Service",
           customer_name: booking.customer?.first_name || "Customer",
-          review_url: `${config.storefrontUrl}/account/bookings/${booking.id}/review`,
-          rebook_url: `${config.storefrontUrl}/services/${booking.service?.handle || ""}`,
+          review_url: `${appConfig.storefrontUrl}/account/bookings/${booking.id}/review`,
+          rebook_url: `${appConfig.storefrontUrl}/services/${booking.service?.handle || ""}`,
         }
       })
     }
