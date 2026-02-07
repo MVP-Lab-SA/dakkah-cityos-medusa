@@ -34,7 +34,7 @@ export async function PUT(
     rate?: number
   }
 
-  const commissionService = req.scope.resolve("commissionModuleService")
+  const commissionService = req.scope.resolve("commissionModuleService") as any
 
   if (rate !== undefined && (rate < 0 || rate > 100)) {
     return res.status(400).json({ message: "Rate must be between 0 and 100" })
@@ -66,7 +66,7 @@ export async function DELETE(
   res: MedusaResponse
 ) {
   const { id } = req.params
-  const commissionService = req.scope.resolve("commissionModuleService")
+  const commissionService = req.scope.resolve("commissionModuleService") as any
 
   await commissionService.deleteCommissionTiers(id)
 

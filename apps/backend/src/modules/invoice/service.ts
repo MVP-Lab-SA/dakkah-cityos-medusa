@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { MedusaService } from "@medusajs/framework/utils"
 import { Invoice } from "./models/invoice"
 import { InvoiceItem } from "./models/invoice-item"

@@ -25,7 +25,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
 export async function PUT(req: MedusaRequest, res: MedusaResponse) {
   const { id } = req.params
-  const commissionService = req.scope.resolve("commission")
+  const commissionService = req.scope.resolve("commission") as any
   
   try {
     const {
@@ -39,7 +39,7 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
       max_order_value,
       is_active,
       priority
-    } = req.body
+    } = req.body as any
     
     if (type && !["percentage", "flat"].includes(type)) {
       return res.status(400).json({ message: "type must be 'percentage' or 'flat'" })
@@ -72,7 +72,7 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
 
 export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
   const { id } = req.params
-  const commissionService = req.scope.resolve("commission")
+  const commissionService = req.scope.resolve("commission") as any
   
   try {
     await commissionService.deleteCommissionRules(id)

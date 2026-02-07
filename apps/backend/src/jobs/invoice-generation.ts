@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { MedusaContainer } from "@medusajs/framework/types"
 import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils"
 

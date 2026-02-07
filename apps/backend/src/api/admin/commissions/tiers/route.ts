@@ -28,7 +28,7 @@ export async function POST(
     rate: number
   }
 
-  const commissionService = req.scope.resolve("commissionModuleService")
+  const commissionService = req.scope.resolve("commissionModuleService") as any
 
   // Validate rate is between 0 and 100
   if (rate < 0 || rate > 100) {

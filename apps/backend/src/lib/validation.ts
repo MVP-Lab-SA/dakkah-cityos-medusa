@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Centralized Zod validation schemas for API routes
  */

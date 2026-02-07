@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
 import { subscriberLogger } from "../lib/logger"

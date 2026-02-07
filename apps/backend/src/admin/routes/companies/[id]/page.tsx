@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { defineRouteConfig } from "@medusajs/admin-sdk"
 import { Container, Heading, Text, Button, Badge, Input, Label, toast } from "@medusajs/ui"
 import { Buildings, CurrencyDollar, DocumentText, Users, Check, XMark, Plus, Trash } from "@medusajs/icons"

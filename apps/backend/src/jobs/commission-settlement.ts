@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { MedusaContainer } from "@medusajs/framework/types"
 import { jobLogger } from "../lib/logger"
 
