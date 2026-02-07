@@ -1,8 +1,29 @@
 @theme {
-  /* Font Family */
-  --font-sans:
-    Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+  /* Enterprise Font Family - Professional & Modern */
+  --font-sans: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", Ubuntu, sans-serif;
+  --font-display: "Plus Jakarta Sans", var(--font-sans);
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+  /* Enterprise Color Palette */
+  --color-enterprise-50: #f8fafc;
+  --color-enterprise-100: #f1f5f9;
+  --color-enterprise-200: #e2e8f0;
+  --color-enterprise-300: #cbd5e1;
+  --color-enterprise-400: #94a3b8;
+  --color-enterprise-500: #64748b;
+  --color-enterprise-600: #475569;
+  --color-enterprise-700: #334155;
+  --color-enterprise-800: #1e293b;
+  --color-enterprise-900: #0f172a;
+  --color-enterprise-950: #020617;
+
+  /* Accent Colors */
+  --color-accent-primary: #2563eb;
+  --color-accent-primary-dark: #1d4ed8;
+  --color-accent-success: #059669;
+  --color-accent-warning: #d97706;
+  --color-accent-danger: #dc2626;
 
   /* Animation */
   --animation-ring: ring 2.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
@@ -19,6 +40,10 @@
   --animation-enter: enter 200ms ease-out;
   --animation-slide-in: slide-in 1.2s cubic-bezier(0.41, 0.73, 0.51, 1.02);
   --animation-leave: leave 150ms ease-in forwards;
+  --animation-fade-in: fade-in 0.5s ease-out forwards;
+  --animation-slide-up: slide-up 0.4s ease-out forwards;
+  --animation-scale-in: scale-in 0.3s ease-out forwards;
+  --animation-pulse-subtle: pulse-subtle 2s ease-in-out infinite;
 
   /* Keyframes definitions */
   @keyframes ring {
@@ -116,6 +141,46 @@
     }
     100% {
       transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-up {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scale-in {
+    0% {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes pulse-subtle {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
     }
   }
 }
