@@ -1,0 +1,104 @@
+import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+
+// GET - Get Stripe Connect status for vendor
+export async function GET(
+  req: MedusaRequest,
+  res: MedusaResponse
+) {
+  const { id } = req.params
+  const query = req.scope.resolve("query")
+
+  const { data: vendors } = await query.graph({
+    entity: "vendors",
+    fields: ["id", "stripe_account_id", "stripe_onboarding_complete", "stripe_payouts_enabled"],
+    filters: { id }
+  })
+
+  if (!vendors.length) {
+    return res.status(404).json({ message: "Vendor not found" })
+  }
+
+  const vendor = vendors[0]
+
+  res.json({
+    vendor_id: vendor.id,
+    stripe_account_id: vendor.stripe_account_id,
+    onboarding_complete: vendor.stripe_onboarding_complete || false,
+    payouts_enabled: vendor.stripe_payouts_enabled || false
+  })
+}
+
+// POST - Create Stripe Connect account and get onboarding link
+export async function POST(
+  req: MedusaRequest,
+  res: MedusaResponse
+) {
+  const { id } = req.params
+  const { return_url, refresh_url } = req.body as { return_url: string; refresh_url: string }
+  const query = req.scope.resolve("query")
+  const vendorService = req.scope.resolve("vendorModuleService")
+
+  const { data: vendors } = await query.graph({
+    entity: "vendors",
+    fields: ["id", "name", "email", "stripe_account_id"],
+    filters: { id }
+  })
+
+  if (!vendors.length) {
+    return res.status(404).json({ message: "Vendor not found" })
+  }
+
+  const vendor = vendors[0]
+
+  // Check if Stripe is configured
+  const stripeSecretKey = process.env.STRIPE_SECRET_KEY
+  if (!stripeSecretKey) {
+    return res.status(400).json({ 
+      message: "Stripe is not configured. Please add STRIPE_SECRET_KEY to environment variables." 
+    })
+  }
+
+  try {
+    const stripe = require("stripe")(stripeSecretKey)
+
+    let stripeAccountId = vendor.stripe_account_id
+
+    // Create Stripe Connect account if not exists
+    if (!stripeAccountId) {
+      const account = await stripe.accounts.create({
+        type: "express",
+        email: vendor.email,
+        capabilities: {
+          card_payments: { requested: true },
+          transfers: { requested: true },
+        },
+        business_profile: {
+          name: vendor.name,
+        },
+      })
+
+      stripeAccountId = account.id
+
+      // Save Stripe account ID to vendor
+      await vendorService.updateVendors({
+        selector: { id },
+        data: { stripe_account_id: stripeAccountId }
+      })
+    }
+
+    // Create account link for onboarding
+    const accountLink = await stripe.accountLinks.create({
+      account: stripeAccountId,
+      refresh_url: refresh_url || `${process.env.STORE_URL}/vendor/onboarding/refresh`,
+      return_url: return_url || `${process.env.STORE_URL}/vendor/onboarding/complete`,
+      type: "account_onboarding",
+    })
+
+    res.json({
+      onboarding_url: accountLink.url,
+      stripe_account_id: stripeAccountId
+    })
+  } catch (error: any) {
+    res.status(500).json({ message: error.message })
+  }
+}

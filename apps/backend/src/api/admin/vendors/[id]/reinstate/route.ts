@@ -1,28 +1,59 @@
-import { MedusaRequest, MedusaResponse } from "@medusajs/framework"
+import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 
-export async function POST(req: MedusaRequest, res: MedusaResponse) {
+// POST - Reinstate suspended vendor
+export async function POST(
+  req: MedusaRequest,
+  res: MedusaResponse
+) {
   const { id } = req.params
-  const vendorService = req.scope.resolve("vendor")
-  const eventBus = req.scope.resolve("event_bus")
-  
-  try {
-    const vendor = await vendorService.updateVendors({
-      id,
-      status: "active",
-      suspended_at: null,
-      suspended_by: null,
-      suspension_reason: null,
-      metadata: {
-        reinstated_at: new Date().toISOString(),
-        reinstated_by: req.auth_context?.actor_id
-      }
-    })
-    
-    await eventBus.emit("vendor.reinstated", { id })
-    
-    res.json({ vendor })
-  } catch (error: any) {
-    console.error("[Admin Vendor Reinstate] Error:", error)
-    res.status(500).json({ message: error.message || "Failed to reinstate vendor" })
+  const { reason, notify_vendor } = req.body as { 
+    reason?: string
+    notify_vendor?: boolean 
   }
+
+  const query = req.scope.resolve("query")
+  const vendorService = req.scope.resolve("vendorModuleService")
+
+  const { data: vendors } = await query.graph({
+    entity: "vendors",
+    fields: ["id", "name", "email", "status", "suspended_at", "suspension_reason"],
+    filters: { id }
+  })
+
+  if (!vendors.length) {
+    return res.status(404).json({ message: "Vendor not found" })
+  }
+
+  const vendor = vendors[0]
+
+  if (vendor.status !== "suspended") {
+    return res.status(400).json({ 
+      message: `Vendor is not suspended. Current status: ${vendor.status}` 
+    })
+  }
+
+  // Reinstate vendor
+  await vendorService.updateVendors({
+    selector: { id },
+    data: {
+      status: "approved",
+      suspended_at: null,
+      suspension_reason: null,
+      reinstated_at: new Date(),
+      reinstatement_reason: reason
+    }
+  })
+
+  // Notify vendor if requested
+  if (notify_vendor) {
+    // TODO: Send reinstatement notification email
+  }
+
+  res.json({
+    message: "Vendor reinstated successfully",
+    vendor_id: id,
+    previous_status: "suspended",
+    new_status: "approved",
+    reinstated_at: new Date()
+  })
 }
