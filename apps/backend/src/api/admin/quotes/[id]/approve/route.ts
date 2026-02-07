@@ -1,34 +1,41 @@
-import { MedusaRequest, MedusaResponse } from "@medusajs/framework";
-import { z } from "zod";
+import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 
-const approveQuoteSchema = z.object({
-  custom_discount_percentage: z.number().optional(),
-  custom_discount_amount: z.string().optional(),
-  discount_reason: z.string().optional(),
-  valid_days: z.number().default(30),
-});
-
-/**
- * POST /admin/quotes/:id/approve
- * Approve a quote with optional custom pricing
- */
+// POST /admin/quotes/:id/approve
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const { id } = req.params;
-  const adminUserId = req.auth_context?.actor_id;
-  const parsed = approveQuoteSchema.parse(req.body);
-
-  // @ts-ignore - Dynamic import
-  const { approveQuoteWorkflow } = await import(
-    "../../../../../workflows/b2b/approve-quote-workflow.js"
-  );
-
-  const { result } = await approveQuoteWorkflow(req.scope).run({
-    input: {
-      quote_id: id,
-      approved_by: adminUserId,
-      ...parsed,
-    },
-  });
-
-  res.json({ quote: result });
+  const quoteModule = req.scope.resolve("quote")
+  const { id } = req.params
+  
+  const { 
+    quoted_price,
+    custom_discount_percentage,
+    custom_discount_amount,
+    discount_reason,
+    valid_until,
+    internal_notes,
+  } = req.body as {
+    quoted_price?: number
+    custom_discount_percentage?: number
+    custom_discount_amount?: number
+    discount_reason?: string
+    valid_until?: string
+    internal_notes?: string
+  }
+  
+  // Set default validity of 30 days if not provided
+  const defaultValidUntil = new Date()
+  defaultValidUntil.setDate(defaultValidUntil.getDate() + 30)
+  
+  const quote = await quoteModule.updateQuotes({
+    id,
+    status: "approved",
+    reviewed_at: new Date(),
+    valid_from: new Date(),
+    valid_until: valid_until ? new Date(valid_until) : defaultValidUntil,
+    custom_discount_percentage,
+    custom_discount_amount: custom_discount_amount || quoted_price,
+    discount_reason,
+    internal_notes,
+  })
+  
+  res.json({ quote })
 }
