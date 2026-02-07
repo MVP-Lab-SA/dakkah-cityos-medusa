@@ -25,11 +25,17 @@ export default defineConfig(({ mode }) => {
         : []),
 
       tanstackStart({
-        target: "netlify",
+        target: "node",
         customViteReactPlugin: true,
       }),
       react(),
     ],
+
+    server: {
+      host: "0.0.0.0",
+      port: 5000,
+      allowedHosts: true,
+    },
 
     ssr: {
       noExternal: ["@medusajs/js-sdk", "@medusajs/types"],

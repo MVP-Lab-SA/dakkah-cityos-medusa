@@ -12,6 +12,10 @@ import { createServerRootRoute } from '@tanstack/react-start/server'
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as StoreRouteImport } from './routes/store'
+import {
+  Route as HealthRouteImport,
+  ServerRoute as HealthServerRouteImport,
+} from './routes/health'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as CountryCodeRouteImport } from './routes/$countryCode'
@@ -81,13 +85,17 @@ import { Route as CountryCodeAccountBookingsIdRouteImport } from './routes/$coun
 import { Route as CountryCodeAccountSubscriptionsIdBillingRouteImport } from './routes/$countryCode/account/subscriptions/$id.billing'
 import { Route as CountryCodeAccountOrdersIdTrackRouteImport } from './routes/$countryCode/account/orders/$id.track'
 import { Route as CountryCodeAccountOrdersIdReturnRouteImport } from './routes/$countryCode/account/orders/$id.return'
-import { ServerRoute as HealthServerRouteImport } from './routes/health'
 
 const rootServerRouteImport = createServerRootRoute()
 
 const StoreRoute = StoreRouteImport.update({
   id: '/store',
   path: '/store',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HealthRoute = HealthRouteImport.update({
+  id: '/health',
+  path: '/health',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CheckoutRoute = CheckoutRouteImport.update({
@@ -486,6 +494,7 @@ export interface FileRoutesByFullPath {
   '/$countryCode': typeof CountryCodeRouteWithChildren
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
+  '/health': typeof HealthRoute
   '/store': typeof StoreRoute
   '/$countryCode/$slug': typeof CountryCodeSlugRoute
   '/$countryCode/cart': typeof CountryCodeCartRoute
@@ -557,6 +566,7 @@ export interface FileRoutesByTo {
   '/$': typeof SplatRoute
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
+  '/health': typeof HealthRoute
   '/store': typeof StoreRoute
   '/$countryCode/$slug': typeof CountryCodeSlugRoute
   '/$countryCode/cart': typeof CountryCodeCartRoute
@@ -629,6 +639,7 @@ export interface FileRoutesById {
   '/$countryCode': typeof CountryCodeRouteWithChildren
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
+  '/health': typeof HealthRoute
   '/store': typeof StoreRoute
   '/$countryCode/$slug': typeof CountryCodeSlugRoute
   '/$countryCode/cart': typeof CountryCodeCartRoute
@@ -703,6 +714,7 @@ export interface FileRouteTypes {
     | '/$countryCode'
     | '/cart'
     | '/checkout'
+    | '/health'
     | '/store'
     | '/$countryCode/$slug'
     | '/$countryCode/cart'
@@ -774,6 +786,7 @@ export interface FileRouteTypes {
     | '/$'
     | '/cart'
     | '/checkout'
+    | '/health'
     | '/store'
     | '/$countryCode/$slug'
     | '/$countryCode/cart'
@@ -845,6 +858,7 @@ export interface FileRouteTypes {
     | '/$countryCode'
     | '/cart'
     | '/checkout'
+    | '/health'
     | '/store'
     | '/$countryCode/$slug'
     | '/$countryCode/cart'
@@ -918,6 +932,7 @@ export interface RootRouteChildren {
   CountryCodeRoute: typeof CountryCodeRouteWithChildren
   CartRoute: typeof CartRoute
   CheckoutRoute: typeof CheckoutRoute
+  HealthRoute: typeof HealthRoute
   StoreRoute: typeof StoreRoute
   VendorOrdersOrderIdRoute: typeof VendorOrdersOrderIdRoute
   VendorProductsProductIdRoute: typeof VendorProductsProductIdRoute
@@ -957,6 +972,13 @@ declare module '@tanstack/react-router' {
       path: '/store'
       fullPath: '/store'
       preLoaderRoute: typeof StoreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/health': {
+      id: '/health'
+      path: '/health'
+      fullPath: '/health'
+      preLoaderRoute: typeof HealthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checkout': {
@@ -1641,6 +1663,7 @@ const rootRouteChildren: RootRouteChildren = {
   CountryCodeRoute: CountryCodeRouteWithChildren,
   CartRoute: CartRoute,
   CheckoutRoute: CheckoutRoute,
+  HealthRoute: HealthRoute,
   StoreRoute: StoreRoute,
   VendorOrdersOrderIdRoute: VendorOrdersOrderIdRoute,
   VendorProductsProductIdRoute: VendorProductsProductIdRoute,

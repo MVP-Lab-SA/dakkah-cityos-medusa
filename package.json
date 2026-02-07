@@ -12,8 +12,8 @@
     "storefront:dev": "turbo dev --filter=storefront"
   },
   "devDependencies": {
-    "turbo": "^2.0.14",
-    "prettier": "^3.2.5"
+    "prettier": "^3.2.5",
+    "turbo": "^2.0.14"
   },
   "packageManager": "pnpm@10.12.3",
   "engines": {
@@ -23,6 +23,16 @@
     "overrides": {
       "react": "19.1.1",
       "react-dom": "19.1.1"
-    }
+    },
+    "ignoredBuiltDependencies": [
+      "@medusajs/telemetry",
+      "@parcel/watcher",
+      "@swc/core",
+      "esbuild",
+      "msgpackr-extract",
+      "protobufjs",
+      "sharp",
+      "unrs-resolver"
+    ]
   }
 }
