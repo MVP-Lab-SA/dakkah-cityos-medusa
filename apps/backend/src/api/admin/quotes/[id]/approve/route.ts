@@ -19,7 +19,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
   // @ts-ignore - Dynamic import
   const { approveQuoteWorkflow } = await import(
-    "../../../../workflows/b2b/approve-quote-workflow"
+    "../../../../../workflows/b2b/approve-quote-workflow.js"
   );
 
   const { result } = await approveQuoteWorkflow(req.scope).run({

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
 import { z } from "zod";
 import { createSubscriptionWorkflow } from "../../../workflows/subscription/create-subscription-workflow";
@@ -17,7 +18,7 @@ const createSubscriptionSchema = z.object({
       quantity: z.number().min(1),
     })
   ),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 // GET /admin/subscriptions - List subscriptions

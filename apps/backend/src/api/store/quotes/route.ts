@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
 
 /**
@@ -32,7 +33,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   });
 
   // Create quote items
-  const quoteItems = [];
+  const quoteItems: any[] = [];
   for (const item of ((items || []) as any[])) {
     const quoteItem = await quoteModuleService.createQuoteItems({
       quote_id: quote.id,
@@ -43,8 +44,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       thumbnail: item.thumbnail,
       quantity: item.quantity,
       unit_price: item.unit_price,
-      subtotal: BigInt(item.unit_price) * BigInt(item.quantity),
-      total: BigInt(item.unit_price) * BigInt(item.quantity),
+      subtotal: String(Number(item.unit_price) * Number(item.quantity)),
+      total: String(Number(item.unit_price) * Number(item.quantity)),
     });
     quoteItems.push(quoteItem);
   }

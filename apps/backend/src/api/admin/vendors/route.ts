@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { z } from "zod"
 import { createVendorWorkflow } from "../../../workflows/vendor/create-vendor-workflow"
@@ -17,7 +18,7 @@ const createVendorSchema = z.object({
     countryCode: z.string(),
   }),
   commissionRate: z.number().min(0).max(100).optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 })
 
 interface CityOSContext {
