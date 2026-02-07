@@ -1,12 +1,13 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework";
 import { z } from "zod";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const updateSubscriptionSchema = z.object({
   status: z.enum(["active", "paused", "canceled"]).optional(),
   payment_method_id: z.string().optional(),
   billing_interval: z.enum(["daily", "weekly", "monthly", "quarterly", "yearly"]).optional(),
   billing_interval_count: z.number().optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 // GET /admin/subscriptions/:id - Get subscription
@@ -19,7 +20,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     return res.status(403).json({ message: "Tenant context required" });
   }
   
-  const subscription = await subscriptionModule.retrieveSubscription(id);
+  const [subscription] = await subscriptionModule.listSubscriptions({ id }, { take: 1 });
   
   if (!subscription || subscription.tenant_id !== tenantId) {
     return res.status(404).json({ message: "Subscription not found" });
@@ -38,7 +39,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     return res.status(403).json({ message: "Tenant context required" });
   }
   
-  const subscription = await subscriptionModule.retrieveSubscription(id);
+  const [subscription] = await subscriptionModule.listSubscriptions({ id }, { take: 1 });
   
   if (!subscription || subscription.tenant_id !== tenantId) {
     return res.status(404).json({ message: "Subscription not found" });
@@ -69,7 +70,7 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
     return res.status(403).json({ message: "Tenant context required" });
   }
   
-  const subscription = await subscriptionModule.retrieveSubscription(id);
+  const [subscription] = await subscriptionModule.listSubscriptions({ id }, { take: 1 });
   
   if (!subscription || subscription.tenant_id !== tenantId) {
     return res.status(404).json({ message: "Subscription not found" });

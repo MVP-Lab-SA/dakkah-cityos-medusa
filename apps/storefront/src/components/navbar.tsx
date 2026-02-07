@@ -1,4 +1,5 @@
 import { CartDropdown } from "@/components/cart"
+import { UserMenu } from "@/components/auth"
 import {
   Drawer,
   DrawerClose,
@@ -8,6 +9,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer"
 import { useCategories } from "@/lib/hooks/use-categories"
+import { useAuth } from "@/lib/context/auth-context"
 import { getCountryCodeFromPath } from "@/lib/utils/region"
 import * as NavigationMenu from "@radix-ui/react-navigation-menu"
 import { Link, useLocation } from "@tanstack/react-router"
@@ -166,8 +168,9 @@ export const Navbar = () => {
             </Link>
           </div>
 
-          {/* Cart */}
-          <div className="flex items-center gap-x-6 h-full justify-end">
+          {/* Cart & User */}
+          <div className="flex items-center gap-x-4 h-full justify-end">
+            <UserMenu />
             <CartDropdown />
           </div>
         </nav>

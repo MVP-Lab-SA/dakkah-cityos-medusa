@@ -1,74 +1,42 @@
-import type { MedusaRequest, MedusaResponse } from "@medusajs/framework"
-import { z } from "zod"
-import { processPayoutWorkflow } from "../../../workflows/vendor/process-payout-workflow.js"
-
-const createPayoutSchema = z.object({
-  vendorId: z.string(),
-  periodStart: z.string().datetime(),
-  periodEnd: z.string().datetime(),
-  paymentMethod: z.enum(["stripe_connect", "bank_transfer", "paypal", "manual"]).optional(),
-})
+import { MedusaRequest, MedusaResponse } from "@medusajs/framework"
+import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const payoutModule = req.scope.resolve("payout") as any
-  const context = (req as any).cityosContext
-
-  if (!context?.tenantId) {
-    return res.status(403).json({ message: "Tenant context required" })
-  }
-
-  const { limit = 20, offset = 0, vendor_id, status } = req.query
-
-  const filters: any = {
-    tenant_id: context.tenantId,
-    ...(context.storeId && { store_id: context.storeId }),
-  }
-
-  if (vendor_id) filters.vendor_id = vendor_id
-  if (status) filters.status = status
-
-  const payouts = await payoutModule.listPayouts(
-    filters,
-    {
-      skip: Number(offset),
-      take: Number(limit),
-    }
-  )
-
-  return res.json({
-    payouts,
-    count: Array.isArray(payouts) ? payouts.length : 0,
-    limit: Number(limit),
-    offset: Number(offset),
-  })
-}
-
-export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const context = (req as any).cityosContext
-
-  if (!context?.tenantId) {
-    return res.status(403).json({ message: "Tenant context required" })
-  }
-
-  const validation = createPayoutSchema.safeParse(req.body)
+  const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
   
-  if (!validation.success) {
-    return res.status(400).json({
-      message: "Validation failed",
-      errors: validation.error.issues,
+  try {
+    const { 
+      limit = "20", 
+      offset = "0", 
+      status,
+      vendor_id,
+      sort = "created_at",
+      order = "DESC"
+    } = req.query as Record<string, string>
+    
+    const filters: Record<string, any> = {}
+    if (status) filters.status = status
+    if (vendor_id) filters.vendor_id = vendor_id
+    
+    const { data: payouts, metadata } = await query.graph({
+      entity: "payout",
+      fields: ["*", "vendor.*"],
+      filters,
+      pagination: {
+        skip: Number(offset),
+        take: Number(limit),
+        order: { [sort]: order.toUpperCase() as "ASC" | "DESC" }
+      }
     })
+    
+    res.json({
+      payouts,
+      count: metadata?.count || payouts.length,
+      limit: Number(limit),
+      offset: Number(offset)
+    })
+  } catch (error: any) {
+    console.error("[Admin Payouts GET] Error:", error)
+    res.status(500).json({ message: error.message || "Failed to fetch payouts" })
   }
-
-  const { result } = await processPayoutWorkflow(req.scope).run({
-    input: {
-      vendorId: validation.data.vendorId,
-      tenantId: context.tenantId,
-      storeId: context.storeId,
-      periodStart: new Date(validation.data.periodStart),
-      periodEnd: new Date(validation.data.periodEnd),
-      paymentMethod: validation.data.paymentMethod,
-    },
-  })
-
-  return res.status(201).json({ payout: result.payout, transactionCount: result.transactionCount })
 }

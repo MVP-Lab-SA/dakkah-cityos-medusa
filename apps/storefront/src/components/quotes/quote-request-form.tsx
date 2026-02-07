@@ -3,13 +3,51 @@ import { useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { sdk } from "@/lib/utils/sdk";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useCart } from "@/lib/hooks/use-cart";
+import { useToast } from "@/components/ui/toast";
+import { useCountryCode } from "@/lib/hooks/use-country-code";
+
+const MAX_NOTES_LENGTH = 2000;
+
+interface FormErrors {
+  notes?: string;
+  items?: string;
+}
 
 export function QuoteRequestForm() {
   const navigate = useNavigate();
   const { data: cart } = useCart();
   const [notes, setNotes] = useState("");
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const { addToast } = useToast();
+  const countryCode = useCountryCode();
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+
+    if (!cart?.items || cart.items.length === 0) {
+      newErrors.items = "Your cart is empty. Add items before requesting a quote.";
+    }
+
+    if (notes.length > MAX_NOTES_LENGTH) {
+      newErrors.notes = `Notes must be less than ${MAX_NOTES_LENGTH} characters`;
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleNotesChange = (value: string) => {
+    setNotes(value);
+    if (touched.notes) {
+      if (value.length > MAX_NOTES_LENGTH) {
+        setErrors(prev => ({ ...prev, notes: `Notes must be less than ${MAX_NOTES_LENGTH} characters` }));
+      } else {
+        setErrors(prev => ({ ...prev, notes: undefined }));
+      }
+    }
+  };
 
   const createQuoteMutation = useMutation({
     mutationFn: async (data: Record<string, unknown>) => {
@@ -21,23 +59,28 @@ export function QuoteRequestForm() {
       return response as { quote: { id: string } };
     },
     onSuccess: (data) => {
-      const countryCode = cart?.region?.countries?.[0]?.iso_2 || "us";
+      addToast("success", "Quote request submitted successfully!");
       navigate({
         to: "/$countryCode/quotes/$id",
         params: { countryCode, id: data.quote.id },
       });
+    },
+    onError: (error: Error) => {
+      addToast("error", error.message || "Failed to submit quote request. Please try again.");
     },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!cart?.items || cart.items.length === 0) {
-      alert("Your cart is empty. Add items before requesting a quote.");
+    if (!validateForm()) {
+      if (errors.items) {
+        addToast("warning", errors.items);
+      }
       return;
     }
 
-    const items = cart.items.map((item) => ({
+    const items = cart!.items!.map((item) => ({
       product_id: item.product_id,
       variant_id: item.variant_id,
       title: item.title,
@@ -49,11 +92,11 @@ export function QuoteRequestForm() {
 
     createQuoteMutation.mutate({
       items,
-      customer_notes: notes,
-      company_id: (cart.metadata as Record<string, string>)?.company_id || null,
-      tenant_id: (cart.metadata as Record<string, string>)?.tenant_id || null,
-      region_id: cart.region_id,
-      store_id: (cart.metadata as Record<string, string>)?.store_id || null,
+      customer_notes: notes.trim(),
+      company_id: (cart!.metadata as Record<string, string>)?.company_id || null,
+      tenant_id: (cart!.metadata as Record<string, string>)?.tenant_id || null,
+      region_id: cart!.region_id,
+      store_id: (cart!.metadata as Record<string, string>)?.store_id || null,
     });
   };
 
@@ -100,10 +143,22 @@ export function QuoteRequestForm() {
         <textarea
           id="notes"
           value={notes}
-          onChange={(e) => setNotes(e.target.value)}
+          onChange={(e) => handleNotesChange(e.target.value)}
+          onBlur={() => setTouched(prev => ({ ...prev, notes: true }))}
           placeholder="Tell us about your needs, timeline, or any special requirements..."
-          className="w-full min-h-32 p-3 border rounded-lg resize-none"
+          className={`w-full min-h-32 p-3 border rounded-lg resize-none ${
+            errors.notes ? "border-red-500" : ""
+          }`}
+          maxLength={MAX_NOTES_LENGTH + 100}
         />
+        <div className="flex justify-between mt-1">
+          {errors.notes && (
+            <p className="text-sm text-red-500">{errors.notes}</p>
+          )}
+          <p className={`text-sm ml-auto ${notes.length > MAX_NOTES_LENGTH ? "text-red-500" : "text-muted-foreground"}`}>
+            {notes.length}/{MAX_NOTES_LENGTH}
+          </p>
+        </div>
       </div>
 
       <div className="flex gap-4">
@@ -117,7 +172,7 @@ export function QuoteRequestForm() {
         <Button
           type="button"
           variant="secondary"
-          onClick={() => navigate({ to: "/$countryCode", params: { countryCode: "us" } })}
+          onClick={() => navigate({ to: "/$countryCode", params: { countryCode } })}
         >
           Cancel
         </Button>

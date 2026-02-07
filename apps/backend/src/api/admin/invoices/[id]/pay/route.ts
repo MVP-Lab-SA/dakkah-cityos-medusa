@@ -1,0 +1,12 @@
+import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+
+// POST /admin/invoices/:id/pay - Record payment on invoice
+export async function POST(req: MedusaRequest, res: MedusaResponse) {
+  const invoiceModule = req.scope.resolve("invoice")
+  const { id } = req.params
+  const { amount } = req.body as { amount?: number }
+  
+  const invoice = await invoiceModule.markAsPaid(id, amount)
+  
+  res.json({ invoice })
+}

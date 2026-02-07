@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework"
 import { z } from "zod"
 
@@ -7,7 +8,7 @@ const updateVendorSchema = z.object({
   phone: z.string().optional(),
   status: z.enum(["onboarding", "active", "inactive", "suspended", "terminated"]).optional(),
   commissionRate: z.number().min(0).max(100).optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 })
 
 export async function GET(
@@ -17,7 +18,7 @@ export async function GET(
   const vendorModule = req.scope.resolve("vendor") as any
   const { id } = req.params
 
-  const vendor = await vendorModule.retrieveVendor(id)
+  const [vendor] = await vendorModule.listVendors({ id }, { take: 1 })
 
   if (!vendor) {
     return res.status(404).json({ message: "Vendor not found" })

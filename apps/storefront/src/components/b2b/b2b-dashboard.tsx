@@ -9,6 +9,7 @@ import {
   Clock,
   CheckCircleSolid
 } from "@medusajs/icons";
+import { useCountryCode } from "@/lib/hooks/use-country-code";
 
 interface Company {
   id: string;
@@ -41,6 +42,8 @@ interface Quote {
 }
 
 export function B2BDashboard() {
+  const countryCode = useCountryCode();
+  
   // Fetch company data
   const { data: companyData, isLoading: loadingCompany } = useQuery({
     queryKey: ["my-company"],
@@ -92,7 +95,7 @@ export function B2BDashboard() {
         <p className="text-muted-foreground mb-6">
           Register your company to access B2B features like quotes, volume pricing, and credit terms.
         </p>
-        <Link to="/$countryCode/b2b/register" params={{ countryCode: "us" }}>
+        <Link to="/$countryCode/b2b/register" params={{ countryCode }}>
           <Button>Register Your Company</Button>
         </Link>
       </div>
@@ -208,7 +211,7 @@ export function B2BDashboard() {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Link to="/$countryCode/quotes/request" params={{ countryCode: "us" }}>
+        <Link to="/$countryCode/quotes/request" params={{ countryCode }}>
           <div className="border rounded-lg p-6 hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer">
             <DocumentText className="w-8 h-8 text-primary mb-3" />
             <h3 className="font-semibold mb-1">Request a Quote</h3>
@@ -218,7 +221,7 @@ export function B2BDashboard() {
           </div>
         </Link>
 
-        <Link to="/$countryCode/quotes" params={{ countryCode: "us" }}>
+        <Link to="/$countryCode/quotes" params={{ countryCode }}>
           <div className="border rounded-lg p-6 hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer">
             <Clock className="w-8 h-8 text-primary mb-3" />
             <h3 className="font-semibold mb-1">View All Quotes</h3>
@@ -228,7 +231,7 @@ export function B2BDashboard() {
           </div>
         </Link>
 
-        <Link to="/$countryCode/store" params={{ countryCode: "us" }}>
+        <Link to="/$countryCode/store" params={{ countryCode }}>
           <div className="border rounded-lg p-6 hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer">
             <CreditCard className="w-8 h-8 text-primary mb-3" />
             <h3 className="font-semibold mb-1">Browse Products</h3>
@@ -243,7 +246,7 @@ export function B2BDashboard() {
       <div className="border rounded-lg">
         <div className="p-6 border-b flex items-center justify-between">
           <h2 className="text-xl font-semibold">Recent Quotes</h2>
-          <Link to="/$countryCode/quotes" params={{ countryCode: "us" }}>
+          <Link to="/$countryCode/quotes" params={{ countryCode }}>
             <Button variant="secondary">View All</Button>
           </Link>
         </div>

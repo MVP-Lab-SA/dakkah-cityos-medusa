@@ -20,26 +20,67 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CountryCodeIndexRouteImport } from './routes/$countryCode/index'
 import { Route as CountryCodeStoresRouteImport } from './routes/$countryCode/stores'
 import { Route as CountryCodeStoreRouteImport } from './routes/$countryCode/store'
+import { Route as CountryCodeSearchRouteImport } from './routes/$countryCode/search'
+import { Route as CountryCodeResetPasswordRouteImport } from './routes/$countryCode/reset-password'
+import { Route as CountryCodeRegisterRouteImport } from './routes/$countryCode/register'
+import { Route as CountryCodeLoginRouteImport } from './routes/$countryCode/login'
 import { Route as CountryCodeCheckoutRouteImport } from './routes/$countryCode/checkout'
 import { Route as CountryCodeCartRouteImport } from './routes/$countryCode/cart'
 import { Route as CountryCodeSlugRouteImport } from './routes/$countryCode/$slug'
+import { Route as VendorSettingsIndexRouteImport } from './routes/vendor/settings/index'
+import { Route as VendorProductsIndexRouteImport } from './routes/vendor/products/index'
+import { Route as VendorPayoutsIndexRouteImport } from './routes/vendor/payouts/index'
+import { Route as VendorOrdersIndexRouteImport } from './routes/vendor/orders/index'
+import { Route as CountryCodeVendorsIndexRouteImport } from './routes/$countryCode/vendors/index'
 import { Route as CountryCodeVendorIndexRouteImport } from './routes/$countryCode/vendor/index'
+import { Route as CountryCodeSubscriptionsIndexRouteImport } from './routes/$countryCode/subscriptions/index'
 import { Route as CountryCodeQuotesIndexRouteImport } from './routes/$countryCode/quotes/index'
+import { Route as CountryCodeBookingsIndexRouteImport } from './routes/$countryCode/bookings/index'
+import { Route as CountryCodeAccountIndexRouteImport } from './routes/$countryCode/account/index'
+import { Route as VendorSettingsPaymentsRouteImport } from './routes/vendor/settings/payments'
+import { Route as VendorProductsNewRouteImport } from './routes/vendor/products/new'
+import { Route as VendorProductsProductIdRouteImport } from './routes/vendor/products/$productId'
+import { Route as VendorOrdersOrderIdRouteImport } from './routes/vendor/orders/$orderId'
+import { Route as CountryCodeVendorsHandleRouteImport } from './routes/$countryCode/vendors/$handle'
 import { Route as CountryCodeVendorRegisterRouteImport } from './routes/$countryCode/vendor/register'
 import { Route as CountryCodeVendorPayoutsRouteImport } from './routes/$countryCode/vendor/payouts'
 import { Route as CountryCodeVendorCommissionsRouteImport } from './routes/$countryCode/vendor/commissions'
+import { Route as CountryCodeSubscriptionsSuccessRouteImport } from './routes/$countryCode/subscriptions/success'
+import { Route as CountryCodeSubscriptionsCheckoutRouteImport } from './routes/$countryCode/subscriptions/checkout'
 import { Route as CountryCodeQuotesRequestRouteImport } from './routes/$countryCode/quotes/request'
 import { Route as CountryCodeQuotesIdRouteImport } from './routes/$countryCode/quotes/$id'
 import { Route as CountryCodeProductsHandleRouteImport } from './routes/$countryCode/products/$handle'
 import { Route as CountryCodeCategoriesHandleRouteImport } from './routes/$countryCode/categories/$handle'
+import { Route as CountryCodeBusinessTeamRouteImport } from './routes/$countryCode/business/team'
+import { Route as CountryCodeBusinessOrdersRouteImport } from './routes/$countryCode/business/orders'
+import { Route as CountryCodeBusinessApprovalsRouteImport } from './routes/$countryCode/business/approvals'
+import { Route as CountryCodeBookingsConfirmationRouteImport } from './routes/$countryCode/bookings/confirmation'
+import { Route as CountryCodeBookingsServiceHandleRouteImport } from './routes/$countryCode/bookings/$serviceHandle'
 import { Route as CountryCodeB2bRegisterRouteImport } from './routes/$countryCode/b2b/register'
 import { Route as CountryCodeB2bDashboardRouteImport } from './routes/$countryCode/b2b/dashboard'
+import { Route as CountryCodeAccountSettingsRouteImport } from './routes/$countryCode/account/settings'
+import { Route as CountryCodeAccountProfileRouteImport } from './routes/$countryCode/account/profile'
+import { Route as CountryCodeAccountAddressesRouteImport } from './routes/$countryCode/account/addresses'
 import { Route as CountryCodeVendorProductsIndexRouteImport } from './routes/$countryCode/vendor/products/index'
 import { Route as CountryCodeVendorPayoutsIndexRouteImport } from './routes/$countryCode/vendor/payouts/index'
 import { Route as CountryCodeVendorOrdersIndexRouteImport } from './routes/$countryCode/vendor/orders/index'
+import { Route as CountryCodeAccountSubscriptionsIndexRouteImport } from './routes/$countryCode/account/subscriptions/index'
+import { Route as CountryCodeAccountPurchaseOrdersIndexRouteImport } from './routes/$countryCode/account/purchase-orders/index'
+import { Route as CountryCodeAccountOrdersIndexRouteImport } from './routes/$countryCode/account/orders/index'
+import { Route as CountryCodeAccountBookingsIndexRouteImport } from './routes/$countryCode/account/bookings/index'
+import { Route as CountryCodeVendorsHandleReviewsRouteImport } from './routes/$countryCode/vendors/$handle.reviews'
+import { Route as CountryCodeVendorsHandleProductsRouteImport } from './routes/$countryCode/vendors/$handle.products'
 import { Route as CountryCodeVendorProductsNewRouteImport } from './routes/$countryCode/vendor/products/new'
 import { Route as CountryCodeVendorProductsProductIdRouteImport } from './routes/$countryCode/vendor/products/$productId'
 import { Route as CountryCodeOrderOrderIdConfirmedRouteImport } from './routes/$countryCode/order/$orderId/confirmed'
+import { Route as CountryCodeAccountSubscriptionsIdRouteImport } from './routes/$countryCode/account/subscriptions/$id'
+import { Route as CountryCodeAccountPurchaseOrdersNewRouteImport } from './routes/$countryCode/account/purchase-orders/new'
+import { Route as CountryCodeAccountPurchaseOrdersIdRouteImport } from './routes/$countryCode/account/purchase-orders/$id'
+import { Route as CountryCodeAccountOrdersIdRouteImport } from './routes/$countryCode/account/orders/$id'
+import { Route as CountryCodeAccountBookingsIdRouteImport } from './routes/$countryCode/account/bookings/$id'
+import { Route as CountryCodeAccountSubscriptionsIdBillingRouteImport } from './routes/$countryCode/account/subscriptions/$id.billing'
+import { Route as CountryCodeAccountOrdersIdTrackRouteImport } from './routes/$countryCode/account/orders/$id.track'
+import { Route as CountryCodeAccountOrdersIdReturnRouteImport } from './routes/$countryCode/account/orders/$id.return'
 import { ServerRoute as HealthServerRouteImport } from './routes/health'
 
 const rootServerRouteImport = createServerRootRoute()
@@ -89,6 +130,27 @@ const CountryCodeStoreRoute = CountryCodeStoreRouteImport.update({
   path: '/store',
   getParentRoute: () => CountryCodeRoute,
 } as any)
+const CountryCodeSearchRoute = CountryCodeSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => CountryCodeRoute,
+} as any)
+const CountryCodeResetPasswordRoute =
+  CountryCodeResetPasswordRouteImport.update({
+    id: '/reset-password',
+    path: '/reset-password',
+    getParentRoute: () => CountryCodeRoute,
+  } as any)
+const CountryCodeRegisterRoute = CountryCodeRegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => CountryCodeRoute,
+} as any)
+const CountryCodeLoginRoute = CountryCodeLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => CountryCodeRoute,
+} as any)
 const CountryCodeCheckoutRoute = CountryCodeCheckoutRouteImport.update({
   id: '/checkout',
   path: '/checkout',
@@ -104,16 +166,84 @@ const CountryCodeSlugRoute = CountryCodeSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => CountryCodeRoute,
 } as any)
+const VendorSettingsIndexRoute = VendorSettingsIndexRouteImport.update({
+  id: '/vendor/settings/',
+  path: '/vendor/settings/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VendorProductsIndexRoute = VendorProductsIndexRouteImport.update({
+  id: '/vendor/products/',
+  path: '/vendor/products/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VendorPayoutsIndexRoute = VendorPayoutsIndexRouteImport.update({
+  id: '/vendor/payouts/',
+  path: '/vendor/payouts/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VendorOrdersIndexRoute = VendorOrdersIndexRouteImport.update({
+  id: '/vendor/orders/',
+  path: '/vendor/orders/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CountryCodeVendorsIndexRoute = CountryCodeVendorsIndexRouteImport.update({
+  id: '/vendors/',
+  path: '/vendors/',
+  getParentRoute: () => CountryCodeRoute,
+} as any)
 const CountryCodeVendorIndexRoute = CountryCodeVendorIndexRouteImport.update({
   id: '/vendor/',
   path: '/vendor/',
   getParentRoute: () => CountryCodeRoute,
 } as any)
+const CountryCodeSubscriptionsIndexRoute =
+  CountryCodeSubscriptionsIndexRouteImport.update({
+    id: '/subscriptions/',
+    path: '/subscriptions/',
+    getParentRoute: () => CountryCodeRoute,
+  } as any)
 const CountryCodeQuotesIndexRoute = CountryCodeQuotesIndexRouteImport.update({
   id: '/quotes/',
   path: '/quotes/',
   getParentRoute: () => CountryCodeRoute,
 } as any)
+const CountryCodeBookingsIndexRoute =
+  CountryCodeBookingsIndexRouteImport.update({
+    id: '/bookings/',
+    path: '/bookings/',
+    getParentRoute: () => CountryCodeRoute,
+  } as any)
+const CountryCodeAccountIndexRoute = CountryCodeAccountIndexRouteImport.update({
+  id: '/account/',
+  path: '/account/',
+  getParentRoute: () => CountryCodeRoute,
+} as any)
+const VendorSettingsPaymentsRoute = VendorSettingsPaymentsRouteImport.update({
+  id: '/vendor/settings/payments',
+  path: '/vendor/settings/payments',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VendorProductsNewRoute = VendorProductsNewRouteImport.update({
+  id: '/vendor/products/new',
+  path: '/vendor/products/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VendorProductsProductIdRoute = VendorProductsProductIdRouteImport.update({
+  id: '/vendor/products/$productId',
+  path: '/vendor/products/$productId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VendorOrdersOrderIdRoute = VendorOrdersOrderIdRouteImport.update({
+  id: '/vendor/orders/$orderId',
+  path: '/vendor/orders/$orderId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CountryCodeVendorsHandleRoute =
+  CountryCodeVendorsHandleRouteImport.update({
+    id: '/vendors/$handle',
+    path: '/vendors/$handle',
+    getParentRoute: () => CountryCodeRoute,
+  } as any)
 const CountryCodeVendorRegisterRoute =
   CountryCodeVendorRegisterRouteImport.update({
     id: '/vendor/register',
@@ -130,6 +260,18 @@ const CountryCodeVendorCommissionsRoute =
   CountryCodeVendorCommissionsRouteImport.update({
     id: '/vendor/commissions',
     path: '/vendor/commissions',
+    getParentRoute: () => CountryCodeRoute,
+  } as any)
+const CountryCodeSubscriptionsSuccessRoute =
+  CountryCodeSubscriptionsSuccessRouteImport.update({
+    id: '/subscriptions/success',
+    path: '/subscriptions/success',
+    getParentRoute: () => CountryCodeRoute,
+  } as any)
+const CountryCodeSubscriptionsCheckoutRoute =
+  CountryCodeSubscriptionsCheckoutRouteImport.update({
+    id: '/subscriptions/checkout',
+    path: '/subscriptions/checkout',
     getParentRoute: () => CountryCodeRoute,
   } as any)
 const CountryCodeQuotesRequestRoute =
@@ -155,6 +297,35 @@ const CountryCodeCategoriesHandleRoute =
     path: '/categories/$handle',
     getParentRoute: () => CountryCodeRoute,
   } as any)
+const CountryCodeBusinessTeamRoute = CountryCodeBusinessTeamRouteImport.update({
+  id: '/business/team',
+  path: '/business/team',
+  getParentRoute: () => CountryCodeRoute,
+} as any)
+const CountryCodeBusinessOrdersRoute =
+  CountryCodeBusinessOrdersRouteImport.update({
+    id: '/business/orders',
+    path: '/business/orders',
+    getParentRoute: () => CountryCodeRoute,
+  } as any)
+const CountryCodeBusinessApprovalsRoute =
+  CountryCodeBusinessApprovalsRouteImport.update({
+    id: '/business/approvals',
+    path: '/business/approvals',
+    getParentRoute: () => CountryCodeRoute,
+  } as any)
+const CountryCodeBookingsConfirmationRoute =
+  CountryCodeBookingsConfirmationRouteImport.update({
+    id: '/bookings/confirmation',
+    path: '/bookings/confirmation',
+    getParentRoute: () => CountryCodeRoute,
+  } as any)
+const CountryCodeBookingsServiceHandleRoute =
+  CountryCodeBookingsServiceHandleRouteImport.update({
+    id: '/bookings/$serviceHandle',
+    path: '/bookings/$serviceHandle',
+    getParentRoute: () => CountryCodeRoute,
+  } as any)
 const CountryCodeB2bRegisterRoute = CountryCodeB2bRegisterRouteImport.update({
   id: '/b2b/register',
   path: '/b2b/register',
@@ -165,6 +336,24 @@ const CountryCodeB2bDashboardRoute = CountryCodeB2bDashboardRouteImport.update({
   path: '/b2b/dashboard',
   getParentRoute: () => CountryCodeRoute,
 } as any)
+const CountryCodeAccountSettingsRoute =
+  CountryCodeAccountSettingsRouteImport.update({
+    id: '/account/settings',
+    path: '/account/settings',
+    getParentRoute: () => CountryCodeRoute,
+  } as any)
+const CountryCodeAccountProfileRoute =
+  CountryCodeAccountProfileRouteImport.update({
+    id: '/account/profile',
+    path: '/account/profile',
+    getParentRoute: () => CountryCodeRoute,
+  } as any)
+const CountryCodeAccountAddressesRoute =
+  CountryCodeAccountAddressesRouteImport.update({
+    id: '/account/addresses',
+    path: '/account/addresses',
+    getParentRoute: () => CountryCodeRoute,
+  } as any)
 const CountryCodeVendorProductsIndexRoute =
   CountryCodeVendorProductsIndexRouteImport.update({
     id: '/vendor/products/',
@@ -182,6 +371,42 @@ const CountryCodeVendorOrdersIndexRoute =
     id: '/vendor/orders/',
     path: '/vendor/orders/',
     getParentRoute: () => CountryCodeRoute,
+  } as any)
+const CountryCodeAccountSubscriptionsIndexRoute =
+  CountryCodeAccountSubscriptionsIndexRouteImport.update({
+    id: '/account/subscriptions/',
+    path: '/account/subscriptions/',
+    getParentRoute: () => CountryCodeRoute,
+  } as any)
+const CountryCodeAccountPurchaseOrdersIndexRoute =
+  CountryCodeAccountPurchaseOrdersIndexRouteImport.update({
+    id: '/account/purchase-orders/',
+    path: '/account/purchase-orders/',
+    getParentRoute: () => CountryCodeRoute,
+  } as any)
+const CountryCodeAccountOrdersIndexRoute =
+  CountryCodeAccountOrdersIndexRouteImport.update({
+    id: '/account/orders/',
+    path: '/account/orders/',
+    getParentRoute: () => CountryCodeRoute,
+  } as any)
+const CountryCodeAccountBookingsIndexRoute =
+  CountryCodeAccountBookingsIndexRouteImport.update({
+    id: '/account/bookings/',
+    path: '/account/bookings/',
+    getParentRoute: () => CountryCodeRoute,
+  } as any)
+const CountryCodeVendorsHandleReviewsRoute =
+  CountryCodeVendorsHandleReviewsRouteImport.update({
+    id: '/reviews',
+    path: '/reviews',
+    getParentRoute: () => CountryCodeVendorsHandleRoute,
+  } as any)
+const CountryCodeVendorsHandleProductsRoute =
+  CountryCodeVendorsHandleProductsRouteImport.update({
+    id: '/products',
+    path: '/products',
+    getParentRoute: () => CountryCodeVendorsHandleRoute,
   } as any)
 const CountryCodeVendorProductsNewRoute =
   CountryCodeVendorProductsNewRouteImport.update({
@@ -201,6 +426,54 @@ const CountryCodeOrderOrderIdConfirmedRoute =
     path: '/order/$orderId/confirmed',
     getParentRoute: () => CountryCodeRoute,
   } as any)
+const CountryCodeAccountSubscriptionsIdRoute =
+  CountryCodeAccountSubscriptionsIdRouteImport.update({
+    id: '/account/subscriptions/$id',
+    path: '/account/subscriptions/$id',
+    getParentRoute: () => CountryCodeRoute,
+  } as any)
+const CountryCodeAccountPurchaseOrdersNewRoute =
+  CountryCodeAccountPurchaseOrdersNewRouteImport.update({
+    id: '/account/purchase-orders/new',
+    path: '/account/purchase-orders/new',
+    getParentRoute: () => CountryCodeRoute,
+  } as any)
+const CountryCodeAccountPurchaseOrdersIdRoute =
+  CountryCodeAccountPurchaseOrdersIdRouteImport.update({
+    id: '/account/purchase-orders/$id',
+    path: '/account/purchase-orders/$id',
+    getParentRoute: () => CountryCodeRoute,
+  } as any)
+const CountryCodeAccountOrdersIdRoute =
+  CountryCodeAccountOrdersIdRouteImport.update({
+    id: '/account/orders/$id',
+    path: '/account/orders/$id',
+    getParentRoute: () => CountryCodeRoute,
+  } as any)
+const CountryCodeAccountBookingsIdRoute =
+  CountryCodeAccountBookingsIdRouteImport.update({
+    id: '/account/bookings/$id',
+    path: '/account/bookings/$id',
+    getParentRoute: () => CountryCodeRoute,
+  } as any)
+const CountryCodeAccountSubscriptionsIdBillingRoute =
+  CountryCodeAccountSubscriptionsIdBillingRouteImport.update({
+    id: '/billing',
+    path: '/billing',
+    getParentRoute: () => CountryCodeAccountSubscriptionsIdRoute,
+  } as any)
+const CountryCodeAccountOrdersIdTrackRoute =
+  CountryCodeAccountOrdersIdTrackRouteImport.update({
+    id: '/track',
+    path: '/track',
+    getParentRoute: () => CountryCodeAccountOrdersIdRoute,
+  } as any)
+const CountryCodeAccountOrdersIdReturnRoute =
+  CountryCodeAccountOrdersIdReturnRouteImport.update({
+    id: '/return',
+    path: '/return',
+    getParentRoute: () => CountryCodeAccountOrdersIdRoute,
+  } as any)
 const HealthServerRoute = HealthServerRouteImport.update({
   id: '/health',
   path: '/health',
@@ -217,26 +490,67 @@ export interface FileRoutesByFullPath {
   '/$countryCode/$slug': typeof CountryCodeSlugRoute
   '/$countryCode/cart': typeof CountryCodeCartRoute
   '/$countryCode/checkout': typeof CountryCodeCheckoutRoute
+  '/$countryCode/login': typeof CountryCodeLoginRoute
+  '/$countryCode/register': typeof CountryCodeRegisterRoute
+  '/$countryCode/reset-password': typeof CountryCodeResetPasswordRoute
+  '/$countryCode/search': typeof CountryCodeSearchRoute
   '/$countryCode/store': typeof CountryCodeStoreRoute
   '/$countryCode/stores': typeof CountryCodeStoresRoute
   '/$countryCode/': typeof CountryCodeIndexRoute
+  '/$countryCode/account/addresses': typeof CountryCodeAccountAddressesRoute
+  '/$countryCode/account/profile': typeof CountryCodeAccountProfileRoute
+  '/$countryCode/account/settings': typeof CountryCodeAccountSettingsRoute
   '/$countryCode/b2b/dashboard': typeof CountryCodeB2bDashboardRoute
   '/$countryCode/b2b/register': typeof CountryCodeB2bRegisterRoute
+  '/$countryCode/bookings/$serviceHandle': typeof CountryCodeBookingsServiceHandleRoute
+  '/$countryCode/bookings/confirmation': typeof CountryCodeBookingsConfirmationRoute
+  '/$countryCode/business/approvals': typeof CountryCodeBusinessApprovalsRoute
+  '/$countryCode/business/orders': typeof CountryCodeBusinessOrdersRoute
+  '/$countryCode/business/team': typeof CountryCodeBusinessTeamRoute
   '/$countryCode/categories/$handle': typeof CountryCodeCategoriesHandleRoute
   '/$countryCode/products/$handle': typeof CountryCodeProductsHandleRoute
   '/$countryCode/quotes/$id': typeof CountryCodeQuotesIdRoute
   '/$countryCode/quotes/request': typeof CountryCodeQuotesRequestRoute
+  '/$countryCode/subscriptions/checkout': typeof CountryCodeSubscriptionsCheckoutRoute
+  '/$countryCode/subscriptions/success': typeof CountryCodeSubscriptionsSuccessRoute
   '/$countryCode/vendor/commissions': typeof CountryCodeVendorCommissionsRoute
   '/$countryCode/vendor/payouts': typeof CountryCodeVendorPayoutsRouteWithChildren
   '/$countryCode/vendor/register': typeof CountryCodeVendorRegisterRoute
+  '/$countryCode/vendors/$handle': typeof CountryCodeVendorsHandleRouteWithChildren
+  '/vendor/orders/$orderId': typeof VendorOrdersOrderIdRoute
+  '/vendor/products/$productId': typeof VendorProductsProductIdRoute
+  '/vendor/products/new': typeof VendorProductsNewRoute
+  '/vendor/settings/payments': typeof VendorSettingsPaymentsRoute
+  '/$countryCode/account': typeof CountryCodeAccountIndexRoute
+  '/$countryCode/bookings': typeof CountryCodeBookingsIndexRoute
   '/$countryCode/quotes': typeof CountryCodeQuotesIndexRoute
+  '/$countryCode/subscriptions': typeof CountryCodeSubscriptionsIndexRoute
   '/$countryCode/vendor': typeof CountryCodeVendorIndexRoute
+  '/$countryCode/vendors': typeof CountryCodeVendorsIndexRoute
+  '/vendor/orders': typeof VendorOrdersIndexRoute
+  '/vendor/payouts': typeof VendorPayoutsIndexRoute
+  '/vendor/products': typeof VendorProductsIndexRoute
+  '/vendor/settings': typeof VendorSettingsIndexRoute
+  '/$countryCode/account/bookings/$id': typeof CountryCodeAccountBookingsIdRoute
+  '/$countryCode/account/orders/$id': typeof CountryCodeAccountOrdersIdRouteWithChildren
+  '/$countryCode/account/purchase-orders/$id': typeof CountryCodeAccountPurchaseOrdersIdRoute
+  '/$countryCode/account/purchase-orders/new': typeof CountryCodeAccountPurchaseOrdersNewRoute
+  '/$countryCode/account/subscriptions/$id': typeof CountryCodeAccountSubscriptionsIdRouteWithChildren
   '/$countryCode/order/$orderId/confirmed': typeof CountryCodeOrderOrderIdConfirmedRoute
   '/$countryCode/vendor/products/$productId': typeof CountryCodeVendorProductsProductIdRoute
   '/$countryCode/vendor/products/new': typeof CountryCodeVendorProductsNewRoute
+  '/$countryCode/vendors/$handle/products': typeof CountryCodeVendorsHandleProductsRoute
+  '/$countryCode/vendors/$handle/reviews': typeof CountryCodeVendorsHandleReviewsRoute
+  '/$countryCode/account/bookings': typeof CountryCodeAccountBookingsIndexRoute
+  '/$countryCode/account/orders': typeof CountryCodeAccountOrdersIndexRoute
+  '/$countryCode/account/purchase-orders': typeof CountryCodeAccountPurchaseOrdersIndexRoute
+  '/$countryCode/account/subscriptions': typeof CountryCodeAccountSubscriptionsIndexRoute
   '/$countryCode/vendor/orders': typeof CountryCodeVendorOrdersIndexRoute
   '/$countryCode/vendor/payouts/': typeof CountryCodeVendorPayoutsIndexRoute
   '/$countryCode/vendor/products': typeof CountryCodeVendorProductsIndexRoute
+  '/$countryCode/account/orders/$id/return': typeof CountryCodeAccountOrdersIdReturnRoute
+  '/$countryCode/account/orders/$id/track': typeof CountryCodeAccountOrdersIdTrackRoute
+  '/$countryCode/account/subscriptions/$id/billing': typeof CountryCodeAccountSubscriptionsIdBillingRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -247,25 +561,66 @@ export interface FileRoutesByTo {
   '/$countryCode/$slug': typeof CountryCodeSlugRoute
   '/$countryCode/cart': typeof CountryCodeCartRoute
   '/$countryCode/checkout': typeof CountryCodeCheckoutRoute
+  '/$countryCode/login': typeof CountryCodeLoginRoute
+  '/$countryCode/register': typeof CountryCodeRegisterRoute
+  '/$countryCode/reset-password': typeof CountryCodeResetPasswordRoute
+  '/$countryCode/search': typeof CountryCodeSearchRoute
   '/$countryCode/store': typeof CountryCodeStoreRoute
   '/$countryCode/stores': typeof CountryCodeStoresRoute
   '/$countryCode': typeof CountryCodeIndexRoute
+  '/$countryCode/account/addresses': typeof CountryCodeAccountAddressesRoute
+  '/$countryCode/account/profile': typeof CountryCodeAccountProfileRoute
+  '/$countryCode/account/settings': typeof CountryCodeAccountSettingsRoute
   '/$countryCode/b2b/dashboard': typeof CountryCodeB2bDashboardRoute
   '/$countryCode/b2b/register': typeof CountryCodeB2bRegisterRoute
+  '/$countryCode/bookings/$serviceHandle': typeof CountryCodeBookingsServiceHandleRoute
+  '/$countryCode/bookings/confirmation': typeof CountryCodeBookingsConfirmationRoute
+  '/$countryCode/business/approvals': typeof CountryCodeBusinessApprovalsRoute
+  '/$countryCode/business/orders': typeof CountryCodeBusinessOrdersRoute
+  '/$countryCode/business/team': typeof CountryCodeBusinessTeamRoute
   '/$countryCode/categories/$handle': typeof CountryCodeCategoriesHandleRoute
   '/$countryCode/products/$handle': typeof CountryCodeProductsHandleRoute
   '/$countryCode/quotes/$id': typeof CountryCodeQuotesIdRoute
   '/$countryCode/quotes/request': typeof CountryCodeQuotesRequestRoute
+  '/$countryCode/subscriptions/checkout': typeof CountryCodeSubscriptionsCheckoutRoute
+  '/$countryCode/subscriptions/success': typeof CountryCodeSubscriptionsSuccessRoute
   '/$countryCode/vendor/commissions': typeof CountryCodeVendorCommissionsRoute
   '/$countryCode/vendor/register': typeof CountryCodeVendorRegisterRoute
+  '/$countryCode/vendors/$handle': typeof CountryCodeVendorsHandleRouteWithChildren
+  '/vendor/orders/$orderId': typeof VendorOrdersOrderIdRoute
+  '/vendor/products/$productId': typeof VendorProductsProductIdRoute
+  '/vendor/products/new': typeof VendorProductsNewRoute
+  '/vendor/settings/payments': typeof VendorSettingsPaymentsRoute
+  '/$countryCode/account': typeof CountryCodeAccountIndexRoute
+  '/$countryCode/bookings': typeof CountryCodeBookingsIndexRoute
   '/$countryCode/quotes': typeof CountryCodeQuotesIndexRoute
+  '/$countryCode/subscriptions': typeof CountryCodeSubscriptionsIndexRoute
   '/$countryCode/vendor': typeof CountryCodeVendorIndexRoute
+  '/$countryCode/vendors': typeof CountryCodeVendorsIndexRoute
+  '/vendor/orders': typeof VendorOrdersIndexRoute
+  '/vendor/payouts': typeof VendorPayoutsIndexRoute
+  '/vendor/products': typeof VendorProductsIndexRoute
+  '/vendor/settings': typeof VendorSettingsIndexRoute
+  '/$countryCode/account/bookings/$id': typeof CountryCodeAccountBookingsIdRoute
+  '/$countryCode/account/orders/$id': typeof CountryCodeAccountOrdersIdRouteWithChildren
+  '/$countryCode/account/purchase-orders/$id': typeof CountryCodeAccountPurchaseOrdersIdRoute
+  '/$countryCode/account/purchase-orders/new': typeof CountryCodeAccountPurchaseOrdersNewRoute
+  '/$countryCode/account/subscriptions/$id': typeof CountryCodeAccountSubscriptionsIdRouteWithChildren
   '/$countryCode/order/$orderId/confirmed': typeof CountryCodeOrderOrderIdConfirmedRoute
   '/$countryCode/vendor/products/$productId': typeof CountryCodeVendorProductsProductIdRoute
   '/$countryCode/vendor/products/new': typeof CountryCodeVendorProductsNewRoute
+  '/$countryCode/vendors/$handle/products': typeof CountryCodeVendorsHandleProductsRoute
+  '/$countryCode/vendors/$handle/reviews': typeof CountryCodeVendorsHandleReviewsRoute
+  '/$countryCode/account/bookings': typeof CountryCodeAccountBookingsIndexRoute
+  '/$countryCode/account/orders': typeof CountryCodeAccountOrdersIndexRoute
+  '/$countryCode/account/purchase-orders': typeof CountryCodeAccountPurchaseOrdersIndexRoute
+  '/$countryCode/account/subscriptions': typeof CountryCodeAccountSubscriptionsIndexRoute
   '/$countryCode/vendor/orders': typeof CountryCodeVendorOrdersIndexRoute
   '/$countryCode/vendor/payouts': typeof CountryCodeVendorPayoutsIndexRoute
   '/$countryCode/vendor/products': typeof CountryCodeVendorProductsIndexRoute
+  '/$countryCode/account/orders/$id/return': typeof CountryCodeAccountOrdersIdReturnRoute
+  '/$countryCode/account/orders/$id/track': typeof CountryCodeAccountOrdersIdTrackRoute
+  '/$countryCode/account/subscriptions/$id/billing': typeof CountryCodeAccountSubscriptionsIdBillingRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -278,26 +633,67 @@ export interface FileRoutesById {
   '/$countryCode/$slug': typeof CountryCodeSlugRoute
   '/$countryCode/cart': typeof CountryCodeCartRoute
   '/$countryCode/checkout': typeof CountryCodeCheckoutRoute
+  '/$countryCode/login': typeof CountryCodeLoginRoute
+  '/$countryCode/register': typeof CountryCodeRegisterRoute
+  '/$countryCode/reset-password': typeof CountryCodeResetPasswordRoute
+  '/$countryCode/search': typeof CountryCodeSearchRoute
   '/$countryCode/store': typeof CountryCodeStoreRoute
   '/$countryCode/stores': typeof CountryCodeStoresRoute
   '/$countryCode/': typeof CountryCodeIndexRoute
+  '/$countryCode/account/addresses': typeof CountryCodeAccountAddressesRoute
+  '/$countryCode/account/profile': typeof CountryCodeAccountProfileRoute
+  '/$countryCode/account/settings': typeof CountryCodeAccountSettingsRoute
   '/$countryCode/b2b/dashboard': typeof CountryCodeB2bDashboardRoute
   '/$countryCode/b2b/register': typeof CountryCodeB2bRegisterRoute
+  '/$countryCode/bookings/$serviceHandle': typeof CountryCodeBookingsServiceHandleRoute
+  '/$countryCode/bookings/confirmation': typeof CountryCodeBookingsConfirmationRoute
+  '/$countryCode/business/approvals': typeof CountryCodeBusinessApprovalsRoute
+  '/$countryCode/business/orders': typeof CountryCodeBusinessOrdersRoute
+  '/$countryCode/business/team': typeof CountryCodeBusinessTeamRoute
   '/$countryCode/categories/$handle': typeof CountryCodeCategoriesHandleRoute
   '/$countryCode/products/$handle': typeof CountryCodeProductsHandleRoute
   '/$countryCode/quotes/$id': typeof CountryCodeQuotesIdRoute
   '/$countryCode/quotes/request': typeof CountryCodeQuotesRequestRoute
+  '/$countryCode/subscriptions/checkout': typeof CountryCodeSubscriptionsCheckoutRoute
+  '/$countryCode/subscriptions/success': typeof CountryCodeSubscriptionsSuccessRoute
   '/$countryCode/vendor/commissions': typeof CountryCodeVendorCommissionsRoute
   '/$countryCode/vendor/payouts': typeof CountryCodeVendorPayoutsRouteWithChildren
   '/$countryCode/vendor/register': typeof CountryCodeVendorRegisterRoute
+  '/$countryCode/vendors/$handle': typeof CountryCodeVendorsHandleRouteWithChildren
+  '/vendor/orders/$orderId': typeof VendorOrdersOrderIdRoute
+  '/vendor/products/$productId': typeof VendorProductsProductIdRoute
+  '/vendor/products/new': typeof VendorProductsNewRoute
+  '/vendor/settings/payments': typeof VendorSettingsPaymentsRoute
+  '/$countryCode/account/': typeof CountryCodeAccountIndexRoute
+  '/$countryCode/bookings/': typeof CountryCodeBookingsIndexRoute
   '/$countryCode/quotes/': typeof CountryCodeQuotesIndexRoute
+  '/$countryCode/subscriptions/': typeof CountryCodeSubscriptionsIndexRoute
   '/$countryCode/vendor/': typeof CountryCodeVendorIndexRoute
+  '/$countryCode/vendors/': typeof CountryCodeVendorsIndexRoute
+  '/vendor/orders/': typeof VendorOrdersIndexRoute
+  '/vendor/payouts/': typeof VendorPayoutsIndexRoute
+  '/vendor/products/': typeof VendorProductsIndexRoute
+  '/vendor/settings/': typeof VendorSettingsIndexRoute
+  '/$countryCode/account/bookings/$id': typeof CountryCodeAccountBookingsIdRoute
+  '/$countryCode/account/orders/$id': typeof CountryCodeAccountOrdersIdRouteWithChildren
+  '/$countryCode/account/purchase-orders/$id': typeof CountryCodeAccountPurchaseOrdersIdRoute
+  '/$countryCode/account/purchase-orders/new': typeof CountryCodeAccountPurchaseOrdersNewRoute
+  '/$countryCode/account/subscriptions/$id': typeof CountryCodeAccountSubscriptionsIdRouteWithChildren
   '/$countryCode/order/$orderId/confirmed': typeof CountryCodeOrderOrderIdConfirmedRoute
   '/$countryCode/vendor/products/$productId': typeof CountryCodeVendorProductsProductIdRoute
   '/$countryCode/vendor/products/new': typeof CountryCodeVendorProductsNewRoute
+  '/$countryCode/vendors/$handle/products': typeof CountryCodeVendorsHandleProductsRoute
+  '/$countryCode/vendors/$handle/reviews': typeof CountryCodeVendorsHandleReviewsRoute
+  '/$countryCode/account/bookings/': typeof CountryCodeAccountBookingsIndexRoute
+  '/$countryCode/account/orders/': typeof CountryCodeAccountOrdersIndexRoute
+  '/$countryCode/account/purchase-orders/': typeof CountryCodeAccountPurchaseOrdersIndexRoute
+  '/$countryCode/account/subscriptions/': typeof CountryCodeAccountSubscriptionsIndexRoute
   '/$countryCode/vendor/orders/': typeof CountryCodeVendorOrdersIndexRoute
   '/$countryCode/vendor/payouts/': typeof CountryCodeVendorPayoutsIndexRoute
   '/$countryCode/vendor/products/': typeof CountryCodeVendorProductsIndexRoute
+  '/$countryCode/account/orders/$id/return': typeof CountryCodeAccountOrdersIdReturnRoute
+  '/$countryCode/account/orders/$id/track': typeof CountryCodeAccountOrdersIdTrackRoute
+  '/$countryCode/account/subscriptions/$id/billing': typeof CountryCodeAccountSubscriptionsIdBillingRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -311,26 +707,67 @@ export interface FileRouteTypes {
     | '/$countryCode/$slug'
     | '/$countryCode/cart'
     | '/$countryCode/checkout'
+    | '/$countryCode/login'
+    | '/$countryCode/register'
+    | '/$countryCode/reset-password'
+    | '/$countryCode/search'
     | '/$countryCode/store'
     | '/$countryCode/stores'
     | '/$countryCode/'
+    | '/$countryCode/account/addresses'
+    | '/$countryCode/account/profile'
+    | '/$countryCode/account/settings'
     | '/$countryCode/b2b/dashboard'
     | '/$countryCode/b2b/register'
+    | '/$countryCode/bookings/$serviceHandle'
+    | '/$countryCode/bookings/confirmation'
+    | '/$countryCode/business/approvals'
+    | '/$countryCode/business/orders'
+    | '/$countryCode/business/team'
     | '/$countryCode/categories/$handle'
     | '/$countryCode/products/$handle'
     | '/$countryCode/quotes/$id'
     | '/$countryCode/quotes/request'
+    | '/$countryCode/subscriptions/checkout'
+    | '/$countryCode/subscriptions/success'
     | '/$countryCode/vendor/commissions'
     | '/$countryCode/vendor/payouts'
     | '/$countryCode/vendor/register'
+    | '/$countryCode/vendors/$handle'
+    | '/vendor/orders/$orderId'
+    | '/vendor/products/$productId'
+    | '/vendor/products/new'
+    | '/vendor/settings/payments'
+    | '/$countryCode/account'
+    | '/$countryCode/bookings'
     | '/$countryCode/quotes'
+    | '/$countryCode/subscriptions'
     | '/$countryCode/vendor'
+    | '/$countryCode/vendors'
+    | '/vendor/orders'
+    | '/vendor/payouts'
+    | '/vendor/products'
+    | '/vendor/settings'
+    | '/$countryCode/account/bookings/$id'
+    | '/$countryCode/account/orders/$id'
+    | '/$countryCode/account/purchase-orders/$id'
+    | '/$countryCode/account/purchase-orders/new'
+    | '/$countryCode/account/subscriptions/$id'
     | '/$countryCode/order/$orderId/confirmed'
     | '/$countryCode/vendor/products/$productId'
     | '/$countryCode/vendor/products/new'
+    | '/$countryCode/vendors/$handle/products'
+    | '/$countryCode/vendors/$handle/reviews'
+    | '/$countryCode/account/bookings'
+    | '/$countryCode/account/orders'
+    | '/$countryCode/account/purchase-orders'
+    | '/$countryCode/account/subscriptions'
     | '/$countryCode/vendor/orders'
     | '/$countryCode/vendor/payouts/'
     | '/$countryCode/vendor/products'
+    | '/$countryCode/account/orders/$id/return'
+    | '/$countryCode/account/orders/$id/track'
+    | '/$countryCode/account/subscriptions/$id/billing'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -341,25 +778,66 @@ export interface FileRouteTypes {
     | '/$countryCode/$slug'
     | '/$countryCode/cart'
     | '/$countryCode/checkout'
+    | '/$countryCode/login'
+    | '/$countryCode/register'
+    | '/$countryCode/reset-password'
+    | '/$countryCode/search'
     | '/$countryCode/store'
     | '/$countryCode/stores'
     | '/$countryCode'
+    | '/$countryCode/account/addresses'
+    | '/$countryCode/account/profile'
+    | '/$countryCode/account/settings'
     | '/$countryCode/b2b/dashboard'
     | '/$countryCode/b2b/register'
+    | '/$countryCode/bookings/$serviceHandle'
+    | '/$countryCode/bookings/confirmation'
+    | '/$countryCode/business/approvals'
+    | '/$countryCode/business/orders'
+    | '/$countryCode/business/team'
     | '/$countryCode/categories/$handle'
     | '/$countryCode/products/$handle'
     | '/$countryCode/quotes/$id'
     | '/$countryCode/quotes/request'
+    | '/$countryCode/subscriptions/checkout'
+    | '/$countryCode/subscriptions/success'
     | '/$countryCode/vendor/commissions'
     | '/$countryCode/vendor/register'
+    | '/$countryCode/vendors/$handle'
+    | '/vendor/orders/$orderId'
+    | '/vendor/products/$productId'
+    | '/vendor/products/new'
+    | '/vendor/settings/payments'
+    | '/$countryCode/account'
+    | '/$countryCode/bookings'
     | '/$countryCode/quotes'
+    | '/$countryCode/subscriptions'
     | '/$countryCode/vendor'
+    | '/$countryCode/vendors'
+    | '/vendor/orders'
+    | '/vendor/payouts'
+    | '/vendor/products'
+    | '/vendor/settings'
+    | '/$countryCode/account/bookings/$id'
+    | '/$countryCode/account/orders/$id'
+    | '/$countryCode/account/purchase-orders/$id'
+    | '/$countryCode/account/purchase-orders/new'
+    | '/$countryCode/account/subscriptions/$id'
     | '/$countryCode/order/$orderId/confirmed'
     | '/$countryCode/vendor/products/$productId'
     | '/$countryCode/vendor/products/new'
+    | '/$countryCode/vendors/$handle/products'
+    | '/$countryCode/vendors/$handle/reviews'
+    | '/$countryCode/account/bookings'
+    | '/$countryCode/account/orders'
+    | '/$countryCode/account/purchase-orders'
+    | '/$countryCode/account/subscriptions'
     | '/$countryCode/vendor/orders'
     | '/$countryCode/vendor/payouts'
     | '/$countryCode/vendor/products'
+    | '/$countryCode/account/orders/$id/return'
+    | '/$countryCode/account/orders/$id/track'
+    | '/$countryCode/account/subscriptions/$id/billing'
   id:
     | '__root__'
     | '/'
@@ -371,26 +849,67 @@ export interface FileRouteTypes {
     | '/$countryCode/$slug'
     | '/$countryCode/cart'
     | '/$countryCode/checkout'
+    | '/$countryCode/login'
+    | '/$countryCode/register'
+    | '/$countryCode/reset-password'
+    | '/$countryCode/search'
     | '/$countryCode/store'
     | '/$countryCode/stores'
     | '/$countryCode/'
+    | '/$countryCode/account/addresses'
+    | '/$countryCode/account/profile'
+    | '/$countryCode/account/settings'
     | '/$countryCode/b2b/dashboard'
     | '/$countryCode/b2b/register'
+    | '/$countryCode/bookings/$serviceHandle'
+    | '/$countryCode/bookings/confirmation'
+    | '/$countryCode/business/approvals'
+    | '/$countryCode/business/orders'
+    | '/$countryCode/business/team'
     | '/$countryCode/categories/$handle'
     | '/$countryCode/products/$handle'
     | '/$countryCode/quotes/$id'
     | '/$countryCode/quotes/request'
+    | '/$countryCode/subscriptions/checkout'
+    | '/$countryCode/subscriptions/success'
     | '/$countryCode/vendor/commissions'
     | '/$countryCode/vendor/payouts'
     | '/$countryCode/vendor/register'
+    | '/$countryCode/vendors/$handle'
+    | '/vendor/orders/$orderId'
+    | '/vendor/products/$productId'
+    | '/vendor/products/new'
+    | '/vendor/settings/payments'
+    | '/$countryCode/account/'
+    | '/$countryCode/bookings/'
     | '/$countryCode/quotes/'
+    | '/$countryCode/subscriptions/'
     | '/$countryCode/vendor/'
+    | '/$countryCode/vendors/'
+    | '/vendor/orders/'
+    | '/vendor/payouts/'
+    | '/vendor/products/'
+    | '/vendor/settings/'
+    | '/$countryCode/account/bookings/$id'
+    | '/$countryCode/account/orders/$id'
+    | '/$countryCode/account/purchase-orders/$id'
+    | '/$countryCode/account/purchase-orders/new'
+    | '/$countryCode/account/subscriptions/$id'
     | '/$countryCode/order/$orderId/confirmed'
     | '/$countryCode/vendor/products/$productId'
     | '/$countryCode/vendor/products/new'
+    | '/$countryCode/vendors/$handle/products'
+    | '/$countryCode/vendors/$handle/reviews'
+    | '/$countryCode/account/bookings/'
+    | '/$countryCode/account/orders/'
+    | '/$countryCode/account/purchase-orders/'
+    | '/$countryCode/account/subscriptions/'
     | '/$countryCode/vendor/orders/'
     | '/$countryCode/vendor/payouts/'
     | '/$countryCode/vendor/products/'
+    | '/$countryCode/account/orders/$id/return'
+    | '/$countryCode/account/orders/$id/track'
+    | '/$countryCode/account/subscriptions/$id/billing'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -400,6 +919,14 @@ export interface RootRouteChildren {
   CartRoute: typeof CartRoute
   CheckoutRoute: typeof CheckoutRoute
   StoreRoute: typeof StoreRoute
+  VendorOrdersOrderIdRoute: typeof VendorOrdersOrderIdRoute
+  VendorProductsProductIdRoute: typeof VendorProductsProductIdRoute
+  VendorProductsNewRoute: typeof VendorProductsNewRoute
+  VendorSettingsPaymentsRoute: typeof VendorSettingsPaymentsRoute
+  VendorOrdersIndexRoute: typeof VendorOrdersIndexRoute
+  VendorPayoutsIndexRoute: typeof VendorPayoutsIndexRoute
+  VendorProductsIndexRoute: typeof VendorProductsIndexRoute
+  VendorSettingsIndexRoute: typeof VendorSettingsIndexRoute
 }
 export interface FileServerRoutesByFullPath {
   '/health': typeof HealthServerRoute
@@ -488,6 +1015,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CountryCodeStoreRouteImport
       parentRoute: typeof CountryCodeRoute
     }
+    '/$countryCode/search': {
+      id: '/$countryCode/search'
+      path: '/search'
+      fullPath: '/$countryCode/search'
+      preLoaderRoute: typeof CountryCodeSearchRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
+    '/$countryCode/reset-password': {
+      id: '/$countryCode/reset-password'
+      path: '/reset-password'
+      fullPath: '/$countryCode/reset-password'
+      preLoaderRoute: typeof CountryCodeResetPasswordRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
+    '/$countryCode/register': {
+      id: '/$countryCode/register'
+      path: '/register'
+      fullPath: '/$countryCode/register'
+      preLoaderRoute: typeof CountryCodeRegisterRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
+    '/$countryCode/login': {
+      id: '/$countryCode/login'
+      path: '/login'
+      fullPath: '/$countryCode/login'
+      preLoaderRoute: typeof CountryCodeLoginRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
     '/$countryCode/checkout': {
       id: '/$countryCode/checkout'
       path: '/checkout'
@@ -509,6 +1064,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CountryCodeSlugRouteImport
       parentRoute: typeof CountryCodeRoute
     }
+    '/vendor/settings/': {
+      id: '/vendor/settings/'
+      path: '/vendor/settings'
+      fullPath: '/vendor/settings'
+      preLoaderRoute: typeof VendorSettingsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vendor/products/': {
+      id: '/vendor/products/'
+      path: '/vendor/products'
+      fullPath: '/vendor/products'
+      preLoaderRoute: typeof VendorProductsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vendor/payouts/': {
+      id: '/vendor/payouts/'
+      path: '/vendor/payouts'
+      fullPath: '/vendor/payouts'
+      preLoaderRoute: typeof VendorPayoutsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vendor/orders/': {
+      id: '/vendor/orders/'
+      path: '/vendor/orders'
+      fullPath: '/vendor/orders'
+      preLoaderRoute: typeof VendorOrdersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$countryCode/vendors/': {
+      id: '/$countryCode/vendors/'
+      path: '/vendors'
+      fullPath: '/$countryCode/vendors'
+      preLoaderRoute: typeof CountryCodeVendorsIndexRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
     '/$countryCode/vendor/': {
       id: '/$countryCode/vendor/'
       path: '/vendor'
@@ -516,11 +1106,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CountryCodeVendorIndexRouteImport
       parentRoute: typeof CountryCodeRoute
     }
+    '/$countryCode/subscriptions/': {
+      id: '/$countryCode/subscriptions/'
+      path: '/subscriptions'
+      fullPath: '/$countryCode/subscriptions'
+      preLoaderRoute: typeof CountryCodeSubscriptionsIndexRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
     '/$countryCode/quotes/': {
       id: '/$countryCode/quotes/'
       path: '/quotes'
       fullPath: '/$countryCode/quotes'
       preLoaderRoute: typeof CountryCodeQuotesIndexRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
+    '/$countryCode/bookings/': {
+      id: '/$countryCode/bookings/'
+      path: '/bookings'
+      fullPath: '/$countryCode/bookings'
+      preLoaderRoute: typeof CountryCodeBookingsIndexRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
+    '/$countryCode/account/': {
+      id: '/$countryCode/account/'
+      path: '/account'
+      fullPath: '/$countryCode/account'
+      preLoaderRoute: typeof CountryCodeAccountIndexRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
+    '/vendor/settings/payments': {
+      id: '/vendor/settings/payments'
+      path: '/vendor/settings/payments'
+      fullPath: '/vendor/settings/payments'
+      preLoaderRoute: typeof VendorSettingsPaymentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vendor/products/new': {
+      id: '/vendor/products/new'
+      path: '/vendor/products/new'
+      fullPath: '/vendor/products/new'
+      preLoaderRoute: typeof VendorProductsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vendor/products/$productId': {
+      id: '/vendor/products/$productId'
+      path: '/vendor/products/$productId'
+      fullPath: '/vendor/products/$productId'
+      preLoaderRoute: typeof VendorProductsProductIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vendor/orders/$orderId': {
+      id: '/vendor/orders/$orderId'
+      path: '/vendor/orders/$orderId'
+      fullPath: '/vendor/orders/$orderId'
+      preLoaderRoute: typeof VendorOrdersOrderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$countryCode/vendors/$handle': {
+      id: '/$countryCode/vendors/$handle'
+      path: '/vendors/$handle'
+      fullPath: '/$countryCode/vendors/$handle'
+      preLoaderRoute: typeof CountryCodeVendorsHandleRouteImport
       parentRoute: typeof CountryCodeRoute
     }
     '/$countryCode/vendor/register': {
@@ -542,6 +1188,20 @@ declare module '@tanstack/react-router' {
       path: '/vendor/commissions'
       fullPath: '/$countryCode/vendor/commissions'
       preLoaderRoute: typeof CountryCodeVendorCommissionsRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
+    '/$countryCode/subscriptions/success': {
+      id: '/$countryCode/subscriptions/success'
+      path: '/subscriptions/success'
+      fullPath: '/$countryCode/subscriptions/success'
+      preLoaderRoute: typeof CountryCodeSubscriptionsSuccessRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
+    '/$countryCode/subscriptions/checkout': {
+      id: '/$countryCode/subscriptions/checkout'
+      path: '/subscriptions/checkout'
+      fullPath: '/$countryCode/subscriptions/checkout'
+      preLoaderRoute: typeof CountryCodeSubscriptionsCheckoutRouteImport
       parentRoute: typeof CountryCodeRoute
     }
     '/$countryCode/quotes/request': {
@@ -572,6 +1232,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CountryCodeCategoriesHandleRouteImport
       parentRoute: typeof CountryCodeRoute
     }
+    '/$countryCode/business/team': {
+      id: '/$countryCode/business/team'
+      path: '/business/team'
+      fullPath: '/$countryCode/business/team'
+      preLoaderRoute: typeof CountryCodeBusinessTeamRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
+    '/$countryCode/business/orders': {
+      id: '/$countryCode/business/orders'
+      path: '/business/orders'
+      fullPath: '/$countryCode/business/orders'
+      preLoaderRoute: typeof CountryCodeBusinessOrdersRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
+    '/$countryCode/business/approvals': {
+      id: '/$countryCode/business/approvals'
+      path: '/business/approvals'
+      fullPath: '/$countryCode/business/approvals'
+      preLoaderRoute: typeof CountryCodeBusinessApprovalsRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
+    '/$countryCode/bookings/confirmation': {
+      id: '/$countryCode/bookings/confirmation'
+      path: '/bookings/confirmation'
+      fullPath: '/$countryCode/bookings/confirmation'
+      preLoaderRoute: typeof CountryCodeBookingsConfirmationRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
+    '/$countryCode/bookings/$serviceHandle': {
+      id: '/$countryCode/bookings/$serviceHandle'
+      path: '/bookings/$serviceHandle'
+      fullPath: '/$countryCode/bookings/$serviceHandle'
+      preLoaderRoute: typeof CountryCodeBookingsServiceHandleRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
     '/$countryCode/b2b/register': {
       id: '/$countryCode/b2b/register'
       path: '/b2b/register'
@@ -584,6 +1279,27 @@ declare module '@tanstack/react-router' {
       path: '/b2b/dashboard'
       fullPath: '/$countryCode/b2b/dashboard'
       preLoaderRoute: typeof CountryCodeB2bDashboardRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
+    '/$countryCode/account/settings': {
+      id: '/$countryCode/account/settings'
+      path: '/account/settings'
+      fullPath: '/$countryCode/account/settings'
+      preLoaderRoute: typeof CountryCodeAccountSettingsRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
+    '/$countryCode/account/profile': {
+      id: '/$countryCode/account/profile'
+      path: '/account/profile'
+      fullPath: '/$countryCode/account/profile'
+      preLoaderRoute: typeof CountryCodeAccountProfileRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
+    '/$countryCode/account/addresses': {
+      id: '/$countryCode/account/addresses'
+      path: '/account/addresses'
+      fullPath: '/$countryCode/account/addresses'
+      preLoaderRoute: typeof CountryCodeAccountAddressesRouteImport
       parentRoute: typeof CountryCodeRoute
     }
     '/$countryCode/vendor/products/': {
@@ -607,6 +1323,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CountryCodeVendorOrdersIndexRouteImport
       parentRoute: typeof CountryCodeRoute
     }
+    '/$countryCode/account/subscriptions/': {
+      id: '/$countryCode/account/subscriptions/'
+      path: '/account/subscriptions'
+      fullPath: '/$countryCode/account/subscriptions'
+      preLoaderRoute: typeof CountryCodeAccountSubscriptionsIndexRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
+    '/$countryCode/account/purchase-orders/': {
+      id: '/$countryCode/account/purchase-orders/'
+      path: '/account/purchase-orders'
+      fullPath: '/$countryCode/account/purchase-orders'
+      preLoaderRoute: typeof CountryCodeAccountPurchaseOrdersIndexRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
+    '/$countryCode/account/orders/': {
+      id: '/$countryCode/account/orders/'
+      path: '/account/orders'
+      fullPath: '/$countryCode/account/orders'
+      preLoaderRoute: typeof CountryCodeAccountOrdersIndexRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
+    '/$countryCode/account/bookings/': {
+      id: '/$countryCode/account/bookings/'
+      path: '/account/bookings'
+      fullPath: '/$countryCode/account/bookings'
+      preLoaderRoute: typeof CountryCodeAccountBookingsIndexRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
+    '/$countryCode/vendors/$handle/reviews': {
+      id: '/$countryCode/vendors/$handle/reviews'
+      path: '/reviews'
+      fullPath: '/$countryCode/vendors/$handle/reviews'
+      preLoaderRoute: typeof CountryCodeVendorsHandleReviewsRouteImport
+      parentRoute: typeof CountryCodeVendorsHandleRoute
+    }
+    '/$countryCode/vendors/$handle/products': {
+      id: '/$countryCode/vendors/$handle/products'
+      path: '/products'
+      fullPath: '/$countryCode/vendors/$handle/products'
+      preLoaderRoute: typeof CountryCodeVendorsHandleProductsRouteImport
+      parentRoute: typeof CountryCodeVendorsHandleRoute
+    }
     '/$countryCode/vendor/products/new': {
       id: '/$countryCode/vendor/products/new'
       path: '/vendor/products/new'
@@ -627,6 +1385,62 @@ declare module '@tanstack/react-router' {
       fullPath: '/$countryCode/order/$orderId/confirmed'
       preLoaderRoute: typeof CountryCodeOrderOrderIdConfirmedRouteImport
       parentRoute: typeof CountryCodeRoute
+    }
+    '/$countryCode/account/subscriptions/$id': {
+      id: '/$countryCode/account/subscriptions/$id'
+      path: '/account/subscriptions/$id'
+      fullPath: '/$countryCode/account/subscriptions/$id'
+      preLoaderRoute: typeof CountryCodeAccountSubscriptionsIdRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
+    '/$countryCode/account/purchase-orders/new': {
+      id: '/$countryCode/account/purchase-orders/new'
+      path: '/account/purchase-orders/new'
+      fullPath: '/$countryCode/account/purchase-orders/new'
+      preLoaderRoute: typeof CountryCodeAccountPurchaseOrdersNewRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
+    '/$countryCode/account/purchase-orders/$id': {
+      id: '/$countryCode/account/purchase-orders/$id'
+      path: '/account/purchase-orders/$id'
+      fullPath: '/$countryCode/account/purchase-orders/$id'
+      preLoaderRoute: typeof CountryCodeAccountPurchaseOrdersIdRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
+    '/$countryCode/account/orders/$id': {
+      id: '/$countryCode/account/orders/$id'
+      path: '/account/orders/$id'
+      fullPath: '/$countryCode/account/orders/$id'
+      preLoaderRoute: typeof CountryCodeAccountOrdersIdRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
+    '/$countryCode/account/bookings/$id': {
+      id: '/$countryCode/account/bookings/$id'
+      path: '/account/bookings/$id'
+      fullPath: '/$countryCode/account/bookings/$id'
+      preLoaderRoute: typeof CountryCodeAccountBookingsIdRouteImport
+      parentRoute: typeof CountryCodeRoute
+    }
+    '/$countryCode/account/subscriptions/$id/billing': {
+      id: '/$countryCode/account/subscriptions/$id/billing'
+      path: '/billing'
+      fullPath: '/$countryCode/account/subscriptions/$id/billing'
+      preLoaderRoute: typeof CountryCodeAccountSubscriptionsIdBillingRouteImport
+      parentRoute: typeof CountryCodeAccountSubscriptionsIdRoute
+    }
+    '/$countryCode/account/orders/$id/track': {
+      id: '/$countryCode/account/orders/$id/track'
+      path: '/track'
+      fullPath: '/$countryCode/account/orders/$id/track'
+      preLoaderRoute: typeof CountryCodeAccountOrdersIdTrackRouteImport
+      parentRoute: typeof CountryCodeAccountOrdersIdRoute
+    }
+    '/$countryCode/account/orders/$id/return': {
+      id: '/$countryCode/account/orders/$id/return'
+      path: '/return'
+      fullPath: '/$countryCode/account/orders/$id/return'
+      preLoaderRoute: typeof CountryCodeAccountOrdersIdReturnRouteImport
+      parentRoute: typeof CountryCodeAccountOrdersIdRoute
     }
   }
 }
@@ -656,27 +1470,104 @@ const CountryCodeVendorPayoutsRouteWithChildren =
     CountryCodeVendorPayoutsRouteChildren,
   )
 
+interface CountryCodeVendorsHandleRouteChildren {
+  CountryCodeVendorsHandleProductsRoute: typeof CountryCodeVendorsHandleProductsRoute
+  CountryCodeVendorsHandleReviewsRoute: typeof CountryCodeVendorsHandleReviewsRoute
+}
+
+const CountryCodeVendorsHandleRouteChildren: CountryCodeVendorsHandleRouteChildren =
+  {
+    CountryCodeVendorsHandleProductsRoute:
+      CountryCodeVendorsHandleProductsRoute,
+    CountryCodeVendorsHandleReviewsRoute: CountryCodeVendorsHandleReviewsRoute,
+  }
+
+const CountryCodeVendorsHandleRouteWithChildren =
+  CountryCodeVendorsHandleRoute._addFileChildren(
+    CountryCodeVendorsHandleRouteChildren,
+  )
+
+interface CountryCodeAccountOrdersIdRouteChildren {
+  CountryCodeAccountOrdersIdReturnRoute: typeof CountryCodeAccountOrdersIdReturnRoute
+  CountryCodeAccountOrdersIdTrackRoute: typeof CountryCodeAccountOrdersIdTrackRoute
+}
+
+const CountryCodeAccountOrdersIdRouteChildren: CountryCodeAccountOrdersIdRouteChildren =
+  {
+    CountryCodeAccountOrdersIdReturnRoute:
+      CountryCodeAccountOrdersIdReturnRoute,
+    CountryCodeAccountOrdersIdTrackRoute: CountryCodeAccountOrdersIdTrackRoute,
+  }
+
+const CountryCodeAccountOrdersIdRouteWithChildren =
+  CountryCodeAccountOrdersIdRoute._addFileChildren(
+    CountryCodeAccountOrdersIdRouteChildren,
+  )
+
+interface CountryCodeAccountSubscriptionsIdRouteChildren {
+  CountryCodeAccountSubscriptionsIdBillingRoute: typeof CountryCodeAccountSubscriptionsIdBillingRoute
+}
+
+const CountryCodeAccountSubscriptionsIdRouteChildren: CountryCodeAccountSubscriptionsIdRouteChildren =
+  {
+    CountryCodeAccountSubscriptionsIdBillingRoute:
+      CountryCodeAccountSubscriptionsIdBillingRoute,
+  }
+
+const CountryCodeAccountSubscriptionsIdRouteWithChildren =
+  CountryCodeAccountSubscriptionsIdRoute._addFileChildren(
+    CountryCodeAccountSubscriptionsIdRouteChildren,
+  )
+
 interface CountryCodeRouteChildren {
   CountryCodeSlugRoute: typeof CountryCodeSlugRoute
   CountryCodeCartRoute: typeof CountryCodeCartRoute
   CountryCodeCheckoutRoute: typeof CountryCodeCheckoutRoute
+  CountryCodeLoginRoute: typeof CountryCodeLoginRoute
+  CountryCodeRegisterRoute: typeof CountryCodeRegisterRoute
+  CountryCodeResetPasswordRoute: typeof CountryCodeResetPasswordRoute
+  CountryCodeSearchRoute: typeof CountryCodeSearchRoute
   CountryCodeStoreRoute: typeof CountryCodeStoreRoute
   CountryCodeStoresRoute: typeof CountryCodeStoresRoute
   CountryCodeIndexRoute: typeof CountryCodeIndexRoute
+  CountryCodeAccountAddressesRoute: typeof CountryCodeAccountAddressesRoute
+  CountryCodeAccountProfileRoute: typeof CountryCodeAccountProfileRoute
+  CountryCodeAccountSettingsRoute: typeof CountryCodeAccountSettingsRoute
   CountryCodeB2bDashboardRoute: typeof CountryCodeB2bDashboardRoute
   CountryCodeB2bRegisterRoute: typeof CountryCodeB2bRegisterRoute
+  CountryCodeBookingsServiceHandleRoute: typeof CountryCodeBookingsServiceHandleRoute
+  CountryCodeBookingsConfirmationRoute: typeof CountryCodeBookingsConfirmationRoute
+  CountryCodeBusinessApprovalsRoute: typeof CountryCodeBusinessApprovalsRoute
+  CountryCodeBusinessOrdersRoute: typeof CountryCodeBusinessOrdersRoute
+  CountryCodeBusinessTeamRoute: typeof CountryCodeBusinessTeamRoute
   CountryCodeCategoriesHandleRoute: typeof CountryCodeCategoriesHandleRoute
   CountryCodeProductsHandleRoute: typeof CountryCodeProductsHandleRoute
   CountryCodeQuotesIdRoute: typeof CountryCodeQuotesIdRoute
   CountryCodeQuotesRequestRoute: typeof CountryCodeQuotesRequestRoute
+  CountryCodeSubscriptionsCheckoutRoute: typeof CountryCodeSubscriptionsCheckoutRoute
+  CountryCodeSubscriptionsSuccessRoute: typeof CountryCodeSubscriptionsSuccessRoute
   CountryCodeVendorCommissionsRoute: typeof CountryCodeVendorCommissionsRoute
   CountryCodeVendorPayoutsRoute: typeof CountryCodeVendorPayoutsRouteWithChildren
   CountryCodeVendorRegisterRoute: typeof CountryCodeVendorRegisterRoute
+  CountryCodeVendorsHandleRoute: typeof CountryCodeVendorsHandleRouteWithChildren
+  CountryCodeAccountIndexRoute: typeof CountryCodeAccountIndexRoute
+  CountryCodeBookingsIndexRoute: typeof CountryCodeBookingsIndexRoute
   CountryCodeQuotesIndexRoute: typeof CountryCodeQuotesIndexRoute
+  CountryCodeSubscriptionsIndexRoute: typeof CountryCodeSubscriptionsIndexRoute
   CountryCodeVendorIndexRoute: typeof CountryCodeVendorIndexRoute
+  CountryCodeVendorsIndexRoute: typeof CountryCodeVendorsIndexRoute
+  CountryCodeAccountBookingsIdRoute: typeof CountryCodeAccountBookingsIdRoute
+  CountryCodeAccountOrdersIdRoute: typeof CountryCodeAccountOrdersIdRouteWithChildren
+  CountryCodeAccountPurchaseOrdersIdRoute: typeof CountryCodeAccountPurchaseOrdersIdRoute
+  CountryCodeAccountPurchaseOrdersNewRoute: typeof CountryCodeAccountPurchaseOrdersNewRoute
+  CountryCodeAccountSubscriptionsIdRoute: typeof CountryCodeAccountSubscriptionsIdRouteWithChildren
   CountryCodeOrderOrderIdConfirmedRoute: typeof CountryCodeOrderOrderIdConfirmedRoute
   CountryCodeVendorProductsProductIdRoute: typeof CountryCodeVendorProductsProductIdRoute
   CountryCodeVendorProductsNewRoute: typeof CountryCodeVendorProductsNewRoute
+  CountryCodeAccountBookingsIndexRoute: typeof CountryCodeAccountBookingsIndexRoute
+  CountryCodeAccountOrdersIndexRoute: typeof CountryCodeAccountOrdersIndexRoute
+  CountryCodeAccountPurchaseOrdersIndexRoute: typeof CountryCodeAccountPurchaseOrdersIndexRoute
+  CountryCodeAccountSubscriptionsIndexRoute: typeof CountryCodeAccountSubscriptionsIndexRoute
   CountryCodeVendorOrdersIndexRoute: typeof CountryCodeVendorOrdersIndexRoute
   CountryCodeVendorProductsIndexRoute: typeof CountryCodeVendorProductsIndexRoute
 }
@@ -685,24 +1576,57 @@ const CountryCodeRouteChildren: CountryCodeRouteChildren = {
   CountryCodeSlugRoute: CountryCodeSlugRoute,
   CountryCodeCartRoute: CountryCodeCartRoute,
   CountryCodeCheckoutRoute: CountryCodeCheckoutRoute,
+  CountryCodeLoginRoute: CountryCodeLoginRoute,
+  CountryCodeRegisterRoute: CountryCodeRegisterRoute,
+  CountryCodeResetPasswordRoute: CountryCodeResetPasswordRoute,
+  CountryCodeSearchRoute: CountryCodeSearchRoute,
   CountryCodeStoreRoute: CountryCodeStoreRoute,
   CountryCodeStoresRoute: CountryCodeStoresRoute,
   CountryCodeIndexRoute: CountryCodeIndexRoute,
+  CountryCodeAccountAddressesRoute: CountryCodeAccountAddressesRoute,
+  CountryCodeAccountProfileRoute: CountryCodeAccountProfileRoute,
+  CountryCodeAccountSettingsRoute: CountryCodeAccountSettingsRoute,
   CountryCodeB2bDashboardRoute: CountryCodeB2bDashboardRoute,
   CountryCodeB2bRegisterRoute: CountryCodeB2bRegisterRoute,
+  CountryCodeBookingsServiceHandleRoute: CountryCodeBookingsServiceHandleRoute,
+  CountryCodeBookingsConfirmationRoute: CountryCodeBookingsConfirmationRoute,
+  CountryCodeBusinessApprovalsRoute: CountryCodeBusinessApprovalsRoute,
+  CountryCodeBusinessOrdersRoute: CountryCodeBusinessOrdersRoute,
+  CountryCodeBusinessTeamRoute: CountryCodeBusinessTeamRoute,
   CountryCodeCategoriesHandleRoute: CountryCodeCategoriesHandleRoute,
   CountryCodeProductsHandleRoute: CountryCodeProductsHandleRoute,
   CountryCodeQuotesIdRoute: CountryCodeQuotesIdRoute,
   CountryCodeQuotesRequestRoute: CountryCodeQuotesRequestRoute,
+  CountryCodeSubscriptionsCheckoutRoute: CountryCodeSubscriptionsCheckoutRoute,
+  CountryCodeSubscriptionsSuccessRoute: CountryCodeSubscriptionsSuccessRoute,
   CountryCodeVendorCommissionsRoute: CountryCodeVendorCommissionsRoute,
   CountryCodeVendorPayoutsRoute: CountryCodeVendorPayoutsRouteWithChildren,
   CountryCodeVendorRegisterRoute: CountryCodeVendorRegisterRoute,
+  CountryCodeVendorsHandleRoute: CountryCodeVendorsHandleRouteWithChildren,
+  CountryCodeAccountIndexRoute: CountryCodeAccountIndexRoute,
+  CountryCodeBookingsIndexRoute: CountryCodeBookingsIndexRoute,
   CountryCodeQuotesIndexRoute: CountryCodeQuotesIndexRoute,
+  CountryCodeSubscriptionsIndexRoute: CountryCodeSubscriptionsIndexRoute,
   CountryCodeVendorIndexRoute: CountryCodeVendorIndexRoute,
+  CountryCodeVendorsIndexRoute: CountryCodeVendorsIndexRoute,
+  CountryCodeAccountBookingsIdRoute: CountryCodeAccountBookingsIdRoute,
+  CountryCodeAccountOrdersIdRoute: CountryCodeAccountOrdersIdRouteWithChildren,
+  CountryCodeAccountPurchaseOrdersIdRoute:
+    CountryCodeAccountPurchaseOrdersIdRoute,
+  CountryCodeAccountPurchaseOrdersNewRoute:
+    CountryCodeAccountPurchaseOrdersNewRoute,
+  CountryCodeAccountSubscriptionsIdRoute:
+    CountryCodeAccountSubscriptionsIdRouteWithChildren,
   CountryCodeOrderOrderIdConfirmedRoute: CountryCodeOrderOrderIdConfirmedRoute,
   CountryCodeVendorProductsProductIdRoute:
     CountryCodeVendorProductsProductIdRoute,
   CountryCodeVendorProductsNewRoute: CountryCodeVendorProductsNewRoute,
+  CountryCodeAccountBookingsIndexRoute: CountryCodeAccountBookingsIndexRoute,
+  CountryCodeAccountOrdersIndexRoute: CountryCodeAccountOrdersIndexRoute,
+  CountryCodeAccountPurchaseOrdersIndexRoute:
+    CountryCodeAccountPurchaseOrdersIndexRoute,
+  CountryCodeAccountSubscriptionsIndexRoute:
+    CountryCodeAccountSubscriptionsIndexRoute,
   CountryCodeVendorOrdersIndexRoute: CountryCodeVendorOrdersIndexRoute,
   CountryCodeVendorProductsIndexRoute: CountryCodeVendorProductsIndexRoute,
 }
@@ -718,6 +1642,14 @@ const rootRouteChildren: RootRouteChildren = {
   CartRoute: CartRoute,
   CheckoutRoute: CheckoutRoute,
   StoreRoute: StoreRoute,
+  VendorOrdersOrderIdRoute: VendorOrdersOrderIdRoute,
+  VendorProductsProductIdRoute: VendorProductsProductIdRoute,
+  VendorProductsNewRoute: VendorProductsNewRoute,
+  VendorSettingsPaymentsRoute: VendorSettingsPaymentsRoute,
+  VendorOrdersIndexRoute: VendorOrdersIndexRoute,
+  VendorPayoutsIndexRoute: VendorPayoutsIndexRoute,
+  VendorProductsIndexRoute: VendorProductsIndexRoute,
+  VendorSettingsIndexRoute: VendorSettingsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

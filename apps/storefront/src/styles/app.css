@@ -1,12 +1,13 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Roboto+Mono:wght@400;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=JetBrains+Mono:wght@400;500&display=swap");
 @import "tailwindcss";
 @config "../../tailwind.config.js";
 @import "./theme.css";
 
 @layer base {
   :root {
-    @apply bg-white text-zinc-900 antialiased;
+    @apply bg-slate-50 text-slate-900 antialiased;
     text-rendering: optimizeLegibility;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }
 
@@ -14,6 +15,217 @@
   /* Content container */
   .content-container {
     @apply max-w-[1440px] w-full mx-auto px-6;
+  }
+
+  /* Enterprise Card Styles */
+  .enterprise-card {
+    @apply bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200;
+  }
+
+  .enterprise-card-header {
+    @apply px-6 py-4 border-b border-slate-100;
+  }
+
+  .enterprise-card-body {
+    @apply p-6;
+  }
+
+  /* Enterprise Button Styles */
+  .btn-enterprise {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200;
+  }
+
+  .btn-enterprise-primary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 bg-slate-900 text-white hover:bg-slate-800 active:bg-slate-950;
+  }
+
+  .btn-enterprise-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 active:bg-slate-100;
+  }
+
+  .btn-enterprise-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 hover:bg-slate-100 active:bg-slate-200;
+  }
+
+  .btn-enterprise-success {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800;
+  }
+
+  .btn-enterprise-danger {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 bg-red-600 text-white hover:bg-red-700 active:bg-red-800;
+  }
+
+  /* Enterprise Badge Styles */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-primary {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700;
+  }
+
+  .badge-success {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700;
+  }
+
+  .badge-warning {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700;
+  }
+
+  .badge-danger {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700;
+  }
+
+  .badge-neutral {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700;
+  }
+
+  /* Enterprise Input Styles */
+  .input-enterprise {
+    @apply w-full px-4 py-2.5 text-sm bg-white border border-slate-300 rounded-lg 
+           placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/10 
+           focus:border-slate-900 transition-colors duration-200;
+  }
+
+  .input-enterprise-error {
+    @apply w-full px-4 py-2.5 text-sm bg-white border rounded-lg placeholder:text-slate-400 focus:outline-none focus:ring-2 transition-colors duration-200 border-red-300 focus:ring-red-500/10 focus:border-red-500;
+  }
+
+  /* Enterprise Table Styles */
+  .table-enterprise {
+    @apply w-full text-sm;
+  }
+
+  .table-enterprise th {
+    @apply text-left font-medium text-slate-500 uppercase tracking-wider text-xs px-4 py-3 bg-slate-50 border-b border-slate-200;
+  }
+
+  .table-enterprise td {
+    @apply px-4 py-4 border-b border-slate-100;
+  }
+
+  .table-enterprise tr:hover td {
+    @apply bg-slate-50;
+  }
+
+  /* Enterprise Stats Card */
+  .stats-card {
+    @apply bg-white rounded-xl border border-slate-200 shadow-sm p-6;
+  }
+
+  .stats-card-label {
+    @apply text-sm font-medium text-slate-500;
+  }
+
+  .stats-card-value {
+    @apply text-2xl font-semibold text-slate-900 mt-1;
+  }
+
+  .stats-card-change {
+    @apply text-sm mt-2;
+  }
+
+  .stats-card-change-positive {
+    @apply text-sm mt-2 text-emerald-600;
+  }
+
+  .stats-card-change-negative {
+    @apply text-sm mt-2 text-red-600;
+  }
+
+  /* Enterprise Section Headers */
+  .section-header {
+    @apply flex items-center justify-between mb-6;
+  }
+
+  .section-title {
+    @apply text-xl font-semibold text-slate-900;
+  }
+
+  .section-subtitle {
+    @apply text-sm text-slate-500 mt-1;
+  }
+
+  /* Enterprise Navigation */
+  .nav-enterprise {
+    @apply flex items-center gap-1;
+  }
+
+  .nav-enterprise-link {
+    @apply px-4 py-2 text-sm font-medium text-slate-600 rounded-lg hover:bg-slate-100 transition-colors;
+  }
+
+  .nav-enterprise-link-active {
+    @apply px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-slate-900 text-white hover:bg-slate-800;
+  }
+
+  /* Enterprise Tabs */
+  .tabs-enterprise {
+    @apply flex border-b border-slate-200;
+  }
+
+  .tab-enterprise {
+    @apply px-4 py-3 text-sm font-medium text-slate-500 border-b-2 border-transparent 
+           hover:text-slate-700 hover:border-slate-300 transition-colors -mb-px;
+  }
+
+  .tab-enterprise-active {
+    @apply px-4 py-3 text-sm font-medium border-b-2 transition-colors -mb-px text-slate-900 border-slate-900;
+  }
+
+  /* Enterprise Status Indicators */
+  .status-dot {
+    @apply w-2 h-2 rounded-full;
+  }
+
+  .status-dot-active {
+    @apply w-2 h-2 rounded-full bg-emerald-500;
+  }
+
+  .status-dot-pending {
+    @apply w-2 h-2 rounded-full bg-amber-500;
+  }
+
+  .status-dot-inactive {
+    @apply w-2 h-2 rounded-full bg-slate-300;
+  }
+
+  .status-dot-error {
+    @apply w-2 h-2 rounded-full bg-red-500;
+  }
+
+  /* Enterprise Progress Bar */
+  .progress-bar {
+    @apply h-2 bg-slate-200 rounded-full overflow-hidden;
+  }
+
+  .progress-bar-fill {
+    @apply h-full bg-slate-900 rounded-full transition-all duration-500;
+  }
+
+  .progress-bar-fill-success {
+    @apply h-full rounded-full transition-all duration-500 bg-emerald-600;
+  }
+
+  .progress-bar-fill-warning {
+    @apply h-full rounded-full transition-all duration-500 bg-amber-500;
+  }
+
+  /* Enterprise Empty State */
+  .empty-state {
+    @apply flex flex-col items-center justify-center py-16 text-center;
+  }
+
+  .empty-state-icon {
+    @apply w-16 h-16 text-slate-300 mb-4;
+  }
+
+  .empty-state-title {
+    @apply text-lg font-medium text-slate-900;
+  }
+
+  .empty-state-description {
+    @apply text-sm text-slate-500 mt-1 max-w-sm;
   }
 }
 
@@ -41,20 +253,25 @@
     @apply left-0;
   }
 
-  /* input:not([type="checkbox"]):-webkit-autofill,
-  input:not([type="checkbox"]):-webkit-autofill:hover,
-  input:not([type="checkbox"]):-webkit-autofill:focus,
-  textarea:-webkit-autofill,
-  textarea:-webkit-autofill:hover,
-  textarea:-webkit-autofill:focus,
-  select:-webkit-autofill,
-  select:-webkit-autofill:hover,
-  select:-webkit-autofill:focus {
-    border: 1px solid #212121;
-    -webkit-text-fill-color: #212121;
-    -webkit-box-shadow: 0 0 0px 1000px #fff inset;
-    transition: background-color 5000s ease-in-out 0s;
-  } */
+  /* Animation delays for staggered animations */
+  .animate-delay-100 { animation-delay: 100ms; }
+  .animate-delay-200 { animation-delay: 200ms; }
+  .animate-delay-300 { animation-delay: 300ms; }
+  .animate-delay-400 { animation-delay: 400ms; }
+  .animate-delay-500 { animation-delay: 500ms; }
+
+  /* Enterprise shadows */
+  .shadow-enterprise {
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
+  }
+
+  .shadow-enterprise-md {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  }
+
+  .shadow-enterprise-lg {
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+  }
 }
 
 /* Navigation menu dropdown animations */

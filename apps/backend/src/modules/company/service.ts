@@ -1,15 +1,27 @@
 import { MedusaService } from "@medusajs/framework/utils";
 import Company from "./models/company";
 import CompanyUser from "./models/company-user";
+import { PurchaseOrder } from "./models/purchase-order";
+import { PurchaseOrderItem } from "./models/purchase-order-item";
+import { PaymentTerms } from "./models/payment-terms";
+import { TaxExemption } from "./models/tax-exemption";
+import { ApprovalWorkflow, ApprovalRequest, ApprovalAction } from "./models/approval-workflow";
 
 /**
  * Company Service
  * 
- * Manages B2B company accounts and user memberships.
+ * Manages B2B company accounts, purchase orders, payment terms, tax exemptions, and approval workflows.
  */
 class CompanyModuleService extends MedusaService({
   Company,
   CompanyUser,
+  PurchaseOrder,
+  PurchaseOrderItem,
+  PaymentTerms,
+  TaxExemption,
+  ApprovalWorkflow,
+  ApprovalRequest,
+  ApprovalAction,
 }) {
   /**
    * Check if company has available credit
@@ -127,6 +139,341 @@ class CompanyModuleService extends MedusaService({
       if (!user.approval_limit) return true;
       return BigInt(user.approval_limit) >= amount;
     });
+  }
+
+  // ============ Purchase Order Methods ============
+
+  /**
+   * Generate unique PO number
+   */
+  async generatePONumber(companyId: string): Promise<string> {
+    const company = await this.retrieveCompany(companyId);
+    const prefix = company.name?.substring(0, 3).toUpperCase() || "PO";
+    const timestamp = Date.now().toString(36).toUpperCase();
+    const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+    return `${prefix}-${timestamp}-${random}`;
+  }
+
+  /**
+   * Create purchase order with items
+   */
+  async createPurchaseOrderWithItems(
+    poData: any,
+    items: any[]
+  ): Promise<any> {
+    const poNumber = await this.generatePONumber(poData.company_id);
+    
+    const purchaseOrder = await (this as any).createPurchaseOrders({
+      ...poData,
+      po_number: poNumber,
+      issue_date: new Date(),
+    });
+
+    const createdItems = await Promise.all(
+      items.map(item => 
+        (this as any).createPurchaseOrderItems({
+          ...item,
+          purchase_order_id: purchaseOrder.id,
+          subtotal: item.unit_price * item.quantity,
+          total: item.unit_price * item.quantity + (item.tax_amount || 0),
+        })
+      )
+    );
+
+    // Calculate totals
+    const subtotal = createdItems.reduce((sum: number, item: any) => sum + Number(item.subtotal), 0);
+    const taxTotal = createdItems.reduce((sum: number, item: any) => sum + Number(item.tax_amount || 0), 0);
+    
+    await (this as any).updatePurchaseOrders({
+      id: purchaseOrder.id,
+      subtotal,
+      tax_total: taxTotal,
+      total: subtotal + taxTotal + Number(poData.shipping_total || 0),
+    });
+
+    return { ...purchaseOrder, items: createdItems };
+  }
+
+  /**
+   * Submit PO for approval
+   */
+  async submitPOForApproval(poId: string): Promise<any> {
+    const po = await (this as any).retrievePurchaseOrder(poId);
+    
+    if (po.status !== "draft") {
+      throw new Error("Only draft POs can be submitted for approval");
+    }
+
+    // Find applicable workflow
+    const workflows = await this.listApprovalWorkflows({
+      company_id: po.company_id,
+      workflow_type: "purchase_order",
+      is_active: true,
+    }) as any;
+
+    const workflowList = Array.isArray(workflows) ? workflows : [workflows].filter(Boolean);
+    
+    if (workflowList.length === 0 || !po.requires_approval) {
+      // No workflow, auto-approve
+      return await (this as any).updatePurchaseOrders({
+        id: poId,
+        status: "approved",
+        approved_at: new Date(),
+      });
+    }
+
+    // Create approval request
+    const workflow = workflowList[0];
+    await (this as any).createApprovalRequests({
+      workflow_id: workflow.id,
+      company_id: po.company_id,
+      tenant_id: po.tenant_id,
+      entity_type: "purchase_order",
+      entity_id: poId,
+      requested_by_id: po.customer_id,
+      requested_at: new Date(),
+      amount: po.total,
+      currency_code: po.currency_code,
+      request_data: po,
+    });
+
+    return await (this as any).updatePurchaseOrders({
+      id: poId,
+      status: "pending_approval",
+    });
+  }
+
+  // ============ Payment Terms Methods ============
+
+  /**
+   * Calculate payment due date based on terms
+   */
+  calculateDueDate(terms: any, invoiceDate: Date = new Date()): Date {
+    const date = new Date(invoiceDate);
+    
+    switch (terms.terms_type) {
+      case "due_on_receipt":
+        return date;
+      
+      case "net_days":
+        date.setDate(date.getDate() + (terms.net_days || 30));
+        return date;
+      
+      case "end_of_month":
+        date.setMonth(date.getMonth() + 1, 0);
+        return date;
+      
+      case "end_of_next_month":
+        date.setMonth(date.getMonth() + 2, 0);
+        return date;
+      
+      default:
+        date.setDate(date.getDate() + 30);
+        return date;
+    }
+  }
+
+  /**
+   * Calculate early payment discount
+   */
+  calculateEarlyPaymentDiscount(terms: any, amount: number, paymentDate: Date, invoiceDate: Date): number {
+    if (!terms.early_payment_discount_percent || !terms.early_payment_discount_days) {
+      return 0;
+    }
+
+    const daysSinceInvoice = Math.floor(
+      (paymentDate.getTime() - invoiceDate.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    if (daysSinceInvoice <= terms.early_payment_discount_days) {
+      return amount * (Number(terms.early_payment_discount_percent) / 100);
+    }
+
+    return 0;
+  }
+
+  /**
+   * Get default payment terms for company
+   */
+  async getCompanyPaymentTerms(companyId: string, tenantId?: string): Promise<any> {
+    const company = await this.retrieveCompany(companyId);
+    
+    // Find terms matching company tier
+    const terms = await this.listPaymentTerms({
+      tenant_id: tenantId,
+      is_active: true,
+    }) as any;
+
+    const termsList = Array.isArray(terms) ? terms : [terms].filter(Boolean);
+    
+    // Find tier-specific or default
+    const tierTerms = termsList.find((t: any) => 
+      t.company_tiers?.includes(company.tier)
+    );
+    
+    if (tierTerms) return tierTerms;
+    
+    // Return default
+    return termsList.find((t: any) => t.is_default);
+  }
+
+  // ============ Tax Exemption Methods ============
+
+  /**
+   * Validate tax exemption certificate
+   */
+  async validateTaxExemption(exemptionId: string): Promise<boolean> {
+    const exemption = await (this as any).retrieveTaxExemption(exemptionId);
+    
+    if (exemption.status !== "verified") {
+      return false;
+    }
+
+    if (exemption.expiration_date && new Date(exemption.expiration_date) < new Date()) {
+      // Mark as expired
+      await (this as any).updateTaxExemptions({
+        id: exemptionId,
+        status: "expired",
+      });
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Get applicable tax exemption for order
+   */
+  async getApplicableTaxExemption(
+    companyId: string, 
+    regionId?: string,
+    categoryIds?: string[]
+  ): Promise<any | null> {
+    const exemptions = await this.listTaxExemptions({
+      company_id: companyId,
+      status: "verified",
+    }) as any;
+
+    const exemptionList = Array.isArray(exemptions) ? exemptions : [exemptions].filter(Boolean);
+
+    for (const exemption of exemptionList) {
+      // Check expiration
+      if (exemption.expiration_date && new Date(exemption.expiration_date) < new Date()) {
+        continue;
+      }
+
+      // Check region applicability
+      if (exemption.applicable_regions?.length && regionId) {
+        if (!exemption.applicable_regions.includes(regionId)) {
+          continue;
+        }
+      }
+
+      // Check category applicability
+      if (exemption.applicable_categories?.length && categoryIds?.length) {
+        const hasMatch = categoryIds.some(id => 
+          exemption.applicable_categories.includes(id)
+        );
+        if (!hasMatch) continue;
+      }
+
+      // Update usage
+      await (this as any).updateTaxExemptions({
+        id: exemption.id,
+        last_used_at: new Date(),
+        usage_count: (exemption.usage_count || 0) + 1,
+      });
+
+      return exemption;
+    }
+
+    return null;
+  }
+
+  // ============ Approval Workflow Methods ============
+
+  /**
+   * Process approval action
+   */
+  async processApprovalAction(
+    requestId: string,
+    userId: string,
+    action: "approve" | "reject" | "request_changes",
+    comments?: string
+  ): Promise<any> {
+    const request = await (this as any).retrieveApprovalRequest(requestId);
+    const workflow = await (this as any).retrieveApprovalWorkflow(request.workflow_id);
+    
+    const steps = workflow.steps || [];
+    const currentStep = steps[request.current_step - 1];
+
+    // Record action
+    await (this as any).createApprovalActions({
+      approval_request_id: requestId,
+      step_number: request.current_step,
+      step_name: currentStep?.name,
+      action,
+      action_by_id: userId,
+      action_at: new Date(),
+      comments,
+    });
+
+    if (action === "reject") {
+      // Update request status
+      await (this as any).updateApprovalRequests({
+        id: requestId,
+        status: "rejected",
+        resolved_at: new Date(),
+        resolution_notes: comments,
+      });
+
+      // Update entity
+      if (request.entity_type === "purchase_order") {
+        await (this as any).updatePurchaseOrders({
+          id: request.entity_id,
+          status: "rejected",
+          rejected_by_id: userId,
+          rejected_at: new Date(),
+          rejection_reason: comments,
+        });
+      }
+
+      return { status: "rejected" };
+    }
+
+    if (action === "approve") {
+      // Check if more steps
+      if (request.current_step < steps.length) {
+        await (this as any).updateApprovalRequests({
+          id: requestId,
+          current_step: request.current_step + 1,
+          status: "in_progress",
+        });
+        return { status: "in_progress", next_step: request.current_step + 1 };
+      }
+
+      // All steps complete
+      await (this as any).updateApprovalRequests({
+        id: requestId,
+        status: "approved",
+        resolved_at: new Date(),
+      });
+
+      // Update entity
+      if (request.entity_type === "purchase_order") {
+        await (this as any).updatePurchaseOrders({
+          id: request.entity_id,
+          status: "approved",
+          approved_by_id: userId,
+          approved_at: new Date(),
+          approval_notes: comments,
+        });
+      }
+
+      return { status: "approved" };
+    }
+
+    return { status: "pending" };
   }
 }
 

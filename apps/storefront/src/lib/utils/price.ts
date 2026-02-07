@@ -11,13 +11,23 @@ type FormatPriceParams = {
   locale?: string
 }
 
-export const formatPrice = ({
-  amount,
-  currency_code,
-  minimumFractionDigits,
-  maximumFractionDigits,
-  locale = "en-US",
-}: FormatPriceParams): string => {
+export const formatPrice = (
+  amountOrParams: number | FormatPriceParams,
+  currencyCode?: string
+): string => {
+  // Support both (amount, currency) and ({amount, currency_code}) signatures
+  if (typeof amountOrParams === "number") {
+    const amount = amountOrParams
+    const currency = currencyCode || "usd"
+    return currency && !isEmpty(currency)
+      ? new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: currency,
+        }).format(amount)
+      : amount.toString()
+  }
+  
+  const { amount, currency_code, minimumFractionDigits, maximumFractionDigits, locale = "en-US" } = amountOrParams
   return currency_code && !isEmpty(currency_code)
     ? new Intl.NumberFormat(locale, {
         style: "currency",

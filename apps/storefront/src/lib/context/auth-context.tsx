@@ -1,0 +1,231 @@
+import { sdk } from "@/lib/utils/sdk"
+import { queryKeys } from "@/lib/utils/query-keys"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { createContext, useContext, useCallback, type ReactNode } from "react"
+
+// Types
+export interface Customer {
+  id: string
+  email: string
+  first_name: string | null
+  last_name: string | null
+  phone: string | null
+  has_account: boolean
+  created_at: string
+  updated_at: string
+  metadata?: Record<string, unknown>
+  // B2B fields
+  company_id?: string
+  company?: {
+    id: string
+    name: string
+    credit_limit?: number
+    spending_limit?: number
+  }
+}
+
+export interface LoginCredentials {
+  email: string
+  password: string
+}
+
+export interface RegisterData {
+  email: string
+  password: string
+  first_name: string
+  last_name: string
+  phone?: string
+}
+
+export interface AuthContextType {
+  customer: Customer | null
+  isLoading: boolean
+  isAuthenticated: boolean
+  isB2B: boolean
+  login: (credentials: LoginCredentials) => Promise<void>
+  register: (data: RegisterData) => Promise<void>
+  logout: () => Promise<void>
+  updateProfile: (data: Partial<Customer>) => Promise<void>
+  requestPasswordReset: (email: string) => Promise<void>
+  resetPassword: (token: string, password: string) => Promise<void>
+  refetch: () => void
+}
+
+const AuthContext = createContext<AuthContextType | null>(null)
+
+// Fetch current customer
+async function fetchCurrentCustomer(): Promise<Customer | null> {
+  try {
+    const { customer } = await sdk.store.customer.retrieve()
+    return customer as unknown as Customer
+  } catch {
+    return null
+  }
+}
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const queryClient = useQueryClient()
+
+  // Query for current customer
+  const {
+    data: customer,
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: queryKeys.customer.current(),
+    queryFn: fetchCurrentCustomer,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: false,
+  })
+
+  // Login mutation
+  const loginMutation = useMutation({
+    mutationFn: async (credentials: LoginCredentials) => {
+      await sdk.auth.login("customer", "emailpass", credentials)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.customer.current() })
+      queryClient.invalidateQueries({ queryKey: queryKeys.cart.all })
+    },
+  })
+
+  // Register mutation
+  const registerMutation = useMutation({
+    mutationFn: async (data: RegisterData) => {
+      // First create the auth identity
+      const token = await sdk.auth.register("customer", "emailpass", {
+        email: data.email,
+        password: data.password,
+      })
+
+      // Then create the customer profile
+      await sdk.store.customer.create({
+        email: data.email,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        phone: data.phone,
+      })
+
+      return token
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.customer.current() })
+    },
+  })
+
+  // Logout mutation
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      await sdk.auth.logout()
+    },
+    onSuccess: () => {
+      queryClient.setQueryData(queryKeys.customer.current(), null)
+      queryClient.invalidateQueries({ queryKey: queryKeys.cart.all })
+    },
+  })
+
+  // Update profile mutation
+  const updateProfileMutation = useMutation({
+    mutationFn: async (data: Partial<Customer>) => {
+      const { customer } = await sdk.store.customer.update(data as any)
+      return customer
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.customer.current() })
+    },
+  })
+
+  // Request password reset
+  const requestPasswordResetMutation = useMutation({
+    mutationFn: async (email: string) => {
+      await sdk.auth.resetPassword("customer", "emailpass", { identifier: email } as any)
+    },
+  })
+
+  // Reset password with token
+  const resetPasswordMutation = useMutation({
+    mutationFn: async ({ token, password }: { token: string; password: string }) => {
+      // Use fetch directly for password update since SDK method signature varies
+      const backendUrl = import.meta.env.VITE_MEDUSA_BACKEND_URL || 'http://localhost:9000'
+      await fetch(`${backendUrl}/auth/customer/emailpass/update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ token, password }),
+      })
+    },
+  })
+
+  const login = useCallback(
+    async (credentials: LoginCredentials) => {
+      await loginMutation.mutateAsync(credentials)
+    },
+    [loginMutation]
+  )
+
+  const register = useCallback(
+    async (data: RegisterData) => {
+      await registerMutation.mutateAsync(data)
+    },
+    [registerMutation]
+  )
+
+  const logout = useCallback(async () => {
+    await logoutMutation.mutateAsync()
+  }, [logoutMutation])
+
+  const updateProfile = useCallback(
+    async (data: Partial<Customer>) => {
+      await updateProfileMutation.mutateAsync(data)
+    },
+    [updateProfileMutation]
+  )
+
+  const requestPasswordReset = useCallback(
+    async (email: string) => {
+      await requestPasswordResetMutation.mutateAsync(email)
+    },
+    [requestPasswordResetMutation]
+  )
+
+  const resetPassword = useCallback(
+    async (token: string, password: string) => {
+      await resetPasswordMutation.mutateAsync({ token, password })
+    },
+    [resetPasswordMutation]
+  )
+
+  const value: AuthContextType = {
+    customer: customer ?? null,
+    isLoading,
+    isAuthenticated: !!customer,
+    isB2B: !!customer?.company_id,
+    login,
+    register,
+    logout,
+    updateProfile,
+    requestPasswordReset,
+    resetPassword,
+    refetch,
+  }
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext)
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider")
+  }
+  return context
+}
+
+// Helper hook for protected content
+export function useRequireAuth() {
+  const auth = useAuth()
+  return {
+    ...auth,
+    isReady: !auth.isLoading,
+    shouldRedirect: !auth.isLoading && !auth.isAuthenticated,
+  }
+}

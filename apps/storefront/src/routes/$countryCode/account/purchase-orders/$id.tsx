@@ -1,0 +1,86 @@
+import { createFileRoute, Link } from "@tanstack/react-router"
+import { AccountLayout } from "@/components/account"
+import { PODetail, POApprovalFlow, POTimeline, POLineItems } from "@/components/purchase-orders"
+import { usePurchaseOrder, useApprovePurchaseOrder, useRejectPurchaseOrder } from "@/lib/hooks/use-purchase-orders"
+import { useAuth } from "@/lib/context/auth-context"
+import { ArrowLeft } from "@medusajs/icons"
+
+export const Route = createFileRoute("/$countryCode/account/purchase-orders/$id")({
+  component: PurchaseOrderDetailPage,
+})
+
+function PurchaseOrderDetailPage() {
+  const { countryCode, id } = Route.useParams()
+  const { customer, isB2B } = useAuth()
+  const { data: purchaseOrder, isLoading } = usePurchaseOrder(id)
+  const approveMutation = useApprovePurchaseOrder()
+  const rejectMutation = useRejectPurchaseOrder()
+
+  // Check if current user can approve (simplified - in real app would check role)
+  const canApprove = isB2B && purchaseOrder?.status === "pending_approval"
+
+  const handleApprove = async () => {
+    if (!purchaseOrder || !customer) return
+    await approveMutation.mutateAsync({ poId: purchaseOrder.id, approverId: customer.id })
+  }
+
+  const handleReject = async (reason?: string) => {
+    if (!purchaseOrder) return
+    await rejectMutation.mutateAsync({ poId: purchaseOrder.id, reason })
+  }
+
+  if (isLoading) {
+    return (
+      <AccountLayout>
+        <div className="text-center py-12">
+          <p className="text-zinc-500">Loading purchase order...</p>
+        </div>
+      </AccountLayout>
+    )
+  }
+
+  if (!purchaseOrder) {
+    return (
+      <AccountLayout>
+        <div className="text-center py-12">
+          <p className="text-zinc-500">Purchase order not found</p>
+          <Link
+            to={`/${countryCode}/account/purchase-orders` as any}
+            className="text-zinc-900 hover:underline mt-2 inline-block"
+          >
+            Back to Purchase Orders
+          </Link>
+        </div>
+      </AccountLayout>
+    )
+  }
+
+  return (
+    <AccountLayout>
+      {/* Back Link */}
+      <Link
+        to={`/${countryCode}/account/purchase-orders` as any}
+        className="inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-zinc-900 mb-6"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        Back to Purchase Orders
+      </Link>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
+          <PODetail purchaseOrder={purchaseOrder} />
+          <POLineItems items={purchaseOrder.items} currencyCode={purchaseOrder.currency_code} />
+        </div>
+        <div className="space-y-6">
+          <POApprovalFlow
+            purchaseOrder={purchaseOrder}
+            canApprove={canApprove}
+            onApprove={handleApprove}
+            onReject={handleReject}
+          />
+          <POTimeline purchaseOrder={purchaseOrder} />
+        </div>
+      </div>
+    </AccountLayout>
+  )
+}

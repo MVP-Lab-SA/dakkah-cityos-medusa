@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { sdk } from "@/lib/utils/sdk";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash, PencilSquare } from "@medusajs/icons";
+import { useCountryCode } from "@/lib/hooks/use-country-code";
 
 interface VendorProduct {
   id: string;
@@ -20,7 +21,7 @@ interface VendorProduct {
 }
 
 export function VendorProductList() {
-  const countryCode = "us";
+  const countryCode = useCountryCode();
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({

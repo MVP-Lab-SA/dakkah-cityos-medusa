@@ -1,0 +1,64 @@
+import { ShoppingBag, CreditCard, Calendar, TruckFast } from "@medusajs/icons"
+
+interface DashboardStatsProps {
+  orderCount: number
+  subscriptionCount: number
+  bookingCount: number
+  pendingShipments: number
+}
+
+export function DashboardStats({
+  orderCount,
+  subscriptionCount,
+  bookingCount,
+  pendingShipments,
+}: DashboardStatsProps) {
+  const stats = [
+    {
+      icon: ShoppingBag,
+      label: "Total Orders",
+      value: orderCount,
+      color: "bg-blue-50 text-blue-600",
+    },
+    {
+      icon: CreditCard,
+      label: "Active Subscriptions",
+      value: subscriptionCount,
+      color: "bg-green-50 text-green-600",
+    },
+    {
+      icon: Calendar,
+      label: "Upcoming Bookings",
+      value: bookingCount,
+      color: "bg-purple-50 text-purple-600",
+    },
+    {
+      icon: TruckFast,
+      label: "Pending Shipments",
+      value: pendingShipments,
+      color: "bg-orange-50 text-orange-600",
+    },
+  ]
+
+  return (
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      {stats.map((stat) => {
+        const Icon = stat.icon
+        return (
+          <div
+            key={stat.label}
+            className="bg-white rounded-lg border border-zinc-200 p-4 flex items-center gap-4"
+          >
+            <div className={`p-3 rounded-lg ${stat.color}`}>
+              <Icon className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-zinc-900">{stat.value}</p>
+              <p className="text-sm text-zinc-500">{stat.label}</p>
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}

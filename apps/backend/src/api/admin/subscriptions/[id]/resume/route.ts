@@ -1,28 +1,37 @@
-import { MedusaRequest, MedusaResponse } from "@medusajs/framework";
+import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 
-// POST /admin/subscriptions/:id/resume - Resume paused subscription
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const subscriptionModule = req.scope.resolve("subscription");
-  const tenantId = req.tenant?.id;
-  const { id } = req.params;
+  const query = req.scope.resolve("query")
+  const subscriptionService = req.scope.resolve("subscriptionModuleService") as any
+  const { id } = req.params
   
-  if (!tenantId) {
-    return res.status(403).json({ message: "Tenant context required" });
-  }
+  const { data: [subscription] } = await query.graph({
+    entity: "subscription",
+    fields: ["*"],
+    filters: { id },
+  })
   
-  const subscription = await subscriptionModule.retrieveSubscription(id);
-  
-  if (!subscription || subscription.tenant_id !== tenantId) {
-    return res.status(404).json({ message: "Subscription not found" });
+  if (!subscription) {
+    return res.status(404).json({ message: "Subscription not found" })
   }
   
   if (subscription.status !== "paused") {
-    return res.status(400).json({ message: "Can only resume paused subscriptions" });
+    return res.status(400).json({ message: "Can only resume paused subscriptions" })
   }
   
-  const updated = await subscriptionModule.updateSubscriptions(id, {
+  const updated = await subscriptionService.updateSubscriptions({
+    id,
     status: "active",
-  });
+    resumed_at: new Date(),
+    metadata: {
+      ...subscription.metadata,
+      resumed_by: "admin",
+      resumed_at: new Date().toISOString(),
+    },
+  })
   
-  res.json({ subscription: updated });
+  res.json({
+    subscription: updated,
+    message: "Subscription resumed",
+  })
 }

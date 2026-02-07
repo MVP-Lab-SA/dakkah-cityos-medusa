@@ -3,6 +3,7 @@ import ProductOptionSelect from "@/components/product-option-select"
 import ProductPrice from "@/components/product-price"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { useToast } from "@/components/ui/toast"
 import { useCartDrawer } from "@/lib/context/cart"
 import { useAddToCart } from "@/lib/hooks/use-cart"
 import { getVariantOptionsKeymap, isVariantInStock } from "@/lib/utils/product"
@@ -31,6 +32,7 @@ const ProductActions = memo(function ProductActions({
   const [quantity, setQuantity] = useState(1);
   const location = useLocation();
   const countryCode = getCountryCodeFromPath(location.pathname) || "dk";
+  const toast = useToast();
 
   const addToCartMutation = useAddToCart({
     fields: DEFAULT_CART_DROPDOWN_FIELDS,
@@ -121,12 +123,12 @@ const ProductActions = memo(function ProductActions({
       },
       {
         onSuccess: () => {
-          console.log("Item added to cart");
+          toast.success("Item added to cart");
           setQuantity(1); // Reset quantity after adding
           openCart();
         },
         onError: () => {
-          console.error("Failed to add item to cart");
+          toast.error("Failed to add item to cart. Please try again.");
         },
       }
     );
