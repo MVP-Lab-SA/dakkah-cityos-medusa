@@ -6,3 +6,6 @@ export const sdk = new Medusa({
     type: "jwt",
   },
 })
+
+// Alias for backwards compatibility
+export const client = sdk
