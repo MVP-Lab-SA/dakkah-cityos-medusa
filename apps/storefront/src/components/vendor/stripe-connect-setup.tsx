@@ -86,7 +86,7 @@ export function StripeConnectSetup({ vendorId }: StripeConnectSetupProps) {
               </p>
               <Button
                 variant="secondary"
-                size="small"
+                size="sm"
                 className="mt-4"
                 onClick={() => onboardMutation.mutate()}
                 disabled={onboardMutation.isPending || isRedirecting}
