@@ -122,11 +122,14 @@ export interface BookingLocation {
 
 export interface BookingRequest {
   service_id: string
-  provider_id: string
+  provider_id?: string
   start_time: string
   notes?: string
   attendees?: number
   location_type?: BookingLocation["type"]
+  customer_name?: string
+  customer_email?: string
+  customer_phone?: string
 }
 
 // API Response types

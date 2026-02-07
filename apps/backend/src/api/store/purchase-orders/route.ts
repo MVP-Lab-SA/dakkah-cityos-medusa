@@ -1,0 +1,142 @@
+import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+
+/**
+ * GET /store/purchase-orders
+ * List customer's purchase orders
+ */
+export async function GET(req: MedusaRequest, res: MedusaResponse) {
+  const companyModule = req.scope.resolve("company") as any
+  
+  if (!req.auth_context?.actor_id) {
+    return res.status(401).json({ message: "Authentication required" })
+  }
+  
+  const customerId = req.auth_context.actor_id
+  const { offset = 0, limit = 20, status } = req.query
+  
+  try {
+    const filters: Record<string, unknown> = { customer_id: customerId }
+    if (status) filters.status = status
+    
+    const purchaseOrders = await companyModule.listPurchaseOrders(filters, {
+      skip: Number(offset),
+      take: Number(limit),
+      order: { created_at: "DESC" },
+    })
+    
+    const poList = Array.isArray(purchaseOrders) ? purchaseOrders : [purchaseOrders].filter(Boolean)
+    
+    res.json({
+      purchase_orders: poList,
+      count: poList.length,
+      offset: Number(offset),
+      limit: Number(limit),
+    })
+  } catch (error: any) {
+    res.status(500).json({
+      message: "Failed to fetch purchase orders",
+      error: error.message,
+    })
+  }
+}
+
+/**
+ * POST /store/purchase-orders
+ * Create a new purchase order
+ */
+export async function POST(req: MedusaRequest, res: MedusaResponse) {
+  const companyModule = req.scope.resolve("company") as any
+  
+  if (!req.auth_context?.actor_id) {
+    return res.status(401).json({ message: "Authentication required" })
+  }
+  
+  const customerId = req.auth_context.actor_id
+  const {
+    company_id,
+    po_number,
+    shipping_address_id,
+    billing_address_id,
+    items,
+    notes,
+    requested_delivery_date,
+  } = req.body as Record<string, any>
+  
+  if (!company_id) {
+    return res.status(400).json({ message: "company_id is required" })
+  }
+  
+  try {
+    // Verify customer belongs to company
+    const employees = await companyModule.listCompanyEmployees({ 
+      company_id, 
+      customer_id: customerId 
+    })
+    
+    const employeeList = Array.isArray(employees) ? employees : [employees].filter(Boolean)
+    
+    if (employeeList.length === 0) {
+      return res.status(403).json({ message: "You are not a member of this company" })
+    }
+    
+    const employee = employeeList[0]
+    
+    // Generate PO number if not provided
+    const generatedPoNumber = po_number || `PO-${Date.now().toString(36).toUpperCase()}`
+    
+    // Create purchase order
+    const purchaseOrder = await companyModule.createPurchaseOrders({
+      po_number: generatedPoNumber,
+      company_id,
+      customer_id: customerId,
+      employee_id: employee.id,
+      status: "draft",
+      shipping_address_id,
+      billing_address_id,
+      notes,
+      requested_delivery_date: requested_delivery_date ? new Date(requested_delivery_date) : null,
+      subtotal: "0",
+      tax_total: "0",
+      shipping_total: "0",
+      total: "0",
+    })
+    
+    // Create line items if provided
+    if (items && Array.isArray(items)) {
+      let subtotal = 0
+      
+      for (const item of items) {
+        await companyModule.createPurchaseOrderItems({
+          purchase_order_id: purchaseOrder.id,
+          product_id: item.product_id,
+          variant_id: item.variant_id,
+          title: item.title,
+          sku: item.sku,
+          quantity: item.quantity,
+          unit_price: item.unit_price,
+          subtotal: String(Number(item.quantity) * Number(item.unit_price)),
+        })
+        
+        subtotal += Number(item.quantity) * Number(item.unit_price)
+      }
+      
+      // Update totals
+      await companyModule.updatePurchaseOrders({
+        id: purchaseOrder.id,
+        subtotal: String(subtotal),
+        total: String(subtotal),
+      })
+    }
+    
+    // Fetch complete PO
+    const completePO = await companyModule.retrievePurchaseOrder(purchaseOrder.id, {
+      relations: ["items"],
+    })
+    
+    res.status(201).json({ purchase_order: completePO })
+  } catch (error: any) {
+    res.status(400).json({
+      message: error.message || "Failed to create purchase order",
+    })
+  }
+}

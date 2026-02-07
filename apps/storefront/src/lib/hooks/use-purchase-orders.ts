@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 
 export interface PurchaseOrderLineItem {
@@ -41,20 +40,36 @@ export interface PurchaseOrder {
   }
 }
 
-// Mock data
-const mockPurchaseOrders: PurchaseOrder[] = []
+// API Fetch helper
+async function fetchApi<T>(path: string, options?: RequestInit): Promise<T> {
+  const baseUrl = import.meta.env.VITE_MEDUSA_BACKEND_URL || "http://localhost:9000"
+  const response = await fetch(`${baseUrl}${path}`, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers,
+    },
+    credentials: "include",
+  })
+  
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ message: "Request failed" }))
+    throw new Error(error.message || "Request failed")
+  }
+  
+  return response.json()
+}
 
 export function usePurchaseOrders(companyId?: string) {
   return useQuery({
     queryKey: ["purchase-orders", companyId],
     queryFn: async () => {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      return mockPurchaseOrders.filter(
-        (po) => !companyId || po.company_id === companyId
+      const params = companyId ? `?company_id=${companyId}` : ""
+      const response = await fetchApi<{ purchase_orders: PurchaseOrder[] }>(
+        `/store/purchase-orders${params}`
       )
+      return response.purchase_orders || []
     },
-    enabled: !!companyId,
   })
 }
 
@@ -62,8 +77,10 @@ export function usePurchaseOrder(poId: string) {
   return useQuery({
     queryKey: ["purchase-order", poId],
     queryFn: async () => {
-      await new Promise((resolve) => setTimeout(resolve, 300))
-      return mockPurchaseOrders.find((po) => po.id === poId) || null
+      const response = await fetchApi<{ purchase_order: PurchaseOrder }>(
+        `/store/purchase-orders/${poId}`
+      )
+      return response.purchase_order
     },
     enabled: !!poId,
   })
@@ -74,25 +91,20 @@ export function useCreatePurchaseOrder() {
 
   return useMutation({
     mutationFn: async (data: Partial<PurchaseOrder>) => {
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      const newPO: PurchaseOrder = {
-        id: `po_${Date.now()}`,
-        po_number: `PO-${Date.now().toString().slice(-6)}`,
-        status: "draft",
-        company_id: data.company_id || "",
-        created_by: data.created_by || "",
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        items: data.items || [],
-        subtotal: data.subtotal || 0,
-        tax_total: data.tax_total || 0,
-        shipping_total: data.shipping_total || 0,
-        total: data.total || 0,
-        currency_code: data.currency_code || "usd",
-        notes: data.notes,
-      }
-      mockPurchaseOrders.push(newPO)
-      return newPO
+      const response = await fetchApi<{ purchase_order: PurchaseOrder }>(
+        "/store/purchase-orders",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            company_id: data.company_id,
+            po_number: data.po_number,
+            items: data.items,
+            notes: data.notes,
+            shipping_address_id: data.shipping_address,
+          }),
+        }
+      )
+      return response.purchase_order
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["purchase-orders"] })
@@ -105,14 +117,11 @@ export function useSubmitPurchaseOrder() {
 
   return useMutation({
     mutationFn: async (poId: string) => {
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      const po = mockPurchaseOrders.find((p) => p.id === poId)
-      if (po) {
-        po.status = "pending_approval"
-        po.submitted_at = new Date().toISOString()
-        po.updated_at = new Date().toISOString()
-      }
-      return po
+      const response = await fetchApi<{ purchase_order: PurchaseOrder }>(
+        `/store/purchase-orders/${poId}/submit`,
+        { method: "POST" }
+      )
+      return response.purchase_order
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["purchase-orders"] })
@@ -121,20 +130,35 @@ export function useSubmitPurchaseOrder() {
   })
 }
 
+export function useCancelPurchaseOrder() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (poId: string) => {
+      await fetchApi(`/store/purchase-orders/${poId}`, { method: "DELETE" })
+      return poId
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["purchase-orders"] })
+      queryClient.invalidateQueries({ queryKey: ["purchase-order"] })
+    },
+  })
+}
+
+// Approval functions are typically admin-only, but keeping for compatibility
 export function useApprovePurchaseOrder() {
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: async ({ poId, approverId }: { poId: string; approverId: string }) => {
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      const po = mockPurchaseOrders.find((p) => p.id === poId)
-      if (po) {
-        po.status = "approved"
-        po.approved_by = approverId
-        po.approved_at = new Date().toISOString()
-        po.updated_at = new Date().toISOString()
-      }
-      return po
+      const response = await fetchApi<{ purchase_order: PurchaseOrder }>(
+        `/admin/purchase-orders/${poId}/approve`,
+        {
+          method: "POST",
+          body: JSON.stringify({ approver_id: approverId }),
+        }
+      )
+      return response.purchase_order
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["purchase-orders"] })
@@ -148,13 +172,14 @@ export function useRejectPurchaseOrder() {
 
   return useMutation({
     mutationFn: async ({ poId, reason }: { poId: string; reason?: string }) => {
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      const po = mockPurchaseOrders.find((p) => p.id === poId)
-      if (po) {
-        po.status = "rejected"
-        po.updated_at = new Date().toISOString()
-      }
-      return po
+      const response = await fetchApi<{ purchase_order: PurchaseOrder }>(
+        `/admin/purchase-orders/${poId}/reject`,
+        {
+          method: "POST",
+          body: JSON.stringify({ reason }),
+        }
+      )
+      return response.purchase_order
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["purchase-orders"] })
