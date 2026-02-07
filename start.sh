@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Start Medusa backend in background
+cd /home/runner/workspace/apps/backend
+npx medusa develop &
+BACKEND_PID=$!
+
+# Wait for backend to start
+echo "Waiting for Medusa backend to start..."
+for i in $(seq 1 30); do
+  if curl -s http://localhost:9000/health > /dev/null 2>&1; then
+    echo "Medusa backend is ready on port 9000"
+    break
+  fi
+  sleep 2
+done
+
+# Start storefront
+cd /home/runner/workspace/apps/storefront
+echo "Starting storefront on port 5000..."
+exec npx vite dev --host 0.0.0.0 --port 5000

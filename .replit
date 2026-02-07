@@ -14,7 +14,36 @@ AUTH_CORS = "http://localhost:5000,http://localhost:9000,https://*.replit.dev,ht
 JWT_SECRET = "supersecret-replit-medusa-jwt-key-32chars"
 COOKIE_SECRET = "supersecret-replit-medusa-cookie-key-32chars"
 VITE_MEDUSA_BACKEND_URL = "http://localhost:9000"
+VITE_MEDUSA_PUBLISHABLE_KEY = "pk_da4273830c05d5f12f6ca785a47d3a5e590b59b29a8834cf70ff4ce91e7a0c6f"
 
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 9000
+externalPort = 9000
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "bash /home/runner/workspace/start.sh"
+waitForPort = 5000
