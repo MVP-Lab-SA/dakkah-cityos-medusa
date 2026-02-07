@@ -22,8 +22,9 @@ export interface Subscription {
   id: string
   customer_id: string
   plan_id: string
-  plan?: SubscriptionPlan
+  plan: SubscriptionPlan
   status: SubscriptionStatus
+  billing_interval: "monthly" | "yearly" | "quarterly" | "weekly"
   current_period_start: string
   current_period_end: string
   canceled_at?: string

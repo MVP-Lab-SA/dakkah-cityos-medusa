@@ -163,6 +163,7 @@ export function useCreateSubscription() {
         customer_id: "customer_123",
         plan_id: data.plan_id,
         plan,
+        billing_interval: plan.billing_interval,
         status: plan.trial_days ? "trialing" : "active",
         current_period_start: new Date().toISOString(),
         current_period_end: new Date(

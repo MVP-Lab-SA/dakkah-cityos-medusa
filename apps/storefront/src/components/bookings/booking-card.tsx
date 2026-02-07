@@ -109,24 +109,9 @@ export function BookingCard({
           <div className="flex items-start gap-3">
             <MapPin className="w-5 h-5 text-slate-400 mt-0.5" />
             <div>
-              <div className="font-medium text-slate-900 capitalize">
-                {booking.location.type.replace("_", " ")}
+              <div className="text-sm text-slate-500">
+                {booking.location}
               </div>
-              {booking.location.address && (
-                <div className="text-sm text-slate-500">
-                  {booking.location.address}
-                </div>
-              )}
-              {booking.location.meeting_url && (
-                <a
-                  href={booking.location.meeting_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-blue-600 hover:underline"
-                >
-                  Join Meeting
-                </a>
-              )}
             </div>
           </div>
         )}

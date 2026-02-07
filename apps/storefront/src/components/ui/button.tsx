@@ -4,8 +4,8 @@ type ButtonProps = React.DetailedHTMLProps<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
   HTMLButtonElement
 > & {
-  variant?: "primary" | "secondary" | "danger" | "transparent";
-  size?: "full" | "fit";
+  variant?: "primary" | "secondary" | "danger" | "transparent" | "outline" | "ghost";
+  size?: "full" | "fit" | "sm" | "lg";
 };
 
 export const Button = ({
@@ -25,6 +25,8 @@ export const Button = ({
         "text-base font-medium",
         size === "full" && "w-full",
         size === "fit" && "w-fit",
+        size === "sm" && "h-9 px-3 text-sm",
+        size === "lg" && "h-12 px-6 text-lg",
         {
           "bg-zinc-800 text-white hover:bg-zinc-700 active:bg-zinc-600 border-transparent":
             variant === "primary",
@@ -34,6 +36,10 @@ export const Button = ({
             variant === "danger",
           "bg-transparent text-zinc-900 hover:bg-transparent active:bg-transparent border-transparent":
             variant === "transparent",
+          "bg-transparent text-zinc-900 hover:bg-zinc-100 active:bg-zinc-200 border-zinc-200":
+            variant === "outline",
+          "bg-transparent text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 border-transparent":
+            variant === "ghost",
         },
         className
       )}

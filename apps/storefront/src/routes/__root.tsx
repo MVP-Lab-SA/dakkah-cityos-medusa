@@ -9,6 +9,7 @@ import {
 import { lazy } from "react"
 import appCss from "../styles/app.css?url"
 import { BrandingProvider } from "@/lib/context/branding-context"
+import { AuthProvider } from "@/lib/context/auth-context"
 import { StoreProvider, type StoreConfig } from "@/lib/store-context"
 
 const NotFound = lazy(() => import("@/components/not-found"))
@@ -59,9 +60,11 @@ function RootComponent() {
       <body>
         <QueryClientProvider client={queryClient}>
           <StoreProvider initialStore={loaderData.store}>
-            <BrandingProvider>
-              <Layout />
-            </BrandingProvider>
+            <AuthProvider>
+              <BrandingProvider>
+                <Layout />
+              </BrandingProvider>
+            </AuthProvider>
           </StoreProvider>
         </QueryClientProvider>
 

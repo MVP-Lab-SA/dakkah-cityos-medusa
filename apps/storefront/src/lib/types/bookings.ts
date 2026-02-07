@@ -83,14 +83,15 @@ export interface Booking {
   id: string
   customer_id: string
   service_id: string
-  service?: Service
+  service: Service
   provider_id: string
   provider?: ServiceProvider
   status: BookingStatus
+  scheduled_at: string // main scheduled date/time
   start_time: string
   end_time: string
   notes?: string
-  location?: BookingLocation
+  location?: string
   attendees?: number
   price: number
   currency_code: string

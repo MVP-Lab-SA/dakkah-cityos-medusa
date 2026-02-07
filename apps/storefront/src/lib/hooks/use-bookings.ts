@@ -330,10 +330,11 @@ export function useCreateBooking() {
         id: `book_${Date.now()}`,
         customer_id: "customer_123",
         service_id: data.service_id,
-        service,
+        service: service!,
         provider_id: data.provider_id,
         provider,
         status: "confirmed",
+        scheduled_at: data.start_time,
         start_time: data.start_time,
         end_time: new Date(
           new Date(data.start_time).getTime() + (service?.duration || 60) * 60 * 1000
