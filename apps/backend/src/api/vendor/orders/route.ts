@@ -1,67 +1,71 @@
-import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
 
-interface CityOSContext {
-  vendorId?: string
-  tenantId?: string
-  storeId?: string
-}
-
+// GET /vendor/orders - List vendor's orders
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const query = req.scope.resolve("query")
-  const context = (req as any).cityosContext as CityOSContext | undefined
-
-  if (!context?.vendorId) {
-    return res.status(403).json({ message: "Vendor context required" })
+  const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
+  
+  const vendorId = (req as any).vendor_id
+  if (!vendorId) {
+    return res.status(401).json({ message: "Vendor authentication required" })
   }
 
-  const { limit = 20, offset = 0, status } = req.query as Record<string, string>
+  const { status, limit = 50, offset = 0 } = req.query as any
 
-  // Query orders that contain items from this vendor
-  const { data: orders } = await query.graph({
-    entity: "order",
+  const filters: any = { vendor_id: vendorId }
+  if (status) {
+    filters.status = status
+  }
+
+  const { data: vendorOrders } = await query.graph({
+    entity: "vendor_order",
     fields: [
       "id",
-      "display_id",
+      "vendor_id",
+      "order_id",
+      "vendor_order_number",
       "status",
-      "created_at",
+      "subtotal",
+      "shipping_total",
+      "tax_total",
       "total",
-      "currency_code",
-      "customer_id",
-      "email",
+      "commission_amount",
+      "net_amount",
+      "created_at",
+      "shipped_at",
+      "delivered_at",
+      "order.display_id",
+      "order.email",
+      "order.shipping_address.*",
       "items.*",
-      "items.variant.*",
-      "items.variant.product.*",
-      "items.variant.product.metadata",
-      "shipping_address.*",
+      "items.product.*",
     ],
-    filters: status ? { status: status as any } : undefined,
+    filters,
     pagination: {
       skip: Number(offset),
       take: Number(limit),
     },
   })
 
-  // Filter orders that have items from this vendor
-  const vendorOrders = orders
-    .map((order: any) => {
-      const vendorItems = order.items?.filter(
-        (item: any) => item.variant?.product?.metadata?.vendor_id === context.vendorId
-      )
+  const orders = vendorOrders.map((vo: any) => ({
+    id: vo.id,
+    order_id: vo.order_id,
+    vendor_order_number: vo.vendor_order_number,
+    display_id: vo.order?.display_id,
+    customer_email: vo.order?.email,
+    shipping_address: vo.order?.shipping_address,
+    status: vo.status,
+    subtotal: vo.subtotal,
+    shipping_total: vo.shipping_total,
+    tax_total: vo.tax_total,
+    total: vo.total,
+    commission_amount: vo.commission_amount,
+    net_amount: vo.net_amount,
+    items: vo.items || [],
+    created_at: vo.created_at,
+    shipped_at: vo.shipped_at,
+    delivered_at: vo.delivered_at,
+  }))
 
-      if (!vendorItems || vendorItems.length === 0) return null
-
-      return {
-        ...order,
-        items: vendorItems,
-        vendor_total: vendorItems.reduce((sum: number, item: any) => sum + (item.subtotal || 0), 0),
-      }
-    })
-    .filter(Boolean)
-
-  return res.json({
-    orders: vendorOrders,
-    count: vendorOrders.length,
-    limit: Number(limit),
-    offset: Number(offset),
-  })
+  res.json({ orders, count: orders.length })
 }

@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { VendorReviews } from "@/components/vendors/vendor-reviews"
-import { ArrowLeft } from "@medusajs/icons"
+import { ArrowLeft, Spinner } from "@medusajs/icons"
+import { useVendor } from "@/lib/hooks/use-vendors"
+import { useVendorReviews } from "@/lib/hooks/use-reviews"
 
 export const Route = createFileRoute("/$countryCode/vendors/$handle/reviews")({
   component: VendorReviewsPage,
@@ -9,55 +11,57 @@ export const Route = createFileRoute("/$countryCode/vendors/$handle/reviews")({
 function VendorReviewsPage() {
   const { countryCode, handle } = Route.useParams()
 
-  // Mock data - would come from API
-  const vendor = {
-    id: "vendor_1",
-    name: "Artisan Crafts Co.",
-    handle,
+  // Fetch real vendor and reviews data
+  const { data: vendorData, isLoading: vendorLoading } = useVendor(handle)
+  const vendor = (vendorData as any)?.vendor || vendorData
+
+  const { data: reviewsData, isLoading: reviewsLoading } = useVendorReviews(vendor?.id || "", {
+    limit: 50,
+  })
+
+  const isLoading = vendorLoading || reviewsLoading
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
+        <Spinner className="w-8 h-8 animate-spin text-zinc-400" />
+      </div>
+    )
   }
 
-  const reviews = [
-    {
-      id: "rev_1",
-      author: "Sarah M.",
-      rating: 5,
-      date: "2024-12-15",
-      content: "Absolutely love the quality of these products! Fast shipping and great packaging. Will definitely order again.",
-      product: "Handcrafted Ceramic Mug",
-    },
-    {
-      id: "rev_2",
-      author: "John D.",
-      rating: 4,
-      date: "2024-12-10",
-      content: "Beautiful craftsmanship. The only reason for 4 stars is shipping took a bit longer than expected, but the quality makes up for it.",
-      product: "Wooden Cutting Board",
-    },
-    {
-      id: "rev_3",
-      author: "Emily R.",
-      rating: 5,
-      date: "2024-12-05",
-      content: "This seller is amazing! They even included a handwritten thank you note. The item exceeded my expectations.",
-      product: "Leather Journal",
-    },
-    {
-      id: "rev_4",
-      author: "Michael T.",
-      rating: 5,
-      date: "2024-11-28",
-      content: "Third time ordering from this shop. Consistently excellent quality and customer service.",
-      product: "Artisan Soap Set",
-    },
-    {
-      id: "rev_5",
-      author: "Lisa K.",
-      rating: 4,
-      date: "2024-11-20",
-      content: "Very nice product, exactly as described. Would recommend.",
-      product: "Woven Basket",
-    },
-  ]
+  if (!vendor) {
+    return (
+      <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-zinc-900 mb-2">Vendor not found</h1>
+          <Link to={`/${countryCode}/vendors` as any} className="text-blue-600 hover:underline">
+            Browse all vendors
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  // Transform reviews for the component
+  const reviews = (reviewsData?.reviews || []).map((r: any) => ({
+    id: r.id,
+    author: r.customer?.first_name 
+      ? `${r.customer.first_name} ${r.customer?.last_name?.[0] || ""}.`
+      : "Anonymous",
+    rating: r.rating,
+    date: r.created_at,
+    content: r.content,
+    product: r.product?.title || null,
+    is_verified: r.is_verified_purchase,
+  }))
+
+  // Calculate average rating
+  const reviewsResponse = reviewsData as any
+  const totalReviews = reviewsResponse?.count || reviews.length
+  const averageRating = reviewsResponse?.average_rating || 
+    (reviews.length > 0 
+      ? reviews.reduce((acc: number, r: any) => acc + r.rating, 0) / reviews.length 
+      : 0)
 
   return (
     <div className="min-h-screen bg-zinc-50">
@@ -75,11 +79,17 @@ function VendorReviewsPage() {
           Reviews for {vendor.name}
         </h1>
 
-        <VendorReviews
-          reviews={reviews}
-          averageRating={4.6}
-          totalReviews={reviews.length}
-        />
+        {reviews.length === 0 ? (
+          <div className="bg-white rounded-xl border border-zinc-200 p-8 text-center">
+            <p className="text-zinc-500">No reviews yet for this vendor.</p>
+          </div>
+        ) : (
+          <VendorReviews
+            reviews={reviews}
+            averageRating={averageRating}
+            totalReviews={totalReviews}
+          />
+        )}
       </div>
     </div>
   )

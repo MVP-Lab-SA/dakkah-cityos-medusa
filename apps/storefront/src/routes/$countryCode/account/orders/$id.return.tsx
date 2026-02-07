@@ -1,7 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router"
 import { AccountLayout } from "@/components/account"
 import { ReturnForm } from "@/components/orders/return-form"
-import { ArrowLeft } from "@medusajs/icons"
+import { ArrowLeft, Spinner } from "@medusajs/icons"
+import { useOrder } from "@/lib/hooks/use-orders"
+import { sdk } from "@/lib/utils/sdk"
+import { useMutation } from "@tanstack/react-query"
 
 export const Route = createFileRoute("/$countryCode/account/orders/$id/return")({
   component: ReturnRequestPage,
@@ -11,35 +14,72 @@ function ReturnRequestPage() {
   const { countryCode, id } = Route.useParams()
   const navigate = useNavigate()
 
-  // Mock order items - would come from API
-  const orderItems = [
-    {
-      id: "item_1",
-      title: "Premium Cotton T-Shirt",
-      thumbnail: undefined,
-      quantity: 2,
-      maxQuantity: 2,
+  // Fetch real order data
+  const { data: orderData, isLoading } = useOrder({ 
+    order_id: id, 
+    fields: "+items,+items.variant,+items.variant.product" 
+  })
+
+  const order = (orderData as any)?.order || orderData
+
+  // Transform order items for the return form
+  const orderItems = (order?.items || []).map((item: any) => ({
+    id: item.id,
+    title: item.title || item.variant?.product?.title || "Unknown Product",
+    thumbnail: item.thumbnail || item.variant?.product?.thumbnail,
+    quantity: item.quantity,
+    maxQuantity: item.quantity, // Can return up to what was purchased
+  }))
+
+  // Return request mutation
+  const submitReturnMutation = useMutation({
+    mutationFn: async (data: { items: Array<{ id: string; quantity: number; reason: string }> }) => {
+      const response = await sdk.client.fetch(`/store/orders/${id}/returns`, {
+        method: "POST",
+        body: {
+          items: data.items.map(item => ({
+            item_id: item.id,
+            quantity: item.quantity,
+            reason: item.reason,
+          })),
+        },
+      })
+      return response
     },
-    {
-      id: "item_2",
-      title: "Classic Denim Jeans",
-      thumbnail: undefined,
-      quantity: 1,
-      maxQuantity: 1,
+    onSuccess: () => {
+      alert("Return request submitted successfully")
+      navigate({ to: `/${countryCode}/account/orders/${id}` as any })
     },
-    {
-      id: "item_3",
-      title: "Leather Belt",
-      thumbnail: undefined,
-      quantity: 1,
-      maxQuantity: 1,
+    onError: (error: any) => {
+      alert(error.message || "Failed to submit return request")
     },
-  ]
+  })
 
   const handleSubmit = async (data: { items: Array<{ id: string; quantity: number; reason: string }> }) => {
-    console.log("Return request submitted:", data)
-    // Would call API to submit return request
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    await submitReturnMutation.mutateAsync(data)
+  }
+
+  if (isLoading) {
+    return (
+      <AccountLayout>
+        <div className="flex items-center justify-center py-12">
+          <Spinner className="w-8 h-8 animate-spin text-zinc-400" />
+        </div>
+      </AccountLayout>
+    )
+  }
+
+  if (!order) {
+    return (
+      <AccountLayout>
+        <div className="text-center py-12">
+          <h1 className="text-2xl font-bold text-zinc-900 mb-2">Order not found</h1>
+          <Link to={`/${countryCode}/account/orders` as any} className="text-blue-600 hover:underline">
+            View all orders
+          </Link>
+        </div>
+      </AccountLayout>
+    )
   }
 
   const handleCancel = () => {
