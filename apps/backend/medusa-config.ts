@@ -55,11 +55,11 @@ module.exports = defineConfig({
       resolve: "@rsc-labs/medusa-wishlist",
       options: {},
     },
-    // RSC-Labs Booking System - For service bookings
-    {
-      resolve: "@rsc-labs/medusa-booking-system",
-      options: {},
-    },
+    // RSC-Labs Booking System disabled - using custom booking module instead
+    // {
+    //   resolve: "@rsc-labs/medusa-booking-system",
+    //   options: {},
+    // },
     // RSC-Labs RBAC - Role-based access control
     {
       resolve: "@rsc-labs/medusa-rbac",
@@ -189,6 +189,14 @@ module.exports = defineConfig({
     },
     {
       resolve: "./src/modules/volume-pricing",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/booking",
       options: {
         definition: {
           isQueryable: true

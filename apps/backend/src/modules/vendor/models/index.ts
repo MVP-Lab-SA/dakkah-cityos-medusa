@@ -1,2 +1,5 @@
 export { default as Vendor } from "./vendor"
 export { default as VendorUser } from "./vendor-user"
+export { VendorProduct } from "./vendor-product"
+export { VendorOrder, VendorOrderItem } from "./vendor-order"
+export { VendorAnalyticsSnapshot, VendorPerformanceMetric } from "./vendor-analytics"
