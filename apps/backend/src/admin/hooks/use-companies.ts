@@ -1,116 +1,99 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { sdk } from "../lib/client"
+import { client } from "../lib/client"
 
-export type Company = {
+export interface Company {
   id: string
+  handle: string
   name: string
+  legal_name?: string
+  tax_id?: string
   email: string
   phone?: string
-  tax_id?: string
+  industry?: string
+  employee_count?: number
+  annual_revenue?: string
+  credit_limit: string
+  credit_used: string
+  payment_terms_days: number
+  status: "pending" | "active" | "suspended" | "inactive"
   tier: "bronze" | "silver" | "gold" | "platinum"
-  status: "pending" | "active" | "suspended"
-  credit_limit: number
-  credit_balance: number
-  address?: {
-    address_1?: string
-    address_2?: string
-    city?: string
-    province?: string
-    postal_code?: string
-    country_code?: string
-  }
-  metadata?: Record<string, unknown>
+  approved_at?: string
+  approved_by?: string
+  rejection_reason?: string
+  requires_approval: boolean
+  auto_approve_limit?: string
+  billing_address?: any
+  shipping_addresses?: any[]
+  metadata?: any
   created_at: string
   updated_at: string
+  users?: CompanyUser[]
 }
 
-export type CompanyUser = {
+export interface CompanyUser {
   id: string
   company_id: string
   customer_id: string
-  role: "admin" | "buyer" | "viewer"
-  spending_limit?: number
-  is_active: boolean
-  customer?: {
-    id: string
-    email: string
-    first_name?: string
-    last_name?: string
-  }
+  role: "admin" | "buyer" | "approver"
+  spending_limit?: string
+  can_approve: boolean
   created_at: string
 }
 
-export type PurchaseOrder = {
+export interface TaxExemption {
   id: string
-  company_id: string
-  po_number: string
-  status: "draft" | "pending_approval" | "approved" | "rejected" | "fulfilled" | "closed"
-  total: number
-  currency_code: string
-  items: PurchaseOrderItem[]
-  company?: Company
-  submitted_by?: string
-  approved_by?: string
-  approved_at?: string
+  certificate_number: string
+  certificate_type: string
+  issuing_state?: string
+  expiration_date?: string
+  document_url?: string
+  exempt_categories?: string[]
   notes?: string
+  status: "pending" | "verified" | "expired" | "rejected"
   created_at: string
-  updated_at: string
+  verified_at?: string
+  verified_by?: string
 }
 
-export type PurchaseOrderItem = {
-  id: string
-  purchase_order_id: string
-  product_id?: string
-  variant_id?: string
-  title: string
-  sku?: string
-  quantity: number
-  unit_price: number
-  total: number
+interface CompaniesResponse {
+  companies: Company[]
+  count: number
+  offset: number
+  limit: number
 }
 
-// Companies hooks
-export function useCompanies(params?: { status?: string; tier?: string; search?: string }) {
+export function useCompanies(filters?: {
+  status?: string
+  tier?: string
+  q?: string
+  limit?: number
+  offset?: number
+}) {
+  const params = new URLSearchParams()
+  if (filters?.status) params.append("status", filters.status)
+  if (filters?.tier) params.append("tier", filters.tier)
+  if (filters?.q) params.append("q", filters.q)
+  if (filters?.limit) params.append("limit", String(filters.limit))
+  if (filters?.offset) params.append("offset", String(filters.offset))
+  
   return useQuery({
-    queryKey: ["companies", params],
+    queryKey: ["companies", filters],
     queryFn: async () => {
-      const searchParams = new URLSearchParams()
-      if (params?.status) searchParams.set("status", params.status)
-      if (params?.tier) searchParams.set("tier", params.tier)
-      if (params?.search) searchParams.set("q", params.search)
-      
-      const query = searchParams.toString()
-      const response = await sdk.client.fetch(`/admin/companies${query ? `?${query}` : ""}`)
-      return response as { companies: Company[] }
+      const url = `/admin/companies${params.toString() ? `?${params}` : ""}`
+      const { data } = await client.get<CompaniesResponse>(url)
+      return data
     },
   })
 }
 
 export function useCompany(id: string) {
   return useQuery({
-    queryKey: ["companies", id],
+    queryKey: ["company", id],
     queryFn: async () => {
-      const response = await sdk.client.fetch(`/admin/companies/${id}`)
-      return response as { company: Company }
+      const { data } = await client.get<{ company: Company }>(`/admin/companies/${id}`)
+      return data.company
     },
     enabled: !!id,
-  })
-}
-
-export function useCreateCompany() {
-  const queryClient = useQueryClient()
-  
-  return useMutation({
-    mutationFn: async (data: Partial<Company>) => {
-      const response = await sdk.client.fetch(`/admin/companies`, {
-        method: "POST",
-        body: data,
-      })
-      return response as { company: Company }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["companies"] })
-    },
   })
 }
 
@@ -119,103 +102,206 @@ export function useUpdateCompany() {
   
   return useMutation({
     mutationFn: async ({ id, ...data }: Partial<Company> & { id: string }) => {
-      const response = await sdk.client.fetch(`/admin/companies/${id}`, {
-        method: "PUT",
-        body: data,
-      })
-      return response as { company: Company }
+      const response = await client.put<{ company: Company }>(`/admin/companies/${id}`, data)
+      return response.data.company
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["companies"] })
-      queryClient.invalidateQueries({ queryKey: ["companies", variables.id] })
+      queryClient.invalidateQueries({ queryKey: ["company", variables.id] })
     },
   })
 }
 
-export function useDeleteCompany() {
+export function useApproveCompany() {
   const queryClient = useQueryClient()
   
   return useMutation({
     mutationFn: async (id: string) => {
-      await sdk.client.fetch(`/admin/companies/${id}`, {
-        method: "DELETE",
-      })
+      const response = await client.post<{ company: Company }>(`/admin/companies/${id}/approve`, {})
+      return response.data.company
     },
-    onSuccess: () => {
+    onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ["companies"] })
+      queryClient.invalidateQueries({ queryKey: ["company", id] })
     },
   })
 }
 
-// Company users hooks
-export function useCompanyUsers(companyId: string) {
+// Credit Management
+export function useCompanyCredit(companyId: string) {
   return useQuery({
-    queryKey: ["companies", companyId, "users"],
+    queryKey: ["company-credit", companyId],
     queryFn: async () => {
-      const response = await sdk.client.fetch(`/admin/companies/${companyId}/users`)
-      return response as { users: CompanyUser[] }
+      const { data } = await client.get<{
+        company_id: string
+        credit_limit: number
+        credit_used: number
+        available_credit: number
+        payment_terms_days: number
+        tier: string
+      }>(`/admin/companies/${companyId}/credit`)
+      return data
     },
     enabled: !!companyId,
   })
 }
 
-// Purchase orders hooks
-export function usePurchaseOrders(params?: { company_id?: string; status?: string }) {
-  return useQuery({
-    queryKey: ["purchase-orders", params],
-    queryFn: async () => {
-      const searchParams = new URLSearchParams()
-      if (params?.company_id) searchParams.set("company_id", params.company_id)
-      if (params?.status) searchParams.set("status", params.status)
-      
-      const query = searchParams.toString()
-      const response = await sdk.client.fetch(`/admin/purchase-orders${query ? `?${query}` : ""}`)
-      return response as { purchase_orders: PurchaseOrder[] }
-    },
-  })
-}
-
-export function usePurchaseOrder(id: string) {
-  return useQuery({
-    queryKey: ["purchase-orders", id],
-    queryFn: async () => {
-      const response = await sdk.client.fetch(`/admin/purchase-orders/${id}`)
-      return response as { purchase_order: PurchaseOrder }
-    },
-    enabled: !!id,
-  })
-}
-
-export function useApprovePurchaseOrder() {
+export function useUpdateCreditLimit() {
   const queryClient = useQueryClient()
   
   return useMutation({
-    mutationFn: async ({ id, notes }: { id: string; notes?: string }) => {
-      const response = await sdk.client.fetch(`/admin/purchase-orders/${id}/approve`, {
-        method: "POST",
-        body: { notes },
+    mutationFn: async ({ id, credit_limit, payment_terms_days, reason }: {
+      id: string
+      credit_limit?: number
+      payment_terms_days?: number
+      reason?: string
+    }) => {
+      const response = await client.put(`/admin/companies/${id}/credit`, {
+        credit_limit,
+        payment_terms_days,
+        reason,
       })
-      return response as { purchase_order: PurchaseOrder }
+      return response.data
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["purchase-orders"] })
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["company-credit", variables.id] })
+      queryClient.invalidateQueries({ queryKey: ["company", variables.id] })
     },
   })
 }
 
-export function useRejectPurchaseOrder() {
+export function useAdjustCredit() {
   const queryClient = useQueryClient()
   
   return useMutation({
-    mutationFn: async ({ id, reason }: { id: string; reason: string }) => {
-      const response = await sdk.client.fetch(`/admin/purchase-orders/${id}/reject`, {
-        method: "POST",
-        body: { reason },
+    mutationFn: async ({ id, amount, type, reason }: {
+      id: string
+      amount: number
+      type: "add" | "subtract" | "reset"
+      reason: string
+    }) => {
+      const response = await client.post(`/admin/companies/${id}/credit`, {
+        amount,
+        type,
+        reason,
       })
-      return response as { purchase_order: PurchaseOrder }
+      return response.data
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["purchase-orders"] })
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["company-credit", variables.id] })
+      queryClient.invalidateQueries({ queryKey: ["company", variables.id] })
+    },
+  })
+}
+
+// Spending Limits
+export function useSpendingLimits(companyId: string) {
+  return useQuery({
+    queryKey: ["spending-limits", companyId],
+    queryFn: async () => {
+      const { data } = await client.get(`/admin/companies/${companyId}/spending-limits`)
+      return data
+    },
+    enabled: !!companyId,
+  })
+}
+
+export function useUpdateSpendingLimit() {
+  const queryClient = useQueryClient()
+  
+  return useMutation({
+    mutationFn: async ({ companyId, user_id, spending_limit, can_approve }: {
+      companyId: string
+      user_id: string
+      spending_limit?: number
+      can_approve?: boolean
+    }) => {
+      const response = await client.put(`/admin/companies/${companyId}/spending-limits`, {
+        user_id,
+        spending_limit,
+        can_approve,
+      })
+      return response.data
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["spending-limits", variables.companyId] })
+    },
+  })
+}
+
+// Tax Exemptions
+export function useTaxExemptions(companyId: string) {
+  return useQuery({
+    queryKey: ["tax-exemptions", companyId],
+    queryFn: async () => {
+      const { data } = await client.get<{ exemptions: TaxExemption[] }>(`/admin/companies/${companyId}/tax-exemptions`)
+      return data.exemptions
+    },
+    enabled: !!companyId,
+  })
+}
+
+export function useCreateTaxExemption() {
+  const queryClient = useQueryClient()
+  
+  return useMutation({
+    mutationFn: async ({ companyId, ...data }: {
+      companyId: string
+      certificate_number: string
+      certificate_type: string
+      issuing_state?: string
+      expiration_date?: string
+      document_url?: string
+      exempt_categories?: string[]
+      notes?: string
+    }) => {
+      const response = await client.post(`/admin/companies/${companyId}/tax-exemptions`, data)
+      return response.data
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["tax-exemptions", variables.companyId] })
+    },
+  })
+}
+
+export function useVerifyTaxExemption() {
+  const queryClient = useQueryClient()
+  
+  return useMutation({
+    mutationFn: async ({ companyId, exemption_id, status, verified_by, notes }: {
+      companyId: string
+      exemption_id: string
+      status: "pending" | "verified" | "expired" | "rejected"
+      verified_by?: string
+      notes?: string
+    }) => {
+      const response = await client.put(`/admin/companies/${companyId}/tax-exemptions`, {
+        exemption_id,
+        status,
+        verified_by,
+        notes,
+      })
+      return response.data
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["tax-exemptions", variables.companyId] })
+    },
+  })
+}
+
+export function useDeleteTaxExemption() {
+  const queryClient = useQueryClient()
+  
+  return useMutation({
+    mutationFn: async ({ companyId, exemption_id }: {
+      companyId: string
+      exemption_id: string
+    }) => {
+      await client.delete(`/admin/companies/${companyId}/tax-exemptions?exemption_id=${exemption_id}`)
+      return exemption_id
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["tax-exemptions", variables.companyId] })
     },
   })
 }
