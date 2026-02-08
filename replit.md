@@ -40,6 +40,34 @@ Medusa.js e-commerce monorepo aligned with Dakkah CityOS CMS architecture. Multi
 | booking | booking | Service bookings |
 | review | review | Product reviews |
 | invoice | invoice | Invoice generation |
+| promotion-ext | promotionExt | Loyalty, wishlists, gift cards, referrals, bundles, segments |
+| digital-product | digitalProduct | Digital assets & download licenses |
+| auction | auction | Auction listings, bids, escrow |
+| rental | rental | Rental products, agreements, returns, damage claims |
+| restaurant | restaurant | Restaurants, menus, modifiers, reservations, kitchen orders |
+| event-ticketing | eventTicketing | Events, tickets, venues, seat maps, check-ins |
+| classified | classified | Classified listings, offers, flags |
+| affiliate | affiliate | Affiliates, referral links, click tracking, influencer campaigns |
+| warranty | warranty | Warranty plans, claims, repair orders, service centers |
+| freelance | freelance | Gig listings, proposals, contracts, milestones, time logs |
+| travel | travel | Properties, rooms, reservations, rate plans, guest profiles |
+| real-estate | realEstate | Property listings, viewings, leases, valuations, agents |
+| membership | membership | Membership tiers, points ledger, rewards, redemptions |
+| crowdfunding | crowdfunding | Campaigns, pledges, reward tiers, backers |
+| social-commerce | socialCommerce | Live streams, social posts, group buys |
+| grocery | grocery | Fresh products, batch tracking, substitutions, delivery slots |
+| automotive | automotive | Vehicle listings, test drives, parts catalog, trade-ins |
+| healthcare | healthcare | Practitioners, appointments, prescriptions, lab orders, pharmacy |
+| education | education | Courses, lessons, enrollments, certificates, quizzes |
+| charity | charity | Charity orgs, donation campaigns, impact reports |
+| financial-product | financialProduct | Loans, insurance, investment plans |
+| advertising | advertising | Ad campaigns, placements, creatives, impression logs |
+| parking | parking | Parking zones, sessions, shuttle routes, ride requests |
+| utilities | utilities | Utility accounts, bills, meter readings, usage records |
+| government | government | Service requests, permits, licenses, fines, citizen profiles |
+| pet-service | petService | Pet profiles, grooming, vet appointments, pet products |
+| fitness | fitness | Gym memberships, class schedules, trainers, wellness plans |
+| legal | legal | Attorney profiles, cases, consultations, retainer agreements |
 
 ### API Routes
 - `GET /store/cityos/tenant?slug=X` - Tenant resolution
@@ -120,6 +148,15 @@ Medusa.js e-commerce monorepo aligned with Dakkah CityOS CMS architecture. Multi
   - Query keys: Comprehensive update covering all 20+ data domains
   - All hooks use SDK consistently (sdk.client.fetch pattern)
   - Barrel export at lib/hooks/index.ts
+- 2026-02-08: **ALL COMMERCE VERTICAL MODULES IMPLEMENTED** - 28 new Medusa modules (144 models) across 6 phases:
+  - Phase 1: promotion-ext (8 models), digital-product (2 models)
+  - Phase 2: auction (5), rental (5), restaurant (7), event-ticketing (6), classified (5), affiliate (5), warranty (5)
+  - Phase 3: freelance (6), travel (7), real-estate (6), membership (5)
+  - Phase 4: crowdfunding (5), social-commerce (5), grocery (4)
+  - Phase 5: automotive (5), healthcare (7), education (6), charity (4), financial-product (5)
+  - Phase 6: advertising (5), parking (4), utilities (4), government (5), pet-service (4), fitness (5), legal (4)
+  - All 28 modules registered in medusa-config.ts, migrations generated and applied
+  - Total: 48 module directories, 191 model files across all verticals
 
 ### Frontend Component Map
 | Category | Components |

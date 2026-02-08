@@ -1,0 +1,5 @@
+export { default as LoanProduct } from "./loan-product"
+export { default as LoanApplication } from "./loan-application"
+export { default as InsuranceProduct } from "./insurance-product"
+export { default as InsurancePolicy } from "./insurance-policy"
+export { default as InvestmentPlan } from "./investment-plan"

@@ -1,0 +1,7 @@
+export { default as Practitioner } from "./practitioner"
+export { default as HealthcareAppointment } from "./healthcare-appointment"
+export { default as Prescription } from "./prescription"
+export { default as LabOrder } from "./lab-order"
+export { default as MedicalRecord } from "./medical-record"
+export { default as PharmacyProduct } from "./pharmacy-product"
+export { default as InsuranceClaim } from "./insurance-claim"

@@ -1,0 +1,36 @@
+import { model } from "@medusajs/framework/utils"
+
+const PropertyListing = model.define("property_listing", {
+  id: model.id().primaryKey(),
+  tenant_id: model.text(),
+  agent_id: model.text().nullable(),
+  title: model.text(),
+  description: model.text().nullable(),
+  listing_type: model.enum(["sale", "rent", "lease", "auction"]),
+  property_type: model.enum(["apartment", "house", "villa", "land", "commercial", "office", "warehouse", "studio"]),
+  status: model.enum(["draft", "active", "under_offer", "sold", "rented", "expired", "withdrawn"]).default("draft"),
+  price: model.bigNumber(),
+  currency_code: model.text(),
+  price_period: model.enum(["total", "monthly", "yearly", "weekly"]).nullable(),
+  address_line1: model.text(),
+  address_line2: model.text().nullable(),
+  city: model.text(),
+  state: model.text().nullable(),
+  postal_code: model.text(),
+  country_code: model.text(),
+  latitude: model.number().nullable(),
+  longitude: model.number().nullable(),
+  bedrooms: model.number().nullable(),
+  bathrooms: model.number().nullable(),
+  area_sqm: model.number().nullable(),
+  year_built: model.number().nullable(),
+  features: model.json().nullable(),
+  images: model.json().nullable(),
+  virtual_tour_url: model.text().nullable(),
+  floor_plan_url: model.text().nullable(),
+  view_count: model.number().default(0),
+  favorite_count: model.number().default(0),
+  metadata: model.json().nullable(),
+})
+
+export default PropertyListing

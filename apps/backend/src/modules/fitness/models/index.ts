@@ -1,0 +1,5 @@
+export { default as GymMembership } from "./gym-membership"
+export { default as ClassSchedule } from "./class-schedule"
+export { default as TrainerProfile } from "./trainer-profile"
+export { default as ClassBooking } from "./class-booking"
+export { default as WellnessPlan } from "./wellness-plan"

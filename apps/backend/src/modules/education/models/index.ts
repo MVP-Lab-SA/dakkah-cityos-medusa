@@ -1,0 +1,6 @@
+export { default as Course } from "./course"
+export { default as Lesson } from "./lesson"
+export { default as Enrollment } from "./enrollment"
+export { default as Certificate } from "./certificate"
+export { default as Quiz } from "./quiz"
+export { default as Assignment } from "./assignment"

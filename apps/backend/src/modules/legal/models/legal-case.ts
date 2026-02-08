@@ -1,0 +1,52 @@
+import { model } from "@medusajs/framework/utils"
+
+const LegalCase = model.define("legal_case", {
+  id: model.id().primaryKey(),
+  tenant_id: model.text(),
+  attorney_id: model.text(),
+  client_id: model.text(),
+  case_number: model.text().unique(),
+  title: model.text(),
+  description: model.text().nullable(),
+  case_type: model.enum([
+    "civil",
+    "criminal",
+    "corporate",
+    "family",
+    "real_estate",
+    "immigration",
+    "ip",
+    "tax",
+    "labor",
+    "other",
+  ]),
+  status: model.enum([
+    "consultation",
+    "retained",
+    "active",
+    "discovery",
+    "trial",
+    "settled",
+    "closed",
+    "appeal",
+  ]).default("consultation"),
+  priority: model.enum([
+    "low",
+    "medium",
+    "high",
+    "urgent",
+  ]).default("medium"),
+  filing_date: model.dateTime().nullable(),
+  court_name: model.text().nullable(),
+  opposing_party: model.text().nullable(),
+  documents: model.json().nullable(),
+  notes: model.text().nullable(),
+  estimated_cost: model.bigNumber().nullable(),
+  actual_cost: model.bigNumber().nullable(),
+  currency_code: model.text().nullable(),
+  outcome: model.text().nullable(),
+  closed_at: model.dateTime().nullable(),
+  metadata: model.json().nullable(),
+})
+
+export default LegalCase

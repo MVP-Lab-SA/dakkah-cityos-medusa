@@ -1,0 +1,35 @@
+import { model } from "@medusajs/framework/utils"
+
+const Restaurant = model.define("restaurant", {
+  id: model.id().primaryKey(),
+  tenant_id: model.text(),
+  vendor_id: model.text().nullable(),
+  name: model.text(),
+  handle: model.text().unique(),
+  description: model.text().nullable(),
+  cuisine_types: model.json(),
+  address_line1: model.text(),
+  address_line2: model.text().nullable(),
+  city: model.text(),
+  state: model.text().nullable(),
+  postal_code: model.text(),
+  country_code: model.text(),
+  latitude: model.number().nullable(),
+  longitude: model.number().nullable(),
+  phone: model.text().nullable(),
+  email: model.text().nullable(),
+  operating_hours: model.json(),
+  is_active: model.boolean().default(true),
+  is_accepting_orders: model.boolean().default(true),
+  avg_prep_time_minutes: model.number().default(30),
+  delivery_radius_km: model.number().nullable(),
+  min_order_amount: model.bigNumber().nullable(),
+  delivery_fee: model.bigNumber().nullable(),
+  rating: model.number().nullable(),
+  total_reviews: model.number().default(0),
+  logo_url: model.text().nullable(),
+  banner_url: model.text().nullable(),
+  metadata: model.json().nullable(),
+})
+
+export default Restaurant

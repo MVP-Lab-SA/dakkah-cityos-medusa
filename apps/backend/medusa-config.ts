@@ -283,5 +283,257 @@ module.exports = defineConfig({
         }
       }
     },
+    {
+      resolve: "./src/modules/promotion-ext",
+      key: "promotionExt",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/digital-product",
+      key: "digitalProduct",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/auction",
+      key: "auction",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/rental",
+      key: "rental",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/restaurant",
+      key: "restaurant",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/event-ticketing",
+      key: "eventTicketing",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/classified",
+      key: "classified",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/affiliate",
+      key: "affiliate",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/warranty",
+      key: "warranty",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/freelance",
+      key: "freelance",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/travel",
+      key: "travel",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/real-estate",
+      key: "realEstate",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/membership",
+      key: "membership",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/crowdfunding",
+      key: "crowdfunding",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/social-commerce",
+      key: "socialCommerce",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/grocery",
+      key: "grocery",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/automotive",
+      key: "automotive",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/healthcare",
+      key: "healthcare",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/education",
+      key: "education",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/charity",
+      key: "charity",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/financial-product",
+      key: "financialProduct",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/advertising",
+      key: "advertising",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/parking",
+      key: "parking",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/utilities",
+      key: "utilities",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/government",
+      key: "government",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/pet-service",
+      key: "petService",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/fitness",
+      key: "fitness",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/legal",
+      key: "legal",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
   ],
 });
