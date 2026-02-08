@@ -1,6 +1,6 @@
 import { Migration } from "@medusajs/framework/mikro-orm/migrations";
 
-export class Migration20260208144740 extends Migration {
+export class Migration20260208150027 extends Migration {
 
   override async up(): Promise<void> {
     this.addSql(`create table if not exists "class_booking" ("id" text not null, "tenant_id" text not null, "schedule_id" text not null, "customer_id" text not null, "status" text check ("status" in ('booked', 'checked_in', 'completed', 'cancelled', 'no_show')) not null default 'booked', "booked_at" timestamptz not null, "checked_in_at" timestamptz null, "cancelled_at" timestamptz null, "cancellation_reason" text null, "waitlist_position" integer null, "metadata" jsonb null, "created_at" timestamptz not null default now(), "updated_at" timestamptz not null default now(), "deleted_at" timestamptz null, constraint "class_booking_pkey" primary key ("id"));`);

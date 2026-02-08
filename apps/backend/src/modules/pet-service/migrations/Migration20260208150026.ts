@@ -1,6 +1,6 @@
 import { Migration } from "@medusajs/framework/mikro-orm/migrations";
 
-export class Migration20260208144740 extends Migration {
+export class Migration20260208150026 extends Migration {
 
   override async up(): Promise<void> {
     this.addSql(`create table if not exists "grooming_booking" ("id" text not null, "tenant_id" text not null, "pet_id" text not null, "owner_id" text not null, "provider_id" text null, "service_type" text check ("service_type" in ('bath', 'haircut', 'nail_trim', 'teeth_cleaning', 'full_grooming', 'deshedding')) not null, "status" text check ("status" in ('scheduled', 'in_progress', 'completed', 'cancelled')) not null default 'scheduled', "scheduled_at" timestamptz not null, "duration_minutes" integer not null default 60, "price" numeric null, "currency_code" text null, "special_instructions" text null, "completed_at" timestamptz null, "notes" text null, "metadata" jsonb null, "raw_price" jsonb null, "created_at" timestamptz not null default now(), "updated_at" timestamptz not null default now(), "deleted_at" timestamptz null, constraint "grooming_booking_pkey" primary key ("id"));`);

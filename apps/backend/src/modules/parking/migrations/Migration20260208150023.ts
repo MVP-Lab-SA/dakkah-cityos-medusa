@@ -1,6 +1,6 @@
 import { Migration } from "@medusajs/framework/mikro-orm/migrations";
 
-export class Migration20260208144740 extends Migration {
+export class Migration20260208150023 extends Migration {
 
   override async up(): Promise<void> {
     this.addSql(`create table if not exists "parking_session" ("id" text not null, "tenant_id" text not null, "zone_id" text not null, "customer_id" text null, "vehicle_plate" text null, "spot_number" text null, "status" text check ("status" in ('active', 'completed', 'expired', 'cancelled')) not null default 'active', "started_at" timestamptz not null, "ended_at" timestamptz null, "duration_minutes" integer null, "amount" numeric null, "currency_code" text not null, "payment_status" text check ("payment_status" in ('pending', 'paid', 'failed')) not null default 'pending', "payment_reference" text null, "is_ev_charging" boolean not null default false, "metadata" jsonb null, "raw_amount" jsonb null, "created_at" timestamptz not null default now(), "updated_at" timestamptz not null default now(), "deleted_at" timestamptz null, constraint "parking_session_pkey" primary key ("id"));`);

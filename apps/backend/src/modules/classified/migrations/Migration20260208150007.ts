@@ -1,6 +1,6 @@
 import { Migration } from "@medusajs/framework/mikro-orm/migrations";
 
-export class Migration20260208144738 extends Migration {
+export class Migration20260208150007 extends Migration {
 
   override async up(): Promise<void> {
     this.addSql(`alter table if exists "listing_category" drop constraint if exists "listing_category_handle_unique";`);

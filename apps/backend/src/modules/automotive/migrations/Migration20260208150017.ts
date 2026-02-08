@@ -1,6 +1,6 @@
 import { Migration } from "@medusajs/framework/mikro-orm/migrations";
 
-export class Migration20260208144739 extends Migration {
+export class Migration20260208150017 extends Migration {
 
   override async up(): Promise<void> {
     this.addSql(`create table if not exists "part_catalog" ("id" text not null, "tenant_id" text not null, "name" text not null, "part_number" text not null, "oem_number" text null, "description" text null, "category" text null, "compatible_makes" jsonb null, "compatible_models" jsonb null, "compatible_years" jsonb null, "price" numeric not null, "currency_code" text not null, "stock_quantity" integer not null default 0, "condition" text check ("condition" in ('new', 'refurbished', 'used')) not null default 'new', "weight_kg" integer null, "dimensions" jsonb null, "supplier" text null, "is_active" boolean not null default true, "metadata" jsonb null, "raw_price" jsonb not null, "created_at" timestamptz not null default now(), "updated_at" timestamptz not null default now(), "deleted_at" timestamptz null, constraint "part_catalog_pkey" primary key ("id"));`);

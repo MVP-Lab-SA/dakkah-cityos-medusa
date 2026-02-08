@@ -1,6 +1,6 @@
 import { Migration } from "@medusajs/framework/mikro-orm/migrations";
 
-export class Migration20260208144740 extends Migration {
+export class Migration20260208150022 extends Migration {
 
   override async up(): Promise<void> {
     this.addSql(`create table if not exists "ad_account" ("id" text not null, "tenant_id" text not null, "advertiser_id" text not null, "account_name" text not null, "balance" numeric not null default 0, "currency_code" text not null, "total_spent" numeric not null default 0, "total_deposited" numeric not null default 0, "status" text check ("status" in ('active', 'suspended', 'closed')) not null default 'active', "auto_recharge" boolean not null default false, "auto_recharge_amount" numeric null, "auto_recharge_threshold" numeric null, "metadata" jsonb null, "raw_balance" jsonb not null default '{"value":"0","precision":20}', "raw_total_spent" jsonb not null default '{"value":"0","precision":20}', "raw_total_deposited" jsonb not null default '{"value":"0","precision":20}', "raw_auto_recharge_amount" jsonb null, "raw_auto_recharge_threshold" jsonb null, "created_at" timestamptz not null default now(), "updated_at" timestamptz not null default now(), "deleted_at" timestamptz null, constraint "ad_account_pkey" primary key ("id"));`);

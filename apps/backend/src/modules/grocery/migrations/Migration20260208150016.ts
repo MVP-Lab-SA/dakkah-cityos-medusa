@@ -1,6 +1,6 @@
 import { Migration } from "@medusajs/framework/mikro-orm/migrations";
 
-export class Migration20260208144739 extends Migration {
+export class Migration20260208150016 extends Migration {
 
   override async up(): Promise<void> {
     this.addSql(`create table if not exists "batch_tracking" ("id" text not null, "tenant_id" text not null, "product_id" text not null, "batch_number" text not null, "supplier" text null, "received_date" timestamptz not null, "expiry_date" timestamptz not null, "quantity_received" integer not null, "quantity_remaining" integer not null, "unit_cost" numeric null, "currency_code" text null, "status" text check ("status" in ('active', 'low_stock', 'expiring_soon', 'expired', 'recalled')) not null default 'active', "storage_location" text null, "temperature_log" jsonb null, "metadata" jsonb null, "raw_unit_cost" jsonb null, "created_at" timestamptz not null default now(), "updated_at" timestamptz not null default now(), "deleted_at" timestamptz null, constraint "batch_tracking_pkey" primary key ("id"));`);
