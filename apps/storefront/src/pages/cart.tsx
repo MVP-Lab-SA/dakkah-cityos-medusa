@@ -15,8 +15,8 @@ const DEFAULT_CART_FIELDS =
 
 const Cart = () => {
   const { region, countryCode } = useLoaderData({
-    from: "/$countryCode/cart",
-  });
+    strict: false,
+  }) as any;
   const { data: cart, isLoading: cartLoading } = useCart({
     fields: DEFAULT_CART_FIELDS,
   });

@@ -11,8 +11,8 @@ import { useLoaderData } from "@tanstack/react-router"
  */
 const OrderConfirmation = () => {
   const { order } = useLoaderData({
-    from: "/$countryCode/order/$orderId/confirmed",
-  })
+    strict: false,
+  }) as any
 
   return (
     <div className="content-container py-6">

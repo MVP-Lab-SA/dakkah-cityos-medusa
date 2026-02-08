@@ -18,8 +18,8 @@ import { useLoaderData } from "@tanstack/react-router"
  */
 const ProductDetails = () => {
   const { product, region } = useLoaderData({
-    from: "/$countryCode/products/$handle",
-  })
+    strict: false,
+  }) as any
 
   return (
     <div className="content-container py-6">

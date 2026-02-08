@@ -13,8 +13,8 @@ import { useLoaderData } from "@tanstack/react-router"
  */
 const Category = () => {
   const { category, region } = useLoaderData({
-    from: "/$countryCode/categories/$handle",
-  })
+    strict: false,
+  }) as any
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching } = useProducts({
     region_id: region.id,

@@ -21,6 +21,12 @@ export const retrieveRegion = async ({
   return region
 }
 
+const LOCALE_TO_COUNTRY: Record<string, string> = {
+  en: "us",
+  fr: "fr",
+  ar: "sa",
+}
+
 export const getRegion = async ({
   country_code,
   fields,
@@ -29,7 +35,8 @@ export const getRegion = async ({
   fields?: string;
 }): Promise<HttpTypes.StoreRegion | null> => {
     const regions = await listRegions({ fields })
-    return regions.find(region => 
-      region.countries?.some(country => country.iso_2 === country_code.toLowerCase())
-    ) || null
+    const code = LOCALE_TO_COUNTRY[country_code.toLowerCase()] ?? country_code.toLowerCase()
+    return regions.find(region =>
+      region.countries?.some(country => country.iso_2 === code)
+    ) || regions[0] || null
 }

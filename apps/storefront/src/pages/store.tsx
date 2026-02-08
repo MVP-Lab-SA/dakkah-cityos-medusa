@@ -13,7 +13,7 @@ import { useLoaderData } from "@tanstack/react-router"
  * - Rendering product cards with region context
  */
 const Store = () => {
-  const { region } = useLoaderData({ from: "/$countryCode/store" })
+  const { region } = useLoaderData({ strict: false }) as any
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching } = useProducts({
     region_id: region.id,

@@ -18,8 +18,8 @@ const CheckoutSummary = lazy(() => import("@/components/checkout-summary"))
 
 const Checkout = () => {
   const { step } = useLoaderData({
-    from: "/$countryCode/checkout",
-  });
+    strict: false,
+  }) as any;
   const { data: cart, isLoading: cartLoading } = useCart();
   const location = useLocation();
   const navigate = useNavigate();

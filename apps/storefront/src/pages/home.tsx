@@ -1,5 +1,15 @@
 import { Link, useLocation } from "@tanstack/react-router"
-import { getCountryCodeFromPath } from "@/lib/utils/region"
+
+function getBasePrefix(pathname: string): string {
+  const segments = pathname.split("/").filter(Boolean)
+  if (segments.length >= 2) {
+    return `/${segments[0]}/${segments[1]}`
+  }
+  if (segments.length === 1) {
+    return `/${segments[0]}`
+  }
+  return ""
+}
 
 const sections = [
   {
@@ -101,8 +111,7 @@ const sections = [
 
 const Home = () => {
   const location = useLocation()
-  const base = getCountryCodeFromPath(location.pathname)
-  const prefix = base ? `/${base}` : ""
+  const prefix = getBasePrefix(location.pathname)
 
   return (
     <div className="content-container py-12">
@@ -123,12 +132,12 @@ const Home = () => {
             <ul className="space-y-2">
               {section.links.map((link) => (
                 <li key={link.path}>
-                  <Link
-                    to={`${prefix}${link.path}` as string}
+                  <a
+                    href={`${prefix}${link.path}`}
                     className="text-blue-600 hover:text-blue-800 hover:underline text-sm"
                   >
                     {link.name}
-                  </Link>
+                  </a>
                 </li>
               ))}
             </ul>
