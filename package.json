@@ -34,5 +34,8 @@
       "sharp",
       "unrs-resolver"
     ]
+  },
+  "dependencies": {
+    "@octokit/rest": "^22.0.1"
   }
 }
