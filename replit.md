@@ -55,10 +55,12 @@ A centralized design system is implemented through several packages:
 ### Temporal Integration Bridge
 The Medusa backend integrates with Temporal Cloud for workflow orchestration:
 - **Client Library** (`src/lib/temporal-client.ts`): Lazy-initialized Temporal client with dynamic SDK import, connects to `ap-northeast-1.aws.api.temporal.io:7233`, namespace `quickstart-dakkah-cityos.djvai`.
-- **Event Dispatcher** (`src/lib/event-dispatcher.ts`): Maps 14 Medusa event types to Temporal workflow IDs (order.placed → unified-order-orchestrator, payment.initiated → multi-gateway-payment, etc.), with event outbox processing support.
+- **Event Dispatcher** (`src/lib/event-dispatcher.ts`): Maps 18 Medusa event types to Temporal workflow IDs (order.placed → unified-order-orchestrator, payment.initiated → multi-gateway-payment, governance.policy.changed → governance-policy-propagation, node.created → node-provisioning, tenant.provisioned → tenant-setup-saga, etc.), with event outbox processing support.
+- **Dynamic Workflow Client** (`src/lib/dynamic-workflow-client.ts`): Supports Temporal's dynamic AI agent workflow pattern — LLM-driven workflows that determine their execution path at runtime. Provides `startDynamicWorkflow`, `queryDynamicWorkflowStatus`, `signalDynamicWorkflow` (human-in-the-loop), `cancelDynamicWorkflow`, and `listDynamicWorkflows`.
 - **Admin API Routes** (`src/api/admin/temporal/`): Health check, workflow listing, and manual trigger endpoints with Zod validation.
+- **Dynamic Workflow API** (`src/api/admin/temporal/dynamic/`): CRUD+signal routes for dynamic AI agent workflows — start, list, query status, send signals, cancel.
 - **Event Bridge Subscriber** (`src/subscribers/temporal-event-bridge.ts`): Listens to order/product events and dispatches to Temporal; dormant when TEMPORAL_API_KEY is unset.
-- **Task Queue**: `cityos-workflow-queue`
+- **Task Queues**: `cityos-workflow-queue` (static event-driven), `cityos-dynamic-queue` (AI agent dynamic workflows).
 - **Workflow Repo**: Separate private repo at `Qahtani1979/dakkah-cityos-workflow` with 505+ workflow definitions.
 
 ### Cross-System Architecture
@@ -72,7 +74,9 @@ The project is part of a larger ecosystem involving:
 Two seed scripts are available:
 - `apps/backend/src/scripts/seed.ts` - Minimal seed: admin user, store, regions (MENA/International), sales channels, stock location, fulfillment, API key.
 - `apps/backend/src/scripts/seed-complete.ts` - Full seed: adds tenant, governance, 5-level node hierarchy (Riyadh → Al Olaya → King Fahad Zone → Main Mall → Shop 101), 5 product categories, 7 products with variants, 3 customers, 2 vendors.
+- `apps/backend/src/scripts/db-verify.ts` - Database verification and cleanup: checks all entities, detects duplicates (API keys, stock locations), prints summary report.
 - Run via: `cd apps/backend && npx medusa exec ./src/scripts/seed-complete.ts`
+- Verify via: `cd apps/backend && npx medusa exec ./src/scripts/db-verify.ts`
 
 ## External Dependencies
 - **Database:** PostgreSQL (managed by Replit).
@@ -100,3 +104,7 @@ Two seed scripts are available:
 - Fixed Zod validation issues in trigger route (z.record requires key+value schema in this version).
 - Updated and tested seed scripts with idempotent data creation.
 - Database populated with full seed data (products, categories, customers, vendors, tenant, node hierarchy).
+- Made seed scripts fully idempotent: API key creation checks for existing keys, region handling searches by name, link operations wrapped in try/catch.
+- Created database verification/cleanup script (`db-verify.ts`): validates all entities, detects duplicates, prints summary report.
+- Added Temporal dynamic AI agent workflow support: `dynamic-workflow-client.ts` with start/query/signal/cancel/list operations, admin API routes at `/admin/temporal/dynamic/`, separate `cityos-dynamic-queue` task queue.
+- Extended event dispatcher with 4 new mappings (governance.policy.changed, node.created, tenant.provisioned, workflow.dynamic.start).

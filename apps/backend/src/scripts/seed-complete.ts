@@ -178,7 +178,18 @@ export default async function seedComplete({ container }: ExecArgs) {
     intlRegion = regionResult[1]
     console.log(`  Created ${regionResult.length} regions`)
   } else {
-    menaRegion = existingRegions[0]
+    const foundMena = existingRegions.find((r: any) => r.name === "MENA")
+    const foundIntl = existingRegions.find((r: any) => r.name === "International")
+    if (foundMena) {
+      menaRegion = foundMena
+      console.log(`  MENA region found (${foundMena.id})`)
+    } else {
+      menaRegion = existingRegions[0]
+      console.log(`  MENA region not found, using fallback: ${existingRegions[0].name} (${existingRegions[0].id})`)
+    }
+    if (foundIntl) {
+      intlRegion = foundIntl
+    }
     console.log(`  Regions already exist (${existingRegions.length})`)
   }
 
@@ -208,10 +219,14 @@ export default async function seedComplete({ container }: ExecArgs) {
     stockLocation = stockLocationResult[0]
     console.log("  Created Riyadh Warehouse")
 
-    await link.create({
-      [Modules.STOCK_LOCATION]: { stock_location_id: stockLocation.id },
-      [Modules.FULFILLMENT]: { fulfillment_provider_id: "manual_manual" },
-    })
+    try {
+      await link.create({
+        [Modules.STOCK_LOCATION]: { stock_location_id: stockLocation.id },
+        [Modules.FULFILLMENT]: { fulfillment_provider_id: "manual_manual" },
+      })
+    } catch (linkError: any) {
+      console.log(`  Fulfillment provider link already exists or failed: ${linkError.message}`)
+    }
   } else {
     stockLocation = existingLocations[0]
     console.log("  Riyadh Warehouse already exists")
@@ -249,10 +264,14 @@ export default async function seedComplete({ container }: ExecArgs) {
       ],
     })
 
-    await link.create({
-      [Modules.STOCK_LOCATION]: { stock_location_id: stockLocation.id },
-      [Modules.FULFILLMENT]: { fulfillment_set_id: fulfillmentSet.id },
-    })
+    try {
+      await link.create({
+        [Modules.STOCK_LOCATION]: { stock_location_id: stockLocation.id },
+        [Modules.FULFILLMENT]: { fulfillment_set_id: fulfillmentSet.id },
+      })
+    } catch (linkError: any) {
+      console.log(`  Fulfillment set link already exists or failed: ${linkError.message}`)
+    }
 
     await createShippingOptionsWorkflow(container).run({
       input: [
@@ -300,26 +319,53 @@ export default async function seedComplete({ container }: ExecArgs) {
   // STEP 8: Link Sales Channels
   // ============================================================
   console.log("\nStep 8: Linking sales channels to stock location...")
-  await linkSalesChannelsToStockLocationWorkflow(container).run({
-    input: { id: stockLocation.id, add: allChannelIds },
-  })
-  console.log("  Sales channels linked")
+  try {
+    await linkSalesChannelsToStockLocationWorkflow(container).run({
+      input: { id: stockLocation.id, add: allChannelIds },
+    })
+    console.log("  Sales channels linked")
+  } catch (linkError: any) {
+    console.log(`  Sales channel linking skipped (may already be linked): ${linkError.message}`)
+  }
 
   // ============================================================
   // STEP 9: Publishable API Key
   // ============================================================
   console.log("\nStep 9: Creating publishable API key...")
-  const { result: apiKeyResult } = await createApiKeysWorkflow(container).run({
-    input: {
-      api_keys: [{ title: "Storefront API Key", type: "publishable", created_by: "" }],
-    },
-  })
-  const publishableApiKey = apiKeyResult[0]
+  let publishableApiKey: any = null
 
-  await linkSalesChannelsToApiKeyWorkflow(container).run({
-    input: { id: publishableApiKey.id, add: allChannelIds },
-  })
-  console.log(`  API Key: ${publishableApiKey.token}`)
+  try {
+    const { data: existingApiKeys } = await query.graph({
+      entity: "api_key",
+      fields: ["id", "token", "title", "type"],
+      filters: { title: "Storefront API Key", type: "publishable" },
+    })
+
+    if (existingApiKeys && existingApiKeys.length > 0) {
+      publishableApiKey = existingApiKeys[0]
+      console.log(`  Publishable API key already exists: ${publishableApiKey.id}`)
+    }
+  } catch (checkError: any) {
+    console.log(`  Could not check existing API keys: ${checkError.message}`)
+  }
+
+  if (!publishableApiKey) {
+    const { result: apiKeyResult } = await createApiKeysWorkflow(container).run({
+      input: {
+        api_keys: [{ title: "Storefront API Key", type: "publishable", created_by: "" }],
+      },
+    })
+    publishableApiKey = apiKeyResult[0]
+    console.log(`  API Key created: ${publishableApiKey.token}`)
+  }
+
+  try {
+    await linkSalesChannelsToApiKeyWorkflow(container).run({
+      input: { id: publishableApiKey.id, add: allChannelIds },
+    })
+  } catch (linkError: any) {
+    console.log(`  Sales channel to API key linking skipped: ${linkError.message}`)
+  }
 
   // ============================================================
   // STEP 10: Tenant (Dakkah)
@@ -897,13 +943,24 @@ export default async function seedComplete({ container }: ExecArgs) {
 
     for (const vendor of vendorData) {
       try {
-        const { data: existing } = await query.graph({
-          entity: "vendor",
-          fields: ["id"],
-          filters: { handle: vendor.handle },
-        })
+        let existingVendor: any[] = []
+        try {
+          const { data: existing } = await query.graph({
+            entity: "vendor",
+            fields: ["id"],
+            filters: { handle: vendor.handle },
+          })
+          existingVendor = existing || []
+        } catch (queryError: any) {
+          try {
+            const result = await vendorService.listVendors({ handle: vendor.handle })
+            existingVendor = Array.isArray(result) ? result : [result].filter(Boolean)
+          } catch {
+            existingVendor = []
+          }
+        }
 
-        if (!existing || existing.length === 0) {
+        if (existingVendor.length === 0) {
           await vendorService.createVendors(vendor)
           vendorCount++
           console.log(`  Created vendor: ${vendor.business_name}`)
@@ -927,7 +984,7 @@ export default async function seedComplete({ container }: ExecArgs) {
   console.log(`
 Summary:
   - Admin User: admin@dakkah.com
-  - Publishable API Key: ${publishableApiKey.token}
+  - Publishable API Key: ${publishableApiKey?.token || publishableApiKey?.id || "N/A"}
   - Sales Channels: ${allChannels.length}
   - Regions: ${menaRegion ? "MENA + International" : "existing"}
   - Stock Location: Riyadh Warehouse

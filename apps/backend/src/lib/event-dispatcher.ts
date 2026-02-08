@@ -15,6 +15,10 @@ const EVENT_WORKFLOW_MAP: Record<string, string> = {
   "auction.started": "xsystem.auction-lifecycle",
   "restaurant-order.placed": "xsystem.restaurant-order-orchestrator",
   "product.updated": "commerce.sync-product-to-cms",
+  "workflow.dynamic.start": "dynamic-agent-orchestrator",
+  "governance.policy.changed": "xsystem.governance-policy-propagation",
+  "node.created": "xsystem.node-provisioning",
+  "tenant.provisioned": "xsystem.tenant-setup-saga",
 }
 
 export function getWorkflowForEvent(eventType: string): string | null {
