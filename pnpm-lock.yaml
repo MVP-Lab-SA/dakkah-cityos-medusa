@@ -17,11 +17,7 @@ overrides:
   seroval-plugins: 1.4.2
   tar: 7.5.7
   glob: 11.1.0
-
-patchedDependencies:
-  lodash.set@4.3.2:
-    hash: 29bedc6467206b6914315ad5ac79bfced72c10d5bc553f82ec24b6776a34c614
-    path: patches/lodash.set@4.3.2.patch
+  lodash.set: link:packages/lodash-set-safe
 
 importers:
 
@@ -373,6 +369,8 @@ importers:
   packages/cityos-design-system: {}
 
   packages/cityos-design-tokens: {}
+
+  packages/lodash-set-safe: {}
 
 packages:
 
@@ -9115,9 +9113,6 @@ packages:
   lodash.once@4.1.1:
     resolution: {integrity: sha512-Sb487aTOCr9drQVL8pIxOzVhafOjZN9UU54hiN8PU3uAiSV7lx1yYNpbNmex2PK6dSJoNTSJUUswT651yww3Mg==}
 
-  lodash.set@4.3.2:
-    resolution: {integrity: sha512-4hNPN5jlm/N/HLMCO43v8BXKq9Z7QdAGc/VGrRD61w8gN9g/6jF9A4L1pbUgBLCffi0w9VsXfTOij5x8iTyFvg==}
-
   lodash@4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
 
@@ -14610,7 +14605,7 @@ snapshots:
       i18next-http-backend: 2.4.2
       lodash.debounce: 4.0.8
       lodash.isequal: 4.5.0
-      lodash.set: 4.3.2(patch_hash=29bedc6467206b6914315ad5ac79bfced72c10d5bc553f82ec24b6776a34c614)
+      lodash.set: link:packages/lodash-set-safe
       match-sorter: 6.3.4
       motion: 11.18.2(@emotion/is-prop-valid@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       qs: 6.14.1
@@ -23272,8 +23267,6 @@ snapshots:
   lodash.merge@4.6.2: {}
 
   lodash.once@4.1.1: {}
-
-  lodash.set@4.3.2(patch_hash=29bedc6467206b6914315ad5ac79bfced72c10d5bc553f82ec24b6776a34c614): {}
 
   lodash@4.17.21: {}
 

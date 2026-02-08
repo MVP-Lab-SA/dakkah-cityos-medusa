@@ -1,0 +1,7 @@
+{
+  "name": "lodash.set",
+  "version": "4.3.3",
+  "description": "Safe replacement for lodash.set without prototype pollution vulnerability",
+  "main": "index.js",
+  "license": "MIT"
+}

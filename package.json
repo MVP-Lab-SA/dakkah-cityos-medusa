@@ -32,7 +32,8 @@
       "seroval": "1.4.1",
       "seroval-plugins": "1.4.2",
       "tar": "7.5.7",
-      "glob": "11.1.0"
+      "glob": "11.1.0",
+      "lodash.set": "link:packages/lodash-set-safe"
     },
     "ignoredBuiltDependencies": [
       "@medusajs/telemetry",
@@ -43,10 +44,7 @@
       "protobufjs",
       "sharp",
       "unrs-resolver"
-    ],
-    "patchedDependencies": {
-      "lodash.set@4.3.2": "patches/lodash.set@4.3.2.patch"
-    }
+    ]
   },
   "dependencies": {
     "@octokit/rest": "^22.0.1"

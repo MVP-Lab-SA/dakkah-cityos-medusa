@@ -104,7 +104,7 @@ Medusa.js e-commerce monorepo aligned with Dakkah CityOS CMS architecture. Multi
 - 2026-02-08: All 8 new modules registered in medusa-config.ts, migrations generated and applied
 - 2026-02-08: Workspace updated to include packages/* in pnpm-workspace.yaml
 - 2026-02-08: Security dependency updates via pnpm overrides: @remix-run/router@1.23.2, fast-xml-parser@5.3.4, jws@3.2.3, qs@6.14.1, h3@1.15.5, node-forge@1.3.2, seroval@1.4.1, seroval-plugins@1.4.2, tar@7.5.7, glob@11.1.0. Direct: next@15.0.8 in orchestrator
-- 2026-02-08: Security patch for lodash.set@4.3.2 (prototype pollution CVE) via pnpm patch - added __proto__/constructor/prototype guard in baseSet function
+- 2026-02-08: Replaced lodash.set@4.3.2 (critical CVE - prototype pollution) with safe local package at packages/lodash-set-safe, using pnpm override to redirect all lodash.set imports. Removed old patch file.
 
 ## User Preferences
 - Full alignment with CityOS CMS architecture required
