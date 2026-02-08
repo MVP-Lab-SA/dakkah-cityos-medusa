@@ -22,6 +22,8 @@ import { Route as CountryCodeRouteImport } from './routes/$countryCode'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CountryCodeIndexRouteImport } from './routes/$countryCode/index'
+import { Route as ProductsHandleRouteImport } from './routes/products/$handle'
+import { Route as CategoriesHandleRouteImport } from './routes/categories/$handle'
 import { Route as TenantLocaleRouteImport } from './routes/$tenant.$locale'
 import { Route as CountryCodeStoresRouteImport } from './routes/$countryCode/stores'
 import { Route as CountryCodeStoreRouteImport } from './routes/$countryCode/store'
@@ -184,6 +186,16 @@ const CountryCodeIndexRoute = CountryCodeIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => CountryCodeRoute,
+} as any)
+const ProductsHandleRoute = ProductsHandleRouteImport.update({
+  id: '/products/$handle',
+  path: '/products/$handle',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriesHandleRoute = CategoriesHandleRouteImport.update({
+  id: '/categories/$handle',
+  path: '/categories/$handle',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const TenantLocaleRoute = TenantLocaleRouteImport.update({
   id: '/$tenant/$locale',
@@ -891,6 +903,8 @@ export interface FileRoutesByFullPath {
   '/$countryCode/store': typeof CountryCodeStoreRoute
   '/$countryCode/stores': typeof CountryCodeStoresRoute
   '/$tenant/$locale': typeof TenantLocaleRouteWithChildren
+  '/categories/$handle': typeof CategoriesHandleRoute
+  '/products/$handle': typeof ProductsHandleRoute
   '/$countryCode/': typeof CountryCodeIndexRoute
   '/$countryCode/account/addresses': typeof CountryCodeAccountAddressesRoute
   '/$countryCode/account/profile': typeof CountryCodeAccountProfileRoute
@@ -1019,6 +1033,8 @@ export interface FileRoutesByTo {
   '/$countryCode/search': typeof CountryCodeSearchRoute
   '/$countryCode/store': typeof CountryCodeStoreRoute
   '/$countryCode/stores': typeof CountryCodeStoresRoute
+  '/categories/$handle': typeof CategoriesHandleRoute
+  '/products/$handle': typeof ProductsHandleRoute
   '/$countryCode': typeof CountryCodeIndexRoute
   '/$countryCode/account/addresses': typeof CountryCodeAccountAddressesRoute
   '/$countryCode/account/profile': typeof CountryCodeAccountProfileRoute
@@ -1148,6 +1164,8 @@ export interface FileRoutesById {
   '/$countryCode/store': typeof CountryCodeStoreRoute
   '/$countryCode/stores': typeof CountryCodeStoresRoute
   '/$tenant/$locale': typeof TenantLocaleRouteWithChildren
+  '/categories/$handle': typeof CategoriesHandleRoute
+  '/products/$handle': typeof ProductsHandleRoute
   '/$countryCode/': typeof CountryCodeIndexRoute
   '/$countryCode/account/addresses': typeof CountryCodeAccountAddressesRoute
   '/$countryCode/account/profile': typeof CountryCodeAccountProfileRoute
@@ -1280,6 +1298,8 @@ export interface FileRouteTypes {
     | '/$countryCode/store'
     | '/$countryCode/stores'
     | '/$tenant/$locale'
+    | '/categories/$handle'
+    | '/products/$handle'
     | '/$countryCode/'
     | '/$countryCode/account/addresses'
     | '/$countryCode/account/profile'
@@ -1408,6 +1428,8 @@ export interface FileRouteTypes {
     | '/$countryCode/search'
     | '/$countryCode/store'
     | '/$countryCode/stores'
+    | '/categories/$handle'
+    | '/products/$handle'
     | '/$countryCode'
     | '/$countryCode/account/addresses'
     | '/$countryCode/account/profile'
@@ -1536,6 +1558,8 @@ export interface FileRouteTypes {
     | '/$countryCode/store'
     | '/$countryCode/stores'
     | '/$tenant/$locale'
+    | '/categories/$handle'
+    | '/products/$handle'
     | '/$countryCode/'
     | '/$countryCode/account/addresses'
     | '/$countryCode/account/profile'
@@ -1658,6 +1682,8 @@ export interface RootRouteChildren {
   HealthRoute: typeof HealthRoute
   StoreRoute: typeof StoreRoute
   TenantLocaleRoute: typeof TenantLocaleRouteWithChildren
+  CategoriesHandleRoute: typeof CategoriesHandleRoute
+  ProductsHandleRoute: typeof ProductsHandleRoute
   VendorOrdersOrderIdRoute: typeof VendorOrdersOrderIdRoute
   VendorProductsProductIdRoute: typeof VendorProductsProductIdRoute
   VendorProductsNewRoute: typeof VendorProductsNewRoute
@@ -1746,6 +1772,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/$countryCode/'
       preLoaderRoute: typeof CountryCodeIndexRouteImport
       parentRoute: typeof CountryCodeRoute
+    }
+    '/products/$handle': {
+      id: '/products/$handle'
+      path: '/products/$handle'
+      fullPath: '/products/$handle'
+      preLoaderRoute: typeof ProductsHandleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categories/$handle': {
+      id: '/categories/$handle'
+      path: '/categories/$handle'
+      fullPath: '/categories/$handle'
+      preLoaderRoute: typeof CategoriesHandleRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/$tenant/$locale': {
       id: '/$tenant/$locale'
@@ -2974,6 +3014,8 @@ const rootRouteChildren: RootRouteChildren = {
   HealthRoute: HealthRoute,
   StoreRoute: StoreRoute,
   TenantLocaleRoute: TenantLocaleRouteWithChildren,
+  CategoriesHandleRoute: CategoriesHandleRoute,
+  ProductsHandleRoute: ProductsHandleRoute,
   VendorOrdersOrderIdRoute: VendorOrdersOrderIdRoute,
   VendorProductsProductIdRoute: VendorProductsProductIdRoute,
   VendorProductsNewRoute: VendorProductsNewRoute,
