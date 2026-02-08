@@ -1402,5 +1402,153 @@ Critical CVEs are addressed through pnpm overrides in the root `package.json`, e
 
 ---
 
+## 20. Frontend–Backend Model Integration Audit
+
+This section maps all 57 backend models against the storefront to identify which models have frontend representation, which files/routes use them, and whether the integration is active (API calls wired) or structural-only (UI exists but no working backend connection).
+
+### 20.1 Models WITH Frontend Representation
+
+#### Tenant Module (1 of 6 models reflected)
+
+| Backend Model | Frontend Status | Files | Routes | Active? |
+|--------------|----------------|-------|--------|---------|
+| `Tenant` | **Reflected** — Used for multi-tenant context resolution, branding, slug-based routing | `lib/context/tenant-context.tsx`, `lib/context/branding-context.tsx`, `lib/api/unified-client.ts`, `lib/store-context.tsx`, `components/store/store-switcher.tsx`, `components/locale-switcher.tsx` | `/$tenant/$locale.tsx` (layout), `/$tenant/$locale/store.tsx`, `/$tenant/$locale/stores.tsx` | **Yes** — API call to `/store/cityos/tenant?slug=X` |
+
+#### Vendor Module (3 of 7 models reflected)
+
+| Backend Model | Frontend Status | Files | Routes | Active? |
+|--------------|----------------|-------|--------|---------|
+| `Vendor` | **Reflected** — Full vendor directory, profiles, registration, dashboard | `lib/hooks/use-vendors.ts`, `lib/types/vendors.ts`, `components/vendors/` (10 files: vendor-card, vendor-directory, vendor-header, vendor-about, vendor-contact, vendor-stats, vendor-badges, vendor-filters, vendor-products, vendor-reviews, featured-vendors), `components/vendor/` (vendor-dashboard, vendor-registration-form, vendor-product-form, vendor-product-list, vendor-order-list, vendor-analytics-dashboard, stripe-connect-setup) | `/$tenant/$locale/vendors/index.tsx`, `/$tenant/$locale/vendors/$handle.tsx`, `/$tenant/$locale/vendors/$handle.products.tsx`, `/$tenant/$locale/vendors/$handle.reviews.tsx`, `/$tenant/$locale/vendor/register.tsx`, `/$tenant/$locale/vendor/index.tsx` (dashboard), `/$tenant/$locale/vendor/products/*`, `/$tenant/$locale/vendor/orders/*` | **Yes** — API calls to `/store/vendors`, `/store/vendors/:handle`, `/store/vendors/:handle/products` |
+| `VendorProduct` | **Reflected** — Vendor product management (CRUD) | `components/vendor/vendor-product-form.tsx`, `components/vendor/vendor-product-list.tsx` | `/$tenant/$locale/vendor/products/index.tsx`, `/$tenant/$locale/vendor/products/new.tsx`, `/$tenant/$locale/vendor/products/$productId.tsx` | **Yes** — API calls to `/store/vendors/:handle/products` |
+| `VendorOrder` | **Reflected** — Vendor order management | `components/vendor/vendor-order-list.tsx` | `/$tenant/$locale/vendor/orders/index.tsx` | **Partial** — UI exists, references vendor orders but no dedicated hook; uses generic order data |
+
+#### Commission Module (2 of 2 models reflected)
+
+| Backend Model | Frontend Status | Files | Routes | Active? |
+|--------------|----------------|-------|--------|---------|
+| `CommissionRule` | **Reflected** — Commission display in vendor dashboard | `components/vendor/vendor-commissions.tsx`, `components/vendor/vendor-dashboard.tsx` | `/$tenant/$locale/vendor/commissions.tsx` | **Partial** — UI renders commission data but no dedicated hook for `/store/commissions`; data shown via vendor dashboard aggregate |
+| `CommissionTransaction` | **Reflected** — Transaction history in commissions view | `components/vendor/vendor-commissions.tsx`, `components/vendor/vendor-analytics-dashboard.tsx` | `/$tenant/$locale/vendor/commissions.tsx` | **Partial** — Same as above; displayed within commission component |
+
+#### Payout Module (1 of 2 models reflected)
+
+| Backend Model | Frontend Status | Files | Routes | Active? |
+|--------------|----------------|-------|--------|---------|
+| `Payout` | **Reflected** — Vendor payout tracking, Stripe Connect setup | `components/vendor/vendor-payouts.tsx`, `components/vendor/vendor-dashboard.tsx`, `components/vendor/stripe-connect-setup.tsx` | `/$tenant/$locale/vendor/payouts/index.tsx`, `/$tenant/$locale/vendor/payouts.tsx` | **Partial** — UI exists with payout list display; Stripe Connect integration referenced |
+
+#### Company Module (3 of 7 models reflected)
+
+| Backend Model | Frontend Status | Files | Routes | Active? |
+|--------------|----------------|-------|--------|---------|
+| `Company` | **Reflected** — B2B company registration, dashboard, credit display | `lib/hooks/use-companies.ts`, `lib/types/companies.ts`, `components/b2b/b2b-dashboard.tsx`, `components/b2b/company-registration-form.tsx`, `components/business/company-overview.tsx`, `components/business/company-orders.tsx`, `components/business/credit-display.tsx` | `/$tenant/$locale/b2b/register.tsx`, `/$tenant/$locale/b2b/dashboard.tsx`, `/$tenant/$locale/business/orders.tsx`, `/$tenant/$locale/business/team.tsx` | **Yes** — API calls to `/store/companies/me`, `/store/companies/me/credit`, `/store/companies/me/orders`, `/store/companies/me/team` |
+| `CompanyUser` | **Reflected** — Team management (invite, update, remove members) | `lib/hooks/use-companies.ts` (useCompanyTeam, useInviteTeamMember, useUpdateTeamMember, useRemoveTeamMember), `lib/types/companies.ts` (CompanyMember type) | `/$tenant/$locale/business/team.tsx` | **Yes** — API calls to `/store/companies/me/team`, `/store/companies/me/team/invite`, `/store/companies/me/team/:memberId` |
+| `PurchaseOrder` + `PurchaseOrderItem` | **Reflected** — Full PO lifecycle (create, submit, approve/reject, view) | `lib/hooks/use-purchase-orders.ts`, `components/purchase-orders/` (po-card, po-detail, po-form, po-line-items, po-list, po-timeline, po-approval-flow), `components/business/approval-queue.tsx`, `components/business/po-checkout.tsx`, `components/b2b/b2b-checkout-options.tsx` | `/$tenant/$locale/account/purchase-orders/index.tsx`, `/$tenant/$locale/account/purchase-orders/$id.tsx`, `/$tenant/$locale/account/purchase-orders/new.tsx`, `/$tenant/$locale/business/approvals.tsx` | **Yes** — API calls to `/store/purchase-orders`, `/store/purchase-orders/:id`, `/store/purchase-orders/:id/submit` |
+
+#### Quote Module (2 of 2 models reflected)
+
+| Backend Model | Frontend Status | Files | Routes | Active? |
+|--------------|----------------|-------|--------|---------|
+| `Quote` | **Reflected** — Quote listing, details, request, accept/decline | `lib/hooks/use-quotes.ts`, `lib/types/quotes.ts`, `components/quotes/quote-list.tsx`, `components/quotes/quote-details.tsx`, `components/quotes/quote-request-form.tsx` | `/$tenant/$locale/quotes/index.tsx`, `/$tenant/$locale/quotes/$id.tsx`, `/$tenant/$locale/quotes/request.tsx` | **Yes** — API calls to `/store/quotes`, `/store/quotes/:id`, `/store/quotes/:id/accept`, `/store/quotes/:id/decline` |
+| `QuoteItem` | **Reflected** — Rendered within quote details as line items | `lib/types/quotes.ts` (QuoteItem type), `components/quotes/quote-details.tsx`, `components/quotes/quote-request-form.tsx` | Same as Quote routes | **Yes** — Included in quote API responses |
+
+#### Subscription Module (3 of 5 models reflected)
+
+| Backend Model | Frontend Status | Files | Routes | Active? |
+|--------------|----------------|-------|--------|---------|
+| `SubscriptionPlan` | **Reflected** — Plan listing, selection, comparison | `lib/hooks/use-subscriptions.ts`, `lib/types/subscriptions.ts`, `components/subscriptions/plan-card.tsx` | `/$tenant/$locale/subscriptions/index.tsx`, `/$tenant/$locale/subscriptions/checkout.tsx` | **Yes** — API call to `/store/subscription-plans` |
+| `Subscription` | **Reflected** — Full subscription management (view, pause, resume, cancel, change plan) | `lib/hooks/use-subscriptions.ts` (7 hooks), `lib/types/subscriptions.ts`, `components/subscriptions/` (subscription-card, subscription-detail, subscription-list, subscription-actions, cancellation-flow, billing-history), `components/account/active-subscriptions.tsx` | `/$tenant/$locale/account/subscriptions/index.tsx`, `/$tenant/$locale/account/subscriptions/$id.tsx`, `/$tenant/$locale/account/subscriptions/$id.billing.tsx`, `/$tenant/$locale/subscriptions/success.tsx` | **Yes** — API calls to `/store/subscriptions/me`, `/store/subscriptions/:id`, `/store/subscriptions/:id/pause`, `/store/subscriptions/:id/resume`, `/store/subscriptions/:id/cancel`, `/store/subscriptions/:id/change-plan` |
+| `SubscriptionItem` | **Reflected** — Rendered within subscription detail as line items | `lib/types/subscriptions.ts` (SubscriptionItem type), `components/subscriptions/subscription-detail.tsx` | Same as Subscription routes | **Yes** — Included in subscription API responses |
+
+#### Booking Module (4 of 7 models reflected)
+
+| Backend Model | Frontend Status | Files | Routes | Active? |
+|--------------|----------------|-------|--------|---------|
+| `Booking` | **Reflected** — Full booking lifecycle (browse services, select time, book, view, cancel, reschedule) | `lib/hooks/use-bookings.ts` (8 hooks), `lib/types/bookings.ts`, `components/bookings/` (booking-card, booking-detail, booking-list, booking-actions, service-card, provider-select, calendar-picker, add-to-calendar, booking-reminder), `components/account/upcoming-bookings.tsx` | `/$tenant/$locale/bookings/index.tsx`, `/$tenant/$locale/bookings/$serviceHandle.tsx`, `/$tenant/$locale/bookings/confirmation.tsx`, `/$tenant/$locale/account/bookings/index.tsx`, `/$tenant/$locale/account/bookings/$id.tsx` | **Yes** — API calls to `/store/bookings`, `/store/bookings/services`, `/store/bookings/availability`, `/store/bookings/:id/cancel`, `/store/bookings/:id/reschedule` |
+| `ServiceProvider` | **Reflected** — Provider selection during booking | `lib/types/bookings.ts` (ServiceProvider type), `lib/hooks/use-bookings.ts` (useServiceProviders), `components/bookings/provider-select.tsx` | `/$tenant/$locale/bookings/$serviceHandle.tsx` | **Yes** — API call to `/store/bookings/services/:serviceId/providers` |
+| `Availability` | **Reflected** — Time slot display during booking flow | `lib/types/bookings.ts` (ProviderAvailability, WeeklySchedule, TimeSlot types), `lib/hooks/use-bookings.ts` (useServiceAvailability), `components/bookings/calendar-picker.tsx` | `/$tenant/$locale/bookings/$serviceHandle.tsx` | **Yes** — API call to `/store/bookings/availability` |
+| `BookingReminder` | **Reflected** — Reminder display on booking detail | `components/bookings/booking-reminder.tsx` | `/$tenant/$locale/account/bookings/$id.tsx` | **Partial** — UI component exists but no dedicated API call; reminder data expected from booking detail response |
+
+#### Review Module (1 of 1 model reflected)
+
+| Backend Model | Frontend Status | Files | Routes | Active? |
+|--------------|----------------|-------|--------|---------|
+| `Review` | **Reflected** — Product reviews, vendor reviews, review submission, helpful voting | `lib/hooks/use-reviews.ts` (useProductReviews, useVendorReviews, useCreateReview, useMarkReviewHelpful), `lib/types/reviews.ts`, `components/reviews/` (review-card, review-form, review-list, review-summary, verified-badge), `components/vendors/vendor-reviews.tsx`, `components/homepage/sections/reviews-section.tsx` | `/$tenant/$locale/vendors/$handle.reviews.tsx` (vendor reviews on vendor profile) | **Yes** — API calls to `/store/reviews/products/:id`, `/store/reviews/vendors/:id`, `/store/reviews`, `/store/reviews/:id/helpful` |
+
+#### Invoice Module (1 of 2 models reflected)
+
+| Backend Model | Frontend Status | Files | Routes | Active? |
+|--------------|----------------|-------|--------|---------|
+| `Invoice` | **Reflected** — Invoice download, early payment discount banner | `components/orders/invoice-download.tsx`, `components/orders/order-actions.tsx`, `components/invoices/early-payment-banner.tsx`, `components/subscriptions/billing-history.tsx`, `components/business/po-checkout.tsx` | `/$tenant/$locale/account/orders/$id.tsx` (within order detail), `/$tenant/$locale/account/subscriptions/$id.billing.tsx` | **Partial** — Invoice download UI exists; early payment endpoint at `/store/invoices/:id/early-payment` exists on backend |
+
+#### Volume Pricing Module (1 of 2 models reflected)
+
+| Backend Model | Frontend Status | Files | Routes | Active? |
+|--------------|----------------|-------|--------|---------|
+| `VolumePricing` | **Reflected** — Tiered pricing display on product pages, B2B dashboard | `components/products/volume-pricing-display.tsx`, `components/b2b/b2b-dashboard.tsx`, `components/product-actions.tsx` | `/$tenant/$locale/products/$handle.tsx` (product detail page) | **Partial** — UI component exists; backend endpoint at `/store/products/:id/volume-pricing` and `/store/volume-pricing/:productId` available |
+
+#### I18n Module (1 of 1 model reflected — indirectly)
+
+| Backend Model | Frontend Status | Files | Routes | Active? |
+|--------------|----------------|-------|--------|---------|
+| `Translation` | **Indirectly reflected** — Locale switching, i18n utilities, RTL support | `lib/i18n/index.ts`, `components/locale-switcher.tsx`, `lib/context/tenant-context.tsx` | `/$tenant/$locale.tsx` (layout with locale param) | **Partial** — Frontend has hardcoded translation strings in i18n/index.ts; does NOT call `/store/translations` API. Locale is used for routing and formatting only |
+
+#### Store Module (1 of 1 model reflected)
+
+| Backend Model | Frontend Status | Files | Routes | Active? |
+|--------------|----------------|-------|--------|---------|
+| `CityosStore` | **Reflected** — Store detection, multi-store browsing | `lib/store-detector.ts`, `lib/store-context.tsx`, `components/store/store-switcher.tsx` | `/$tenant/$locale/store.tsx`, `/$tenant/$locale/stores.tsx` | **Yes** — API calls to `/store/stores`, `/store/stores/default`, `/store/stores/by-domain/:domain` |
+
+### 20.2 Models NOT Reflected in Frontend (23 of 57)
+
+These backend models have **zero frontend representation** — no types, no hooks, no components, no routes.
+
+| # | Backend Model | Module | Reason / Notes |
+|---|--------------|--------|----------------|
+| 1 | `TenantUser` | Tenant | Admin-only model. RBAC roles and node-scoped access managed via admin dashboard, not storefront |
+| 2 | `TenantSettings` | Tenant | Admin configuration (feature flags, limits). Backend-only; storefront reads effects via `/store/features` |
+| 3 | `TenantBilling` | Tenant | Platform-level billing for tenant subscription. Admin/platform concern, not customer-facing |
+| 4 | `TenantUsageRecord` | Tenant | Platform usage metering. Internal tracking only |
+| 5 | `TenantInvoice` | Tenant | Platform invoices to tenants. Admin/platform concern |
+| 6 | `Node` | Node | CityOS 5-level hierarchy. Backend-only structural model; storefront uses tenant context, not node hierarchy |
+| 7 | `GovernanceAuthority` | Governance | Policy chain for data sovereignty. Backend-only enforcement; storefront never displays governance rules |
+| 8 | `Persona` | Persona | 6-axis persona system. Backend-only resolution; storefront doesn't display/manage personas |
+| 9 | `PersonaAssignment` | Persona | Persona-to-entity mapping. Backend-only |
+| 10 | `EventOutbox` | Events | CMS event queue. Purely infrastructure; never exposed to storefront |
+| 11 | `AuditLog` | Audit | Audit trail. Admin-only viewing; storefront has no audit display |
+| 12 | `SalesChannelMapping` | Channel | Channel→Medusa sales channel mapping. Backend orchestration only |
+| 13 | `RegionZoneMapping` | Region-Zone | Residency zone→Medusa region mapping. Backend orchestration only |
+| 14 | `VendorUser` | Vendor | Vendor team members. Not exposed in vendor storefront portal (vendor dashboard shows products/orders, not team) |
+| 15 | `VendorOrderItem` | Vendor | Line items within vendor orders. Vendor order list doesn't drill into line items |
+| 16 | `VendorAnalyticsSnapshot` | Vendor | Analytics snapshots. Vendor dashboard shows aggregate data but doesn't use this model's API directly |
+| 17 | `VendorPerformanceMetric` | Vendor | Performance metrics. Same as above — shown as aggregate in dashboard |
+| 18 | `PayoutTransactionLink` | Payout | Links payouts to Medusa payment transactions. Backend join table only |
+| 19 | `ApprovalWorkflow` | Company | B2B approval workflow configuration. Admin-configured; storefront only shows approval status on POs |
+| 20 | `ApprovalRequest` + `ApprovalAction` | Company | Individual approval steps. Storefront shows approval status but doesn't expose the request/action models directly |
+| 21 | `TaxExemption` | Company | B2B tax exemption certificates. Admin/backend validated; not shown in storefront |
+| 22 | `PaymentTerms` | Company | B2B payment terms (net_30, etc.). Displayed as a field on Company, but no dedicated PaymentTerms model exposure |
+| 23 | `ServiceProduct` | Booking | Bookable service definition. Frontend uses a `Service` type that maps to this but doesn't reference model directly; API returns services via `/store/bookings/services` |
+| 24 | `AvailabilityException` | Booking | Date-specific overrides. Embedded within availability response, not standalone |
+| 25 | `BookingItem` | Booking | Booking line items. Not exposed; bookings are shown as single-service records |
+| 26 | `BillingCycle` | Subscription | Billing period tracking. Referenced in subscription detail display but no dedicated API call |
+| 27 | `SubscriptionEvent` | Subscription | Subscription lifecycle events. Backend audit trail; not exposed to storefront |
+| 28 | `SubscriptionPause` | Subscription | Pause period records. Pause/resume functionality exists but uses the Subscription model's pause fields, not a separate PauseRecord API |
+| 29 | `SubscriptionDiscount` | Subscription | Discount/coupon application. `discount-code-input.tsx` component exists but references generic discount logic, not this model |
+| 30 | `InvoiceItem` | Invoice | Invoice line items. Invoice download provides the full document; items not displayed individually |
+| 31 | `VolumePricingTier` | Volume Pricing | Individual tier records. Volume pricing display reads tiers from the parent model response |
+
+### 20.3 Summary
+
+| Category | Count | Details |
+|----------|-------|---------|
+| **Models with active frontend integration** | **16** | Tenant, Vendor, VendorProduct, Company, CompanyUser, PurchaseOrder+PurchaseOrderItem, Quote, QuoteItem, Subscription, SubscriptionPlan, SubscriptionItem, Booking, ServiceProvider, Availability, Review, CityosStore |
+| **Models with partial/UI-only frontend** | **10** | VendorOrder, CommissionRule, CommissionTransaction, Payout, BookingReminder, Invoice, VolumePricing, Translation, BillingCycle, SubscriptionDiscount |
+| **Models with NO frontend representation** | **31** | TenantUser, TenantSettings, TenantBilling, TenantUsageRecord, TenantInvoice, Node, GovernanceAuthority, Persona, PersonaAssignment, EventOutbox, AuditLog, SalesChannelMapping, RegionZoneMapping, VendorUser, VendorOrderItem, VendorAnalyticsSnapshot, VendorPerformanceMetric, PayoutTransactionLink, ApprovalWorkflow, ApprovalRequest, ApprovalAction, TaxExemption, PaymentTerms, ServiceProduct, AvailabilityException, BookingItem, SubscriptionEvent, SubscriptionPause, InvoiceItem, VolumePricingTier |
+
+**Key observations:**
+- The 31 "not reflected" models fall into clear categories: **admin/platform models** (TenantUser, TenantSettings, TenantBilling, etc.), **infrastructure models** (EventOutbox, AuditLog, SalesChannelMapping, RegionZoneMapping), **join/child models** already embedded in parent responses (QuoteItem, BookingItem, InvoiceItem, VolumePricingTier, AvailabilityException), and **vendor internal models** (VendorUser, VendorAnalyticsSnapshot, VendorPerformanceMetric).
+- Most "partial" models have UI components built but rely on data being included in parent API responses rather than making dedicated API calls.
+- The 16 actively integrated models cover all core customer-facing features: shopping, B2B commerce, subscriptions, bookings, reviews, quotes, and vendor marketplace.
+
+---
+
 *Document generated: 2026-02-08*
 *Platform version: Medusa.js 2.11.4-snapshot | React 19.1.1 | TanStack Router 1.131.32*
