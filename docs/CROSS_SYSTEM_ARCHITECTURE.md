@@ -34,7 +34,7 @@
 
 ## 1. Executive Summary
 
-Dakkah CityOS is a multi-tenant, multi-vendor city-scale commerce platform. It distributes ~195 data models across 6 specialized systems, orchestrated by Temporal workflows for cross-system operations.
+Dakkah CityOS is a multi-tenant, multi-vendor city-scale commerce platform. It distributes **~396 data models** across 6 specialized systems, orchestrated by **80 Temporal workflows** for cross-system operations. The platform covers **27 personas** and **26+ commerce verticals** spanning retail, marketplace, B2B, hospitality, healthcare, education, government, real estate, automotive, gig economy, and more.
 
 **Core principle:** Each system owns the models it is best suited to manage. Cross-system coordination happens through Temporal workflows, with the EventOutbox providing an audit trail of all inter-system events.
 
@@ -42,14 +42,14 @@ Dakkah CityOS is a multi-tenant, multi-vendor city-scale commerce platform. It d
 
 | System | Model Count | Role |
 |--------|------------|------|
-| Medusa.js | ~75 | Commerce engine, marketplace, B2B |
-| ERPNext | ~35 | Accounting, inventory, HR, compliance |
-| Fleetbase | ~20 | Delivery, fleet, warehousing |
-| Walt.id | ~15 | Identity, credentials, KYC |
-| Payment Gateways | ~15 | Money movement, wallets, BNPL |
-| PayloadCMS | ~25 | Content, branding, city services |
+| Medusa.js | ~209 | Commerce engine, marketplace, B2B, all commerce verticals |
+| ERPNext | ~55 | Accounting, inventory, HR, compliance, vertical finance |
+| Fleetbase | ~32 | Delivery, fleet, warehousing, cold chain, transport |
+| Walt.id | ~25 | Identity, credentials, KYC, professional licenses |
+| Payment Gateways | ~25 | Money movement, wallets, BNPL, escrow, tips, micro |
+| PayloadCMS | ~40 | Content, branding, city services, knowledge, community |
 | Shared/Synced (PayloadCMS-managed) | ~10 | Master data synced via Temporal |
-| **Total** | **~195** | |
+| **Total** | **~396** | |
 
 ### Temporal Workflow Count Summary
 
@@ -65,7 +65,66 @@ Dakkah CityOS is a multi-tenant, multi-vendor city-scale commerce platform. It d
 | Content & Notification | 4 |
 | Booking & Services | 4 |
 | Platform Operations | 5 |
-| **Total** | **~55** |
+| Auction & Bidding | 1 |
+| Rental & Leasing | 1 |
+| Restaurant & Food | 1 |
+| Events & Ticketing | 1 |
+| Classified & C2C | 1 |
+| Affiliate & Influencer | 1 |
+| Warranty & After-Sales | 1 |
+| Freelance & Gig Economy | 1 |
+| Travel & Hospitality | 1 |
+| Real Estate | 1 |
+| Crowdfunding | 1 |
+| Social Commerce | 1 |
+| Grocery & Fresh | 1 |
+| Automotive | 1 |
+| Healthcare | 1 |
+| Education | 1 |
+| Charity & Donations | 1 |
+| Financial Products | 1 |
+| Advertising | 1 |
+| Parking & Transport | 1 |
+| Utility Bill Payment | 1 |
+| Government & Municipal | 1 |
+| Membership Lifecycle | 1 |
+| Pet Services | 1 |
+| Fitness & Wellness | 1 |
+| **Total** | **~80** |
+
+### Persona Coverage Matrix
+
+Every commerce vertical is mapped to the personas it serves:
+
+| Persona | Verticals Covered |
+|---------|------------------|
+| **Consumer (B2C)** | Core commerce, subscriptions, bookings, auctions, rentals, restaurant, events, travel, grocery, automotive, healthcare, education, fitness, pet services, parking, utilities, membership, social commerce |
+| **Business Buyer (B2B)** | B2B commerce, quotes, purchase orders, volume pricing, payment terms, tax exemptions, approval workflows |
+| **Vendor / Seller** | Marketplace, commissions, payouts, product management, performance reviews, settlement |
+| **Restaurant Owner** | Restaurant & food, menu management, kitchen orders, table reservations, food delivery |
+| **Service Provider** | Bookings, freelance/gig, healthcare provider, fitness instructor, pet services, legal/professional, automotive workshop |
+| **Freelancer / Gig Worker** | Gig listings, proposals, contracts, milestones, escrow, mutual reviews |
+| **Property Owner / Agent** | Real estate listings, lease agreements, property transactions, viewing scheduling |
+| **Event Organizer** | Events & ticketing, seating, sponsorships, registrations |
+| **Hotel / Hospitality** | Hotel reservations, room management, tour packages, transfers |
+| **Delivery Driver / Courier** | Fleet management, route optimization, proof of delivery, ride assignments |
+| **Healthcare Practitioner** | Medical appointments, prescriptions, telemedicine, lab bookings |
+| **Educator / Instructor** | Courses, modules, enrollments, assignments, certifications, tutoring |
+| **Government Official** | Municipal services, permits, fines, public consultations, citizen identity |
+| **Citizen / Resident** | Government services, utility payments, public consultations, parking |
+| **Advertiser / Marketer** | Ad campaigns, placements, creatives, impressions, sponsored products, influencer programs |
+| **Affiliate / Influencer** | Affiliate programs, tracked links, commissions, influencer campaigns |
+| **Donor / Philanthropist** | Donation campaigns, recurring donations, tax receipts, non-profit profiles |
+| **Investor / Backer** | Crowdfunding campaigns, pledges, rewards, stretch goals |
+| **Auction Participant** | Auctions (English, Dutch, sealed, reverse), bidding, watchlists |
+| **Renter / Lessee** | Rental products, rental agreements, returns, damage reports |
+| **Tourist / Visitor** | Travel packages, hotel reservations, tours, city guides, event tickets |
+| **Student / Learner** | Course enrollment, progress tracking, assignments, certifications |
+| **Patient** | Medical appointments, prescriptions, pharmacy orders, telemedicine, lab tests |
+| **Pet Owner** | Pet profiles, pet service bookings, pet product subscriptions |
+| **Vehicle Owner** | Vehicle listings, parts, service appointments, inspections, trade-ins |
+| **Membership Holder** | Membership plans, loyalty tiers, member benefits, digital cards |
+| **Platform Admin** | Tenant management, audit logs, system health, compliance, data migration |
 
 ---
 
@@ -106,7 +165,7 @@ Dakkah CityOS is a multi-tenant, multi-vendor city-scale commerce platform. It d
 
 ## 3. Model Distribution by System
 
-### 3.1 Medusa.js — Commerce Engine (~75 models)
+### 3.1 Medusa.js — Commerce Engine (~209 models)
 
 #### 3.1.1 Core Commerce (Medusa Built-in) — 18 models
 
@@ -208,7 +267,7 @@ Dakkah CityOS is a multi-tenant, multi-vendor city-scale commerce platform. It d
 | 59 | Availability | Provider schedules | availability |
 | 60 | AvailabilityException | Schedule overrides | availability_exception |
 
-#### 3.1.9 Reviews & Pricing — 4 models
+#### 3.1.9 Reviews & Pricing — 5 models
 
 | # | Model | Description | DB Table |
 |---|-------|-------------|----------|
@@ -231,16 +290,280 @@ Dakkah CityOS is a multi-tenant, multi-vendor city-scale commerce platform. It d
 | 72 | ReferralProgram | Referral tracking/rewards | referral_program |
 | 73 | FeaturedListing | Sponsored/promoted products | featured_listing |
 
-#### 3.1.11 Digital Products (NEW — to build) — 2 models
+#### 3.1.11 Digital Products — 2 models
 
 | # | Model | Description | DB Table |
 |---|-------|-------------|----------|
 | 74 | DigitalAsset | Downloadable files/media | digital_asset |
 | 75 | LicenseKey | Software license keys | license_key |
 
+#### 3.1.12 Auction & Bidding — 5 models
+
+| # | Model | Description | DB Table |
+|---|-------|-------------|----------|
+| 76 | Auction | Auction event (timed, reverse, Dutch, sealed) | auction |
+| 77 | AuctionLot | Individual lot/item in an auction | auction_lot |
+| 78 | AuctionBid | Individual bid submission | auction_bid |
+| 79 | AuctionWatchlist | User-saved auctions to follow | auction_watchlist |
+| 80 | AuctionResult | Final outcome (winner, price, settlement) | auction_result |
+
+#### 3.1.13 Rental & Leasing — 5 models
+
+| # | Model | Description | DB Table |
+|---|-------|-------------|----------|
+| 81 | RentalProduct | Products/assets available for rent | rental_product |
+| 82 | RentalAgreement | Active rental contract (dates, terms, deposit) | rental_agreement |
+| 83 | RentalPeriod | Individual rental period (extension, early return) | rental_period |
+| 84 | RentalReturn | Return inspection and deposit reconciliation | rental_return |
+| 85 | RentalDamageReport | Damage assessment and charges | rental_damage_report |
+
+#### 3.1.14 Restaurant & Food Commerce — 7 models
+
+| # | Model | Description | DB Table |
+|---|-------|-------------|----------|
+| 86 | Restaurant | Restaurant/kitchen profile (hours, cuisine, rating) | restaurant |
+| 87 | Menu | Active menu per restaurant (breakfast, lunch, dinner) | menu |
+| 88 | MenuItem | Individual dish with modifiers/add-ons | menu_item |
+| 89 | MenuModifier | Add-on options (extra cheese, size upgrades) | menu_modifier |
+| 90 | TableReservation | Dine-in table booking (party size, time, deposit) | table_reservation |
+| 91 | DineInOrder | In-restaurant order with table assignment | dine_in_order |
+| 92 | KitchenOrder | Kitchen display system order queue | kitchen_order |
+
+#### 3.1.15 Events & Ticketing — 6 models
+
+| # | Model | Description | DB Table |
+|---|-------|-------------|----------|
+| 93 | TicketedEvent | Ticketed event (concert, conference, match, fair) | ticketed_event |
+| 94 | EventTicketType | Ticket tiers (VIP, general, early bird) | event_ticket_type |
+| 95 | EventTicket | Individual issued ticket (barcode, seat, status) | event_ticket |
+| 96 | EventRegistration | Registration for free/paid events | event_registration |
+| 97 | SeatingChart | Venue seating layout and availability | seating_chart |
+| 98 | EventSponsor | Event sponsor packages and deliverables | event_sponsor |
+
+#### 3.1.16 Classified Ads & C2C — 5 models
+
+| # | Model | Description | DB Table |
+|---|-------|-------------|----------|
+| 99 | ClassifiedListing | User-posted listing (item, vehicle, service) | classified_listing |
+| 100 | ClassifiedCategory | Classified ad taxonomy | classified_category |
+| 101 | ClassifiedOffer | Buyer offer/counteroffer on a listing | classified_offer |
+| 102 | ClassifiedMessage | Buyer-seller messaging thread | classified_message |
+| 103 | ClassifiedReport | Flag/report inappropriate listings | classified_report |
+
+#### 3.1.17 Affiliate & Influencer Marketing — 5 models
+
+| # | Model | Description | DB Table |
+|---|-------|-------------|----------|
+| 104 | AffiliateProgram | Program definition (commission %, cookie duration) | affiliate_program |
+| 105 | AffiliatePartner | Approved affiliate/influencer profiles | affiliate_partner |
+| 106 | AffiliateLink | Tracked referral links with UTM codes | affiliate_link |
+| 107 | AffiliateCommission | Earned commission per referred sale | affiliate_commission |
+| 108 | InfluencerCampaign | Paid influencer collaboration campaigns | influencer_campaign |
+
+#### 3.1.18 Warranty & After-Sales — 5 models
+
+| # | Model | Description | DB Table |
+|---|-------|-------------|----------|
+| 109 | WarrantyPlan | Warranty/extended warranty plan definitions | warranty_plan |
+| 110 | WarrantyRegistration | Customer product warranty activation | warranty_registration |
+| 111 | WarrantyClaim | Warranty claim lifecycle (submitted→approved→resolved) | warranty_claim |
+| 112 | ServiceContract | Annual maintenance / service level agreements | service_contract |
+| 113 | RepairTicket | Repair/service request tracking | repair_ticket |
+
+#### 3.1.19 Freelance & Gig Economy — 6 models
+
+| # | Model | Description | DB Table |
+|---|-------|-------------|----------|
+| 114 | FreelancerProfile | Freelancer portfolio, skills, rates, rating | freelancer_profile |
+| 115 | GigListing | Posted job/project/task listing | gig_listing |
+| 116 | GigProposal | Freelancer proposal with quote and timeline | gig_proposal |
+| 117 | GigContract | Accepted proposal → active contract | gig_contract |
+| 118 | GigMilestone | Milestone-based deliverables and payments | gig_milestone |
+| 119 | GigReview | Client ↔ freelancer mutual reviews | gig_review |
+
+#### 3.1.20 Travel & Hospitality — 7 models
+
+| # | Model | Description | DB Table |
+|---|-------|-------------|----------|
+| 120 | HotelProperty | Hotel/resort/hostel profile | hotel_property |
+| 121 | HotelRoom | Room types (single, double, suite) with rates | hotel_room |
+| 122 | HotelReservation | Room booking with check-in/check-out | hotel_reservation |
+| 123 | TourPackage | Tour/experience package (itinerary, inclusions) | tour_package |
+| 124 | TourBooking | Booked tour with participant details | tour_booking |
+| 125 | TravelItinerary | Multi-stop itinerary planner | travel_itinerary |
+| 126 | TransferService | Airport/station pickup and transfer bookings | transfer_service |
+
+#### 3.1.21 Real Estate — 6 models
+
+| # | Model | Description | DB Table |
+|---|-------|-------------|----------|
+| 127 | Property | Property listing (sale/rent, residential/commercial) | property |
+| 128 | PropertyUnit | Individual units in a building (apartment, office) | property_unit |
+| 129 | LeaseAgreement | Active lease contract (tenant, terms, rent) | lease_agreement |
+| 130 | PropertyInquiry | Buyer/tenant inquiry with agent assignment | property_inquiry |
+| 131 | PropertyViewing | Scheduled property viewing/open house | property_viewing |
+| 132 | PropertyTransaction | Purchase/sale transaction (offer→closing) | property_transaction |
+
+#### 3.1.22 Membership & Loyalty Programs — 5 models
+
+| # | Model | Description | DB Table |
+|---|-------|-------------|----------|
+| 133 | MembershipPlan | Plan tiers (bronze, silver, gold, platinum) | membership_plan |
+| 134 | MembershipCard | Issued membership with validity period | membership_card |
+| 135 | MemberBenefit | Benefits per tier (discounts, priority, access) | member_benefit |
+| 136 | MembershipTransaction | Membership purchase/renewal/upgrade records | membership_transaction |
+| 137 | LoyaltyTier | Points-based tier progression rules | loyalty_tier |
+
+#### 3.1.23 Crowdfunding & Community Investment — 5 models
+
+| # | Model | Description | DB Table |
+|---|-------|-------------|----------|
+| 138 | CrowdfundCampaign | Fundraising campaign (goal, deadline, type) | crowdfund_campaign |
+| 139 | CampaignPledge | Individual pledge/contribution | campaign_pledge |
+| 140 | CampaignReward | Backer reward tiers and fulfillment | campaign_reward |
+| 141 | CampaignUpdate | Creator updates to backers | campaign_update |
+| 142 | CampaignMilestone | Stretch goals and milestones | campaign_milestone |
+
+#### 3.1.24 Social Commerce & Live Selling — 5 models
+
+| # | Model | Description | DB Table |
+|---|-------|-------------|----------|
+| 143 | LiveSaleSession | Live-stream selling event (start, host, products) | live_sale_session |
+| 144 | LiveSaleItem | Products featured during live session | live_sale_item |
+| 145 | LiveSaleBid | Real-time bids during live sale | live_sale_bid |
+| 146 | SocialShareReward | Rewards for social sharing/referrals | social_share_reward |
+| 147 | UserGeneratedReview | Photo/video reviews from customers | user_generated_review |
+
+#### 3.1.25 Grocery & Fresh Commerce — 4 models
+
+| # | Model | Description | DB Table |
+|---|-------|-------------|----------|
+| 148 | FreshProductProfile | Perishable product metadata (shelf life, storage) | fresh_product_profile |
+| 149 | GroceryList | Saved/recurring shopping lists | grocery_list |
+| 150 | RecipeKit | Meal kit with linked ingredients and instructions | recipe_kit |
+| 151 | SubstitutionRule | Auto-substitution rules for out-of-stock items | substitution_rule |
+
+#### 3.1.26 Automotive Commerce — 5 models
+
+| # | Model | Description | DB Table |
+|---|-------|-------------|----------|
+| 152 | VehicleListing | Vehicle sale listing (make, model, year, mileage) | vehicle_listing |
+| 153 | VehiclePart | Auto parts catalog with compatibility | vehicle_part |
+| 154 | VehicleServiceAppointment | Workshop/service center booking | vehicle_service_appointment |
+| 155 | VehicleInspection | Pre-sale inspection report | vehicle_inspection |
+| 156 | TradeInOffer | Vehicle trade-in valuation and offer | trade_in_offer |
+
+#### 3.1.27 Healthcare Commerce — 7 models
+
+| # | Model | Description | DB Table |
+|---|-------|-------------|----------|
+| 157 | HealthcareProvider | Doctor/clinic/hospital profile | healthcare_provider |
+| 158 | MedicalAppointment | Patient appointment booking | medical_appointment |
+| 159 | Prescription | Doctor-issued prescription | prescription |
+| 160 | PrescriptionItem | Individual medication in a prescription | prescription_item |
+| 161 | PharmacyOrder | Prescription fulfillment order | pharmacy_order |
+| 162 | TelemedicineSession | Virtual consultation session (video/chat) | telemedicine_session |
+| 163 | LabTestBooking | Diagnostic lab test booking | lab_test_booking |
+
+#### 3.1.28 Education & Training Commerce — 6 models
+
+| # | Model | Description | DB Table |
+|---|-------|-------------|----------|
+| 164 | Course | Course/workshop/training program | course |
+| 165 | CourseModule | Sections/chapters within a course | course_module |
+| 166 | CourseEnrollment | Student enrollment with progress tracking | course_enrollment |
+| 167 | Assignment | Student assignments/quizzes/exams | assignment |
+| 168 | TutoringSession | 1-on-1 tutoring session booking | tutoring_session |
+| 169 | AcademicCertificate | Completion certificate issuance | academic_certificate |
+
+#### 3.1.29 Charity & Donations — 4 models
+
+| # | Model | Description | DB Table |
+|---|-------|-------------|----------|
+| 170 | DonationCampaign | Fundraising campaign (cause, goal, deadline) | donation_campaign |
+| 171 | Donation | Individual donation transaction | donation |
+| 172 | NonProfitOrg | Registered non-profit organization profile | non_profit_org |
+| 173 | DonorProfile | Recurring donor profile and preferences | donor_profile |
+
+#### 3.1.30 Financial Products & Services — 5 models
+
+| # | Model | Description | DB Table |
+|---|-------|-------------|----------|
+| 174 | LoanApplication | Consumer/business loan application | loan_application |
+| 175 | FinancingPlan | Product financing (0% APR, payment plans) | financing_plan |
+| 176 | InsuranceProduct | Insurance product listings (travel, product, health) | insurance_product |
+| 177 | InsuranceQuote | Customer insurance quotation | insurance_quote |
+| 178 | MicrofinanceAccount | Microfinance/community lending account | microfinance_account |
+
+#### 3.1.31 Advertising & Sponsored Listings — 5 models
+
+| # | Model | Description | DB Table |
+|---|-------|-------------|----------|
+| 179 | AdCampaign | Advertiser campaign (budget, targeting, schedule) | ad_campaign |
+| 180 | AdPlacement | Ad slot on storefront (banner, sidebar, search) | ad_placement |
+| 181 | AdCreative | Ad visual/copy assets | ad_creative |
+| 182 | AdImpression | Impression/click/conversion tracking | ad_impression |
+| 183 | SponsoredProduct | Promoted product placement in search/category | sponsored_product |
+
+#### 3.1.32 Parking & Urban Transport — 4 models
+
+| # | Model | Description | DB Table |
+|---|-------|-------------|----------|
+| 184 | ParkingFacility | Parking garage/lot profile (capacity, rates) | parking_facility |
+| 185 | ParkingSpot | Individual spot (type, floor, EV charging) | parking_spot |
+| 186 | ParkingReservation | Reserved parking booking with QR entry | parking_reservation |
+| 187 | RideRequest | Ride-hailing/shuttle booking | ride_request |
+
+#### 3.1.33 Utilities & Bill Payment — 4 models
+
+| # | Model | Description | DB Table |
+|---|-------|-------------|----------|
+| 188 | UtilityProvider | Utility company profile (electricity, water, gas, internet) | utility_provider |
+| 189 | UtilityAccount | Customer utility account linking | utility_account |
+| 190 | UtilityBill | Bill statement with amount and due date | utility_bill |
+| 191 | UtilityPayment | Bill payment transaction record | utility_payment |
+
+#### 3.1.34 Government & Municipal Services — 5 models
+
+| # | Model | Description | DB Table |
+|---|-------|-------------|----------|
+| 192 | MunicipalService | City service catalog (permits, registrations) | municipal_service |
+| 193 | ServiceApplication | Citizen application for a municipal service | service_application |
+| 194 | PermitApplication | Permit request lifecycle (applied→reviewing→issued) | permit_application |
+| 195 | FineRecord | Issued fine/penalty with payment status | fine_record |
+| 196 | PublicConsultation | Public feedback/voting on city proposals | public_consultation |
+
+#### 3.1.35 Pet Services — 4 models
+
+| # | Model | Description | DB Table |
+|---|-------|-------------|----------|
+| 197 | PetProfile | Pet record (species, breed, vaccinations, owner) | pet_profile |
+| 198 | PetServiceListing | Pet service (grooming, boarding, walking, vet) | pet_service_listing |
+| 199 | PetServiceBooking | Booked pet service appointment | pet_service_booking |
+| 200 | PetProductSubscription | Recurring pet food/supply subscription box | pet_product_subscription |
+
+#### 3.1.36 Fitness & Wellness — 5 models
+
+| # | Model | Description | DB Table |
+|---|-------|-------------|----------|
+| 201 | FitnessCenter | Gym/studio/wellness center profile | fitness_center |
+| 202 | FitnessClass | Class schedule (yoga, HIIT, swimming, personal training) | fitness_class |
+| 203 | ClassEnrollment | Member class registration/waitlist | class_enrollment |
+| 204 | GymMembership | Active gym membership with check-in tracking | gym_membership |
+| 205 | WellnessPackage | Spa/wellness service bundles | wellness_package |
+
+#### 3.1.37 Legal & Professional Services — 4 models
+
+| # | Model | Description | DB Table |
+|---|-------|-------------|----------|
+| 206 | ProfessionalProfile | Lawyer/accountant/consultant profile | professional_profile |
+| 207 | ConsultationBooking | Professional consultation session | consultation_booking |
+| 208 | DocumentService | Legal document preparation/notarization | document_service |
+| 209 | RetainerAgreement | Ongoing retainer contract with billing | retainer_agreement |
+
 ---
 
-### 3.2 ERPNext — Back-Office ERP (~35 models)
+### 3.2 ERPNext — Back-Office ERP (~55 models)
 
 #### 3.2.1 Accounting & Finance — 8 models
 
@@ -317,9 +640,69 @@ Dakkah CityOS is a multi-tenant, multi-vendor city-scale commerce platform. It d
 | 34 | Budget Allocation | Department/project budgets |
 | 35 | Cost Center | Cost center tracking |
 
+#### 3.2.9 Rental & Leasing Accounting — 3 models
+
+| # | Model (ERPNext DocType) | Description |
+|---|------------------------|-------------|
+| 36 | Rental Revenue Schedule | Recognized rental income over lease term |
+| 37 | Security Deposit Ledger | Refundable deposit tracking per rental |
+| 38 | Depreciation Schedule (Rental Assets) | Rental asset depreciation tracking |
+
+#### 3.2.10 Real Estate Finance — 3 models
+
+| # | Model (ERPNext DocType) | Description |
+|---|------------------------|-------------|
+| 39 | Property Asset Register | Owned/managed property valuation |
+| 40 | Rental Income Statement | Periodic rental income reporting |
+| 41 | Property Expense Ledger | Maintenance, tax, HOA expense tracking |
+
+#### 3.2.11 Financial Products & Lending — 3 models
+
+| # | Model (ERPNext DocType) | Description |
+|---|------------------------|-------------|
+| 42 | Loan Ledger | Principal + interest tracking per loan |
+| 43 | Loan Repayment Schedule | Amortization schedule |
+| 44 | Provision for Bad Debts | Loan default provisions |
+
+#### 3.2.12 Healthcare & Pharmacy Inventory — 2 models
+
+| # | Model (ERPNext DocType) | Description |
+|---|------------------------|-------------|
+| 45 | Medical Supply Inventory | Pharmaceutical and medical supply stock |
+| 46 | Controlled Substance Log | Regulated medication dispensing log |
+
+#### 3.2.13 Government & Municipal Finance — 3 models
+
+| # | Model (ERPNext DocType) | Description |
+|---|------------------------|-------------|
+| 47 | Fee & Fine Revenue | Government fee/fine revenue tracking |
+| 48 | Permit Revenue | Permit issuance revenue tracking |
+| 49 | Subsidy & Grant Disbursement | Government subsidy/grant tracking |
+
+#### 3.2.14 Crowdfunding & Donations Finance — 2 models
+
+| # | Model (ERPNext DocType) | Description |
+|---|------------------------|-------------|
+| 50 | Donation Revenue | Donation income categorization and receipts |
+| 51 | Campaign Fund Accounting | Crowdfund campaign escrow and disbursement |
+
+#### 3.2.15 Advertising Revenue — 2 models
+
+| # | Model (ERPNext DocType) | Description |
+|---|------------------------|-------------|
+| 52 | Ad Revenue Recognition | Advertiser billing and revenue recognition |
+| 53 | Media Spend Report | Cross-campaign spend and ROI reporting |
+
+#### 3.2.16 Automotive & Vehicle Assets — 2 models
+
+| # | Model (ERPNext DocType) | Description |
+|---|------------------------|-------------|
+| 54 | Vehicle Asset Register | Owned vehicle fleet valuation |
+| 55 | Vehicle Maintenance Cost Center | Workshop labor and parts cost tracking |
+
 ---
 
-### 3.3 Fleetbase — Logistics & Fulfillment (~20 models)
+### 3.3 Fleetbase — Logistics & Fulfillment (~32 models)
 
 | # | Model (Fleetbase Resource) | Description |
 |---|---------------------------|-------------|
@@ -343,10 +726,22 @@ Dakkah CityOS is a multi-tenant, multi-vendor city-scale commerce platform. It d
 | 18 | Fuel Log | Fleet fuel consumption tracking |
 | 19 | Driver Schedule | Driver shift management |
 | 20 | Last Mile Config | Last-mile delivery rules per zone |
+| 21 | Cold Chain Tracker | Temperature/humidity monitoring for perishables |
+| 22 | Temperature Log | Time-series temperature readings per shipment |
+| 23 | Food Delivery Config | Restaurant-specific delivery rules (hot bags, time limits) |
+| 24 | Kitchen Dispatch | Timed kitchen-to-driver handoff coordination |
+| 25 | Airport Transfer Route | Airport pickup/dropoff optimized routes |
+| 26 | Luggage Tracking | Travel luggage pickup and delivery tracking |
+| 27 | Moving Order | Residential/commercial relocation job |
+| 28 | Moving Inventory | Item-level inventory for moving jobs |
+| 29 | Parking Lot Map | Geospatial parking facility layout for navigation |
+| 30 | Shuttle Route | Fixed-route shuttle/bus scheduling |
+| 31 | Ride Assignment | On-demand ride driver-passenger matching |
+| 32 | Pharmacy Delivery | Regulated prescription delivery with chain-of-custody |
 
 ---
 
-### 3.4 Walt.id — Identity & Credentials (~15 models)
+### 3.4 Walt.id — Identity & Credentials (~25 models)
 
 | # | Model (Walt.id Resource) | Description |
 |---|-------------------------|-------------|
@@ -365,10 +760,20 @@ Dakkah CityOS is a multi-tenant, multi-vendor city-scale commerce platform. It d
 | 13 | Age Verification | Age-gated commerce verification |
 | 14 | Residency Proof | Zone-based residency verification |
 | 15 | Consent Record | GDPR/privacy consent tracking |
+| 16 | Medical License | Healthcare practitioner license verification |
+| 17 | Patient Identity | Verified patient identity for healthcare |
+| 18 | Academic Credential | University degree, diploma, certification |
+| 19 | Bar Association Credential | Legal practitioner verification |
+| 20 | Citizen Identity | Municipal citizen ID for government services |
+| 21 | Vehicle Ownership Proof | Verifiable vehicle registration/title |
+| 22 | Property Ownership Credential | Verifiable real estate deed/title |
+| 23 | Food Safety Certificate | Restaurant health and safety certification |
+| 24 | Driver Background Check | Background check for ride/delivery drivers |
+| 25 | Freelancer Verification | Skills and portfolio credential for gig workers |
 
 ---
 
-### 3.5 Payment Gateways (Stripe / Tap / HyperPay) (~15 models)
+### 3.5 Payment Gateways (Stripe / Tap / HyperPay) (~25 models)
 
 | # | Model (Gateway Resource) | Description | Primary Gateway |
 |---|-------------------------|-------------|-----------------|
@@ -387,10 +792,20 @@ Dakkah CityOS is a multi-tenant, multi-vendor city-scale commerce platform. It d
 | 13 | Installment Plan (BNPL) | Buy-now-pay-later plan setup | Tap/Tamara |
 | 14 | Installment Payment | Individual installment records | Tap/Tamara |
 | 15 | Loyalty Points & Transactions | Points earning and redemption | Custom |
+| 16 | Bid Deposit (Auction) | Refundable auction bid security deposit | Stripe/Tap |
+| 17 | Rental Security Deposit | Held rental deposit with conditional release | Stripe/Tap |
+| 18 | Crowdfunding Pledge Hold | Pledged funds held until campaign goal met | Stripe |
+| 19 | Donation Receipt | Tax-deductible donation receipt generation | Stripe/Tap |
+| 20 | Tip / Gratuity | Service tip collection and distribution | Stripe/Tap |
+| 21 | Split Billing | Multi-party bill splitting (restaurants, group orders) | Stripe |
+| 22 | Recurring Bill Payment | Automated utility/subscription bill payment | Stripe/Tap |
+| 23 | Loan Disbursement | Loan payout to borrower account | Stripe Connect |
+| 24 | Insurance Payout | Insurance claim payout processing | Stripe Connect |
+| 25 | Micropayment | Sub-dollar content/service micropayments | Stripe/Custom |
 
 ---
 
-### 3.6 PayloadCMS — Content & Configuration (~25 models)
+### 3.6 PayloadCMS — Content, Configuration & Master Data (~40 models)
 
 #### 3.6.1 Core Content — 8 models
 
@@ -441,6 +856,46 @@ Dakkah CityOS is a multi-tenant, multi-vendor city-scale commerce platform. It d
 | 23 | Form Builder | Dynamic form definitions |
 | 24 | Form Submission | Form response records |
 | 25 | Course Content | Educational/training content |
+
+#### 3.6.6 Events & Entertainment Content — 3 models
+
+| # | Collection/Global | Description |
+|---|-------------------|-------------|
+| 26 | Event Page | Rich event detail pages with galleries, speakers, schedules |
+| 27 | Event Gallery | Photo/video galleries for past events |
+| 28 | Speaker / Performer Profile | Bios for event speakers, performers, panelists |
+
+#### 3.6.7 Education & Knowledge Content — 3 models
+
+| # | Collection/Global | Description |
+|---|-------------------|-------------|
+| 29 | Course Catalog Page | Marketing pages for courses and programs |
+| 30 | Learning Path | Curated sequences of courses/certifications |
+| 31 | Knowledge Base Article | Help center / documentation articles |
+
+#### 3.6.8 Social & Community Content — 3 models
+
+| # | Collection/Global | Description |
+|---|-------------------|-------------|
+| 32 | Influencer Profile Page | Public influencer/affiliate profile pages |
+| 33 | Community Forum | Discussion forum structure and moderation |
+| 34 | User Generated Content Gallery | Curated UGC photo/video galleries |
+
+#### 3.6.9 Advertising & Sponsorship Content — 3 models
+
+| # | Collection/Global | Description |
+|---|-------------------|-------------|
+| 35 | Ad Template | Creative templates for self-serve advertisers |
+| 36 | Sponsored Content Page | Native advertising / sponsored articles |
+| 37 | Media Kit | Downloadable media kits for advertisers |
+
+#### 3.6.10 City & Neighborhood Content — 3 models
+
+| # | Collection/Global | Description |
+|---|-------------------|-------------|
+| 38 | City Guide | Neighborhood/district guide pages |
+| 39 | Service Directory | Categorized local service provider directory |
+| 40 | Public Notice Board | Government/municipal public notices |
 
 ---
 
@@ -2637,6 +3092,1196 @@ interface AuditReportPayload {
 | 6 | generateReport | ERPNext |
 | 7 | sendReport | PayloadCMS |
 | 8 | archiveReport | ERPNext |
+
+---
+
+#### 4.3.11 AUCTION & BIDDING WORKFLOWS
+
+---
+
+##### WF-056: AuctionLifecycleWorkflow
+
+**Trigger:** `auction.created`
+**Task Queue:** `medusa-commerce`
+**Duration:** Hours to days (timed auction)
+
+```typescript
+interface AuctionLifecyclePayload {
+  workflow_id: string
+  tenant_id: string
+  auction_id: string
+  auction_type: 'english' | 'dutch' | 'sealed' | 'reverse'
+  seller_id: string
+  lots: {
+    lot_id: string
+    product_id: string
+    starting_price: number
+    reserve_price?: number
+    buy_now_price?: number
+  }[]
+  start_time: string
+  end_time: string
+  currency_code: string
+  bid_increment: number
+  auto_extend_minutes: number
+  requires_bid_deposit: boolean
+  deposit_amount?: number
+}
+```
+
+**Steps:**
+
+| Step | Activity | System |
+|------|----------|--------|
+| 1 | validateAuctionConfig | Medusa |
+| 2 | publishAuctionListing | Medusa |
+| 3 | notifyWatchlistUsers | PayloadCMS |
+| 4 | awaitAuctionStart (timer) | Temporal |
+| 5 | openBidding | Medusa |
+| 6 | monitorBids (signals: bid.placed) | Medusa |
+| 7 | autoExtendIfLastMinuteBid | Medusa |
+| 8 | closeAuction (timer: end_time) | Medusa |
+| 9 | determineWinners | Medusa |
+| 10 | collectBidDeposits OR chargeWinners | Payment Gateway |
+| 11 | createOrderFromAuction | Medusa |
+| 12 | refundLosingBidDeposits | Payment Gateway |
+| 13 | notifyWinners | PayloadCMS |
+| 14 | recordAuditLog | Medusa |
+
+**Signals:**
+- `bid.placed` — new bid received
+- `bid.retracted` — bid withdrawn (if allowed)
+- `auction.cancelled` — seller cancelled
+- `buy_now.triggered` — instant purchase at buy-now price
+
+---
+
+#### 4.3.12 RENTAL & LEASING WORKFLOWS
+
+---
+
+##### WF-057: RentalAgreementWorkflow
+
+**Trigger:** `rental.agreement_created`
+**Task Queue:** `medusa-commerce`
+**Duration:** Days to years (continue-as-new)
+
+```typescript
+interface RentalAgreementPayload {
+  workflow_id: string
+  tenant_id: string
+  rental_agreement_id: string
+  customer_id: string
+  rental_product_id: string
+  start_date: string
+  end_date: string
+  billing_frequency: 'daily' | 'weekly' | 'monthly'
+  rate: number
+  currency_code: string
+  security_deposit: number
+  payment_method_id: string
+  gateway: string
+  late_return_fee_per_day: number
+  damage_waiver_opted: boolean
+}
+```
+
+**Steps:**
+
+| Step | Activity | System |
+|------|----------|--------|
+| 1 | holdSecurityDeposit | Payment Gateway |
+| 2 | verifyCustomerIdentity (if high-value) | Walt.id |
+| 3 | activateRentalAgreement | Medusa |
+| 4 | updateInventoryAsRented | ERPNext |
+| 5 | sendRentalConfirmation | PayloadCMS |
+| 6 | loop: scheduleBillingCycle (timer) | Temporal |
+| 7 | chargeRentalFee | Payment Gateway |
+| 8 | createAccountingEntry | ERPNext |
+| 9 | scheduleReturnReminder (timer: end_date - 3d) | Temporal |
+| 10 | awaitReturn (signal) | Medusa |
+| 11 | processReturnInspection | Medusa |
+| 12 | releaseOrDeductDeposit | Payment Gateway |
+| 13 | markAsReturned | Medusa, ERPNext |
+| 14 | recordAuditLog | Medusa |
+
+**Signals:**
+- `rental.returned` — item returned
+- `rental.extended` — extension requested
+- `rental.damaged` — damage reported
+- `rental.early_termination` — early return
+
+---
+
+#### 4.3.13 RESTAURANT & FOOD WORKFLOWS
+
+---
+
+##### WF-058: RestaurantOrderWorkflow
+
+**Trigger:** `restaurant.order_placed`
+**Task Queue:** `medusa-commerce`
+
+```typescript
+interface RestaurantOrderPayload {
+  workflow_id: string
+  tenant_id: string
+  order_id: string
+  restaurant_id: string
+  customer_id: string
+  order_type: 'dine_in' | 'takeaway' | 'delivery'
+  table_id?: string
+  items: {
+    menu_item_id: string
+    quantity: number
+    modifiers: { modifier_id: string; quantity: number }[]
+    special_instructions?: string
+  }[]
+  payment: {
+    payment_intent_id: string
+    gateway: string
+    amount: number
+    tip_amount?: number
+  }
+  estimated_prep_minutes: number
+  delivery_address?: object
+}
+```
+
+**Steps:**
+
+| Step | Activity | System |
+|------|----------|--------|
+| 1 | capturePayment (or authorize for dine-in) | Payment Gateway |
+| 2 | sendToKitchenDisplay | Medusa |
+| 3 | notifyRestaurant | PayloadCMS |
+| 4 | awaitKitchenAcceptance (signal, timer: 5m) | Medusa |
+| 5 | awaitPrepComplete (signal) | Medusa |
+| 6 | if delivery: createFoodDeliveryOrder | Fleetbase |
+| 7 | if delivery: assignNearestDriver | Fleetbase |
+| 8 | if delivery: trackDelivery | Fleetbase |
+| 9 | if dine_in: notifyServerReady | PayloadCMS |
+| 10 | finalizePayment (with tip) | Payment Gateway |
+| 11 | calculateRestaurantCommission | Medusa |
+| 12 | recordAuditLog | Medusa |
+
+---
+
+#### 4.3.14 EVENTS & TICKETING WORKFLOWS
+
+---
+
+##### WF-059: EventTicketingWorkflow
+
+**Trigger:** `event.ticket_purchased`
+**Task Queue:** `medusa-commerce`
+
+```typescript
+interface EventTicketingPayload {
+  workflow_id: string
+  tenant_id: string
+  event_id: string
+  customer_id: string
+  tickets: {
+    ticket_type_id: string
+    quantity: number
+    seat_ids?: string[]
+    attendee_names?: string[]
+  }[]
+  total_amount: number
+  currency_code: string
+  payment_intent_id: string
+  gateway: string
+  requires_age_verification: boolean
+}
+```
+
+**Steps:**
+
+| Step | Activity | System |
+|------|----------|--------|
+| 1 | reserveSeats (if seated) | Medusa |
+| 2 | verifyAge (if required) | Walt.id |
+| 3 | capturePayment | Payment Gateway |
+| 4 | generateTickets (with barcodes/QR) | Medusa |
+| 5 | issueTicketCredentials (verifiable) | Walt.id |
+| 6 | sendTicketsByEmail | PayloadCMS |
+| 7 | updateAvailability | Medusa |
+| 8 | scheduleEventReminder (timer: event_date - 1d) | Temporal |
+| 9 | sendEventReminder | PayloadCMS |
+| 10 | createAccountingEntry | ERPNext |
+| 11 | recordAuditLog | Medusa |
+
+---
+
+#### 4.3.15 CLASSIFIED & C2C WORKFLOWS
+
+---
+
+##### WF-060: ClassifiedTransactionWorkflow
+
+**Trigger:** `classified.offer_accepted`
+**Task Queue:** `medusa-commerce`
+
+```typescript
+interface ClassifiedTransactionPayload {
+  workflow_id: string
+  tenant_id: string
+  listing_id: string
+  seller_id: string
+  buyer_id: string
+  agreed_price: number
+  currency_code: string
+  exchange_method: 'in_person' | 'shipped' | 'digital'
+  escrow_required: boolean
+}
+```
+
+**Steps:**
+
+| Step | Activity | System |
+|------|----------|--------|
+| 1 | holdPaymentInEscrow | Payment Gateway |
+| 2 | notifySeller | PayloadCMS |
+| 3 | if shipped: createShipment | Fleetbase |
+| 4 | if shipped: awaitDelivery (signal) | Fleetbase |
+| 5 | if in_person: awaitMeetupConfirmation (signal) | Medusa |
+| 6 | awaitBuyerConfirmation (signal, timer: 48h) | Medusa |
+| 7 | releasePaymentToSeller | Payment Gateway |
+| 8 | markListingAsSold | Medusa |
+| 9 | sendReviewRequests | PayloadCMS |
+| 10 | recordAuditLog | Medusa |
+
+---
+
+#### 4.3.16 AFFILIATE & INFLUENCER WORKFLOWS
+
+---
+
+##### WF-061: AffiliateTrackingWorkflow
+
+**Trigger:** `affiliate.conversion_detected` (via tracked link click → purchase)
+**Task Queue:** `medusa-commerce`
+
+```typescript
+interface AffiliateTrackingPayload {
+  workflow_id: string
+  tenant_id: string
+  affiliate_link_id: string
+  affiliate_partner_id: string
+  order_id: string
+  order_amount: number
+  currency_code: string
+  commission_rate: number
+  cookie_attribution_window_days: number
+  influencer_campaign_id?: string
+}
+```
+
+**Steps:**
+
+| Step | Activity | System |
+|------|----------|--------|
+| 1 | validateAttribution | Medusa |
+| 2 | calculateAffiliateCommission | Medusa |
+| 3 | createCommissionRecord | Medusa |
+| 4 | checkMinimumPayoutThreshold | Medusa |
+| 5 | if threshold_met: initiateAffiliatePayout | Payment Gateway |
+| 6 | updateAffiliateAnalytics | Medusa |
+| 7 | notifyAffiliate | PayloadCMS |
+| 8 | createAccountingEntry | ERPNext |
+
+---
+
+#### 4.3.17 WARRANTY & AFTER-SALES WORKFLOWS
+
+---
+
+##### WF-062: WarrantyClaimWorkflow
+
+**Trigger:** `warranty.claim_submitted`
+**Task Queue:** `medusa-commerce`
+
+```typescript
+interface WarrantyClaimPayload {
+  workflow_id: string
+  tenant_id: string
+  warranty_claim_id: string
+  warranty_registration_id: string
+  customer_id: string
+  product_id: string
+  issue_description: string
+  issue_photos: string[]
+  claim_type: 'repair' | 'replacement' | 'refund'
+  vendor_id: string
+}
+```
+
+**Steps:**
+
+| Step | Activity | System |
+|------|----------|--------|
+| 1 | validateWarrantyCoverage | Medusa |
+| 2 | assessClaimType | Medusa |
+| 3 | if repair: createRepairTicket | Medusa |
+| 4 | if repair: schedulePickup | Fleetbase |
+| 5 | if replacement: reserveReplacementUnit | ERPNext |
+| 6 | if replacement: createReplacementOrder | Medusa |
+| 7 | if refund: processWarrantyRefund | Payment Gateway |
+| 8 | notifyCustomer | PayloadCMS |
+| 9 | notifyVendor | PayloadCMS |
+| 10 | chargeVendorIfApplicable | Payment Gateway |
+| 11 | createAccountingEntry | ERPNext |
+| 12 | recordAuditLog | Medusa |
+
+---
+
+#### 4.3.18 FREELANCE & GIG ECONOMY WORKFLOWS
+
+---
+
+##### WF-063: GigContractWorkflow
+
+**Trigger:** `gig.proposal_accepted`
+**Task Queue:** `medusa-commerce`
+**Duration:** Days to months (milestone-based)
+
+```typescript
+interface GigContractPayload {
+  workflow_id: string
+  tenant_id: string
+  gig_contract_id: string
+  gig_listing_id: string
+  client_id: string
+  freelancer_id: string
+  total_amount: number
+  currency_code: string
+  milestones: {
+    milestone_id: string
+    title: string
+    amount: number
+    due_date: string
+    deliverables: string[]
+  }[]
+  payment_method_id: string
+  gateway: string
+  platform_fee_percent: number
+}
+```
+
+**Steps:**
+
+| Step | Activity | System |
+|------|----------|--------|
+| 1 | verifyFreelancerCredentials | Walt.id |
+| 2 | holdFullAmountInEscrow | Payment Gateway |
+| 3 | activateContract | Medusa |
+| 4 | notifyBothParties | PayloadCMS |
+| 5 | loop per milestone: awaitDelivery (signal) | Medusa |
+| 6 | awaitClientApproval (signal, timer: 72h) | Medusa |
+| 7 | autoApproveIfTimeout | Medusa |
+| 8 | releaseMilestonePayment | Payment Gateway |
+| 9 | deductPlatformFee | Payment Gateway |
+| 10 | sendPaymentConfirmation | PayloadCMS |
+| 11 | finalMilestone: closeContract | Medusa |
+| 12 | sendReviewRequests | PayloadCMS |
+| 13 | createAccountingEntries | ERPNext |
+
+**Signals:**
+- `milestone.delivered` — freelancer submitted deliverable
+- `milestone.approved` — client approved
+- `milestone.revision_requested` — client requested changes
+- `contract.disputed` — dispute raised
+- `contract.cancelled` — mutual or unilateral cancellation
+
+---
+
+#### 4.3.19 TRAVEL & HOSPITALITY WORKFLOWS
+
+---
+
+##### WF-064: HotelReservationWorkflow
+
+**Trigger:** `hotel.reservation_created`
+**Task Queue:** `medusa-commerce`
+
+```typescript
+interface HotelReservationPayload {
+  workflow_id: string
+  tenant_id: string
+  reservation_id: string
+  hotel_property_id: string
+  customer_id: string
+  rooms: {
+    room_id: string
+    room_type: string
+    rate_per_night: number
+    guests: number
+  }[]
+  check_in: string
+  check_out: string
+  total_amount: number
+  currency_code: string
+  payment_method_id: string
+  gateway: string
+  cancellation_policy: 'free_24h' | 'non_refundable' | 'flexible'
+  special_requests?: string[]
+}
+```
+
+**Steps:**
+
+| Step | Activity | System |
+|------|----------|--------|
+| 1 | reserveRooms | Medusa |
+| 2 | authorizePayment | Payment Gateway |
+| 3 | sendBookingConfirmation | PayloadCMS |
+| 4 | scheduleCheckInReminder (timer: check_in - 1d) | Temporal |
+| 5 | sendCheckInReminder | PayloadCMS |
+| 6 | awaitCheckIn (signal) | Medusa |
+| 7 | capturePayment | Payment Gateway |
+| 8 | if transfer_needed: createAirportTransfer | Fleetbase |
+| 9 | awaitCheckOut (signal) | Medusa |
+| 10 | processExtraCharges (minibar, room service) | Payment Gateway |
+| 11 | createAccountingEntry | ERPNext |
+| 12 | sendReviewRequest | PayloadCMS |
+
+---
+
+#### 4.3.20 REAL ESTATE WORKFLOWS
+
+---
+
+##### WF-065: PropertyTransactionWorkflow
+
+**Trigger:** `property.offer_accepted`
+**Task Queue:** `medusa-commerce`
+**Duration:** Days to weeks
+
+```typescript
+interface PropertyTransactionPayload {
+  workflow_id: string
+  tenant_id: string
+  property_transaction_id: string
+  property_id: string
+  transaction_type: 'sale' | 'lease'
+  seller_id: string
+  buyer_id: string
+  agreed_price: number
+  currency_code: string
+  payment_method: 'full' | 'mortgage' | 'installments'
+  requires_title_verification: boolean
+  escrow_amount: number
+  documents_required: string[]
+}
+```
+
+**Steps:**
+
+| Step | Activity | System |
+|------|----------|--------|
+| 1 | holdEscrowDeposit | Payment Gateway |
+| 2 | verifyBuyerIdentity | Walt.id |
+| 3 | verifyPropertyOwnership | Walt.id |
+| 4 | awaitDocumentUploads (signal) | Walt.id |
+| 5 | verifyDocuments | Walt.id |
+| 6 | awaitInspectionReport (signal) | Medusa |
+| 7 | processFullPayment | Payment Gateway |
+| 8 | transferPropertyCredential | Walt.id |
+| 9 | updatePropertyAsset | ERPNext |
+| 10 | createAccountingEntries (stamp duty, fees) | ERPNext |
+| 11 | sendCompletionDocuments | PayloadCMS |
+| 12 | recordAuditLog | Medusa |
+
+---
+
+#### 4.3.21 CROWDFUNDING WORKFLOWS
+
+---
+
+##### WF-066: CrowdfundingCampaignWorkflow
+
+**Trigger:** `crowdfund.campaign_launched`
+**Task Queue:** `medusa-commerce`
+**Duration:** Days to months
+
+```typescript
+interface CrowdfundingPayload {
+  workflow_id: string
+  tenant_id: string
+  campaign_id: string
+  creator_id: string
+  goal_amount: number
+  currency_code: string
+  deadline: string
+  funding_model: 'all_or_nothing' | 'keep_what_you_raise'
+  stretch_goals: { amount: number; description: string }[]
+}
+```
+
+**Steps:**
+
+| Step | Activity | System |
+|------|----------|--------|
+| 1 | publishCampaign | Medusa |
+| 2 | createCampaignPage | PayloadCMS |
+| 3 | monitorPledges (signals: pledge.created) | Medusa |
+| 4 | checkStretchGoals | Medusa |
+| 5 | sendMilestoneNotifications | PayloadCMS |
+| 6 | awaitDeadline (timer) | Temporal |
+| 7 | if goal_met: holdAllPledges | Payment Gateway |
+| 8 | if goal_met: chargeAllPledges | Payment Gateway |
+| 9 | if goal_not_met AND all_or_nothing: refundAll | Payment Gateway |
+| 10 | disburseFundsToCreator | Payment Gateway |
+| 11 | beginRewardFulfillment | Medusa, Fleetbase |
+| 12 | createAccountingEntry | ERPNext |
+| 13 | recordAuditLog | Medusa |
+
+---
+
+#### 4.3.22 SOCIAL COMMERCE WORKFLOWS
+
+---
+
+##### WF-067: LiveSaleSessionWorkflow
+
+**Trigger:** `live_sale.session_started`
+**Task Queue:** `medusa-commerce`
+
+```typescript
+interface LiveSalePayload {
+  workflow_id: string
+  tenant_id: string
+  session_id: string
+  host_id: string
+  vendor_id: string
+  products: {
+    product_id: string
+    flash_price: number
+    limited_quantity: number
+  }[]
+  start_time: string
+  estimated_duration_minutes: number
+  platform: 'native' | 'instagram' | 'tiktok' | 'youtube'
+}
+```
+
+**Steps:**
+
+| Step | Activity | System |
+|------|----------|--------|
+| 1 | reserveFlashInventory | ERPNext |
+| 2 | startSession | Medusa |
+| 3 | monitorBids/Purchases (signals) | Medusa |
+| 4 | processInstantPurchases | Payment Gateway |
+| 5 | updateLiveInventoryCounts | Medusa |
+| 6 | endSession (signal or timer) | Medusa |
+| 7 | releaseUnpurchasedInventory | ERPNext |
+| 8 | calculateHostCommission | Medusa |
+| 9 | sendPurchaseConfirmations | PayloadCMS |
+| 10 | createFulfillmentOrders | Fleetbase |
+
+---
+
+#### 4.3.23 GROCERY & FRESH COMMERCE WORKFLOWS
+
+---
+
+##### WF-068: GroceryFreshDeliveryWorkflow
+
+**Trigger:** `order.placed` with perishable items
+**Task Queue:** `fleetbase-logistics`
+
+```typescript
+interface GroceryDeliveryPayload {
+  workflow_id: string
+  tenant_id: string
+  order_id: string
+  customer_id: string
+  items: {
+    product_id: string
+    sku: string
+    quantity: number
+    storage_type: 'ambient' | 'chilled' | 'frozen'
+    shelf_life_hours: number
+  }[]
+  delivery_window: { start: string; end: string }
+  substitution_preference: 'allow' | 'deny' | 'ask_first'
+  warehouse_id: string
+}
+```
+
+**Steps:**
+
+| Step | Activity | System |
+|------|----------|--------|
+| 1 | checkFreshInventory | ERPNext |
+| 2 | handleSubstitutions (if out of stock) | Medusa |
+| 3 | notifyCustomerOfSubstitutions | PayloadCMS |
+| 4 | awaitSubstitutionApproval (signal) | Medusa |
+| 5 | createPickList (temperature-sorted) | Fleetbase |
+| 6 | assignColdChainVehicle | Fleetbase |
+| 7 | startTemperatureMonitoring | Fleetbase |
+| 8 | trackDelivery | Fleetbase |
+| 9 | awaitDeliveryProof | Fleetbase |
+| 10 | verifyTemperatureCompliance | Fleetbase |
+| 11 | flagIfTemperatureBreach | Medusa, ERPNext |
+| 12 | confirmDelivery | Medusa |
+
+---
+
+#### 4.3.24 AUTOMOTIVE COMMERCE WORKFLOWS
+
+---
+
+##### WF-069: VehicleServiceWorkflow
+
+**Trigger:** `vehicle.service_booked`
+**Task Queue:** `medusa-commerce`
+
+```typescript
+interface VehicleServicePayload {
+  workflow_id: string
+  tenant_id: string
+  appointment_id: string
+  customer_id: string
+  vehicle_listing_id?: string
+  service_type: 'maintenance' | 'repair' | 'inspection' | 'trade_in_appraisal'
+  workshop_id: string
+  scheduled_date: string
+  estimated_hours: number
+  parts_needed: { part_id: string; quantity: number }[]
+}
+```
+
+**Steps:**
+
+| Step | Activity | System |
+|------|----------|--------|
+| 1 | reserveWorkshopSlot | Medusa |
+| 2 | checkPartsAvailability | ERPNext |
+| 3 | orderMissingParts (if needed) | ERPNext |
+| 4 | sendAppointmentConfirmation | PayloadCMS |
+| 5 | scheduleReminder (timer: date - 1d) | Temporal |
+| 6 | awaitVehicleDropoff (signal) | Medusa |
+| 7 | performInspection | Medusa |
+| 8 | if trade_in: generateAppraisalReport | Medusa |
+| 9 | awaitServiceCompletion (signal) | Medusa |
+| 10 | generateInvoice | Medusa |
+| 11 | processPayment | Payment Gateway |
+| 12 | updateVehicleServiceHistory | Medusa |
+| 13 | createAccountingEntry | ERPNext |
+
+---
+
+#### 4.3.25 HEALTHCARE COMMERCE WORKFLOWS
+
+---
+
+##### WF-070: HealthcareAppointmentWorkflow
+
+**Trigger:** `healthcare.appointment_booked`
+**Task Queue:** `medusa-commerce`
+
+```typescript
+interface HealthcareAppointmentPayload {
+  workflow_id: string
+  tenant_id: string
+  appointment_id: string
+  patient_id: string
+  provider_id: string
+  appointment_type: 'in_person' | 'telemedicine' | 'home_visit' | 'lab_test'
+  scheduled_at: string
+  duration_minutes: number
+  insurance_policy_id?: string
+  copay_amount?: number
+  requires_prescription_history: boolean
+}
+```
+
+**Steps:**
+
+| Step | Activity | System |
+|------|----------|--------|
+| 1 | verifyPatientIdentity | Walt.id |
+| 2 | verifyProviderLicense | Walt.id |
+| 3 | checkInsuranceCoverage (if insured) | ERPNext |
+| 4 | collectCopay | Payment Gateway |
+| 5 | blockProviderSlot | Medusa |
+| 6 | sendAppointmentConfirmation | PayloadCMS |
+| 7 | scheduleReminder (timer) | Temporal |
+| 8 | if telemedicine: createVideoSession | Medusa |
+| 9 | if lab_test: reserveLabSlot | Medusa |
+| 10 | if home_visit: scheduleVisitRoute | Fleetbase |
+| 11 | awaitCompletion (signal) | Medusa |
+| 12 | if prescription: createPrescription | Medusa |
+| 13 | if prescription: routeToPharmacy | Medusa, Fleetbase |
+| 14 | processInsuranceClaim | ERPNext |
+| 15 | sendPostVisitSummary | PayloadCMS |
+| 16 | recordAuditLog (HIPAA-compliant) | Medusa |
+
+---
+
+#### 4.3.26 EDUCATION COMMERCE WORKFLOWS
+
+---
+
+##### WF-071: CourseEnrollmentWorkflow
+
+**Trigger:** `course.enrollment_purchased`
+**Task Queue:** `medusa-commerce`
+
+```typescript
+interface CourseEnrollmentPayload {
+  workflow_id: string
+  tenant_id: string
+  enrollment_id: string
+  course_id: string
+  student_id: string
+  plan: 'self_paced' | 'instructor_led' | 'cohort'
+  price: number
+  currency_code: string
+  payment_intent_id: string
+  gateway: string
+  includes_certification: boolean
+  scholarship_discount?: number
+}
+```
+
+**Steps:**
+
+| Step | Activity | System |
+|------|----------|--------|
+| 1 | capturePayment | Payment Gateway |
+| 2 | createEnrollment | Medusa |
+| 3 | grantCourseAccess | PayloadCMS |
+| 4 | sendWelcomeKit | PayloadCMS |
+| 5 | if instructor_led: addToClassRoster | Medusa |
+| 6 | trackProgress (continue-as-new, weekly checks) | Medusa |
+| 7 | sendProgressReminders (timer) | PayloadCMS |
+| 8 | awaitCompletion (signal) | Medusa |
+| 9 | if includes_certification: generateCertificate | Medusa |
+| 10 | issueVerifiableCertificate | Walt.id |
+| 11 | sendCertificate | PayloadCMS |
+| 12 | createAccountingEntry | ERPNext |
+
+---
+
+#### 4.3.27 CHARITY & DONATION WORKFLOWS
+
+---
+
+##### WF-072: DonationProcessingWorkflow
+
+**Trigger:** `donation.submitted`
+**Task Queue:** `medusa-commerce`
+
+```typescript
+interface DonationPayload {
+  workflow_id: string
+  tenant_id: string
+  donation_id: string
+  campaign_id: string
+  donor_id: string
+  amount: number
+  currency_code: string
+  is_recurring: boolean
+  recurrence_interval?: 'weekly' | 'monthly' | 'yearly'
+  is_anonymous: boolean
+  tax_deductible: boolean
+  payment_method_id: string
+  gateway: string
+}
+```
+
+**Steps:**
+
+| Step | Activity | System |
+|------|----------|--------|
+| 1 | processPayment | Payment Gateway |
+| 2 | recordDonation | Medusa |
+| 3 | updateCampaignTotal | Medusa |
+| 4 | if tax_deductible: generateTaxReceipt | ERPNext |
+| 5 | sendThankYouMessage | PayloadCMS |
+| 6 | if recurring: setupRecurringPayment | Payment Gateway |
+| 7 | notifyCampaignOrganizer | PayloadCMS |
+| 8 | createAccountingEntry | ERPNext |
+| 9 | recordAuditLog | Medusa |
+
+---
+
+#### 4.3.28 FINANCIAL PRODUCTS WORKFLOWS
+
+---
+
+##### WF-073: LoanApplicationWorkflow
+
+**Trigger:** `loan.application_submitted`
+**Task Queue:** `medusa-commerce`
+**Duration:** Hours to days
+
+```typescript
+interface LoanApplicationPayload {
+  workflow_id: string
+  tenant_id: string
+  loan_application_id: string
+  applicant_id: string
+  loan_type: 'personal' | 'business' | 'product_financing' | 'microfinance'
+  requested_amount: number
+  currency_code: string
+  term_months: number
+  purpose: string
+  applicant_income?: number
+  collateral_description?: string
+  product_id?: string
+}
+```
+
+**Steps:**
+
+| Step | Activity | System |
+|------|----------|--------|
+| 1 | verifyApplicantIdentity | Walt.id |
+| 2 | checkCreditHistory | ERPNext |
+| 3 | assessRisk (credit score, income ratio) | ERPNext |
+| 4 | calculateInterestRate | ERPNext |
+| 5 | generateLoanOffer | Medusa |
+| 6 | sendOfferToApplicant | PayloadCMS |
+| 7 | awaitAcceptance (signal, timer: 14d) | Medusa |
+| 8 | if accepted: signLoanAgreement | Walt.id |
+| 9 | disburseFunds | Payment Gateway |
+| 10 | createLoanLedger | ERPNext |
+| 11 | scheduleRepayments | Temporal |
+| 12 | loop: collectRepayment (timer per installment) | Payment Gateway |
+| 13 | handleLatePayment (if missed) | ERPNext, PayloadCMS |
+| 14 | loanCompletion: closeLoanLedger | ERPNext |
+
+---
+
+#### 4.3.29 ADVERTISING WORKFLOWS
+
+---
+
+##### WF-074: AdCampaignWorkflow
+
+**Trigger:** `ad.campaign_created`
+**Task Queue:** `medusa-commerce`
+**Duration:** Days to months
+
+```typescript
+interface AdCampaignPayload {
+  workflow_id: string
+  tenant_id: string
+  campaign_id: string
+  advertiser_id: string
+  budget: number
+  currency_code: string
+  billing_model: 'cpm' | 'cpc' | 'cpa' | 'flat_rate'
+  start_date: string
+  end_date: string
+  placements: {
+    placement_id: string
+    creative_id: string
+    targeting: {
+      node_ids?: string[]
+      persona_ids?: string[]
+      categories?: string[]
+      demographics?: object
+    }
+  }[]
+  payment_method_id: string
+  gateway: string
+}
+```
+
+**Steps:**
+
+| Step | Activity | System |
+|------|----------|--------|
+| 1 | validateCreatives | PayloadCMS |
+| 2 | holdBudgetAuthorization | Payment Gateway |
+| 3 | activatePlacements | Medusa |
+| 4 | startImpressionTracking | Medusa |
+| 5 | loop: dailyBillingCycle | Temporal |
+| 6 | aggregateImpressions/Clicks | Medusa |
+| 7 | chargeDaily (or deduct from hold) | Payment Gateway |
+| 8 | sendPerformanceReport (weekly) | PayloadCMS |
+| 9 | checkBudgetExhaustion | Medusa |
+| 10 | endCampaign (timer: end_date) | Medusa |
+| 11 | generateFinalReport | Medusa |
+| 12 | createAdRevenueEntry | ERPNext |
+| 13 | reconcileCharges | ERPNext |
+
+---
+
+#### 4.3.30 PARKING & TRANSPORT WORKFLOWS
+
+---
+
+##### WF-075: ParkingReservationWorkflow
+
+**Trigger:** `parking.reservation_created`
+**Task Queue:** `medusa-commerce`
+
+```typescript
+interface ParkingReservationPayload {
+  workflow_id: string
+  tenant_id: string
+  reservation_id: string
+  customer_id: string
+  facility_id: string
+  spot_id?: string
+  start_time: string
+  end_time: string
+  vehicle_type: 'car' | 'motorcycle' | 'truck' | 'ev'
+  ev_charging_requested: boolean
+  amount: number
+  currency_code: string
+  payment_method_id: string
+  gateway: string
+}
+```
+
+**Steps:**
+
+| Step | Activity | System |
+|------|----------|--------|
+| 1 | reserveSpot | Medusa |
+| 2 | authorizePayment | Payment Gateway |
+| 3 | generateQREntryPass | Medusa |
+| 4 | sendConfirmation | PayloadCMS |
+| 5 | awaitEntry (signal: qr_scanned) | Medusa |
+| 6 | if ev_charging: activateCharger | Medusa |
+| 7 | awaitExit (signal: qr_scanned) | Medusa |
+| 8 | calculateFinalAmount (with overstay if any) | Medusa |
+| 9 | capturePayment | Payment Gateway |
+| 10 | releaseSpot | Medusa |
+
+---
+
+#### 4.3.31 UTILITY BILL PAYMENT WORKFLOWS
+
+---
+
+##### WF-076: UtilityBillPaymentWorkflow
+
+**Trigger:** `utility.bill_due` OR `utility.payment_requested`
+**Task Queue:** `medusa-commerce`
+
+```typescript
+interface UtilityBillPayload {
+  workflow_id: string
+  tenant_id: string
+  utility_payment_id: string
+  customer_id: string
+  utility_account_id: string
+  provider_id: string
+  bill_id: string
+  amount: number
+  currency_code: string
+  due_date: string
+  auto_pay_enabled: boolean
+  payment_method_id: string
+  gateway: string
+}
+```
+
+**Steps:**
+
+| Step | Activity | System |
+|------|----------|--------|
+| 1 | validateBillDetails | Medusa |
+| 2 | processPayment | Payment Gateway |
+| 3 | notifyUtilityProvider | Medusa (API) |
+| 4 | updateBillStatus | Medusa |
+| 5 | sendPaymentReceipt | PayloadCMS |
+| 6 | createAccountingEntry | ERPNext |
+| 7 | if auto_pay: scheduleNextPayment (timer) | Temporal |
+
+---
+
+#### 4.3.32 GOVERNMENT & MUNICIPAL SERVICE WORKFLOWS
+
+---
+
+##### WF-077: MunicipalServiceApplicationWorkflow
+
+**Trigger:** `municipal.application_submitted`
+**Task Queue:** `medusa-commerce`
+
+```typescript
+interface MunicipalServicePayload {
+  workflow_id: string
+  tenant_id: string
+  application_id: string
+  service_id: string
+  citizen_id: string
+  service_type: 'permit' | 'registration' | 'license' | 'certificate' | 'fine_payment'
+  fee_amount: number
+  currency_code: string
+  required_documents: string[]
+  node_id: string
+}
+```
+
+**Steps:**
+
+| Step | Activity | System |
+|------|----------|--------|
+| 1 | verifyCitizenIdentity | Walt.id |
+| 2 | validateApplicationData | Medusa |
+| 3 | collectFee | Payment Gateway |
+| 4 | awaitDocumentUploads (signal) | Walt.id |
+| 5 | verifyDocuments | Walt.id |
+| 6 | routeForApproval (per node governance) | Medusa |
+| 7 | awaitApproval (signal, timer: 30d) | Medusa |
+| 8 | if approved: issuePermitCredential | Walt.id |
+| 9 | if approved: generatePermitDocument | PayloadCMS |
+| 10 | notifyCitizen | PayloadCMS |
+| 11 | createRevenueEntry | ERPNext |
+| 12 | recordAuditLog | Medusa |
+
+---
+
+#### 4.3.33 MEMBERSHIP LIFECYCLE WORKFLOWS
+
+---
+
+##### WF-078: MembershipLifecycleWorkflow
+
+**Trigger:** `membership.purchased`
+**Task Queue:** `medusa-commerce`
+**Duration:** Long-running (continue-as-new)
+
+```typescript
+interface MembershipLifecyclePayload {
+  workflow_id: string
+  tenant_id: string
+  membership_card_id: string
+  customer_id: string
+  plan_id: string
+  tier: string
+  billing_interval: 'monthly' | 'quarterly' | 'yearly' | 'lifetime'
+  price: number
+  currency_code: string
+  payment_method_id: string
+  gateway: string
+  benefits: string[]
+  points_earned_on_purchase: number
+}
+```
+
+**Steps:**
+
+| Step | Activity | System |
+|------|----------|--------|
+| 1 | capturePayment | Payment Gateway |
+| 2 | activateMembership | Medusa |
+| 3 | issueDigitalMembershipCard | Walt.id |
+| 4 | grantBenefits (discounts, access, priority) | Medusa |
+| 5 | creditWelcomePoints | Payment Gateway (wallet) |
+| 6 | sendWelcomeKit | PayloadCMS |
+| 7 | loop: scheduleBillingCycle (timer) | Temporal |
+| 8 | chargeRenewal | Payment Gateway |
+| 9 | evaluateTierUpgrade (points-based) | Medusa |
+| 10 | sendRenewalConfirmation | PayloadCMS |
+| 11 | scheduleExpiryReminder (if non-renewal) | Temporal |
+| 12 | createAccountingEntry | ERPNext |
+
+---
+
+#### 4.3.34 PET SERVICES WORKFLOWS
+
+---
+
+##### WF-079: PetServiceWorkflow
+
+**Trigger:** `pet.service_booked`
+**Task Queue:** `medusa-commerce`
+
+```typescript
+interface PetServicePayload {
+  workflow_id: string
+  tenant_id: string
+  booking_id: string
+  pet_profile_id: string
+  owner_id: string
+  service_type: 'grooming' | 'boarding' | 'walking' | 'veterinary' | 'training'
+  provider_id: string
+  scheduled_at: string
+  duration_minutes: number
+  price: number
+  currency_code: string
+  pet_info: {
+    species: string
+    breed: string
+    weight_kg: number
+    vaccination_status: string
+    special_needs?: string
+  }
+}
+```
+
+**Steps:**
+
+| Step | Activity | System |
+|------|----------|--------|
+| 1 | verifyVaccinationStatus | Walt.id |
+| 2 | capturePayment | Payment Gateway |
+| 3 | blockProviderSlot | Medusa |
+| 4 | sendBookingConfirmation | PayloadCMS |
+| 5 | scheduleReminder (timer) | Temporal |
+| 6 | if walking: assignWalker | Fleetbase |
+| 7 | if walking: trackWalk (GPS) | Fleetbase |
+| 8 | awaitServiceCompletion (signal) | Medusa |
+| 9 | sendServiceSummary (with photos) | PayloadCMS |
+| 10 | sendReviewRequest | PayloadCMS |
+
+---
+
+#### 4.3.35 FITNESS & WELLNESS WORKFLOWS
+
+---
+
+##### WF-080: FitnessClassWorkflow
+
+**Trigger:** `fitness.class_enrolled`
+**Task Queue:** `medusa-commerce`
+
+```typescript
+interface FitnessClassPayload {
+  workflow_id: string
+  tenant_id: string
+  enrollment_id: string
+  class_id: string
+  customer_id: string
+  fitness_center_id: string
+  class_type: 'yoga' | 'hiit' | 'swimming' | 'personal_training' | 'group_fitness'
+  scheduled_at: string
+  instructor_id: string
+  price: number
+  currency_code: string
+  membership_card_id?: string
+  is_included_in_membership: boolean
+  waitlisted: boolean
+}
+```
+
+**Steps:**
+
+| Step | Activity | System |
+|------|----------|--------|
+| 1 | if waitlisted: addToWaitlist | Medusa |
+| 2 | if waitlisted: awaitSpotOpening (signal) | Medusa |
+| 3 | if not_included: chargeClassFee | Payment Gateway |
+| 4 | confirmEnrollment | Medusa |
+| 5 | sendConfirmation | PayloadCMS |
+| 6 | scheduleReminder (timer: class - 2h) | Temporal |
+| 7 | sendReminder | PayloadCMS |
+| 8 | awaitCheckIn (signal) | Medusa |
+| 9 | if noShow after 15m: markNoShow | Medusa |
+| 10 | if noShow: openSpotForWaitlist | Medusa |
+| 11 | sendClassSummary | PayloadCMS |
 
 ---
 

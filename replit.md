@@ -132,9 +132,10 @@ Medusa.js e-commerce monorepo aligned with Dakkah CityOS CMS architecture. Multi
 | Orders/Invoices | InvoiceDetail, InvoiceList |
 
 ### Cross-System Architecture
-- **Document:** `docs/CROSS_SYSTEM_ARCHITECTURE.md` — Complete model distribution across all 6 systems (~195 models), 55 Temporal workflow definitions with triggers/payloads/steps, integration patterns, data flow diagrams, security/compliance rules
-- **Systems:** Medusa.js (~75 models), ERPNext (~35), Fleetbase (~20), Walt.id (~15), Payment Gateways (~15), PayloadCMS (~25), Shared (~10)
-- **Temporal Workflows:** 55 workflows across 10 categories (Order, Payment, Marketplace, B2B, Subscription, Logistics, Identity, Content, Booking, Platform)
+- **Document:** `docs/CROSS_SYSTEM_ARCHITECTURE.md` — Complete model distribution across all 6 systems (~396 models), 80 Temporal workflow definitions with triggers/payloads/steps, 27 persona coverage matrix, integration patterns, data flow diagrams, security/compliance rules
+- **Systems:** Medusa.js (~209 models), ERPNext (~55), Fleetbase (~32), Walt.id (~25), Payment Gateways (~25), PayloadCMS (~40), Shared/Synced PayloadCMS-managed (~10)
+- **Temporal Workflows:** 80 workflows across 35 categories covering all commerce verticals
+- **Commerce Verticals:** Core retail, marketplace, B2B, subscriptions, bookings, auctions, rentals, restaurant/food, events/ticketing, classified/C2C, affiliate/influencer, warranty/after-sales, freelance/gig, travel/hospitality, real estate, membership/loyalty, crowdfunding, social commerce, grocery/fresh, automotive, healthcare, education, charity/donations, financial products, advertising, parking/transport, utilities, government/municipal, pet services, fitness/wellness, legal/professional
 
 ## User Preferences
 - Full alignment with CityOS CMS architecture required
