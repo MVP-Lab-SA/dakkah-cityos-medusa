@@ -48,6 +48,11 @@ export default defineConfig(({ mode }) => {
           target: "http://localhost:9000",
           changeOrigin: true,
         },
+        "/app": {
+          target: "http://localhost:9000",
+          changeOrigin: true,
+          ws: true,
+        },
       },
     },
 

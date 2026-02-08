@@ -1,6 +1,9 @@
 import { defineConfig, loadEnv } from "@medusajs/framework/utils";
+import path from "path";
 
 loadEnv(process.env.NODE_ENV || "development", process.cwd());
+
+const iconsPath = path.resolve(__dirname, "node_modules/@medusajs/icons/dist/esm/index.js");
 
 module.exports = defineConfig({
   admin: {
@@ -24,6 +27,14 @@ module.exports = defineConfig({
           hmr: {
             server: hmrServer,
           },
+        },
+        resolve: {
+          alias: {
+            "@medusajs/icons": iconsPath,
+          },
+        },
+        optimizeDeps: {
+          include: ["@medusajs/icons"],
         },
       };
     },
