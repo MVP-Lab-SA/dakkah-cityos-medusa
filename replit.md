@@ -112,6 +112,7 @@ Medusa.js e-commerce monorepo aligned with Dakkah CityOS CMS architecture. Multi
   - nodemailer@6.9.9→7.0.13 via pnpm override (2 CVEs)
   - react-router@6.20.1→6.30.3 via pnpm override (CVE-2025-68470)
   - undici@7.10.0/7.16.0→7.21.0 via pnpm override (CVE-2026-22036)
+- 2026-02-08: Security overrides added for axios (^1.8.2→1.13.4), form-data (^4.0.4), multer (^2.0.0→2.0.2), react-router override updated from ^6.30.3 to ^7.12.0 (resolves to 7.13.0, aligned with react-router-dom@7.13.0)
 
 ## User Preferences
 - Full alignment with CityOS CMS architecture required
