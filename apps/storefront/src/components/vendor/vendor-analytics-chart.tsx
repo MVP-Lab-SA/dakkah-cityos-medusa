@@ -47,15 +47,15 @@ export function VendorAnalyticsChart() {
             />
             <MetricCard
               label="Orders"
-              value={totalMetric(snapshots, "orders").toString()}
+              value={totalMetric(snapshots, "total_orders").toString()}
             />
             <MetricCard
-              label="Avg Order Value"
-              value={`$${avgMetric(snapshots, "average_order_value").toFixed(2)}`}
+              label="Avg Fulfillment (hrs)"
+              value={avgMetric(snapshots, "average_fulfillment_time_hours").toFixed(1)}
             />
             <MetricCard
-              label="Conversion Rate"
-              value={`${avgMetric(snapshots, "conversion_rate").toFixed(1)}%`}
+              label="Unique Customers"
+              value={totalMetric(snapshots, "unique_customers").toString()}
             />
           </div>
 
@@ -67,10 +67,10 @@ export function VendorAnalyticsChart() {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-4 text-sm">
-                    <span>${snapshot.metrics.revenue.toFixed(2)}</span>
-                    <span className="text-muted-foreground">{snapshot.metrics.orders} orders</span>
-                    <span className="text-muted-foreground">{snapshot.metrics.units_sold} units</span>
-                    <span className="text-muted-foreground">{snapshot.metrics.new_customers} new customers</span>
+                    <span>${(snapshot.revenue || 0).toFixed(2)}</span>
+                    <span className="text-muted-foreground">{snapshot.total_orders} orders</span>
+                    <span className="text-muted-foreground">{snapshot.units_sold || 0} units</span>
+                    <span className="text-muted-foreground">{snapshot.unique_customers} customers</span>
                   </div>
                 </div>
               </div>
@@ -91,11 +91,14 @@ function MetricCard({ label, value }: { label: string; value: string }) {
   )
 }
 
-function totalMetric(snapshots: VendorAnalyticsSnapshot[], key: keyof VendorAnalyticsSnapshot["metrics"]): number {
-  return snapshots.reduce((sum, s) => sum + (s.metrics[key] as number), 0)
+function totalMetric(snapshots: VendorAnalyticsSnapshot[], key: keyof VendorAnalyticsSnapshot): number {
+  return snapshots.reduce((sum, s) => {
+    const val = s[key]
+    return sum + (typeof val === "number" ? val : 0)
+  }, 0)
 }
 
-function avgMetric(snapshots: VendorAnalyticsSnapshot[], key: keyof VendorAnalyticsSnapshot["metrics"]): number {
+function avgMetric(snapshots: VendorAnalyticsSnapshot[], key: keyof VendorAnalyticsSnapshot): number {
   if (snapshots.length === 0) return 0
   return totalMetric(snapshots, key) / snapshots.length
 }

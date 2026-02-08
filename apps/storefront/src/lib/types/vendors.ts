@@ -57,13 +57,29 @@ export interface VendorOrder {
   id: string
   vendor_id: string
   order_id: string
-  display_id: number
-  status: "pending" | "processing" | "shipped" | "delivered" | "cancelled" | "refunded"
-  email: string
-  vendor_total: number
-  commission_amount: number
-  net_amount: number
+  tenant_id?: string
+  vendor_order_number: string
+  display_id?: number
+  status:
+    | "pending"
+    | "acknowledged"
+    | "processing"
+    | "ready_to_ship"
+    | "shipped"
+    | "delivered"
+    | "completed"
+    | "cancelled"
+    | "returned"
+    | "disputed"
+  email?: string
   currency_code: string
+  subtotal: number
+  shipping_total: number
+  tax_total: number
+  discount_total: number
+  total: number
+  commission_amount?: number
+  net_amount?: number
   items: VendorOrderItem[]
   shipping_address?: {
     address_1?: string
@@ -95,48 +111,72 @@ export interface VendorOrderItem {
 export interface VendorAnalyticsSnapshot {
   id: string
   vendor_id: string
-  period: "daily" | "weekly" | "monthly"
+  tenant_id?: string
+  period_type: "daily" | "weekly" | "monthly"
   period_start: string
   period_end: string
-  metrics: {
-    revenue: number
-    orders: number
-    units_sold: number
-    average_order_value: number
-    refund_rate: number
-    new_customers: number
-    returning_customers: number
-    page_views: number
-    conversion_rate: number
-  }
+  total_orders: number
+  completed_orders: number
+  cancelled_orders: number
+  returned_orders: number
+  total_products: number
+  active_products: number
+  out_of_stock_products: number
+  average_fulfillment_time_hours: number
+  unique_customers: number
+  repeat_customers: number
+  total_reviews: number
+  revenue?: number
+  units_sold?: number
+  average_order_value?: number
+  refund_rate?: number
+  page_views?: number
+  conversion_rate?: number
+  metadata?: Record<string, unknown>
   created_at: string
 }
 
 export interface VendorPerformanceMetric {
   id: string
   vendor_id: string
-  metric_type: "fulfillment_time" | "response_time" | "return_rate" | "customer_satisfaction" | "order_accuracy"
-  value: number
-  benchmark: number
-  rating: "excellent" | "good" | "average" | "below_average" | "poor"
-  period: string
-  trend: "up" | "down" | "stable"
+  tenant_id?: string
+  metric_type:
+    | "fulfillment_time"
+    | "response_time"
+    | "return_rate"
+    | "customer_satisfaction"
+    | "order_accuracy"
+  value?: number
+  benchmark?: number
+  status: "excellent" | "good" | "average" | "below_average" | "poor"
+  measured_at: string
+  period_days: number
+  sample_count: number
+  trend?: "up" | "down" | "stable"
+  metadata?: Record<string, unknown>
   created_at: string
 }
 
 export interface CommissionRule {
   id: string
   tenant_id: string
+  store_id?: string
   vendor_id?: string
+  priority: number
   name: string
+  description?: string
   commission_type: "percentage" | "fixed" | "tiered"
-  rate: number
+  commission_percentage?: number
+  rate?: number
   tiers?: CommissionTier[]
+  conditions?: Record<string, unknown>
+  valid_from?: string
+  valid_to?: string
+  status: "active" | "inactive" | "scheduled"
+  applies_to: "all_products" | "specific_products" | "specific_categories" | "specific_vendors"
   product_category_ids?: string[]
-  is_default: boolean
-  is_active: boolean
-  effective_from: string
-  effective_until?: string
+  is_default?: boolean
+  is_active?: boolean
   metadata?: Record<string, unknown>
   created_at: string
   updated_at: string
@@ -151,15 +191,25 @@ export interface CommissionTier {
 export interface CommissionTransaction {
   id: string
   tenant_id: string
+  store_id?: string
   vendor_id: string
   order_id: string
-  order_display_id: number
-  gross_amount: number
+  line_item_id?: string
+  commission_rule_id?: string
+  payout_id?: string
+  order_display_id?: number
+  transaction_type: "sale" | "refund" | "adjustment" | "chargeback"
   commission_rate: number
-  commission_amount: number
-  net_amount: number
-  status: "pending" | "calculated" | "paid" | "refunded"
+  platform_fee_rate?: number
+  gross_amount?: number
+  commission_amount?: number
+  net_amount?: number
+  status: "pending" | "calculated" | "approved" | "paid" | "refunded" | "disputed"
+  payout_status: "unpaid" | "scheduled" | "processing" | "paid" | "failed"
+  transaction_date: string
+  approved_at?: string
   paid_at?: string
+  notes?: string
   metadata?: Record<string, unknown>
   created_at: string
 }
@@ -167,14 +217,32 @@ export interface CommissionTransaction {
 export interface Payout {
   id: string
   tenant_id: string
+  store_id?: string
   vendor_id: string
-  amount: number
-  currency_code: string
+  payout_number: string
+  period_start: string
+  period_end: string
+  amount?: number
+  currency_code?: string
+  transaction_count: number
   status: "pending" | "processing" | "completed" | "failed" | "cancelled"
-  method: "bank_transfer" | "stripe_connect" | "paypal" | "manual"
-  reference_id?: string
-  processed_at?: string
+  payment_method: "bank_transfer" | "stripe_connect" | "paypal" | "manual"
+  stripe_transfer_id?: string
+  stripe_payout_id?: string
+  stripe_failure_code?: string
+  stripe_failure_message?: string
+  bank_reference_number?: string
+  processing_started_at?: string
+  processing_completed_at?: string
+  processing_failed_at?: string
+  retry_count: number
+  last_retry_at?: string
   notes?: string
+  failure_reason?: string
+  requires_approval: boolean
+  approved_by?: string
+  approved_at?: string
+  scheduled_for?: string
   transaction_links?: PayoutTransactionLink[]
   metadata?: Record<string, unknown>
   created_at: string
@@ -185,7 +253,7 @@ export interface PayoutTransactionLink {
   id: string
   payout_id: string
   commission_transaction_id: string
-  amount: number
+  amount?: number
   created_at: string
 }
 
@@ -225,4 +293,3 @@ export interface VendorOrdersResponse {
   orders: VendorOrder[]
   count: number
 }
-

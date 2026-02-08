@@ -6,11 +6,13 @@ import type { SupportedLocale } from "@/lib/i18n"
 export interface Translation {
   id: string
   tenant_id: string
-  locale: SupportedLocale
+  locale: string
   namespace: string
   key: string
   value: string
-  is_default: boolean
+  context?: string
+  status: "draft" | "published" | "archived"
+  is_default?: boolean
   metadata?: Record<string, unknown>
   created_at: string
   updated_at: string

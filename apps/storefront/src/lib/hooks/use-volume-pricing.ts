@@ -4,19 +4,33 @@ import { queryKeys } from "@/lib/utils/query-keys"
 
 export interface VolumePricingTier {
   id: string
+  volume_pricing_id?: string
   min_quantity: number
   max_quantity?: number | null
   discount_percentage?: number
   fixed_price?: number
   discount_amount?: number
+  metadata?: Record<string, unknown>
 }
 
 export interface VolumePricingRule {
   id: string
   tenant_id?: string
-  product_id: string
-  name?: string
-  is_active: boolean
+  store_id?: string
+  region_id?: string
+  name: string
+  description?: string
+  applies_to: "product" | "variant" | "collection" | "category" | "all"
+  target_id?: string
+  product_id?: string
+  pricing_type: "percentage" | "fixed" | "fixed_price"
+  company_id?: string
+  company_tier?: string
+  priority: number
+  status: "active" | "inactive" | "scheduled"
+  starts_at?: string
+  ends_at?: string
+  is_active?: boolean
   tiers: VolumePricingTier[]
   metadata?: Record<string, unknown>
   created_at: string

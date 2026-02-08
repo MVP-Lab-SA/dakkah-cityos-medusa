@@ -85,6 +85,10 @@ export const queryKeys = {
     ...createDomainKeys("vendor-orders"),
   },
 
+  purchaseOrders: {
+    ...createDomainKeys("purchase-orders"),
+  },
+
   commissions: {
     ...createDomainKeys("commissions"),
     summary: () => createDynamicKey("commissions", "summary"),
