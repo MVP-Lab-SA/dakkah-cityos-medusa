@@ -598,6 +598,13 @@ export default async function seedComplete({ container }: ExecArgs) {
       handle: "samsung-galaxy-s24",
       description: "Latest Samsung flagship smartphone with S Pen, 200MP camera, and Titanium frame.",
       status: "published",
+      thumbnail: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=800&q=80",
+      images: [
+        { url: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=1200&q=80" },
+        { url: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=1200&q=80" },
+        { url: "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=1200&q=80" },
+        { url: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=1200&q=80" },
+      ],
       category_ids: [getCategoryId("electronics")].filter(Boolean),
       sales_channels: [{ id: allChannels[0].id }],
       options: [
@@ -631,6 +638,12 @@ export default async function seedComplete({ container }: ExecArgs) {
       handle: "classic-white-thobe",
       description: "Premium quality white thobe made from finest cotton. Traditional Saudi cut with modern comfort.",
       status: "published",
+      thumbnail: "https://images.unsplash.com/photo-1589656966895-2f33e7653819?w=800&q=80",
+      images: [
+        { url: "https://images.unsplash.com/photo-1589656966895-2f33e7653819?w=1200&q=80" },
+        { url: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1200&q=80" },
+        { url: "https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?w=1200&q=80" },
+      ],
       category_ids: [getCategoryId("fashion")].filter(Boolean),
       sales_channels: [{ id: allChannels[0].id }],
       options: [
@@ -674,6 +687,12 @@ export default async function seedComplete({ container }: ExecArgs) {
       handle: "ajwa-dates-premium",
       description: "Authentic Ajwa dates from Al-Madinah. Known for health benefits. Premium gift packaging.",
       status: "published",
+      thumbnail: "https://images.unsplash.com/photo-1563699743-35a41d15c232?w=800&q=80",
+      images: [
+        { url: "https://images.unsplash.com/photo-1563699743-35a41d15c232?w=1200&q=80" },
+        { url: "https://images.unsplash.com/photo-1597714026720-8f74c62310ba?w=1200&q=80" },
+        { url: "https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?w=1200&q=80" },
+      ],
       category_ids: [getCategoryId("food-beverages")].filter(Boolean),
       sales_channels: [{ id: allChannels[0].id }],
       options: [
@@ -707,6 +726,12 @@ export default async function seedComplete({ container }: ExecArgs) {
       handle: "home-cleaning-service",
       description: "Professional home cleaning service. Deep cleaning by trained professionals with eco-friendly products.",
       status: "published",
+      thumbnail: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80",
+      images: [
+        { url: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1200&q=80" },
+        { url: "https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=1200&q=80" },
+        { url: "https://images.unsplash.com/photo-1527515545081-5db817172677?w=1200&q=80" },
+      ],
       category_ids: [getCategoryId("services")].filter(Boolean),
       sales_channels: [{ id: allChannels[0].id }],
       options: [
@@ -740,6 +765,13 @@ export default async function seedComplete({ container }: ExecArgs) {
       handle: "al-olaya-office-space",
       description: "Modern office space in Al Olaya district, Riyadh. Fully furnished with meeting rooms and parking.",
       status: "published",
+      thumbnail: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80",
+      images: [
+        { url: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80" },
+        { url: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=1200&q=80" },
+        { url: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=1200&q=80" },
+        { url: "https://images.unsplash.com/photo-1604328698692-f76ea9498e76?w=1200&q=80" },
+      ],
       category_ids: [getCategoryId("real-estate")].filter(Boolean),
       sales_channels: [{ id: allChannels[0].id }],
       options: [
@@ -773,6 +805,12 @@ export default async function seedComplete({ container }: ExecArgs) {
       handle: "premium-oud-oil",
       description: "Luxury aged Cambodian oud oil. Rich and complex aroma, aged 10 years. 10ml bottle.",
       status: "published",
+      thumbnail: "https://images.unsplash.com/photo-1594035910387-fea081acb591?w=800&q=80",
+      images: [
+        { url: "https://images.unsplash.com/photo-1594035910387-fea081acb591?w=1200&q=80" },
+        { url: "https://images.unsplash.com/photo-1615634260167-c8cdede054de?w=1200&q=80" },
+        { url: "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?w=1200&q=80" },
+      ],
       category_ids: [getCategoryId("fashion")].filter(Boolean),
       sales_channels: [{ id: allChannels[0].id }, { id: allChannels[1].id }],
       options: [
@@ -796,6 +834,13 @@ export default async function seedComplete({ container }: ExecArgs) {
       handle: "saudi-khawlani-coffee",
       description: "Finest Khawlani coffee beans from Saudi mountain regions. Ground with cardamom.",
       status: "published",
+      thumbnail: "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=800&q=80",
+      images: [
+        { url: "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1200&q=80" },
+        { url: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefda?w=1200&q=80" },
+        { url: "https://images.unsplash.com/photo-1504630083234-14187a9df0f5?w=1200&q=80" },
+        { url: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1200&q=80" },
+      ],
       category_ids: [getCategoryId("food-beverages")].filter(Boolean),
       sales_channels: [{ id: allChannels[0].id }],
       options: [
