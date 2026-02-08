@@ -18,7 +18,7 @@
    - 3.4 Walt.id — Identity & Credentials
    - 3.5 Payment Gateways — Financial Transactions
    - 3.6 PayloadCMS — Content & Configuration
-   - 3.7 Shared / Synced Models
+   - 3.7 Shared / Synced Models (PayloadCMS = Master System)
 4. [Temporal Workflow System](#4-temporal-workflow-system)
    - 4.1 Architecture Overview
    - 4.2 Design Principles
@@ -48,7 +48,7 @@ Dakkah CityOS is a multi-tenant, multi-vendor city-scale commerce platform. It d
 | Walt.id | ~15 | Identity, credentials, KYC |
 | Payment Gateways | ~15 | Money movement, wallets, BNPL |
 | PayloadCMS | ~25 | Content, branding, city services |
-| Shared/Synced | ~10 | Cross-system integration layer |
+| Shared/Synced (PayloadCMS-managed) | ~10 | Master data synced via Temporal |
 | **Total** | **~195** | |
 
 ### Temporal Workflow Count Summary
@@ -96,10 +96,11 @@ Dakkah CityOS is a multi-tenant, multi-vendor city-scale commerce platform. It d
 - **Does NOT own:** Order lifecycle, product data, delivery
 - **Integration role:** Called by Temporal for payment capture, refunds, splits, escrow. Webhooks feed back into Medusa
 
-### 2.6 PayloadCMS — Content & Configuration
+### 2.6 PayloadCMS — Content, Configuration & Master Data
 - **Owns:** Pages, blog posts, media, navigation, banners, email/SMS/push templates, storefront themes, SEO, forms, city events, venue profiles, localized content
+- **Owns (Master System):** Node hierarchy, Governance, Persona, Translations, Sales Channel mappings, Region-Zone mappings, Store config, Event envelope routing, Audit log aggregation. PayloadCMS is the single source of truth for all shared/synced models — all other systems receive these via Temporal sync workflows
 - **Does NOT own:** Transactional data, inventory, payments
-- **Integration role:** Provides content to storefront. Receives tenant/node config from Medusa via sync
+- **Integration role:** Master system for platform configuration and shared models. Temporal workflows sync changes from PayloadCMS → all other systems. Also provides content to storefront
 
 ---
 
@@ -443,22 +444,24 @@ Dakkah CityOS is a multi-tenant, multi-vendor city-scale commerce platform. It d
 
 ---
 
-### 3.7 Shared / Synced Models (~10 models)
+### 3.7 Shared / Synced Models (~10 models) — PayloadCMS = Master System
 
-These models exist in Medusa as the source of truth but are synced to other systems.
+PayloadCMS is the **master system** (single source of truth) for all shared/synced models. Changes are authored in PayloadCMS and propagated to all other systems via Temporal sync workflows. Other systems hold read replicas of this data and must not modify it directly.
 
-| # | Model | Primary System | Syncs To | Sync Direction | Sync Trigger |
-|---|-------|---------------|----------|----------------|-------------|
-| 1 | Node (5-level hierarchy) | Medusa | PayloadCMS, ERPNext, Fleetbase | Medusa → Others | node.created / node.updated |
-| 2 | GovernanceAuthority | Medusa | ERPNext | Medusa → ERPNext | governance.updated |
-| 3 | Persona | Medusa | PayloadCMS | Medusa → PayloadCMS | persona.created |
-| 4 | PersonaAssignment | Medusa | PayloadCMS | Medusa → PayloadCMS | persona.assigned |
-| 5 | EventOutbox | Medusa | All (event bus) | Medusa → All | Every domain event |
-| 6 | AuditLog | Medusa | ERPNext | Medusa → ERPNext | All auditable actions |
-| 7 | SalesChannelMapping | Medusa | PayloadCMS, Fleetbase | Medusa → Others | channel.mapped |
-| 8 | RegionZoneMapping | Medusa | ERPNext, Fleetbase, Walt.id | Medusa → Others | region.mapped |
-| 9 | Translation | Medusa | PayloadCMS | Bidirectional | translation.updated |
-| 10 | CityosStore | Medusa | PayloadCMS, ERPNext | Medusa → Others | store.updated |
+| # | Model | Master System | Synced To | Sync Direction | Temporal Workflow Trigger |
+|---|-------|--------------|-----------|----------------|--------------------------|
+| 1 | Node (5-level hierarchy) | PayloadCMS | Medusa, ERPNext, Fleetbase | PayloadCMS → Others | node.created / node.updated |
+| 2 | GovernanceAuthority | PayloadCMS | Medusa, ERPNext | PayloadCMS → Others | governance.updated |
+| 3 | Persona | PayloadCMS | Medusa | PayloadCMS → Medusa | persona.created |
+| 4 | PersonaAssignment | PayloadCMS | Medusa | PayloadCMS → Medusa | persona.assigned |
+| 5 | EventOutbox | PayloadCMS | All (event bus) | PayloadCMS → All | Every domain event routing |
+| 6 | AuditLog | PayloadCMS | ERPNext | PayloadCMS → ERPNext | All auditable actions (aggregated) |
+| 7 | SalesChannelMapping | PayloadCMS | Medusa, Fleetbase | PayloadCMS → Others | channel.mapped |
+| 8 | RegionZoneMapping | PayloadCMS | Medusa, ERPNext, Fleetbase, Walt.id | PayloadCMS → Others | region.mapped |
+| 9 | Translation | PayloadCMS | Medusa | PayloadCMS → Medusa | translation.updated |
+| 10 | CityosStore | PayloadCMS | Medusa, ERPNext | PayloadCMS → Others | store.updated |
+
+> **Sync Rule:** All changes to shared models originate in PayloadCMS. Temporal workflows detect changes via PayloadCMS webhooks/events and push updates to target systems. If a target system needs to reference a shared model, it reads from its local synced copy (never calls PayloadCMS directly at runtime).
 
 ---
 
@@ -2642,26 +2645,36 @@ interface AuditReportPayload {
 ### 5.1 Event Flow Architecture
 
 ```
-   Medusa EventOutbox          Temporal Server              Target Systems
-  ┌───────────────────┐      ┌──────────────────┐      ┌────────────────────┐
-  │                   │      │                  │      │                    │
-  │  order.placed ────┼─────>│  OrderPlacement  │─────>│  Payment Gateway   │
-  │                   │      │  Workflow         │─────>│  ERPNext           │
-  │  order.cancelled ─┼─────>│                  │─────>│  Fleetbase         │
-  │                   │      │  OrderCancellation│─────>│  PayloadCMS        │
-  │  vendor.created ──┼─────>│  Workflow         │─────>│  Walt.id           │
-  │                   │      │                  │      │                    │
-  │  subscription.    │      │  VendorOnboarding │      │                    │
-  │   created ────────┼─────>│  Workflow         │      │                    │
-  │                   │      │                  │      │                    │
-  └───────────────────┘      │  Subscription    │      └────────────────────┘
-                             │  Lifecycle       │
-                             │  Workflow         │               ▲
-                             │                  │               │
-                             └──────────────────┘               │
-                                      │                        │
-                                      │    Webhooks/Signals    │
-                                      └────────────────────────┘
+  PayloadCMS (Master)            Temporal Server              Target Systems
+  ┌───────────────────┐        ┌──────────────────┐      ┌────────────────────┐
+  │ SHARED MODELS     │        │                  │      │                    │
+  │ (Source of Truth)  │        │  Config Sync     │      │                    │
+  │                   │        │  Workflows       │      │                    │
+  │  node.created ────┼───────>│  (PayloadCMS →   │─────>│  Medusa            │
+  │  governance.upd ──┼───────>│   All systems)   │─────>│  ERPNext           │
+  │  persona.created ─┼───────>│                  │─────>│  Fleetbase         │
+  │  channel.mapped ──┼───────>│                  │─────>│  Walt.id           │
+  │  translation.upd ─┼───────>│                  │      │                    │
+  └───────────────────┘        └──────────────────┘      └────────────────────┘
+
+  Medusa EventOutbox             Temporal Server              Target Systems
+  ┌───────────────────┐        ┌──────────────────┐      ┌────────────────────┐
+  │ COMMERCE EVENTS    │        │                  │      │                    │
+  │                   │        │  OrderPlacement  │─────>│  Payment Gateway   │
+  │  order.placed ────┼───────>│  Workflow         │─────>│  ERPNext           │
+  │  order.cancelled ─┼───────>│                  │─────>│  Fleetbase         │
+  │  vendor.created ──┼───────>│  OrderCancellation│─────>│  PayloadCMS        │
+  │  subscription.    │        │  Workflow         │─────>│  Walt.id           │
+  │   created ────────┼───────>│                  │      │                    │
+  │                   │        │  VendorOnboarding │      │                    │
+  └───────────────────┘        │  Workflow         │      └────────────────────┘
+                               │                  │               ▲
+                               │  Subscription    │               │
+                               │  Lifecycle       │               │
+                               └──────────────────┘               │
+                                        │                        │
+                                        │    Webhooks/Signals    │
+                                        └────────────────────────┘
 ```
 
 ### 5.2 EventOutbox Envelope Format
@@ -2679,7 +2692,7 @@ interface EventEnvelope {
   causation_id: string                 // the event that caused this event
   payload: Record<string, unknown>     // event-specific data
   metadata: {
-    source_system: string              // "medusa" | "erpnext" | "fleetbase" | etc.
+    source_system: string              // "payloadcms" | "medusa" | "erpnext" | "fleetbase" | "waltid" | "payment_gateway"
     actor_id: string
     actor_role: string
     node_id?: string
@@ -2698,14 +2711,25 @@ interface EventEnvelope {
 
 ### 5.3 System Sync Rules
 
+#### Shared/Synced Models (PayloadCMS = Master)
+
+PayloadCMS is the master system for all platform configuration and shared models. Changes flow outward from PayloadCMS to all other systems via Temporal.
+
+| Source → Target | Sync Method | Frequency | Conflict Resolution |
+|----------------|-------------|-----------|---------------------|
+| PayloadCMS → Medusa | Temporal workflow | Real-time (webhook) | PayloadCMS wins (master for shared models) |
+| PayloadCMS → ERPNext | Temporal workflow | Real-time (webhook) | PayloadCMS wins (master for shared models) |
+| PayloadCMS → Fleetbase | Temporal workflow | Real-time (webhook) | PayloadCMS wins (master for shared models) |
+| PayloadCMS → Walt.id | Temporal workflow | Real-time (webhook) | PayloadCMS wins (master for shared models) |
+
+#### Domain-Specific Data (each system owns its domain)
+
 | Source → Target | Sync Method | Frequency | Conflict Resolution |
 |----------------|-------------|-----------|---------------------|
 | Medusa → ERPNext | Temporal workflow | Real-time (event) | Medusa wins (commerce truth) |
 | ERPNext → Medusa | Temporal workflow | Every 15 min (inventory) | ERPNext wins (inventory truth) |
 | Medusa → Fleetbase | Temporal workflow | Real-time (fulfillment) | Medusa wins (order truth) |
 | Fleetbase → Medusa | Webhook → Signal | Real-time (tracking) | Fleetbase wins (logistics truth) |
-| Medusa → PayloadCMS | Temporal workflow | Real-time (config) | Medusa wins (config truth) |
-| PayloadCMS → Medusa | Temporal workflow | Real-time (content) | PayloadCMS wins (content truth) |
 | Walt.id → Medusa | Temporal signal | Real-time (verification) | Walt.id wins (identity truth) |
 | Gateway → Medusa | Webhook → Signal | Real-time (payment) | Gateway wins (payment truth) |
 
