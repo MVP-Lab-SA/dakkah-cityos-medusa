@@ -43,7 +43,10 @@
       "protobufjs",
       "sharp",
       "unrs-resolver"
-    ]
+    ],
+    "patchedDependencies": {
+      "lodash.set@4.3.2": "patches/lodash.set@4.3.2.patch"
+    }
   },
   "dependencies": {
     "@octokit/rest": "^22.0.1"

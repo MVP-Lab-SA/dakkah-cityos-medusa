@@ -18,6 +18,11 @@ overrides:
   tar: 7.5.7
   glob: 11.1.0
 
+patchedDependencies:
+  lodash.set@4.3.2:
+    hash: 29bedc6467206b6914315ad5ac79bfced72c10d5bc553f82ec24b6776a34c614
+    path: patches/lodash.set@4.3.2.patch
+
 importers:
 
   .:
@@ -14605,7 +14610,7 @@ snapshots:
       i18next-http-backend: 2.4.2
       lodash.debounce: 4.0.8
       lodash.isequal: 4.5.0
-      lodash.set: 4.3.2
+      lodash.set: 4.3.2(patch_hash=29bedc6467206b6914315ad5ac79bfced72c10d5bc553f82ec24b6776a34c614)
       match-sorter: 6.3.4
       motion: 11.18.2(@emotion/is-prop-valid@1.4.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       qs: 6.14.1
@@ -23268,7 +23273,7 @@ snapshots:
 
   lodash.once@4.1.1: {}
 
-  lodash.set@4.3.2: {}
+  lodash.set@4.3.2(patch_hash=29bedc6467206b6914315ad5ac79bfced72c10d5bc553f82ec24b6776a34c614): {}
 
   lodash@4.17.21: {}
 
