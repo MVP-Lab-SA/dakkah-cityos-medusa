@@ -37,6 +37,23 @@ Medusa.js e-commerce monorepo with three applications: Medusa backend API, Vite/
 - `Booking` entity error in no-show check job (missing `customer` property) - custom module schema issue
 - Admin `/app` shows spinner initially; navigate to `/app/login` directly to see login form
 
+### CityOS CMS Alignment
+- **Reference repos:** `Dakkah-CityOS-CMS` (PayloadCMS + Next.js), `dakkah-cityos-workflow` (Temporal workflows)
+- **Alignment roadmap:** `docs/ALIGNMENT_ROADMAP.md` — 8 phases, ~200 tasks
+- **Key contracts from CMS:**
+  - NodeContext: tenantId, tenantSlug, locale, channel, nodeId, nodeType, personaId, residencyZone
+  - Tenant: slug, domain, customDomains, residencyZone, settings (locale/timezone/currency), branding, defaultPersona
+  - Node hierarchy: CITY(0) → DISTRICT(1) → ZONE(2) → FACILITY(3) → ASSET(4)
+  - RBAC: 10 roles from super-admin(100) to viewer(10)
+  - Persona: 6 axes (audience, economic, ecosystem, government, interaction, aiMode), 5-level precedence
+  - Governance: Region → Country → Authority chain with deep-merge policy inheritance
+  - Residency zones: GCC, EU, MENA, APAC, AMERICAS, GLOBAL
+  - Locales: en, fr, ar (RTL)
+  - Channels: web, mobile, api, kiosk, internal
+  - Design system: 3 packages (design-tokens, design-runtime, design-system)
+- **Current routing:** `/$countryCode/...` → Target: `/$tenant/$locale/...`
+- **Current modules:** tenant, store, vendor, commission, payout, subscription, booking, review, invoice, quote, volume-pricing, company
+
 ## Recent Changes
 - 2026-02-07: Initial setup - Node.js 20, pnpm, PostgreSQL database
 - 2026-02-07: Medusa migrations, admin user creation, publishable API key
@@ -46,8 +63,11 @@ Medusa.js e-commerce monorepo with three applications: Medusa backend API, Vite/
 - 2026-02-07: Fixed duplicate health route files
 - 2026-02-08: Fixed @medusajs/icons resolution with Vite alias in medusa-config.ts
 - 2026-02-08: Admin panel proxy at /app with WebSocket support working through storefront
+- 2026-02-08: Created comprehensive alignment roadmap (docs/ALIGNMENT_ROADMAP.md) — 8 phases covering tenant alignment, node hierarchy, persona system, centralized design system, event system, compliance, advanced features, and quality
 
 ## User Preferences
 - Follow existing project setup conventions
 - Use port 5000 for frontend with 0.0.0.0 host
 - Bypass host verification for Replit environment
+- Full alignment with CityOS CMS architecture required
+- Centralized design system matching CMS pattern (design-tokens, design-runtime, design-system packages)
