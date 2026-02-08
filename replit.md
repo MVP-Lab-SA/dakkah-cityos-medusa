@@ -156,7 +156,9 @@ Medusa.js e-commerce monorepo aligned with Dakkah CityOS CMS architecture. Multi
   - Phase 5: automotive (5), healthcare (7), education (6), charity (4), financial-product (5)
   - Phase 6: advertising (5), parking (4), utilities (4), government (5), pet-service (4), fitness (5), legal (4)
   - All 28 modules registered in medusa-config.ts, migrations generated and applied
-  - Total: 48 module directories, 191 model files across all verticals
+  - Total: 48 module directories, 237 model files across all verticals
+  - **IMPORTANT**: Each module migration file MUST have a unique timestamp/class name — Medusa tracks migrations globally in mikro_orm_migrations table. Shared timestamps cause only the first module to create tables.
+- 2026-02-08: **Migration fix** - Fixed 24 modules with missing database tables. Root cause: migration files shared 3 timestamps across 28 modules. Renamed all to unique timestamps (Migration20260208150001–150028), re-ran migrations. Database tables went from 197 to 323.
 
 ### Frontend Component Map
 | Category | Components |
