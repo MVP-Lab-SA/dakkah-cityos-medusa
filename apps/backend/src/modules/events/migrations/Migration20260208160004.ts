@@ -1,6 +1,6 @@
 import { Migration } from "@medusajs/framework/mikro-orm/migrations";
 
-export class Migration20260208081244 extends Migration {
+export class Migration20260208160004 extends Migration {
 
   override async up(): Promise<void> {
     this.addSql(`create table if not exists "event_outbox" ("id" text not null, "tenant_id" text not null, "event_type" text not null, "aggregate_type" text not null, "aggregate_id" text not null, "payload" jsonb not null, "metadata" jsonb null, "source" text not null default 'commerce', "correlation_id" text null, "causation_id" text null, "actor_id" text null, "actor_role" text null, "node_id" text null, "channel" text null, "status" text check ("status" in ('pending', 'published', 'failed', 'archived')) not null default 'pending', "published_at" timestamptz null, "error" text null, "retry_count" integer not null default 0, "created_at" timestamptz not null default now(), "updated_at" timestamptz not null default now(), "deleted_at" timestamptz null, constraint "event_outbox_pkey" primary key ("id"));`);

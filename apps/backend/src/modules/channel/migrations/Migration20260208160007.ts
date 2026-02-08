@@ -1,6 +1,6 @@
 import { Migration } from "@medusajs/framework/mikro-orm/migrations";
 
-export class Migration20260208081244 extends Migration {
+export class Migration20260208160007 extends Migration {
 
   override async up(): Promise<void> {
     this.addSql(`create table if not exists "sales_channel_mapping" ("id" text not null, "tenant_id" text not null, "channel_type" text check ("channel_type" in ('web', 'mobile', 'api', 'kiosk', 'internal')) not null, "medusa_sales_channel_id" text null, "name" text not null, "description" text null, "node_id" text null, "config" jsonb null, "is_active" boolean not null default true, "metadata" jsonb null, "created_at" timestamptz not null default now(), "updated_at" timestamptz not null default now(), "deleted_at" timestamptz null, constraint "sales_channel_mapping_pkey" primary key ("id"));`);

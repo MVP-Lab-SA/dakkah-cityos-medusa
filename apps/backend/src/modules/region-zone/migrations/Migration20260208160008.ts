@@ -1,6 +1,6 @@
 import { Migration } from "@medusajs/framework/mikro-orm/migrations";
 
-export class Migration20260208081244 extends Migration {
+export class Migration20260208160008 extends Migration {
 
   override async up(): Promise<void> {
     this.addSql(`create table if not exists "region_zone_mapping" ("id" text not null, "residency_zone" text check ("residency_zone" in ('GCC', 'EU', 'MENA', 'APAC', 'AMERICAS', 'GLOBAL')) not null, "medusa_region_id" text not null, "country_codes" jsonb null, "policies_override" jsonb null, "metadata" jsonb null, "created_at" timestamptz not null default now(), "updated_at" timestamptz not null default now(), "deleted_at" timestamptz null, constraint "region_zone_mapping_pkey" primary key ("id"));`);

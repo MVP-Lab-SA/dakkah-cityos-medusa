@@ -1,6 +1,6 @@
 import { Migration } from "@medusajs/framework/mikro-orm/migrations";
 
-export class Migration20260208081244 extends Migration {
+export class Migration20260208160005 extends Migration {
 
   override async up(): Promise<void> {
     this.addSql(`create table if not exists "audit_log" ("id" text not null, "tenant_id" text not null, "action" text not null, "resource_type" text not null, "resource_id" text not null, "actor_id" text null, "actor_role" text null, "actor_email" text null, "node_id" text null, "changes" jsonb null, "previous_values" jsonb null, "new_values" jsonb null, "ip_address" text null, "user_agent" text null, "data_classification" text check ("data_classification" in ('public', 'internal', 'confidential', 'restricted')) not null default 'internal', "metadata" jsonb null, "created_at" timestamptz not null default now(), "updated_at" timestamptz not null default now(), "deleted_at" timestamptz null, constraint "audit_log_pkey" primary key ("id"));`);
