@@ -54,6 +54,6 @@ args = "bash /home/runner/workspace/start.sh"
 waitForPort = 5000
 
 [deployment]
-deploymentTarget = "cloudrun"
+deploymentTarget = "vm"
 run = ["bash", "/home/runner/workspace/start.sh"]
-build = ["bash", "-c", "cd /home/runner/workspace/apps/storefront && npx vite build"]
+build = ["bash", "-c", "cd /home/runner/workspace && pnpm --filter backend build && pnpm --filter storefront build"]
