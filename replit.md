@@ -113,6 +113,23 @@ Medusa.js e-commerce monorepo aligned with Dakkah CityOS CMS architecture. Multi
   - react-router@6.20.1→6.30.3 via pnpm override (CVE-2025-68470)
   - undici@7.10.0/7.16.0→7.21.0 via pnpm override (CVE-2026-22036)
 - 2026-02-08: Security overrides added for axios (^1.8.2→1.13.4), form-data (^4.0.4), multer (^2.0.0→2.0.2), react-router override updated from ^6.30.3 to ^7.12.0 (resolves to 7.13.0, aligned with react-router-dom@7.13.0)
+- 2026-02-08: **Frontend Integration COMPLETE** - All 57 backend models integrated across 6 phases:
+  - Types: 4 new files (invoices, cityos, approvals, tenant-admin), 3 extended (vendors, bookings, subscriptions)
+  - Hooks: 14 hook files with React Query (vendor-orders, commissions, payouts, invoices, volume-pricing, translations, vendor-team, vendor-analytics, approvals, tax-exemptions, nodes, governance, personas, tenant-admin)
+  - Components: 20+ new components across vendor portal, B2B governance, CityOS admin, platform admin, subscriptions, invoices
+  - Query keys: Comprehensive update covering all 20+ data domains
+  - All hooks use SDK consistently (sdk.client.fetch pattern)
+  - Barrel export at lib/hooks/index.ts
+
+### Frontend Component Map
+| Category | Components |
+|----------|-----------|
+| Vendor Portal | VendorTeam, VendorOrderDetail, VendorPerformanceCard, VendorAnalyticsChart |
+| B2B/Governance | ApprovalWorkflowList, ApprovalRequestDetail, TaxExemptionList, PaymentTermsDisplay |
+| CityOS | NodeHierarchyTree, GovernancePolicies, PersonaDisplay |
+| Platform Admin | TenantUserManagement, TenantSettingsPanel, AuditLogViewer, EventOutboxViewer, ChannelMappingList, RegionZoneMappingList |
+| Subscriptions | SubscriptionEvents, SubscriptionPauseResume |
+| Orders/Invoices | InvoiceDetail, InvoiceList |
 
 ## User Preferences
 - Full alignment with CityOS CMS architecture required

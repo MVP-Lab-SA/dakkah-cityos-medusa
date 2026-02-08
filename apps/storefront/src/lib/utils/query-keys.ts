@@ -80,6 +80,109 @@ export const queryKeys = {
     ...createDomainKeys("vendors"),
     byHandle: (handle: string) => createDynamicKey("vendors", "byHandle", handle),
   },
+
+  vendorOrders: {
+    ...createDomainKeys("vendor-orders"),
+  },
+
+  commissions: {
+    ...createDomainKeys("commissions"),
+    summary: () => createDynamicKey("commissions", "summary"),
+    transactions: (...params: any[]) => createDynamicKey("commissions", "transactions", ...params),
+  },
+
+  payouts: {
+    ...createDomainKeys("payouts"),
+    summary: () => createDynamicKey("payouts", "summary"),
+  },
+
+  invoices: {
+    ...createDomainKeys("invoices"),
+  },
+
+  volumePricing: {
+    ...createDomainKeys("volume-pricing"),
+    forProduct: (productId: string) => createDynamicKey("volume-pricing", "product", productId),
+  },
+
+  translations: {
+    ...createDomainKeys("translations"),
+    byLocale: (locale: string) => createDynamicKey("translations", "locale", locale),
+    byKey: (locale: string, namespace: string) => createDynamicKey("translations", "key", locale, namespace),
+  },
+
+  subscriptions: {
+    ...createDomainKeys("subscriptions"),
+    plans: () => createDynamicKey("subscriptions", "plans"),
+    billingHistory: (id: string) => createDynamicKey("subscriptions", "billing", id),
+    events: (id: string) => createDynamicKey("subscriptions", "events", id),
+  },
+
+  bookings: {
+    ...createDomainKeys("bookings"),
+    services: () => createDynamicKey("bookings", "services"),
+    availability: (serviceId: string, date: string) => createDynamicKey("bookings", "availability", serviceId, date),
+    reminders: (bookingId: string) => createDynamicKey("bookings", "reminders", bookingId),
+  },
+
+  approvals: {
+    ...createDomainKeys("approvals"),
+    workflows: () => createDynamicKey("approvals", "workflows"),
+    requests: (...params: any[]) => createDynamicKey("approvals", "requests", ...params),
+  },
+
+  taxExemptions: {
+    ...createDomainKeys("tax-exemptions"),
+  },
+
+  nodes: {
+    ...createDomainKeys("nodes"),
+    tree: (tenantId: string) => createDynamicKey("nodes", "tree", tenantId),
+  },
+
+  governance: {
+    ...createDomainKeys("governance"),
+    policies: (tenantId: string) => createDynamicKey("governance", "policies", tenantId),
+  },
+
+  personas: {
+    ...createDomainKeys("personas"),
+  },
+
+  tenantAdmin: {
+    ...createDomainKeys("tenant-admin"),
+    users: () => createDynamicKey("tenant-admin", "users"),
+    settings: () => createDynamicKey("tenant-admin", "settings"),
+    billing: () => createDynamicKey("tenant-admin", "billing"),
+    usage: (...params: any[]) => createDynamicKey("tenant-admin", "usage", ...params),
+    invoices: () => createDynamicKey("tenant-admin", "invoices"),
+  },
+
+  auditLogs: {
+    ...createDomainKeys("audit-logs"),
+  },
+
+  eventOutbox: {
+    ...createDomainKeys("event-outbox"),
+  },
+
+  channelMappings: {
+    ...createDomainKeys("channel-mappings"),
+  },
+
+  regionZones: {
+    ...createDomainKeys("region-zones"),
+  },
+
+  vendorTeam: {
+    ...createDomainKeys("vendor-team"),
+  },
+
+  vendorAnalytics: {
+    ...createDomainKeys("vendor-analytics"),
+    snapshots: (...params: any[]) => createDynamicKey("vendor-analytics", "snapshots", ...params),
+    performance: () => createDynamicKey("vendor-analytics", "performance"),
+  },
 } as const
 
 export type QueryKeys = typeof queryKeys

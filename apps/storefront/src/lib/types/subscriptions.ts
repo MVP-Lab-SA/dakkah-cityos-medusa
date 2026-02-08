@@ -109,6 +109,56 @@ export interface BillingAddress {
   phone?: string
 }
 
+export interface BillingCycle {
+  id: string
+  subscription_id: string
+  period_start: string
+  period_end: string
+  amount: number
+  currency_code: string
+  status: "upcoming" | "current" | "completed" | "failed"
+  invoice_id?: string
+  paid_at?: string
+  created_at: string
+}
+
+export interface SubscriptionEvent {
+  id: string
+  subscription_id: string
+  event_type: "created" | "activated" | "paused" | "resumed" | "cancelled" | "renewed" | "plan_changed" | "payment_failed" | "payment_succeeded" | "trial_started" | "trial_ended"
+  description: string
+  details?: Record<string, unknown>
+  created_at: string
+}
+
+export interface SubscriptionPause {
+  id: string
+  subscription_id: string
+  pause_start: string
+  pause_end?: string
+  reason?: string
+  resumed_at?: string
+  status: "active" | "scheduled" | "completed" | "cancelled"
+  created_at: string
+}
+
+export interface SubscriptionDiscount {
+  id: string
+  subscription_id?: string
+  plan_id?: string
+  code: string
+  discount_type: "percentage" | "fixed"
+  discount_value: number
+  description?: string
+  max_uses?: number
+  times_used: number
+  valid_from: string
+  valid_until?: string
+  is_active: boolean
+  metadata?: Record<string, unknown>
+  created_at: string
+}
+
 // API Response types
 export interface SubscriptionPlansResponse {
   plans: SubscriptionPlan[]
