@@ -1,0 +1,36 @@
+import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { z } from "zod"
+
+const createSchema = z.object({
+  tenant_id: z.string(),
+  user_id: z.string().optional(),
+  name: z.string(),
+  bar_number: z.string().optional(),
+  specializations: z.any().optional(),
+  practice_areas: z.any().optional(),
+  bio: z.string().optional(),
+  education: z.any().optional(),
+  experience_years: z.number().optional(),
+  hourly_rate: z.number().optional(),
+  currency_code: z.string().optional(),
+  is_accepting_cases: z.boolean().optional(),
+  rating: z.number().optional(),
+  photo_url: z.string().optional(),
+  languages: z.any().optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
+})
+
+export async function GET(req: MedusaRequest, res: MedusaResponse) {
+  const mod = req.scope.resolve("legal") as any
+  const { limit = "20", offset = "0" } = req.query as Record<string, string | undefined>
+  const items = await mod.listAttorneyProfiles({}, { skip: Number(offset), take: Number(limit) })
+  return res.json({ items, count: Array.isArray(items) ? items.length : 0, limit: Number(limit), offset: Number(offset) })
+}
+
+export async function POST(req: MedusaRequest, res: MedusaResponse) {
+  const mod = req.scope.resolve("legal") as any
+  const validation = createSchema.safeParse(req.body)
+  if (!validation.success) return res.status(400).json({ message: "Validation failed", errors: validation.error.issues })
+  const item = await mod.createAttorneyProfiles(validation.data)
+  return res.status(201).json({ item })
+}

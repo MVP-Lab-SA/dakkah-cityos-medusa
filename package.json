@@ -60,6 +60,7 @@
     ]
   },
   "dependencies": {
-    "@octokit/rest": "^22.0.1"
+    "@octokit/rest": "^22.0.1",
+    "@temporalio/client": "^1.14.1"
   }
 }

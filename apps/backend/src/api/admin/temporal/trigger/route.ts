@@ -1,0 +1,42 @@
+import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { startWorkflow } from "../../../../lib/temporal-client"
+import { getWorkflowForEvent } from "../../../../lib/event-dispatcher"
+import { z } from "zod"
+
+const triggerSchema = z.object({
+  workflowId: z.string().min(1),
+  input: z.record(z.string(), z.unknown()).optional(),
+  nodeContext: z.record(z.string(), z.unknown()).optional(),
+  eventType: z.string().optional(),
+})
+
+export async function POST(req: MedusaRequest, res: MedusaResponse) {
+  const validation = triggerSchema.safeParse(req.body)
+
+  if (!validation.success) {
+    return res.status(400).json({
+      message: "Validation failed",
+      errors: validation.error.issues,
+    })
+  }
+
+  const { workflowId, input, nodeContext, eventType } = validation.data
+
+  const resolvedWorkflowId = eventType
+    ? getWorkflowForEvent(eventType) || workflowId
+    : workflowId
+
+  try {
+    const result = await startWorkflow(resolvedWorkflowId, input, nodeContext)
+    return res.status(201).json({
+      message: "Workflow triggered successfully",
+      workflowId: resolvedWorkflowId,
+      runId: result.runId,
+    })
+  } catch (err: any) {
+    return res.status(503).json({
+      error: "Failed to trigger workflow",
+      message: err.message,
+    })
+  }
+}

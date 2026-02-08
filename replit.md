@@ -52,17 +52,41 @@ A centralized design system is implemented through several packages:
 - **Event Outbox:** CMS-compatible envelope format with correlation/causation IDs.
 - **Vite Proxy:** Frontend uses a Vite proxy for seamless API communication, with SSR directly accessing the backend.
 
+### Temporal Integration Bridge
+The Medusa backend integrates with Temporal Cloud for workflow orchestration:
+- **Client Library** (`src/lib/temporal-client.ts`): Lazy-initialized Temporal client with dynamic SDK import, connects to `ap-northeast-1.aws.api.temporal.io:7233`, namespace `quickstart-dakkah-cityos.djvai`.
+- **Event Dispatcher** (`src/lib/event-dispatcher.ts`): Maps 14 Medusa event types to Temporal workflow IDs (order.placed → unified-order-orchestrator, payment.initiated → multi-gateway-payment, etc.), with event outbox processing support.
+- **Admin API Routes** (`src/api/admin/temporal/`): Health check, workflow listing, and manual trigger endpoints with Zod validation.
+- **Event Bridge Subscriber** (`src/subscribers/temporal-event-bridge.ts`): Listens to order/product events and dispatches to Temporal; dormant when TEMPORAL_API_KEY is unset.
+- **Task Queue**: `cityos-workflow-queue`
+- **Workflow Repo**: Separate private repo at `Qahtani1979/dakkah-cityos-workflow` with 505+ workflow definitions.
+
 ### Cross-System Architecture
 The project is part of a larger ecosystem involving:
 - **Medusa.js:** Core commerce platform (approx. 209 models).
 - **External Systems:** ERPNext, Fleetbase, Walt.id, various Payment Gateways, and PayloadCMS.
-- **Temporal Workflows:** 80 workflow definitions across 35 commerce categories to manage complex business processes.
+- **Temporal Workflows:** 505+ workflow definitions across 10 domain packs to manage complex business processes.
 - **Comprehensive Data Model:** Approximately 396 models distributed across all integrated systems.
+
+### Seed Data
+Two seed scripts are available:
+- `apps/backend/src/scripts/seed.ts` - Minimal seed: admin user, store, regions (MENA/International), sales channels, stock location, fulfillment, API key.
+- `apps/backend/src/scripts/seed-complete.ts` - Full seed: adds tenant, governance, 5-level node hierarchy (Riyadh → Al Olaya → King Fahad Zone → Main Mall → Shop 101), 5 product categories, 7 products with variants, 3 customers, 2 vendors.
+- Run via: `cd apps/backend && npx medusa exec ./src/scripts/seed-complete.ts`
 
 ## External Dependencies
 - **Database:** PostgreSQL (managed by Replit).
 - **Frontend Framework:** TanStack Start, React.
 - **Monorepo Management:** Turborepo, pnpm.
 - **API Gateway/Orchestration:** Medusa.js.
+- **Workflow Orchestration:** Temporal Cloud (`@temporalio/client`).
 - **Design System Tools:** Vite.
 - **Security & Utilities:** `lodash.set-safe` (custom replacement for `lodash.set`), various up-to-date dependencies for security patching.
+
+## Recent Changes (Feb 2026)
+- Implemented Temporal Cloud integration bridge (client, event dispatcher, admin API, event bridge subscriber).
+- Installed `@temporalio/client` SDK.
+- Set TEMPORAL_ENDPOINT and TEMPORAL_NAMESPACE environment variables.
+- Fixed Zod validation issues in trigger route (z.record requires key+value schema in this version).
+- Updated and tested seed scripts with idempotent data creation.
+- Database populated with full seed data (products, categories, customers, vendors, tenant, node hierarchy).

@@ -1,0 +1,29 @@
+import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { z } from "zod"
+
+const createSchema = z.object({
+  tenant_id: z.string().min(1),
+  customer_id: z.string().min(1),
+  tier_id: z.string().min(1),
+  membership_number: z.string().min(1),
+  status: z.enum(["active", "expired", "suspended", "cancelled"]).optional(),
+  joined_at: z.string().min(1),
+  expires_at: z.string().nullable().optional(),
+  auto_renew: z.boolean().optional(),
+  metadata: z.record(z.string(), z.unknown()).nullable().optional(),
+})
+
+export async function GET(req: MedusaRequest, res: MedusaResponse) {
+  const moduleService = req.scope.resolve("membership") as any
+  const { limit = "20", offset = "0" } = req.query as Record<string, string | undefined>
+  const items = await moduleService.listMemberships({}, { skip: Number(offset), take: Number(limit) })
+  return res.json({ items, count: Array.isArray(items) ? items.length : 0, limit: Number(limit), offset: Number(offset) })
+}
+
+export async function POST(req: MedusaRequest, res: MedusaResponse) {
+  const moduleService = req.scope.resolve("membership") as any
+  const validation = createSchema.safeParse(req.body)
+  if (!validation.success) return res.status(400).json({ message: "Validation failed", errors: validation.error.issues })
+  const item = await moduleService.createMemberships(validation.data)
+  return res.status(201).json({ item })
+}
