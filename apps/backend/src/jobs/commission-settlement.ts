@@ -53,7 +53,7 @@ export default async function commissionSettlementJob(container: MedusaContainer
       }
       
       vendorCommissions[vendorId].transactions.push(tx)
-      vendorCommissions[vendorId].totalGross += Number(tx.order_amount || 0)
+      vendorCommissions[vendorId].totalGross += Number(tx.order_total || 0)
       vendorCommissions[vendorId].totalCommission += Number(tx.commission_amount || 0)
     }
     
@@ -94,8 +94,8 @@ export default async function commissionSettlementJob(container: MedusaContainer
         for (const tx of data.transactions) {
           await commissionService.updateCommissionTransactions({
             id: tx.id,
-            status: "settled",
-            settled_at: new Date(),
+            status: "paid",
+            paid_at: new Date(),
             payout_id: payout.id
           })
         }
@@ -122,7 +122,7 @@ export default async function commissionSettlementJob(container: MedusaContainer
         successCount++
         logger.info("Commission settled", { 
           vendorId, 
-          vendorName: data.vendor?.name,
+          vendorName: data.vendor?.business_name,
           amount: netAmount 
         })
       } catch (error) {

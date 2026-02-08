@@ -2,6 +2,7 @@ import medusaAiTags from "@medusajs-ai/tags";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import react from "@vitejs/plugin-react";
+import path from "path";
 import { defineConfig } from "vite";
 import Terminal from "vite-plugin-terminal";
 import viteTsConfigPaths from "vite-tsconfig-paths";
@@ -59,7 +60,8 @@ export default defineConfig(({ mode }) => {
     ssr: {
       noExternal: ["@medusajs/js-sdk", "@medusajs/types"],
       optimizeDeps: {
-        include: ["@medusajs/js-sdk"],
+        noDiscovery: true,
+        include: [],
       },
     },
 
@@ -80,6 +82,10 @@ export default defineConfig(({ mode }) => {
 
     resolve: {
       dedupe: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime", "@tanstack/react-router", "@tanstack/react-query"],
+      alias: {
+        react: path.resolve("./node_modules/react"),
+        "react-dom": path.resolve("./node_modules/react-dom"),
+      },
     },
   };
 });

@@ -9,13 +9,11 @@ export default async function failedPaymentRetryJob(container: MedusaContainer) 
   console.log("[Payment Retry] Starting retry job...")
   
   try {
-    // Get subscriptions with failed payments (retry up to 3 times)
     const { data: failedSubscriptions } = await query.graph({
       entity: "subscription",
-      fields: ["*", "customer.*", "plan.*"],
+      fields: ["*"],
       filters: {
-        status: "active",
-        payment_status: "failed"
+        status: "past_due"
       }
     })
     
@@ -29,16 +27,17 @@ export default async function failedPaymentRetryJob(container: MedusaContainer) 
     let cancelledCount = 0
     
     for (const subscription of failedSubscriptions) {
-      const retryCount = subscription.metadata?.retry_count || 0
+      const retryCount = subscription.retry_count || 0
       
-      // Check if max retries exceeded
-      if (retryCount >= 3) {
-        // Cancel subscription
+      if (retryCount >= subscription.max_retry_attempts) {
         await subscriptionService.updateSubscriptions({
           id: subscription.id,
-          status: "cancelled",
-          cancelled_at: new Date(),
-          cancellation_reason: "payment_failed_max_retries"
+          status: "canceled",
+          canceled_at: new Date(),
+          metadata: {
+            ...subscription.metadata,
+            cancellation_reason: "payment_failed_max_retries"
+          }
         })
         
         await eventBus.emit("subscription.cancelled", {
@@ -52,17 +51,15 @@ export default async function failedPaymentRetryJob(container: MedusaContainer) 
       }
       
       try {
-        // Attempt to charge with Stripe
         if (process.env.STRIPE_SECRET_KEY && subscription.payment_method_id) {
           const Stripe = require("stripe")
           const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
           
-          // Get customer's Stripe customer ID
-          const stripeCustomerId = subscription.customer?.metadata?.stripe_customer_id
+          const stripeCustomerId = subscription.metadata?.stripe_customer_id
           
           if (stripeCustomerId) {
             const paymentIntent = await stripe.paymentIntents.create({
-              amount: Math.round(Number(subscription.price) * 100),
+              amount: Math.round(Number(subscription.total) * 100),
               currency: subscription.currency_code || "usd",
               customer: stripeCustomerId,
               payment_method: subscription.payment_method_id,
@@ -75,13 +72,13 @@ export default async function failedPaymentRetryJob(container: MedusaContainer) 
             })
             
             if (paymentIntent.status === "succeeded") {
-              // Update subscription
               await subscriptionService.updateSubscriptions({
                 id: subscription.id,
-                payment_status: "paid",
+                status: "active",
+                retry_count: 0,
+                last_retry_at: new Date(),
                 metadata: {
                   ...subscription.metadata,
-                  retry_count: 0,
                   last_payment_date: new Date().toISOString(),
                   last_payment_intent_id: paymentIntent.id
                 }
@@ -94,21 +91,18 @@ export default async function failedPaymentRetryJob(container: MedusaContainer) 
           }
         }
         
-        // Payment failed or no Stripe configured
         throw new Error("Payment could not be processed")
       } catch (error: any) {
-        // Update retry count
         await subscriptionService.updateSubscriptions({
           id: subscription.id,
+          retry_count: retryCount + 1,
+          last_retry_at: new Date(),
           metadata: {
             ...subscription.metadata,
-            retry_count: retryCount + 1,
-            last_retry_at: new Date().toISOString(),
             last_retry_error: error.message
           }
         })
         
-        // Emit payment failed event
         await eventBus.emit("subscription.payment_failed", {
           id: subscription.id,
           customer_id: subscription.customer_id,

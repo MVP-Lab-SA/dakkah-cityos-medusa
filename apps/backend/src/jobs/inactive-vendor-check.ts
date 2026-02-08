@@ -9,14 +9,12 @@ export default async function inactiveVendorCheckJob(container: MedusaContainer)
   console.log("[Inactive Vendor Check] Checking for inactive vendors...")
   
   try {
-    // Vendors with no orders in 90 days
     const ninetyDaysAgo = new Date()
     ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90)
     
-    // Get all active vendors
     const { data: activeVendors } = await query.graph({
       entity: "vendor",
-      fields: ["id", "name", "contact_email", "status", "last_order_at", "metadata"],
+      fields: ["id", "business_name", "email", "status", "metadata"],
       filters: {
         status: "active"
       }
@@ -31,26 +29,22 @@ export default async function inactiveVendorCheckJob(container: MedusaContainer)
     let deactivatedCount = 0
     
     for (const vendor of activeVendors) {
-      const lastOrderAt = vendor.last_order_at ? new Date(vendor.last_order_at) : null
+      const lastOrderAt = vendor.metadata?.last_order_at ? new Date(vendor.metadata.last_order_at) : null
       const warningsSent = vendor.metadata?.inactivity_warnings || 0
       
-      // Skip if recent order
       if (lastOrderAt && lastOrderAt > ninetyDaysAgo) {
         continue
       }
       
-      // Check if never had an order and is older than 90 days
       const vendorAge = vendor.metadata?.created_at 
         ? Date.now() - new Date(vendor.metadata.created_at).getTime()
         : Infinity
       
       if (!lastOrderAt && vendorAge < 90 * 24 * 60 * 60 * 1000) {
-        // New vendor, not inactive yet
         continue
       }
       
       if (warningsSent >= 2) {
-        // Deactivate after 2 warnings
         await vendorService.updateVendors({
           id: vendor.id,
           status: "inactive",
@@ -67,9 +61,8 @@ export default async function inactiveVendorCheckJob(container: MedusaContainer)
         })
         
         deactivatedCount++
-        console.log(`[Inactive Vendor Check] Deactivated vendor: ${vendor.name}`)
+        console.log(`[Inactive Vendor Check] Deactivated vendor: ${vendor.business_name}`)
       } else {
-        // Send warning
         await vendorService.updateVendors({
           id: vendor.id,
           metadata: {
@@ -85,7 +78,7 @@ export default async function inactiveVendorCheckJob(container: MedusaContainer)
         })
         
         warningCount++
-        console.log(`[Inactive Vendor Check] Warning ${warningsSent + 1} sent to: ${vendor.name}`)
+        console.log(`[Inactive Vendor Check] Warning ${warningsSent + 1} sent to: ${vendor.business_name}`)
       }
     }
     

@@ -2,10 +2,6 @@
 import { MedusaContainer } from "@medusajs/framework/types"
 import { Modules } from "@medusajs/framework/utils"
 
-/**
- * Scheduled job to process vendor payouts
- * Runs weekly on Mondays to calculate and initiate vendor payouts
- */
 export default async function vendorPayoutsJob(container: MedusaContainer) {
   const payoutService = container.resolve("payout")
   const vendorService = container.resolve("vendor")
@@ -15,7 +11,6 @@ export default async function vendorPayoutsJob(container: MedusaContainer) {
   logger.info("[vendor-payouts] Starting vendor payouts job")
 
   try {
-    // Get all active vendors
     const vendors = await vendorService.listVendors({
       status: "active",
     })
@@ -27,7 +22,6 @@ export default async function vendorPayoutsJob(container: MedusaContainer) {
 
     for (const vendor of vendors) {
       try {
-        // Get pending payout amount for vendor
         const pendingPayouts = await payoutService.listPayouts({
           vendor_id: vendor.id,
           status: "pending",
@@ -38,7 +32,7 @@ export default async function vendorPayoutsJob(container: MedusaContainer) {
         }
 
         const payoutAmount = pendingPayouts.reduce(
-          (sum: number, p: any) => sum + (p.amount || 0),
+          (sum: number, p: any) => sum + (p.net_amount || 0),
           0
         )
 
@@ -46,36 +40,42 @@ export default async function vendorPayoutsJob(container: MedusaContainer) {
           continue
         }
 
-        // Create payout record
+        const now = new Date()
+        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+
         await payoutService.createPayouts({
           vendor_id: vendor.id,
-          amount: payoutAmount,
-          currency_code: vendor.currency_code || "usd",
+          tenant_id: vendor.tenant_id,
+          net_amount: payoutAmount,
+          gross_amount: payoutAmount,
+          commission_amount: 0,
+          payout_number: `PO-${now.getFullYear()}-${vendor.id.slice(-6)}-${Date.now()}`,
+          period_start: weekAgo,
+          period_end: now,
+          transaction_count: pendingPayouts.length,
           status: "processing",
-          payout_date: new Date(),
+          payment_method: vendor.payout_method || "stripe_connect",
+          scheduled_for: now,
           metadata: {
             payout_count: pendingPayouts.length,
           },
         })
 
-        // Mark individual payouts as processed
         for (const payout of pendingPayouts) {
           await payoutService.updatePayouts(
             { id: payout.id },
-            { status: "processed" }
+            { status: "completed" }
           )
         }
 
-        // Send notification to vendor
         if (vendor.email) {
           await notificationService.createNotifications({
             to: vendor.email,
             channel: "email",
             template: "vendor-payout-processed",
             data: {
-              vendor_name: vendor.name,
+              vendor_name: vendor.business_name,
               amount: payoutAmount,
-              currency_code: vendor.currency_code || "usd",
             },
           })
         }
@@ -90,7 +90,6 @@ export default async function vendorPayoutsJob(container: MedusaContainer) {
 
     logger.info(`[vendor-payouts] Completed: ${processedCount} vendors, total payout: ${totalPayout}`)
 
-    // Send admin notification
     await notificationService.createNotifications({
       to: "",
       channel: "feed",

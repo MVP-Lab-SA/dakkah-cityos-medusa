@@ -1,7 +1,7 @@
 import { sdk } from "@/lib/utils/sdk"
 import { queryKeys } from "@/lib/utils/query-keys"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { createContext, useContext, useCallback, type ReactNode } from "react"
+import { createContext, useContext, useCallback, useState, useEffect, type ReactNode } from "react"
 
 // Types
 export interface Customer {
@@ -63,7 +63,33 @@ async function fetchCurrentCustomer(): Promise<Customer | null> {
   }
 }
 
+const defaultAuthValue: AuthContextType = {
+  customer: null,
+  isLoading: true,
+  isAuthenticated: false,
+  isB2B: false,
+  login: async () => {},
+  register: async () => {},
+  logout: async () => {},
+  updateProfile: async () => {},
+  requestPasswordReset: async () => {},
+  resetPassword: async () => {},
+  refetch: () => {},
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
+  if (typeof window === "undefined") {
+    return (
+      <AuthContext.Provider value={defaultAuthValue}>
+        {children}
+      </AuthContext.Provider>
+    )
+  }
+
+  return <ClientAuthProvider>{children}</ClientAuthProvider>
+}
+
+function ClientAuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient()
 
   // Query for current customer

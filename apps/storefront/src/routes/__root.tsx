@@ -6,12 +6,12 @@ import {
   Scripts,
   createRootRouteWithContext,
 } from "@tanstack/react-router"
-import { lazy } from "react"
+import { lazy, type ReactNode } from "react"
 import appCss from "../styles/app.css?url"
 import rtlCss from "../styles/rtl.css?url"
 import { BrandingProvider } from "@/lib/context/branding-context"
 import { AuthProvider } from "@/lib/context/auth-context"
-import { StoreProvider, type StoreConfig } from "@/lib/store-context"
+import { StoreProvider } from "@/lib/store-context"
 import { ToastProvider } from "@/components/ui/toast"
 
 const NotFound = lazy(() => import("@/components/not-found"))
@@ -22,14 +22,12 @@ export const Route = createRootRouteWithContext<{
   loader: async ({ context }) => {
     const { queryClient } = context
     
-    // Pre-populate regions cache
     await queryClient.ensureQueryData({
       queryKey: ["regions"],
       queryFn: () => listRegions({ fields: "id, name, currency_code, *countries" }),
     })
     
-    // Single-store mode - no multi-tenant detection needed
-    return { store: null as StoreConfig | null }
+    return {}
   },
   head: () => ({
     links: [
@@ -51,9 +49,31 @@ export const Route = createRootRouteWithContext<{
   component: RootComponent,
 })
 
+function ClientProviders({ children, queryClient }: {
+  children: ReactNode
+  queryClient: QueryClient
+}) {
+  if (typeof window === "undefined") {
+    return <>{children}</>
+  }
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <StoreProvider initialStore={null}>
+        <AuthProvider>
+          <BrandingProvider>
+            <ToastProvider>
+              {children}
+            </ToastProvider>
+          </BrandingProvider>
+        </AuthProvider>
+      </StoreProvider>
+    </QueryClientProvider>
+  )
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext()
-  const loaderData = Route.useLoaderData()
 
   return (
     <html lang="en">
@@ -61,18 +81,9 @@ function RootComponent() {
         <HeadContent />
       </head>
       <body>
-        <QueryClientProvider client={queryClient}>
-          <StoreProvider initialStore={loaderData.store}>
-            <AuthProvider>
-              <BrandingProvider>
-                <ToastProvider>
-                  <Layout />
-                </ToastProvider>
-              </BrandingProvider>
-            </AuthProvider>
-          </StoreProvider>
-        </QueryClientProvider>
-
+        <ClientProviders queryClient={queryClient}>
+          <Layout />
+        </ClientProviders>
         <Scripts />
       </body>
     </html>

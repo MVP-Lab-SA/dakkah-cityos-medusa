@@ -10,7 +10,6 @@ export default async function subscriptionRenewalReminderJob(container: MedusaCo
   try {
     const now = new Date()
     
-    // Send reminders at 7 days and 3 days before renewal
     const reminderDays = [7, 3]
     let totalReminders = 0
     
@@ -23,10 +22,10 @@ export default async function subscriptionRenewalReminderJob(container: MedusaCo
       
       const { data: upcomingRenewals } = await query.graph({
         entity: "subscription",
-        fields: ["*", "customer.*", "plan.*"],
+        fields: ["*"],
         filters: {
           status: "active",
-          next_billing_date: {
+          current_period_end: {
             $gte: dayStart.toISOString(),
             $lt: dayEnd.toISOString()
           }
@@ -34,22 +33,18 @@ export default async function subscriptionRenewalReminderJob(container: MedusaCo
       })
       
       for (const subscription of upcomingRenewals || []) {
-        // Check if we already sent this reminder
         const reminderKey = `renewal_reminder_${days}d_sent`
-        const currentBillingDate = subscription.next_billing_date
+        const currentPeriodEnd = subscription.current_period_end
         const lastReminderFor = subscription.metadata?.[`${reminderKey}_for`]
         
-        if (lastReminderFor === currentBillingDate) {
-          continue // Already sent for this billing cycle
+        if (lastReminderFor === currentPeriodEnd) {
+          continue
         }
         
         await eventBus.emit("subscription.renewal_upcoming", {
           id: subscription.id,
           days_until_renewal: days
         })
-        
-        // Mark reminder as sent (would need subscription service update)
-        // This prevents duplicate reminders
         
         totalReminders++
         console.log(`[Renewal Reminder] ${days}-day reminder sent for subscription ${subscription.id}`)

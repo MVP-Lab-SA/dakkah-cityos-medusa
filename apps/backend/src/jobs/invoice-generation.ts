@@ -11,13 +11,12 @@ export default async function invoiceGenerationJob(container: MedusaContainer) {
   logger.info("[Invoice Generation] Starting monthly invoice generation...")
   
   try {
-    // Get all companies that need monthly invoices
     const { data: companies } = await query.graph({
       entity: "company",
-      fields: ["id", "name", "email", "payment_terms", "metadata"],
+      fields: ["id", "name", "email", "payment_terms_days", "metadata"],
       filters: {
-        is_verified: true,
-        payment_terms: { $in: ["net_15", "net_30", "net_45", "net_60"] }
+        status: "active",
+        payment_terms_days: { $gt: 0 }
       }
     })
     
@@ -35,7 +34,6 @@ export default async function invoiceGenerationJob(container: MedusaContainer) {
     
     for (const company of companies) {
       try {
-        // Get orders for this company from last month
         const { data: orders } = await query.graph({
           entity: "order",
           fields: ["id", "display_id", "total", "created_at", "currency_code"],
@@ -53,11 +51,9 @@ export default async function invoiceGenerationJob(container: MedusaContainer) {
           continue
         }
         
-        // Calculate payment terms days
-        const paymentTermsDays = parseInt(company.payment_terms?.replace("net_", "") || "30")
+        const paymentTermsDays = company.payment_terms_days || 30
         const dueDate = new Date(now.getTime() + paymentTermsDays * 24 * 60 * 60 * 1000)
         
-        // Prepare invoice items from orders
         const invoiceItems = orders.map((order: any) => ({
           title: `Order #${order.display_id}`,
           description: `Order placed on ${new Date(order.created_at).toLocaleDateString()}`,
@@ -67,14 +63,13 @@ export default async function invoiceGenerationJob(container: MedusaContainer) {
           unit_price: Number(order.total),
         }))
         
-        // Create invoice with items using the service
         const { invoice, items } = await invoiceService.createInvoiceWithItems({
           company_id: company.id,
           issue_date: now,
           due_date: dueDate,
           period_start: lastMonth,
           period_end: lastMonthEnd,
-          payment_terms: company.payment_terms,
+          payment_terms: `net_${paymentTermsDays}`,
           payment_terms_days: paymentTermsDays,
           currency_code: orders[0]?.currency_code || "usd",
           notes: `Monthly invoice for ${lastMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}`,
@@ -85,12 +80,10 @@ export default async function invoiceGenerationJob(container: MedusaContainer) {
           }
         })
         
-        // Mark as sent (in a real scenario, you'd send an email first)
         await invoiceService.markAsSent(invoice.id)
         
         logger.info(`[Invoice Generation] Created ${invoice.invoice_number} for ${company.name}: $${invoice.total} (${items.length} items)`)
         
-        // Emit event for notification
         await eventBus.emit("invoice.created", {
           invoice_id: invoice.id,
           company_id: company.id,
@@ -108,12 +101,10 @@ export default async function invoiceGenerationJob(container: MedusaContainer) {
     
     logger.info(`[Invoice Generation] Completed: ${generatedCount} invoices generated, ${errorCount} errors`)
     
-    // Also mark any overdue invoices
     const overdueInvoices = await invoiceService.markOverdueInvoices()
     if (overdueInvoices.length > 0) {
       logger.info(`[Invoice Generation] Marked ${overdueInvoices.length} invoices as overdue`)
       
-      // Emit events for overdue invoices
       for (const invoice of overdueInvoices) {
         await eventBus.emit("invoice.overdue", {
           invoice_id: invoice.id,

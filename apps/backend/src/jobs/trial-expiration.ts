@@ -12,13 +12,12 @@ export default async function trialExpirationJob(container: MedusaContainer) {
     const now = new Date()
     const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000)
     
-    // Get trials expiring in next 24 hours (send reminder)
     const { data: expiringTrials } = await query.graph({
       entity: "subscription",
-      fields: ["*", "customer.*", "plan.*"],
+      fields: ["*"],
       filters: {
-        status: "trialing",
-        trial_ends_at: {
+        status: "active",
+        trial_end: {
           $gte: now.toISOString(),
           $lt: tomorrow.toISOString()
         }
@@ -28,22 +27,20 @@ export default async function trialExpirationJob(container: MedusaContainer) {
     console.log(`[Trial Expiration] Found ${expiringTrials?.length || 0} trials expiring soon`)
     
     for (const subscription of expiringTrials || []) {
-      // Send reminder email
       await eventBus.emit("subscription.trial_ending", {
         id: subscription.id,
         customer_id: subscription.customer_id,
-        trial_ends_at: subscription.trial_ends_at,
+        trial_end: subscription.trial_end,
         has_payment_method: !!subscription.payment_method_id
       })
     }
     
-    // Get already expired trials
     const { data: expiredTrials } = await query.graph({
       entity: "subscription",
-      fields: ["*", "customer.*"],
+      fields: ["*"],
       filters: {
-        status: "trialing",
-        trial_ends_at: { $lt: now.toISOString() }
+        status: "active",
+        trial_end: { $lt: now.toISOString() }
       }
     })
     
@@ -54,12 +51,12 @@ export default async function trialExpirationJob(container: MedusaContainer) {
     
     for (const subscription of expiredTrials || []) {
       if (subscription.payment_method_id) {
-        // Has payment method - convert to active and charge
         await subscriptionService.updateSubscriptions({
           id: subscription.id,
           status: "active",
-          trial_ends_at: null,
-          next_billing_date: new Date() // Bill immediately
+          trial_end: null,
+          current_period_start: new Date(),
+          current_period_end: new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
         })
         
         await eventBus.emit("subscription.trial_converted", {
@@ -70,14 +67,13 @@ export default async function trialExpirationJob(container: MedusaContainer) {
         convertedCount++
         console.log(`[Trial Expiration] Converted trial to active: ${subscription.id}`)
       } else {
-        // No payment method - expire the subscription
         await subscriptionService.updateSubscriptions({
           id: subscription.id,
           status: "expired",
-          expired_at: new Date(),
           metadata: {
             ...subscription.metadata,
-            expiration_reason: "trial_ended_no_payment_method"
+            expiration_reason: "trial_ended_no_payment_method",
+            expired_at: new Date().toISOString()
           }
         })
         

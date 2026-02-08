@@ -7,7 +7,20 @@ import { useStoreTheme } from "@/lib/hooks/use-store-theme"
 import { Outlet } from "@tanstack/react-router"
 
 const Layout = () => {
-  // Apply store-specific theme
+  if (typeof window === "undefined") {
+    return (
+      <div id="app-root" className="min-h-screen flex flex-col">
+        <main className="relative flex-1">
+          <Outlet />
+        </main>
+      </div>
+    )
+  }
+
+  return <ClientLayout />
+};
+
+function ClientLayout() {
   useStoreTheme()
   
   return (
@@ -27,6 +40,6 @@ const Layout = () => {
       </CartProvider>
     </ToastProvider>
   );
-};
+}
 
 export default Layout;

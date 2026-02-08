@@ -83,7 +83,17 @@ Two seed scripts are available:
 - **Design System Tools:** Vite.
 - **Security & Utilities:** `lodash.set-safe` (custom replacement for `lodash.set`), various up-to-date dependencies for security patching.
 
+## SSR Architecture Notes
+- **Vite SSR dual React instance**: Vite's SSR dep optimizer pre-bundles React into `.vite/deps_ssr/`, creating a duplicate instance separate from react-dom-server's Node require(). Fixed via `ssr.optimizeDeps.noDiscovery: true` + `include: []` in vite.config.ts.
+- **Client-only provider boundary**: `ClientProviders` in `__root.tsx` uses `typeof window === "undefined"` guard to skip rendering providers (QueryClient, Store, Auth, Branding, Toast) during SSR. Providers mount on client hydration.
+- **SSR-safe Layout**: `Layout` component checks `typeof window` to render a minimal HTML shell during SSR and the full client layout (with Navbar, Footer, CartProvider, theme) on the client.
+- **Trade-off**: Providers render only on client side, losing some SSR benefits but maintaining full application functionality and preventing crashes.
+
 ## Recent Changes (Feb 2026)
+- Fixed Vite SSR crash from dual React instances by disabling SSR dep optimization and implementing client-only provider boundaries.
+- Fixed Layout component to be SSR-safe with typeof window guards.
+- Added graceful fallback for PayloadCMS unavailability in storefront slug routes.
+- Fixed Booking model job errors (missing service relation and reminder_sent property).
 - Implemented Temporal Cloud integration bridge (client, event dispatcher, admin API, event bridge subscriber).
 - Installed `@temporalio/client` SDK.
 - Set TEMPORAL_ENDPOINT and TEMPORAL_NAMESPACE environment variables.

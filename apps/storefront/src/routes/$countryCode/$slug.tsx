@@ -7,35 +7,43 @@ export const Route = createFileRoute('/$countryCode/$slug')({
   loader: async ({ params, context }) => {
     const { slug, countryCode } = params
 
-    // Load page data from Payload CMS
-    const page = await context.queryClient.ensureQueryData({
-      queryKey: queryKeys.pages.bySlug(slug),
-      queryFn: async () => {
-        const client = getUnifiedClient()
-        const page = await client.getPayloadPage(slug)
-
-        if (!page) {
-          throw notFound()
-        }
-
-        return page
-      },
-    })
-
-    // Get tenant/store branding if page is associated with a tenant
-    let tenantBranding = null
-    if (page.tenant) {
-      tenantBranding = await context.queryClient.ensureQueryData({
-        queryKey: queryKeys.tenants.detail(
-          typeof page.tenant === 'string' ? page.tenant : page.tenant.id
-        ),
+    let page = null
+    try {
+      page = await context.queryClient.ensureQueryData({
+        queryKey: queryKeys.pages.bySlug(slug),
         queryFn: async () => {
           const client = getUnifiedClient()
-          const tenantId = typeof page.tenant === 'string' ? page.tenant : page.tenant.id
-          const stores = await client.getStores()
-          return stores.find(s => s.id === tenantId) || null
+          const result = await client.getPayloadPage(slug)
+          return result || null
         },
       })
+    } catch (error) {
+      console.warn(`Failed to load page "${slug}" from PayloadCMS:`, error)
+      page = null
+    }
+
+    if (!page) {
+      throw notFound()
+    }
+
+    let tenantBranding = null
+    if (page.tenant) {
+      try {
+        tenantBranding = await context.queryClient.ensureQueryData({
+          queryKey: queryKeys.tenants.detail(
+            typeof page.tenant === 'string' ? page.tenant : page.tenant.id
+          ),
+          queryFn: async () => {
+            const client = getUnifiedClient()
+            const tenantId = typeof page.tenant === 'string' ? page.tenant : page.tenant.id
+            const stores = await client.getStores()
+            return stores.find(s => s.id === tenantId) || null
+          },
+        })
+      } catch (error) {
+        console.warn(`Failed to load tenant branding:`, error)
+        tenantBranding = null
+      }
     }
 
     return { page, tenantBranding, countryCode }
