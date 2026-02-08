@@ -1,45 +1,43 @@
 import { model } from "@medusajs/framework/utils"
 
-/**
- * CityOS Tenant Entity
- * Represents a business/organization within the CityOS tenancy hierarchy:
- * Country > Scope (Theme|City) > Category > Subcategory > Tenant
- */
 const Tenant = model.define("tenant", {
   id: model.id().primaryKey(),
   
-  // CityOS Hierarchy
-  country_id: model.text(),
-  scope_type: model.enum(["theme", "city"]),
-  scope_id: model.text(),
-  category_id: model.text(),
-  subcategory_id: model.text().nullable(),
-  
-  // Identity
-  handle: model.text().unique(),
   name: model.text(),
+  slug: model.text().unique(),
+  handle: model.text().unique(),
   
-  // Domain Configuration
-  subdomain: model.text().unique().nullable(),
-  custom_domain: model.text().unique().nullable(),
+  domain: model.text().nullable(),
+  custom_domains: model.json().nullable(),
   
-  // Status & Subscription
-  status: model.enum(["active", "suspended", "trial", "inactive"]).default("trial"),
+  residency_zone: model.enum(["GCC", "EU", "MENA", "APAC", "AMERICAS", "GLOBAL"]).default("GLOBAL"),
+  
+  country_id: model.text().nullable(),
+  governance_authority_id: model.text().nullable(),
+  
+  default_locale: model.text().default("en"),
+  supported_locales: model.json().default(["en"]),
+  timezone: model.text().default("UTC"),
+  default_currency: model.text().default("usd"),
+  date_format: model.text().default("dd/MM/yyyy"),
+  
+  default_persona_id: model.text().nullable(),
+  
+  logo_url: model.text().nullable(),
+  favicon_url: model.text().nullable(),
+  primary_color: model.text().nullable(),
+  accent_color: model.text().nullable(),
+  font_family: model.text().nullable(),
+  branding: model.json().nullable(),
+  
+  status: model.enum(["active", "suspended", "trial", "archived", "inactive"]).default("trial"),
   subscription_tier: model.enum(["basic", "pro", "enterprise", "custom"]).default("basic"),
   
-  // Billing
-  billing_email: model.text(),
+  billing_email: model.text().nullable(),
   billing_address: model.json().nullable(),
-  
-  // Trial Management
   trial_starts_at: model.dateTime().nullable(),
   trial_ends_at: model.dateTime().nullable(),
   
-  // Branding
-  logo_url: model.text().nullable(),
-  brand_colors: model.json().nullable(),
-  
-  // Configuration
   settings: model.json().nullable(),
   metadata: model.json().nullable(),
 })

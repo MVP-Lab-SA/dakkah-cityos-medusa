@@ -9,6 +9,7 @@ import {
   scopeToVendorMiddleware,
   scopeToCompanyMiddleware,
 } from "./scope-guards"
+import { nodeContextMiddleware } from "./node-context"
 
 /**
  * Dakkah CityOS Middleware Configuration
@@ -16,6 +17,12 @@ import {
  */
 export default defineMiddlewares({
   routes: [
+    // CityOS Store APIs: NodeContext middleware
+    {
+      matcher: "/store/cityos/*",
+      middlewares: [nodeContextMiddleware],
+    },
+
     // Storefront APIs: Detect tenant + require it
     {
       matcher: "/store/*",
@@ -62,3 +69,4 @@ export default defineMiddlewares({
 
 export * from "./tenant-context"
 export * from "./scope-guards"
+export * from "./node-context"

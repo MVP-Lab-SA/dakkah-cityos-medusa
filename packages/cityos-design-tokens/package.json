@@ -1,0 +1,16 @@
+{
+  "name": "@dakkah-cityos/design-tokens",
+  "version": "0.0.1",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./colors": "./src/colors/ColorTokens.ts",
+    "./typography": "./src/typography/TypographyTokens.ts",
+    "./spacing": "./src/spacing/SpacingTokens.ts",
+    "./shadows": "./src/shadows/ShadowTokens.ts",
+    "./borders": "./src/borders/BorderTokens.ts",
+    "./breakpoints": "./src/breakpoints/BreakpointTokens.ts"
+  }
+}

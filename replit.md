@@ -1,73 +1,111 @@
-# Medusa.js E-Commerce Monorepo
+# Medusa.js E-Commerce Monorepo — Dakkah CityOS Commerce Platform
 
 ## Overview
-Medusa.js e-commerce monorepo with three applications: Medusa backend API, Vite/React storefront with TanStack Router SSR, and Payload CMS orchestrator. The backend handles e-commerce operations, the storefront serves the customer-facing website, and the CMS manages content.
+Medusa.js e-commerce monorepo aligned with Dakkah CityOS CMS architecture. Multi-tenant commerce backend with 5-level node hierarchy, 10-role RBAC, 6-axis persona system, 4-level governance chain, 6 residency zones, and centralized design system. Supports 3 locales (en/fr/ar with RTL).
 
 ## Project Architecture
 
 ### Structure
 - `apps/backend/` - Medusa.js v2 backend API (port 9000)
 - `apps/storefront/` - TanStack Start + React storefront (port 5000)
-- `apps/orchestrator/` - Payload CMS (not yet configured)
+- `packages/cityos-contracts/` - Shared TypeScript contracts (@dakkah-cityos/contracts)
+- `packages/cityos-design-tokens/` - Design token definitions (@dakkah-cityos/design-tokens)
+- `packages/cityos-design-runtime/` - Theme runtime + React providers (@dakkah-cityos/design-runtime)
+- `packages/cityos-design-system/` - Component type system (@dakkah-cityos/design-system)
+- `docs/ALIGNMENT_ROADMAP.md` - 8-phase alignment roadmap
 - `turbo.json` - Turborepo config
-- `package.json` - Root monorepo config using pnpm workspaces
-- `start.sh` - Startup script that runs backend then storefront
+- `pnpm-workspace.yaml` - Workspace packages: apps/* + packages/*
+- `start.sh` - Startup script (backend → storefront)
+
+### Backend Modules (apps/backend/src/modules/)
+| Module | Key | Purpose |
+|--------|-----|---------|
+| tenant | tenant | Multi-tenant management with CMS-aligned schema |
+| node | node | 5-level hierarchy (CITY→DISTRICT→ZONE→FACILITY→ASSET) |
+| governance | governance | Authority chain with deep-merge policy inheritance |
+| persona | persona | 6-axis persona system with 5-level precedence |
+| events | eventOutbox | CMS-compatible outbox event pattern |
+| audit | audit | Audit trail with data classification |
+| i18n | i18n | Translation management (en/fr/ar) |
+| channel | channel | 5 channel types → Medusa sales channel mapping |
+| region-zone | regionZone | 6 residency zones → Medusa region mapping |
+| store | cityosStore | Store management |
+| vendor | vendor | Multi-vendor marketplace |
+| commission | commission | Vendor commission management |
+| payout | payout | Vendor payout management |
+| subscription | subscription | Subscription products |
+| company | company | B2B company management |
+| quote | quote | Quote/RFQ management |
+| volume-pricing | volumePricing | Tiered pricing |
+| booking | booking | Service bookings |
+| review | review | Product reviews |
+| invoice | invoice | Invoice generation |
+
+### API Routes
+- `GET /store/cityos/tenant?slug=X` - Tenant resolution
+- `GET /store/cityos/nodes?tenant_id=X` - Node hierarchy listing
+- `GET /store/cityos/persona?tenant_id=X` - Persona resolution
+- `GET /store/cityos/governance?tenant_id=X` - Effective governance policies
+
+### Middleware
+- NodeContext middleware on `/store/cityos/*` routes
+- Headers: `x-tenant-slug`, `x-locale`, `x-channel`, `x-node-id`, `x-persona-id`
+
+### Storefront Routing
+- **New pattern:** `/$tenant/$locale/...` (e.g., `/default/en/products/shirt`)
+- **Legacy pattern:** `/$countryCode/...` (kept for backward compatibility, redirects to new pattern)
+- **Root `/`** redirects to `/default/en/`
+- TanStack Router file-based routing with SSR
+
+### Design System (packages/)
+- **@dakkah-cityos/contracts** - NodeContext, RBAC roles, Persona axes, Governance policies, Node types, Channel types, Locale config
+- **@dakkah-cityos/design-tokens** - Colors (light/dark), Typography, Spacing, Shadows, Borders, Breakpoints
+- **@dakkah-cityos/design-runtime** - ThemeProvider, createTheme, CSS variable injection, useTheme hook
+- **@dakkah-cityos/design-system** - Component type interfaces (forms, layout, data display, navigation, utilities)
 
 ### Key Design Decisions
-- **Vite Proxy for API calls**: Browser-side SDK uses empty `baseUrl` (routes through Vite proxy on port 5000 to backend on 9000). Server-side SSR uses `http://localhost:9000` directly.
-- **SDK Configuration** (`apps/storefront/src/lib/utils/sdk.ts`): Uses `typeof window === "undefined"` check to determine server vs client URL.
-- **Admin Panel Proxy**: Admin dashboard is served through storefront Vite proxy at `/app` route, proxying to backend port 9000. WebSocket support enabled for HMR. Backend `medusa-config.ts` has `__MEDUSA_ADDITIONAL_ALLOWED_HOSTS=.replit.dev` for admin Vite server.
-- **@medusajs/icons fix**: Vite alias in `medusa-config.ts` resolves `@medusajs/icons` to `dist/esm/index.js` to fix package.json exports resolution issue.
-- **Country Code Routing**: Root `/` redirects to `/$countryCode` (e.g., `/gb`, `/us`). The Replit iframe proxy doesn't handle 307 redirects properly, so users should navigate to `/us` or `/gb` directly.
-- **Workflow**: Single workflow using `start.sh` that starts backend first, waits for port 9000, then starts storefront on port 5000.
+- **Multi-tenant isolation:** tenantId on all entities, node-scoped access
+- **RBAC:** 10 roles from super-admin(100) to viewer(10), with node-scoped access via assigned_node_ids
+- **Persona precedence:** session(500) > surface(400) > membership(300) > user-default(200) > tenant-default(100)
+- **Governance:** Deep merge policies from region → country → authority chain
+- **Residency zones:** GCC/EU (local storage, no cross-border), MENA (local storage), APAC/AMERICAS/GLOBAL (flexible)
+- **RTL:** Arabic locale gets dir="rtl", dedicated RTL CSS overrides
+- **Event outbox:** CMS-compatible envelope format with correlation/causation IDs
+- **Vite Proxy:** Browser SDK uses empty baseUrl (Vite proxy on 5000 → backend 9000), SSR uses http://localhost:9000
 
 ### Environment Variables
 - `DATABASE_URL` - PostgreSQL connection (auto-managed by Replit)
-- `VITE_MEDUSA_BACKEND_URL` - Backend URL for SSR (`http://localhost:9000`)
+- `VITE_MEDUSA_BACKEND_URL` - Backend URL for SSR (http://localhost:9000)
 - `VITE_MEDUSA_PUBLISHABLE_KEY` - Medusa publishable API key
-- Backend `.env` has `JWT_SECRET`, `COOKIE_SECRET`, `STORE_CORS`, `AUTH_CORS`, `ADMIN_CORS`
+- Backend `.env`: JWT_SECRET, COOKIE_SECRET, STORE_CORS, AUTH_CORS, ADMIN_CORS
 
 ### Admin Credentials
 - Email: admin@medusa-test.com
 - Password: supersecret
 
 ### Known Issues
-- Root `/` path shows 404 to `/undefined` through Replit proxy iframe (redirect works fine with direct access); navigate to `/us` or `/gb` directly
-- Hydration mismatch warnings due to SSR/client URL difference (non-blocking)
-- `Booking` entity error in no-show check job (missing `customer` property) - custom module schema issue
-- Admin `/app` shows spinner initially; navigate to `/app/login` directly to see login form
-
-### CityOS CMS Alignment
-- **Reference repos:** `Dakkah-CityOS-CMS` (PayloadCMS + Next.js), `dakkah-cityos-workflow` (Temporal workflows)
-- **Alignment roadmap:** `docs/ALIGNMENT_ROADMAP.md` — 8 phases, ~200 tasks
-- **Key contracts from CMS:**
-  - NodeContext: tenantId, tenantSlug, locale, channel, nodeId, nodeType, personaId, residencyZone
-  - Tenant: slug, domain, customDomains, residencyZone, settings (locale/timezone/currency), branding, defaultPersona
-  - Node hierarchy: CITY(0) → DISTRICT(1) → ZONE(2) → FACILITY(3) → ASSET(4)
-  - RBAC: 10 roles from super-admin(100) to viewer(10)
-  - Persona: 6 axes (audience, economic, ecosystem, government, interaction, aiMode), 5-level precedence
-  - Governance: Region → Country → Authority chain with deep-merge policy inheritance
-  - Residency zones: GCC, EU, MENA, APAC, AMERICAS, GLOBAL
-  - Locales: en, fr, ar (RTL)
-  - Channels: web, mobile, api, kiosk, internal
-  - Design system: 3 packages (design-tokens, design-runtime, design-system)
-- **Current routing:** `/$countryCode/...` → Target: `/$tenant/$locale/...`
-- **Current modules:** tenant, store, vendor, commission, payout, subscription, booking, review, invoice, quote, volume-pricing, company
+- Hydration mismatch warnings due to SSR/client URL difference (non-blocking, pre-existing)
+- Root `/` through Replit proxy iframe may need direct navigation to `/default/en/`
+- `Booking` entity error in no-show check job (pre-existing custom module schema issue)
+- Admin `/app` shows spinner initially; navigate to `/app/login` directly
 
 ## Recent Changes
 - 2026-02-07: Initial setup - Node.js 20, pnpm, PostgreSQL database
 - 2026-02-07: Medusa migrations, admin user creation, publishable API key
-- 2026-02-07: Storefront Vite proxy configured for `/store`, `/admin`, `/auth` routes
-- 2026-02-07: SDK configured for dual server/client URLs
-- 2026-02-07: Created default region with US/GB/SA countries
-- 2026-02-07: Fixed duplicate health route files
-- 2026-02-08: Fixed @medusajs/icons resolution with Vite alias in medusa-config.ts
-- 2026-02-08: Admin panel proxy at /app with WebSocket support working through storefront
-- 2026-02-08: Created comprehensive alignment roadmap (docs/ALIGNMENT_ROADMAP.md) — 8 phases covering tenant alignment, node hierarchy, persona system, centralized design system, event system, compliance, advanced features, and quality
+- 2026-02-07: Storefront Vite proxy configured for /store, /admin, /auth routes
+- 2026-02-08: Created comprehensive alignment roadmap (docs/ALIGNMENT_ROADMAP.md)
+- 2026-02-08: **Phase 1 COMPLETE** - Tenant model aligned with CMS (slug, residency_zone, governance, branding, locale). TenantUser updated to 10-role RBAC with node-scoped access
+- 2026-02-08: **Phase 1 COMPLETE** - Node hierarchy module (5-level validation), Governance module (policy chain merge), Persona module (6-axis, 5-level precedence resolution)
+- 2026-02-08: **Phase 1 COMPLETE** - NodeContext middleware, tenant/node/persona/governance APIs on /store/cityos/*
+- 2026-02-08: **Phase 1 COMPLETE** - Storefront routing migrated from /$countryCode to /$tenant/$locale, TenantContext/LocaleSwitcher/i18n utils created
+- 2026-02-08: **Phase 4 COMPLETE** - Design system packages: contracts, tokens, runtime (ThemeProvider), system (type interfaces)
+- 2026-02-08: **Phase 5 COMPLETE** - Event outbox module (CMS-compatible envelopes)
+- 2026-02-08: **Phase 6 COMPLETE** - Audit trail module, i18n module, channel mapping module, region-zone mapping module
+- 2026-02-08: All 8 new modules registered in medusa-config.ts, migrations generated and applied
+- 2026-02-08: Workspace updated to include packages/* in pnpm-workspace.yaml
 
 ## User Preferences
-- Follow existing project setup conventions
-- Use port 5000 for frontend with 0.0.0.0 host
-- Bypass host verification for Replit environment
 - Full alignment with CityOS CMS architecture required
-- Centralized design system matching CMS pattern (design-tokens, design-runtime, design-system packages)
+- Centralized design system matching CMS pattern
+- Port 5000 for frontend, 0.0.0.0 host
+- Bypass host verification for Replit environment

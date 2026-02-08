@@ -123,6 +123,33 @@ module.exports = defineConfig({
       }
     },
     {
+      resolve: "./src/modules/node",
+      key: "node",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/governance",
+      key: "governance",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/persona",
+      key: "persona",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
       resolve: "./src/modules/store",
       key: "cityosStore",
       options: {
@@ -205,6 +232,51 @@ module.exports = defineConfig({
     },
     {
       resolve: "./src/modules/invoice",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/events",
+      key: "eventOutbox",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/audit",
+      key: "audit",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/i18n",
+      key: "i18n",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/channel",
+      key: "channel",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/region-zone",
+      key: "regionZone",
       options: {
         definition: {
           isQueryable: true

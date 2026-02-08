@@ -8,6 +8,7 @@ import {
 } from "@tanstack/react-router"
 import { lazy } from "react"
 import appCss from "../styles/app.css?url"
+import rtlCss from "../styles/rtl.css?url"
 import { BrandingProvider } from "@/lib/context/branding-context"
 import { AuthProvider } from "@/lib/context/auth-context"
 import { StoreProvider, type StoreConfig } from "@/lib/store-context"
@@ -34,6 +35,7 @@ export const Route = createRootRouteWithContext<{
     links: [
       { rel: "icon", href: "/images/medusa.svg" },
       { rel: "stylesheet", href: appCss },
+      { rel: "stylesheet", href: rtlCss },
     ],
     meta: [
       { title: "Medusa Storefront" },
