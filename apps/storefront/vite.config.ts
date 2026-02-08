@@ -79,7 +79,7 @@ export default defineConfig(({ mode }) => {
     },
 
     resolve: {
-      dedupe: ["react", "react-dom", "@tanstack/react-router"],
+      dedupe: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime", "@tanstack/react-router", "@tanstack/react-query"],
     },
   };
 });

@@ -209,93 +209,112 @@ class UnifiedAPIClient {
   // ===== Payload CMS API Methods =====
   
   async getPayloadContent(productId: string, tenantId?: string, storeId?: string) {
-    const query = new URLSearchParams({
-      where: JSON.stringify({
-        medusaProductId: { equals: productId },
-        ...(tenantId && { tenant: { equals: tenantId } }),
-        ...(storeId && { store: { equals: storeId } }),
-      }),
-      limit: '1',
-    })
-    
-    const response = await fetch(`${this.payloadUrl}/api/product-content?${query}`, {
+    try {
+      const query = new URLSearchParams({
+        where: JSON.stringify({
+          medusaProductId: { equals: productId },
+          ...(tenantId && { tenant: { equals: tenantId } }),
+          ...(storeId && { store: { equals: storeId } }),
+        }),
+        limit: '1',
+      })
+      
+      const response = await fetch(`${this.payloadUrl}/api/product-content?${query}`, {
 
-    })
-    
-    if (!response.ok) {
-      console.warn(`Payload content not found for product ${productId}`)
+      })
+      
+      if (!response.ok) {
+        return null
+      }
+      
+      const data = await response.json()
+      return data.docs?.[0] || null
+    } catch (error) {
+      console.warn(`PayloadCMS unavailable for product content "${productId}":`, error instanceof Error ? error.message : error)
       return null
     }
-    
-    const data = await response.json()
-    return data.docs?.[0] || null
   }
   
   async getPayloadPage(slug: string, tenantId?: string, storeId?: string): Promise<PayloadPage | null> {
-    const query = new URLSearchParams({
-      where: JSON.stringify({
-        slug: { equals: slug },
-        status: { equals: 'published' },
-        ...(tenantId && { tenant: { equals: tenantId } }),
-        ...(storeId && { store: { equals: storeId } }),
-      }),
-      limit: '1',
-    })
-    
-    const response = await fetch(`${this.payloadUrl}/api/pages?${query}`, {
+    try {
+      const query = new URLSearchParams({
+        where: JSON.stringify({
+          slug: { equals: slug },
+          status: { equals: 'published' },
+          ...(tenantId && { tenant: { equals: tenantId } }),
+          ...(storeId && { store: { equals: storeId } }),
+        }),
+        limit: '1',
+      })
+      
+      const response = await fetch(`${this.payloadUrl}/api/pages?${query}`, {
 
-    })
-    
-    if (!response.ok) {
+      })
+      
+      if (!response.ok) {
+        return null
+      }
+      
+      const data = await response.json()
+      return data.docs?.[0] || null
+    } catch (error) {
+      console.warn(`PayloadCMS unavailable for page "${slug}":`, error instanceof Error ? error.message : error)
       return null
     }
-    
-    const data = await response.json()
-    return data.docs?.[0] || null
   }
   
   async getPayloadPages(tenantId?: string, storeId?: string): Promise<PayloadPage[]> {
-    const query = new URLSearchParams({
-      where: JSON.stringify({
-        status: { equals: 'published' },
-        ...(tenantId && { tenant: { equals: tenantId } }),
-        ...(storeId && { store: { equals: storeId } }),
-      }),
-      limit: '100',
-    })
-    
-    const response = await fetch(`${this.payloadUrl}/api/pages?${query}`, {
+    try {
+      const query = new URLSearchParams({
+        where: JSON.stringify({
+          status: { equals: 'published' },
+          ...(tenantId && { tenant: { equals: tenantId } }),
+          ...(storeId && { store: { equals: storeId } }),
+        }),
+        limit: '100',
+      })
+      
+      const response = await fetch(`${this.payloadUrl}/api/pages?${query}`, {
 
-    })
-    
-    if (!response.ok) {
+      })
+      
+      if (!response.ok) {
+        return []
+      }
+      
+      const data = await response.json()
+      return data.docs || []
+    } catch (error) {
+      console.warn(`PayloadCMS unavailable for pages list:`, error instanceof Error ? error.message : error)
       return []
     }
-    
-    const data = await response.json()
-    return data.docs || []
   }
   
   async getStoreBranding(storeHandle: string, tenantId?: string): Promise<StoreBranding | null> {
-    const query = new URLSearchParams({
-      where: JSON.stringify({
-        handle: { equals: storeHandle },
-        status: { equals: 'active' },
-        ...(tenantId && { tenant: { equals: tenantId } }),
-      }),
-      limit: '1',
-    })
-    
-    const response = await fetch(`${this.payloadUrl}/api/stores?${query}`, {
+    try {
+      const query = new URLSearchParams({
+        where: JSON.stringify({
+          handle: { equals: storeHandle },
+          status: { equals: 'active' },
+          ...(tenantId && { tenant: { equals: tenantId } }),
+        }),
+        limit: '1',
+      })
+      
+      const response = await fetch(`${this.payloadUrl}/api/stores?${query}`, {
 
-    })
-    
-    if (!response.ok) {
+      })
+      
+      if (!response.ok) {
+        return null
+      }
+      
+      const data = await response.json()
+      return data.docs?.[0] || null
+    } catch (error) {
+      console.warn(`PayloadCMS unavailable for store branding "${storeHandle}":`, error instanceof Error ? error.message : error)
       return null
     }
-    
-    const data = await response.json()
-    return data.docs?.[0] || null
   }
   
   async getStores(tenantId?: string): Promise<StoreBranding[]> {

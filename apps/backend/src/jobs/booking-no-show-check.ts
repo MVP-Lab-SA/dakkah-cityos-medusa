@@ -14,10 +14,10 @@ export default async function bookingNoShowCheckJob(container: MedusaContainer) 
     
     const { data: missedBookings } = await query.graph({
       entity: "booking",
-      fields: ["*", "customer.*", "service.*"],
+      fields: ["*", "customer.*"],
       filters: {
         status: "confirmed",
-        scheduled_at: { $lt: thirtyMinutesAgo.toISOString() }
+        start_time: { $lt: thirtyMinutesAgo.toISOString() }
       }
     })
     
@@ -33,7 +33,6 @@ export default async function bookingNoShowCheckJob(container: MedusaContainer) 
         await bookingService.updateBookings({
           id: booking.id,
           status: "no_show",
-          no_show_at: new Date(),
           metadata: {
             ...booking.metadata,
             no_show_detected_at: new Date().toISOString()
@@ -43,7 +42,7 @@ export default async function bookingNoShowCheckJob(container: MedusaContainer) 
         await eventBus.emit("booking.no_show", {
           id: booking.id,
           customer_id: booking.customer_id,
-          service_id: booking.service_id
+          service_product_id: booking.service_product_id
         })
         
         noShowCount++

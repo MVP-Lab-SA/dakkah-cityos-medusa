@@ -24,7 +24,7 @@ export default async function bookingRemindersJob(container: MedusaContainer) {
         $gte: now.toISOString(),
         $lte: tomorrow.toISOString(),
       },
-      reminder_sent: false,
+      confirmation_sent_at: null,
     })
 
     logger.info(`[booking-reminders] Found ${bookings.length} bookings needing reminders`)
@@ -45,18 +45,23 @@ export default async function bookingRemindersJob(container: MedusaContainer) {
           template: "booking-reminder",
           data: {
             booking_id: booking.id,
-            service_name: booking.service?.name || "Your appointment",
-            provider_name: booking.provider?.name,
+            service_name: "Your appointment",
+            provider_id: booking.provider_id,
             start_time: booking.start_time,
-            location: booking.location,
+            location: booking.location_address,
             customer_name: booking.customer_name,
           },
         })
 
-        // Mark reminder as sent
+        // Mark reminder as sent in metadata
         await bookingService.updateBookings(
           { id: booking.id },
-          { reminder_sent: true }
+          { 
+            metadata: {
+              ...booking.metadata,
+              reminder_sent_at: new Date().toISOString()
+            }
+          }
         )
 
         sentCount++
