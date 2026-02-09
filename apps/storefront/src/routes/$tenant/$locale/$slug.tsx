@@ -5,7 +5,20 @@ import { getUnifiedClient } from '@/lib/api/unified-client'
 
 export const Route = createFileRoute('/$tenant/$locale/$slug')({
   loader: async ({ params, context }) => {
-    const { slug, locale } = params
+    const { slug, locale, tenant } = params
+
+    let tenantId = ""
+    try {
+      const tenantResponse = await fetch(
+        `/store/cityos/tenant?slug=${encodeURIComponent(tenant)}`
+      )
+      if (tenantResponse.ok) {
+        const data = await tenantResponse.json()
+        tenantId = data.tenant?.id || ""
+      }
+    } catch (e) {
+      console.warn("Failed to resolve tenant for page:", e)
+    }
 
     let page = null
     try {
@@ -13,7 +26,7 @@ export const Route = createFileRoute('/$tenant/$locale/$slug')({
         queryKey: queryKeys.pages.bySlug(slug),
         queryFn: async () => {
           const client = getUnifiedClient()
-          const result = await client.getPayloadPage(slug)
+          const result = await client.getPayloadPage(slug, tenantId || undefined)
           return result || null
         },
       })

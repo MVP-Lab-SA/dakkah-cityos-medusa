@@ -26,6 +26,18 @@ The backend provides extensive modularity for core CityOS features such as tenan
 ### Storefront Architecture
 The storefront uses a dynamic routing pattern `/$tenant/$locale/...` with TanStack Router for file-based routing and Server-Side Rendering (SSR). A centralized design system, implemented through several packages, defines design primitives, theming infrastructure, and component interfaces.
 
+**Provider Chain:** `ClientProviders` (root) wraps `QueryClientProvider` → `StoreProvider` → `AuthProvider` → `BrandingProvider` → `GovernanceProvider` → `ToastProvider`. The `$tenant.$locale` layout wraps children with `TenantProvider` so governance and tenant context are available to all tenant-scoped pages.
+
+**Tenant-Scoped Routing:**
+- `/$tenant/$locale/` — Home page with governance-filtered verticals
+- `/$tenant/$locale/nodes` — Interactive 5-level node hierarchy browser (CITY→DISTRICT→ZONE→FACILITY→ASSET)
+- `/$tenant/$locale/$slug` — Dynamic CMS pages from Payload, filtered by resolved tenant ID
+- `/$tenant/$locale/store`, `/account`, `/bookings`, etc. — Feature pages
+
+**Governance Integration:** `GovernanceProvider` fetches tenant-specific policies via `/store/cityos/governance?tenant_id=X`. The `useGovernanceContext()` hook provides `isVerticalAllowed()`, `isFeatureAllowed()`, and `getCommercePolicy()` for feature gating. SSR-safe via `typeof window` guard.
+
+**Payload CMS Alignment:** The `$slug` route resolves tenant slug → tenant ID before calling `getPayloadPage(slug, tenantId)` for tenant-scoped page filtering. Governance policies sync to Payload via `syncGovernancePolicies()`. Node hierarchy syncs to Payload via `syncNodeToPayload()`.
+
 ### Key Design Decisions
 - **Multi-tenant Isolation:** `tenantId` on all entities with node-scoped access.
 - **RBAC:** 10 roles with node-scoped access.
@@ -55,6 +67,10 @@ The project integrates Medusa.js with ERPNext, Fleetbase, Walt.id, Stripe, and P
 
 ### Database Seeding
 Seed scripts are provided for minimal and complete data seeding, including an admin user, store, regions, sales channels, products, customers, vendors, tenant, and the 5-level node hierarchy. A `db-verify.ts` script ensures database integrity and cleans up duplicates. Comprehensive seeding includes data for all vertical modules and CityOS tenant infrastructure, respecting enum constraints and ID prefixes for traceability.
+
+### Test Infrastructure
+- **Backend Tests:** Jest with @swc/jest (target: es2022). Unit test files are in `apps/backend/tests/unit/` (moved out of `src/` to prevent Medusa auto-loading). Run with `TEST_TYPE=unit npx jest`. 88 tests covering governance service, event dispatcher, API routes, subscribers, and Payload sync.
+- **Storefront Tests:** Vitest with jsdom environment. Config excludes `**/e2e/**` directories. 16 tests covering governance context logic. Run with `npx vitest run`.
 
 ## External Dependencies
 - **Database:** PostgreSQL.

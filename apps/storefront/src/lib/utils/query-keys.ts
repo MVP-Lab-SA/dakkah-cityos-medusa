@@ -142,6 +142,8 @@ export const queryKeys = {
   nodes: {
     ...createDomainKeys("nodes"),
     tree: (tenantId: string) => createDynamicKey("nodes", "tree", tenantId),
+    children: (tenantId: string, parentId: string) => createDynamicKey("nodes", "children", tenantId, parentId),
+    root: (tenantId: string) => createDynamicKey("nodes", "root", tenantId),
   },
 
   governance: {

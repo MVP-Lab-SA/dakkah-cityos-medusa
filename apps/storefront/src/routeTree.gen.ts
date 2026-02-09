@@ -54,6 +54,7 @@ import { Route as TenantLocaleStoreRouteImport } from './routes/$tenant/$locale/
 import { Route as TenantLocaleSearchRouteImport } from './routes/$tenant/$locale/search'
 import { Route as TenantLocaleResetPasswordRouteImport } from './routes/$tenant/$locale/reset-password'
 import { Route as TenantLocaleRegisterRouteImport } from './routes/$tenant/$locale/register'
+import { Route as TenantLocaleNodesRouteImport } from './routes/$tenant/$locale/nodes'
 import { Route as TenantLocaleLoginRouteImport } from './routes/$tenant/$locale/login'
 import { Route as TenantLocaleCheckoutRouteImport } from './routes/$tenant/$locale/checkout'
 import { Route as TenantLocaleCartRouteImport } from './routes/$tenant/$locale/cart'
@@ -403,6 +404,11 @@ const TenantLocaleResetPasswordRoute =
 const TenantLocaleRegisterRoute = TenantLocaleRegisterRouteImport.update({
   id: '/register',
   path: '/register',
+  getParentRoute: () => TenantLocaleRoute,
+} as any)
+const TenantLocaleNodesRoute = TenantLocaleNodesRouteImport.update({
+  id: '/nodes',
+  path: '/nodes',
   getParentRoute: () => TenantLocaleRoute,
 } as any)
 const TenantLocaleLoginRoute = TenantLocaleLoginRouteImport.update({
@@ -1293,6 +1299,7 @@ export interface FileRoutesByFullPath {
   '/$tenant/$locale/cart': typeof TenantLocaleCartRoute
   '/$tenant/$locale/checkout': typeof TenantLocaleCheckoutRoute
   '/$tenant/$locale/login': typeof TenantLocaleLoginRoute
+  '/$tenant/$locale/nodes': typeof TenantLocaleNodesRoute
   '/$tenant/$locale/register': typeof TenantLocaleRegisterRoute
   '/$tenant/$locale/reset-password': typeof TenantLocaleResetPasswordRoute
   '/$tenant/$locale/search': typeof TenantLocaleSearchRoute
@@ -1476,6 +1483,7 @@ export interface FileRoutesByTo {
   '/$tenant/$locale/cart': typeof TenantLocaleCartRoute
   '/$tenant/$locale/checkout': typeof TenantLocaleCheckoutRoute
   '/$tenant/$locale/login': typeof TenantLocaleLoginRoute
+  '/$tenant/$locale/nodes': typeof TenantLocaleNodesRoute
   '/$tenant/$locale/register': typeof TenantLocaleRegisterRoute
   '/$tenant/$locale/reset-password': typeof TenantLocaleResetPasswordRoute
   '/$tenant/$locale/search': typeof TenantLocaleSearchRoute
@@ -1662,6 +1670,7 @@ export interface FileRoutesById {
   '/$tenant/$locale/cart': typeof TenantLocaleCartRoute
   '/$tenant/$locale/checkout': typeof TenantLocaleCheckoutRoute
   '/$tenant/$locale/login': typeof TenantLocaleLoginRoute
+  '/$tenant/$locale/nodes': typeof TenantLocaleNodesRoute
   '/$tenant/$locale/register': typeof TenantLocaleRegisterRoute
   '/$tenant/$locale/reset-password': typeof TenantLocaleResetPasswordRoute
   '/$tenant/$locale/search': typeof TenantLocaleSearchRoute
@@ -1850,6 +1859,7 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/cart'
     | '/$tenant/$locale/checkout'
     | '/$tenant/$locale/login'
+    | '/$tenant/$locale/nodes'
     | '/$tenant/$locale/register'
     | '/$tenant/$locale/reset-password'
     | '/$tenant/$locale/search'
@@ -2033,6 +2043,7 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/cart'
     | '/$tenant/$locale/checkout'
     | '/$tenant/$locale/login'
+    | '/$tenant/$locale/nodes'
     | '/$tenant/$locale/register'
     | '/$tenant/$locale/reset-password'
     | '/$tenant/$locale/search'
@@ -2218,6 +2229,7 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/cart'
     | '/$tenant/$locale/checkout'
     | '/$tenant/$locale/login'
+    | '/$tenant/$locale/nodes'
     | '/$tenant/$locale/register'
     | '/$tenant/$locale/reset-password'
     | '/$tenant/$locale/search'
@@ -2682,6 +2694,13 @@ declare module '@tanstack/react-router' {
       path: '/register'
       fullPath: '/$tenant/$locale/register'
       preLoaderRoute: typeof TenantLocaleRegisterRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/nodes': {
+      id: '/$tenant/$locale/nodes'
+      path: '/nodes'
+      fullPath: '/$tenant/$locale/nodes'
+      preLoaderRoute: typeof TenantLocaleNodesRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$tenant/$locale/login': {
@@ -3955,6 +3974,7 @@ interface TenantLocaleRouteChildren {
   TenantLocaleCartRoute: typeof TenantLocaleCartRoute
   TenantLocaleCheckoutRoute: typeof TenantLocaleCheckoutRoute
   TenantLocaleLoginRoute: typeof TenantLocaleLoginRoute
+  TenantLocaleNodesRoute: typeof TenantLocaleNodesRoute
   TenantLocaleRegisterRoute: typeof TenantLocaleRegisterRoute
   TenantLocaleResetPasswordRoute: typeof TenantLocaleResetPasswordRoute
   TenantLocaleSearchRoute: typeof TenantLocaleSearchRoute
@@ -4062,6 +4082,7 @@ const TenantLocaleRouteChildren: TenantLocaleRouteChildren = {
   TenantLocaleCartRoute: TenantLocaleCartRoute,
   TenantLocaleCheckoutRoute: TenantLocaleCheckoutRoute,
   TenantLocaleLoginRoute: TenantLocaleLoginRoute,
+  TenantLocaleNodesRoute: TenantLocaleNodesRoute,
   TenantLocaleRegisterRoute: TenantLocaleRegisterRoute,
   TenantLocaleResetPasswordRoute: TenantLocaleResetPasswordRoute,
   TenantLocaleSearchRoute: TenantLocaleSearchRoute,
