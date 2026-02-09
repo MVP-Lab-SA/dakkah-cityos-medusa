@@ -333,6 +333,25 @@ export async function dispatchCrossSystemEvent(
         break
       }
 
+      case "governance": {
+        const payloadUrl = process.env.PAYLOAD_API_URL
+        const payloadKey = process.env.PAYLOAD_API_KEY
+        if (payloadUrl && payloadKey) {
+          try {
+            const { MedusaToPayloadSync } = await import("../integrations/payload-sync/medusa-to-payload.js")
+            const payloadSync = new MedusaToPayloadSync(container, { payloadUrl, payloadApiKey: payloadKey })
+            const targetTenantId = payload.tenant_id || nodeContext?.tenantId
+            if (targetTenantId) {
+              await payloadSync.syncGovernancePolicies(targetTenantId)
+              integrations.push("payload")
+            }
+          } catch (err: any) {
+            console.warn(`[EventDispatcher] Payload governance sync failed for ${eventType}: ${err.message}`)
+          }
+        }
+        break
+      }
+
       case "fulfillment": {
         const fbApiUrl = process.env.FLEETBASE_API_URL
         const fbApiKey = process.env.FLEETBASE_API_KEY

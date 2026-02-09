@@ -433,7 +433,7 @@ export default async function verifyDatabase({ container }: ExecArgs) {
 
     let authorities: any[] = []
     try {
-      const result = await governanceService.listGovernanceAuthoritys?.({ slug: "sa-mena" })
+      const result = await governanceService.listGovernanceAuthorities?.({ slug: "sa-mena" })
       authorities = Array.isArray(result) ? result : [result].filter(Boolean)
     } catch {
       try {

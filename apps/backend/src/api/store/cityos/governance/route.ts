@@ -9,8 +9,20 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
   try {
     const governanceModule = req.scope.resolve("governance") as any
-    const policies = await governanceModule.resolveEffectivePolicies(tenantId)
-    return res.json({ policies })
+    const effectivePolicies = await governanceModule.resolveEffectivePolicies(tenantId)
+
+    let authorities: any[] = []
+    try {
+      const rawAuthorities = await governanceModule.listGovernanceAuthorities({ tenant_id: tenantId })
+      authorities = Array.isArray(rawAuthorities) ? rawAuthorities : [rawAuthorities].filter(Boolean)
+    } catch {
+      authorities = []
+    }
+
+    return res.json({
+      authorities,
+      effective_policies: effectivePolicies,
+    })
   } catch (error: any) {
     console.error("Governance error:", error)
     return res.status(500).json({ message: "Internal server error" })

@@ -104,8 +104,16 @@ export class MedusaToPayloadSync {
       status: tenant.status,
       tier: tenant.subscription_tier,
       metadata: tenant.metadata || {},
+      effectivePolicies: null as any,
       lastSyncedAt: new Date().toISOString(),
     };
+
+    try {
+      const governanceModule = this.container.resolve("governance") as any;
+      tenantData.effectivePolicies = await governanceModule.resolveEffectivePolicies(tenantId);
+    } catch {
+      tenantData.effectivePolicies = {};
+    }
 
     if (existingTenant) {
       await this.client.patch(`/api/tenants/${existingTenant.id}`, tenantData);
@@ -250,6 +258,47 @@ export class MedusaToPayloadSync {
       return response.data.docs?.[0] || null;
     } catch (error) {
       return null;
+    }
+  }
+
+  async syncGovernancePolicies(tenantId: string): Promise<void> {
+    const governanceModule = this.container.resolve("governance") as any;
+    const effectivePolicies = await governanceModule.resolveEffectivePolicies(tenantId);
+    const authorities = await governanceModule.listGovernanceAuthorities({ tenant_id: tenantId });
+    const authorityList = Array.isArray(authorities) ? authorities : [authorities].filter(Boolean);
+
+    const policyData = {
+      tenantId,
+      effectivePolicies,
+      authorities: authorityList.map((a: any) => ({
+        id: a.id,
+        name: a.name,
+        slug: a.slug,
+        type: a.type,
+        jurisdictionLevel: a.jurisdiction_level,
+        residencyZone: a.residency_zone,
+        policies: a.policies,
+        status: a.status,
+      })),
+      lastSyncedAt: new Date().toISOString(),
+    };
+
+    try {
+      const existing = await this.client.get("/api/governance-policies", {
+        params: {
+          where: { tenantId: { equals: tenantId } },
+          limit: 1,
+        },
+      });
+
+      if (existing.data.docs?.[0]) {
+        await this.client.patch(`/api/governance-policies/${existing.data.docs[0].id}`, policyData);
+      } else {
+        await this.client.post("/api/governance-policies", policyData);
+      }
+    } catch (err: any) {
+      console.log(`[PayloadSync] Failed to sync governance policies for tenant ${tenantId}: ${err.message}`);
+      throw err;
     }
   }
 

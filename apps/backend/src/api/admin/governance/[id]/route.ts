@@ -19,7 +19,7 @@ const updateSchema = z.object({
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const moduleService = req.scope.resolve("governance") as any
   const { id } = req.params
-  const [item] = await moduleService.listGovernanceAuthoritys({ id }, { take: 1 })
+  const [item] = await moduleService.listGovernanceAuthorities({ id }, { take: 1 })
   if (!item) return res.status(404).json({ message: "Not found" })
   return res.json({ item })
 }

@@ -424,7 +424,7 @@ export default async function seedComplete({ container }: ExecArgs) {
 
     let existingAuthorities: any[] = []
     try {
-      const result = await governanceService.listGovernanceAuthoritys({ slug: "sa-mena" })
+      const result = await governanceService.listGovernanceAuthorities({ slug: "sa-mena" })
       existingAuthorities = Array.isArray(result) ? result : [result].filter(Boolean)
     } catch {
       try {

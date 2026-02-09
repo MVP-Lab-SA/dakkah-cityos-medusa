@@ -23,7 +23,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const filters: Record<string, any> = {}
   if (tenant_id) filters.tenant_id = tenant_id
   if (type) filters.type = type
-  const items = await moduleService.listGovernanceAuthoritys(filters, { skip: Number(offset), take: Number(limit) })
+  const items = await moduleService.listGovernanceAuthorities(filters, { skip: Number(offset), take: Number(limit) })
   return res.json({ items, count: Array.isArray(items) ? items.length : 0, limit: Number(limit), offset: Number(offset) })
 }
 

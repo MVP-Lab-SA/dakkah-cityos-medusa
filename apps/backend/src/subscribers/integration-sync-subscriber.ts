@@ -133,6 +133,27 @@ export default async function integrationSyncHandler({ event, container }: Subsc
         break
       }
 
+      case "governance.policy.changed": {
+        const tenantId = data?.tenant_id
+        if (!tenantId) break
+
+        const payloadUrl = process.env.PAYLOAD_API_URL
+        const payloadKey = process.env.PAYLOAD_API_KEY
+        if (payloadUrl && payloadKey) {
+          try {
+            const payloadSync = new MedusaToPayloadSync(container, {
+              payloadUrl,
+              payloadApiKey: payloadKey,
+            })
+            await payloadSync.syncGovernancePolicies(tenantId)
+            console.log(`[IntegrationSync] Governance policies synced to Payload for tenant ${tenantId}`)
+          } catch (err: any) {
+            console.log(`[IntegrationSync] Failed to sync governance policies to Payload: ${err.message}`)
+          }
+        }
+        break
+      }
+
       default:
         console.log(`[IntegrationSync] Unhandled event: ${eventName}`)
     }
@@ -142,5 +163,5 @@ export default async function integrationSyncHandler({ event, container }: Subsc
 }
 
 export const config: SubscriberConfig = {
-  event: ["product.created", "product.updated", "customer.created", "order.placed", "product.deleted"],
+  event: ["product.created", "product.updated", "customer.created", "order.placed", "product.deleted", "governance.policy.changed"],
 }

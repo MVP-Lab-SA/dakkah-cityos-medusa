@@ -13,6 +13,7 @@ import { BrandingProvider } from "@/lib/context/branding-context"
 import { AuthProvider } from "@/lib/context/auth-context"
 import { StoreProvider } from "@/lib/store-context"
 import { ToastProvider } from "@/components/ui/toast"
+import { GovernanceProvider } from "@/lib/context/governance-context"
 
 const NotFound = lazy(() => import("@/components/not-found"))
 
@@ -62,9 +63,11 @@ function ClientProviders({ children, queryClient }: {
       <StoreProvider initialStore={null}>
         <AuthProvider>
           <BrandingProvider>
-            <ToastProvider>
-              {children}
-            </ToastProvider>
+            <GovernanceProvider>
+              <ToastProvider>
+                {children}
+              </ToastProvider>
+            </GovernanceProvider>
           </BrandingProvider>
         </AuthProvider>
       </StoreProvider>

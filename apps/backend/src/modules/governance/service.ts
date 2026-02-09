@@ -43,7 +43,7 @@ class GovernanceModuleService extends MedusaService({
   async resolveEffectivePolicies(tenantId: string) {
     let mergedPolicies: Record<string, any> = {}
 
-    const authorities = await this.listGovernanceAuthoritys({ tenant_id: tenantId }) as any
+    const authorities = await this.listGovernanceAuthorities({ tenant_id: tenantId }) as any
     const authorityList = Array.isArray(authorities) ? authorities : [authorities].filter(Boolean)
 
     const regionAuthority = authorityList.find((a: any) => a.type === "region")

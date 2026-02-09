@@ -2,6 +2,7 @@ import { useLocation, useLoaderData } from "@tanstack/react-router"
 import { useProducts } from "@/lib/hooks/use-products"
 import { useCategories } from "@/lib/hooks/use-categories"
 import ProductCard from "@/components/product-card"
+import { useGovernanceContext } from "@/lib/context/governance-context"
 
 function getBasePrefix(pathname: string): string {
   const segments = pathname.split("/").filter(Boolean)
@@ -114,6 +115,9 @@ const Home = () => {
     enabled: true,
   })
 
+  const { isVerticalAllowed, effectivePolicies, getCommercePolicy } = useGovernanceContext()
+  const commercePolicy = getCommercePolicy()
+
   const products = data?.pages?.flatMap((page: any) => page.products) || []
 
   return (
@@ -144,6 +148,15 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {commercePolicy?.require_kyc && (
+        <div className="bg-amber-50 border-b border-amber-200">
+          <div className="content-container py-3 flex items-center gap-2 text-sm text-amber-800">
+            <span>🔒</span>
+            <span>Identity verification required for transactions in this region</span>
+          </div>
+        </div>
+      )}
 
       {products.length > 0 && (
         <section className="py-16 bg-white">
@@ -176,13 +189,18 @@ const Home = () => {
           </div>
 
           <div className="space-y-12">
-            {verticalCategories.map((category) => (
+            {verticalCategories.map((category) => {
+              const allowedVerticals = category.verticals.filter(v =>
+                isVerticalAllowed(v.title)
+              )
+              if (allowedVerticals.length === 0) return null
+              return (
               <div key={category.group}>
                 <h3 className="text-lg font-semibold text-zinc-700 mb-4 border-b border-zinc-200 pb-2">
                   {category.group}
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {category.verticals.map((vertical) => (
+                  {allowedVerticals.map((vertical) => (
                     <a
                       key={vertical.path}
                       href={`${prefix}${vertical.path}`}
@@ -201,7 +219,8 @@ const Home = () => {
                   ))}
                 </div>
               </div>
-            ))}
+              )
+            }).filter(Boolean)}
           </div>
         </div>
       </section>
