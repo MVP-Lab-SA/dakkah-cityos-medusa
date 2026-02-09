@@ -1,119 +1,108 @@
-import { createFileRoute, notFound } from '@tanstack/react-router'
-import { queryKeys } from '@/lib/utils/query-keys'
-import { DynamicPage } from '@/components/pages/dynamic-page'
-import { getUnifiedClient } from '@/lib/api/unified-client'
-import { sdk } from '@/lib/utils/sdk'
+import { createFileRoute } from '@tanstack/react-router'
+import { useState, useEffect } from 'react'
+import { TemplateRenderer } from '@/components/cms/template-renderer'
+import type { CMSPage } from '@/lib/types/cityos'
+
+const DEFAULT_TENANT_ID = "01KGZ2JRYX607FWMMYQNQRKVWS"
+
+const TENANT_SLUG_TO_ID: Record<string, string> = {
+  dakkah: DEFAULT_TENANT_ID,
+}
+
+async function resolvePageFromServer(tenantId: string, path: string, locale?: string): Promise<CMSPage | null> {
+  try {
+    const baseUrl = typeof window === "undefined" ? "http://localhost:9000" : ""
+    const params = new URLSearchParams({ path, tenant_id: tenantId })
+    if (locale) params.set("locale", locale)
+    const response = await fetch(`${baseUrl}/platform/cms/resolve?${params}`)
+    if (!response.ok) return null
+    const data = await response.json()
+    return data.data?.page || null
+  } catch {
+    return null
+  }
+}
 
 export const Route = createFileRoute('/$tenant/$locale/$slug')({
-  loader: async ({ params, context }) => {
+  loader: async ({ params }) => {
     const { slug, locale, tenant } = params
-    if (typeof window === "undefined") return { page: null, tenantBranding: null, countryCode: locale }
-
-    let tenantId = ""
+    const tenantId = TENANT_SLUG_TO_ID[tenant] || DEFAULT_TENANT_ID
+    let page: CMSPage | null = null
     try {
-      const data = await sdk.client.fetch<{ tenant: { id: string } }>(
-        `/store/cityos/tenant?slug=${encodeURIComponent(tenant)}`
-      )
-      tenantId = data.tenant?.id || ""
-    } catch (e) {
-      console.warn("Failed to resolve tenant for page:", e)
-    }
-
-    let page = null
-    try {
-      page = await context.queryClient.ensureQueryData({
-        queryKey: queryKeys.pages.bySlug(slug),
-        queryFn: async () => {
-          const client = getUnifiedClient()
-          const result = await client.getPayloadPage(slug, tenantId || undefined)
-          return result || null
-        },
-      })
-    } catch (error) {
-      console.warn(`Failed to load page "${slug}" from PayloadCMS:`, error)
-      page = null
-    }
-
-    if (!page) {
-      throw notFound()
-    }
-
-    let tenantBranding = null
-    if (page.tenant) {
-      try {
-        tenantBranding = await context.queryClient.ensureQueryData({
-          queryKey: queryKeys.tenants.detail(
-            typeof page.tenant === 'string' ? page.tenant : page.tenant.id
-          ),
-          queryFn: async () => {
-            const client = getUnifiedClient()
-            const tenantId = typeof page.tenant === 'string' ? page.tenant : page.tenant.id
-            const stores = await client.getStores()
-            return stores.find(s => s.id === tenantId) || null
-          },
-        })
-      } catch (error) {
-        console.warn(`Failed to load tenant branding:`, error)
-        tenantBranding = null
-      }
-    }
-
-    return { page, tenantBranding, countryCode: locale }
+      page = await resolvePageFromServer(tenantId, slug, locale)
+    } catch {}
+    return { page, tenantSlug: tenant, locale, slug }
   },
-  component: DynamicPageComponent,
+  component: CMSSlugPageComponent,
   head: ({ loaderData }) => ({
     meta: [
-      {
-        title: loaderData?.page?.meta?.title || loaderData?.page?.title || 'Page',
-      },
-      {
-        name: 'description',
-        content:
-          loaderData?.page?.meta?.description ||
-          loaderData?.page?.description ||
-          '',
-      },
-      // Open Graph
-      {
-        property: 'og:title',
-        content: loaderData?.page?.meta?.title || loaderData?.page?.title || 'Page',
-      },
-      {
-        property: 'og:description',
-        content:
-          loaderData?.page?.meta?.description ||
-          loaderData?.page?.description ||
-          '',
-      },
-      {
-        property: 'og:image',
-        content:
-          loaderData?.page?.meta?.image?.url ||
-          loaderData?.tenantBranding?.logo?.url ||
-          '',
-      },
-      // Twitter
-      {
-        name: 'twitter:card',
-        content: 'summary_large_image',
-      },
-      {
-        name: 'twitter:title',
-        content: loaderData?.page?.meta?.title || loaderData?.page?.title || 'Page',
-      },
-      {
-        name: 'twitter:description',
-        content:
-          loaderData?.page?.meta?.description ||
-          loaderData?.page?.description ||
-          '',
-      },
+      { title: loaderData?.page?.seo?.title || loaderData?.page?.title || 'Page' },
+      { name: 'description', content: loaderData?.page?.seo?.description || '' },
+      { property: 'og:title', content: loaderData?.page?.seo?.title || loaderData?.page?.title || 'Page' },
+      { property: 'og:description', content: loaderData?.page?.seo?.description || '' },
+      { property: 'og:image', content: loaderData?.page?.seo?.ogImage?.url || '' },
     ],
   }),
 })
 
-function DynamicPageComponent() {
-  const { page, tenantBranding } = Route.useLoaderData()
+function CMSSlugPageComponent() {
+  const data = Route.useLoaderData()
+  const { tenant, locale, slug } = Route.useParams()
+  const tenantId = TENANT_SLUG_TO_ID[tenant] || DEFAULT_TENANT_ID
 
-  return <DynamicPage page={page} branding={tenantBranding} />
+  const [page, setPage] = useState<CMSPage | null>(data?.page || null)
+  const [isLoading, setIsLoading] = useState(!data?.page)
+  const [hasError, setHasError] = useState(false)
+
+  useEffect(() => {
+    if (page || typeof window === "undefined") return
+
+    const params = new URLSearchParams({ path: slug, tenant_id: tenantId })
+    if (locale) params.set("locale", locale)
+
+    fetch(`/platform/cms/resolve?${params}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Not found")
+        return res.json()
+      })
+      .then((d) => {
+        setPage(d.data?.page || null)
+        setIsLoading(false)
+      })
+      .catch(() => {
+        setHasError(true)
+        setIsLoading(false)
+      })
+  }, [slug, tenantId, locale, page])
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-zinc-200 border-t-zinc-900 rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-zinc-600">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!page || hasError) {
+    return (
+      <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-zinc-900 mb-4">Page Not Found</h1>
+          <p className="text-zinc-600 mb-6">The page you're looking for doesn't exist or hasn't been published yet.</p>
+          <a href={`/${tenant}/${locale}`} className="text-zinc-900 underline hover:no-underline">Return home</a>
+        </div>
+      </div>
+    )
+  }
+
+  const tenantObj = {
+    id: typeof page.tenant === "string" ? page.tenant : page.tenant?.id || "",
+    slug: tenant,
+    name: typeof page.tenant === "object" ? page.tenant?.name || tenant : tenant,
+  }
+
+  return <TemplateRenderer page={page} tenant={tenantObj} locale={locale} />
 }

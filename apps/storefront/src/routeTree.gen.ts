@@ -80,38 +80,11 @@ import { Route as CountryCodeB2bDashboardRouteImport } from './routes/$countryCo
 import { Route as CountryCodeAccountSettingsRouteImport } from './routes/$countryCode/account/settings'
 import { Route as CountryCodeAccountProfileRouteImport } from './routes/$countryCode/account/profile'
 import { Route as CountryCodeAccountAddressesRouteImport } from './routes/$countryCode/account/addresses'
-import { Route as TenantLocaleWarrantiesIndexRouteImport } from './routes/$tenant/$locale/warranties/index'
 import { Route as TenantLocaleVendorsIndexRouteImport } from './routes/$tenant/$locale/vendors/index'
 import { Route as TenantLocaleVendorIndexRouteImport } from './routes/$tenant/$locale/vendor/index'
-import { Route as TenantLocaleUtilitiesIndexRouteImport } from './routes/$tenant/$locale/utilities/index'
-import { Route as TenantLocaleTravelIndexRouteImport } from './routes/$tenant/$locale/travel/index'
 import { Route as TenantLocaleSubscriptionsIndexRouteImport } from './routes/$tenant/$locale/subscriptions/index'
-import { Route as TenantLocaleSocialCommerceIndexRouteImport } from './routes/$tenant/$locale/social-commerce/index'
-import { Route as TenantLocaleRestaurantsIndexRouteImport } from './routes/$tenant/$locale/restaurants/index'
-import { Route as TenantLocaleRentalsIndexRouteImport } from './routes/$tenant/$locale/rentals/index'
-import { Route as TenantLocaleRealEstateIndexRouteImport } from './routes/$tenant/$locale/real-estate/index'
 import { Route as TenantLocaleQuotesIndexRouteImport } from './routes/$tenant/$locale/quotes/index'
-import { Route as TenantLocalePetServicesIndexRouteImport } from './routes/$tenant/$locale/pet-services/index'
-import { Route as TenantLocaleParkingIndexRouteImport } from './routes/$tenant/$locale/parking/index'
-import { Route as TenantLocaleMembershipsIndexRouteImport } from './routes/$tenant/$locale/memberships/index'
-import { Route as TenantLocaleLegalIndexRouteImport } from './routes/$tenant/$locale/legal/index'
-import { Route as TenantLocaleHealthcareIndexRouteImport } from './routes/$tenant/$locale/healthcare/index'
-import { Route as TenantLocaleGroceryIndexRouteImport } from './routes/$tenant/$locale/grocery/index'
-import { Route as TenantLocaleGovernmentIndexRouteImport } from './routes/$tenant/$locale/government/index'
-import { Route as TenantLocaleFreelanceIndexRouteImport } from './routes/$tenant/$locale/freelance/index'
-import { Route as TenantLocaleFitnessIndexRouteImport } from './routes/$tenant/$locale/fitness/index'
-import { Route as TenantLocaleFinancialProductsIndexRouteImport } from './routes/$tenant/$locale/financial-products/index'
-import { Route as TenantLocaleEventsIndexRouteImport } from './routes/$tenant/$locale/events/index'
-import { Route as TenantLocaleEducationIndexRouteImport } from './routes/$tenant/$locale/education/index'
-import { Route as TenantLocaleDigitalProductsIndexRouteImport } from './routes/$tenant/$locale/digital-products/index'
-import { Route as TenantLocaleCrowdfundingIndexRouteImport } from './routes/$tenant/$locale/crowdfunding/index'
-import { Route as TenantLocaleClassifiedsIndexRouteImport } from './routes/$tenant/$locale/classifieds/index'
-import { Route as TenantLocaleCharityIndexRouteImport } from './routes/$tenant/$locale/charity/index'
 import { Route as TenantLocaleBookingsIndexRouteImport } from './routes/$tenant/$locale/bookings/index'
-import { Route as TenantLocaleAutomotiveIndexRouteImport } from './routes/$tenant/$locale/automotive/index'
-import { Route as TenantLocaleAuctionsIndexRouteImport } from './routes/$tenant/$locale/auctions/index'
-import { Route as TenantLocaleAffiliatesIndexRouteImport } from './routes/$tenant/$locale/affiliates/index'
-import { Route as TenantLocaleAdvertisingIndexRouteImport } from './routes/$tenant/$locale/advertising/index'
 import { Route as TenantLocaleAccountIndexRouteImport } from './routes/$tenant/$locale/account/index'
 import { Route as CountryCodeVendorProductsIndexRouteImport } from './routes/$countryCode/vendor/products/index'
 import { Route as CountryCodeVendorPayoutsIndexRouteImport } from './routes/$countryCode/vendor/payouts/index'
@@ -120,38 +93,15 @@ import { Route as CountryCodeAccountSubscriptionsIndexRouteImport } from './rout
 import { Route as CountryCodeAccountPurchaseOrdersIndexRouteImport } from './routes/$countryCode/account/purchase-orders/index'
 import { Route as CountryCodeAccountOrdersIndexRouteImport } from './routes/$countryCode/account/orders/index'
 import { Route as CountryCodeAccountBookingsIndexRouteImport } from './routes/$countryCode/account/bookings/index'
-import { Route as TenantLocaleWarrantiesIdRouteImport } from './routes/$tenant/$locale/warranties/$id'
 import { Route as TenantLocaleVendorsHandleRouteImport } from './routes/$tenant/$locale/vendors/$handle'
 import { Route as TenantLocaleVendorRegisterRouteImport } from './routes/$tenant/$locale/vendor/register'
 import { Route as TenantLocaleVendorPayoutsRouteImport } from './routes/$tenant/$locale/vendor/payouts'
 import { Route as TenantLocaleVendorCommissionsRouteImport } from './routes/$tenant/$locale/vendor/commissions'
-import { Route as TenantLocaleUtilitiesIdRouteImport } from './routes/$tenant/$locale/utilities/$id'
-import { Route as TenantLocaleTravelIdRouteImport } from './routes/$tenant/$locale/travel/$id'
 import { Route as TenantLocaleSubscriptionsSuccessRouteImport } from './routes/$tenant/$locale/subscriptions/success'
 import { Route as TenantLocaleSubscriptionsCheckoutRouteImport } from './routes/$tenant/$locale/subscriptions/checkout'
-import { Route as TenantLocaleSocialCommerceIdRouteImport } from './routes/$tenant/$locale/social-commerce/$id'
-import { Route as TenantLocaleRestaurantsIdRouteImport } from './routes/$tenant/$locale/restaurants/$id'
-import { Route as TenantLocaleRentalsIdRouteImport } from './routes/$tenant/$locale/rentals/$id'
-import { Route as TenantLocaleRealEstateIdRouteImport } from './routes/$tenant/$locale/real-estate/$id'
 import { Route as TenantLocaleQuotesRequestRouteImport } from './routes/$tenant/$locale/quotes/request'
 import { Route as TenantLocaleQuotesIdRouteImport } from './routes/$tenant/$locale/quotes/$id'
 import { Route as TenantLocaleProductsHandleRouteImport } from './routes/$tenant/$locale/products/$handle'
-import { Route as TenantLocalePetServicesIdRouteImport } from './routes/$tenant/$locale/pet-services/$id'
-import { Route as TenantLocaleParkingIdRouteImport } from './routes/$tenant/$locale/parking/$id'
-import { Route as TenantLocaleMembershipsIdRouteImport } from './routes/$tenant/$locale/memberships/$id'
-import { Route as TenantLocaleLegalIdRouteImport } from './routes/$tenant/$locale/legal/$id'
-import { Route as TenantLocaleHealthcareIdRouteImport } from './routes/$tenant/$locale/healthcare/$id'
-import { Route as TenantLocaleGroceryIdRouteImport } from './routes/$tenant/$locale/grocery/$id'
-import { Route as TenantLocaleGovernmentIdRouteImport } from './routes/$tenant/$locale/government/$id'
-import { Route as TenantLocaleFreelanceIdRouteImport } from './routes/$tenant/$locale/freelance/$id'
-import { Route as TenantLocaleFitnessIdRouteImport } from './routes/$tenant/$locale/fitness/$id'
-import { Route as TenantLocaleFinancialProductsIdRouteImport } from './routes/$tenant/$locale/financial-products/$id'
-import { Route as TenantLocaleEventsIdRouteImport } from './routes/$tenant/$locale/events/$id'
-import { Route as TenantLocaleEducationIdRouteImport } from './routes/$tenant/$locale/education/$id'
-import { Route as TenantLocaleDigitalProductsIdRouteImport } from './routes/$tenant/$locale/digital-products/$id'
-import { Route as TenantLocaleCrowdfundingIdRouteImport } from './routes/$tenant/$locale/crowdfunding/$id'
-import { Route as TenantLocaleClassifiedsIdRouteImport } from './routes/$tenant/$locale/classifieds/$id'
-import { Route as TenantLocaleCharityIdRouteImport } from './routes/$tenant/$locale/charity/$id'
 import { Route as TenantLocaleCategoriesHandleRouteImport } from './routes/$tenant/$locale/categories/$handle'
 import { Route as TenantLocaleBusinessTeamRouteImport } from './routes/$tenant/$locale/business/team'
 import { Route as TenantLocaleBusinessOrdersRouteImport } from './routes/$tenant/$locale/business/orders'
@@ -160,10 +110,6 @@ import { Route as TenantLocaleBookingsConfirmationRouteImport } from './routes/$
 import { Route as TenantLocaleBookingsServiceHandleRouteImport } from './routes/$tenant/$locale/bookings/$serviceHandle'
 import { Route as TenantLocaleB2bRegisterRouteImport } from './routes/$tenant/$locale/b2b/register'
 import { Route as TenantLocaleB2bDashboardRouteImport } from './routes/$tenant/$locale/b2b/dashboard'
-import { Route as TenantLocaleAutomotiveIdRouteImport } from './routes/$tenant/$locale/automotive/$id'
-import { Route as TenantLocaleAuctionsIdRouteImport } from './routes/$tenant/$locale/auctions/$id'
-import { Route as TenantLocaleAffiliatesIdRouteImport } from './routes/$tenant/$locale/affiliates/$id'
-import { Route as TenantLocaleAdvertisingIdRouteImport } from './routes/$tenant/$locale/advertising/$id'
 import { Route as TenantLocaleAccountSettingsRouteImport } from './routes/$tenant/$locale/account/settings'
 import { Route as TenantLocaleAccountProfileRouteImport } from './routes/$tenant/$locale/account/profile'
 import { Route as TenantLocaleAccountAddressesRouteImport } from './routes/$tenant/$locale/account/addresses'
@@ -553,12 +499,6 @@ const CountryCodeAccountAddressesRoute =
     path: '/account/addresses',
     getParentRoute: () => CountryCodeRoute,
   } as any)
-const TenantLocaleWarrantiesIndexRoute =
-  TenantLocaleWarrantiesIndexRouteImport.update({
-    id: '/warranties/',
-    path: '/warranties/',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
 const TenantLocaleVendorsIndexRoute =
   TenantLocaleVendorsIndexRouteImport.update({
     id: '/vendors/',
@@ -570,45 +510,10 @@ const TenantLocaleVendorIndexRoute = TenantLocaleVendorIndexRouteImport.update({
   path: '/vendor/',
   getParentRoute: () => TenantLocaleRoute,
 } as any)
-const TenantLocaleUtilitiesIndexRoute =
-  TenantLocaleUtilitiesIndexRouteImport.update({
-    id: '/utilities/',
-    path: '/utilities/',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleTravelIndexRoute = TenantLocaleTravelIndexRouteImport.update({
-  id: '/travel/',
-  path: '/travel/',
-  getParentRoute: () => TenantLocaleRoute,
-} as any)
 const TenantLocaleSubscriptionsIndexRoute =
   TenantLocaleSubscriptionsIndexRouteImport.update({
     id: '/subscriptions/',
     path: '/subscriptions/',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleSocialCommerceIndexRoute =
-  TenantLocaleSocialCommerceIndexRouteImport.update({
-    id: '/social-commerce/',
-    path: '/social-commerce/',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleRestaurantsIndexRoute =
-  TenantLocaleRestaurantsIndexRouteImport.update({
-    id: '/restaurants/',
-    path: '/restaurants/',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleRentalsIndexRoute =
-  TenantLocaleRentalsIndexRouteImport.update({
-    id: '/rentals/',
-    path: '/rentals/',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleRealEstateIndexRoute =
-  TenantLocaleRealEstateIndexRouteImport.update({
-    id: '/real-estate/',
-    path: '/real-estate/',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
 const TenantLocaleQuotesIndexRoute = TenantLocaleQuotesIndexRouteImport.update({
@@ -616,128 +521,10 @@ const TenantLocaleQuotesIndexRoute = TenantLocaleQuotesIndexRouteImport.update({
   path: '/quotes/',
   getParentRoute: () => TenantLocaleRoute,
 } as any)
-const TenantLocalePetServicesIndexRoute =
-  TenantLocalePetServicesIndexRouteImport.update({
-    id: '/pet-services/',
-    path: '/pet-services/',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleParkingIndexRoute =
-  TenantLocaleParkingIndexRouteImport.update({
-    id: '/parking/',
-    path: '/parking/',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleMembershipsIndexRoute =
-  TenantLocaleMembershipsIndexRouteImport.update({
-    id: '/memberships/',
-    path: '/memberships/',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleLegalIndexRoute = TenantLocaleLegalIndexRouteImport.update({
-  id: '/legal/',
-  path: '/legal/',
-  getParentRoute: () => TenantLocaleRoute,
-} as any)
-const TenantLocaleHealthcareIndexRoute =
-  TenantLocaleHealthcareIndexRouteImport.update({
-    id: '/healthcare/',
-    path: '/healthcare/',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleGroceryIndexRoute =
-  TenantLocaleGroceryIndexRouteImport.update({
-    id: '/grocery/',
-    path: '/grocery/',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleGovernmentIndexRoute =
-  TenantLocaleGovernmentIndexRouteImport.update({
-    id: '/government/',
-    path: '/government/',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleFreelanceIndexRoute =
-  TenantLocaleFreelanceIndexRouteImport.update({
-    id: '/freelance/',
-    path: '/freelance/',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleFitnessIndexRoute =
-  TenantLocaleFitnessIndexRouteImport.update({
-    id: '/fitness/',
-    path: '/fitness/',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleFinancialProductsIndexRoute =
-  TenantLocaleFinancialProductsIndexRouteImport.update({
-    id: '/financial-products/',
-    path: '/financial-products/',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleEventsIndexRoute = TenantLocaleEventsIndexRouteImport.update({
-  id: '/events/',
-  path: '/events/',
-  getParentRoute: () => TenantLocaleRoute,
-} as any)
-const TenantLocaleEducationIndexRoute =
-  TenantLocaleEducationIndexRouteImport.update({
-    id: '/education/',
-    path: '/education/',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleDigitalProductsIndexRoute =
-  TenantLocaleDigitalProductsIndexRouteImport.update({
-    id: '/digital-products/',
-    path: '/digital-products/',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleCrowdfundingIndexRoute =
-  TenantLocaleCrowdfundingIndexRouteImport.update({
-    id: '/crowdfunding/',
-    path: '/crowdfunding/',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleClassifiedsIndexRoute =
-  TenantLocaleClassifiedsIndexRouteImport.update({
-    id: '/classifieds/',
-    path: '/classifieds/',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleCharityIndexRoute =
-  TenantLocaleCharityIndexRouteImport.update({
-    id: '/charity/',
-    path: '/charity/',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
 const TenantLocaleBookingsIndexRoute =
   TenantLocaleBookingsIndexRouteImport.update({
     id: '/bookings/',
     path: '/bookings/',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleAutomotiveIndexRoute =
-  TenantLocaleAutomotiveIndexRouteImport.update({
-    id: '/automotive/',
-    path: '/automotive/',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleAuctionsIndexRoute =
-  TenantLocaleAuctionsIndexRouteImport.update({
-    id: '/auctions/',
-    path: '/auctions/',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleAffiliatesIndexRoute =
-  TenantLocaleAffiliatesIndexRouteImport.update({
-    id: '/affiliates/',
-    path: '/affiliates/',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleAdvertisingIndexRoute =
-  TenantLocaleAdvertisingIndexRouteImport.update({
-    id: '/advertising/',
-    path: '/advertising/',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
 const TenantLocaleAccountIndexRoute =
@@ -788,12 +575,6 @@ const CountryCodeAccountBookingsIndexRoute =
     path: '/account/bookings/',
     getParentRoute: () => CountryCodeRoute,
   } as any)
-const TenantLocaleWarrantiesIdRoute =
-  TenantLocaleWarrantiesIdRouteImport.update({
-    id: '/warranties/$id',
-    path: '/warranties/$id',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
 const TenantLocaleVendorsHandleRoute =
   TenantLocaleVendorsHandleRouteImport.update({
     id: '/vendors/$handle',
@@ -818,16 +599,6 @@ const TenantLocaleVendorCommissionsRoute =
     path: '/vendor/commissions',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
-const TenantLocaleUtilitiesIdRoute = TenantLocaleUtilitiesIdRouteImport.update({
-  id: '/utilities/$id',
-  path: '/utilities/$id',
-  getParentRoute: () => TenantLocaleRoute,
-} as any)
-const TenantLocaleTravelIdRoute = TenantLocaleTravelIdRouteImport.update({
-  id: '/travel/$id',
-  path: '/travel/$id',
-  getParentRoute: () => TenantLocaleRoute,
-} as any)
 const TenantLocaleSubscriptionsSuccessRoute =
   TenantLocaleSubscriptionsSuccessRouteImport.update({
     id: '/subscriptions/success',
@@ -838,29 +609,6 @@ const TenantLocaleSubscriptionsCheckoutRoute =
   TenantLocaleSubscriptionsCheckoutRouteImport.update({
     id: '/subscriptions/checkout',
     path: '/subscriptions/checkout',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleSocialCommerceIdRoute =
-  TenantLocaleSocialCommerceIdRouteImport.update({
-    id: '/social-commerce/$id',
-    path: '/social-commerce/$id',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleRestaurantsIdRoute =
-  TenantLocaleRestaurantsIdRouteImport.update({
-    id: '/restaurants/$id',
-    path: '/restaurants/$id',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleRentalsIdRoute = TenantLocaleRentalsIdRouteImport.update({
-  id: '/rentals/$id',
-  path: '/rentals/$id',
-  getParentRoute: () => TenantLocaleRoute,
-} as any)
-const TenantLocaleRealEstateIdRoute =
-  TenantLocaleRealEstateIdRouteImport.update({
-    id: '/real-estate/$id',
-    path: '/real-estate/$id',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
 const TenantLocaleQuotesRequestRoute =
@@ -880,94 +628,6 @@ const TenantLocaleProductsHandleRoute =
     path: '/products/$handle',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
-const TenantLocalePetServicesIdRoute =
-  TenantLocalePetServicesIdRouteImport.update({
-    id: '/pet-services/$id',
-    path: '/pet-services/$id',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleParkingIdRoute = TenantLocaleParkingIdRouteImport.update({
-  id: '/parking/$id',
-  path: '/parking/$id',
-  getParentRoute: () => TenantLocaleRoute,
-} as any)
-const TenantLocaleMembershipsIdRoute =
-  TenantLocaleMembershipsIdRouteImport.update({
-    id: '/memberships/$id',
-    path: '/memberships/$id',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleLegalIdRoute = TenantLocaleLegalIdRouteImport.update({
-  id: '/legal/$id',
-  path: '/legal/$id',
-  getParentRoute: () => TenantLocaleRoute,
-} as any)
-const TenantLocaleHealthcareIdRoute =
-  TenantLocaleHealthcareIdRouteImport.update({
-    id: '/healthcare/$id',
-    path: '/healthcare/$id',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleGroceryIdRoute = TenantLocaleGroceryIdRouteImport.update({
-  id: '/grocery/$id',
-  path: '/grocery/$id',
-  getParentRoute: () => TenantLocaleRoute,
-} as any)
-const TenantLocaleGovernmentIdRoute =
-  TenantLocaleGovernmentIdRouteImport.update({
-    id: '/government/$id',
-    path: '/government/$id',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleFreelanceIdRoute = TenantLocaleFreelanceIdRouteImport.update({
-  id: '/freelance/$id',
-  path: '/freelance/$id',
-  getParentRoute: () => TenantLocaleRoute,
-} as any)
-const TenantLocaleFitnessIdRoute = TenantLocaleFitnessIdRouteImport.update({
-  id: '/fitness/$id',
-  path: '/fitness/$id',
-  getParentRoute: () => TenantLocaleRoute,
-} as any)
-const TenantLocaleFinancialProductsIdRoute =
-  TenantLocaleFinancialProductsIdRouteImport.update({
-    id: '/financial-products/$id',
-    path: '/financial-products/$id',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleEventsIdRoute = TenantLocaleEventsIdRouteImport.update({
-  id: '/events/$id',
-  path: '/events/$id',
-  getParentRoute: () => TenantLocaleRoute,
-} as any)
-const TenantLocaleEducationIdRoute = TenantLocaleEducationIdRouteImport.update({
-  id: '/education/$id',
-  path: '/education/$id',
-  getParentRoute: () => TenantLocaleRoute,
-} as any)
-const TenantLocaleDigitalProductsIdRoute =
-  TenantLocaleDigitalProductsIdRouteImport.update({
-    id: '/digital-products/$id',
-    path: '/digital-products/$id',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleCrowdfundingIdRoute =
-  TenantLocaleCrowdfundingIdRouteImport.update({
-    id: '/crowdfunding/$id',
-    path: '/crowdfunding/$id',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleClassifiedsIdRoute =
-  TenantLocaleClassifiedsIdRouteImport.update({
-    id: '/classifieds/$id',
-    path: '/classifieds/$id',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleCharityIdRoute = TenantLocaleCharityIdRouteImport.update({
-  id: '/charity/$id',
-  path: '/charity/$id',
-  getParentRoute: () => TenantLocaleRoute,
-} as any)
 const TenantLocaleCategoriesHandleRoute =
   TenantLocaleCategoriesHandleRouteImport.update({
     id: '/categories/$handle',
@@ -1013,29 +673,6 @@ const TenantLocaleB2bDashboardRoute =
   TenantLocaleB2bDashboardRouteImport.update({
     id: '/b2b/dashboard',
     path: '/b2b/dashboard',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleAutomotiveIdRoute =
-  TenantLocaleAutomotiveIdRouteImport.update({
-    id: '/automotive/$id',
-    path: '/automotive/$id',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleAuctionsIdRoute = TenantLocaleAuctionsIdRouteImport.update({
-  id: '/auctions/$id',
-  path: '/auctions/$id',
-  getParentRoute: () => TenantLocaleRoute,
-} as any)
-const TenantLocaleAffiliatesIdRoute =
-  TenantLocaleAffiliatesIdRouteImport.update({
-    id: '/affiliates/$id',
-    path: '/affiliates/$id',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
-const TenantLocaleAdvertisingIdRoute =
-  TenantLocaleAdvertisingIdRouteImport.update({
-    id: '/advertising/$id',
-    path: '/advertising/$id',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
 const TenantLocaleAccountSettingsRoute =
@@ -1340,10 +977,6 @@ export interface FileRoutesByFullPath {
   '/$tenant/$locale/account/addresses': typeof TenantLocaleAccountAddressesRoute
   '/$tenant/$locale/account/profile': typeof TenantLocaleAccountProfileRoute
   '/$tenant/$locale/account/settings': typeof TenantLocaleAccountSettingsRoute
-  '/$tenant/$locale/advertising/$id': typeof TenantLocaleAdvertisingIdRoute
-  '/$tenant/$locale/affiliates/$id': typeof TenantLocaleAffiliatesIdRoute
-  '/$tenant/$locale/auctions/$id': typeof TenantLocaleAuctionsIdRoute
-  '/$tenant/$locale/automotive/$id': typeof TenantLocaleAutomotiveIdRoute
   '/$tenant/$locale/b2b/dashboard': typeof TenantLocaleB2bDashboardRoute
   '/$tenant/$locale/b2b/register': typeof TenantLocaleB2bRegisterRoute
   '/$tenant/$locale/bookings/$serviceHandle': typeof TenantLocaleBookingsServiceHandleRoute
@@ -1352,38 +985,15 @@ export interface FileRoutesByFullPath {
   '/$tenant/$locale/business/orders': typeof TenantLocaleBusinessOrdersRoute
   '/$tenant/$locale/business/team': typeof TenantLocaleBusinessTeamRoute
   '/$tenant/$locale/categories/$handle': typeof TenantLocaleCategoriesHandleRoute
-  '/$tenant/$locale/charity/$id': typeof TenantLocaleCharityIdRoute
-  '/$tenant/$locale/classifieds/$id': typeof TenantLocaleClassifiedsIdRoute
-  '/$tenant/$locale/crowdfunding/$id': typeof TenantLocaleCrowdfundingIdRoute
-  '/$tenant/$locale/digital-products/$id': typeof TenantLocaleDigitalProductsIdRoute
-  '/$tenant/$locale/education/$id': typeof TenantLocaleEducationIdRoute
-  '/$tenant/$locale/events/$id': typeof TenantLocaleEventsIdRoute
-  '/$tenant/$locale/financial-products/$id': typeof TenantLocaleFinancialProductsIdRoute
-  '/$tenant/$locale/fitness/$id': typeof TenantLocaleFitnessIdRoute
-  '/$tenant/$locale/freelance/$id': typeof TenantLocaleFreelanceIdRoute
-  '/$tenant/$locale/government/$id': typeof TenantLocaleGovernmentIdRoute
-  '/$tenant/$locale/grocery/$id': typeof TenantLocaleGroceryIdRoute
-  '/$tenant/$locale/healthcare/$id': typeof TenantLocaleHealthcareIdRoute
-  '/$tenant/$locale/legal/$id': typeof TenantLocaleLegalIdRoute
-  '/$tenant/$locale/memberships/$id': typeof TenantLocaleMembershipsIdRoute
-  '/$tenant/$locale/parking/$id': typeof TenantLocaleParkingIdRoute
-  '/$tenant/$locale/pet-services/$id': typeof TenantLocalePetServicesIdRoute
   '/$tenant/$locale/products/$handle': typeof TenantLocaleProductsHandleRoute
   '/$tenant/$locale/quotes/$id': typeof TenantLocaleQuotesIdRoute
   '/$tenant/$locale/quotes/request': typeof TenantLocaleQuotesRequestRoute
-  '/$tenant/$locale/real-estate/$id': typeof TenantLocaleRealEstateIdRoute
-  '/$tenant/$locale/rentals/$id': typeof TenantLocaleRentalsIdRoute
-  '/$tenant/$locale/restaurants/$id': typeof TenantLocaleRestaurantsIdRoute
-  '/$tenant/$locale/social-commerce/$id': typeof TenantLocaleSocialCommerceIdRoute
   '/$tenant/$locale/subscriptions/checkout': typeof TenantLocaleSubscriptionsCheckoutRoute
   '/$tenant/$locale/subscriptions/success': typeof TenantLocaleSubscriptionsSuccessRoute
-  '/$tenant/$locale/travel/$id': typeof TenantLocaleTravelIdRoute
-  '/$tenant/$locale/utilities/$id': typeof TenantLocaleUtilitiesIdRoute
   '/$tenant/$locale/vendor/commissions': typeof TenantLocaleVendorCommissionsRoute
   '/$tenant/$locale/vendor/payouts': typeof TenantLocaleVendorPayoutsRouteWithChildren
   '/$tenant/$locale/vendor/register': typeof TenantLocaleVendorRegisterRoute
   '/$tenant/$locale/vendors/$handle': typeof TenantLocaleVendorsHandleRouteWithChildren
-  '/$tenant/$locale/warranties/$id': typeof TenantLocaleWarrantiesIdRoute
   '/$countryCode/account/bookings': typeof CountryCodeAccountBookingsIndexRoute
   '/$countryCode/account/orders': typeof CountryCodeAccountOrdersIndexRoute
   '/$countryCode/account/purchase-orders': typeof CountryCodeAccountPurchaseOrdersIndexRoute
@@ -1392,38 +1002,11 @@ export interface FileRoutesByFullPath {
   '/$countryCode/vendor/payouts/': typeof CountryCodeVendorPayoutsIndexRoute
   '/$countryCode/vendor/products': typeof CountryCodeVendorProductsIndexRoute
   '/$tenant/$locale/account': typeof TenantLocaleAccountIndexRoute
-  '/$tenant/$locale/advertising': typeof TenantLocaleAdvertisingIndexRoute
-  '/$tenant/$locale/affiliates': typeof TenantLocaleAffiliatesIndexRoute
-  '/$tenant/$locale/auctions': typeof TenantLocaleAuctionsIndexRoute
-  '/$tenant/$locale/automotive': typeof TenantLocaleAutomotiveIndexRoute
   '/$tenant/$locale/bookings': typeof TenantLocaleBookingsIndexRoute
-  '/$tenant/$locale/charity': typeof TenantLocaleCharityIndexRoute
-  '/$tenant/$locale/classifieds': typeof TenantLocaleClassifiedsIndexRoute
-  '/$tenant/$locale/crowdfunding': typeof TenantLocaleCrowdfundingIndexRoute
-  '/$tenant/$locale/digital-products': typeof TenantLocaleDigitalProductsIndexRoute
-  '/$tenant/$locale/education': typeof TenantLocaleEducationIndexRoute
-  '/$tenant/$locale/events': typeof TenantLocaleEventsIndexRoute
-  '/$tenant/$locale/financial-products': typeof TenantLocaleFinancialProductsIndexRoute
-  '/$tenant/$locale/fitness': typeof TenantLocaleFitnessIndexRoute
-  '/$tenant/$locale/freelance': typeof TenantLocaleFreelanceIndexRoute
-  '/$tenant/$locale/government': typeof TenantLocaleGovernmentIndexRoute
-  '/$tenant/$locale/grocery': typeof TenantLocaleGroceryIndexRoute
-  '/$tenant/$locale/healthcare': typeof TenantLocaleHealthcareIndexRoute
-  '/$tenant/$locale/legal': typeof TenantLocaleLegalIndexRoute
-  '/$tenant/$locale/memberships': typeof TenantLocaleMembershipsIndexRoute
-  '/$tenant/$locale/parking': typeof TenantLocaleParkingIndexRoute
-  '/$tenant/$locale/pet-services': typeof TenantLocalePetServicesIndexRoute
   '/$tenant/$locale/quotes': typeof TenantLocaleQuotesIndexRoute
-  '/$tenant/$locale/real-estate': typeof TenantLocaleRealEstateIndexRoute
-  '/$tenant/$locale/rentals': typeof TenantLocaleRentalsIndexRoute
-  '/$tenant/$locale/restaurants': typeof TenantLocaleRestaurantsIndexRoute
-  '/$tenant/$locale/social-commerce': typeof TenantLocaleSocialCommerceIndexRoute
   '/$tenant/$locale/subscriptions': typeof TenantLocaleSubscriptionsIndexRoute
-  '/$tenant/$locale/travel': typeof TenantLocaleTravelIndexRoute
-  '/$tenant/$locale/utilities': typeof TenantLocaleUtilitiesIndexRoute
   '/$tenant/$locale/vendor': typeof TenantLocaleVendorIndexRoute
   '/$tenant/$locale/vendors': typeof TenantLocaleVendorsIndexRoute
-  '/$tenant/$locale/warranties': typeof TenantLocaleWarrantiesIndexRoute
   '/$countryCode/account/orders/$id/return': typeof CountryCodeAccountOrdersIdReturnRoute
   '/$countryCode/account/orders/$id/track': typeof CountryCodeAccountOrdersIdTrackRoute
   '/$countryCode/account/subscriptions/$id/billing': typeof CountryCodeAccountSubscriptionsIdBillingRoute
@@ -1525,10 +1108,6 @@ export interface FileRoutesByTo {
   '/$tenant/$locale/account/addresses': typeof TenantLocaleAccountAddressesRoute
   '/$tenant/$locale/account/profile': typeof TenantLocaleAccountProfileRoute
   '/$tenant/$locale/account/settings': typeof TenantLocaleAccountSettingsRoute
-  '/$tenant/$locale/advertising/$id': typeof TenantLocaleAdvertisingIdRoute
-  '/$tenant/$locale/affiliates/$id': typeof TenantLocaleAffiliatesIdRoute
-  '/$tenant/$locale/auctions/$id': typeof TenantLocaleAuctionsIdRoute
-  '/$tenant/$locale/automotive/$id': typeof TenantLocaleAutomotiveIdRoute
   '/$tenant/$locale/b2b/dashboard': typeof TenantLocaleB2bDashboardRoute
   '/$tenant/$locale/b2b/register': typeof TenantLocaleB2bRegisterRoute
   '/$tenant/$locale/bookings/$serviceHandle': typeof TenantLocaleBookingsServiceHandleRoute
@@ -1537,37 +1116,14 @@ export interface FileRoutesByTo {
   '/$tenant/$locale/business/orders': typeof TenantLocaleBusinessOrdersRoute
   '/$tenant/$locale/business/team': typeof TenantLocaleBusinessTeamRoute
   '/$tenant/$locale/categories/$handle': typeof TenantLocaleCategoriesHandleRoute
-  '/$tenant/$locale/charity/$id': typeof TenantLocaleCharityIdRoute
-  '/$tenant/$locale/classifieds/$id': typeof TenantLocaleClassifiedsIdRoute
-  '/$tenant/$locale/crowdfunding/$id': typeof TenantLocaleCrowdfundingIdRoute
-  '/$tenant/$locale/digital-products/$id': typeof TenantLocaleDigitalProductsIdRoute
-  '/$tenant/$locale/education/$id': typeof TenantLocaleEducationIdRoute
-  '/$tenant/$locale/events/$id': typeof TenantLocaleEventsIdRoute
-  '/$tenant/$locale/financial-products/$id': typeof TenantLocaleFinancialProductsIdRoute
-  '/$tenant/$locale/fitness/$id': typeof TenantLocaleFitnessIdRoute
-  '/$tenant/$locale/freelance/$id': typeof TenantLocaleFreelanceIdRoute
-  '/$tenant/$locale/government/$id': typeof TenantLocaleGovernmentIdRoute
-  '/$tenant/$locale/grocery/$id': typeof TenantLocaleGroceryIdRoute
-  '/$tenant/$locale/healthcare/$id': typeof TenantLocaleHealthcareIdRoute
-  '/$tenant/$locale/legal/$id': typeof TenantLocaleLegalIdRoute
-  '/$tenant/$locale/memberships/$id': typeof TenantLocaleMembershipsIdRoute
-  '/$tenant/$locale/parking/$id': typeof TenantLocaleParkingIdRoute
-  '/$tenant/$locale/pet-services/$id': typeof TenantLocalePetServicesIdRoute
   '/$tenant/$locale/products/$handle': typeof TenantLocaleProductsHandleRoute
   '/$tenant/$locale/quotes/$id': typeof TenantLocaleQuotesIdRoute
   '/$tenant/$locale/quotes/request': typeof TenantLocaleQuotesRequestRoute
-  '/$tenant/$locale/real-estate/$id': typeof TenantLocaleRealEstateIdRoute
-  '/$tenant/$locale/rentals/$id': typeof TenantLocaleRentalsIdRoute
-  '/$tenant/$locale/restaurants/$id': typeof TenantLocaleRestaurantsIdRoute
-  '/$tenant/$locale/social-commerce/$id': typeof TenantLocaleSocialCommerceIdRoute
   '/$tenant/$locale/subscriptions/checkout': typeof TenantLocaleSubscriptionsCheckoutRoute
   '/$tenant/$locale/subscriptions/success': typeof TenantLocaleSubscriptionsSuccessRoute
-  '/$tenant/$locale/travel/$id': typeof TenantLocaleTravelIdRoute
-  '/$tenant/$locale/utilities/$id': typeof TenantLocaleUtilitiesIdRoute
   '/$tenant/$locale/vendor/commissions': typeof TenantLocaleVendorCommissionsRoute
   '/$tenant/$locale/vendor/register': typeof TenantLocaleVendorRegisterRoute
   '/$tenant/$locale/vendors/$handle': typeof TenantLocaleVendorsHandleRouteWithChildren
-  '/$tenant/$locale/warranties/$id': typeof TenantLocaleWarrantiesIdRoute
   '/$countryCode/account/bookings': typeof CountryCodeAccountBookingsIndexRoute
   '/$countryCode/account/orders': typeof CountryCodeAccountOrdersIndexRoute
   '/$countryCode/account/purchase-orders': typeof CountryCodeAccountPurchaseOrdersIndexRoute
@@ -1576,38 +1132,11 @@ export interface FileRoutesByTo {
   '/$countryCode/vendor/payouts': typeof CountryCodeVendorPayoutsIndexRoute
   '/$countryCode/vendor/products': typeof CountryCodeVendorProductsIndexRoute
   '/$tenant/$locale/account': typeof TenantLocaleAccountIndexRoute
-  '/$tenant/$locale/advertising': typeof TenantLocaleAdvertisingIndexRoute
-  '/$tenant/$locale/affiliates': typeof TenantLocaleAffiliatesIndexRoute
-  '/$tenant/$locale/auctions': typeof TenantLocaleAuctionsIndexRoute
-  '/$tenant/$locale/automotive': typeof TenantLocaleAutomotiveIndexRoute
   '/$tenant/$locale/bookings': typeof TenantLocaleBookingsIndexRoute
-  '/$tenant/$locale/charity': typeof TenantLocaleCharityIndexRoute
-  '/$tenant/$locale/classifieds': typeof TenantLocaleClassifiedsIndexRoute
-  '/$tenant/$locale/crowdfunding': typeof TenantLocaleCrowdfundingIndexRoute
-  '/$tenant/$locale/digital-products': typeof TenantLocaleDigitalProductsIndexRoute
-  '/$tenant/$locale/education': typeof TenantLocaleEducationIndexRoute
-  '/$tenant/$locale/events': typeof TenantLocaleEventsIndexRoute
-  '/$tenant/$locale/financial-products': typeof TenantLocaleFinancialProductsIndexRoute
-  '/$tenant/$locale/fitness': typeof TenantLocaleFitnessIndexRoute
-  '/$tenant/$locale/freelance': typeof TenantLocaleFreelanceIndexRoute
-  '/$tenant/$locale/government': typeof TenantLocaleGovernmentIndexRoute
-  '/$tenant/$locale/grocery': typeof TenantLocaleGroceryIndexRoute
-  '/$tenant/$locale/healthcare': typeof TenantLocaleHealthcareIndexRoute
-  '/$tenant/$locale/legal': typeof TenantLocaleLegalIndexRoute
-  '/$tenant/$locale/memberships': typeof TenantLocaleMembershipsIndexRoute
-  '/$tenant/$locale/parking': typeof TenantLocaleParkingIndexRoute
-  '/$tenant/$locale/pet-services': typeof TenantLocalePetServicesIndexRoute
   '/$tenant/$locale/quotes': typeof TenantLocaleQuotesIndexRoute
-  '/$tenant/$locale/real-estate': typeof TenantLocaleRealEstateIndexRoute
-  '/$tenant/$locale/rentals': typeof TenantLocaleRentalsIndexRoute
-  '/$tenant/$locale/restaurants': typeof TenantLocaleRestaurantsIndexRoute
-  '/$tenant/$locale/social-commerce': typeof TenantLocaleSocialCommerceIndexRoute
   '/$tenant/$locale/subscriptions': typeof TenantLocaleSubscriptionsIndexRoute
-  '/$tenant/$locale/travel': typeof TenantLocaleTravelIndexRoute
-  '/$tenant/$locale/utilities': typeof TenantLocaleUtilitiesIndexRoute
   '/$tenant/$locale/vendor': typeof TenantLocaleVendorIndexRoute
   '/$tenant/$locale/vendors': typeof TenantLocaleVendorsIndexRoute
-  '/$tenant/$locale/warranties': typeof TenantLocaleWarrantiesIndexRoute
   '/$countryCode/account/orders/$id/return': typeof CountryCodeAccountOrdersIdReturnRoute
   '/$countryCode/account/orders/$id/track': typeof CountryCodeAccountOrdersIdTrackRoute
   '/$countryCode/account/subscriptions/$id/billing': typeof CountryCodeAccountSubscriptionsIdBillingRoute
@@ -1713,10 +1242,6 @@ export interface FileRoutesById {
   '/$tenant/$locale/account/addresses': typeof TenantLocaleAccountAddressesRoute
   '/$tenant/$locale/account/profile': typeof TenantLocaleAccountProfileRoute
   '/$tenant/$locale/account/settings': typeof TenantLocaleAccountSettingsRoute
-  '/$tenant/$locale/advertising/$id': typeof TenantLocaleAdvertisingIdRoute
-  '/$tenant/$locale/affiliates/$id': typeof TenantLocaleAffiliatesIdRoute
-  '/$tenant/$locale/auctions/$id': typeof TenantLocaleAuctionsIdRoute
-  '/$tenant/$locale/automotive/$id': typeof TenantLocaleAutomotiveIdRoute
   '/$tenant/$locale/b2b/dashboard': typeof TenantLocaleB2bDashboardRoute
   '/$tenant/$locale/b2b/register': typeof TenantLocaleB2bRegisterRoute
   '/$tenant/$locale/bookings/$serviceHandle': typeof TenantLocaleBookingsServiceHandleRoute
@@ -1725,38 +1250,15 @@ export interface FileRoutesById {
   '/$tenant/$locale/business/orders': typeof TenantLocaleBusinessOrdersRoute
   '/$tenant/$locale/business/team': typeof TenantLocaleBusinessTeamRoute
   '/$tenant/$locale/categories/$handle': typeof TenantLocaleCategoriesHandleRoute
-  '/$tenant/$locale/charity/$id': typeof TenantLocaleCharityIdRoute
-  '/$tenant/$locale/classifieds/$id': typeof TenantLocaleClassifiedsIdRoute
-  '/$tenant/$locale/crowdfunding/$id': typeof TenantLocaleCrowdfundingIdRoute
-  '/$tenant/$locale/digital-products/$id': typeof TenantLocaleDigitalProductsIdRoute
-  '/$tenant/$locale/education/$id': typeof TenantLocaleEducationIdRoute
-  '/$tenant/$locale/events/$id': typeof TenantLocaleEventsIdRoute
-  '/$tenant/$locale/financial-products/$id': typeof TenantLocaleFinancialProductsIdRoute
-  '/$tenant/$locale/fitness/$id': typeof TenantLocaleFitnessIdRoute
-  '/$tenant/$locale/freelance/$id': typeof TenantLocaleFreelanceIdRoute
-  '/$tenant/$locale/government/$id': typeof TenantLocaleGovernmentIdRoute
-  '/$tenant/$locale/grocery/$id': typeof TenantLocaleGroceryIdRoute
-  '/$tenant/$locale/healthcare/$id': typeof TenantLocaleHealthcareIdRoute
-  '/$tenant/$locale/legal/$id': typeof TenantLocaleLegalIdRoute
-  '/$tenant/$locale/memberships/$id': typeof TenantLocaleMembershipsIdRoute
-  '/$tenant/$locale/parking/$id': typeof TenantLocaleParkingIdRoute
-  '/$tenant/$locale/pet-services/$id': typeof TenantLocalePetServicesIdRoute
   '/$tenant/$locale/products/$handle': typeof TenantLocaleProductsHandleRoute
   '/$tenant/$locale/quotes/$id': typeof TenantLocaleQuotesIdRoute
   '/$tenant/$locale/quotes/request': typeof TenantLocaleQuotesRequestRoute
-  '/$tenant/$locale/real-estate/$id': typeof TenantLocaleRealEstateIdRoute
-  '/$tenant/$locale/rentals/$id': typeof TenantLocaleRentalsIdRoute
-  '/$tenant/$locale/restaurants/$id': typeof TenantLocaleRestaurantsIdRoute
-  '/$tenant/$locale/social-commerce/$id': typeof TenantLocaleSocialCommerceIdRoute
   '/$tenant/$locale/subscriptions/checkout': typeof TenantLocaleSubscriptionsCheckoutRoute
   '/$tenant/$locale/subscriptions/success': typeof TenantLocaleSubscriptionsSuccessRoute
-  '/$tenant/$locale/travel/$id': typeof TenantLocaleTravelIdRoute
-  '/$tenant/$locale/utilities/$id': typeof TenantLocaleUtilitiesIdRoute
   '/$tenant/$locale/vendor/commissions': typeof TenantLocaleVendorCommissionsRoute
   '/$tenant/$locale/vendor/payouts': typeof TenantLocaleVendorPayoutsRouteWithChildren
   '/$tenant/$locale/vendor/register': typeof TenantLocaleVendorRegisterRoute
   '/$tenant/$locale/vendors/$handle': typeof TenantLocaleVendorsHandleRouteWithChildren
-  '/$tenant/$locale/warranties/$id': typeof TenantLocaleWarrantiesIdRoute
   '/$countryCode/account/bookings/': typeof CountryCodeAccountBookingsIndexRoute
   '/$countryCode/account/orders/': typeof CountryCodeAccountOrdersIndexRoute
   '/$countryCode/account/purchase-orders/': typeof CountryCodeAccountPurchaseOrdersIndexRoute
@@ -1765,38 +1267,11 @@ export interface FileRoutesById {
   '/$countryCode/vendor/payouts/': typeof CountryCodeVendorPayoutsIndexRoute
   '/$countryCode/vendor/products/': typeof CountryCodeVendorProductsIndexRoute
   '/$tenant/$locale/account/': typeof TenantLocaleAccountIndexRoute
-  '/$tenant/$locale/advertising/': typeof TenantLocaleAdvertisingIndexRoute
-  '/$tenant/$locale/affiliates/': typeof TenantLocaleAffiliatesIndexRoute
-  '/$tenant/$locale/auctions/': typeof TenantLocaleAuctionsIndexRoute
-  '/$tenant/$locale/automotive/': typeof TenantLocaleAutomotiveIndexRoute
   '/$tenant/$locale/bookings/': typeof TenantLocaleBookingsIndexRoute
-  '/$tenant/$locale/charity/': typeof TenantLocaleCharityIndexRoute
-  '/$tenant/$locale/classifieds/': typeof TenantLocaleClassifiedsIndexRoute
-  '/$tenant/$locale/crowdfunding/': typeof TenantLocaleCrowdfundingIndexRoute
-  '/$tenant/$locale/digital-products/': typeof TenantLocaleDigitalProductsIndexRoute
-  '/$tenant/$locale/education/': typeof TenantLocaleEducationIndexRoute
-  '/$tenant/$locale/events/': typeof TenantLocaleEventsIndexRoute
-  '/$tenant/$locale/financial-products/': typeof TenantLocaleFinancialProductsIndexRoute
-  '/$tenant/$locale/fitness/': typeof TenantLocaleFitnessIndexRoute
-  '/$tenant/$locale/freelance/': typeof TenantLocaleFreelanceIndexRoute
-  '/$tenant/$locale/government/': typeof TenantLocaleGovernmentIndexRoute
-  '/$tenant/$locale/grocery/': typeof TenantLocaleGroceryIndexRoute
-  '/$tenant/$locale/healthcare/': typeof TenantLocaleHealthcareIndexRoute
-  '/$tenant/$locale/legal/': typeof TenantLocaleLegalIndexRoute
-  '/$tenant/$locale/memberships/': typeof TenantLocaleMembershipsIndexRoute
-  '/$tenant/$locale/parking/': typeof TenantLocaleParkingIndexRoute
-  '/$tenant/$locale/pet-services/': typeof TenantLocalePetServicesIndexRoute
   '/$tenant/$locale/quotes/': typeof TenantLocaleQuotesIndexRoute
-  '/$tenant/$locale/real-estate/': typeof TenantLocaleRealEstateIndexRoute
-  '/$tenant/$locale/rentals/': typeof TenantLocaleRentalsIndexRoute
-  '/$tenant/$locale/restaurants/': typeof TenantLocaleRestaurantsIndexRoute
-  '/$tenant/$locale/social-commerce/': typeof TenantLocaleSocialCommerceIndexRoute
   '/$tenant/$locale/subscriptions/': typeof TenantLocaleSubscriptionsIndexRoute
-  '/$tenant/$locale/travel/': typeof TenantLocaleTravelIndexRoute
-  '/$tenant/$locale/utilities/': typeof TenantLocaleUtilitiesIndexRoute
   '/$tenant/$locale/vendor/': typeof TenantLocaleVendorIndexRoute
   '/$tenant/$locale/vendors/': typeof TenantLocaleVendorsIndexRoute
-  '/$tenant/$locale/warranties/': typeof TenantLocaleWarrantiesIndexRoute
   '/$countryCode/account/orders/$id/return': typeof CountryCodeAccountOrdersIdReturnRoute
   '/$countryCode/account/orders/$id/track': typeof CountryCodeAccountOrdersIdTrackRoute
   '/$countryCode/account/subscriptions/$id/billing': typeof CountryCodeAccountSubscriptionsIdBillingRoute
@@ -1903,10 +1378,6 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/account/addresses'
     | '/$tenant/$locale/account/profile'
     | '/$tenant/$locale/account/settings'
-    | '/$tenant/$locale/advertising/$id'
-    | '/$tenant/$locale/affiliates/$id'
-    | '/$tenant/$locale/auctions/$id'
-    | '/$tenant/$locale/automotive/$id'
     | '/$tenant/$locale/b2b/dashboard'
     | '/$tenant/$locale/b2b/register'
     | '/$tenant/$locale/bookings/$serviceHandle'
@@ -1915,38 +1386,15 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/business/orders'
     | '/$tenant/$locale/business/team'
     | '/$tenant/$locale/categories/$handle'
-    | '/$tenant/$locale/charity/$id'
-    | '/$tenant/$locale/classifieds/$id'
-    | '/$tenant/$locale/crowdfunding/$id'
-    | '/$tenant/$locale/digital-products/$id'
-    | '/$tenant/$locale/education/$id'
-    | '/$tenant/$locale/events/$id'
-    | '/$tenant/$locale/financial-products/$id'
-    | '/$tenant/$locale/fitness/$id'
-    | '/$tenant/$locale/freelance/$id'
-    | '/$tenant/$locale/government/$id'
-    | '/$tenant/$locale/grocery/$id'
-    | '/$tenant/$locale/healthcare/$id'
-    | '/$tenant/$locale/legal/$id'
-    | '/$tenant/$locale/memberships/$id'
-    | '/$tenant/$locale/parking/$id'
-    | '/$tenant/$locale/pet-services/$id'
     | '/$tenant/$locale/products/$handle'
     | '/$tenant/$locale/quotes/$id'
     | '/$tenant/$locale/quotes/request'
-    | '/$tenant/$locale/real-estate/$id'
-    | '/$tenant/$locale/rentals/$id'
-    | '/$tenant/$locale/restaurants/$id'
-    | '/$tenant/$locale/social-commerce/$id'
     | '/$tenant/$locale/subscriptions/checkout'
     | '/$tenant/$locale/subscriptions/success'
-    | '/$tenant/$locale/travel/$id'
-    | '/$tenant/$locale/utilities/$id'
     | '/$tenant/$locale/vendor/commissions'
     | '/$tenant/$locale/vendor/payouts'
     | '/$tenant/$locale/vendor/register'
     | '/$tenant/$locale/vendors/$handle'
-    | '/$tenant/$locale/warranties/$id'
     | '/$countryCode/account/bookings'
     | '/$countryCode/account/orders'
     | '/$countryCode/account/purchase-orders'
@@ -1955,38 +1403,11 @@ export interface FileRouteTypes {
     | '/$countryCode/vendor/payouts/'
     | '/$countryCode/vendor/products'
     | '/$tenant/$locale/account'
-    | '/$tenant/$locale/advertising'
-    | '/$tenant/$locale/affiliates'
-    | '/$tenant/$locale/auctions'
-    | '/$tenant/$locale/automotive'
     | '/$tenant/$locale/bookings'
-    | '/$tenant/$locale/charity'
-    | '/$tenant/$locale/classifieds'
-    | '/$tenant/$locale/crowdfunding'
-    | '/$tenant/$locale/digital-products'
-    | '/$tenant/$locale/education'
-    | '/$tenant/$locale/events'
-    | '/$tenant/$locale/financial-products'
-    | '/$tenant/$locale/fitness'
-    | '/$tenant/$locale/freelance'
-    | '/$tenant/$locale/government'
-    | '/$tenant/$locale/grocery'
-    | '/$tenant/$locale/healthcare'
-    | '/$tenant/$locale/legal'
-    | '/$tenant/$locale/memberships'
-    | '/$tenant/$locale/parking'
-    | '/$tenant/$locale/pet-services'
     | '/$tenant/$locale/quotes'
-    | '/$tenant/$locale/real-estate'
-    | '/$tenant/$locale/rentals'
-    | '/$tenant/$locale/restaurants'
-    | '/$tenant/$locale/social-commerce'
     | '/$tenant/$locale/subscriptions'
-    | '/$tenant/$locale/travel'
-    | '/$tenant/$locale/utilities'
     | '/$tenant/$locale/vendor'
     | '/$tenant/$locale/vendors'
-    | '/$tenant/$locale/warranties'
     | '/$countryCode/account/orders/$id/return'
     | '/$countryCode/account/orders/$id/track'
     | '/$countryCode/account/subscriptions/$id/billing'
@@ -2088,10 +1509,6 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/account/addresses'
     | '/$tenant/$locale/account/profile'
     | '/$tenant/$locale/account/settings'
-    | '/$tenant/$locale/advertising/$id'
-    | '/$tenant/$locale/affiliates/$id'
-    | '/$tenant/$locale/auctions/$id'
-    | '/$tenant/$locale/automotive/$id'
     | '/$tenant/$locale/b2b/dashboard'
     | '/$tenant/$locale/b2b/register'
     | '/$tenant/$locale/bookings/$serviceHandle'
@@ -2100,37 +1517,14 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/business/orders'
     | '/$tenant/$locale/business/team'
     | '/$tenant/$locale/categories/$handle'
-    | '/$tenant/$locale/charity/$id'
-    | '/$tenant/$locale/classifieds/$id'
-    | '/$tenant/$locale/crowdfunding/$id'
-    | '/$tenant/$locale/digital-products/$id'
-    | '/$tenant/$locale/education/$id'
-    | '/$tenant/$locale/events/$id'
-    | '/$tenant/$locale/financial-products/$id'
-    | '/$tenant/$locale/fitness/$id'
-    | '/$tenant/$locale/freelance/$id'
-    | '/$tenant/$locale/government/$id'
-    | '/$tenant/$locale/grocery/$id'
-    | '/$tenant/$locale/healthcare/$id'
-    | '/$tenant/$locale/legal/$id'
-    | '/$tenant/$locale/memberships/$id'
-    | '/$tenant/$locale/parking/$id'
-    | '/$tenant/$locale/pet-services/$id'
     | '/$tenant/$locale/products/$handle'
     | '/$tenant/$locale/quotes/$id'
     | '/$tenant/$locale/quotes/request'
-    | '/$tenant/$locale/real-estate/$id'
-    | '/$tenant/$locale/rentals/$id'
-    | '/$tenant/$locale/restaurants/$id'
-    | '/$tenant/$locale/social-commerce/$id'
     | '/$tenant/$locale/subscriptions/checkout'
     | '/$tenant/$locale/subscriptions/success'
-    | '/$tenant/$locale/travel/$id'
-    | '/$tenant/$locale/utilities/$id'
     | '/$tenant/$locale/vendor/commissions'
     | '/$tenant/$locale/vendor/register'
     | '/$tenant/$locale/vendors/$handle'
-    | '/$tenant/$locale/warranties/$id'
     | '/$countryCode/account/bookings'
     | '/$countryCode/account/orders'
     | '/$countryCode/account/purchase-orders'
@@ -2139,38 +1533,11 @@ export interface FileRouteTypes {
     | '/$countryCode/vendor/payouts'
     | '/$countryCode/vendor/products'
     | '/$tenant/$locale/account'
-    | '/$tenant/$locale/advertising'
-    | '/$tenant/$locale/affiliates'
-    | '/$tenant/$locale/auctions'
-    | '/$tenant/$locale/automotive'
     | '/$tenant/$locale/bookings'
-    | '/$tenant/$locale/charity'
-    | '/$tenant/$locale/classifieds'
-    | '/$tenant/$locale/crowdfunding'
-    | '/$tenant/$locale/digital-products'
-    | '/$tenant/$locale/education'
-    | '/$tenant/$locale/events'
-    | '/$tenant/$locale/financial-products'
-    | '/$tenant/$locale/fitness'
-    | '/$tenant/$locale/freelance'
-    | '/$tenant/$locale/government'
-    | '/$tenant/$locale/grocery'
-    | '/$tenant/$locale/healthcare'
-    | '/$tenant/$locale/legal'
-    | '/$tenant/$locale/memberships'
-    | '/$tenant/$locale/parking'
-    | '/$tenant/$locale/pet-services'
     | '/$tenant/$locale/quotes'
-    | '/$tenant/$locale/real-estate'
-    | '/$tenant/$locale/rentals'
-    | '/$tenant/$locale/restaurants'
-    | '/$tenant/$locale/social-commerce'
     | '/$tenant/$locale/subscriptions'
-    | '/$tenant/$locale/travel'
-    | '/$tenant/$locale/utilities'
     | '/$tenant/$locale/vendor'
     | '/$tenant/$locale/vendors'
-    | '/$tenant/$locale/warranties'
     | '/$countryCode/account/orders/$id/return'
     | '/$countryCode/account/orders/$id/track'
     | '/$countryCode/account/subscriptions/$id/billing'
@@ -2275,10 +1642,6 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/account/addresses'
     | '/$tenant/$locale/account/profile'
     | '/$tenant/$locale/account/settings'
-    | '/$tenant/$locale/advertising/$id'
-    | '/$tenant/$locale/affiliates/$id'
-    | '/$tenant/$locale/auctions/$id'
-    | '/$tenant/$locale/automotive/$id'
     | '/$tenant/$locale/b2b/dashboard'
     | '/$tenant/$locale/b2b/register'
     | '/$tenant/$locale/bookings/$serviceHandle'
@@ -2287,38 +1650,15 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/business/orders'
     | '/$tenant/$locale/business/team'
     | '/$tenant/$locale/categories/$handle'
-    | '/$tenant/$locale/charity/$id'
-    | '/$tenant/$locale/classifieds/$id'
-    | '/$tenant/$locale/crowdfunding/$id'
-    | '/$tenant/$locale/digital-products/$id'
-    | '/$tenant/$locale/education/$id'
-    | '/$tenant/$locale/events/$id'
-    | '/$tenant/$locale/financial-products/$id'
-    | '/$tenant/$locale/fitness/$id'
-    | '/$tenant/$locale/freelance/$id'
-    | '/$tenant/$locale/government/$id'
-    | '/$tenant/$locale/grocery/$id'
-    | '/$tenant/$locale/healthcare/$id'
-    | '/$tenant/$locale/legal/$id'
-    | '/$tenant/$locale/memberships/$id'
-    | '/$tenant/$locale/parking/$id'
-    | '/$tenant/$locale/pet-services/$id'
     | '/$tenant/$locale/products/$handle'
     | '/$tenant/$locale/quotes/$id'
     | '/$tenant/$locale/quotes/request'
-    | '/$tenant/$locale/real-estate/$id'
-    | '/$tenant/$locale/rentals/$id'
-    | '/$tenant/$locale/restaurants/$id'
-    | '/$tenant/$locale/social-commerce/$id'
     | '/$tenant/$locale/subscriptions/checkout'
     | '/$tenant/$locale/subscriptions/success'
-    | '/$tenant/$locale/travel/$id'
-    | '/$tenant/$locale/utilities/$id'
     | '/$tenant/$locale/vendor/commissions'
     | '/$tenant/$locale/vendor/payouts'
     | '/$tenant/$locale/vendor/register'
     | '/$tenant/$locale/vendors/$handle'
-    | '/$tenant/$locale/warranties/$id'
     | '/$countryCode/account/bookings/'
     | '/$countryCode/account/orders/'
     | '/$countryCode/account/purchase-orders/'
@@ -2327,38 +1667,11 @@ export interface FileRouteTypes {
     | '/$countryCode/vendor/payouts/'
     | '/$countryCode/vendor/products/'
     | '/$tenant/$locale/account/'
-    | '/$tenant/$locale/advertising/'
-    | '/$tenant/$locale/affiliates/'
-    | '/$tenant/$locale/auctions/'
-    | '/$tenant/$locale/automotive/'
     | '/$tenant/$locale/bookings/'
-    | '/$tenant/$locale/charity/'
-    | '/$tenant/$locale/classifieds/'
-    | '/$tenant/$locale/crowdfunding/'
-    | '/$tenant/$locale/digital-products/'
-    | '/$tenant/$locale/education/'
-    | '/$tenant/$locale/events/'
-    | '/$tenant/$locale/financial-products/'
-    | '/$tenant/$locale/fitness/'
-    | '/$tenant/$locale/freelance/'
-    | '/$tenant/$locale/government/'
-    | '/$tenant/$locale/grocery/'
-    | '/$tenant/$locale/healthcare/'
-    | '/$tenant/$locale/legal/'
-    | '/$tenant/$locale/memberships/'
-    | '/$tenant/$locale/parking/'
-    | '/$tenant/$locale/pet-services/'
     | '/$tenant/$locale/quotes/'
-    | '/$tenant/$locale/real-estate/'
-    | '/$tenant/$locale/rentals/'
-    | '/$tenant/$locale/restaurants/'
-    | '/$tenant/$locale/social-commerce/'
     | '/$tenant/$locale/subscriptions/'
-    | '/$tenant/$locale/travel/'
-    | '/$tenant/$locale/utilities/'
     | '/$tenant/$locale/vendor/'
     | '/$tenant/$locale/vendors/'
-    | '/$tenant/$locale/warranties/'
     | '/$countryCode/account/orders/$id/return'
     | '/$countryCode/account/orders/$id/track'
     | '/$countryCode/account/subscriptions/$id/billing'
@@ -2890,13 +2203,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CountryCodeAccountAddressesRouteImport
       parentRoute: typeof CountryCodeRoute
     }
-    '/$tenant/$locale/warranties/': {
-      id: '/$tenant/$locale/warranties/'
-      path: '/warranties'
-      fullPath: '/$tenant/$locale/warranties'
-      preLoaderRoute: typeof TenantLocaleWarrantiesIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
     '/$tenant/$locale/vendors/': {
       id: '/$tenant/$locale/vendors/'
       path: '/vendors'
@@ -2911,53 +2217,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleVendorIndexRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
-    '/$tenant/$locale/utilities/': {
-      id: '/$tenant/$locale/utilities/'
-      path: '/utilities'
-      fullPath: '/$tenant/$locale/utilities'
-      preLoaderRoute: typeof TenantLocaleUtilitiesIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/travel/': {
-      id: '/$tenant/$locale/travel/'
-      path: '/travel'
-      fullPath: '/$tenant/$locale/travel'
-      preLoaderRoute: typeof TenantLocaleTravelIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
     '/$tenant/$locale/subscriptions/': {
       id: '/$tenant/$locale/subscriptions/'
       path: '/subscriptions'
       fullPath: '/$tenant/$locale/subscriptions'
       preLoaderRoute: typeof TenantLocaleSubscriptionsIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/social-commerce/': {
-      id: '/$tenant/$locale/social-commerce/'
-      path: '/social-commerce'
-      fullPath: '/$tenant/$locale/social-commerce'
-      preLoaderRoute: typeof TenantLocaleSocialCommerceIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/restaurants/': {
-      id: '/$tenant/$locale/restaurants/'
-      path: '/restaurants'
-      fullPath: '/$tenant/$locale/restaurants'
-      preLoaderRoute: typeof TenantLocaleRestaurantsIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/rentals/': {
-      id: '/$tenant/$locale/rentals/'
-      path: '/rentals'
-      fullPath: '/$tenant/$locale/rentals'
-      preLoaderRoute: typeof TenantLocaleRentalsIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/real-estate/': {
-      id: '/$tenant/$locale/real-estate/'
-      path: '/real-estate'
-      fullPath: '/$tenant/$locale/real-estate'
-      preLoaderRoute: typeof TenantLocaleRealEstateIndexRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$tenant/$locale/quotes/': {
@@ -2967,151 +2231,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleQuotesIndexRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
-    '/$tenant/$locale/pet-services/': {
-      id: '/$tenant/$locale/pet-services/'
-      path: '/pet-services'
-      fullPath: '/$tenant/$locale/pet-services'
-      preLoaderRoute: typeof TenantLocalePetServicesIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/parking/': {
-      id: '/$tenant/$locale/parking/'
-      path: '/parking'
-      fullPath: '/$tenant/$locale/parking'
-      preLoaderRoute: typeof TenantLocaleParkingIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/memberships/': {
-      id: '/$tenant/$locale/memberships/'
-      path: '/memberships'
-      fullPath: '/$tenant/$locale/memberships'
-      preLoaderRoute: typeof TenantLocaleMembershipsIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/legal/': {
-      id: '/$tenant/$locale/legal/'
-      path: '/legal'
-      fullPath: '/$tenant/$locale/legal'
-      preLoaderRoute: typeof TenantLocaleLegalIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/healthcare/': {
-      id: '/$tenant/$locale/healthcare/'
-      path: '/healthcare'
-      fullPath: '/$tenant/$locale/healthcare'
-      preLoaderRoute: typeof TenantLocaleHealthcareIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/grocery/': {
-      id: '/$tenant/$locale/grocery/'
-      path: '/grocery'
-      fullPath: '/$tenant/$locale/grocery'
-      preLoaderRoute: typeof TenantLocaleGroceryIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/government/': {
-      id: '/$tenant/$locale/government/'
-      path: '/government'
-      fullPath: '/$tenant/$locale/government'
-      preLoaderRoute: typeof TenantLocaleGovernmentIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/freelance/': {
-      id: '/$tenant/$locale/freelance/'
-      path: '/freelance'
-      fullPath: '/$tenant/$locale/freelance'
-      preLoaderRoute: typeof TenantLocaleFreelanceIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/fitness/': {
-      id: '/$tenant/$locale/fitness/'
-      path: '/fitness'
-      fullPath: '/$tenant/$locale/fitness'
-      preLoaderRoute: typeof TenantLocaleFitnessIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/financial-products/': {
-      id: '/$tenant/$locale/financial-products/'
-      path: '/financial-products'
-      fullPath: '/$tenant/$locale/financial-products'
-      preLoaderRoute: typeof TenantLocaleFinancialProductsIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/events/': {
-      id: '/$tenant/$locale/events/'
-      path: '/events'
-      fullPath: '/$tenant/$locale/events'
-      preLoaderRoute: typeof TenantLocaleEventsIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/education/': {
-      id: '/$tenant/$locale/education/'
-      path: '/education'
-      fullPath: '/$tenant/$locale/education'
-      preLoaderRoute: typeof TenantLocaleEducationIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/digital-products/': {
-      id: '/$tenant/$locale/digital-products/'
-      path: '/digital-products'
-      fullPath: '/$tenant/$locale/digital-products'
-      preLoaderRoute: typeof TenantLocaleDigitalProductsIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/crowdfunding/': {
-      id: '/$tenant/$locale/crowdfunding/'
-      path: '/crowdfunding'
-      fullPath: '/$tenant/$locale/crowdfunding'
-      preLoaderRoute: typeof TenantLocaleCrowdfundingIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/classifieds/': {
-      id: '/$tenant/$locale/classifieds/'
-      path: '/classifieds'
-      fullPath: '/$tenant/$locale/classifieds'
-      preLoaderRoute: typeof TenantLocaleClassifiedsIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/charity/': {
-      id: '/$tenant/$locale/charity/'
-      path: '/charity'
-      fullPath: '/$tenant/$locale/charity'
-      preLoaderRoute: typeof TenantLocaleCharityIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
     '/$tenant/$locale/bookings/': {
       id: '/$tenant/$locale/bookings/'
       path: '/bookings'
       fullPath: '/$tenant/$locale/bookings'
       preLoaderRoute: typeof TenantLocaleBookingsIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/automotive/': {
-      id: '/$tenant/$locale/automotive/'
-      path: '/automotive'
-      fullPath: '/$tenant/$locale/automotive'
-      preLoaderRoute: typeof TenantLocaleAutomotiveIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/auctions/': {
-      id: '/$tenant/$locale/auctions/'
-      path: '/auctions'
-      fullPath: '/$tenant/$locale/auctions'
-      preLoaderRoute: typeof TenantLocaleAuctionsIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/affiliates/': {
-      id: '/$tenant/$locale/affiliates/'
-      path: '/affiliates'
-      fullPath: '/$tenant/$locale/affiliates'
-      preLoaderRoute: typeof TenantLocaleAffiliatesIndexRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/advertising/': {
-      id: '/$tenant/$locale/advertising/'
-      path: '/advertising'
-      fullPath: '/$tenant/$locale/advertising'
-      preLoaderRoute: typeof TenantLocaleAdvertisingIndexRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$tenant/$locale/account/': {
@@ -3170,13 +2294,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CountryCodeAccountBookingsIndexRouteImport
       parentRoute: typeof CountryCodeRoute
     }
-    '/$tenant/$locale/warranties/$id': {
-      id: '/$tenant/$locale/warranties/$id'
-      path: '/warranties/$id'
-      fullPath: '/$tenant/$locale/warranties/$id'
-      preLoaderRoute: typeof TenantLocaleWarrantiesIdRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
     '/$tenant/$locale/vendors/$handle': {
       id: '/$tenant/$locale/vendors/$handle'
       path: '/vendors/$handle'
@@ -3205,20 +2322,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleVendorCommissionsRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
-    '/$tenant/$locale/utilities/$id': {
-      id: '/$tenant/$locale/utilities/$id'
-      path: '/utilities/$id'
-      fullPath: '/$tenant/$locale/utilities/$id'
-      preLoaderRoute: typeof TenantLocaleUtilitiesIdRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/travel/$id': {
-      id: '/$tenant/$locale/travel/$id'
-      path: '/travel/$id'
-      fullPath: '/$tenant/$locale/travel/$id'
-      preLoaderRoute: typeof TenantLocaleTravelIdRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
     '/$tenant/$locale/subscriptions/success': {
       id: '/$tenant/$locale/subscriptions/success'
       path: '/subscriptions/success'
@@ -3231,34 +2334,6 @@ declare module '@tanstack/react-router' {
       path: '/subscriptions/checkout'
       fullPath: '/$tenant/$locale/subscriptions/checkout'
       preLoaderRoute: typeof TenantLocaleSubscriptionsCheckoutRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/social-commerce/$id': {
-      id: '/$tenant/$locale/social-commerce/$id'
-      path: '/social-commerce/$id'
-      fullPath: '/$tenant/$locale/social-commerce/$id'
-      preLoaderRoute: typeof TenantLocaleSocialCommerceIdRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/restaurants/$id': {
-      id: '/$tenant/$locale/restaurants/$id'
-      path: '/restaurants/$id'
-      fullPath: '/$tenant/$locale/restaurants/$id'
-      preLoaderRoute: typeof TenantLocaleRestaurantsIdRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/rentals/$id': {
-      id: '/$tenant/$locale/rentals/$id'
-      path: '/rentals/$id'
-      fullPath: '/$tenant/$locale/rentals/$id'
-      preLoaderRoute: typeof TenantLocaleRentalsIdRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/real-estate/$id': {
-      id: '/$tenant/$locale/real-estate/$id'
-      path: '/real-estate/$id'
-      fullPath: '/$tenant/$locale/real-estate/$id'
-      preLoaderRoute: typeof TenantLocaleRealEstateIdRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$tenant/$locale/quotes/request': {
@@ -3280,118 +2355,6 @@ declare module '@tanstack/react-router' {
       path: '/products/$handle'
       fullPath: '/$tenant/$locale/products/$handle'
       preLoaderRoute: typeof TenantLocaleProductsHandleRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/pet-services/$id': {
-      id: '/$tenant/$locale/pet-services/$id'
-      path: '/pet-services/$id'
-      fullPath: '/$tenant/$locale/pet-services/$id'
-      preLoaderRoute: typeof TenantLocalePetServicesIdRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/parking/$id': {
-      id: '/$tenant/$locale/parking/$id'
-      path: '/parking/$id'
-      fullPath: '/$tenant/$locale/parking/$id'
-      preLoaderRoute: typeof TenantLocaleParkingIdRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/memberships/$id': {
-      id: '/$tenant/$locale/memberships/$id'
-      path: '/memberships/$id'
-      fullPath: '/$tenant/$locale/memberships/$id'
-      preLoaderRoute: typeof TenantLocaleMembershipsIdRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/legal/$id': {
-      id: '/$tenant/$locale/legal/$id'
-      path: '/legal/$id'
-      fullPath: '/$tenant/$locale/legal/$id'
-      preLoaderRoute: typeof TenantLocaleLegalIdRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/healthcare/$id': {
-      id: '/$tenant/$locale/healthcare/$id'
-      path: '/healthcare/$id'
-      fullPath: '/$tenant/$locale/healthcare/$id'
-      preLoaderRoute: typeof TenantLocaleHealthcareIdRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/grocery/$id': {
-      id: '/$tenant/$locale/grocery/$id'
-      path: '/grocery/$id'
-      fullPath: '/$tenant/$locale/grocery/$id'
-      preLoaderRoute: typeof TenantLocaleGroceryIdRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/government/$id': {
-      id: '/$tenant/$locale/government/$id'
-      path: '/government/$id'
-      fullPath: '/$tenant/$locale/government/$id'
-      preLoaderRoute: typeof TenantLocaleGovernmentIdRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/freelance/$id': {
-      id: '/$tenant/$locale/freelance/$id'
-      path: '/freelance/$id'
-      fullPath: '/$tenant/$locale/freelance/$id'
-      preLoaderRoute: typeof TenantLocaleFreelanceIdRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/fitness/$id': {
-      id: '/$tenant/$locale/fitness/$id'
-      path: '/fitness/$id'
-      fullPath: '/$tenant/$locale/fitness/$id'
-      preLoaderRoute: typeof TenantLocaleFitnessIdRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/financial-products/$id': {
-      id: '/$tenant/$locale/financial-products/$id'
-      path: '/financial-products/$id'
-      fullPath: '/$tenant/$locale/financial-products/$id'
-      preLoaderRoute: typeof TenantLocaleFinancialProductsIdRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/events/$id': {
-      id: '/$tenant/$locale/events/$id'
-      path: '/events/$id'
-      fullPath: '/$tenant/$locale/events/$id'
-      preLoaderRoute: typeof TenantLocaleEventsIdRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/education/$id': {
-      id: '/$tenant/$locale/education/$id'
-      path: '/education/$id'
-      fullPath: '/$tenant/$locale/education/$id'
-      preLoaderRoute: typeof TenantLocaleEducationIdRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/digital-products/$id': {
-      id: '/$tenant/$locale/digital-products/$id'
-      path: '/digital-products/$id'
-      fullPath: '/$tenant/$locale/digital-products/$id'
-      preLoaderRoute: typeof TenantLocaleDigitalProductsIdRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/crowdfunding/$id': {
-      id: '/$tenant/$locale/crowdfunding/$id'
-      path: '/crowdfunding/$id'
-      fullPath: '/$tenant/$locale/crowdfunding/$id'
-      preLoaderRoute: typeof TenantLocaleCrowdfundingIdRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/classifieds/$id': {
-      id: '/$tenant/$locale/classifieds/$id'
-      path: '/classifieds/$id'
-      fullPath: '/$tenant/$locale/classifieds/$id'
-      preLoaderRoute: typeof TenantLocaleClassifiedsIdRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/charity/$id': {
-      id: '/$tenant/$locale/charity/$id'
-      path: '/charity/$id'
-      fullPath: '/$tenant/$locale/charity/$id'
-      preLoaderRoute: typeof TenantLocaleCharityIdRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$tenant/$locale/categories/$handle': {
@@ -3448,34 +2411,6 @@ declare module '@tanstack/react-router' {
       path: '/b2b/dashboard'
       fullPath: '/$tenant/$locale/b2b/dashboard'
       preLoaderRoute: typeof TenantLocaleB2bDashboardRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/automotive/$id': {
-      id: '/$tenant/$locale/automotive/$id'
-      path: '/automotive/$id'
-      fullPath: '/$tenant/$locale/automotive/$id'
-      preLoaderRoute: typeof TenantLocaleAutomotiveIdRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/auctions/$id': {
-      id: '/$tenant/$locale/auctions/$id'
-      path: '/auctions/$id'
-      fullPath: '/$tenant/$locale/auctions/$id'
-      preLoaderRoute: typeof TenantLocaleAuctionsIdRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/affiliates/$id': {
-      id: '/$tenant/$locale/affiliates/$id'
-      path: '/affiliates/$id'
-      fullPath: '/$tenant/$locale/affiliates/$id'
-      preLoaderRoute: typeof TenantLocaleAffiliatesIdRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/advertising/$id': {
-      id: '/$tenant/$locale/advertising/$id'
-      path: '/advertising/$id'
-      fullPath: '/$tenant/$locale/advertising/$id'
-      preLoaderRoute: typeof TenantLocaleAdvertisingIdRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$tenant/$locale/account/settings': {
@@ -4004,10 +2939,6 @@ interface TenantLocaleRouteChildren {
   TenantLocaleAccountAddressesRoute: typeof TenantLocaleAccountAddressesRoute
   TenantLocaleAccountProfileRoute: typeof TenantLocaleAccountProfileRoute
   TenantLocaleAccountSettingsRoute: typeof TenantLocaleAccountSettingsRoute
-  TenantLocaleAdvertisingIdRoute: typeof TenantLocaleAdvertisingIdRoute
-  TenantLocaleAffiliatesIdRoute: typeof TenantLocaleAffiliatesIdRoute
-  TenantLocaleAuctionsIdRoute: typeof TenantLocaleAuctionsIdRoute
-  TenantLocaleAutomotiveIdRoute: typeof TenantLocaleAutomotiveIdRoute
   TenantLocaleB2bDashboardRoute: typeof TenantLocaleB2bDashboardRoute
   TenantLocaleB2bRegisterRoute: typeof TenantLocaleB2bRegisterRoute
   TenantLocaleBookingsServiceHandleRoute: typeof TenantLocaleBookingsServiceHandleRoute
@@ -4016,71 +2947,21 @@ interface TenantLocaleRouteChildren {
   TenantLocaleBusinessOrdersRoute: typeof TenantLocaleBusinessOrdersRoute
   TenantLocaleBusinessTeamRoute: typeof TenantLocaleBusinessTeamRoute
   TenantLocaleCategoriesHandleRoute: typeof TenantLocaleCategoriesHandleRoute
-  TenantLocaleCharityIdRoute: typeof TenantLocaleCharityIdRoute
-  TenantLocaleClassifiedsIdRoute: typeof TenantLocaleClassifiedsIdRoute
-  TenantLocaleCrowdfundingIdRoute: typeof TenantLocaleCrowdfundingIdRoute
-  TenantLocaleDigitalProductsIdRoute: typeof TenantLocaleDigitalProductsIdRoute
-  TenantLocaleEducationIdRoute: typeof TenantLocaleEducationIdRoute
-  TenantLocaleEventsIdRoute: typeof TenantLocaleEventsIdRoute
-  TenantLocaleFinancialProductsIdRoute: typeof TenantLocaleFinancialProductsIdRoute
-  TenantLocaleFitnessIdRoute: typeof TenantLocaleFitnessIdRoute
-  TenantLocaleFreelanceIdRoute: typeof TenantLocaleFreelanceIdRoute
-  TenantLocaleGovernmentIdRoute: typeof TenantLocaleGovernmentIdRoute
-  TenantLocaleGroceryIdRoute: typeof TenantLocaleGroceryIdRoute
-  TenantLocaleHealthcareIdRoute: typeof TenantLocaleHealthcareIdRoute
-  TenantLocaleLegalIdRoute: typeof TenantLocaleLegalIdRoute
-  TenantLocaleMembershipsIdRoute: typeof TenantLocaleMembershipsIdRoute
-  TenantLocaleParkingIdRoute: typeof TenantLocaleParkingIdRoute
-  TenantLocalePetServicesIdRoute: typeof TenantLocalePetServicesIdRoute
   TenantLocaleProductsHandleRoute: typeof TenantLocaleProductsHandleRoute
   TenantLocaleQuotesIdRoute: typeof TenantLocaleQuotesIdRoute
   TenantLocaleQuotesRequestRoute: typeof TenantLocaleQuotesRequestRoute
-  TenantLocaleRealEstateIdRoute: typeof TenantLocaleRealEstateIdRoute
-  TenantLocaleRentalsIdRoute: typeof TenantLocaleRentalsIdRoute
-  TenantLocaleRestaurantsIdRoute: typeof TenantLocaleRestaurantsIdRoute
-  TenantLocaleSocialCommerceIdRoute: typeof TenantLocaleSocialCommerceIdRoute
   TenantLocaleSubscriptionsCheckoutRoute: typeof TenantLocaleSubscriptionsCheckoutRoute
   TenantLocaleSubscriptionsSuccessRoute: typeof TenantLocaleSubscriptionsSuccessRoute
-  TenantLocaleTravelIdRoute: typeof TenantLocaleTravelIdRoute
-  TenantLocaleUtilitiesIdRoute: typeof TenantLocaleUtilitiesIdRoute
   TenantLocaleVendorCommissionsRoute: typeof TenantLocaleVendorCommissionsRoute
   TenantLocaleVendorPayoutsRoute: typeof TenantLocaleVendorPayoutsRouteWithChildren
   TenantLocaleVendorRegisterRoute: typeof TenantLocaleVendorRegisterRoute
   TenantLocaleVendorsHandleRoute: typeof TenantLocaleVendorsHandleRouteWithChildren
-  TenantLocaleWarrantiesIdRoute: typeof TenantLocaleWarrantiesIdRoute
   TenantLocaleAccountIndexRoute: typeof TenantLocaleAccountIndexRoute
-  TenantLocaleAdvertisingIndexRoute: typeof TenantLocaleAdvertisingIndexRoute
-  TenantLocaleAffiliatesIndexRoute: typeof TenantLocaleAffiliatesIndexRoute
-  TenantLocaleAuctionsIndexRoute: typeof TenantLocaleAuctionsIndexRoute
-  TenantLocaleAutomotiveIndexRoute: typeof TenantLocaleAutomotiveIndexRoute
   TenantLocaleBookingsIndexRoute: typeof TenantLocaleBookingsIndexRoute
-  TenantLocaleCharityIndexRoute: typeof TenantLocaleCharityIndexRoute
-  TenantLocaleClassifiedsIndexRoute: typeof TenantLocaleClassifiedsIndexRoute
-  TenantLocaleCrowdfundingIndexRoute: typeof TenantLocaleCrowdfundingIndexRoute
-  TenantLocaleDigitalProductsIndexRoute: typeof TenantLocaleDigitalProductsIndexRoute
-  TenantLocaleEducationIndexRoute: typeof TenantLocaleEducationIndexRoute
-  TenantLocaleEventsIndexRoute: typeof TenantLocaleEventsIndexRoute
-  TenantLocaleFinancialProductsIndexRoute: typeof TenantLocaleFinancialProductsIndexRoute
-  TenantLocaleFitnessIndexRoute: typeof TenantLocaleFitnessIndexRoute
-  TenantLocaleFreelanceIndexRoute: typeof TenantLocaleFreelanceIndexRoute
-  TenantLocaleGovernmentIndexRoute: typeof TenantLocaleGovernmentIndexRoute
-  TenantLocaleGroceryIndexRoute: typeof TenantLocaleGroceryIndexRoute
-  TenantLocaleHealthcareIndexRoute: typeof TenantLocaleHealthcareIndexRoute
-  TenantLocaleLegalIndexRoute: typeof TenantLocaleLegalIndexRoute
-  TenantLocaleMembershipsIndexRoute: typeof TenantLocaleMembershipsIndexRoute
-  TenantLocaleParkingIndexRoute: typeof TenantLocaleParkingIndexRoute
-  TenantLocalePetServicesIndexRoute: typeof TenantLocalePetServicesIndexRoute
   TenantLocaleQuotesIndexRoute: typeof TenantLocaleQuotesIndexRoute
-  TenantLocaleRealEstateIndexRoute: typeof TenantLocaleRealEstateIndexRoute
-  TenantLocaleRentalsIndexRoute: typeof TenantLocaleRentalsIndexRoute
-  TenantLocaleRestaurantsIndexRoute: typeof TenantLocaleRestaurantsIndexRoute
-  TenantLocaleSocialCommerceIndexRoute: typeof TenantLocaleSocialCommerceIndexRoute
   TenantLocaleSubscriptionsIndexRoute: typeof TenantLocaleSubscriptionsIndexRoute
-  TenantLocaleTravelIndexRoute: typeof TenantLocaleTravelIndexRoute
-  TenantLocaleUtilitiesIndexRoute: typeof TenantLocaleUtilitiesIndexRoute
   TenantLocaleVendorIndexRoute: typeof TenantLocaleVendorIndexRoute
   TenantLocaleVendorsIndexRoute: typeof TenantLocaleVendorsIndexRoute
-  TenantLocaleWarrantiesIndexRoute: typeof TenantLocaleWarrantiesIndexRoute
   TenantLocaleAccountBookingsIdRoute: typeof TenantLocaleAccountBookingsIdRoute
   TenantLocaleAccountOrdersIdRoute: typeof TenantLocaleAccountOrdersIdRouteWithChildren
   TenantLocaleAccountPurchaseOrdersIdRoute: typeof TenantLocaleAccountPurchaseOrdersIdRoute
@@ -4113,10 +2994,6 @@ const TenantLocaleRouteChildren: TenantLocaleRouteChildren = {
   TenantLocaleAccountAddressesRoute: TenantLocaleAccountAddressesRoute,
   TenantLocaleAccountProfileRoute: TenantLocaleAccountProfileRoute,
   TenantLocaleAccountSettingsRoute: TenantLocaleAccountSettingsRoute,
-  TenantLocaleAdvertisingIdRoute: TenantLocaleAdvertisingIdRoute,
-  TenantLocaleAffiliatesIdRoute: TenantLocaleAffiliatesIdRoute,
-  TenantLocaleAuctionsIdRoute: TenantLocaleAuctionsIdRoute,
-  TenantLocaleAutomotiveIdRoute: TenantLocaleAutomotiveIdRoute,
   TenantLocaleB2bDashboardRoute: TenantLocaleB2bDashboardRoute,
   TenantLocaleB2bRegisterRoute: TenantLocaleB2bRegisterRoute,
   TenantLocaleBookingsServiceHandleRoute:
@@ -4126,73 +3003,22 @@ const TenantLocaleRouteChildren: TenantLocaleRouteChildren = {
   TenantLocaleBusinessOrdersRoute: TenantLocaleBusinessOrdersRoute,
   TenantLocaleBusinessTeamRoute: TenantLocaleBusinessTeamRoute,
   TenantLocaleCategoriesHandleRoute: TenantLocaleCategoriesHandleRoute,
-  TenantLocaleCharityIdRoute: TenantLocaleCharityIdRoute,
-  TenantLocaleClassifiedsIdRoute: TenantLocaleClassifiedsIdRoute,
-  TenantLocaleCrowdfundingIdRoute: TenantLocaleCrowdfundingIdRoute,
-  TenantLocaleDigitalProductsIdRoute: TenantLocaleDigitalProductsIdRoute,
-  TenantLocaleEducationIdRoute: TenantLocaleEducationIdRoute,
-  TenantLocaleEventsIdRoute: TenantLocaleEventsIdRoute,
-  TenantLocaleFinancialProductsIdRoute: TenantLocaleFinancialProductsIdRoute,
-  TenantLocaleFitnessIdRoute: TenantLocaleFitnessIdRoute,
-  TenantLocaleFreelanceIdRoute: TenantLocaleFreelanceIdRoute,
-  TenantLocaleGovernmentIdRoute: TenantLocaleGovernmentIdRoute,
-  TenantLocaleGroceryIdRoute: TenantLocaleGroceryIdRoute,
-  TenantLocaleHealthcareIdRoute: TenantLocaleHealthcareIdRoute,
-  TenantLocaleLegalIdRoute: TenantLocaleLegalIdRoute,
-  TenantLocaleMembershipsIdRoute: TenantLocaleMembershipsIdRoute,
-  TenantLocaleParkingIdRoute: TenantLocaleParkingIdRoute,
-  TenantLocalePetServicesIdRoute: TenantLocalePetServicesIdRoute,
   TenantLocaleProductsHandleRoute: TenantLocaleProductsHandleRoute,
   TenantLocaleQuotesIdRoute: TenantLocaleQuotesIdRoute,
   TenantLocaleQuotesRequestRoute: TenantLocaleQuotesRequestRoute,
-  TenantLocaleRealEstateIdRoute: TenantLocaleRealEstateIdRoute,
-  TenantLocaleRentalsIdRoute: TenantLocaleRentalsIdRoute,
-  TenantLocaleRestaurantsIdRoute: TenantLocaleRestaurantsIdRoute,
-  TenantLocaleSocialCommerceIdRoute: TenantLocaleSocialCommerceIdRoute,
   TenantLocaleSubscriptionsCheckoutRoute:
     TenantLocaleSubscriptionsCheckoutRoute,
   TenantLocaleSubscriptionsSuccessRoute: TenantLocaleSubscriptionsSuccessRoute,
-  TenantLocaleTravelIdRoute: TenantLocaleTravelIdRoute,
-  TenantLocaleUtilitiesIdRoute: TenantLocaleUtilitiesIdRoute,
   TenantLocaleVendorCommissionsRoute: TenantLocaleVendorCommissionsRoute,
   TenantLocaleVendorPayoutsRoute: TenantLocaleVendorPayoutsRouteWithChildren,
   TenantLocaleVendorRegisterRoute: TenantLocaleVendorRegisterRoute,
   TenantLocaleVendorsHandleRoute: TenantLocaleVendorsHandleRouteWithChildren,
-  TenantLocaleWarrantiesIdRoute: TenantLocaleWarrantiesIdRoute,
   TenantLocaleAccountIndexRoute: TenantLocaleAccountIndexRoute,
-  TenantLocaleAdvertisingIndexRoute: TenantLocaleAdvertisingIndexRoute,
-  TenantLocaleAffiliatesIndexRoute: TenantLocaleAffiliatesIndexRoute,
-  TenantLocaleAuctionsIndexRoute: TenantLocaleAuctionsIndexRoute,
-  TenantLocaleAutomotiveIndexRoute: TenantLocaleAutomotiveIndexRoute,
   TenantLocaleBookingsIndexRoute: TenantLocaleBookingsIndexRoute,
-  TenantLocaleCharityIndexRoute: TenantLocaleCharityIndexRoute,
-  TenantLocaleClassifiedsIndexRoute: TenantLocaleClassifiedsIndexRoute,
-  TenantLocaleCrowdfundingIndexRoute: TenantLocaleCrowdfundingIndexRoute,
-  TenantLocaleDigitalProductsIndexRoute: TenantLocaleDigitalProductsIndexRoute,
-  TenantLocaleEducationIndexRoute: TenantLocaleEducationIndexRoute,
-  TenantLocaleEventsIndexRoute: TenantLocaleEventsIndexRoute,
-  TenantLocaleFinancialProductsIndexRoute:
-    TenantLocaleFinancialProductsIndexRoute,
-  TenantLocaleFitnessIndexRoute: TenantLocaleFitnessIndexRoute,
-  TenantLocaleFreelanceIndexRoute: TenantLocaleFreelanceIndexRoute,
-  TenantLocaleGovernmentIndexRoute: TenantLocaleGovernmentIndexRoute,
-  TenantLocaleGroceryIndexRoute: TenantLocaleGroceryIndexRoute,
-  TenantLocaleHealthcareIndexRoute: TenantLocaleHealthcareIndexRoute,
-  TenantLocaleLegalIndexRoute: TenantLocaleLegalIndexRoute,
-  TenantLocaleMembershipsIndexRoute: TenantLocaleMembershipsIndexRoute,
-  TenantLocaleParkingIndexRoute: TenantLocaleParkingIndexRoute,
-  TenantLocalePetServicesIndexRoute: TenantLocalePetServicesIndexRoute,
   TenantLocaleQuotesIndexRoute: TenantLocaleQuotesIndexRoute,
-  TenantLocaleRealEstateIndexRoute: TenantLocaleRealEstateIndexRoute,
-  TenantLocaleRentalsIndexRoute: TenantLocaleRentalsIndexRoute,
-  TenantLocaleRestaurantsIndexRoute: TenantLocaleRestaurantsIndexRoute,
-  TenantLocaleSocialCommerceIndexRoute: TenantLocaleSocialCommerceIndexRoute,
   TenantLocaleSubscriptionsIndexRoute: TenantLocaleSubscriptionsIndexRoute,
-  TenantLocaleTravelIndexRoute: TenantLocaleTravelIndexRoute,
-  TenantLocaleUtilitiesIndexRoute: TenantLocaleUtilitiesIndexRoute,
   TenantLocaleVendorIndexRoute: TenantLocaleVendorIndexRoute,
   TenantLocaleVendorsIndexRoute: TenantLocaleVendorsIndexRoute,
-  TenantLocaleWarrantiesIndexRoute: TenantLocaleWarrantiesIndexRoute,
   TenantLocaleAccountBookingsIdRoute: TenantLocaleAccountBookingsIdRoute,
   TenantLocaleAccountOrdersIdRoute:
     TenantLocaleAccountOrdersIdRouteWithChildren,

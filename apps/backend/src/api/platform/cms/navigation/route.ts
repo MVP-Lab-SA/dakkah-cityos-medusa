@@ -1,4 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { getLocalCMSNavigation } from "../../../../lib/platform/cms-registry"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   try {
@@ -8,6 +9,19 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       return res.status(400).json({
         success: false,
         error: "Missing required query parameter: tenant_id",
+      })
+    }
+
+    const localNav = getLocalCMSNavigation(tenant_id, location || "header")
+    if (localNav) {
+      res.setHeader("Cache-Control", "public, max-age=60, s-maxage=300")
+      return res.status(200).json({
+        success: true,
+        data: {
+          navigations: [localNav],
+          total: 1,
+          source: "local-registry",
+        },
       })
     }
 

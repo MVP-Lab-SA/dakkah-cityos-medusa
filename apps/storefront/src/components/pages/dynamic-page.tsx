@@ -11,11 +11,13 @@ interface DynamicPageProps {
 }
 
 export const DynamicPage: React.FC<DynamicPageProps> = ({ page, branding }) => {
-  if (!page?.layout) {
+  if (!page) return null
+
+  if (!page.layout || (Array.isArray(page.layout) && page.layout.length === 0)) {
     return (
       <div className="container mx-auto px-4 py-12">
         <h1 className="text-3xl font-bold mb-4">{page.title}</h1>
-        <p className="text-gray-600">{page.description}</p>
+        {page.description && <p className="text-gray-600">{page.description}</p>}
       </div>
     )
   }

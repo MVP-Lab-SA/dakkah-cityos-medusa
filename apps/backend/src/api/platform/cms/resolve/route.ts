@@ -1,4 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { resolveLocalCMSPage } from "../../../../lib/platform/cms-registry"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   try {
@@ -11,9 +12,25 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       })
     }
 
-    const payloadUrl = process.env.PAYLOAD_CMS_URL || process.env.PAYLOAD_API_URL || "http://localhost:3001"
-
     const resolvedTenantId = tenant_id || await resolveTenantId(req, tenant)
+
+    const localPage = resolveLocalCMSPage(path, resolvedTenantId, locale)
+    if (localPage) {
+      res.setHeader("Cache-Control", "public, max-age=30, s-maxage=120")
+      return res.status(200).json({
+        success: true,
+        data: {
+          page: localPage,
+          resolved: true,
+          source: "local-registry",
+          tenantId: resolvedTenantId,
+          path,
+          locale: locale || null,
+        },
+      })
+    }
+
+    const payloadUrl = process.env.PAYLOAD_CMS_URL || process.env.PAYLOAD_API_URL || "http://localhost:3001"
 
     const where: Record<string, any> = {
       path: { equals: path },
@@ -48,7 +65,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       if (!response.ok) {
         return res.status(200).json({
           success: true,
-          data: { page: null, resolved: false, source: "payload", error: `Payload returned ${response.status}` },
+          data: { page: null, resolved: false, source: "payload", error: `Payload returned ${response.status}`, tenantId: resolvedTenantId, path },
         })
       }
 
