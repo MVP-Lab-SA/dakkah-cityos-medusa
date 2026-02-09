@@ -94,11 +94,37 @@ Three systems work together, each owning specific domains:
 - Real-time driver tracking
 - Integration spec: `apps/backend/src/lib/integrations/fleetbase-spec.ts`
 
+**ERPNext — Finance, Accounting & ERP:**
+- Sales Invoices, Payment Entries, Credit Notes, GL Journal Entries
+- Inventory & Warehousing (Stock Entries, Batch tracking, Reconciliation)
+- Procurement (Purchase Orders bi-directional sync, Supplier management)
+- Customer & Product sync, Pricing Rules, BOM
+- Reporting (AR, P&L, Balance Sheet, Stock Ledger)
+- Multi-tenant: each tenant maps to ERPNext Company, vendor-tenants sync as Suppliers
+- Integration spec: `apps/backend/src/lib/integrations/erpnext-spec.ts`
+
+**Temporal Cloud — Workflow Orchestration:**
+- 35+ system workflows across 9 categories (Commerce, Vendor, Platform, Lifecycle, Sync, Fulfillment, Finance, Identity, Governance)
+- 2 task queues: `cityos-workflow-queue` (system) and `cityos-dynamic-queue` (AI agents)
+- Dynamic AI agent workflows with goal-based orchestration, signals, queries
+- Event outbox integration for reliable delivery with correlation/causation IDs
+- Cross-system dispatch fan-out (Temporal + direct integration calls)
+- Integration spec: `apps/backend/src/lib/integrations/temporal-spec.ts`
+
+**Walt.id — Decentralized Digital Identity:**
+- DID Management (did:key, did:web, did:ion methods)
+- 6 credential types: KYC, Vendor, Membership, TenantOperator, POI, MarketplaceSeller
+- W3C Verifiable Credentials standard, presentation exchange, selective disclosure
+- Wallet integration for credential storage and QR presentation
+- Trust registries and issuer verification
+- Multi-tenant: platform root issuer DID, delegated issuers for large+ tiers
+- Integration spec: `apps/backend/src/lib/integrations/waltid-spec.ts`
+
 ## Recent Changes (2026-02-09)
 - **Vendor-as-Tenant Architecture:** Vendors are now full tenants with scope tiers (nano→global), tenant types (platform/marketplace/vendor/brand), parent tenant hierarchy, POI collections, multi-channel services, and cross-tenant marketplace listings.
 - **New Models:** TenantRelationship, TenantPOI, ServiceChannel, MarketplaceListing added to backend modules.
 - **Platform Vendor APIs:** New `/platform/vendors` endpoints for vendor discovery with marketplace filtering, POI/channel/listing sub-resources.
-- **Integration Specs:** Created Payload CMS spec (6 collections, webhooks, globals) and Fleetbase spec (6 capability groups, webhooks, events) as TypeScript contracts.
+- **Integration Specs:** Created all 5 integration specs as TypeScript contract documents: Payload CMS (content), Fleetbase (geo/logistics), ERPNext (finance/ERP), Temporal (workflows), Walt.id (identity).
 
 ## External Dependencies
 - **Database:** PostgreSQL
