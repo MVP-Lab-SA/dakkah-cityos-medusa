@@ -67,11 +67,11 @@ export function createDefaultAdapters(): IIntegrationAdapter[] {
   const adapters: IIntegrationAdapter[] = [
     {
       name: "payload",
-      isConfigured: () => !!(process.env.PAYLOAD_URL && process.env.PAYLOAD_API_KEY),
+      isConfigured: () => !!(process.env.PAYLOAD_API_URL && process.env.PAYLOAD_API_KEY),
       async healthCheck() {
         try {
           const axios = (await import("axios")).default
-          const res = await axios.get(`${process.env.PAYLOAD_URL}/api/health`, {
+          const res = await axios.get(`${process.env.PAYLOAD_API_URL}/api/health`, {
             headers: { Authorization: `Bearer ${process.env.PAYLOAD_API_KEY}` },
             timeout: 5000,
           })
@@ -84,7 +84,7 @@ export function createDefaultAdapters(): IIntegrationAdapter[] {
         if (!this.isConfigured()) return { success: false, error: "Payload not configured" }
         try {
           const axios = (await import("axios")).default
-          await axios.post(`${process.env.PAYLOAD_URL}/api/${type}`, { medusaId: id, ...data }, {
+          await axios.post(`${process.env.PAYLOAD_API_URL}/api/${type}`, { medusaId: id, ...data }, {
             headers: {
               Authorization: `Bearer ${process.env.PAYLOAD_API_KEY}`,
               "Content-Type": "application/json",
@@ -211,12 +211,12 @@ export function createDefaultAdapters(): IIntegrationAdapter[] {
     },
     {
       name: "stripe",
-      isConfigured: () => !!(process.env.STRIPE_API_KEY),
+      isConfigured: () => !!(process.env.STRIPE_SECRET_KEY),
       async healthCheck() {
         try {
           const axios = (await import("axios")).default
           const res = await axios.get("https://api.stripe.com/v1/balance", {
-            headers: { Authorization: `Bearer ${process.env.STRIPE_API_KEY}` },
+            headers: { Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}` },
             timeout: 5000,
           })
           return { healthy: res.status === 200, message: "Stripe reachable" }
@@ -230,7 +230,7 @@ export function createDefaultAdapters(): IIntegrationAdapter[] {
           const axios = (await import("axios")).default
           const res = await axios.post(`https://api.stripe.com/v1/${type}`, data, {
             headers: {
-              Authorization: `Bearer ${process.env.STRIPE_API_KEY}`,
+              Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}`,
               "Content-Type": "application/x-www-form-urlencoded",
             },
             timeout: 10000,

@@ -57,7 +57,7 @@ async function checkSystemHealth(system: SystemHealthCheck): Promise<{
     await axios.get(baseUrl, {
       timeout: 3000,
       headers,
-      validateStatus: () => true,
+      validateStatus: (status: number) => status >= 200 && status < 500,
     })
 
     const latency_ms = Date.now() - start

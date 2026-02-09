@@ -69,7 +69,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
             const erpnextApiKey = process.env.ERPNEXT_API_KEY
             const erpnextApiSecret = process.env.ERPNEXT_API_SECRET
             if (erpnextUrl && erpnextApiKey && erpnextApiSecret) {
-              const { ERPNextService } = await import("../../../../integrations/erpnext/service")
+              const { ERPNextService } = await import("../../../../integrations/erpnext/service.js")
               const erpnext = new ERPNextService({
                 siteUrl: erpnextUrl,
                 apiKey: erpnextApiKey,

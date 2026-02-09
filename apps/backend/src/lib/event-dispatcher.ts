@@ -130,7 +130,7 @@ export async function dispatchCrossSystemEvent(
         const payloadKey = process.env.PAYLOAD_API_KEY
         if (payloadUrl && payloadKey) {
           try {
-            const { MedusaToPayloadSync } = await import("../integrations/payload-sync/medusa-to-payload")
+            const { MedusaToPayloadSync } = await import("../integrations/payload-sync/medusa-to-payload.js")
             const payloadSync = new MedusaToPayloadSync(container, { payloadUrl, payloadApiKey: payloadKey })
             if (payload.id) {
               await payloadSync.syncProduct(payload.id)
@@ -146,7 +146,7 @@ export async function dispatchCrossSystemEvent(
         const erpApiSecret = process.env.ERPNEXT_API_SECRET
         if (erpSiteUrl && erpApiKey && erpApiSecret) {
           try {
-            const { ERPNextService } = await import("../integrations/erpnext/service")
+            const { ERPNextService } = await import("../integrations/erpnext/service.js")
             const erpService = new ERPNextService({ siteUrl: erpSiteUrl, apiKey: erpApiKey, apiSecret: erpApiSecret })
             if (payload.id) {
               await erpService.syncProduct({
@@ -173,7 +173,7 @@ export async function dispatchCrossSystemEvent(
         const erpApiSecret = process.env.ERPNEXT_API_SECRET
         if (erpSiteUrl && erpApiKey && erpApiSecret) {
           try {
-            const { ERPNextService } = await import("../integrations/erpnext/service")
+            const { ERPNextService } = await import("../integrations/erpnext/service.js")
             const erpService = new ERPNextService({ siteUrl: erpSiteUrl, apiKey: erpApiKey, apiSecret: erpApiSecret })
             if (payload.email) {
               await erpService.syncCustomer({
@@ -200,7 +200,7 @@ export async function dispatchCrossSystemEvent(
         const erpApiSecret = process.env.ERPNEXT_API_SECRET
         if (erpSiteUrl && erpApiKey && erpApiSecret) {
           try {
-            const { ERPNextService } = await import("../integrations/erpnext/service")
+            const { ERPNextService } = await import("../integrations/erpnext/service.js")
             const erpService = new ERPNextService({ siteUrl: erpSiteUrl, apiKey: erpApiKey, apiSecret: erpApiSecret })
             const customerName = payload.customer?.first_name
               ? `${payload.customer.first_name} ${payload.customer.last_name || ""}`.trim()
@@ -234,7 +234,7 @@ export async function dispatchCrossSystemEvent(
         const fbOrgId = process.env.FLEETBASE_ORG_ID
         if (fbApiUrl && fbApiKey && fbOrgId) {
           try {
-            const { FleetbaseService } = await import("../integrations/fleetbase/service")
+            const { FleetbaseService } = await import("../integrations/fleetbase/service.js")
             const fleetbaseService = new FleetbaseService({ apiUrl: fbApiUrl, apiKey: fbApiKey, organizationId: fbOrgId })
             const shipmentResult = await fleetbaseService.createShipment({
               order_id: payload.id || "",
@@ -291,7 +291,7 @@ export async function dispatchCrossSystemEvent(
         const erpApiSecret = process.env.ERPNEXT_API_SECRET
         if (erpSiteUrl && erpApiKey && erpApiSecret) {
           try {
-            const { ERPNextService } = await import("../integrations/erpnext/service")
+            const { ERPNextService } = await import("../integrations/erpnext/service.js")
             const erpService = new ERPNextService({ siteUrl: erpSiteUrl, apiKey: erpApiKey, apiSecret: erpApiSecret })
             const vendorName = payload.name || payload.company_name || payload.email || "Vendor"
             const syncResult = await erpService.syncCustomer({
@@ -312,7 +312,7 @@ export async function dispatchCrossSystemEvent(
         const waltIdKey = process.env.WALTID_API_KEY
         if (waltIdUrl && waltIdKey) {
           try {
-            const { WaltIdService } = await import("../integrations/waltid/service")
+            const { WaltIdService } = await import("../integrations/waltid/service.js")
             const waltIdService = new WaltIdService({ apiUrl: waltIdUrl, apiKey: waltIdKey })
             if (payload.did || payload.subject_did) {
               const credResult = await waltIdService.issueVendorCredential({
@@ -339,7 +339,7 @@ export async function dispatchCrossSystemEvent(
         const fbOrgId = process.env.FLEETBASE_ORG_ID
         if (fbApiUrl && fbApiKey && fbOrgId) {
           try {
-            const { FleetbaseService } = await import("../integrations/fleetbase/service")
+            const { FleetbaseService } = await import("../integrations/fleetbase/service.js")
             const fleetbaseService = new FleetbaseService({ apiUrl: fbApiUrl, apiKey: fbApiKey, organizationId: fbOrgId })
             const shipmentResult = await fleetbaseService.createShipment({
               order_id: payload.order_id || payload.id || "",

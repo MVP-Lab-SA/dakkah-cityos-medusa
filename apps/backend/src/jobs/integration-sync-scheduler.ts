@@ -7,7 +7,7 @@ import { createIntegrationOrchestrator } from "../integrations/orchestrator"
 
 export class IntegrationSyncScheduler {
   private container: MedusaContainer
-  private tasks: cron.ScheduledTask[] = []
+  private tasks: ReturnType<typeof cron.schedule>[] = []
 
   constructor(container: MedusaContainer) {
     this.container = container
