@@ -13,11 +13,92 @@ import { useAuth } from "@/lib/context/auth-context"
 import { getCountryCodeFromPath } from "@/lib/utils/region"
 import * as NavigationMenu from "@radix-ui/react-navigation-menu"
 import { Link, useLocation } from "@tanstack/react-router"
+import { useState } from "react"
+
+const SERVICE_GROUPS = [
+  {
+    label: "Health & Wellness",
+    items: [
+      { name: "Healthcare", href: "/healthcare" },
+      { name: "Fitness", href: "/fitness" },
+      { name: "Pet Services", href: "/pet-services" },
+    ],
+  },
+  {
+    label: "Education & Legal",
+    items: [
+      { name: "Education", href: "/education" },
+      { name: "Legal", href: "/legal" },
+      { name: "Government", href: "/government" },
+    ],
+  },
+  {
+    label: "Food & Dining",
+    items: [
+      { name: "Restaurants", href: "/restaurants" },
+      { name: "Grocery", href: "/grocery" },
+    ],
+  },
+  {
+    label: "Property",
+    items: [
+      { name: "Real Estate", href: "/real-estate" },
+      { name: "Parking", href: "/parking" },
+    ],
+  },
+  {
+    label: "Transportation",
+    items: [
+      { name: "Automotive", href: "/automotive" },
+      { name: "Travel", href: "/travel" },
+    ],
+  },
+  {
+    label: "Entertainment",
+    items: [
+      { name: "Events", href: "/events" },
+      { name: "Auctions", href: "/auctions" },
+      { name: "Social Commerce", href: "/social-commerce" },
+    ],
+  },
+  {
+    label: "Finance",
+    items: [
+      { name: "Financial Products", href: "/financial-products" },
+      { name: "Memberships", href: "/memberships" },
+      { name: "Crowdfunding", href: "/crowdfunding" },
+    ],
+  },
+  {
+    label: "Professional",
+    items: [
+      { name: "Freelance", href: "/freelance" },
+      { name: "Digital Products", href: "/digital-products" },
+      { name: "Advertising", href: "/advertising" },
+    ],
+  },
+  {
+    label: "Community",
+    items: [
+      { name: "Charity", href: "/charity" },
+      { name: "Classifieds", href: "/classifieds" },
+      { name: "Utilities", href: "/utilities" },
+    ],
+  },
+  {
+    label: "Protection",
+    items: [
+      { name: "Warranties", href: "/warranties" },
+      { name: "Rentals", href: "/rentals" },
+    ],
+  },
+] as const
 
 export const Navbar = () => {
   const location = useLocation()
   const countryCode = getCountryCodeFromPath(location.pathname)
   const baseHref = countryCode ? `/${countryCode}` : ""
+  const [openMobileSections, setOpenMobileSections] = useState<Record<string, boolean>>({})
 
   const { data: topLevelCategories } = useCategories({
     fields: "id,name,handle,parent_category_id",
@@ -33,6 +114,10 @@ export const Navbar = () => {
     })) ?? []),
   ]
 
+  const toggleMobileSection = (key: string) => {
+    setOpenMobileSections((prev) => ({ ...prev, [key]: !prev[key] }))
+  }
+
   return (
     <div className="sticky top-0 inset-x-0 z-40">
       <header className="relative h-16 mx-auto border-b bg-white border-zinc-200">
@@ -44,43 +129,61 @@ export const Navbar = () => {
               <NavigationMenu.Item className="h-full flex items-center">
                 <NavigationMenu.Trigger className="text-zinc-600 hover:text-zinc-500 h-full flex items-center gap-1 select-none">
                   Shop
+                  <svg className="w-3 h-3 ml-0.5 transition-transform duration-200 group-data-[state=open]:rotate-180" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </NavigationMenu.Trigger>
-                <NavigationMenu.Content className="content-container py-12">
-                  <div className="grid grid-cols-2 gap-12">
-                    <div className="flex flex-col gap-6">
-                      <h3 className="text-zinc-900 text-base font-medium uppercase">
-                        Categories
-                      </h3>
-                      <div className="flex flex-col gap-3">
-                        {categoryLinks.map((link) => (
-                          <NavigationMenu.Link key={link.id} asChild>
-                            <Link
-                              to={link.to}
-                              className="text-zinc-600 hover:text-zinc-500 text-base font-medium transition-colors"
-                            >
-                              {link.name}
-                            </Link>
-                          </NavigationMenu.Link>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-6">
-                      {[0, 1].map((i) => (
-                        <div
-                          key={i}
-                          className="aspect-square bg-zinc-50 flex items-center justify-center"
-                        >
-                          <span className="text-zinc-600 text-sm">
-                            Image Placeholder
-                          </span>
-                        </div>
+                <NavigationMenu.Content className="content-container py-8">
+                  <div className="flex flex-col gap-4">
+                    <h3 className="text-zinc-900 text-base font-semibold uppercase tracking-wide">
+                      Categories
+                    </h3>
+                    <div className="grid grid-cols-3 gap-x-8 gap-y-2">
+                      {categoryLinks.map((link) => (
+                        <NavigationMenu.Link key={link.id} asChild>
+                          <Link
+                            to={link.to}
+                            className="text-zinc-600 hover:text-zinc-900 text-sm font-medium transition-colors py-1"
+                          >
+                            {link.name}
+                          </Link>
+                        </NavigationMenu.Link>
                       ))}
                     </div>
                   </div>
                 </NavigationMenu.Content>
               </NavigationMenu.Item>
-              
-              {/* Stores Link */}
+
+              {/* Services Mega-Menu */}
+              <NavigationMenu.Item className="h-full flex items-center">
+                <NavigationMenu.Trigger className="text-zinc-600 hover:text-zinc-500 h-full flex items-center gap-1 select-none">
+                  Services
+                  <svg className="w-3 h-3 ml-0.5 transition-transform duration-200 group-data-[state=open]:rotate-180" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                </NavigationMenu.Trigger>
+                <NavigationMenu.Content className="content-container py-8">
+                  <div className="grid grid-cols-5 gap-x-8 gap-y-6">
+                    {SERVICE_GROUPS.map((group) => (
+                      <div key={group.label} className="flex flex-col gap-2">
+                        <h4 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+                          {group.label}
+                        </h4>
+                        <div className="flex flex-col gap-1">
+                          {group.items.map((item) => (
+                            <NavigationMenu.Link key={item.href} asChild>
+                              <Link
+                                to={`${baseHref}${item.href}` as any}
+                                className="text-sm text-zinc-600 hover:text-zinc-900 font-medium transition-colors py-1"
+                              >
+                                {item.name}
+                              </Link>
+                            </NavigationMenu.Link>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </NavigationMenu.Content>
+              </NavigationMenu.Item>
+
+              {/* Store Link */}
               <NavigationMenu.Item className="h-full flex items-center">
                 <NavigationMenu.Link asChild>
                   <Link
@@ -88,6 +191,30 @@ export const Navbar = () => {
                     className="text-zinc-600 hover:text-zinc-500 h-full flex items-center"
                   >
                     Store
+                  </Link>
+                </NavigationMenu.Link>
+              </NavigationMenu.Item>
+
+              {/* Vendors Link */}
+              <NavigationMenu.Item className="h-full flex items-center">
+                <NavigationMenu.Link asChild>
+                  <Link
+                    to={`${baseHref}/vendors` as any}
+                    className="text-zinc-600 hover:text-zinc-500 h-full flex items-center"
+                  >
+                    Vendors
+                  </Link>
+                </NavigationMenu.Link>
+              </NavigationMenu.Item>
+
+              {/* Bookings Link */}
+              <NavigationMenu.Item className="h-full flex items-center">
+                <NavigationMenu.Link asChild>
+                  <Link
+                    to={`${baseHref}/bookings` as any}
+                    className="text-zinc-600 hover:text-zinc-500 h-full flex items-center"
+                  >
+                    Bookings
                   </Link>
                 </NavigationMenu.Link>
               </NavigationMenu.Item>
@@ -123,34 +250,92 @@ export const Navbar = () => {
               <DrawerHeader>
                 <DrawerTitle className="uppercase">Menu</DrawerTitle>
               </DrawerHeader>
-              <div className="flex flex-col py-4">
-                <div className="px-6 py-4 text-zinc-900 text-lg font-medium">
+              <div className="flex flex-col py-4 overflow-y-auto max-h-[calc(100vh-80px)]">
+                {/* Shop Section */}
+                <button
+                  onClick={() => toggleMobileSection("shop")}
+                  className="px-6 py-4 text-zinc-900 text-lg font-medium flex items-center justify-between w-full text-left"
+                >
                   Shop
-                </div>
-                <div className="flex flex-col">
-                  {categoryLinks.map((link) => (
-                    <DrawerClose key={link.id} asChild>
-                      <Link
-                        to={link.to}
-                        className="px-10 py-3 text-zinc-600 hover:bg-zinc-50 transition-colors"
-                      >
-                        {link.name}
-                      </Link>
-                    </DrawerClose>
-                  ))}
-                </div>
-                
-                {/* Store Section */}
-                <div className="px-6 py-4 text-zinc-900 text-lg font-medium mt-4">
-                  Shop
-                </div>
-                <div className="flex flex-col">
+                  <svg className={`w-4 h-4 transition-transform duration-200 ${openMobileSections["shop"] ? "rotate-180" : ""}`} viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                </button>
+                {openMobileSections["shop"] && (
+                  <div className="flex flex-col">
+                    {categoryLinks.map((link) => (
+                      <DrawerClose key={link.id} asChild>
+                        <Link
+                          to={link.to}
+                          className="px-10 py-3 text-zinc-600 hover:bg-zinc-50 transition-colors"
+                        >
+                          {link.name}
+                        </Link>
+                      </DrawerClose>
+                    ))}
+                  </div>
+                )}
+
+                {/* Services Section */}
+                <button
+                  onClick={() => toggleMobileSection("services")}
+                  className="px-6 py-4 text-zinc-900 text-lg font-medium flex items-center justify-between w-full text-left"
+                >
+                  Services
+                  <svg className={`w-4 h-4 transition-transform duration-200 ${openMobileSections["services"] ? "rotate-180" : ""}`} viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                </button>
+                {openMobileSections["services"] && (
+                  <div className="flex flex-col">
+                    {SERVICE_GROUPS.map((group) => (
+                      <div key={group.label}>
+                        <button
+                          onClick={() => toggleMobileSection(`svc-${group.label}`)}
+                          className="px-10 py-3 text-zinc-800 text-sm font-semibold uppercase tracking-wider flex items-center justify-between w-full text-left"
+                        >
+                          {group.label}
+                          <svg className={`w-3 h-3 transition-transform duration-200 ${openMobileSections[`svc-${group.label}`] ? "rotate-180" : ""}`} viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        </button>
+                        {openMobileSections[`svc-${group.label}`] && (
+                          <div className="flex flex-col">
+                            {group.items.map((item) => (
+                              <DrawerClose key={item.href} asChild>
+                                <Link
+                                  to={`${baseHref}${item.href}` as any}
+                                  className="px-14 py-2.5 text-zinc-600 hover:bg-zinc-50 transition-colors text-sm"
+                                >
+                                  {item.name}
+                                </Link>
+                              </DrawerClose>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Direct Links */}
+                <div className="border-t border-zinc-100 mt-2 pt-2">
                   <DrawerClose asChild>
                     <Link
                       to={`${baseHref}/store` as any}
-                      className="px-10 py-3 text-zinc-600 hover:bg-zinc-50 transition-colors"
+                      className="px-6 py-4 text-zinc-900 text-lg font-medium block hover:bg-zinc-50 transition-colors"
                     >
-                      All Products
+                      Store
+                    </Link>
+                  </DrawerClose>
+                  <DrawerClose asChild>
+                    <Link
+                      to={`${baseHref}/vendors` as any}
+                      className="px-6 py-4 text-zinc-900 text-lg font-medium block hover:bg-zinc-50 transition-colors"
+                    >
+                      Vendors
+                    </Link>
+                  </DrawerClose>
+                  <DrawerClose asChild>
+                    <Link
+                      to={`${baseHref}/bookings` as any}
+                      className="px-6 py-4 text-zinc-900 text-lg font-medium block hover:bg-zinc-50 transition-colors"
+                    >
+                      Bookings
                     </Link>
                   </DrawerClose>
                 </div>
@@ -164,7 +349,7 @@ export const Navbar = () => {
               to={baseHref || "/"}
               className="text-xl font-bold hover:text-zinc-600 uppercase"
             >
-              Bloom
+              Dakkah CityOS
             </Link>
           </div>
 

@@ -1,6 +1,21 @@
+import en from './locales/en.json'
+import fr from './locales/fr.json'
+import ar from './locales/ar.json'
+
 export type SupportedLocale = "en" | "fr" | "ar"
 
 export const SUPPORTED_LOCALES: SupportedLocale[] = ["en", "fr", "ar"]
+
+const translations: Record<string, typeof en> = { en, fr, ar }
+
+export function t(locale: string, key: string): string {
+  const keys = key.split('.')
+  let value: any = translations[locale] || translations.en
+  for (const k of keys) {
+    value = value?.[k]
+  }
+  return value || key
+}
 
 export const LOCALE_CONFIG: Record<SupportedLocale, {
   name: string

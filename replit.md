@@ -108,3 +108,12 @@ Two seed scripts are available:
 - Created database verification/cleanup script (`db-verify.ts`): validates all entities, detects duplicates, prints summary report.
 - Added Temporal dynamic AI agent workflow support: `dynamic-workflow-client.ts` with start/query/signal/cancel/list operations, admin API routes at `/admin/temporal/dynamic/`, separate `cityos-dynamic-queue` task queue.
 - Extended event dispatcher with 4 new mappings (governance.policy.changed, node.created, tenant.provisioned, workflow.dynamic.start).
+- Implemented 42 store-facing API routes across 21 verticals (auctions, rentals, classifieds, digital-products, freelance, travel, social-commerce, crowdfunding, automotive, grocery, warranties, fitness, legal, charity, government, parking, utilities, pet-services, financial-products, advertising, affiliates).
+- Created 50 frontend route files (25 verticals x 2 pages each) with listing and detail pages.
+- Populated all 40+ vertical module database tables with realistic seed data via 3 seed scripts (seed-verticals-1/2/3.ts).
+- Redesigned navbar with professional mega-menu organizing verticals into 10 grouped categories.
+- Redesigned homepage with hero section, featured products, vertical discovery grid, categories, and stats.
+- Updated branding from "Bloom" to "Dakkah CityOS" across all UI components.
+- Created i18n translation infrastructure with en.json, fr.json, ar.json and t() function.
+- Fixed product thumbnails for 6 products missing images.
+- Fixed travel module service method names (TravelPropertys → TravelProperties) in seed scripts and API routes.

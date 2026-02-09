@@ -31,7 +31,7 @@ const createSchema = z.object({
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const mod = req.scope.resolve("travel") as any
   const { limit = "20", offset = "0" } = req.query as Record<string, string | undefined>
-  const items = await mod.listTravelPropertys({}, { skip: Number(offset), take: Number(limit) })
+  const items = await mod.listTravelProperties({}, { skip: Number(offset), take: Number(limit) })
   return res.json({ items, count: Array.isArray(items) ? items.length : 0, limit: Number(limit), offset: Number(offset) })
 }
 
@@ -39,6 +39,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const mod = req.scope.resolve("travel") as any
   const validation = createSchema.safeParse(req.body)
   if (!validation.success) return res.status(400).json({ message: "Validation failed", errors: validation.error.issues })
-  const item = await mod.createTravelPropertys(validation.data)
+  const item = await mod.createTravelProperties(validation.data)
   return res.status(201).json({ item })
 }

@@ -36,7 +36,7 @@ export const Route = createRootRouteWithContext<{
       { rel: "stylesheet", href: rtlCss },
     ],
     meta: [
-      { title: "Medusa Storefront" },
+      { title: "Dakkah CityOS Commerce" },
       { charSet: "UTF-8" },
       {
         name: "viewport",

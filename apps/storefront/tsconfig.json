@@ -7,6 +7,7 @@
     "types": ["vite/client", "vite-plugin-terminal/client"],
     "moduleResolution": "Bundler",
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "resolveJsonModule": true,
     "skipLibCheck": true,
     /* Path mapping */
     "baseUrl": "./src",

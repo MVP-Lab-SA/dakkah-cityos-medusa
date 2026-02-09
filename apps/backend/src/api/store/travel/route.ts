@@ -8,6 +8,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   if (city) filters.city = city
   if (property_type) filters.property_type = property_type
   filters.is_active = true
-  const items = await mod.listTravelPropertys(filters, { skip: Number(offset), take: Number(limit) })
+  const items = await mod.listTravelProperties(filters, { skip: Number(offset), take: Number(limit) })
   return res.json({ items, count: Array.isArray(items) ? items.length : 0, limit: Number(limit), offset: Number(offset) })
 }
