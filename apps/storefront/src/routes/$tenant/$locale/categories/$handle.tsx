@@ -7,9 +7,9 @@ import { HttpTypes } from "@medusajs/types"
 export const Route = createFileRoute("/$tenant/$locale/categories/$handle")({
   loader: async ({ params, context }) => {
     const { locale, handle } = params
+    if (typeof window === "undefined") return { locale, region: null, category: null as any }
     const { queryClient } = context
 
-    // Pre-fetch region data
     const region = await queryClient.ensureQueryData({
       queryKey: ["region", locale],
       queryFn: () => getRegion({ country_code: locale }),

@@ -7,17 +7,14 @@ import { lazy } from "react"
 const NotFound = lazy(() => import("@/components/not-found"))
 
 export function createRouter() {
+  const isServer = typeof window === "undefined"
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        // Optimize for SSR - shorter stale time for fresh data
-        staleTime: 1000 * 60, // 1 minute
-        // Enable refetch on window focus for fresh data
-        refetchOnWindowFocus: true,
-        // Enable refetch on reconnect
-        refetchOnReconnect: true,
-        // Retry failed requests
-        retry: 1,
+        staleTime: 1000 * 60,
+        refetchOnWindowFocus: !isServer,
+        refetchOnReconnect: !isServer,
+        retry: isServer ? 0 : 1,
       },
     },
   })
@@ -25,7 +22,7 @@ export function createRouter() {
   const router = createTanStackRouter({
     routeTree,
     context: { queryClient },
-    defaultPreload: false, // SSR handles data fetching on the server
+    defaultPreload: false,
     defaultNotFoundComponent: NotFound,
     scrollRestoration: true,
   })

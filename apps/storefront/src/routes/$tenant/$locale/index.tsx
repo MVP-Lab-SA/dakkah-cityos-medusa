@@ -7,9 +7,9 @@ import { queryKeys } from "@/lib/utils/query-keys"
 export const Route = createFileRoute("/$tenant/$locale/")({
   loader: async ({ params, context }) => {
     const { locale } = params
+    if (typeof window === "undefined") return { locale, region: null }
     const { queryClient } = context
 
-    // Fetch region for the country code
     const region = await queryClient.ensureQueryData({
       queryKey: ["region", locale],
       queryFn: () => getRegion({ country_code: locale }),

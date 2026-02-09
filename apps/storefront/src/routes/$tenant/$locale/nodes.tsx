@@ -7,17 +7,15 @@ import type { Node } from "@/lib/types/cityos"
 export const Route = createFileRoute("/$tenant/$locale/nodes")({
   loader: async ({ params, context }) => {
     const { tenant } = params
+    if (typeof window === "undefined") return { tenantId: "", rootNodes: [] as Node[] }
     const { queryClient } = context
 
     let tenantId = ""
     try {
-      const tenantResponse = await fetch(
+      const data = await sdk.client.fetch<{ tenant: { id: string } }>(
         `/store/cityos/tenant?slug=${encodeURIComponent(tenant)}`
       )
-      if (tenantResponse.ok) {
-        const data = await tenantResponse.json()
-        tenantId = data.tenant?.id || ""
-      }
+      tenantId = data.tenant?.id || ""
     } catch (e) {
       console.warn("Failed to resolve tenant for nodes page")
     }

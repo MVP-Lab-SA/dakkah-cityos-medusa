@@ -21,13 +21,12 @@ export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
 }>()({
   loader: async ({ context }) => {
+    if (typeof window === "undefined") return {}
     const { queryClient } = context
-    
     await queryClient.ensureQueryData({
       queryKey: ["regions"],
       queryFn: () => listRegions({ fields: "id, name, currency_code, *countries" }),
     })
-    
     return {}
   },
   head: () => ({

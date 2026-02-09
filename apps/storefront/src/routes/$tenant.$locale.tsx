@@ -1,5 +1,6 @@
 import { createFileRoute, notFound, Outlet } from "@tanstack/react-router"
 import { TenantProvider } from "@/lib/context/tenant-context"
+import { sdk } from "@/lib/utils/sdk"
 
 const SUPPORTED_LOCALES = ["en", "fr", "ar"]
 
@@ -12,13 +13,20 @@ export const Route = createFileRoute("/$tenant/$locale")({
       throw notFound()
     }
 
+    if (typeof window === "undefined") {
+      return {
+        tenant: null,
+        tenantSlug: tenant,
+        locale,
+        direction: locale === "ar" ? "rtl" : "ltr",
+        regions: null,
+      }
+    }
+
     let tenantData = null
     try {
-      const response = await fetch(`/store/cityos/tenant?slug=${encodeURIComponent(tenant)}`)
-      if (response.ok) {
-        const data = await response.json()
-        tenantData = data.tenant
-      }
+      const response = await sdk.client.fetch<{ tenant: any }>(`/store/cityos/tenant?slug=${encodeURIComponent(tenant)}`)
+      tenantData = response.tenant
     } catch (e) {
       console.warn("Tenant resolution failed, using default context")
     }

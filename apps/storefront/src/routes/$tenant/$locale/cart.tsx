@@ -5,6 +5,7 @@ import { getRegion } from "@/lib/data/regions"
 export const Route = createFileRoute("/$tenant/$locale/cart")({
   loader: async ({ params, context }) => {
     const { locale } = params
+    if (typeof window === "undefined") return { region: null, locale }
     const { queryClient } = context
 
     const region = await queryClient.ensureQueryData({

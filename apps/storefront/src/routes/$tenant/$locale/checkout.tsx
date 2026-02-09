@@ -20,8 +20,9 @@ export const Route = createFileRoute("/$tenant/$locale/checkout")({
   },
   loader: async ({ params, context, deps }) => {
     const { locale } = params
-    const { queryClient } = context
     const { step } = deps
+    if (typeof window === "undefined") return { region: null, locale, step }
+    const { queryClient } = context
 
     const region = await queryClient.ensureQueryData({
       queryKey: ["region", locale],

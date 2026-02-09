@@ -2,20 +2,19 @@ import { createFileRoute, notFound } from '@tanstack/react-router'
 import { queryKeys } from '@/lib/utils/query-keys'
 import { DynamicPage } from '@/components/pages/dynamic-page'
 import { getUnifiedClient } from '@/lib/api/unified-client'
+import { sdk } from '@/lib/utils/sdk'
 
 export const Route = createFileRoute('/$tenant/$locale/$slug')({
   loader: async ({ params, context }) => {
     const { slug, locale, tenant } = params
+    if (typeof window === "undefined") return { page: null, tenantBranding: null, countryCode: locale }
 
     let tenantId = ""
     try {
-      const tenantResponse = await fetch(
+      const data = await sdk.client.fetch<{ tenant: { id: string } }>(
         `/store/cityos/tenant?slug=${encodeURIComponent(tenant)}`
       )
-      if (tenantResponse.ok) {
-        const data = await tenantResponse.json()
-        tenantId = data.tenant?.id || ""
-      }
+      tenantId = data.tenant?.id || ""
     } catch (e) {
       console.warn("Failed to resolve tenant for page:", e)
     }

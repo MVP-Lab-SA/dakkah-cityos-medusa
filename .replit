@@ -15,7 +15,7 @@ AUTH_CORS = "http://localhost:5000,http://localhost:9000,https://*.replit.dev,ht
 JWT_SECRET = "supersecret-replit-medusa-jwt-key-32chars"
 COOKIE_SECRET = "supersecret-replit-medusa-cookie-key-32chars"
 VITE_MEDUSA_BACKEND_URL = "http://localhost:9000"
-VITE_MEDUSA_PUBLISHABLE_KEY = "pk_da4273830c05d5f12f6ca785a47d3a5e590b59b29a8834cf70ff4ce91e7a0c6f"
+VITE_MEDUSA_PUBLISHABLE_KEY = "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445"
 TEMPORAL_ENDPOINT = "ap-northeast-1.aws.api.temporal.io:7233"
 TEMPORAL_NAMESPACE = "quickstart-dakkah-cityos.djvai"
 

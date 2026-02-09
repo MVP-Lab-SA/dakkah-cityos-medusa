@@ -47,8 +47,10 @@ The storefront uses a dynamic routing pattern `/$tenant/$locale/...` with TanSta
 - **RTL Support:** Dedicated `dir="rtl"` and CSS overrides for Arabic locale.
 - **Event Outbox:** CMS-compatible envelope format with correlation/causation IDs.
 - **Vite Proxy:** Frontend uses a Vite proxy for seamless API communication.
-- **SSR Architecture:** Implemented SSR-safe practices using `typeof window` guards and client-only provider boundaries to prevent React instance duplication and ensure proper hydration.
+- **SSR Architecture:** Route loaders skip API calls during SSR (`typeof window === "undefined"` guard) to prevent OOM crashes. Data fetching happens client-side via React Query. ClientProviders use client-only boundaries to prevent React instance duplication. Hydration mismatch warnings are expected and handled by React's client-side re-rendering fallback.
+- **Memory Management:** Backend limited to 512MB (`NODE_OPTIONS=--max-old-space-size=512`), storefront to 1024MB. SSR loaders return minimal/null data to avoid memory-intensive API calls during server rendering.
 - **Authentication:** Switched to JWT-based authentication for customer SDK to avoid session issues in the Replit environment.
+- **API Key Usage:** All tenant/governance/node API calls must use `sdk.client.fetch()` (not raw `fetch()`) to automatically include the publishable API key header. Publishable key is stored in `VITE_MEDUSA_PUBLISHABLE_KEY` env var.
 
 ### Temporal Integration Bridge
 The Medusa backend integrates with Temporal Cloud for workflow orchestration. This includes a lazy-initialized Temporal client, an event dispatcher mapping Medusa events to Temporal workflows, and a dynamic workflow client supporting AI agent workflows. Admin API routes are available for health checks, workflow listing, and manual triggers. Temporal task queues are used for both static event-driven and dynamic AI agent workflows.

@@ -6,6 +6,7 @@ import { queryKeys } from "@/lib/utils/query-keys"
 export const Route = createFileRoute("/$tenant/$locale/order/$orderId/confirmed")({
   loader: async ({ params, context }) => {
     const { locale, orderId } = params
+    if (typeof window === "undefined") return { locale, order: null }
     const { queryClient } = context
 
     const order = await queryClient.ensureQueryData({
