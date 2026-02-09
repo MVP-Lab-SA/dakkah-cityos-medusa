@@ -1,0 +1,93 @@
+Here's the full implementation plan covering every gap in the platform, organized by priority:
+
+Phase 0 — Critical (Functional Completeness & Demoability)
+1. Fix Missing Product Images (6 products)
+Add Unsplash thumbnail and gallery images for: Canvas Tote Bag, Ceramic Coffee Mug, Medusa Hoodie, Medusa T-Shirt, Stainless Steel Water Bottle, Wireless Earbuds.
+
+2. Store-Facing API Routes for 21 Missing Verticals
+These verticals have backend models + admin APIs but no customer-facing store routes:
+
+Auctions, Rentals, Classifieds, Digital Products, Freelance, Travel, Social Commerce, Crowdfunding, Automotive, Grocery, Warranties
+Healthcare (partial), Education (partial), Real Estate (partial), Restaurants (partial)
+Fitness, Legal, Charity, Government, Parking, Utilities, Pet Services
+Financial Products, Advertising (read-only), Affiliates (read-only)
+Each gets at minimum: GET /store/<vertical> (list) and GET /store/<vertical>/:id (detail).
+
+3. Seed Data for All Vertical Modules
+Every one of the 40+ vertical tables currently has 0 rows. Need 3-10 representative records per module with realistic data, properly linked to existing tenants, nodes, and vendors. Includes:
+
+Restaurants (menus, items, reservations)
+Healthcare (practitioners, appointments)
+Education (courses, lessons, enrollments)
+Real Estate (property listings, viewings)
+Event Ticketing (events, venues, ticket types)
+Auctions, Rentals, Classifieds, Digital Products
+Travel, Fitness, Legal, Charity, Government, Parking, Pet Services, Utilities
+Financial Products, Advertising, Affiliates, Crowdfunding, Social Commerce, Grocery, Automotive, Freelance, Memberships, Warranties
+4. Frontend Pages for 27 Missing Verticals
+Each vertical needs at minimum a listing page and a detail page. These will be built under /$tenant/$locale/<vertical>/ routes:
+
+Consumer Services: Healthcare, Education, Fitness, Legal, Pet Services
+Marketplace: Auctions, Rentals, Classifieds, Digital Products, Freelance
+Food & Retail: Restaurants, Grocery
+Property & Transport: Real Estate, Travel, Parking, Automotive
+Community: Charity, Crowdfunding, Social Commerce, Government, Utilities
+Events & Entertainment: Event Ticketing
+Finance & Protection: Financial Products, Memberships, Warranties, Advertising, Affiliates
+Phase 1 — High Priority (Navigation & UX)
+5. Global Mega-Menu Navigation
+Replace the simple navbar with a grouped mega-menu so users can discover all verticals:
+
+Group verticals into categories (Shopping, Services, Property, Community, etc.)
+Mobile drawer with collapsible vertical groups
+Navbar category images replaced with real product photos
+6. Homepage Overhaul
+Replace placeholder hero images with real visuals
+Add a "Discover Services" grid/tile section linking to all verticals
+Each vertical tile gets an icon and short description
+Remove the current link-dump format, replace with visual cards
+7. Branding Update
+Replace "Bloom" with "Dakkah CityOS" throughout (navbar, footer, page titles, meta tags)
+Update page title and favicon
+Update footer description and links
+Phase 2 — Medium Priority (Localization & Polish)
+8. i18n Translation Files
+Create translation JSON catalogs for all 3 locales (en, fr, ar)
+Wire the existing locale context to load translations
+Cover: navigation labels, common UI text, form labels, error messages, vertical names
+Validate RTL layout applies correctly when Arabic locale is selected
+9. Design System Token Integration
+Map existing Tailwind classes to design token values from the cityos-design-tokens package
+Wire the ThemeProvider from cityos-design-runtime into the storefront
+Apply tokens to core shared components (buttons, cards, forms, inputs)
+10. Admin UI Vertical Pages
+Ensure Medusa Admin dashboard has widgets/pages for managing vertical module data
+Currently only API routes exist for admin — add admin UI widgets where needed
+Phase 3 — Nice-to-Have (Advanced Features)
+11. Product Gallery Image Linking
+Ensure all products have multiple gallery images properly linked (not just thumbnails)
+Add image zoom/lightbox on product detail pages
+12. Advanced Search Across Verticals
+Extend the existing search page to include results from all verticals (not just products)
+Add filters by vertical type
+13. Theme Switcher & Tenant Branding
+Enable per-tenant theme overrides using the design system
+Light/dark mode toggle
+Tenant-specific logo and color scheme support
+14. Newsletter & Social Features
+Wire newsletter subscription to an actual service
+Social sharing buttons on product/vertical pages
+Social commerce features (live streams, group buys)
+Summary of Scope
+Area	Current	Gap
+Backend Models	191 models, 48 modules	All complete
+Admin API Routes	All 48 verticals covered	Complete
+Store API Routes	19 verticals	21 missing
+Seed Data	Core commerce only	40+ vertical tables empty
+Product Images	7/13 have thumbnails	6 products missing images
+Frontend Pages	Core commerce + 8 verticals	27 verticals have zero pages
+Navigation	Basic shop + account	No vertical discovery
+Branding	Says "Bloom"	Should be "Dakkah CityOS"
+i18n	Plumbing exists	No translation files
+Design Tokens	Packages exist	Not wired into storefront
+This is a very large scope. Would you like me to start implementing from Phase 0, or would you prefer to focus on specific parts first? I'd recommend starting with the product images fix (quick win), then tackling the seed data and store APIs together, followed by the frontend vertical pages.

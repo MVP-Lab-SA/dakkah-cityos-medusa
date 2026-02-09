@@ -869,6 +869,254 @@ export default async function seedComplete({ container }: ExecArgs) {
         },
       ],
     },
+    {
+      title: "Canvas Tote Bag",
+      handle: "canvas-tote-bag",
+      description: "Durable and stylish canvas tote bag. Perfect for shopping, travel, or everyday use.",
+      status: "published",
+      thumbnail: "https://images.unsplash.com/photo-1544816155-12df9643f363?w=800&q=80",
+      images: [
+        { url: "https://images.unsplash.com/photo-1544816155-12df9643f363?w=1200&q=80" },
+        { url: "https://images.unsplash.com/photo-1591561954557-26941169b49e?w=1200&q=80" },
+      ],
+      category_ids: [getCategoryId("fashion")].filter(Boolean),
+      sales_channels: [{ id: allChannels[0].id }],
+      options: [
+        { title: "Color", values: ["Natural", "Black"] },
+      ],
+      variants: [
+        {
+          title: "Natural",
+          sku: "TOTE-NAT",
+          options: { Color: "Natural" },
+          prices: [
+            { amount: 85, currency_code: "sar" },
+            { amount: 23, currency_code: "usd" },
+          ],
+          manage_inventory: false,
+        },
+        {
+          title: "Black",
+          sku: "TOTE-BLK",
+          options: { Color: "Black" },
+          prices: [
+            { amount: 85, currency_code: "sar" },
+            { amount: 23, currency_code: "usd" },
+          ],
+          manage_inventory: false,
+        },
+      ],
+    },
+    {
+      title: "Ceramic Coffee Mug",
+      handle: "ceramic-coffee-mug",
+      description: "Premium ceramic coffee mug with glossy finish. Dishwasher safe and perfect for hot beverages.",
+      status: "published",
+      thumbnail: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=800&q=80",
+      images: [
+        { url: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=1200&q=80" },
+        { url: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=1200&q=80" },
+      ],
+      category_ids: [getCategoryId("fashion")].filter(Boolean),
+      sales_channels: [{ id: allChannels[0].id }],
+      options: [
+        { title: "Color", values: ["White", "Gray"] },
+      ],
+      variants: [
+        {
+          title: "White",
+          sku: "MUG-WHT",
+          options: { Color: "White" },
+          prices: [
+            { amount: 45, currency_code: "sar" },
+            { amount: 12, currency_code: "usd" },
+          ],
+          manage_inventory: false,
+        },
+        {
+          title: "Gray",
+          sku: "MUG-GRY",
+          options: { Color: "Gray" },
+          prices: [
+            { amount: 45, currency_code: "sar" },
+            { amount: 12, currency_code: "usd" },
+          ],
+          manage_inventory: false,
+        },
+      ],
+    },
+    {
+      title: "Medusa Hoodie",
+      handle: "medusa-hoodie",
+      description: "Comfortable and stylish hoodie. Perfect for casual wear in cool weather.",
+      status: "published",
+      thumbnail: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&q=80",
+      images: [
+        { url: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=1200&q=80" },
+        { url: "https://images.unsplash.com/photo-1578768079470-0a4536e2b2d7?w=1200&q=80" },
+      ],
+      category_ids: [getCategoryId("fashion")].filter(Boolean),
+      sales_channels: [{ id: allChannels[0].id }],
+      options: [
+        { title: "Size", values: ["Small", "Medium", "Large"] },
+      ],
+      variants: [
+        {
+          title: "Small",
+          sku: "HOOD-SM",
+          options: { Size: "Small" },
+          prices: [
+            { amount: 150, currency_code: "sar" },
+            { amount: 40, currency_code: "usd" },
+          ],
+          manage_inventory: false,
+        },
+        {
+          title: "Medium",
+          sku: "HOOD-MD",
+          options: { Size: "Medium" },
+          prices: [
+            { amount: 150, currency_code: "sar" },
+            { amount: 40, currency_code: "usd" },
+          ],
+          manage_inventory: false,
+        },
+        {
+          title: "Large",
+          sku: "HOOD-LG",
+          options: { Size: "Large" },
+          prices: [
+            { amount: 160, currency_code: "sar" },
+            { amount: 43, currency_code: "usd" },
+          ],
+          manage_inventory: false,
+        },
+      ],
+    },
+    {
+      title: "Medusa T-Shirt",
+      handle: "medusa-t-shirt",
+      description: "Classic cotton t-shirt with modern design. Comfortable fit for all-day wear.",
+      status: "published",
+      thumbnail: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=80",
+      images: [
+        { url: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=1200&q=80" },
+        { url: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=1200&q=80" },
+      ],
+      category_ids: [getCategoryId("fashion")].filter(Boolean),
+      sales_channels: [{ id: allChannels[0].id }],
+      options: [
+        { title: "Size", values: ["Small", "Medium", "Large"] },
+      ],
+      variants: [
+        {
+          title: "Small",
+          sku: "TSHIRT-SM",
+          options: { Size: "Small" },
+          prices: [
+            { amount: 65, currency_code: "sar" },
+            { amount: 17, currency_code: "usd" },
+          ],
+          manage_inventory: false,
+        },
+        {
+          title: "Medium",
+          sku: "TSHIRT-MD",
+          options: { Size: "Medium" },
+          prices: [
+            { amount: 65, currency_code: "sar" },
+            { amount: 17, currency_code: "usd" },
+          ],
+          manage_inventory: false,
+        },
+        {
+          title: "Large",
+          sku: "TSHIRT-LG",
+          options: { Size: "Large" },
+          prices: [
+            { amount: 75, currency_code: "sar" },
+            { amount: 20, currency_code: "usd" },
+          ],
+          manage_inventory: false,
+        },
+      ],
+    },
+    {
+      title: "Stainless Steel Water Bottle",
+      handle: "stainless-steel-water-bottle",
+      description: "Insulated stainless steel water bottle. Keeps drinks hot or cold for hours.",
+      status: "published",
+      thumbnail: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=800&q=80",
+      images: [
+        { url: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=1200&q=80" },
+        { url: "https://images.unsplash.com/photo-1523362628745-0c100150b504?w=1200&q=80" },
+      ],
+      category_ids: [getCategoryId("electronics")].filter(Boolean),
+      sales_channels: [{ id: allChannels[0].id }],
+      options: [
+        { title: "Capacity", values: ["500ml", "750ml"] },
+      ],
+      variants: [
+        {
+          title: "500ml",
+          sku: "BOTTLE-500",
+          options: { Capacity: "500ml" },
+          prices: [
+            { amount: 95, currency_code: "sar" },
+            { amount: 25, currency_code: "usd" },
+          ],
+          manage_inventory: false,
+        },
+        {
+          title: "750ml",
+          sku: "BOTTLE-750",
+          options: { Capacity: "750ml" },
+          prices: [
+            { amount: 120, currency_code: "sar" },
+            { amount: 32, currency_code: "usd" },
+          ],
+          manage_inventory: false,
+        },
+      ],
+    },
+    {
+      title: "Wireless Earbuds",
+      handle: "wireless-earbuds",
+      description: "Premium wireless earbuds with noise cancellation. Crystal clear sound and long battery life.",
+      status: "published",
+      thumbnail: "https://images.unsplash.com/photo-1590658268037-6bf12f032f55?w=800&q=80",
+      images: [
+        { url: "https://images.unsplash.com/photo-1590658268037-6bf12f032f55?w=1200&q=80" },
+        { url: "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=1200&q=80" },
+      ],
+      category_ids: [getCategoryId("electronics")].filter(Boolean),
+      sales_channels: [{ id: allChannels[0].id }],
+      options: [
+        { title: "Color", values: ["Black", "White"] },
+      ],
+      variants: [
+        {
+          title: "Black",
+          sku: "EARBUDS-BLK",
+          options: { Color: "Black" },
+          prices: [
+            { amount: 380, currency_code: "sar" },
+            { amount: 101, currency_code: "usd" },
+          ],
+          manage_inventory: false,
+        },
+        {
+          title: "White",
+          sku: "EARBUDS-WHT",
+          options: { Color: "White" },
+          prices: [
+            { amount: 380, currency_code: "sar" },
+            { amount: 101, currency_code: "usd" },
+          ],
+          manage_inventory: false,
+        },
+      ],
+    },
   ]
 
   let productCount = 0
