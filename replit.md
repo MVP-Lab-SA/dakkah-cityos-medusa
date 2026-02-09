@@ -93,6 +93,15 @@ Two seed scripts are available:
 - **SSR-safe Layout**: `Layout` component checks `typeof window` to render a minimal HTML shell during SSR and the full client layout (with Navbar, Footer, CartProvider, theme) on the client.
 - **Trade-off**: Providers render only on client side, losing some SSR benefits but maintaining full application functionality and preventing crashes.
 
+## Database Seeding Status
+- **Total tables:** 332 | **With data:** 259 (78%) | **Empty:** 73 | **Total rows:** 1,430
+- **Seed scripts:** seed.ts (minimal), seed-complete.ts (full), seed-verticals-4/5/6/7.ts (verticals + tenant), db-verify.ts (audit)
+- **Remaining 73 empty tables:** Medusa core transactional tables (order*, cart*, payment*, fulfillment*, return* — ~50 tables) populated through real commerce operations, plus join/link tables (~15) and a few with complex FK constraints
+- **Key pattern:** BigNumber columns require companion `raw_*` JSONB columns with `{"value":"X","precision":20}` structure
+- **Enum constraints:** 30+ check constraints across tables — must verify allowed values before inserts
+- **ID prefixes:** seed4_, seed5_, seed6_, seed7_ for tracking seed script origin
+- **Data theme:** Saudi/Arabic (SAR currency, Riyadh/Jeddah locations, Arabic names)
+
 ## Recent Changes (Feb 2026)
 - Fixed Vite SSR crash from dual React instances by disabling SSR dep optimization and implementing client-only provider boundaries.
 - Fixed Layout component to be SSR-safe with typeof window guards.
@@ -120,3 +129,7 @@ Two seed scripts are available:
 - Fixed customer auth: switched SDK from session-based to JWT-based auth (`auth: { type: "jwt" }` in sdk.ts) to avoid cookie/session issues in Replit iframe proxy environment.
 - Created auth identities for 3 seeded customers (Mohammed, Fatima, Ahmed) with password `Customer123!` and linked them to existing customer records.
 - Auth flow: POST /auth/customer/emailpass → JWT token → Bearer token for subsequent requests (no session cookie needed).
+- Comprehensive database seeding phase: seed-verticals-4/5/6/7.ts scripts + direct SQL seeded 111+ tables across all verticals and CityOS tenant infrastructure.
+- Seeded CityOS-specific tables: persona (5), persona_assignment (4), cityos_store (2), tenant_settings, tenant_billing, tenant_invoice (2), tenant_usage_record (3), translation (10), audit_log (5), event_outbox (3), view_configuration (2), user_preference (4), sales_channel_mapping (3), region_zone_mapping (3).
+- Seeded B2B/commerce tables: company (3), company_user (3), approval_workflow (2), approval_request (2), purchase_order (2), quote (2), payment_terms (3), price_list (2), promotion (3) with rules.
+- Seeded additional verticals: inventory (7 items + levels), product_collection (3), product_type (3), product_tag (6), customer_group (3), customer_segment (3), gift_card_ext (3), amenity (7), volume_pricing (2) with tiers, vendor_analytics (2), vendor_performance_metric (4), service_provider (3), service_product (4), agent_profile (2), shuttle_route (2), time_log (3), billing_cycle (3), tax_exemption (2), ride_request (2), rental_agreement (2), retainer_agreement (2), workflow_execution (3), return_reason (5), product_bundle (2).
