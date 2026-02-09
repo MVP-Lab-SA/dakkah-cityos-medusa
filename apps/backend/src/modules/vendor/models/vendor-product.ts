@@ -43,6 +43,8 @@ export const VendorProduct = model.define("vendor_product", {
   commission_rate: model.bigNumber().nullable(),
   commission_type: model.enum(["percentage", "flat"]).nullable(),
   
+  marketplace_tenant_id: model.text().nullable(),
+  
   metadata: model.json().nullable(),
 })
 .indexes([

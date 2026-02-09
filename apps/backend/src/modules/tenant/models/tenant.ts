@@ -33,6 +33,14 @@ const Tenant = model.define("tenant", {
   status: model.enum(["active", "suspended", "trial", "archived", "inactive"]).default("trial"),
   subscription_tier: model.enum(["basic", "pro", "enterprise", "custom"]).default("basic"),
   
+  scope_tier: model.enum(["nano", "micro", "small", "medium", "large", "mega", "global"]).default("nano"),
+  tenant_type: model.enum(["platform", "marketplace", "vendor", "brand"]).default("vendor"),
+  parent_tenant_id: model.text().nullable(),
+  operating_countries: model.json().nullable(),
+  max_pois: model.number().default(1),
+  max_channels: model.number().default(1),
+  can_host_vendors: model.boolean().default(false),
+  
   billing_email: model.text().nullable(),
   billing_address: model.json().nullable(),
   trial_starts_at: model.dateTime().nullable(),

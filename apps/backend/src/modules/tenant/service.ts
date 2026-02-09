@@ -3,6 +3,9 @@ import Tenant from "./models/tenant"
 import { TenantBilling, TenantUsageRecord, TenantInvoice } from "./models/tenant-billing"
 import { TenantSettings } from "./models/tenant-settings"
 import { TenantUser } from "./models/tenant-user"
+import TenantRelationship from "./models/tenant-relationship"
+import TenantPOI from "./models/tenant-poi"
+import ServiceChannel from "./models/service-channel"
 
 const ROLE_LEVEL_MAP: Record<string, number> = {
   "super-admin": 100,
@@ -24,6 +27,9 @@ class TenantModuleService extends MedusaService({
   TenantInvoice,
   TenantSettings,
   TenantUser,
+  TenantRelationship,
+  TenantPOI,
+  ServiceChannel,
 }) {
   // ============ Tenant Lookup ============
 

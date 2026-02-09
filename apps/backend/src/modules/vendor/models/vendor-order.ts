@@ -68,6 +68,8 @@ export const VendorOrder = model.define("vendor_order", {
   vendor_notes: model.text().nullable(),
   internal_notes: model.text().nullable(),
   
+  marketplace_tenant_id: model.text().nullable(),
+  
   metadata: model.json().nullable(),
 })
 .indexes([

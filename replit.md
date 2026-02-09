@@ -1,7 +1,7 @@
 # Medusa.js E-Commerce Monorepo — Dakkah CityOS Commerce Platform
 
 ## Overview
-This project is a Medusa.js e-commerce monorepo for multi-tenancy and integration with the Dakkah CityOS CMS architecture. Dakkah is a comprehensive platform powering 27+ commerce verticals (shopping, dining, healthcare, education, real estate, automotive, travel, fitness, legal, financial, government services, etc.). It features a 5-level node hierarchy, a 10-role RBAC system, a 6-axis persona system, a 4-level governance chain, and localization for 3 locales (en/fr/ar with RTL support). The default tenant "Dakkah" (`01KGZ2JRYX607FWMMYQNQRKVWS`) is the primary super-app tenant with all seeded data.
+This project is a Medusa.js e-commerce monorepo designed for multi-tenancy and seamless integration with the Dakkah CityOS CMS architecture. Dakkah is a comprehensive platform intended to power over 27 commerce verticals. Key features include a 5-level node hierarchy, a 10-role RBAC system, a 6-axis persona system, a 4-level governance chain, and localization for en/fr/ar (with RTL support). The primary super-app tenant is "Dakkah" (`01KGZ2JRYX607FWMMYQNQRKVWS`), containing all seeded data.
 
 ## User Preferences
 - Full alignment with CityOS CMS architecture required
@@ -14,7 +14,7 @@ This project is a Medusa.js e-commerce monorepo for multi-tenancy and integratio
 ## System Architecture
 
 ### Structure
-The project is a Turborepo monorepo:
+The project utilizes a Turborepo monorepo:
 - `apps/backend/`: Medusa.js v2 backend API (port 9000).
 - `apps/storefront/`: TanStack Start + React storefront (port 5000).
 - `packages/cityos-contracts/`: Shared TypeScript contracts.
@@ -23,83 +23,82 @@ The project is a Turborepo monorepo:
 - `packages/cityos-design-system/`: Component type system.
 
 ### Backend Modules and Features
-The backend provides modularity for CityOS features like tenant management, node hierarchy (CITY→DISTRICT→ZONE→FACILITY→ASSET), governance with policy inheritance, a persona system, CMS-compatible event outbox, and i18n. It supports multi-vendor marketplaces, subscriptions, B2B, bookings, promotions, and specialized services. API routes handle tenant, node, persona, and governance resolution using `NodeContext` middleware.
+The backend provides modularity for CityOS features such as tenant management, a 5-level node hierarchy (CITY→DISTRICT→ZONE→FACILITY→ASSET), policy inheritance-based governance, a persona system, a CMS-compatible event outbox, and i18n. It supports multi-vendor marketplaces, subscriptions, B2B, bookings, promotions, and specialized services. API routes handle tenant, node, persona, and governance resolution using `NodeContext` middleware.
+
+### Vendor-as-Tenant Architecture
+Vendors are implemented as full tenants within the system, differentiated by `scope_tier` (nano, micro, small, medium, large, mega, global) and `tenant_type` (platform, marketplace, vendor, brand). Key models include `TenantRelationship` for linking vendor-tenants to marketplace-tenants, `TenantPOI` for physical locations, `ServiceChannel` for delivery methods, and `MarketplaceListing` for cross-tenant product listings.
 
 ### Storefront Architecture
-The storefront uses dynamic routing (`/$tenant/$locale/...`) with TanStack Router for file-based routing and Server-Side Rendering (SSR). A centralized design system defines design primitives, theming, and component interfaces. The provider chain (`ClientProviders` → `QueryClientProvider` → `StoreProvider` → `AuthProvider` → `BrandingProvider` → `GovernanceProvider` → `ToastProvider`) ensures consistent context availability. Tenant-scoped routes (`/$tenant/$locale/`) wrap children with `TenantProvider` and `PlatformContextProvider`.
+The storefront uses TanStack Start with React for SSR, dynamic routing (`/$tenant/$locale/...`), and file-based routing. A centralized design system dictates design primitives, theming, and component interfaces. The provider chain (`ClientProviders` → `QueryClientProvider` → `StoreProvider` → `AuthProvider` → `BrandingProvider` → `GovernanceProvider` → `ToastProvider`) ensures consistent context. Tenant-scoped routes (`/$tenant/$locale/`) are wrapped with `TenantProvider` and `PlatformContextProvider`.
 
-**Tenant-Scoped Routing:** Two dynamic catch-all routes handle all CMS-driven pages (`/$tenant/$locale/$slug` for single-segment, `/$tenant/$locale/$...path` for multi-segment). Transactional routes (cart, checkout, account/*, bookings/*, vendor/*, b2b/*, quotes/*, subscriptions/*) remain as dedicated route files.
-
-**CMS-Driven Routing and Templates:** A local CMS registry (`apps/backend/src/lib/platform/cms-registry.ts`) with Payload CMS-compatible data model serves as a drop-in stand-in for Payload CMS. The registry defines 27 commerce verticals (54 page entries for list + detail), plus 5 additional pages (home, store, search, vendors, categories). All pages use Payload CMS document shape (`id`, `createdAt`, `updatedAt`, `_status`). The `TemplateRenderer` component switches on `page.template` (`vertical-list`, `vertical-detail`, `landing`, `static`, `category`, `node-browser`, `custom`) to render the appropriate layout.
-
-**Country/Region Scope Model:** CMS pages have `countryCode` (ISO code or "global") and `regionZone` (GCC_EU, MENA, APAC, AMERICAS, GLOBAL) fields for country-level unification. Pages also support optional `nodeId` and `nodeLevel` for node hierarchy integration. Resolution chain: exact country match → region zone match → global fallback → wildcard detail page matching.
-
-**Payload CMS Collection Endpoints (Local Registry):**
-- `GET /platform/cms/pages` - Payload-compatible collection query with where/limit/sort/page params. Returns `{ docs, totalDocs, limit, page, totalPages, hasNextPage, hasPrevPage, pagingCounter }`.
-- `GET /platform/cms/navigations` - Navigation collection with Payload response shape.
-- `GET /platform/cms/verticals` - Vertical template catalog with Payload response shape.
-- `GET /platform/cms/resolve` - Single-page resolution with `countryCode` support. Returns both legacy `{ success, data: { page } }` and Payload-compatible `payload: { docs: [...] }` shapes.
-- `GET /platform/cms/navigation` - Navigation resolution with both legacy and Payload response shapes.
-
-**CMS Integration:** `useCMSPage`, `useCMSPageChildren`, `useCMSNavigation`, `useCMSVerticals` hooks provide React Query-powered data fetching. All hooks now consume from local Payload-compatible endpoints (`/platform/cms/pages`, `/platform/cms/verticals`) instead of direct Payload CMS access. Response extraction prefers Payload shape (`docs` array) with fallback to legacy shape.
-
-**Governance Integration:** `GovernanceProvider` fetches tenant-specific policies. The `useGovernanceContext()` hook provides `isVerticalAllowed()`, `isFeatureAllowed()`, and `getCommercePolicy()` for feature gating. CMS pages can have `governanceTags`.
+### CMS Integration
+A local CMS registry (`apps/backend/src/lib/platform/cms-registry.ts`), compatible with Payload CMS, serves as a stand-in for CMS data. It defines 27 commerce verticals and additional pages. The `TemplateRenderer` component dynamically renders layouts based on page templates. CMS pages include `countryCode` and `regionZone` for country-level unification, and optional `nodeId` for hierarchy integration. Backend endpoints `/platform/cms/pages`, `/platform/cms/navigations`, `/platform/cms/verticals`, `/platform/cms/resolve`, and `/platform/cms/navigation` provide Payload-compatible responses. Frontend hooks (`useCMSPage`, `useCMSPageChildren`, `useCMSNavigation`, `useCMSVerticals`) utilize React Query for data fetching from these endpoints.
 
 ### Key Design Decisions
-- **Multi-tenant Isolation:** `tenantId` on all entities with node-scoped access.
+- **Multi-tenant Isolation:** `tenantId` is used across all entities with node-scoped access.
 - **RBAC:** 10 roles with node-scoped access.
 - **Persona Precedence:** Hierarchical resolution from session to tenant-default.
-- **Governance:** Deep merging of policies through an authority chain.
+- **Governance:** Deep merging of policies via an authority chain.
 - **Residency Zones:** Data locality based on GCC/EU, MENA, APAC/AMERICAS/GLOBAL.
-- **Country-Level CMS Scoping:** Pages scoped by countryCode/regionZone with 4-step resolution chain.
-- **Payload CMS API Compatibility:** Local registry returns Payload-shaped responses for seamless migration to real Payload CMS.
+- **Country-Level CMS Scoping:** Pages scoped by `countryCode`/`regionZone` with a 4-step resolution chain.
+- **Payload CMS API Compatibility:** Local registry designed for seamless migration to Payload CMS.
 - **RTL Support:** Dedicated `dir="rtl"` and CSS overrides for Arabic.
 - **Event Outbox:** CMS-compatible envelope format with correlation/causation IDs.
-- **Vite Proxy:** Frontend uses a Vite proxy for seamless API communication.
-- **SSR Architecture:** Route loaders return minimal/null data during SSR to prevent OOM errors, with client-side data fetching via React Query. ClientProviders use client-only boundaries.
+- **Vite Proxy:** Frontend uses a Vite proxy for API communication.
+- **SSR Architecture:** Route loaders return minimal data during SSR, with client-side data fetching via React Query to prevent OOM errors.
 - **Memory Management:** Backend limited to 512MB, storefront to 1024MB.
 - **Authentication:** JWT-based authentication for customer SDK.
-- **API Key Usage:** All tenant/governance/node API calls must use `sdk.client.fetch()` for automatic publishable API key inclusion (`VITE_MEDUSA_PUBLISHABLE_KEY`).
-- **Tenant Resolution:** Default tenant "dakkah" (`01KGZ2JRYX607FWMMYQNQRKVWS`). Root `/` redirects to `/dakkah/en`. `DEFAULT_TENANT` fallback config and `TENANT_SLUG_TO_ID` maps are used for tenant ID resolution.
-- **Route Consolidation:** CMS-eligible routes (store, search, vendors, categories, nodes) consolidated into catch-all routes. Only transactional/authenticated routes (cart, checkout, account, bookings, vendor dashboard, B2B, quotes, subscriptions) remain as dedicated files.
-
-### Payload CMS Migration Path
-The local CMS registry is designed as a drop-in stand-in for Payload CMS:
-1. **Current State:** Local registry in `cms-registry.ts` serves all CMS data through Payload-compatible endpoints.
-2. **Migration Step 1:** Deploy Payload CMS instance with matching collection schemas (pages, navigations, verticals).
-3. **Migration Step 2:** Set `PAYLOAD_CMS_URL` and `PAYLOAD_API_KEY` environment variables. The resolve/navigation endpoints already fall back to Payload CMS when local registry has no match.
-4. **Migration Step 3:** Import registry data into Payload CMS collections. Frontend hooks already consume Payload response shapes.
-5. **Migration Step 4:** Remove local registry fallback logic once Payload CMS has all data.
-6. **Future:** Replace storefront with Next.js + Payload CMS frontend, keeping Medusa as remote commerce backend.
+- **API Key Usage:** All tenant/governance/node API calls must use `sdk.client.fetch()` for automatic `VITE_MEDUSA_PUBLISHABLE_KEY` inclusion.
+- **Tenant Resolution:** Default tenant "dakkah" (`01KGZ2JRYX607FWMMYQNQRKVWS`). Root `/` redirects to `/dakkah/en`. `DEFAULT_TENANT` and `TENANT_SLUG_TO_ID` are used for tenant ID resolution.
+- **Route Consolidation:** CMS-eligible routes are consolidated into catch-all routes, while transactional/authenticated routes remain dedicated files.
 
 ### Platform Context API
-The backend exposes a unified Platform Context API at `/platform/*` (no authentication required) for full context resolution:
-- `GET /platform/context?tenant=<slug>`: Returns `tenant`, `nodeHierarchy`, `governanceChain`, `capabilities`, `systems` (22 registered), `contextHeaders`, `hierarchyLevels`.
-- `GET /platform/tenants/default`: Returns Dakkah default tenant.
-- `GET /platform/capabilities`: Returns plugin capabilities and available endpoints.
-Context propagation headers (`X-CityOS-Correlation-Id`, `X-CityOS-Tenant-Id`, etc.) are parsed by `platformContextMiddleware`.
+The backend exposes a unified Platform Context API at `/platform/*` (no authentication required) for context resolution, including `tenant`, `nodeHierarchy`, `governanceChain`, `capabilities`, and `systems`.
 
 ### Temporal Integration Bridge
-The Medusa backend integrates with Temporal Cloud for workflow orchestration, including a lazy-initialized client, an event dispatcher mapping Medusa events to Temporal workflows, and a dynamic workflow client for AI agent workflows. Admin API routes for health checks and workflow management are provided.
+The Medusa backend integrates with Temporal Cloud for workflow orchestration, featuring a lazy-initialized client, an event dispatcher for Medusa events, and a dynamic workflow client for AI agent workflows.
 
 ### Cross-System Integration Layer
 This layer orchestrates integration with CityOS ecosystem components:
-- **Integration Services:** Bi-directional sync with Payload CMS, ERPNext (invoices, customer/product sync), Fleetbase (shipment management), Walt.id (digital identity), and Stripe (payments). A Node Hierarchy Sync service propagates the 5-level hierarchy.
-- **Integration Orchestrator:** Manages sync operations, external system registry, and coordinates syncs, retries, and health checks.
+- **Integration Services:** Bi-directional sync with Payload CMS, ERPNext, Fleetbase, Walt.id, and Stripe.
+- **Integration Orchestrator:** Manages sync operations, external system registry, retries, and health checks.
 - **Webhook Receivers:** Handles inbound webhooks with signature verification.
 - **Admin Integration APIs:** Provides dashboards, health checks, manual triggers, and logs.
 - **Scheduled Jobs:** Automates regular syncs.
 - **Integration Event Subscriber:** Triggers cross-system syncs based on Medusa events.
 
-### Database Seeding and Testing
-Seed scripts provide minimal and complete data seeding, including an admin user, store, products, customers, vendors, tenant, and the 5-level node hierarchy. `db-verify.ts` ensures database integrity. Backend tests use Jest; storefront tests use Vitest.
+### System Responsibility Split
+Three systems work together, each owning specific domains:
+
+**Medusa (this codebase) — Commerce Engine:**
+- Products, orders, payments, commissions, marketplace listings
+- Vendor registration, KYC status, payout management (Stripe Connect)
+- TenantRelationship and MarketplaceListing management
+- ServiceChannel definitions (fulfillment types, order rules)
+- VendorProduct/VendorOrder attribution across tenant boundaries
+
+**Payload CMS — Entity & Content Management:**
+- Tenant profiles (branding, SEO, localized content, media)
+- POI content (descriptions, media galleries, operating hours display)
+- Vendor public profiles (about, story, team, FAQ, reviews display)
+- Pages and navigation (tenant-scoped, tier-gated)
+- Service channel display content (icons, promotional banners)
+- Integration spec: `apps/backend/src/lib/integrations/payload-cms-spec.ts`
+
+**Fleetbase — Geo & Logistics:**
+- Geocoding and address validation for POIs
+- Delivery zone management (polygons, radius-based)
+- Service area coverage checks
+- Fleet management per vendor-tenant (drivers, assignments)
+- Routing, ETA calculations, route optimization
+- Real-time driver tracking
+- Integration spec: `apps/backend/src/lib/integrations/fleetbase-spec.ts`
 
 ## Recent Changes (2026-02-09)
-- **CMS Registry Restructure:** Added `PayloadPage` interface with Payload CMS standard fields, country/region scope model, vertical templates catalog, and 4-step resolution chain.
-- **Payload CMS Collection Endpoints:** Created `/platform/cms/pages`, `/platform/cms/navigations`, `/platform/cms/verticals` with standard Payload response shape. Updated `/resolve` and `/navigation` to return Payload-compatible responses alongside legacy shape.
-- **Route Consolidation:** Removed 9 CMS-eligible route files (stores, store, search, nodes, categories/*, vendors/*). These are now handled by catch-all routes resolving from CMS registry.
-- **Frontend Hook Updates:** All CMS hooks now consume from local Payload-compatible endpoints instead of direct Payload CMS access.
-- **Country-to-Region Mapping:** Hardcoded mapping for 26 countries across GCC_EU, MENA, APAC, AMERICAS zones.
+- **Vendor-as-Tenant Architecture:** Vendors are now full tenants with scope tiers (nano→global), tenant types (platform/marketplace/vendor/brand), parent tenant hierarchy, POI collections, multi-channel services, and cross-tenant marketplace listings.
+- **New Models:** TenantRelationship, TenantPOI, ServiceChannel, MarketplaceListing added to backend modules.
+- **Platform Vendor APIs:** New `/platform/vendors` endpoints for vendor discovery with marketplace filtering, POI/channel/listing sub-resources.
+- **Integration Specs:** Created Payload CMS spec (6 collections, webhooks, globals) and Fleetbase spec (6 capability groups, webhooks, events) as TypeScript contracts.
 
 ## External Dependencies
 - **Database:** PostgreSQL

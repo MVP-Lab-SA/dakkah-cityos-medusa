@@ -4,6 +4,7 @@ import VendorUser from "./models/vendor-user"
 import { VendorProduct } from "./models/vendor-product"
 import { VendorOrder, VendorOrderItem } from "./models/vendor-order"
 import { VendorAnalyticsSnapshot, VendorPerformanceMetric } from "./models/vendor-analytics"
+import MarketplaceListing from "./models/marketplace-listing"
 
 /**
  * Vendor Module Service
@@ -18,6 +19,7 @@ class VendorModuleService extends MedusaService({
   VendorOrderItem,
   VendorAnalyticsSnapshot,
   VendorPerformanceMetric,
+  MarketplaceListing,
 }) {
   // ============ Vendor Management ============
 

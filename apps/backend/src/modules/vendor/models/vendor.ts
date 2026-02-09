@@ -1,5 +1,6 @@
 import { model } from "@medusajs/framework/utils"
 
+// TenantVendorProfile: 1:1 extension of a Tenant for vendor-specific business data
 const Vendor = model.define("vendor", {
   id: model.id().primaryKey(),
   handle: model.text().unique(),
@@ -109,6 +110,10 @@ const Vendor = model.define("vendor", {
   contact_person_name: model.text().nullable(),
   contact_person_email: model.text().nullable(),
   contact_person_phone: model.text().nullable(),
+  
+  is_tenant_profile: model.boolean().default(true),
+  verticals: model.json().nullable(),
+  service_channels: model.json().nullable(),
   
   // Metadata
   metadata: model.json().nullable(),
