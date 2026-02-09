@@ -1,9 +1,6 @@
 import { MedusaContainer } from "@medusajs/framework/types"
 import cron from "node-cron"
-import { MedusaToPayloadSync } from "../integrations/payload-sync"
-import { PayloadToMedusaSync } from "../integrations/payload-sync"
-import { NodeHierarchySyncService } from "../integrations/node-hierarchy-sync"
-import { createIntegrationOrchestrator } from "../integrations/orchestrator"
+import { startWorkflow } from "../lib/temporal-client"
 
 export class IntegrationSyncScheduler {
   private container: MedusaContainer
@@ -14,92 +11,52 @@ export class IntegrationSyncScheduler {
   }
 
   start() {
-    console.log("[SyncScheduler] Starting integration sync scheduler")
+    console.log("[SyncScheduler] Starting integration sync scheduler (Temporal-dispatched)")
 
     const productSyncTask = cron.schedule("0 * * * *", async () => {
-      const payloadUrl = process.env.PAYLOAD_API_URL
-      const payloadKey = process.env.PAYLOAD_API_KEY
-      if (!payloadUrl || !payloadKey) {
-        console.log("[SyncScheduler] Payload CMS not configured, skipping product sync")
-        return
-      }
       try {
-        console.log("[SyncScheduler] Syncing products to Payload CMS")
-        const sync = new MedusaToPayloadSync(this.container, {
-          payloadUrl,
-          payloadApiKey: payloadKey,
-        })
-        const result = await sync.syncAllProducts()
-        console.log(`[SyncScheduler] Product sync complete: ${result.success} success, ${result.failed} failed`)
-      } catch (error: any) {
-        console.log(`[SyncScheduler] Product sync to Payload failed: ${error.message}`)
+        if (!process.env.TEMPORAL_API_KEY) {
+          console.log("[SyncScheduler] Temporal not configured, skipping scheduled product sync")
+          return
+        }
+        const result = await startWorkflow("xsystem.scheduled-product-sync", {
+          timestamp: new Date().toISOString(),
+        }, {})
+        console.log(`[SyncScheduler] Dispatched product sync workflow: ${result.runId}`)
+      } catch (err: any) {
+        console.warn(`[SyncScheduler] Failed to dispatch product sync: ${err.message}`)
       }
     })
     this.tasks.push(productSyncTask)
 
-    const contentSyncTask = cron.schedule("0 * * * *", async () => {
-      const payloadUrl = process.env.PAYLOAD_API_URL
-      const payloadKey = process.env.PAYLOAD_API_KEY
-      if (!payloadUrl || !payloadKey) {
-        console.log("[SyncScheduler] Payload CMS not configured, skipping content sync")
-        return
-      }
-      try {
-        console.log("[SyncScheduler] Processing pending Payload content updates")
-        const reverseSync = new PayloadToMedusaSync(this.container, {
-          payloadUrl,
-          payloadApiKey: payloadKey,
-        })
-        const result = await reverseSync.syncPendingProductContent()
-        console.log(`[SyncScheduler] Pending content sync complete: ${result.success} success, ${result.failed} failed`)
-      } catch (error: any) {
-        console.log(`[SyncScheduler] Pending content sync failed: ${error.message}`)
-      }
-    })
-    this.tasks.push(contentSyncTask)
-
     const retryTask = cron.schedule("*/30 * * * *", async () => {
       try {
-        console.log("[SyncScheduler] Retrying failed syncs")
-        const orchestrator = createIntegrationOrchestrator(this.container)
-        const result = await orchestrator.retryFailedSyncs()
-        console.log(`[SyncScheduler] Retry complete: ${result.succeeded} succeeded, ${result.failed} failed out of ${result.retried} retried`)
-      } catch (error: any) {
-        console.log(`[SyncScheduler] Failed sync retry error: ${error.message}`)
+        if (!process.env.TEMPORAL_API_KEY) {
+          console.log("[SyncScheduler] Temporal not configured, skipping retry sync")
+          return
+        }
+        const result = await startWorkflow("xsystem.retry-failed-syncs", {
+          timestamp: new Date().toISOString(),
+        }, {})
+        console.log(`[SyncScheduler] Dispatched retry-failed-syncs workflow: ${result.runId}`)
+      } catch (err: any) {
+        console.warn(`[SyncScheduler] Failed to dispatch retry sync: ${err.message}`)
       }
     })
     this.tasks.push(retryTask)
 
     const hierarchyTask = cron.schedule("0 */6 * * *", async () => {
-      const hasAnySyncTarget =
-        process.env.PAYLOAD_API_URL ||
-        process.env.ERPNEXT_SITE_URL ||
-        process.env.FLEETBASE_API_URL ||
-        process.env.WALTID_API_URL
-      if (!hasAnySyncTarget) {
-        console.log("[SyncScheduler] No sync targets configured, skipping hierarchy reconciliation")
-        return
-      }
       try {
-        console.log("[SyncScheduler] Starting node hierarchy reconciliation")
-        const nodeHierarchyService = new NodeHierarchySyncService(this.container)
-        const query = this.container.resolve("query") as any
-        const { data: tenants } = await query.graph({
-          entity: "tenant",
-          fields: ["id"],
-          pagination: { take: 100 },
-        })
-
-        for (const tenant of tenants || []) {
-          try {
-            const result = await nodeHierarchyService.syncFullHierarchy(tenant.id)
-            console.log(`[SyncScheduler] Node hierarchy sync for tenant ${tenant.id}: payload=${result.payload.synced}, erpnext=${result.erpnext.synced}, fleetbase=${result.fleetbase.synced}, waltid=${result.waltid.synced}`)
-          } catch (err: any) {
-            console.log(`[SyncScheduler] Node hierarchy sync failed for tenant ${tenant.id}: ${err.message}`)
-          }
+        if (!process.env.TEMPORAL_API_KEY) {
+          console.log("[SyncScheduler] Temporal not configured, skipping hierarchy reconciliation")
+          return
         }
-      } catch (error: any) {
-        console.log(`[SyncScheduler] Node hierarchy reconciliation error: ${error.message}`)
+        const result = await startWorkflow("xsystem.scheduled-hierarchy-reconciliation", {
+          timestamp: new Date().toISOString(),
+        }, {})
+        console.log(`[SyncScheduler] Dispatched hierarchy reconciliation workflow: ${result.runId}`)
+      } catch (err: any) {
+        console.warn(`[SyncScheduler] Failed to dispatch hierarchy reconciliation: ${err.message}`)
       }
     })
     this.tasks.push(hierarchyTask)
@@ -107,6 +64,7 @@ export class IntegrationSyncScheduler {
     const cleanupTask = cron.schedule("0 0 * * *", async () => {
       try {
         console.log("[SyncScheduler] Cleaning up old sync logs")
+        const { createIntegrationOrchestrator } = await import("../integrations/orchestrator/index.js")
         const orchestrator = createIntegrationOrchestrator(this.container)
         const dashboard = await orchestrator.getSyncDashboard()
         const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
@@ -120,7 +78,7 @@ export class IntegrationSyncScheduler {
     })
     this.tasks.push(cleanupTask)
 
-    console.log("[SyncScheduler] All sync jobs scheduled")
+    console.log("[SyncScheduler] All sync jobs scheduled (dispatching to Temporal)")
   }
 
   stop() {
@@ -138,88 +96,39 @@ export function createSyncScheduler(container: MedusaContainer): IntegrationSync
 }
 
 export default async function integrationSyncSchedulerJob(container: MedusaContainer) {
-  console.log("[SyncScheduler] Running scheduled integration sync reconciliation")
+  console.log("[SyncScheduler] Running scheduled integration sync reconciliation (via Temporal)")
 
   try {
-    const payloadUrl = process.env.PAYLOAD_API_URL
-    const payloadKey = process.env.PAYLOAD_API_KEY
-    if (payloadUrl && payloadKey) {
-      try {
-        console.log("[SyncScheduler] Syncing products to Payload CMS")
-        const sync = new MedusaToPayloadSync(container, {
-          payloadUrl,
-          payloadApiKey: payloadKey,
-        })
-        const result = await sync.syncAllProducts()
-        console.log(`[SyncScheduler] Product sync complete: ${result.success} success, ${result.failed} failed`)
-      } catch (error: any) {
-        console.log(`[SyncScheduler] Product sync to Payload failed: ${error.message}`)
-      }
-
-      try {
-        console.log("[SyncScheduler] Processing pending Payload content updates")
-        const reverseSync = new PayloadToMedusaSync(container, {
-          payloadUrl,
-          payloadApiKey: payloadKey,
-        })
-        const result = await reverseSync.syncPendingProductContent()
-        console.log(`[SyncScheduler] Pending content sync complete: ${result.success} success, ${result.failed} failed`)
-      } catch (error: any) {
-        console.log(`[SyncScheduler] Pending content sync failed: ${error.message}`)
-      }
-    } else {
-      console.log("[SyncScheduler] Payload CMS not configured, skipping product sync")
+    if (!process.env.TEMPORAL_API_KEY) {
+      console.log("[SyncScheduler] Temporal not configured, skipping scheduled sync")
+      return
     }
 
     try {
-      console.log("[SyncScheduler] Retrying failed syncs")
-      const orchestrator = createIntegrationOrchestrator(container)
-      const result = await orchestrator.retryFailedSyncs()
-      console.log(`[SyncScheduler] Retry complete: ${result.succeeded} succeeded, ${result.failed} failed out of ${result.retried} retried`)
-    } catch (error: any) {
-      console.log(`[SyncScheduler] Failed sync retry error: ${error.message}`)
-    }
-
-    const hasAnySyncTarget =
-      process.env.PAYLOAD_API_URL ||
-      process.env.ERPNEXT_SITE_URL ||
-      process.env.FLEETBASE_API_URL ||
-      process.env.WALTID_API_URL
-    if (hasAnySyncTarget) {
-      try {
-        console.log("[SyncScheduler] Starting node hierarchy reconciliation")
-        const nodeHierarchyService = new NodeHierarchySyncService(container)
-        const query = container.resolve("query") as any
-        const { data: tenants } = await query.graph({
-          entity: "tenant",
-          fields: ["id"],
-          pagination: { take: 100 },
-        })
-
-        for (const tenant of tenants || []) {
-          try {
-            const result = await nodeHierarchyService.syncFullHierarchy(tenant.id)
-            console.log(`[SyncScheduler] Node hierarchy sync for tenant ${tenant.id}: payload=${result.payload.synced}, erpnext=${result.erpnext.synced}, fleetbase=${result.fleetbase.synced}, waltid=${result.waltid.synced}`)
-          } catch (err: any) {
-            console.log(`[SyncScheduler] Node hierarchy sync failed for tenant ${tenant.id}: ${err.message}`)
-          }
-        }
-      } catch (error: any) {
-        console.log(`[SyncScheduler] Node hierarchy reconciliation error: ${error.message}`)
-      }
+      const productResult = await startWorkflow("xsystem.scheduled-product-sync", {
+        timestamp: new Date().toISOString(),
+      }, {})
+      console.log(`[SyncScheduler] Dispatched product sync workflow: ${productResult.runId}`)
+    } catch (err: any) {
+      console.warn(`[SyncScheduler] Failed to dispatch product sync: ${err.message}`)
     }
 
     try {
-      console.log("[SyncScheduler] Cleaning up old sync logs")
-      const orchestrator = createIntegrationOrchestrator(container)
-      const dashboard = await orchestrator.getSyncDashboard()
-      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-      const oldEntries = dashboard.recentSyncs.filter(
-        (entry) => new Date(entry.created_at) < thirtyDaysAgo
-      )
-      console.log(`[SyncScheduler] Cleanup complete: ${oldEntries.length} old log entries identified`)
-    } catch (error: any) {
-      console.log(`[SyncScheduler] Log cleanup error: ${error.message}`)
+      const retryResult = await startWorkflow("xsystem.retry-failed-syncs", {
+        timestamp: new Date().toISOString(),
+      }, {})
+      console.log(`[SyncScheduler] Dispatched retry-failed-syncs workflow: ${retryResult.runId}`)
+    } catch (err: any) {
+      console.warn(`[SyncScheduler] Failed to dispatch retry sync: ${err.message}`)
+    }
+
+    try {
+      const hierarchyResult = await startWorkflow("xsystem.scheduled-hierarchy-reconciliation", {
+        timestamp: new Date().toISOString(),
+      }, {})
+      console.log(`[SyncScheduler] Dispatched hierarchy reconciliation workflow: ${hierarchyResult.runId}`)
+    } catch (err: any) {
+      console.warn(`[SyncScheduler] Failed to dispatch hierarchy reconciliation: ${err.message}`)
     }
   } catch (error: any) {
     console.log(`[SyncScheduler] Integration sync scheduler error: ${error.message}`)

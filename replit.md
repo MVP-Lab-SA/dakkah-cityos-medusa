@@ -55,17 +55,24 @@ A local CMS registry (`apps/backend/src/lib/platform/cms-registry.ts`), compatib
 ### Platform Context API
 The backend exposes a unified Platform Context API at `/platform/*` (no authentication required) for context resolution, including `tenant`, `nodeHierarchy`, `governanceChain`, `capabilities`, and `systems`.
 
-### Temporal Integration Bridge
-The Medusa backend integrates with Temporal Cloud for workflow orchestration, featuring a lazy-initialized client, an event dispatcher for Medusa events, and a dynamic workflow client for AI agent workflows.
+### Temporal-First Integration Architecture
+ALL cross-system integration calls flow through Temporal Cloud workflows:
+- **Event Flow:** Medusa event → `temporal-event-bridge` subscriber → `dispatchEventToTemporal()` → Temporal workflow → activities call integration services
+- **No Direct API Calls:** Subscribers and event dispatchers never call ERPNext/Payload/Fleetbase/Walt.id directly. All calls happen inside Temporal workflow activities.
+- **Benefits:** Durable execution, automatic retries, saga/compensation patterns, full observability, timeout management.
+- **Temporal Client:** Lazy-initialized client with health checks (`apps/backend/src/lib/temporal-client.ts`)
+- **Event Dispatcher:** Maps 39 event types to Temporal workflow IDs (`apps/backend/src/lib/event-dispatcher.ts`)
+- **Dynamic Workflows:** AI agent workflows on `cityos-dynamic-queue` (`apps/backend/src/lib/dynamic-workflow-client.ts`)
+- **Activity Definitions:** Typed contracts for all integration activities (`apps/backend/src/lib/temporal-activities.ts`)
+- **Scheduled Workflows:** Product sync, failed retry, hierarchy reconciliation dispatched via Temporal schedules
+- **Outbox Fallback:** Events without mapped workflows go to event outbox for reliable delivery
 
 ### Cross-System Integration Layer
-This layer orchestrates integration with CityOS ecosystem components:
-- **Integration Services:** Bi-directional sync with Payload CMS, ERPNext, Fleetbase, Walt.id, and Stripe.
-- **Integration Orchestrator:** Manages sync operations, external system registry, retries, and health checks.
-- **Webhook Receivers:** Handles inbound webhooks with signature verification.
-- **Admin Integration APIs:** Provides dashboards, health checks, manual triggers, and logs.
-- **Scheduled Jobs:** Automates regular syncs.
-- **Integration Event Subscriber:** Triggers cross-system syncs based on Medusa events.
+This layer provides the integration services called by Temporal activities:
+- **Integration Services:** ERPNext, Payload CMS, Fleetbase, Walt.id service wrappers
+- **Integration Orchestrator:** Manages sync tracking, external system registry, retry state
+- **Webhook Receivers:** Handles inbound webhooks from external systems with signature verification
+- **Admin Integration APIs:** Provides dashboards, health checks, manual triggers, and logs
 
 ### System Responsibility Split
 Three systems work together, each owning specific domains:
@@ -121,10 +128,11 @@ Three systems work together, each owning specific domains:
 - Integration spec: `apps/backend/src/lib/integrations/waltid-spec.ts`
 
 ## Recent Changes (2026-02-09)
+- **Temporal-First Architecture:** Refactored ALL cross-system integration calls to flow through Temporal workflows. Removed direct API calls from subscribers and event dispatchers. Created typed activity definitions for all integration services.
+- **Integration Specs:** Created all 5 integration specs as TypeScript contract documents: Payload CMS (content), Fleetbase (geo/logistics), ERPNext (finance/ERP), Temporal (workflows), Walt.id (identity). Annotated implemented vs planned capabilities.
 - **Vendor-as-Tenant Architecture:** Vendors are now full tenants with scope tiers (nano→global), tenant types (platform/marketplace/vendor/brand), parent tenant hierarchy, POI collections, multi-channel services, and cross-tenant marketplace listings.
 - **New Models:** TenantRelationship, TenantPOI, ServiceChannel, MarketplaceListing added to backend modules.
 - **Platform Vendor APIs:** New `/platform/vendors` endpoints for vendor discovery with marketplace filtering, POI/channel/listing sub-resources.
-- **Integration Specs:** Created all 5 integration specs as TypeScript contract documents: Payload CMS (content), Fleetbase (geo/logistics), ERPNext (finance/ERP), Temporal (workflows), Walt.id (identity).
 
 ## External Dependencies
 - **Database:** PostgreSQL

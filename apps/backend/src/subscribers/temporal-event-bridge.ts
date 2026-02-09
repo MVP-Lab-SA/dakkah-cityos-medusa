@@ -1,5 +1,5 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
-import { dispatchEventToTemporal } from "../lib/event-dispatcher"
+import { dispatchEventToTemporal, getWorkflowForEvent } from "../lib/event-dispatcher"
 
 export default async function temporalEventBridge({
   event,
@@ -11,11 +11,19 @@ export default async function temporalEventBridge({
     return
   }
 
+  if (!getWorkflowForEvent(eventName)) {
+    return
+  }
+
+  const nodeContext = {
+    tenantId: event.data?.tenant_id,
+    nodeId: event.data?.node_id,
+    source: "medusa-subscriber",
+    timestamp: new Date().toISOString(),
+  }
+
   try {
-    const result = await dispatchEventToTemporal(eventName, event.data, {
-      source: "medusa-subscriber",
-      timestamp: new Date().toISOString(),
-    })
+    const result = await dispatchEventToTemporal(eventName, event.data, nodeContext)
 
     if (result.dispatched) {
       console.log(
@@ -30,10 +38,48 @@ export default async function temporalEventBridge({
   }
 }
 
+// Medusa business events that trigger Temporal workflows.
+// Scheduled sync events (sync.products.scheduled, sync.retry.scheduled,
+// sync.hierarchy.scheduled) are triggered by cron jobs in
+// integration-sync-scheduler.ts, not by Medusa events.
 export const config: SubscriberConfig = {
   event: [
     "order.placed",
-    "order.updated",
+    "order.cancelled",
+    "payment.initiated",
+    "refund.requested",
+    "vendor.registered",
+    "vendor.created",
+    "dispute.opened",
+    "return.initiated",
+    "kyc.requested",
+    "subscription.created",
+    "booking.created",
+    "auction.started",
+    "restaurant-order.placed",
     "product.updated",
+    "product.created",
+    "product.deleted",
+    "workflow.dynamic.start",
+    "governance.policy.changed",
+    "node.created",
+    "node.updated",
+    "node.deleted",
+    "tenant.provisioned",
+    "tenant.updated",
+    "store.created",
+    "store.updated",
+    "customer.created",
+    "customer.updated",
+    "vendor.approved",
+    "vendor.suspended",
+    "inventory.updated",
+    "fulfillment.created",
+    "fulfillment.shipped",
+    "fulfillment.delivered",
+    "invoice.created",
+    "payment.completed",
+    "kyc.completed",
+    "membership.created",
   ],
 }
