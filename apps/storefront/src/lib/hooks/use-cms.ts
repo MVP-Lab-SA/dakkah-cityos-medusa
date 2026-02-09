@@ -21,7 +21,7 @@ async function fetchCMSPage(
     if (!response.ok) return null
 
     const data = await response.json()
-    return data.data?.page || null
+    return data.payload?.docs?.[0] || data.data?.page || null
   } catch {
     return null
   }
@@ -32,22 +32,20 @@ async function fetchCMSPageChildren(
   parentId: string
 ): Promise<CMSPage[]> {
   try {
-    const payloadBaseUrl = typeof window === "undefined"
-      ? (process.env.PAYLOAD_CMS_URL || "http://localhost:3001")
-      : "/payload"
+    const baseUrl = typeof window === "undefined" ? "http://localhost:9000" : ""
 
     const query = new URLSearchParams({
       where: JSON.stringify({
         parent: { equals: parentId },
         tenant: { equals: tenantId },
-        status: { equals: "published" },
+        _status: { equals: "published" },
       }),
       sort: "sortOrder",
       limit: "100",
       depth: "1",
     })
 
-    const response = await fetch(`${payloadBaseUrl}/api/pages?${query}`)
+    const response = await fetch(`${baseUrl}/platform/cms/pages?${query}`)
     if (!response.ok) return []
 
     const data = await response.json()
@@ -76,7 +74,7 @@ async function fetchCMSNavigation(
     if (!response.ok) return null
 
     const data = await response.json()
-    return data.data?.navigations?.[0] || null
+    return data.docs?.[0] || data.data?.navigations?.[0] || null
   } catch {
     return null
   }
@@ -86,21 +84,14 @@ async function fetchCMSVerticals(
   tenantId: string
 ): Promise<CMSVertical[]> {
   try {
-    const payloadBaseUrl = typeof window === "undefined"
-      ? (process.env.PAYLOAD_CMS_URL || "http://localhost:3001")
-      : "/payload"
+    const baseUrl = typeof window === "undefined" ? "http://localhost:9000" : ""
 
     const query = new URLSearchParams({
-      where: JSON.stringify({
-        tenant: { equals: tenantId },
-        isEnabled: { equals: true },
-        status: { equals: "active" },
-      }),
       sort: "sortOrder",
       limit: "100",
     })
 
-    const response = await fetch(`${payloadBaseUrl}/api/verticals?${query}`)
+    const response = await fetch(`${baseUrl}/platform/cms/verticals?${query}`)
     if (!response.ok) return []
 
     const data = await response.json()

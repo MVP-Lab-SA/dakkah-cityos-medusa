@@ -3,19 +3,34 @@ import { resolveLocalCMSPage } from "../../../../lib/platform/cms-registry"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   try {
-    const { path, tenant, locale, tenant_id } = req.query as Record<string, string>
+    const { path, tenant, locale, tenant_id, countryCode, country_code } = req.query as Record<string, string>
 
     if (!path) {
       return res.status(400).json({
         success: false,
         error: "Missing required query parameter: path",
+        errors: [{ message: "Missing required query parameter: path" }],
       })
     }
 
+    const resolvedCountryCode = countryCode || country_code || undefined
     const resolvedTenantId = tenant_id || await resolveTenantId(req, tenant)
 
-    const localPage = resolveLocalCMSPage(path, resolvedTenantId, locale)
+    const localPage = resolveLocalCMSPage(path, resolvedTenantId, locale, resolvedCountryCode)
     if (localPage) {
+      const payloadShape = {
+        docs: [localPage],
+        totalDocs: 1,
+        limit: 1,
+        page: 1,
+        totalPages: 1,
+        hasNextPage: false,
+        hasPrevPage: false,
+        pagingCounter: 1,
+        prevPage: null,
+        nextPage: null,
+      }
+
       res.setHeader("Cache-Control", "public, max-age=30, s-maxage=120")
       return res.status(200).json({
         success: true,
@@ -26,7 +41,9 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
           tenantId: resolvedTenantId,
           path,
           locale: locale || null,
+          countryCode: resolvedCountryCode || null,
         },
+        payload: payloadShape,
       })
     }
 
@@ -34,7 +51,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
     const where: Record<string, any> = {
       path: { equals: path },
-      status: { equals: "published" },
+      _status: { equals: "published" },
     }
 
     if (resolvedTenantId) {
@@ -43,6 +60,10 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
     if (locale) {
       where.locale = { in: [locale, "all"] }
+    }
+
+    if (resolvedCountryCode) {
+      where.countryCode = { equals: resolvedCountryCode }
     }
 
     const query = new URLSearchParams({
@@ -63,14 +84,54 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       const response = await fetch(`${payloadUrl}/api/pages?${query}`, { headers })
 
       if (!response.ok) {
+        const emptyPayload = {
+          docs: [],
+          totalDocs: 0,
+          limit: 1,
+          page: 1,
+          totalPages: 0,
+          hasNextPage: false,
+          hasPrevPage: false,
+          pagingCounter: 1,
+          prevPage: null,
+          nextPage: null,
+        }
+
         return res.status(200).json({
           success: true,
           data: { page: null, resolved: false, source: "payload", error: `Payload returned ${response.status}`, tenantId: resolvedTenantId, path },
+          payload: emptyPayload,
         })
       }
 
       const data = await response.json()
       const page = data.docs?.[0] || null
+
+      const payloadShape = page
+        ? {
+            docs: [page],
+            totalDocs: 1,
+            limit: 1,
+            page: 1,
+            totalPages: 1,
+            hasNextPage: false,
+            hasPrevPage: false,
+            pagingCounter: 1,
+            prevPage: null,
+            nextPage: null,
+          }
+        : {
+            docs: [],
+            totalDocs: 0,
+            limit: 1,
+            page: 1,
+            totalPages: 0,
+            hasNextPage: false,
+            hasPrevPage: false,
+            pagingCounter: 1,
+            prevPage: null,
+            nextPage: null,
+          }
 
       res.setHeader("Cache-Control", "public, max-age=30, s-maxage=120")
 
@@ -83,9 +144,24 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
           tenantId: resolvedTenantId,
           path,
           locale: locale || null,
+          countryCode: resolvedCountryCode || null,
         },
+        payload: payloadShape,
       })
     } catch (fetchError) {
+      const emptyPayload = {
+        docs: [],
+        totalDocs: 0,
+        limit: 1,
+        page: 1,
+        totalPages: 0,
+        hasNextPage: false,
+        hasPrevPage: false,
+        pagingCounter: 1,
+        prevPage: null,
+        nextPage: null,
+      }
+
       return res.status(200).json({
         success: true,
         data: {
@@ -96,6 +172,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
           tenantId: resolvedTenantId,
           path,
         },
+        payload: emptyPayload,
       })
     }
   } catch (error) {
@@ -103,6 +180,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     return res.status(500).json({
       success: false,
       error: error instanceof Error ? error.message : "Internal server error",
+      errors: [{ message: error instanceof Error ? error.message : "Internal server error" }],
     })
   }
 }

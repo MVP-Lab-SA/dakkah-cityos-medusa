@@ -17,7 +17,7 @@ async function resolvePageFromServer(tenantId: string, path: string, locale?: st
     const response = await fetch(`${baseUrl}/platform/cms/resolve?${params}`)
     if (!response.ok) return null
     const data = await response.json()
-    return data.data?.page || null
+    return data.payload?.docs?.[0] || data.data?.page || null
   } catch {
     return null
   }
@@ -66,7 +66,7 @@ function CMSSlugPageComponent() {
         return res.json()
       })
       .then((d) => {
-        setPage(d.data?.page || null)
+        setPage(d.payload?.docs?.[0] || d.data?.page || null)
         setIsLoading(false)
       })
       .catch(() => {

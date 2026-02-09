@@ -351,6 +351,11 @@ export interface CMSPage {
   seo?: CMSSeoConfig
   breadcrumbs?: Array<{ id: string; title: string; path: string }>
   sortOrder?: number
+  _status?: "published" | "draft"
+  countryCode?: string
+  regionZone?: string
+  nodeId?: string
+  nodeLevel?: string
   createdAt: string
   updatedAt: string
 }

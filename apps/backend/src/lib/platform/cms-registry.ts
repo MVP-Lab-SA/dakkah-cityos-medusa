@@ -1,14 +1,23 @@
 import { DEFAULT_TENANT_ID } from "./registry"
 
-export interface CMSPageEntry {
+type RegionZone = "GCC_EU" | "MENA" | "APAC" | "AMERICAS" | "GLOBAL"
+type NodeLevel = "CITY" | "DISTRICT" | "ZONE" | "FACILITY" | "ASSET"
+
+export interface PayloadPage {
   id: string
+  createdAt: string
+  updatedAt: string
+  _status: "published" | "draft"
   title: string
   slug: string
   path: string
   template: "vertical-list" | "vertical-detail" | "landing" | "static" | "category" | "node-browser" | "custom"
-  status: "published" | "draft"
   tenant: string
   locale: string
+  countryCode: string
+  regionZone: RegionZone
+  nodeId?: string
+  nodeLevel?: NodeLevel
   seo?: { title?: string; description?: string }
   verticalConfig?: {
     verticalSlug: string
@@ -21,6 +30,8 @@ export interface CMSPageEntry {
   governanceTags?: string[]
 }
 
+export type CMSPageEntry = PayloadPage
+
 export interface NavigationItem {
   id: string
   label: string
@@ -31,12 +42,14 @@ export interface NavigationItem {
 
 export interface NavigationEntry {
   id: string
+  createdAt: string
+  updatedAt: string
+  _status: "published" | "draft"
   name: string
   slug: string
   tenant: string
   location: "header" | "footer" | "sidebar" | "mobile"
   locale: string
-  status: "active" | "inactive"
   items: NavigationItem[]
 }
 
@@ -324,16 +337,24 @@ const VERTICALS: VerticalDefinition[] = [
   },
 ]
 
-function buildListPage(v: VerticalDefinition): CMSPageEntry {
+export const VERTICAL_TEMPLATES: VerticalDefinition[] = VERTICALS
+
+const REGISTRY_TIMESTAMP = "2026-02-09T00:00:00.000Z"
+
+function buildListPage(v: VerticalDefinition): PayloadPage {
   return {
     id: `local-cms-${v.slug}-list`,
+    createdAt: REGISTRY_TIMESTAMP,
+    updatedAt: REGISTRY_TIMESTAMP,
+    _status: "published",
     title: v.title,
     slug: v.slug,
     path: v.slug,
     template: "vertical-list",
-    status: "published",
     tenant: DEFAULT_TENANT_ID,
     locale: "en",
+    countryCode: "global",
+    regionZone: "GLOBAL",
     seo: {
       title: `${v.title} | CityOS Marketplace`,
       description: v.seoDescription,
@@ -350,16 +371,20 @@ function buildListPage(v: VerticalDefinition): CMSPageEntry {
   }
 }
 
-function buildDetailPage(v: VerticalDefinition): CMSPageEntry {
+function buildDetailPage(v: VerticalDefinition): PayloadPage {
   return {
     id: `local-cms-${v.slug}-detail`,
+    createdAt: REGISTRY_TIMESTAMP,
+    updatedAt: REGISTRY_TIMESTAMP,
+    _status: "published",
     title: `${v.title} Detail`,
     slug: `${v.slug}/*`,
     path: `${v.slug}/*`,
     template: "vertical-detail",
-    status: "published",
     tenant: DEFAULT_TENANT_ID,
     locale: "en",
+    countryCode: "global",
+    regionZone: "GLOBAL",
     seo: {
       title: `${v.title} | CityOS Marketplace`,
       description: `View detailed information, images, and reviews for this ${v.title.toLowerCase()} listing.`,
@@ -376,33 +401,203 @@ function buildDetailPage(v: VerticalDefinition): CMSPageEntry {
   }
 }
 
-export const CMS_PAGE_REGISTRY: CMSPageEntry[] = VERTICALS.flatMap((v) => [
-  buildListPage(v),
-  buildDetailPage(v),
-])
+const ADDITIONAL_PAGES: PayloadPage[] = [
+  {
+    id: "local-cms-home",
+    createdAt: REGISTRY_TIMESTAMP,
+    updatedAt: REGISTRY_TIMESTAMP,
+    _status: "published",
+    title: "Home",
+    slug: "home",
+    path: "",
+    template: "landing",
+    tenant: DEFAULT_TENANT_ID,
+    locale: "en",
+    countryCode: "global",
+    regionZone: "GLOBAL",
+    seo: {
+      title: "CityOS Marketplace",
+      description: "Welcome to the CityOS Marketplace. Discover products, services, and experiences in your city.",
+    },
+    layout: [],
+    governanceTags: [],
+  },
+  {
+    id: "local-cms-store",
+    createdAt: REGISTRY_TIMESTAMP,
+    updatedAt: REGISTRY_TIMESTAMP,
+    _status: "published",
+    title: "Store",
+    slug: "store",
+    path: "store",
+    template: "category",
+    tenant: DEFAULT_TENANT_ID,
+    locale: "en",
+    countryCode: "global",
+    regionZone: "GLOBAL",
+    seo: {
+      title: "Store | CityOS Marketplace",
+      description: "Browse all products and services available on the CityOS Marketplace.",
+    },
+    layout: [],
+    governanceTags: [],
+  },
+  {
+    id: "local-cms-search",
+    createdAt: REGISTRY_TIMESTAMP,
+    updatedAt: REGISTRY_TIMESTAMP,
+    _status: "published",
+    title: "Search",
+    slug: "search",
+    path: "search",
+    template: "custom",
+    tenant: DEFAULT_TENANT_ID,
+    locale: "en",
+    countryCode: "global",
+    regionZone: "GLOBAL",
+    seo: {
+      title: "Search | CityOS Marketplace",
+      description: "Search across all verticals, products, and services on the CityOS Marketplace.",
+    },
+    layout: [],
+    governanceTags: [],
+  },
+  {
+    id: "local-cms-vendors",
+    createdAt: REGISTRY_TIMESTAMP,
+    updatedAt: REGISTRY_TIMESTAMP,
+    _status: "published",
+    title: "Vendors",
+    slug: "vendors",
+    path: "vendors",
+    template: "vertical-list",
+    tenant: DEFAULT_TENANT_ID,
+    locale: "en",
+    countryCode: "global",
+    regionZone: "GLOBAL",
+    seo: {
+      title: "Vendors | CityOS Marketplace",
+      description: "Discover vendors and sellers on the CityOS Marketplace.",
+    },
+    layout: [],
+    governanceTags: [],
+  },
+  {
+    id: "local-cms-categories",
+    createdAt: REGISTRY_TIMESTAMP,
+    updatedAt: REGISTRY_TIMESTAMP,
+    _status: "published",
+    title: "Categories",
+    slug: "categories",
+    path: "categories",
+    template: "category",
+    tenant: DEFAULT_TENANT_ID,
+    locale: "en",
+    countryCode: "global",
+    regionZone: "GLOBAL",
+    seo: {
+      title: "Categories | CityOS Marketplace",
+      description: "Browse all categories available on the CityOS Marketplace.",
+    },
+    layout: [],
+    governanceTags: [],
+  },
+]
+
+export const CMS_PAGE_REGISTRY: PayloadPage[] = [
+  ...ADDITIONAL_PAGES,
+  ...VERTICALS.flatMap((v) => [buildListPage(v), buildDetailPage(v)]),
+]
+
+const COUNTRY_TO_REGION: Record<string, RegionZone> = {
+  AE: "GCC_EU",
+  SA: "GCC_EU",
+  QA: "GCC_EU",
+  KW: "GCC_EU",
+  BH: "GCC_EU",
+  OM: "GCC_EU",
+  DE: "GCC_EU",
+  FR: "GCC_EU",
+  GB: "GCC_EU",
+  IT: "GCC_EU",
+  ES: "GCC_EU",
+  EG: "MENA",
+  JO: "MENA",
+  LB: "MENA",
+  MA: "MENA",
+  TN: "MENA",
+  IQ: "MENA",
+  CN: "APAC",
+  JP: "APAC",
+  KR: "APAC",
+  IN: "APAC",
+  SG: "APAC",
+  AU: "APAC",
+  US: "AMERICAS",
+  CA: "AMERICAS",
+  MX: "AMERICAS",
+  BR: "AMERICAS",
+}
+
+function resolveRegionZone(countryCode: string): RegionZone {
+  if (countryCode === "global") return "GLOBAL"
+  return COUNTRY_TO_REGION[countryCode.toUpperCase()] || "GLOBAL"
+}
 
 export function resolveLocalCMSPage(
   path: string,
   tenantId: string,
-  locale?: string
-): CMSPageEntry | null {
+  locale?: string,
+  countryCode?: string
+): PayloadPage | null {
   const normalizedPath = path.replace(/^\/+|\/+$/g, "")
+
+  const homePage = CMS_PAGE_REGISTRY.find(
+    (p) =>
+      p.path === "" &&
+      p._status === "published" &&
+      p.tenant === tenantId &&
+      (!locale || p.locale === locale || p.locale === "all")
+  )
+  if (!normalizedPath && homePage) {
+    return homePage
+  }
 
   if (!normalizedPath) {
     return null
   }
 
-  const exactMatch = CMS_PAGE_REGISTRY.find(
-    (page) =>
-      page.path === normalizedPath &&
-      page.status === "published" &&
-      page.tenant === tenantId &&
-      (!locale || page.locale === locale || page.locale === "all")
-  )
+  const matchLocale = (page: PayloadPage) =>
+    !locale || page.locale === locale || page.locale === "all"
 
-  if (exactMatch) {
-    return exactMatch
+  const matchBase = (page: PayloadPage) =>
+    page.path === normalizedPath &&
+    page._status === "published" &&
+    page.tenant === tenantId &&
+    matchLocale(page)
+
+  if (countryCode && countryCode !== "global") {
+    const exactCountry = CMS_PAGE_REGISTRY.find(
+      (page) => matchBase(page) && page.countryCode === countryCode
+    )
+    if (exactCountry) return exactCountry
+
+    const region = resolveRegionZone(countryCode)
+    if (region !== "GLOBAL") {
+      const regionMatch = CMS_PAGE_REGISTRY.find(
+        (page) =>
+          matchBase(page) &&
+          page.countryCode === "global" &&
+          page.regionZone === region
+      )
+      if (regionMatch) return regionMatch
+    }
   }
+
+  const globalMatch = CMS_PAGE_REGISTRY.find(
+    (page) => matchBase(page) && page.countryCode === "global"
+  )
+  if (globalMatch) return globalMatch
 
   const segments = normalizedPath.split("/")
   if (segments.length >= 2) {
@@ -413,9 +608,9 @@ export function resolveLocalCMSPage(
       (page) =>
         page.path === parentSlug &&
         page.template === "vertical-list" &&
-        page.status === "published" &&
+        page._status === "published" &&
         page.tenant === tenantId &&
-        (!locale || page.locale === locale || page.locale === "all")
+        matchLocale(page)
     )
 
     if (listPage) {
@@ -423,7 +618,7 @@ export function resolveLocalCMSPage(
         (page) =>
           page.path === `${parentSlug}/*` &&
           page.template === "vertical-detail" &&
-          page.status === "published" &&
+          page._status === "published" &&
           page.tenant === tenantId
       )
 
@@ -453,14 +648,102 @@ function formatItemSlug(slug: string): string {
     .join(" ")
 }
 
+function matchWhereClause(page: PayloadPage, where: Record<string, any>): boolean {
+  for (const [field, condition] of Object.entries(where)) {
+    if (field === "and" && Array.isArray(condition)) {
+      if (!condition.every((c: Record<string, any>) => matchWhereClause(page, c))) return false
+      continue
+    }
+    if (field === "or" && Array.isArray(condition)) {
+      if (!condition.some((c: Record<string, any>) => matchWhereClause(page, c))) return false
+      continue
+    }
+
+    const value = (page as any)[field]
+
+    if (typeof condition === "object" && condition !== null) {
+      if ("equals" in condition && value !== condition.equals) return false
+      if ("not_equals" in condition && value === condition.not_equals) return false
+      if ("in" in condition && Array.isArray(condition.in) && !condition.in.includes(value)) return false
+      if ("not_in" in condition && Array.isArray(condition.not_in) && condition.not_in.includes(value)) return false
+      if ("like" in condition && typeof value === "string") {
+        const pattern = String(condition.like).replace(/%/g, ".*")
+        if (!new RegExp(`^${pattern}$`, "i").test(value)) return false
+      }
+      if ("contains" in condition && typeof value === "string") {
+        if (!value.toLowerCase().includes(String(condition.contains).toLowerCase())) return false
+      }
+      if ("exists" in condition) {
+        if (condition.exists && (value === undefined || value === null)) return false
+        if (!condition.exists && value !== undefined && value !== null) return false
+      }
+    } else {
+      if (value !== condition) return false
+    }
+  }
+  return true
+}
+
+export function queryPages(params: {
+  where?: Record<string, any>
+  limit?: number
+  sort?: string
+  page?: number
+}): {
+  docs: PayloadPage[]
+  totalDocs: number
+  limit: number
+  page: number
+  totalPages: number
+  hasNextPage: boolean
+  hasPrevPage: boolean
+} {
+  const { where, limit: rawLimit, sort, page: rawPage } = params
+  const limit = rawLimit ?? 10
+  const page = rawPage ?? 1
+
+  let filtered = where
+    ? CMS_PAGE_REGISTRY.filter((p) => matchWhereClause(p, where))
+    : [...CMS_PAGE_REGISTRY]
+
+  if (sort) {
+    const desc = sort.startsWith("-")
+    const field = desc ? sort.slice(1) : sort
+    filtered.sort((a, b) => {
+      const aVal = (a as any)[field]
+      const bVal = (b as any)[field]
+      if (aVal < bVal) return desc ? 1 : -1
+      if (aVal > bVal) return desc ? -1 : 1
+      return 0
+    })
+  }
+
+  const totalDocs = filtered.length
+  const totalPages = Math.max(1, Math.ceil(totalDocs / limit))
+  const start = (page - 1) * limit
+  const docs = filtered.slice(start, start + limit)
+
+  return {
+    docs,
+    totalDocs,
+    limit,
+    page,
+    totalPages,
+    hasNextPage: page < totalPages,
+    hasPrevPage: page > 1,
+  }
+}
+
 const HEADER_NAVIGATION: NavigationEntry = {
   id: "local-nav-header",
+  createdAt: REGISTRY_TIMESTAMP,
+  updatedAt: REGISTRY_TIMESTAMP,
+  _status: "published",
   name: "Main Navigation",
   slug: "main-navigation",
   tenant: DEFAULT_TENANT_ID,
   location: "header",
   locale: "en",
-  status: "active",
   items: [
     {
       id: "nav-commerce",
@@ -515,12 +798,14 @@ const HEADER_NAVIGATION: NavigationEntry = {
 
 const FOOTER_NAVIGATION: NavigationEntry = {
   id: "local-nav-footer",
+  createdAt: REGISTRY_TIMESTAMP,
+  updatedAt: REGISTRY_TIMESTAMP,
+  _status: "published",
   name: "Footer Navigation",
   slug: "footer-navigation",
   tenant: DEFAULT_TENANT_ID,
   location: "footer",
   locale: "en",
-  status: "active",
   items: VERTICALS.map((v, i) => ({
     id: `nav-footer-${v.slug}`,
     label: v.title,
@@ -529,7 +814,7 @@ const FOOTER_NAVIGATION: NavigationEntry = {
   })),
 }
 
-const NAVIGATION_REGISTRY: NavigationEntry[] = [
+export const NAVIGATION_REGISTRY: NavigationEntry[] = [
   HEADER_NAVIGATION,
   FOOTER_NAVIGATION,
 ]
@@ -543,7 +828,7 @@ export function getLocalCMSNavigation(
       (nav) =>
         nav.tenant === tenantId &&
         nav.location === location &&
-        nav.status === "active"
+        nav._status === "published"
     ) || null
   )
 }

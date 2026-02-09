@@ -1,13 +1,15 @@
 # Medusa.js E-Commerce Monorepo — Dakkah CityOS Commerce Platform
 
 ## Overview
-This project is a Medusa.js e-commerce monorepo for multi-tenancy and integration with the Dakkah CityOS CMS architecture. Dakkah is a comprehensive platform powering 25+ commerce verticals (shopping, dining, healthcare, education, real estate). It features a 5-level node hierarchy, a 10-role RBAC system, a 6-axis persona system, a 4-level governance chain, and localization for 3 locales (en/fr/ar with RTL support). The default tenant "Dakkah" (`01KGZ2JRYX607FWMMYQNQRKVWS`) is the primary super-app tenant with all seeded data.
+This project is a Medusa.js e-commerce monorepo for multi-tenancy and integration with the Dakkah CityOS CMS architecture. Dakkah is a comprehensive platform powering 27+ commerce verticals (shopping, dining, healthcare, education, real estate, automotive, travel, fitness, legal, financial, government services, etc.). It features a 5-level node hierarchy, a 10-role RBAC system, a 6-axis persona system, a 4-level governance chain, and localization for 3 locales (en/fr/ar with RTL support). The default tenant "Dakkah" (`01KGZ2JRYX607FWMMYQNQRKVWS`) is the primary super-app tenant with all seeded data.
 
 ## User Preferences
 - Full alignment with CityOS CMS architecture required
 - Centralized design system matching CMS pattern
 - Port 5000 for frontend, 0.0.0.0 host
 - Bypass host verification for Replit environment
+- Country-level record unification for CMS pages
+- Payload CMS API compatibility for future migration
 
 ## System Architecture
 
@@ -26,11 +28,20 @@ The backend provides modularity for CityOS features like tenant management, node
 ### Storefront Architecture
 The storefront uses dynamic routing (`/$tenant/$locale/...`) with TanStack Router for file-based routing and Server-Side Rendering (SSR). A centralized design system defines design primitives, theming, and component interfaces. The provider chain (`ClientProviders` → `QueryClientProvider` → `StoreProvider` → `AuthProvider` → `BrandingProvider` → `GovernanceProvider` → `ToastProvider`) ensures consistent context availability. Tenant-scoped routes (`/$tenant/$locale/`) wrap children with `TenantProvider` and `PlatformContextProvider`.
 
-**Tenant-Scoped Routing:** Supports home page, node hierarchy browser, dynamic CMS pages (`/$tenant/$locale/$slug`, `/$tenant/$locale/$...path`), and hardcoded commerce routes (`/store`, `/account`, `/cart`, `/checkout`, `/products/*`).
+**Tenant-Scoped Routing:** Two dynamic catch-all routes handle all CMS-driven pages (`/$tenant/$locale/$slug` for single-segment, `/$tenant/$locale/$...path` for multi-segment). Transactional routes (cart, checkout, account/*, bookings/*, vendor/*, b2b/*, quotes/*, subscriptions/*) remain as dedicated route files.
 
-**CMS-Driven Routing and Templates:** A local CMS registry (`apps/backend/src/lib/platform/cms-registry.ts`) defines all 27 commerce verticals with 54 page entries (list + detail templates). The `/platform/cms/resolve` endpoint checks the local registry first (returning `source: "local-registry"`), then falls back to Payload CMS. The `/platform/cms/navigation` endpoint serves structured header/footer navigation from the local registry with 4 category groups (Commerce, Services, Lifestyle, Community). All 54 hardcoded vertical route files have been replaced by two dynamic catch-all routes (`$slug.tsx` and `$.tsx`) that fetch from the CMS resolve endpoint using `useState`/`useEffect` for client-side data fetching. The `TemplateRenderer` component switches on `page.template` (`vertical-list`, `vertical-detail`, `landing`, `static`, `category`, `node-browser`, `custom`) to render the appropriate layout.
+**CMS-Driven Routing and Templates:** A local CMS registry (`apps/backend/src/lib/platform/cms-registry.ts`) with Payload CMS-compatible data model serves as a drop-in stand-in for Payload CMS. The registry defines 27 commerce verticals (54 page entries for list + detail), plus 5 additional pages (home, store, search, vendors, categories). All pages use Payload CMS document shape (`id`, `createdAt`, `updatedAt`, `_status`). The `TemplateRenderer` component switches on `page.template` (`vertical-list`, `vertical-detail`, `landing`, `static`, `category`, `node-browser`, `custom`) to render the appropriate layout.
 
-**CMS Integration:** `useCMSPage`, `useCMSPageChildren`, `useCMSNavigation`, `useCMSVerticals` hooks provide React Query-powered data fetching from Payload CMS with tenant scoping. The CMS route components use plain `useState`/`useEffect` instead of React Query hooks to avoid SSR issues with duplicate React instances. The backend exposes `/platform/cms/resolve` and `/platform/cms/navigation` endpoints that resolve from local registry first, then proxy to Payload CMS.
+**Country/Region Scope Model:** CMS pages have `countryCode` (ISO code or "global") and `regionZone` (GCC_EU, MENA, APAC, AMERICAS, GLOBAL) fields for country-level unification. Pages also support optional `nodeId` and `nodeLevel` for node hierarchy integration. Resolution chain: exact country match → region zone match → global fallback → wildcard detail page matching.
+
+**Payload CMS Collection Endpoints (Local Registry):**
+- `GET /platform/cms/pages` - Payload-compatible collection query with where/limit/sort/page params. Returns `{ docs, totalDocs, limit, page, totalPages, hasNextPage, hasPrevPage, pagingCounter }`.
+- `GET /platform/cms/navigations` - Navigation collection with Payload response shape.
+- `GET /platform/cms/verticals` - Vertical template catalog with Payload response shape.
+- `GET /platform/cms/resolve` - Single-page resolution with `countryCode` support. Returns both legacy `{ success, data: { page } }` and Payload-compatible `payload: { docs: [...] }` shapes.
+- `GET /platform/cms/navigation` - Navigation resolution with both legacy and Payload response shapes.
+
+**CMS Integration:** `useCMSPage`, `useCMSPageChildren`, `useCMSNavigation`, `useCMSVerticals` hooks provide React Query-powered data fetching. All hooks now consume from local Payload-compatible endpoints (`/platform/cms/pages`, `/platform/cms/verticals`) instead of direct Payload CMS access. Response extraction prefers Payload shape (`docs` array) with fallback to legacy shape.
 
 **Governance Integration:** `GovernanceProvider` fetches tenant-specific policies. The `useGovernanceContext()` hook provides `isVerticalAllowed()`, `isFeatureAllowed()`, and `getCommercePolicy()` for feature gating. CMS pages can have `governanceTags`.
 
@@ -40,6 +51,8 @@ The storefront uses dynamic routing (`/$tenant/$locale/...`) with TanStack Route
 - **Persona Precedence:** Hierarchical resolution from session to tenant-default.
 - **Governance:** Deep merging of policies through an authority chain.
 - **Residency Zones:** Data locality based on GCC/EU, MENA, APAC/AMERICAS/GLOBAL.
+- **Country-Level CMS Scoping:** Pages scoped by countryCode/regionZone with 4-step resolution chain.
+- **Payload CMS API Compatibility:** Local registry returns Payload-shaped responses for seamless migration to real Payload CMS.
 - **RTL Support:** Dedicated `dir="rtl"` and CSS overrides for Arabic.
 - **Event Outbox:** CMS-compatible envelope format with correlation/causation IDs.
 - **Vite Proxy:** Frontend uses a Vite proxy for seamless API communication.
@@ -48,6 +61,16 @@ The storefront uses dynamic routing (`/$tenant/$locale/...`) with TanStack Route
 - **Authentication:** JWT-based authentication for customer SDK.
 - **API Key Usage:** All tenant/governance/node API calls must use `sdk.client.fetch()` for automatic publishable API key inclusion (`VITE_MEDUSA_PUBLISHABLE_KEY`).
 - **Tenant Resolution:** Default tenant "dakkah" (`01KGZ2JRYX607FWMMYQNQRKVWS`). Root `/` redirects to `/dakkah/en`. `DEFAULT_TENANT` fallback config and `TENANT_SLUG_TO_ID` maps are used for tenant ID resolution.
+- **Route Consolidation:** CMS-eligible routes (store, search, vendors, categories, nodes) consolidated into catch-all routes. Only transactional/authenticated routes (cart, checkout, account, bookings, vendor dashboard, B2B, quotes, subscriptions) remain as dedicated files.
+
+### Payload CMS Migration Path
+The local CMS registry is designed as a drop-in stand-in for Payload CMS:
+1. **Current State:** Local registry in `cms-registry.ts` serves all CMS data through Payload-compatible endpoints.
+2. **Migration Step 1:** Deploy Payload CMS instance with matching collection schemas (pages, navigations, verticals).
+3. **Migration Step 2:** Set `PAYLOAD_CMS_URL` and `PAYLOAD_API_KEY` environment variables. The resolve/navigation endpoints already fall back to Payload CMS when local registry has no match.
+4. **Migration Step 3:** Import registry data into Payload CMS collections. Frontend hooks already consume Payload response shapes.
+5. **Migration Step 4:** Remove local registry fallback logic once Payload CMS has all data.
+6. **Future:** Replace storefront with Next.js + Payload CMS frontend, keeping Medusa as remote commerce backend.
 
 ### Platform Context API
 The backend exposes a unified Platform Context API at `/platform/*` (no authentication required) for full context resolution:
@@ -71,13 +94,20 @@ This layer orchestrates integration with CityOS ecosystem components:
 ### Database Seeding and Testing
 Seed scripts provide minimal and complete data seeding, including an admin user, store, products, customers, vendors, tenant, and the 5-level node hierarchy. `db-verify.ts` ensures database integrity. Backend tests use Jest; storefront tests use Vitest.
 
+## Recent Changes (2026-02-09)
+- **CMS Registry Restructure:** Added `PayloadPage` interface with Payload CMS standard fields, country/region scope model, vertical templates catalog, and 4-step resolution chain.
+- **Payload CMS Collection Endpoints:** Created `/platform/cms/pages`, `/platform/cms/navigations`, `/platform/cms/verticals` with standard Payload response shape. Updated `/resolve` and `/navigation` to return Payload-compatible responses alongside legacy shape.
+- **Route Consolidation:** Removed 9 CMS-eligible route files (stores, store, search, nodes, categories/*, vendors/*). These are now handled by catch-all routes resolving from CMS registry.
+- **Frontend Hook Updates:** All CMS hooks now consume from local Payload-compatible endpoints instead of direct Payload CMS access.
+- **Country-to-Region Mapping:** Hardcoded mapping for 26 countries across GCC_EU, MENA, APAC, AMERICAS zones.
+
 ## External Dependencies
 - **Database:** PostgreSQL
 - **Frontend Framework:** TanStack Start, React
 - **Monorepo Management:** Turborepo, pnpm
 - **API Gateway/Orchestration:** Medusa.js
 - **Workflow Orchestration:** Temporal Cloud (`@temporalio/client`)
-- **CMS:** Payload CMS
+- **CMS:** Payload CMS (local registry stand-in with migration path)
 - **ERP:** ERPNext
 - **Logistics:** Fleetbase
 - **Digital Identity:** Walt.id
