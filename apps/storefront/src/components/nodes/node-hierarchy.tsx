@@ -191,7 +191,22 @@ function NodeCard({
 }
 
 export function NodeHierarchy({ tenantId, initialNodes }: NodeHierarchyProps) {
-  const typeCounts = initialNodes.reduce<Record<string, number>>((acc, node) => {
+  const { data: fetchedNodes, isLoading } = useQuery({
+    queryKey: queryKeys.nodes.root(tenantId),
+    queryFn: async () => {
+      const response = await sdk.client.fetch<{ nodes: Node[] }>(
+        `/store/cityos/nodes?tenant_id=${encodeURIComponent(tenantId)}&type=CITY`,
+        { credentials: "include" }
+      )
+      return response.nodes || []
+    },
+    enabled: !!tenantId,
+    initialData: initialNodes.length > 0 ? initialNodes : undefined,
+    staleTime: 2 * 60 * 1000,
+  })
+
+  const nodes = fetchedNodes || initialNodes
+  const typeCounts = nodes.reduce<Record<string, number>>((acc, node) => {
     acc[node.type] = (acc[node.type] || 0) + 1
     return acc
   }, {})
@@ -226,7 +241,12 @@ export function NodeHierarchy({ tenantId, initialNodes }: NodeHierarchyProps) {
       </div>
 
       <div className="bg-white rounded-xl border border-zinc-200 p-4 sm:p-6">
-        {initialNodes.length === 0 ? (
+        {isLoading ? (
+          <div className="text-center py-12">
+            <span className="text-4xl mb-4 block animate-spin">⏳</span>
+            <h3 className="text-lg font-medium text-zinc-700">Loading nodes...</h3>
+          </div>
+        ) : nodes.length === 0 ? (
           <div className="text-center py-12">
             <span className="text-4xl mb-4 block">🏙️</span>
             <h3 className="text-lg font-medium text-zinc-700">No nodes configured</h3>
@@ -236,7 +256,7 @@ export function NodeHierarchy({ tenantId, initialNodes }: NodeHierarchyProps) {
           </div>
         ) : (
           <div className="space-y-1">
-            {initialNodes.map((node) => (
+            {nodes.map((node) => (
               <NodeCard key={node.id} node={node} tenantId={tenantId} depth={0} />
             ))}
           </div>

@@ -1,8 +1,44 @@
 import { createFileRoute, notFound, Outlet } from "@tanstack/react-router"
 import { TenantProvider } from "@/lib/context/tenant-context"
+import type { TenantConfig } from "@/lib/context/tenant-context"
 import { sdk } from "@/lib/utils/sdk"
 
 const SUPPORTED_LOCALES = ["en", "fr", "ar"]
+
+const DEFAULT_TENANT: TenantConfig = {
+  id: "01KGZ2JRYX607FWMMYQNQRKVWS",
+  name: "Dakkah",
+  slug: "dakkah",
+  handle: "dakkah",
+  residencyZone: "MENA",
+  defaultLocale: "en",
+  supportedLocales: ["en", "ar", "fr"],
+  defaultCurrency: "sar",
+  timezone: "Asia/Riyadh",
+  primaryColor: "#1a5f2a",
+  accentColor: "#d4af37",
+}
+
+function mapApiTenantToConfig(apiTenant: Record<string, any>): TenantConfig {
+  return {
+    id: apiTenant.id,
+    name: apiTenant.name,
+    slug: apiTenant.slug,
+    handle: apiTenant.handle || apiTenant.slug,
+    domain: apiTenant.domain || undefined,
+    residencyZone: apiTenant.residency_zone || "MENA",
+    defaultLocale: apiTenant.default_locale || "en",
+    supportedLocales: apiTenant.supported_locales || ["en"],
+    defaultCurrency: apiTenant.default_currency || "sar",
+    timezone: apiTenant.timezone || "Asia/Riyadh",
+    logoUrl: apiTenant.logo_url || undefined,
+    faviconUrl: apiTenant.favicon_url || undefined,
+    primaryColor: apiTenant.primary_color || undefined,
+    accentColor: apiTenant.accent_color || undefined,
+    fontFamily: apiTenant.font_family || undefined,
+    branding: apiTenant.branding || undefined,
+  }
+}
 
 export const Route = createFileRoute("/$tenant/$locale")({
   loader: async ({ params, context }) => {
@@ -15,7 +51,7 @@ export const Route = createFileRoute("/$tenant/$locale")({
 
     if (typeof window === "undefined") {
       return {
-        tenant: null,
+        tenant: tenant === "dakkah" ? DEFAULT_TENANT : null,
         tenantSlug: tenant,
         locale,
         direction: locale === "ar" ? "rtl" : "ltr",
@@ -23,12 +59,18 @@ export const Route = createFileRoute("/$tenant/$locale")({
       }
     }
 
-    let tenantData = null
+    let tenantConfig: TenantConfig | null = null
     try {
-      const response = await sdk.client.fetch<{ tenant: any }>(`/store/cityos/tenant?slug=${encodeURIComponent(tenant)}`)
-      tenantData = response.tenant
+      const response = await sdk.client.fetch<{ tenant: Record<string, any> }>(`/store/cityos/tenant?slug=${encodeURIComponent(tenant)}`)
+      if (response.tenant) {
+        tenantConfig = mapApiTenantToConfig(response.tenant)
+      }
     } catch (e) {
       console.warn("Tenant resolution failed, using default context")
+    }
+
+    if (!tenantConfig && tenant === "dakkah") {
+      tenantConfig = DEFAULT_TENANT
     }
 
     const regions = await queryClient.ensureQueryData({
@@ -40,7 +82,7 @@ export const Route = createFileRoute("/$tenant/$locale")({
     })
 
     return {
-      tenant: tenantData,
+      tenant: tenantConfig,
       tenantSlug: tenant,
       locale,
       direction: locale === "ar" ? "rtl" : "ltr",
