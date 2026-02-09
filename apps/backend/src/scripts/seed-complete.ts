@@ -416,6 +416,25 @@ export default async function seedComplete({ container }: ExecArgs) {
   }
 
   // ============================================================
+  // STEP 10b: Update Store Name with Tenant Info
+  // ============================================================
+  console.log("\nStep 10b: Updating store name to Dakkah CityOS...")
+  try {
+    await updateStoresWorkflow(container).run({
+      input: {
+        selector: { id: store.id },
+        update: {
+          name: "Dakkah CityOS",
+          metadata: { tenant_id: tenantId, brand: "Dakkah", tagline: "Your Super App for City & Lifestyle" },
+        },
+      },
+    })
+    console.log("  Store name updated to Dakkah CityOS")
+  } catch (error: any) {
+    console.log(`  Store name update skipped: ${error.message}`)
+  }
+
+  // ============================================================
   // STEP 11: Governance Authority
   // ============================================================
   console.log("\nStep 11: Creating governance authority...")
@@ -606,7 +625,7 @@ export default async function seedComplete({ container }: ExecArgs) {
         { url: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=1200&q=80" },
       ],
       category_ids: [getCategoryId("electronics")].filter(Boolean),
-      sales_channels: [{ id: allChannels[0].id }],
+      sales_channels: allChannelIds.map(id => ({ id })),
       options: [
         { title: "Storage", values: ["256GB", "512GB"] },
       ],
@@ -645,7 +664,7 @@ export default async function seedComplete({ container }: ExecArgs) {
         { url: "https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?w=1200&q=80" },
       ],
       category_ids: [getCategoryId("fashion")].filter(Boolean),
-      sales_channels: [{ id: allChannels[0].id }],
+      sales_channels: allChannelIds.map(id => ({ id })),
       options: [
         { title: "Size", values: ["Small", "Medium", "Large"] },
       ],
@@ -694,7 +713,7 @@ export default async function seedComplete({ container }: ExecArgs) {
         { url: "https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?w=1200&q=80" },
       ],
       category_ids: [getCategoryId("food-beverages")].filter(Boolean),
-      sales_channels: [{ id: allChannels[0].id }],
+      sales_channels: allChannelIds.map(id => ({ id })),
       options: [
         { title: "Weight", values: ["500g", "1kg"] },
       ],
@@ -733,7 +752,7 @@ export default async function seedComplete({ container }: ExecArgs) {
         { url: "https://images.unsplash.com/photo-1527515545081-5db817172677?w=1200&q=80" },
       ],
       category_ids: [getCategoryId("services")].filter(Boolean),
-      sales_channels: [{ id: allChannels[0].id }],
+      sales_channels: allChannelIds.map(id => ({ id })),
       options: [
         { title: "Type", values: ["Standard", "Deep Clean"] },
       ],
@@ -773,7 +792,7 @@ export default async function seedComplete({ container }: ExecArgs) {
         { url: "https://images.unsplash.com/photo-1604328698692-f76ea9498e76?w=1200&q=80" },
       ],
       category_ids: [getCategoryId("real-estate")].filter(Boolean),
-      sales_channels: [{ id: allChannels[0].id }],
+      sales_channels: allChannelIds.map(id => ({ id })),
       options: [
         { title: "Size", values: ["50sqm", "100sqm"] },
       ],
@@ -812,7 +831,7 @@ export default async function seedComplete({ container }: ExecArgs) {
         { url: "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?w=1200&q=80" },
       ],
       category_ids: [getCategoryId("fashion")].filter(Boolean),
-      sales_channels: [{ id: allChannels[0].id }, { id: allChannels[1].id }],
+      sales_channels: allChannelIds.map(id => ({ id })),
       options: [
         { title: "Volume", values: ["10ml"] },
       ],
@@ -842,7 +861,7 @@ export default async function seedComplete({ container }: ExecArgs) {
         { url: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1200&q=80" },
       ],
       category_ids: [getCategoryId("food-beverages")].filter(Boolean),
-      sales_channels: [{ id: allChannels[0].id }],
+      sales_channels: allChannelIds.map(id => ({ id })),
       options: [
         { title: "Weight", values: ["250g", "500g"] },
       ],
@@ -880,7 +899,7 @@ export default async function seedComplete({ container }: ExecArgs) {
         { url: "https://images.unsplash.com/photo-1591561954557-26941169b49e?w=1200&q=80" },
       ],
       category_ids: [getCategoryId("fashion")].filter(Boolean),
-      sales_channels: [{ id: allChannels[0].id }],
+      sales_channels: allChannelIds.map(id => ({ id })),
       options: [
         { title: "Color", values: ["Natural", "Black"] },
       ],
@@ -918,7 +937,7 @@ export default async function seedComplete({ container }: ExecArgs) {
         { url: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=1200&q=80" },
       ],
       category_ids: [getCategoryId("fashion")].filter(Boolean),
-      sales_channels: [{ id: allChannels[0].id }],
+      sales_channels: allChannelIds.map(id => ({ id })),
       options: [
         { title: "Color", values: ["White", "Gray"] },
       ],
@@ -956,7 +975,7 @@ export default async function seedComplete({ container }: ExecArgs) {
         { url: "https://images.unsplash.com/photo-1578768079470-0a4536e2b2d7?w=1200&q=80" },
       ],
       category_ids: [getCategoryId("fashion")].filter(Boolean),
-      sales_channels: [{ id: allChannels[0].id }],
+      sales_channels: allChannelIds.map(id => ({ id })),
       options: [
         { title: "Size", values: ["Small", "Medium", "Large"] },
       ],
@@ -1004,7 +1023,7 @@ export default async function seedComplete({ container }: ExecArgs) {
         { url: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=1200&q=80" },
       ],
       category_ids: [getCategoryId("fashion")].filter(Boolean),
-      sales_channels: [{ id: allChannels[0].id }],
+      sales_channels: allChannelIds.map(id => ({ id })),
       options: [
         { title: "Size", values: ["Small", "Medium", "Large"] },
       ],
@@ -1052,7 +1071,7 @@ export default async function seedComplete({ container }: ExecArgs) {
         { url: "https://images.unsplash.com/photo-1523362628745-0c100150b504?w=1200&q=80" },
       ],
       category_ids: [getCategoryId("electronics")].filter(Boolean),
-      sales_channels: [{ id: allChannels[0].id }],
+      sales_channels: allChannelIds.map(id => ({ id })),
       options: [
         { title: "Capacity", values: ["500ml", "750ml"] },
       ],
@@ -1090,7 +1109,7 @@ export default async function seedComplete({ container }: ExecArgs) {
         { url: "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=1200&q=80" },
       ],
       category_ids: [getCategoryId("electronics")].filter(Boolean),
-      sales_channels: [{ id: allChannels[0].id }],
+      sales_channels: allChannelIds.map(id => ({ id })),
       options: [
         { title: "Color", values: ["Black", "White"] },
       ],
@@ -1269,6 +1288,91 @@ export default async function seedComplete({ container }: ExecArgs) {
   }
 
   // ============================================================
+  // STEP 17: Vendor-Product Linking
+  // ============================================================
+  console.log("\nStep 17: Linking products to vendors...")
+  let vpCount = 0
+  try {
+    const vendorService = container.resolve("vendor") as any
+    const vendorProductService = container.resolve("vendorProduct") as any
+
+    const existingVendors = await vendorService.listVendors({ tenant_id: tenantId })
+    if (existingVendors.length > 0 && tenantId) {
+      const seededHandles = products.map(p => p.handle)
+      const { data: allProducts } = await query.graph({
+        entity: "product",
+        fields: ["id", "handle"],
+        filters: { handle: seededHandles },
+      })
+
+      for (let i = 0; i < allProducts.length; i++) {
+        const product = allProducts[i]
+        const vendor = existingVendors[i % existingVendors.length]
+        try {
+          const existing = await vendorProductService.listVendorProducts({ product_id: product.id })
+          if (!existing || existing.length === 0) {
+            await vendorProductService.createVendorProducts({
+              vendor_id: vendor.id,
+              product_id: product.id,
+              tenant_id: tenantId,
+              is_primary_vendor: true,
+              attribution_percentage: 100,
+              status: "approved",
+              manage_inventory: true,
+              fulfillment_method: "vendor_ships",
+              lead_time_days: 3,
+              commission_override: false,
+            })
+            vpCount++
+          }
+        } catch (e: any) {
+          console.log(`  VP link error for ${product.handle}: ${e.message}`)
+        }
+      }
+      console.log(`  Linked ${vpCount} products to vendors`)
+    }
+  } catch (error: any) {
+    console.log(`  Vendor-product linking skipped: ${error.message}`)
+  }
+
+  // ============================================================
+  // STEP 18: Citizen Profiles
+  // ============================================================
+  console.log("\nStep 18: Creating citizen profiles for customers...")
+  let cpCount = 0
+  try {
+    const citizenService = container.resolve("citizenProfile") as any
+    const seededEmails = customers.map(c => c.email)
+    const { data: allCustomers } = await query.graph({
+      entity: "customer",
+      fields: ["id", "first_name", "last_name", "email"],
+      filters: { email: seededEmails },
+    })
+
+    for (const customer of allCustomers) {
+      try {
+        const existing = await citizenService.listCitizenProfiles({ customer_id: customer.id })
+        if (!existing || existing.length === 0) {
+          await citizenService.createCitizenProfiles({
+            tenant_id: tenantId,
+            customer_id: customer.id,
+            full_name: `${customer.first_name} ${customer.last_name}`,
+            email: customer.email,
+            preferred_language: "ar",
+            total_requests: 0,
+          })
+          cpCount++
+        }
+      } catch (e: any) {
+        console.log(`  Citizen profile error for ${customer.email}: ${e.message}`)
+      }
+    }
+    console.log(`  Created ${cpCount} citizen profiles`)
+  } catch (error: any) {
+    console.log(`  Citizen profiles skipped: ${error.message}`)
+  }
+
+  // ============================================================
   // SUMMARY
   // ============================================================
   console.log("\n========================================")
@@ -1281,11 +1385,14 @@ Summary:
   - Sales Channels: ${allChannels.length}
   - Regions: ${menaRegion ? "MENA + International" : "existing"}
   - Stock Location: Riyadh Warehouse
+  - Store Name: Dakkah CityOS
   - Tenant: Dakkah (${tenantId || "skipped"})
   - Node Hierarchy: CITY > DISTRICT > ZONE > FACILITY > ASSET
   - Categories: ${categoryHandles.join(", ")}
-  - Products: ${productCount} created
+  - Products: ${productCount} created (all channels)
   - Customers: ${customerCount} created
   - Vendors: ${vendorCount} created
+  - Vendor-Product Links: ${vpCount} created
+  - Citizen Profiles: ${cpCount} created
   `)
 }

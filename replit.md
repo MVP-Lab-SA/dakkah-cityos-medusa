@@ -1,7 +1,7 @@
 # Medusa.js E-Commerce Monorepo — Dakkah CityOS Commerce Platform
 
 ## Overview
-This project is a Medusa.js e-commerce monorepo designed for multi-tenancy and integration with the Dakkah CityOS CMS architecture. It provides a robust and flexible commerce platform supporting diverse business models, including specialized verticals like healthcare and real estate, within a unified CityOS ecosystem. Key features include a 5-level node hierarchy, a 10-role RBAC system, a 6-axis persona system, and a 4-level governance chain, alongside localization for 3 locales (en/fr/ar with RTL support). The platform aims to be a comprehensive commerce solution for smart city operations.
+This project is a Medusa.js e-commerce monorepo designed for multi-tenancy and integration with the Dakkah CityOS CMS architecture. Dakkah is the super app for all city and lifestyle services — not just a smart city store, but a comprehensive platform powering 25+ commerce verticals from shopping and dining to healthcare, education, real estate, and beyond. Key features include a 5-level node hierarchy, a 10-role RBAC system, a 6-axis persona system, and a 4-level governance chain, alongside localization for 3 locales (en/fr/ar with RTL support). The default tenant "Dakkah" (ID: `01KGZ2JRYX607FWMMYQNQRKVWS`) is the primary super-app tenant with ALL seeded data linked to it — all products across all sales channels (Default, Web Store, Mobile App), all vendors, all customers (via citizen_profile), all nodes, personas, governance authorities, and subscriptions.
 
 ## User Preferences
 - Full alignment with CityOS CMS architecture required
