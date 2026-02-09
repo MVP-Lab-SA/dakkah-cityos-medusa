@@ -117,3 +117,6 @@ Two seed scripts are available:
 - Created i18n translation infrastructure with en.json, fr.json, ar.json and t() function.
 - Fixed product thumbnails for 6 products missing images.
 - Fixed travel module service method names (TravelPropertys → TravelProperties) in seed scripts and API routes.
+- Fixed customer auth: switched SDK from session-based to JWT-based auth (`auth: { type: "jwt" }` in sdk.ts) to avoid cookie/session issues in Replit iframe proxy environment.
+- Created auth identities for 3 seeded customers (Mohammed, Fatima, Ahmed) with password `Customer123!` and linked them to existing customer records.
+- Auth flow: POST /auth/customer/emailpass → JWT token → Bearer token for subsequent requests (no session cookie needed).
