@@ -16,11 +16,21 @@ const Store = () => {
   const { region } = useLoaderData({ strict: false }) as any
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching } = useProducts({
-    region_id: region.id,
+    region_id: region?.id || "",
     query_params: { limit: 12 },
+    enabled: !!region?.id,
   })
 
   const products = data?.pages.flatMap((page) => page.products) || []
+
+  if (!region) {
+    return (
+      <div className="content-container py-6">
+        <h1 className="text-xl mb-6">All Products</h1>
+        <div className="text-zinc-600">Loading...</div>
+      </div>
+    )
+  }
 
   return (
     <div className="content-container py-6">

@@ -1,6 +1,4 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { Navbar } from "@/components/navbar";
-import Footer from "@/components/footer";
 import { getRegion } from "@/lib/data/regions";
 import { listProducts } from "@/lib/data/products";
 import { listCategories } from "@/lib/data/categories";
@@ -9,6 +7,7 @@ import { HttpTypes } from "@medusajs/types";
 export const Route = createFileRoute("/$countryCode/stores")({
   loader: async ({ params, context }) => {
     const { countryCode } = params;
+    if (typeof window === "undefined") return { countryCode, region: null, products: [] as HttpTypes.StoreProduct[], categories: [] as HttpTypes.StoreProductCategory[] }
     const { queryClient } = context;
 
     // Fetch region based on country code
@@ -53,6 +52,18 @@ export const Route = createFileRoute("/$countryCode/stores")({
 function StoresPage() {
   const { products, categories, region } = Route.useLoaderData();
 
+  if (!region) {
+    return (
+      <div className="flex flex-col min-h-screen bg-gradient-to-b from-amber-50 to-white">
+        <main className="flex-1 container mx-auto px-4 py-12">
+          <div className="text-center py-20">
+            <div className="text-zinc-600">Loading...</div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   // Group products by category
   const productsByCategory = categories.map((category) => {
     const categoryProducts = products.filter((product) =>
@@ -71,7 +82,6 @@ function StoresPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-amber-50 to-white">
-      <Navbar />
       <main className="flex-1 container mx-auto px-4 py-12">
         {/* Hero Section */}
         <div className="text-center mb-16">
@@ -151,7 +161,6 @@ function StoresPage() {
           </div>
         )}
       </main>
-      <Footer />
     </div>
   );
 }

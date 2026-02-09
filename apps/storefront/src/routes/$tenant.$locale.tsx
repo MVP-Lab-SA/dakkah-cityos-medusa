@@ -66,7 +66,7 @@ export const Route = createFileRoute("/$tenant/$locale")({
         tenantConfig = mapApiTenantToConfig(response.tenant)
       }
     } catch (e) {
-      console.warn("Tenant resolution failed, using default context")
+      // Tenant resolution failed - expected during development or initial load
     }
 
     if (!tenantConfig && tenant === "dakkah") {

@@ -8,6 +8,7 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 export const Route = createFileRoute("/$countryCode/products/$handle")({
   loader: async ({ params, context }) => {
     const { countryCode, handle } = params;
+    if (typeof window === "undefined") return { countryCode, region: null, product: null }
     const { queryClient } = context;
 
     const region = await queryClient.ensureQueryData({

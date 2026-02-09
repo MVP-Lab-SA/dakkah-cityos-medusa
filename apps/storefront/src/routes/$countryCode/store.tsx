@@ -7,6 +7,7 @@ import { HttpTypes } from "@medusajs/types"
 export const Route = createFileRoute("/$countryCode/store")({
   loader: async ({ params, context }) => {
     const { countryCode } = params
+    if (typeof window === "undefined") return { countryCode, region: null, products: [] as HttpTypes.StoreProduct[] }
     const { queryClient } = context
 
     const region = await queryClient.ensureQueryData({
