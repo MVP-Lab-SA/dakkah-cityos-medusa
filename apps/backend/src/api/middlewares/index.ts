@@ -10,20 +10,20 @@ import {
   scopeToCompanyMiddleware,
 } from "./scope-guards"
 import { nodeContextMiddleware } from "./node-context"
+import { platformContextMiddleware } from "./platform-context"
 
-/**
- * Dakkah CityOS Middleware Configuration
- * Implements tenant detection, scoping, and authorization
- */
 export default defineMiddlewares({
   routes: [
-    // CityOS Store APIs: NodeContext middleware
+    {
+      matcher: "/platform/*",
+      middlewares: [platformContextMiddleware],
+    },
+
     {
       matcher: "/store/cityos/*",
       middlewares: [nodeContextMiddleware],
     },
 
-    // Storefront APIs: Detect tenant + require it
     {
       matcher: "/store/*",
       middlewares: [
@@ -32,8 +32,7 @@ export default defineMiddlewares({
         injectTenantContextMiddleware,
       ],
     },
-    
-    // Admin APIs: Detect tenant + scope by role
+
     {
       matcher: "/admin/*",
       middlewares: [
@@ -43,8 +42,7 @@ export default defineMiddlewares({
       ],
       method: ["POST", "PUT", "PATCH", "DELETE"],
     },
-    
-    // Vendor APIs: Require vendor scope
+
     {
       matcher: "/vendor/*",
       middlewares: [
@@ -53,8 +51,7 @@ export default defineMiddlewares({
         scopeToVendorMiddleware,
       ],
     },
-    
-    // B2B APIs: Require company scope
+
     {
       matcher: "/store/b2b/*",
       middlewares: [
@@ -70,3 +67,4 @@ export default defineMiddlewares({
 export * from "./tenant-context"
 export * from "./scope-guards"
 export * from "./node-context"
+export * from "./platform-context"

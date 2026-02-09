@@ -224,3 +224,80 @@ export interface PersonaResponse {
 export interface TenantResponse {
   tenant: Tenant
 }
+
+export interface PlatformContextTenant {
+  id: string
+  name: string
+  slug: string
+  domain: string
+  residencyZone: string
+  status: string
+  description: string
+  settings: {
+    defaultLocale: string
+    supportedLocales: Array<{ locale: string }>
+    timezone: string
+    currency: string
+  }
+}
+
+export interface PlatformNodeHierarchy {
+  id: string
+  name: string
+  code: string | null
+  type: "CITY" | "DISTRICT" | "ZONE" | "FACILITY" | "ASSET"
+  slug: string
+  status: string
+  coordinates: { lat: number; lng: number } | null
+  parent: string | null
+  children: PlatformNodeHierarchy[]
+}
+
+export interface PlatformGovernanceChain {
+  region: { id: string; name: string; code: string; residencyZone: string } | null
+  country: { id: string; name: string; code: string; settings: Record<string, unknown> } | null
+  authorities: Array<{ id: string; name: string; code: string; type: string; jurisdiction: Record<string, unknown> }>
+  policies: GovernancePolicy
+}
+
+export interface PlatformCapabilities {
+  plugins: {
+    official: string[]
+    community: string[]
+    custom: string[]
+  }
+  features: Record<string, unknown>
+  endpoints: Record<string, { method: string; auth: string; purpose: string }>
+}
+
+export interface PlatformSystem {
+  id: string
+  name: string
+  type: string
+  category: string
+  status: string
+  capabilities: string[]
+  hasBaseUrl: boolean
+}
+
+export interface PlatformContextData {
+  tenant: PlatformContextTenant
+  nodeHierarchy: PlatformNodeHierarchy[]
+  governanceChain: PlatformGovernanceChain
+  capabilities: PlatformCapabilities
+  systems: {
+    total: number
+    active: number
+    external: number
+    registry: PlatformSystem[]
+  }
+  contextHeaders: string[]
+  hierarchyLevels: string[]
+  resolvedAt: string
+  isDefaultTenant: boolean
+}
+
+export interface PlatformContextResponse {
+  success: boolean
+  data: PlatformContextData
+}

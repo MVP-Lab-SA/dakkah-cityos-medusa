@@ -1,6 +1,7 @@
 import { createFileRoute, notFound, Outlet } from "@tanstack/react-router"
 import { TenantProvider } from "@/lib/context/tenant-context"
 import type { TenantConfig } from "@/lib/context/tenant-context"
+import { PlatformContextProvider } from "@/lib/context/platform-context"
 import { sdk } from "@/lib/utils/sdk"
 
 const SUPPORTED_LOCALES = ["en", "fr", "ar"]
@@ -98,7 +99,9 @@ function TenantLocaleLayout() {
   return (
     <div dir={direction} lang={locale}>
       <TenantProvider value={{ tenant, tenantSlug, locale, direction }}>
-        <Outlet />
+        <PlatformContextProvider tenantSlug={tenantSlug}>
+          <Outlet />
+        </PlatformContextProvider>
       </TenantProvider>
     </div>
   )

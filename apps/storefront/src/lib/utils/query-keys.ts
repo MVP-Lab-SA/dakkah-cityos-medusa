@@ -189,6 +189,13 @@ export const queryKeys = {
     snapshots: (...params: any[]) => createDynamicKey("vendor-analytics", "snapshots", ...params),
     performance: () => createDynamicKey("vendor-analytics", "performance"),
   },
+
+  platform: {
+    ...createDomainKeys("platform"),
+    context: (tenantSlug: string) => createDynamicKey("platform", "context", tenantSlug),
+    defaultTenant: () => createDynamicKey("platform", "defaultTenant"),
+    capabilities: () => createDynamicKey("platform", "capabilities"),
+  },
 } as const
 
 export type QueryKeys = typeof queryKeys

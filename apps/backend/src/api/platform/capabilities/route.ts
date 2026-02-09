@@ -1,0 +1,11 @@
+import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { PLATFORM_CAPABILITIES } from "../../../lib/platform"
+
+export const AUTHENTICATE = false
+
+export async function GET(_req: MedusaRequest, res: MedusaResponse) {
+  return res.json({
+    success: true,
+    data: PLATFORM_CAPABILITIES,
+  })
+}

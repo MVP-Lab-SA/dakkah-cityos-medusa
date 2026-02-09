@@ -37,6 +37,10 @@ export default defineConfig(({ mode }) => {
       port: 5000,
       allowedHosts: true,
       proxy: {
+        "/platform": {
+          target: "http://localhost:9000",
+          changeOrigin: true,
+        },
         "/store": {
           target: "http://localhost:9000",
           changeOrigin: true,

@@ -26,7 +26,7 @@ The backend provides extensive modularity for core CityOS features such as tenan
 ### Storefront Architecture
 The storefront uses a dynamic routing pattern `/$tenant/$locale/...` with TanStack Router for file-based routing and Server-Side Rendering (SSR). A centralized design system, implemented through several packages, defines design primitives, theming infrastructure, and component interfaces.
 
-**Provider Chain:** `ClientProviders` (root) wraps `QueryClientProvider` → `StoreProvider` → `AuthProvider` → `BrandingProvider` → `GovernanceProvider` → `ToastProvider`. The `$tenant.$locale` layout wraps children with `TenantProvider` so governance and tenant context are available to all tenant-scoped pages.
+**Provider Chain:** `ClientProviders` (root) wraps `QueryClientProvider` → `StoreProvider` → `AuthProvider` → `BrandingProvider` → `GovernanceProvider` → `ToastProvider`. The `$tenant.$locale` layout wraps children with `TenantProvider` → `PlatformContextProvider` so governance, tenant, and platform context are available to all tenant-scoped pages.
 
 **Tenant-Scoped Routing:**
 - `/$tenant/$locale/` — Home page with governance-filtered verticals
@@ -53,6 +53,27 @@ The storefront uses a dynamic routing pattern `/$tenant/$locale/...` with TanSta
 - **API Key Usage:** All tenant/governance/node API calls must use `sdk.client.fetch()` (not raw `fetch()`) to automatically include the publishable API key header. Publishable key is stored in `VITE_MEDUSA_PUBLISHABLE_KEY` env var.
 - **Tenant Resolution:** Default tenant is "dakkah" (ID: `01KGZ2JRYX607FWMMYQNQRKVWS`). Root `/` redirects to `/dakkah/en`. The `$tenant.$locale` layout provides `DEFAULT_TENANT` fallback config during SSR and when API calls fail. Routes that need tenant ID during SSR use `TENANT_SLUG_TO_ID` maps with `DEFAULT_TENANT_ID` fallback constant.
 - **Node Hierarchy:** The `NodeHierarchy` component fetches root nodes independently via React Query (client-side) using `queryKeys.nodes.root(tenantId)`, rather than relying on SSR loader data which is always empty.
+
+### Platform Context API
+The backend exposes a unified Platform Context API at `/platform/*` (outside `/store/*` to avoid publishable API key requirement). These endpoints require no authentication and provide full context resolution for any tenant.
+
+**Endpoints:**
+- `GET /platform/context?tenant=<slug>` — Full context resolution returning `tenant`, `nodeHierarchy`, `governanceChain`, `capabilities`, `systems` (22 registered), `contextHeaders`, `hierarchyLevels`, `resolvedAt`, `isDefaultTenant`. Falls back to Dakkah tenant if requested tenant not found. Cache: `max-age=60, s-maxage=300`.
+- `GET /platform/tenants/default` — Always returns Dakkah default tenant with `usage` instructions and bootstrap URL. Cache: `max-age=300, s-maxage=600`.
+- `GET /platform/capabilities` — Returns plugin capabilities, enabled features, and available endpoint map.
+
+**Context Propagation Headers:** All cross-system calls should include: `X-CityOS-Correlation-Id`, `X-CityOS-Tenant-Id`, `X-CityOS-Node-Id`, `X-CityOS-Node-Type`, `X-CityOS-Locale`, `X-CityOS-User-Id`, `X-CityOS-Channel`, `X-Idempotency-Key`. The `platformContextMiddleware` parses these headers and attaches them to `req.platformContext`.
+
+**22 Registered Systems:** cms-payload, cms-bff, commerce-medusa, identity-auth, payments-stripe, analytics-internal, communication-email, communication-sms, infra-database, infra-cache, infra-storage, observability-health, observability-metrics, search-elasticsearch, geo-mapping, ai-recommendations, logistics-delivery, iot-platform, social-platform, workflow-temporal, erp-erpnext, logistics-fleetbase.
+
+**Implementation Files:**
+- Registry & Helpers: `apps/backend/src/lib/platform/{registry,helpers,index}.ts`
+- API Routes: `apps/backend/src/api/platform/{context,capabilities}/route.ts`, `apps/backend/src/api/platform/tenants/default/route.ts`
+- Middleware: `apps/backend/src/api/middlewares/platform-context.ts`
+- Storefront: `apps/storefront/src/lib/context/platform-context.tsx`, `apps/storefront/src/lib/hooks/use-platform-context.ts`
+- Vite Proxy: `/platform` → `http://localhost:9000` added in `apps/storefront/vite.config.ts`
+
+**Storefront Integration:** `PlatformContextProvider` wraps tenant-scoped routes in the `$tenant.$locale` layout, consuming `/platform/context?tenant=<slug>` via `usePlatformContext()` hook. Provides `usePlatformContextValue()` for accessing unified platform data including node hierarchy, governance chain, capabilities, and systems registry. Uses plain `fetch()` (not `sdk.client.fetch()`) since platform routes don't require publishable API key.
 
 ### Temporal Integration Bridge
 The Medusa backend integrates with Temporal Cloud for workflow orchestration. This includes a lazy-initialized Temporal client, an event dispatcher mapping Medusa events to Temporal workflows, and a dynamic workflow client supporting AI agent workflows. Admin API routes are available for health checks, workflow listing, and manual triggers. Temporal task queues are used for both static event-driven and dynamic AI agent workflows.
