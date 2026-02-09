@@ -108,6 +108,8 @@ import { Route as TenantLocaleCharityIndexRouteImport } from './routes/$tenant/$
 import { Route as TenantLocaleBookingsIndexRouteImport } from './routes/$tenant/$locale/bookings/index'
 import { Route as TenantLocaleAutomotiveIndexRouteImport } from './routes/$tenant/$locale/automotive/index'
 import { Route as TenantLocaleAuctionsIndexRouteImport } from './routes/$tenant/$locale/auctions/index'
+import { Route as TenantLocaleAffiliatesIndexRouteImport } from './routes/$tenant/$locale/affiliates/index'
+import { Route as TenantLocaleAdvertisingIndexRouteImport } from './routes/$tenant/$locale/advertising/index'
 import { Route as TenantLocaleAccountIndexRouteImport } from './routes/$tenant/$locale/account/index'
 import { Route as CountryCodeVendorProductsIndexRouteImport } from './routes/$countryCode/vendor/products/index'
 import { Route as CountryCodeVendorPayoutsIndexRouteImport } from './routes/$countryCode/vendor/payouts/index'
@@ -158,6 +160,8 @@ import { Route as TenantLocaleB2bRegisterRouteImport } from './routes/$tenant/$l
 import { Route as TenantLocaleB2bDashboardRouteImport } from './routes/$tenant/$locale/b2b/dashboard'
 import { Route as TenantLocaleAutomotiveIdRouteImport } from './routes/$tenant/$locale/automotive/$id'
 import { Route as TenantLocaleAuctionsIdRouteImport } from './routes/$tenant/$locale/auctions/$id'
+import { Route as TenantLocaleAffiliatesIdRouteImport } from './routes/$tenant/$locale/affiliates/$id'
+import { Route as TenantLocaleAdvertisingIdRouteImport } from './routes/$tenant/$locale/advertising/$id'
 import { Route as TenantLocaleAccountSettingsRouteImport } from './routes/$tenant/$locale/account/settings'
 import { Route as TenantLocaleAccountProfileRouteImport } from './routes/$tenant/$locale/account/profile'
 import { Route as TenantLocaleAccountAddressesRouteImport } from './routes/$tenant/$locale/account/addresses'
@@ -712,6 +716,18 @@ const TenantLocaleAuctionsIndexRoute =
     path: '/auctions/',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
+const TenantLocaleAffiliatesIndexRoute =
+  TenantLocaleAffiliatesIndexRouteImport.update({
+    id: '/affiliates/',
+    path: '/affiliates/',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
+const TenantLocaleAdvertisingIndexRoute =
+  TenantLocaleAdvertisingIndexRouteImport.update({
+    id: '/advertising/',
+    path: '/advertising/',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
 const TenantLocaleAccountIndexRoute =
   TenantLocaleAccountIndexRouteImport.update({
     id: '/account/',
@@ -998,6 +1014,18 @@ const TenantLocaleAuctionsIdRoute = TenantLocaleAuctionsIdRouteImport.update({
   path: '/auctions/$id',
   getParentRoute: () => TenantLocaleRoute,
 } as any)
+const TenantLocaleAffiliatesIdRoute =
+  TenantLocaleAffiliatesIdRouteImport.update({
+    id: '/affiliates/$id',
+    path: '/affiliates/$id',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
+const TenantLocaleAdvertisingIdRoute =
+  TenantLocaleAdvertisingIdRouteImport.update({
+    id: '/advertising/$id',
+    path: '/advertising/$id',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
 const TenantLocaleAccountSettingsRoute =
   TenantLocaleAccountSettingsRouteImport.update({
     id: '/account/settings',
@@ -1298,6 +1326,8 @@ export interface FileRoutesByFullPath {
   '/$tenant/$locale/account/addresses': typeof TenantLocaleAccountAddressesRoute
   '/$tenant/$locale/account/profile': typeof TenantLocaleAccountProfileRoute
   '/$tenant/$locale/account/settings': typeof TenantLocaleAccountSettingsRoute
+  '/$tenant/$locale/advertising/$id': typeof TenantLocaleAdvertisingIdRoute
+  '/$tenant/$locale/affiliates/$id': typeof TenantLocaleAffiliatesIdRoute
   '/$tenant/$locale/auctions/$id': typeof TenantLocaleAuctionsIdRoute
   '/$tenant/$locale/automotive/$id': typeof TenantLocaleAutomotiveIdRoute
   '/$tenant/$locale/b2b/dashboard': typeof TenantLocaleB2bDashboardRoute
@@ -1348,6 +1378,8 @@ export interface FileRoutesByFullPath {
   '/$countryCode/vendor/payouts/': typeof CountryCodeVendorPayoutsIndexRoute
   '/$countryCode/vendor/products': typeof CountryCodeVendorProductsIndexRoute
   '/$tenant/$locale/account': typeof TenantLocaleAccountIndexRoute
+  '/$tenant/$locale/advertising': typeof TenantLocaleAdvertisingIndexRoute
+  '/$tenant/$locale/affiliates': typeof TenantLocaleAffiliatesIndexRoute
   '/$tenant/$locale/auctions': typeof TenantLocaleAuctionsIndexRoute
   '/$tenant/$locale/automotive': typeof TenantLocaleAutomotiveIndexRoute
   '/$tenant/$locale/bookings': typeof TenantLocaleBookingsIndexRoute
@@ -1477,6 +1509,8 @@ export interface FileRoutesByTo {
   '/$tenant/$locale/account/addresses': typeof TenantLocaleAccountAddressesRoute
   '/$tenant/$locale/account/profile': typeof TenantLocaleAccountProfileRoute
   '/$tenant/$locale/account/settings': typeof TenantLocaleAccountSettingsRoute
+  '/$tenant/$locale/advertising/$id': typeof TenantLocaleAdvertisingIdRoute
+  '/$tenant/$locale/affiliates/$id': typeof TenantLocaleAffiliatesIdRoute
   '/$tenant/$locale/auctions/$id': typeof TenantLocaleAuctionsIdRoute
   '/$tenant/$locale/automotive/$id': typeof TenantLocaleAutomotiveIdRoute
   '/$tenant/$locale/b2b/dashboard': typeof TenantLocaleB2bDashboardRoute
@@ -1526,6 +1560,8 @@ export interface FileRoutesByTo {
   '/$countryCode/vendor/payouts': typeof CountryCodeVendorPayoutsIndexRoute
   '/$countryCode/vendor/products': typeof CountryCodeVendorProductsIndexRoute
   '/$tenant/$locale/account': typeof TenantLocaleAccountIndexRoute
+  '/$tenant/$locale/advertising': typeof TenantLocaleAdvertisingIndexRoute
+  '/$tenant/$locale/affiliates': typeof TenantLocaleAffiliatesIndexRoute
   '/$tenant/$locale/auctions': typeof TenantLocaleAuctionsIndexRoute
   '/$tenant/$locale/automotive': typeof TenantLocaleAutomotiveIndexRoute
   '/$tenant/$locale/bookings': typeof TenantLocaleBookingsIndexRoute
@@ -1659,6 +1695,8 @@ export interface FileRoutesById {
   '/$tenant/$locale/account/addresses': typeof TenantLocaleAccountAddressesRoute
   '/$tenant/$locale/account/profile': typeof TenantLocaleAccountProfileRoute
   '/$tenant/$locale/account/settings': typeof TenantLocaleAccountSettingsRoute
+  '/$tenant/$locale/advertising/$id': typeof TenantLocaleAdvertisingIdRoute
+  '/$tenant/$locale/affiliates/$id': typeof TenantLocaleAffiliatesIdRoute
   '/$tenant/$locale/auctions/$id': typeof TenantLocaleAuctionsIdRoute
   '/$tenant/$locale/automotive/$id': typeof TenantLocaleAutomotiveIdRoute
   '/$tenant/$locale/b2b/dashboard': typeof TenantLocaleB2bDashboardRoute
@@ -1709,6 +1747,8 @@ export interface FileRoutesById {
   '/$countryCode/vendor/payouts/': typeof CountryCodeVendorPayoutsIndexRoute
   '/$countryCode/vendor/products/': typeof CountryCodeVendorProductsIndexRoute
   '/$tenant/$locale/account/': typeof TenantLocaleAccountIndexRoute
+  '/$tenant/$locale/advertising/': typeof TenantLocaleAdvertisingIndexRoute
+  '/$tenant/$locale/affiliates/': typeof TenantLocaleAffiliatesIndexRoute
   '/$tenant/$locale/auctions/': typeof TenantLocaleAuctionsIndexRoute
   '/$tenant/$locale/automotive/': typeof TenantLocaleAutomotiveIndexRoute
   '/$tenant/$locale/bookings/': typeof TenantLocaleBookingsIndexRoute
@@ -1843,6 +1883,8 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/account/addresses'
     | '/$tenant/$locale/account/profile'
     | '/$tenant/$locale/account/settings'
+    | '/$tenant/$locale/advertising/$id'
+    | '/$tenant/$locale/affiliates/$id'
     | '/$tenant/$locale/auctions/$id'
     | '/$tenant/$locale/automotive/$id'
     | '/$tenant/$locale/b2b/dashboard'
@@ -1893,6 +1935,8 @@ export interface FileRouteTypes {
     | '/$countryCode/vendor/payouts/'
     | '/$countryCode/vendor/products'
     | '/$tenant/$locale/account'
+    | '/$tenant/$locale/advertising'
+    | '/$tenant/$locale/affiliates'
     | '/$tenant/$locale/auctions'
     | '/$tenant/$locale/automotive'
     | '/$tenant/$locale/bookings'
@@ -2022,6 +2066,8 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/account/addresses'
     | '/$tenant/$locale/account/profile'
     | '/$tenant/$locale/account/settings'
+    | '/$tenant/$locale/advertising/$id'
+    | '/$tenant/$locale/affiliates/$id'
     | '/$tenant/$locale/auctions/$id'
     | '/$tenant/$locale/automotive/$id'
     | '/$tenant/$locale/b2b/dashboard'
@@ -2071,6 +2117,8 @@ export interface FileRouteTypes {
     | '/$countryCode/vendor/payouts'
     | '/$countryCode/vendor/products'
     | '/$tenant/$locale/account'
+    | '/$tenant/$locale/advertising'
+    | '/$tenant/$locale/affiliates'
     | '/$tenant/$locale/auctions'
     | '/$tenant/$locale/automotive'
     | '/$tenant/$locale/bookings'
@@ -2203,6 +2251,8 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/account/addresses'
     | '/$tenant/$locale/account/profile'
     | '/$tenant/$locale/account/settings'
+    | '/$tenant/$locale/advertising/$id'
+    | '/$tenant/$locale/affiliates/$id'
     | '/$tenant/$locale/auctions/$id'
     | '/$tenant/$locale/automotive/$id'
     | '/$tenant/$locale/b2b/dashboard'
@@ -2253,6 +2303,8 @@ export interface FileRouteTypes {
     | '/$countryCode/vendor/payouts/'
     | '/$countryCode/vendor/products/'
     | '/$tenant/$locale/account/'
+    | '/$tenant/$locale/advertising/'
+    | '/$tenant/$locale/affiliates/'
     | '/$tenant/$locale/auctions/'
     | '/$tenant/$locale/automotive/'
     | '/$tenant/$locale/bookings/'
@@ -3010,6 +3062,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleAuctionsIndexRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
+    '/$tenant/$locale/affiliates/': {
+      id: '/$tenant/$locale/affiliates/'
+      path: '/affiliates'
+      fullPath: '/$tenant/$locale/affiliates'
+      preLoaderRoute: typeof TenantLocaleAffiliatesIndexRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/advertising/': {
+      id: '/$tenant/$locale/advertising/'
+      path: '/advertising'
+      fullPath: '/$tenant/$locale/advertising'
+      preLoaderRoute: typeof TenantLocaleAdvertisingIndexRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
     '/$tenant/$locale/account/': {
       id: '/$tenant/$locale/account/'
       path: '/account'
@@ -3358,6 +3424,20 @@ declare module '@tanstack/react-router' {
       path: '/auctions/$id'
       fullPath: '/$tenant/$locale/auctions/$id'
       preLoaderRoute: typeof TenantLocaleAuctionsIdRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/affiliates/$id': {
+      id: '/$tenant/$locale/affiliates/$id'
+      path: '/affiliates/$id'
+      fullPath: '/$tenant/$locale/affiliates/$id'
+      preLoaderRoute: typeof TenantLocaleAffiliatesIdRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/advertising/$id': {
+      id: '/$tenant/$locale/advertising/$id'
+      path: '/advertising/$id'
+      fullPath: '/$tenant/$locale/advertising/$id'
+      preLoaderRoute: typeof TenantLocaleAdvertisingIdRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$tenant/$locale/account/settings': {
@@ -3884,6 +3964,8 @@ interface TenantLocaleRouteChildren {
   TenantLocaleAccountAddressesRoute: typeof TenantLocaleAccountAddressesRoute
   TenantLocaleAccountProfileRoute: typeof TenantLocaleAccountProfileRoute
   TenantLocaleAccountSettingsRoute: typeof TenantLocaleAccountSettingsRoute
+  TenantLocaleAdvertisingIdRoute: typeof TenantLocaleAdvertisingIdRoute
+  TenantLocaleAffiliatesIdRoute: typeof TenantLocaleAffiliatesIdRoute
   TenantLocaleAuctionsIdRoute: typeof TenantLocaleAuctionsIdRoute
   TenantLocaleAutomotiveIdRoute: typeof TenantLocaleAutomotiveIdRoute
   TenantLocaleB2bDashboardRoute: typeof TenantLocaleB2bDashboardRoute
@@ -3927,6 +4009,8 @@ interface TenantLocaleRouteChildren {
   TenantLocaleVendorsHandleRoute: typeof TenantLocaleVendorsHandleRouteWithChildren
   TenantLocaleWarrantiesIdRoute: typeof TenantLocaleWarrantiesIdRoute
   TenantLocaleAccountIndexRoute: typeof TenantLocaleAccountIndexRoute
+  TenantLocaleAdvertisingIndexRoute: typeof TenantLocaleAdvertisingIndexRoute
+  TenantLocaleAffiliatesIndexRoute: typeof TenantLocaleAffiliatesIndexRoute
   TenantLocaleAuctionsIndexRoute: typeof TenantLocaleAuctionsIndexRoute
   TenantLocaleAutomotiveIndexRoute: typeof TenantLocaleAutomotiveIndexRoute
   TenantLocaleBookingsIndexRoute: typeof TenantLocaleBookingsIndexRoute
@@ -3987,6 +4071,8 @@ const TenantLocaleRouteChildren: TenantLocaleRouteChildren = {
   TenantLocaleAccountAddressesRoute: TenantLocaleAccountAddressesRoute,
   TenantLocaleAccountProfileRoute: TenantLocaleAccountProfileRoute,
   TenantLocaleAccountSettingsRoute: TenantLocaleAccountSettingsRoute,
+  TenantLocaleAdvertisingIdRoute: TenantLocaleAdvertisingIdRoute,
+  TenantLocaleAffiliatesIdRoute: TenantLocaleAffiliatesIdRoute,
   TenantLocaleAuctionsIdRoute: TenantLocaleAuctionsIdRoute,
   TenantLocaleAutomotiveIdRoute: TenantLocaleAutomotiveIdRoute,
   TenantLocaleB2bDashboardRoute: TenantLocaleB2bDashboardRoute,
@@ -4032,6 +4118,8 @@ const TenantLocaleRouteChildren: TenantLocaleRouteChildren = {
   TenantLocaleVendorsHandleRoute: TenantLocaleVendorsHandleRouteWithChildren,
   TenantLocaleWarrantiesIdRoute: TenantLocaleWarrantiesIdRoute,
   TenantLocaleAccountIndexRoute: TenantLocaleAccountIndexRoute,
+  TenantLocaleAdvertisingIndexRoute: TenantLocaleAdvertisingIndexRoute,
+  TenantLocaleAffiliatesIndexRoute: TenantLocaleAffiliatesIndexRoute,
   TenantLocaleAuctionsIndexRoute: TenantLocaleAuctionsIndexRoute,
   TenantLocaleAutomotiveIndexRoute: TenantLocaleAutomotiveIndexRoute,
   TenantLocaleBookingsIndexRoute: TenantLocaleBookingsIndexRoute,
