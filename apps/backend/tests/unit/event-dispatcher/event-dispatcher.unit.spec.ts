@@ -1,8 +1,8 @@
-jest.mock("../temporal-client", () => ({
+jest.mock("../../../src/lib/temporal-client", () => ({
   startWorkflow: jest.fn(),
 }))
 
-jest.mock("../../integrations/node-hierarchy-sync", () => ({
+jest.mock("../../../src/integrations/node-hierarchy-sync", () => ({
   NodeHierarchySyncService: jest.fn().mockImplementation(() => ({
     syncSingleNode: jest.fn().mockResolvedValue(undefined),
     deleteNodeFromSystems: jest.fn().mockResolvedValue(undefined),
@@ -16,7 +16,7 @@ const MockMedusaToPayloadSync = jest.fn().mockImplementation(() => ({
   syncGovernancePolicies: mockSyncGovernancePolicies,
 }))
 
-jest.mock("../../integrations/payload-sync/medusa-to-payload.js", () => ({
+jest.mock("../../../src/integrations/payload-sync/medusa-to-payload.js", () => ({
   MedusaToPayloadSync: MockMedusaToPayloadSync,
 }), { virtual: true })
 
@@ -29,31 +29,31 @@ const MockERPNextService = jest.fn().mockImplementation(() => ({
   createInvoice: mockErpCreateInvoice,
 }))
 
-jest.mock("../../integrations/erpnext/service.js", () => ({
+jest.mock("../../../src/integrations/erpnext/service.js", () => ({
   ERPNextService: MockERPNextService,
 }), { virtual: true })
 
-jest.mock("../../integrations/fleetbase/service.js", () => ({
+jest.mock("../../../src/integrations/fleetbase/service.js", () => ({
   FleetbaseService: jest.fn().mockImplementation(() => ({
     createShipment: jest.fn().mockResolvedValue({ tracking_number: "TRACK-1" }),
   })),
 }), { virtual: true })
 
-jest.mock("../../integrations/waltid/service.js", () => ({
+jest.mock("../../../src/integrations/waltid/service.js", () => ({
   WaltIdService: jest.fn().mockImplementation(() => ({
     issueVendorCredential: jest.fn().mockResolvedValue({ credentialId: "cred-1" }),
   })),
 }), { virtual: true })
 
-import { startWorkflow } from "../temporal-client"
-import { NodeHierarchySyncService } from "../../integrations/node-hierarchy-sync"
+import { startWorkflow } from "../../../src/lib/temporal-client"
+import { NodeHierarchySyncService } from "../../../src/integrations/node-hierarchy-sync"
 import {
   getWorkflowForEvent,
   getAllMappedEvents,
   dispatchEventToTemporal,
   processOutboxEvents,
   dispatchCrossSystemEvent,
-} from "../event-dispatcher"
+} from "../../../src/lib/event-dispatcher"
 
 const mockStartWorkflow = startWorkflow as jest.Mock
 

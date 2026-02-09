@@ -1,4 +1,4 @@
-import { GET } from "../route"
+import { GET } from "../../../src/api/store/cityos/governance/route"
 
 describe("GET /store/cityos/governance", () => {
   let mockGovernanceModule: {

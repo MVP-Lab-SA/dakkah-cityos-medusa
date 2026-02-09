@@ -31,7 +31,7 @@ jest.mock("@medusajs/framework/utils", () => {
   }
 })
 
-import GovernanceModuleService from "../service"
+import GovernanceModuleService from "../../../src/modules/governance/service"
 
 describe("GovernanceModuleService", () => {
   let service: GovernanceModuleService

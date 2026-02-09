@@ -14,16 +14,21 @@ interface GovernanceContextValue {
   getCommercePolicy: () => GovernancePolicy["commerce"] | undefined
 }
 
-const GovernanceContext = createContext<GovernanceContextValue>({
+const defaultValue: GovernanceContextValue = {
   effectivePolicies: null,
   authorities: [],
   isLoading: false,
   isVerticalAllowed: () => true,
   isFeatureAllowed: () => true,
   getCommercePolicy: () => undefined,
-})
+}
+
+const GovernanceContext = createContext<GovernanceContextValue>(defaultValue)
 
 export function useGovernanceContext() {
+  if (typeof window === "undefined") {
+    return defaultValue
+  }
   return useContext(GovernanceContext)
 }
 

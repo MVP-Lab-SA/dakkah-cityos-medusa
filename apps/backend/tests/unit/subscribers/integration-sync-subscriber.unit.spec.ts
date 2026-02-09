@@ -1,13 +1,13 @@
-import integrationSyncHandler, { config } from "../integration-sync-subscriber"
+import integrationSyncHandler, { config } from "../../../src/subscribers/integration-sync-subscriber"
 
-jest.mock("../../integrations/payload-sync", () => ({
+jest.mock("../../../src/integrations/payload-sync", () => ({
   MedusaToPayloadSync: jest.fn().mockImplementation(() => ({
     syncProduct: jest.fn().mockResolvedValue(undefined),
     syncGovernancePolicies: jest.fn().mockResolvedValue(undefined),
   })),
 }))
 
-jest.mock("../../integrations/orchestrator", () => ({
+jest.mock("../../../src/integrations/orchestrator", () => ({
   createIntegrationOrchestrator: jest.fn().mockReturnValue({
     syncToSystem: jest.fn().mockResolvedValue(undefined),
   }),
@@ -23,8 +23,8 @@ jest.mock("axios", () => ({
   },
 }))
 
-const { MedusaToPayloadSync } = require("../../integrations/payload-sync")
-const { createIntegrationOrchestrator } = require("../../integrations/orchestrator")
+const { MedusaToPayloadSync } = require("../../../src/integrations/payload-sync")
+const { createIntegrationOrchestrator } = require("../../../src/integrations/orchestrator")
 
 describe("integration-sync-subscriber", () => {
   const mockContainer = {} as any

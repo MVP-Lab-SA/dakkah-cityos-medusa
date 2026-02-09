@@ -1,4 +1,4 @@
-import { MedusaToPayloadSync } from "../medusa-to-payload"
+import { MedusaToPayloadSync } from "../../../src/integrations/payload-sync/medusa-to-payload"
 
 const mockGet = jest.fn()
 const mockPost = jest.fn()
