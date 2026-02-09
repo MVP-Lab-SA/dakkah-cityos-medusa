@@ -107,6 +107,19 @@ const sections = [
       { name: "Request a Quote", path: "/quotes/request" },
     ],
   },
+  {
+    title: "Vendor Settings",
+    links: [
+      { name: "Store Settings", path: "/vendor/settings", absolute: true },
+      { name: "Payment Settings", path: "/vendor/settings/payments", absolute: true },
+    ],
+  },
+  {
+    title: "Admin",
+    links: [
+      { name: "Medusa Admin Dashboard", path: "/app", absolute: true },
+    ],
+  },
 ]
 
 const Home = () => {
@@ -133,7 +146,7 @@ const Home = () => {
               {section.links.map((link) => (
                 <li key={link.path}>
                   <a
-                    href={`${prefix}${link.path}`}
+                    href={(link as any).absolute ? link.path : `${prefix}${link.path}`}
                     className="text-blue-600 hover:text-blue-800 hover:underline text-sm"
                   >
                     {link.name}

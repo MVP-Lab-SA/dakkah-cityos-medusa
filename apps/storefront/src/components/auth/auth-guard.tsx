@@ -11,6 +11,18 @@ interface AuthGuardProps {
 }
 
 export function AuthGuard({ children, requireB2B = false, fallbackPath }: AuthGuardProps) {
+  if (typeof window === "undefined") {
+    return (
+      <div className="min-h-[400px] flex items-center justify-center">
+        <p className="text-sm text-zinc-500">Loading...</p>
+      </div>
+    )
+  }
+
+  return <ClientAuthGuard requireB2B={requireB2B} fallbackPath={fallbackPath}>{children}</ClientAuthGuard>
+}
+
+function ClientAuthGuard({ children, requireB2B = false, fallbackPath }: AuthGuardProps) {
   const { isAuthenticated, isB2B, isLoading } = useRequireAuth()
   const navigate = useNavigate()
   const location = useLocation()

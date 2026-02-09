@@ -30,6 +30,18 @@ const navItems = [
 ]
 
 export function AccountLayout({ children, title, description }: AccountLayoutProps) {
+  if (typeof window === "undefined") {
+    return (
+      <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
+        <p className="text-sm text-zinc-500">Loading account...</p>
+      </div>
+    )
+  }
+
+  return <ClientAccountLayout title={title} description={description}>{children}</ClientAccountLayout>
+}
+
+function ClientAccountLayout({ children, title, description }: AccountLayoutProps) {
   const location = useLocation()
   const countryCode = getCountryCodeFromPath(location.pathname)
   const baseHref = countryCode ? `/${countryCode}/account` : "/account"
