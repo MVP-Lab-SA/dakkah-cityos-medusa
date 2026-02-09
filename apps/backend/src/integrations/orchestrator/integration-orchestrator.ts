@@ -1,0 +1,282 @@
+import { MedusaContainer } from "@medusajs/framework/types"
+import crypto from "crypto"
+import { SyncTracker, SyncSystem, ISyncEntry } from "./sync-tracker"
+import { IntegrationRegistry, createDefaultAdapters, IntegrationHealthStatus } from "./integration-registry"
+
+export interface SyncOptions {
+  correlation_id?: string
+  tenant_id?: string
+  node_id?: string
+  max_retries?: number
+  direction?: "inbound" | "outbound"
+}
+
+export interface SyncDashboard {
+  stats: ReturnType<SyncTracker["getSyncStats"]>
+  recentSyncs: ISyncEntry[]
+  failedSyncs: ISyncEntry[]
+  health: IntegrationHealthStatus[]
+}
+
+export class IntegrationOrchestrator {
+  private container: MedusaContainer
+  private tracker: SyncTracker
+  private registry: IntegrationRegistry
+
+  constructor(container: MedusaContainer, tracker: SyncTracker, registry: IntegrationRegistry) {
+    this.container = container
+    this.tracker = tracker
+    this.registry = registry
+  }
+
+  async syncToSystem(
+    system: SyncSystem,
+    entityType: string,
+    entityId: string,
+    data: any,
+    options: SyncOptions = {}
+  ): Promise<ISyncEntry> {
+    const payloadHash = crypto.createHash("sha256").update(JSON.stringify(data)).digest("hex")
+
+    const entry = this.tracker.createSyncEntry({
+      system,
+      entity_type: entityType,
+      entity_id: entityId,
+      direction: options.direction ?? "outbound",
+      payload_hash: payloadHash,
+      correlation_id: options.correlation_id,
+      tenant_id: options.tenant_id,
+      node_id: options.node_id,
+      max_retries: options.max_retries,
+    })
+
+    this.tracker.updateSyncStatus(entry.id, "in_progress")
+
+    const adapter = this.registry.getAdapter(system)
+    if (!adapter) {
+      this.tracker.markFailed(entry.id, `No adapter registered for system: ${system}`)
+      return this.tracker.getRecentSyncs(1)[0] || entry
+    }
+
+    if (!adapter.isConfigured()) {
+      console.log(`[IntegrationOrchestrator] System ${system} not configured, skipping sync`)
+      this.tracker.markFailed(entry.id, `System ${system} not configured (missing env vars)`)
+      return this.tracker.getRecentSyncs(1)[0] || entry
+    }
+
+    try {
+      const result = await adapter.syncEntity(entityType, entityId, data)
+      if (result.success) {
+        this.tracker.markSuccess(entry.id)
+      } else {
+        this.tracker.markFailed(entry.id, result.error || "Unknown sync error")
+      }
+    } catch (error: any) {
+      console.log(`[IntegrationOrchestrator] Sync error for ${system}/${entityType}/${entityId}: ${error.message}`)
+      this.tracker.markFailed(entry.id, error.message)
+    }
+
+    return this.entries_get(entry.id) || entry
+  }
+
+  async syncToAllSystems(
+    entityType: string,
+    entityId: string,
+    data: any,
+    options: SyncOptions = {}
+  ): Promise<ISyncEntry[]> {
+    const adapters = this.registry.getAllAdapters()
+    const results: ISyncEntry[] = []
+
+    for (const adapter of adapters) {
+      if (!adapter.isConfigured()) {
+        console.log(`[IntegrationOrchestrator] Skipping ${adapter.name} (not configured)`)
+        continue
+      }
+
+      try {
+        const entry = await this.syncToSystem(
+          adapter.name as SyncSystem,
+          entityType,
+          entityId,
+          data,
+          options
+        )
+        results.push(entry)
+      } catch (error: any) {
+        console.log(`[IntegrationOrchestrator] Fan-out error for ${adapter.name}: ${error.message}`)
+      }
+    }
+
+    return results
+  }
+
+  async syncNodeHierarchy(tenantId: string): Promise<{
+    synced: number
+    failed: number
+    errors: string[]
+  }> {
+    let synced = 0
+    let failed = 0
+    const errors: string[] = []
+
+    console.log(`[IntegrationOrchestrator] Syncing node hierarchy for tenant: ${tenantId}`)
+
+    try {
+      const query = this.container.resolve("query") as any
+
+      const { data: nodes } = await query.graph({
+        entity: "node",
+        fields: ["id", "name", "type", "parent_id", "metadata"],
+        filters: { tenant_id: tenantId },
+      })
+
+      if (!nodes || nodes.length === 0) {
+        console.log(`[IntegrationOrchestrator] No nodes found for tenant: ${tenantId}`)
+        return { synced: 0, failed: 0, errors: [] }
+      }
+
+      for (const node of nodes) {
+        try {
+          await this.syncToAllSystems("node", node.id, node, {
+            tenant_id: tenantId,
+            node_id: node.id,
+          })
+          synced++
+        } catch (error: any) {
+          failed++
+          errors.push(`Node ${node.id}: ${error.message}`)
+        }
+      }
+    } catch (error: any) {
+      console.log(`[IntegrationOrchestrator] Node hierarchy sync error: ${error.message}`)
+      errors.push(`Hierarchy sync error: ${error.message}`)
+    }
+
+    console.log(
+      `[IntegrationOrchestrator] Node hierarchy sync complete: ${synced} synced, ${failed} failed`
+    )
+    return { synced, failed, errors }
+  }
+
+  async handleInboundWebhook(
+    system: SyncSystem,
+    event: string,
+    payload: any
+  ): Promise<{ processed: boolean; syncEntry?: ISyncEntry; error?: string }> {
+    const entry = this.tracker.createSyncEntry({
+      system,
+      entity_type: event,
+      entity_id: payload?.id || "unknown",
+      direction: "inbound",
+      correlation_id: payload?.correlation_id,
+    })
+
+    this.tracker.updateSyncStatus(entry.id, "in_progress")
+
+    const adapter = this.registry.getAdapter(system)
+    if (!adapter) {
+      this.tracker.markFailed(entry.id, `No adapter for system: ${system}`)
+      return { processed: false, syncEntry: this.entries_get(entry.id) || entry, error: `No adapter for system: ${system}` }
+    }
+
+    try {
+      const result = await adapter.handleWebhook(event, payload)
+      if (result.processed) {
+        this.tracker.markSuccess(entry.id)
+      } else {
+        this.tracker.markFailed(entry.id, result.error || "Webhook not processed")
+      }
+      return {
+        processed: result.processed,
+        syncEntry: this.entries_get(entry.id) || entry,
+        error: result.error,
+      }
+    } catch (error: any) {
+      console.log(`[IntegrationOrchestrator] Webhook error from ${system}: ${error.message}`)
+      this.tracker.markFailed(entry.id, error.message)
+      return { processed: false, syncEntry: this.entries_get(entry.id) || entry, error: error.message }
+    }
+  }
+
+  async retryFailedSyncs(): Promise<{
+    retried: number
+    succeeded: number
+    failed: number
+    errors: string[]
+  }> {
+    const failedSyncs = this.tracker.getFailedSyncs()
+    let retried = 0
+    let succeeded = 0
+    let failedCount = 0
+    const errors: string[] = []
+
+    console.log(`[IntegrationOrchestrator] Retrying ${failedSyncs.length} failed syncs`)
+
+    for (const entry of failedSyncs) {
+      retried++
+      this.tracker.updateSyncStatus(entry.id, "retrying")
+
+      const adapter = this.registry.getAdapter(entry.system)
+      if (!adapter || !adapter.isConfigured()) {
+        this.tracker.markFailed(entry.id, `Adapter ${entry.system} not available for retry`)
+        failedCount++
+        errors.push(`${entry.id}: adapter not available`)
+        continue
+      }
+
+      try {
+        const result = await adapter.syncEntity(entry.entity_type, entry.entity_id, {})
+        if (result.success) {
+          this.tracker.markSuccess(entry.id)
+          succeeded++
+        } else {
+          this.tracker.markFailed(entry.id, result.error || "Retry failed")
+          failedCount++
+          errors.push(`${entry.id}: ${result.error}`)
+        }
+      } catch (error: any) {
+        this.tracker.markFailed(entry.id, error.message)
+        failedCount++
+        errors.push(`${entry.id}: ${error.message}`)
+      }
+    }
+
+    console.log(
+      `[IntegrationOrchestrator] Retry complete: ${succeeded} succeeded, ${failedCount} failed out of ${retried} retried`
+    )
+    return { retried, succeeded, failed: failedCount, errors }
+  }
+
+  async getIntegrationHealth(): Promise<IntegrationHealthStatus[]> {
+    return this.registry.getHealthStatus()
+  }
+
+  async getSyncDashboard(): Promise<SyncDashboard> {
+    const [stats, recentSyncs, failedSyncs, health] = await Promise.all([
+      Promise.resolve(this.tracker.getSyncStats()),
+      Promise.resolve(this.tracker.getRecentSyncs(20)),
+      Promise.resolve(this.tracker.getFailedSyncs()),
+      this.registry.getHealthStatus(),
+    ])
+
+    return { stats, recentSyncs, failedSyncs, health }
+  }
+
+  private entries_get(id: string): ISyncEntry | undefined {
+    return this.tracker.getRecentSyncs(1000).find((e) => e.id === id)
+  }
+}
+
+export function createIntegrationOrchestrator(container: MedusaContainer): IntegrationOrchestrator {
+  const tracker = new SyncTracker(container)
+  const registry = new IntegrationRegistry()
+
+  const defaultAdapters = createDefaultAdapters()
+  for (const adapter of defaultAdapters) {
+    registry.registerAdapter(adapter)
+  }
+
+  console.log("[IntegrationOrchestrator] Orchestrator initialized with default adapters")
+  return new IntegrationOrchestrator(container, tracker, registry)
+}

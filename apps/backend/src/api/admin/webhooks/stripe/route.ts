@@ -1,0 +1,238 @@
+import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+
+export async function POST(req: MedusaRequest, res: MedusaResponse) {
+  try {
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
+    let stripeEvent: any
+
+    if (webhookSecret) {
+      const Stripe = (await import("stripe")).default
+      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "")
+      const signature = req.headers["stripe-signature"] as string
+
+      if (!signature) {
+        console.log("[Webhook:Stripe] Missing stripe-signature header")
+        return res.status(401).json({ error: "Missing signature" })
+      }
+
+      try {
+        const rawBody = typeof req.body === "string" ? req.body : JSON.stringify(req.body)
+        stripeEvent = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret)
+      } catch (err) {
+        console.log(`[Webhook:Stripe] Signature verification failed: ${err instanceof Error ? err.message : err}`)
+        return res.status(401).json({ error: "Invalid signature" })
+      }
+    } else {
+      stripeEvent = {
+        type: (req.body as any)?.type || "unknown",
+        data: (req.body as any)?.data || {},
+      }
+    }
+
+    console.log(`[Webhook:Stripe] Received event: ${stripeEvent.type}`)
+
+    let processed = false
+
+    switch (stripeEvent.type) {
+      case "payment_intent.succeeded": {
+        const paymentIntent = stripeEvent.data.object
+        const orderId = paymentIntent.metadata?.medusa_order_id || paymentIntent.metadata?.orderId
+        console.log(`[Webhook:Stripe] Payment succeeded: ${paymentIntent.id}, order: ${orderId || "N/A"}`)
+
+        if (orderId) {
+          try {
+            const query = req.scope.resolve("query")
+            const { data: orders } = await query.graph({
+              entity: "order",
+              fields: ["id", "metadata"],
+              filters: { id: orderId },
+            })
+
+            if (orders && orders.length > 0) {
+              const orderModuleService = req.scope.resolve("orderModuleService") as any
+              await orderModuleService.updateOrders({
+                id: orderId,
+                metadata: {
+                  ...orders[0].metadata,
+                  stripe_payment_intent_id: paymentIntent.id,
+                  stripe_payment_status: "succeeded",
+                  stripe_paid_at: new Date().toISOString(),
+                },
+              })
+            }
+          } catch (err) {
+            console.log(`[Webhook:Stripe] Error updating order payment status: ${err instanceof Error ? err.message : err}`)
+          }
+
+          try {
+            const erpnextUrl = process.env.ERPNEXT_SITE_URL
+            const erpnextApiKey = process.env.ERPNEXT_API_KEY
+            const erpnextApiSecret = process.env.ERPNEXT_API_SECRET
+            if (erpnextUrl && erpnextApiKey && erpnextApiSecret) {
+              const { ERPNextService } = await import("../../../../integrations/erpnext/service")
+              const erpnext = new ERPNextService({
+                siteUrl: erpnextUrl,
+                apiKey: erpnextApiKey,
+                apiSecret: erpnextApiSecret,
+              })
+              console.log(`[Webhook:Stripe] Triggering ERPNext invoice creation for order ${orderId}`)
+              const query = req.scope.resolve("query")
+              const { data: orders } = await query.graph({
+                entity: "order",
+                fields: ["id", "total", "currency_code", "customer.*", "items.*"],
+                filters: { id: orderId },
+              })
+              if (orders && orders.length > 0) {
+                const order = orders[0] as any
+                await erpnext.createInvoice({
+                  customer_name: order.customer?.first_name ? `${order.customer.first_name} ${order.customer.last_name || ""}`.trim() : "Guest",
+                  customer_email: order.customer?.email || "",
+                  posting_date: new Date(),
+                  due_date: new Date(),
+                  items: (order.items || []).map((item: any) => ({
+                    item_code: item.variant_sku || item.product_id || "ITEM",
+                    item_name: item.title || "Item",
+                    quantity: item.quantity || 1,
+                    rate: (item.unit_price || 0) / 100,
+                    amount: ((item.unit_price || 0) * (item.quantity || 1)) / 100,
+                  })),
+                  total: (order.total || 0) / 100,
+                  grand_total: (order.total || 0) / 100,
+                  currency: order.currency_code?.toUpperCase() || "USD",
+                  medusa_order_id: orderId,
+                })
+                console.log(`[Webhook:Stripe] ERPNext invoice created for order ${orderId}`)
+              }
+            }
+          } catch (err) {
+            console.log(`[Webhook:Stripe] Error creating ERPNext invoice: ${err instanceof Error ? err.message : err}`)
+          }
+        }
+        processed = true
+        break
+      }
+
+      case "payment_intent.payment_failed": {
+        const paymentIntent = stripeEvent.data.object
+        const orderId = paymentIntent.metadata?.medusa_order_id || paymentIntent.metadata?.orderId
+        console.log(`[Webhook:Stripe] Payment failed: ${paymentIntent.id}, order: ${orderId || "N/A"}`)
+
+        if (orderId) {
+          try {
+            const query = req.scope.resolve("query")
+            const { data: orders } = await query.graph({
+              entity: "order",
+              fields: ["id", "metadata"],
+              filters: { id: orderId },
+            })
+
+            if (orders && orders.length > 0) {
+              const orderModuleService = req.scope.resolve("orderModuleService") as any
+              await orderModuleService.updateOrders({
+                id: orderId,
+                metadata: {
+                  ...orders[0].metadata,
+                  stripe_payment_status: "failed",
+                  stripe_payment_failed_at: new Date().toISOString(),
+                  stripe_failure_message: paymentIntent.last_payment_error?.message || "Unknown error",
+                },
+              })
+            }
+          } catch (err) {
+            console.log(`[Webhook:Stripe] Error updating failed payment status: ${err instanceof Error ? err.message : err}`)
+          }
+        }
+        processed = true
+        break
+      }
+
+      case "charge.refunded": {
+        const charge = stripeEvent.data.object
+        const orderId = charge.metadata?.medusa_order_id || charge.metadata?.orderId
+        console.log(`[Webhook:Stripe] Charge refunded: ${charge.id}, order: ${orderId || "N/A"}`)
+
+        if (orderId) {
+          try {
+            const query = req.scope.resolve("query")
+            const { data: orders } = await query.graph({
+              entity: "order",
+              fields: ["id", "metadata"],
+              filters: { id: orderId },
+            })
+
+            if (orders && orders.length > 0) {
+              const orderModuleService = req.scope.resolve("orderModuleService") as any
+              await orderModuleService.updateOrders({
+                id: orderId,
+                metadata: {
+                  ...orders[0].metadata,
+                  stripe_refund_status: charge.refunded ? "fully_refunded" : "partially_refunded",
+                  stripe_amount_refunded: charge.amount_refunded,
+                  stripe_refunded_at: new Date().toISOString(),
+                },
+              })
+            }
+          } catch (err) {
+            console.log(`[Webhook:Stripe] Error updating refund status: ${err instanceof Error ? err.message : err}`)
+          }
+        }
+        processed = true
+        break
+      }
+
+      case "account.updated": {
+        const account = stripeEvent.data.object
+        const tenantId = account.metadata?.tenantId
+        console.log(`[Webhook:Stripe] Connect account updated: ${account.id}, tenant: ${tenantId || "N/A"}`)
+        console.log(`[Webhook:Stripe] Account charges_enabled: ${account.charges_enabled}, payouts_enabled: ${account.payouts_enabled}`)
+
+        if (tenantId) {
+          try {
+            const query = req.scope.resolve("query")
+            const { data: vendors } = await query.graph({
+              entity: "vendor",
+              fields: ["id", "metadata"],
+              filters: { metadata: { stripe_account_id: account.id } },
+            })
+
+            if (vendors && vendors.length > 0) {
+              const vendorModuleService = req.scope.resolve("vendorModuleService") as any
+              await vendorModuleService.updateVendors({
+                id: vendors[0].id,
+                metadata: {
+                  ...vendors[0].metadata,
+                  stripe_account_id: account.id,
+                  stripe_charges_enabled: account.charges_enabled,
+                  stripe_payouts_enabled: account.payouts_enabled,
+                  stripe_account_status: account.charges_enabled ? "active" : "pending",
+                  stripe_account_updated_at: new Date().toISOString(),
+                },
+              })
+              console.log(`[Webhook:Stripe] Vendor ${vendors[0].id} Stripe account status updated`)
+            }
+          } catch (err) {
+            console.log(`[Webhook:Stripe] Error updating vendor Stripe status: ${err instanceof Error ? err.message : err}`)
+          }
+        }
+        processed = true
+        break
+      }
+
+      case "checkout.session.completed": {
+        const session = stripeEvent.data.object
+        console.log(`[Webhook:Stripe] Checkout session completed: ${session.id}, payment_status: ${session.payment_status}`)
+        processed = true
+        break
+      }
+
+      default:
+        console.log(`[Webhook:Stripe] Unhandled event type: ${stripeEvent.type}`)
+        break
+    }
+
+    return res.status(200).json({ received: true, type: stripeEvent.type, processed })
+  } catch (error) {
+    console.log(`[Webhook:Stripe] Error: ${error instanceof Error ? error.message : error}`)
+    return res.status(500).json({ error: "Internal server error" })
+  }
+}
