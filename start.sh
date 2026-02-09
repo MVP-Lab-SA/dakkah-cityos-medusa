@@ -18,4 +18,5 @@ done
 # Start storefront
 cd /home/runner/workspace/apps/storefront
 echo "Starting storefront on port 5000..."
+export NODE_OPTIONS="--max-old-space-size=1024"
 exec npx vite dev --host 0.0.0.0 --port 5000
