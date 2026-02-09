@@ -196,6 +196,20 @@ export const queryKeys = {
     defaultTenant: () => createDynamicKey("platform", "defaultTenant"),
     capabilities: () => createDynamicKey("platform", "capabilities"),
   },
+
+  cms: {
+    ...createDomainKeys("cms"),
+    pageByPath: (tenantId: string, path: string, locale?: string) =>
+      createDynamicKey("cms", "pageByPath", tenantId, path, locale),
+    pageChildren: (tenantId: string, parentId: string) =>
+      createDynamicKey("cms", "pageChildren", tenantId, parentId),
+    navigation: (tenantId: string, location: string, locale?: string) =>
+      createDynamicKey("cms", "navigation", tenantId, location, locale),
+    verticals: (tenantId: string) =>
+      createDynamicKey("cms", "verticals", tenantId),
+    breadcrumbs: (tenantId: string, path: string) =>
+      createDynamicKey("cms", "breadcrumbs", tenantId, path),
+  },
 } as const
 
 export type QueryKeys = typeof queryKeys

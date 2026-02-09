@@ -59,6 +59,7 @@ import { Route as TenantLocaleLoginRouteImport } from './routes/$tenant/$locale/
 import { Route as TenantLocaleCheckoutRouteImport } from './routes/$tenant/$locale/checkout'
 import { Route as TenantLocaleCartRouteImport } from './routes/$tenant/$locale/cart'
 import { Route as TenantLocaleSlugRouteImport } from './routes/$tenant/$locale/$slug'
+import { Route as TenantLocaleSplatRouteImport } from './routes/$tenant/$locale/$'
 import { Route as CountryCodeVendorsHandleRouteImport } from './routes/$countryCode/vendors/$handle'
 import { Route as CountryCodeVendorRegisterRouteImport } from './routes/$countryCode/vendor/register'
 import { Route as CountryCodeVendorPayoutsRouteImport } from './routes/$countryCode/vendor/payouts'
@@ -429,6 +430,11 @@ const TenantLocaleCartRoute = TenantLocaleCartRouteImport.update({
 const TenantLocaleSlugRoute = TenantLocaleSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
+  getParentRoute: () => TenantLocaleRoute,
+} as any)
+const TenantLocaleSplatRoute = TenantLocaleSplatRouteImport.update({
+  id: '/$',
+  path: '/$',
   getParentRoute: () => TenantLocaleRoute,
 } as any)
 const CountryCodeVendorsHandleRoute =
@@ -1295,6 +1301,7 @@ export interface FileRoutesByFullPath {
   '/$countryCode/vendor/payouts': typeof CountryCodeVendorPayoutsRouteWithChildren
   '/$countryCode/vendor/register': typeof CountryCodeVendorRegisterRoute
   '/$countryCode/vendors/$handle': typeof CountryCodeVendorsHandleRouteWithChildren
+  '/$tenant/$locale/$': typeof TenantLocaleSplatRoute
   '/$tenant/$locale/$slug': typeof TenantLocaleSlugRoute
   '/$tenant/$locale/cart': typeof TenantLocaleCartRoute
   '/$tenant/$locale/checkout': typeof TenantLocaleCheckoutRoute
@@ -1479,6 +1486,7 @@ export interface FileRoutesByTo {
   '/$countryCode/vendor/commissions': typeof CountryCodeVendorCommissionsRoute
   '/$countryCode/vendor/register': typeof CountryCodeVendorRegisterRoute
   '/$countryCode/vendors/$handle': typeof CountryCodeVendorsHandleRouteWithChildren
+  '/$tenant/$locale/$': typeof TenantLocaleSplatRoute
   '/$tenant/$locale/$slug': typeof TenantLocaleSlugRoute
   '/$tenant/$locale/cart': typeof TenantLocaleCartRoute
   '/$tenant/$locale/checkout': typeof TenantLocaleCheckoutRoute
@@ -1666,6 +1674,7 @@ export interface FileRoutesById {
   '/$countryCode/vendor/payouts': typeof CountryCodeVendorPayoutsRouteWithChildren
   '/$countryCode/vendor/register': typeof CountryCodeVendorRegisterRoute
   '/$countryCode/vendors/$handle': typeof CountryCodeVendorsHandleRouteWithChildren
+  '/$tenant/$locale/$': typeof TenantLocaleSplatRoute
   '/$tenant/$locale/$slug': typeof TenantLocaleSlugRoute
   '/$tenant/$locale/cart': typeof TenantLocaleCartRoute
   '/$tenant/$locale/checkout': typeof TenantLocaleCheckoutRoute
@@ -1855,6 +1864,7 @@ export interface FileRouteTypes {
     | '/$countryCode/vendor/payouts'
     | '/$countryCode/vendor/register'
     | '/$countryCode/vendors/$handle'
+    | '/$tenant/$locale/$'
     | '/$tenant/$locale/$slug'
     | '/$tenant/$locale/cart'
     | '/$tenant/$locale/checkout'
@@ -2039,6 +2049,7 @@ export interface FileRouteTypes {
     | '/$countryCode/vendor/commissions'
     | '/$countryCode/vendor/register'
     | '/$countryCode/vendors/$handle'
+    | '/$tenant/$locale/$'
     | '/$tenant/$locale/$slug'
     | '/$tenant/$locale/cart'
     | '/$tenant/$locale/checkout'
@@ -2225,6 +2236,7 @@ export interface FileRouteTypes {
     | '/$countryCode/vendor/payouts'
     | '/$countryCode/vendor/register'
     | '/$countryCode/vendors/$handle'
+    | '/$tenant/$locale/$'
     | '/$tenant/$locale/$slug'
     | '/$tenant/$locale/cart'
     | '/$tenant/$locale/checkout'
@@ -2729,6 +2741,13 @@ declare module '@tanstack/react-router' {
       path: '/$slug'
       fullPath: '/$tenant/$locale/$slug'
       preLoaderRoute: typeof TenantLocaleSlugRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/$': {
+      id: '/$tenant/$locale/$'
+      path: '/$'
+      fullPath: '/$tenant/$locale/$'
+      preLoaderRoute: typeof TenantLocaleSplatRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$countryCode/vendors/$handle': {
@@ -3970,6 +3989,7 @@ const TenantLocaleAccountSubscriptionsIdRouteWithChildren =
   )
 
 interface TenantLocaleRouteChildren {
+  TenantLocaleSplatRoute: typeof TenantLocaleSplatRoute
   TenantLocaleSlugRoute: typeof TenantLocaleSlugRoute
   TenantLocaleCartRoute: typeof TenantLocaleCartRoute
   TenantLocaleCheckoutRoute: typeof TenantLocaleCheckoutRoute
@@ -4078,6 +4098,7 @@ interface TenantLocaleRouteChildren {
 }
 
 const TenantLocaleRouteChildren: TenantLocaleRouteChildren = {
+  TenantLocaleSplatRoute: TenantLocaleSplatRoute,
   TenantLocaleSlugRoute: TenantLocaleSlugRoute,
   TenantLocaleCartRoute: TenantLocaleCartRoute,
   TenantLocaleCheckoutRoute: TenantLocaleCheckoutRoute,

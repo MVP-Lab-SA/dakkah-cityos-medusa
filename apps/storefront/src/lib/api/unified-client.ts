@@ -43,22 +43,45 @@ export interface PayloadPage {
   id: string
   title: string
   slug: string
+  path?: string
+  template?: "landing" | "static" | "vertical-list" | "vertical-detail" | "home" | "category" | "node-browser" | "custom"
   description?: string
   layout: any[]
+  verticalConfig?: {
+    verticalSlug: string
+    medusaEndpoint: string
+    itemsPerPage?: number
+    cardLayout?: "grid" | "list" | "map"
+    filterFields?: Array<{ fieldName: string; fieldType: string; label: string }>
+    sortFields?: Array<{ fieldName: string; label: string; defaultDirection?: string }>
+    detailFields?: Array<{ fieldName: string; fieldType: string; label: string; section?: string }>
+  }
   seo?: {
     title?: string
     description?: string
     ogImage?: any
+    keywords?: string[]
+    canonicalUrl?: string
+    noIndex?: boolean
   }
   meta?: {
     title?: string
     description?: string
     image?: { url?: string }
   }
-  status: 'draft' | 'published'
+  status: 'draft' | 'published' | 'archived'
   publishAt?: string
-  tenant: string | { id: string; name?: string }
+  publishedAt?: string
+  tenant: string | { id: string; name?: string; slug?: string }
   store?: string
+  locale?: string
+  parent?: string | { id: string; title?: string; path?: string }
+  nodeScope?: string | { id: string; name?: string }
+  governanceTags?: string[]
+  breadcrumbs?: Array<{ id: string; title: string; path: string }>
+  sortOrder?: number
+  createdAt?: string
+  updatedAt?: string
 }
 
 export interface StoreBranding {
@@ -360,6 +383,127 @@ class UnifiedAPIClient {
     return data.docs || []
   }
   
+  async getPayloadPageByPath(path: string, tenantId?: string, locale?: string): Promise<PayloadPage | null> {
+    try {
+      const where: Record<string, any> = {
+        path: { equals: path },
+        status: { equals: 'published' },
+      }
+      if (tenantId) {
+        where.tenant = { equals: tenantId }
+      }
+      if (locale) {
+        where.locale = { in: [locale, 'all'] }
+      }
+
+      const query = new URLSearchParams({
+        where: JSON.stringify(where),
+        limit: '1',
+        depth: '2',
+      })
+      
+      const response = await fetch(`${this.payloadUrl}/api/pages?${query}`)
+      
+      if (!response.ok) {
+        return null
+      }
+      
+      const data = await response.json()
+      return data.docs?.[0] || null
+    } catch (error) {
+      console.warn(`PayloadCMS unavailable for page path "${path}":`, error instanceof Error ? error.message : error)
+      return null
+    }
+  }
+
+  async getPayloadPageChildren(parentId: string, tenantId?: string): Promise<PayloadPage[]> {
+    try {
+      const where: Record<string, any> = {
+        parent: { equals: parentId },
+        status: { equals: 'published' },
+      }
+      if (tenantId) {
+        where.tenant = { equals: tenantId }
+      }
+
+      const query = new URLSearchParams({
+        where: JSON.stringify(where),
+        sort: 'sortOrder',
+        limit: '100',
+        depth: '1',
+      })
+      
+      const response = await fetch(`${this.payloadUrl}/api/pages?${query}`)
+      
+      if (!response.ok) {
+        return []
+      }
+      
+      const data = await response.json()
+      return data.docs || []
+    } catch (error) {
+      console.warn('PayloadCMS unavailable for page children:', error instanceof Error ? error.message : error)
+      return []
+    }
+  }
+
+  async getPayloadNavigation(tenantId: string, location: string, locale?: string): Promise<any | null> {
+    try {
+      const where: Record<string, any> = {
+        tenant: { equals: tenantId },
+        location: { equals: location },
+        status: { equals: 'active' },
+      }
+      if (locale) {
+        where.locale = { equals: locale }
+      }
+
+      const query = new URLSearchParams({
+        where: JSON.stringify(where),
+        limit: '1',
+        depth: '3',
+      })
+      
+      const response = await fetch(`${this.payloadUrl}/api/navigations?${query}`)
+      
+      if (!response.ok) {
+        return null
+      }
+      
+      const data = await response.json()
+      return data.docs?.[0] || null
+    } catch (error) {
+      console.warn('PayloadCMS unavailable for navigation:', error instanceof Error ? error.message : error)
+      return null
+    }
+  }
+
+  async getPayloadVerticals(tenantId: string): Promise<any[]> {
+    try {
+      const query = new URLSearchParams({
+        where: JSON.stringify({
+          tenant: { equals: tenantId },
+          isEnabled: { equals: true },
+          status: { equals: 'active' },
+        }),
+        sort: 'sortOrder',
+        limit: '100',
+      })
+      
+      const response = await fetch(`${this.payloadUrl}/api/verticals?${query}`)
+      
+      if (!response.ok) {
+        return []
+      }
+      
+      const data = await response.json()
+      return data.docs || []
+    } catch (error) {
+      console.warn('PayloadCMS unavailable for verticals:', error instanceof Error ? error.message : error)
+      return []
+    }
+  }
+
   // ===== Unified Methods (Medusa + Payload) =====
   
   async getUnifiedProduct(handle: string, tenantId?: string, storeId?: string): Promise<UnifiedProduct | null> {

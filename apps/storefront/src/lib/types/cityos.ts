@@ -301,3 +301,203 @@ export interface PlatformContextResponse {
   success: boolean
   data: PlatformContextData
 }
+
+export type CMSPageTemplate = 
+  | "landing"
+  | "static"
+  | "vertical-list"
+  | "vertical-detail"
+  | "home"
+  | "category"
+  | "node-browser"
+  | "custom"
+
+export type CMSPageStatus = "draft" | "published" | "archived"
+
+export interface CMSVerticalConfig {
+  verticalSlug: string
+  medusaEndpoint: string
+  itemsPerPage?: number
+  cardLayout?: "grid" | "list" | "map"
+  filterFields?: Array<{ fieldName: string; fieldType: string; label: string }>
+  sortFields?: Array<{ fieldName: string; label: string; defaultDirection?: "asc" | "desc" }>
+  detailFields?: Array<{ fieldName: string; fieldType: string; label: string; section?: string }>
+}
+
+export interface CMSSeoConfig {
+  title?: string
+  description?: string
+  ogImage?: { url: string; alt?: string }
+  keywords?: string[]
+  canonicalUrl?: string
+  noIndex?: boolean
+}
+
+export interface CMSPage {
+  id: string
+  title: string
+  slug: string
+  path: string
+  template: CMSPageTemplate
+  status: CMSPageStatus
+  publishedAt?: string
+  parent?: string | { id: string; title: string; path: string }
+  tenant: string | { id: string; name: string; slug: string }
+  locale?: string
+  layout?: CMSBlock[]
+  verticalConfig?: CMSVerticalConfig
+  nodeScope?: string | { id: string; name: string; type: string }
+  governanceTags?: string[]
+  seo?: CMSSeoConfig
+  breadcrumbs?: Array<{ id: string; title: string; path: string }>
+  sortOrder?: number
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CMSBlock {
+  id?: string
+  blockType: string
+  [key: string]: unknown
+}
+
+export interface CMSHeroBlock extends CMSBlock {
+  blockType: "hero"
+  heading: string
+  subheading?: string
+  backgroundImage?: { url: string; alt?: string }
+  ctaText?: string
+  ctaLink?: string
+  alignment?: "left" | "center" | "right"
+  overlay?: boolean
+}
+
+export interface CMSContentBlock extends CMSBlock {
+  blockType: "content"
+  richText: any
+  alignment?: "left" | "center" | "right"
+}
+
+export interface CMSProductsBlock extends CMSBlock {
+  blockType: "products"
+  title?: string
+  medusaQuery?: Record<string, unknown>
+  layout?: "grid" | "carousel" | "list"
+  limit?: number
+  regionId?: string
+}
+
+export interface CMSFeaturesBlock extends CMSBlock {
+  blockType: "features"
+  title?: string
+  items: Array<{ icon?: string; title: string; description: string; link?: string }>
+}
+
+export interface CMSCTABlock extends CMSBlock {
+  blockType: "cta"
+  heading: string
+  description?: string
+  buttonText: string
+  buttonLink: string
+  variant?: "primary" | "secondary" | "outline"
+  backgroundImage?: { url: string; alt?: string }
+}
+
+export interface CMSVerticalGridBlock extends CMSBlock {
+  blockType: "vertical-grid"
+  title?: string
+  verticalSlug: string
+  medusaEndpoint: string
+  limit?: number
+  columns?: 2 | 3 | 4
+  cardLayout?: "grid" | "list"
+  filters?: Record<string, unknown>
+}
+
+export interface CMSVerticalDetailBlock extends CMSBlock {
+  blockType: "vertical-detail"
+  verticalSlug: string
+  medusaEndpoint: string
+  sections?: Array<{ title: string; fields: Array<{ fieldName: string; fieldType: string; label: string }> }>
+  relatedItemsLimit?: number
+}
+
+export interface CMSImageGalleryBlock extends CMSBlock {
+  blockType: "image-gallery"
+  title?: string
+  images: Array<{ url: string; alt?: string; caption?: string }>
+  layout?: "grid" | "masonry" | "carousel"
+}
+
+export interface CMSTestimonialsBlock extends CMSBlock {
+  blockType: "testimonials"
+  title?: string
+  items: Array<{ quote: string; author: string; role?: string; avatar?: { url: string }; rating?: number }>
+}
+
+export interface CMSStatsBlock extends CMSBlock {
+  blockType: "stats"
+  title?: string
+  items: Array<{ value: string; label: string; icon?: string; suffix?: string }>
+}
+
+export interface CMSMapBlock extends CMSBlock {
+  blockType: "map"
+  title?: string
+  center: { lat: number; lng: number }
+  zoom?: number
+  markers?: Array<{ lat: number; lng: number; label?: string; link?: string }>
+}
+
+export interface CMSFAQBlock extends CMSBlock {
+  blockType: "faq"
+  title?: string
+  items: Array<{ question: string; answer: string }>
+}
+
+export interface CMSPricingBlock extends CMSBlock {
+  blockType: "pricing"
+  title?: string
+  plans: Array<{
+    name: string; price: number; currency: string; interval?: string
+    features: string[]; ctaText?: string; ctaLink?: string; highlighted?: boolean
+  }>
+}
+
+export interface CMSNavigationItem {
+  id?: string
+  label: string
+  type: "page" | "url" | "vertical" | "node"
+  page?: string | { id: string; path: string; title: string }
+  url?: string
+  icon?: string
+  children?: CMSNavigationItem[]
+}
+
+export interface CMSNavigation {
+  id: string
+  name: string
+  slug: string
+  tenant: string | { id: string }
+  locale?: string
+  items: CMSNavigationItem[]
+  location: "header" | "footer" | "sidebar" | "mobile"
+  status: "active" | "inactive"
+}
+
+export interface CMSVertical {
+  id: string
+  name: string
+  slug: string
+  tenant: string | { id: string }
+  description?: string
+  icon?: string
+  coverImage?: { url: string; alt?: string }
+  medusaEndpoint: string
+  isEnabled: boolean
+  governanceRequired?: boolean
+  cardSchema?: Record<string, unknown>
+  detailSchema?: Record<string, unknown>
+  sortOrder?: number
+  status: "active" | "inactive"
+}

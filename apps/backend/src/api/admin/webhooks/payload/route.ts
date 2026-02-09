@@ -64,6 +64,32 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         break
       }
 
+      case "navigation.create":
+      case "navigation.update": {
+        const navId = body.data?.id || body.doc?.id
+        console.log(`[Webhook:Payload] Navigation updated: ${navId}`)
+        processed = true
+        break
+      }
+
+      case "vertical.create":
+      case "vertical.update": {
+        const verticalId = body.data?.id || body.doc?.id
+        console.log(`[Webhook:Payload] Vertical updated: ${verticalId}`)
+        processed = true
+        break
+      }
+
+      case "page.create":
+      case "page.update":
+      case "page.delete": {
+        const pageId = body.data?.id || body.doc?.id
+        const pagePath = body.data?.path || body.doc?.path
+        console.log(`[Webhook:Payload] Page ${event}: ${pageId} (path: ${pagePath || "unknown"})`)
+        processed = true
+        break
+      }
+
       case "media.uploaded": {
         const mediaId = body.data?.id || body.doc?.id
         if (mediaId) {
