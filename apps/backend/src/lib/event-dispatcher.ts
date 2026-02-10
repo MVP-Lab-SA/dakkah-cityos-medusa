@@ -25,6 +25,7 @@ const EVENT_WORKFLOW_MAP: Record<string, string> = {
   "store.created": "commerce.store-setup",
   "store.updated": "commerce.store-config-sync",
   "product.created": "commerce.product-catalog-sync",
+  "product.deleted": "commerce.product-catalog-remove",
   "customer.created": "xsystem.customer-onboarding",
   "customer.updated": "xsystem.customer-profile-sync",
   "vendor.approved": "xsystem.vendor-ecosystem-setup",

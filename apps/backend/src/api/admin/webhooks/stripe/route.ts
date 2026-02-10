@@ -65,47 +65,20 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
           }
 
           try {
-            const erpnextUrl = process.env.ERPNEXT_SITE_URL
-            const erpnextApiKey = process.env.ERPNEXT_API_KEY
-            const erpnextApiSecret = process.env.ERPNEXT_API_SECRET
-            if (erpnextUrl && erpnextApiKey && erpnextApiSecret) {
-              const { ERPNextService } = await import("../../../../integrations/erpnext/service.js")
-              const erpnext = new ERPNextService({
-                siteUrl: erpnextUrl,
-                apiKey: erpnextApiKey,
-                apiSecret: erpnextApiSecret,
-              })
-              console.log(`[Webhook:Stripe] Triggering ERPNext invoice creation for order ${orderId}`)
-              const query = req.scope.resolve("query")
-              const { data: orders } = await query.graph({
-                entity: "order",
-                fields: ["id", "total", "currency_code", "customer.*", "items.*"],
-                filters: { id: orderId },
-              })
-              if (orders && orders.length > 0) {
-                const order = orders[0] as any
-                await erpnext.createInvoice({
-                  customer_name: order.customer?.first_name ? `${order.customer.first_name} ${order.customer.last_name || ""}`.trim() : "Guest",
-                  customer_email: order.customer?.email || "",
-                  posting_date: new Date(),
-                  due_date: new Date(),
-                  items: (order.items || []).map((item: any) => ({
-                    item_code: item.variant_sku || item.product_id || "ITEM",
-                    item_name: item.title || "Item",
-                    quantity: item.quantity || 1,
-                    rate: (item.unit_price || 0) / 100,
-                    amount: ((item.unit_price || 0) * (item.quantity || 1)) / 100,
-                  })),
-                  total: (order.total || 0) / 100,
-                  grand_total: (order.total || 0) / 100,
-                  currency: order.currency_code?.toUpperCase() || "USD",
-                  medusa_order_id: orderId,
-                })
-                console.log(`[Webhook:Stripe] ERPNext invoice created for order ${orderId}`)
-              }
-            }
+            const { dispatchEventToTemporal } = await import("../../../../lib/event-dispatcher.js")
+            await dispatchEventToTemporal("invoice.created", {
+              order_id: orderId,
+              payment_intent_id: paymentIntent.id,
+              amount: paymentIntent.amount,
+              currency: paymentIntent.currency,
+              tenant_id: paymentIntent.metadata?.tenantId,
+            }, {
+              tenantId: paymentIntent.metadata?.tenantId,
+              source: "stripe-webhook",
+            })
+            console.log(`[Webhook:Stripe] Dispatched invoice creation to Temporal for order ${orderId}`)
           } catch (err) {
-            console.log(`[Webhook:Stripe] Error creating ERPNext invoice: ${err instanceof Error ? err.message : err}`)
+            console.log(`[Webhook:Stripe] Error dispatching invoice creation: ${err instanceof Error ? err.message : err}`)
           }
         }
         processed = true

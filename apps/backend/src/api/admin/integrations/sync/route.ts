@@ -1,7 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { createIntegrationOrchestrator } from "../../../../integrations/orchestrator"
-import { NodeHierarchySyncService } from "../../../../integrations/node-hierarchy-sync"
-import { MedusaToPayloadSync } from "../../../../integrations/payload-sync"
 
 const VALID_SYSTEMS = ["payload", "erpnext", "fleetbase", "waltid", "stripe"]
 const VALID_ENTITY_TYPES = ["product", "tenant", "store", "customer", "order", "node", "vendor"]
@@ -33,75 +31,31 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
     console.log(`[IntegrationSync] Manual sync triggered: ${system}/${entity_type}/${entity_id || "all"}`)
 
-    if (entity_type === "node") {
-      const nodeHierarchyService = new NodeHierarchySyncService(req.scope)
-      if (entity_id) {
-        await nodeHierarchyService.syncSingleNode(entity_id)
-      } else {
-        console.log("[IntegrationSync] Node batch sync requires tenant_id, use node-hierarchy endpoint")
-      }
-      return res.json({ triggered: true, system, entity_type, entity_id: entity_id || "all" })
+    const { startWorkflow } = await import("../../../../lib/temporal-client.js")
+
+    if (!process.env.TEMPORAL_API_KEY) {
+      return res.status(503).json({ error: "Temporal not configured. Manual sync requires Temporal." })
     }
 
-    if (entity_type === "product" && system === "payload") {
-      const payloadUrl = process.env.PAYLOAD_API_URL
-      const payloadKey = process.env.PAYLOAD_API_KEY
-      if (payloadUrl && payloadKey) {
-        const payloadSync = new MedusaToPayloadSync(req.scope, {
-          payloadUrl,
-          payloadApiKey: payloadKey,
-        })
-        if (entity_id) {
-          await payloadSync.syncProduct(entity_id)
-        } else {
-          payloadSync.syncAllProducts().catch((err) => {
-            console.log(`[IntegrationSync] Batch product sync error: ${err.message}`)
-          })
-        }
-      }
-      return res.json({ triggered: true, system, entity_type, entity_id: entity_id || "all" })
-    }
-
-    const orchestrator = createIntegrationOrchestrator(req.scope)
-
-    if (entity_id) {
-      const query = req.scope.resolve("query") as any
-      let data = {}
-      try {
-        const { data: entities } = await query.graph({
-          entity: entity_type,
-          fields: ["*"],
-          filters: { id: entity_id },
-        })
-        if (entities && entities.length > 0) {
-          data = entities[0]
-        }
-      } catch {
-        data = { id: entity_id }
-      }
-
-      await orchestrator.syncToSystem(system as any, entity_type, entity_id, data, {
+    try {
+      const workflowId = `manual-sync-${system}-${entity_type}-${Date.now()}`
+      const result = await startWorkflow(workflowId, {
+        system,
+        entity_type,
+        entity_id: entity_id || "all",
         direction: direction || "outbound",
+        triggered_by: "admin",
+      }, {
+        tenantId: (req.body as any)?.tenant_id,
+        source: "admin-manual-sync",
       })
-    } else {
-      const query = req.scope.resolve("query") as any
-      try {
-        const { data: entities } = await query.graph({
-          entity: entity_type,
-          fields: ["id"],
-          pagination: { take: 100 },
-        })
-        for (const entity of entities || []) {
-          await orchestrator.syncToSystem(system as any, entity_type, entity.id, entity, {
-            direction: direction || "outbound",
-          })
-        }
-      } catch (err: any) {
-        console.log(`[IntegrationSync] Batch sync query error: ${err.message}`)
-      }
-    }
 
-    return res.json({ triggered: true, system, entity_type, entity_id: entity_id || "all" })
+      console.log(`[IntegrationSync] Manual sync dispatched to Temporal: ${result.runId}`)
+      return res.json({ triggered: true, system, entity_type, entity_id: entity_id || "all", workflow_run_id: result.runId })
+    } catch (err: any) {
+      console.log(`[IntegrationSync] Error dispatching manual sync: ${err.message}`)
+      return res.status(500).json({ error: `Failed to dispatch sync: ${err.message}` })
+    }
   } catch (error: any) {
     console.log(`[IntegrationSync] Error triggering sync: ${error.message}`)
     return res.status(500).json({ error: error.message })

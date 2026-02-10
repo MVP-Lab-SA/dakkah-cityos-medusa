@@ -20,6 +20,10 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
     let processed = false
 
+    // Inbound webhook handlers: External system (Payload CMS) → Medusa local data.
+    // These are intentionally direct calls (not routed through Temporal) because they
+    // only update local Medusa data based on external system notifications.
+    // Cross-system OUTBOUND calls (Medusa → external) must go through Temporal.
     switch (event) {
       case "product.published":
       case "product.updated": {

@@ -9,18 +9,30 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       return res.status(400).json({ error: "tenant_id is required" })
     }
 
-    console.log(`[NodeHierarchySync] Full hierarchy sync triggered for tenant: ${tenant_id}`)
+    const { startWorkflow } = await import("../../../../../lib/temporal-client.js")
 
-    const nodeHierarchyService = new NodeHierarchySyncService(req.scope)
-    const results = await nodeHierarchyService.syncFullHierarchy(tenant_id)
+    if (!process.env.TEMPORAL_API_KEY) {
+      return res.status(503).json({ error: "Temporal not configured. Hierarchy sync requires Temporal." })
+    }
+
+    console.log(`[NodeHierarchySync] Dispatching hierarchy sync to Temporal for tenant: ${tenant_id}`)
+
+    const result = await startWorkflow("xsystem.scheduled-hierarchy-reconciliation", {
+      tenant_id,
+      triggered_by: "admin",
+      timestamp: new Date().toISOString(),
+    }, {
+      tenantId: tenant_id,
+      source: "admin-hierarchy-sync",
+    })
 
     return res.json({
       triggered: true,
       tenant_id,
-      results,
+      workflow_run_id: result.runId,
     })
   } catch (error: any) {
-    console.log(`[NodeHierarchySync] Error triggering hierarchy sync: ${error.message}`)
+    console.log(`[NodeHierarchySync] Error dispatching hierarchy sync: ${error.message}`)
     return res.status(500).json({ error: error.message })
   }
 }
