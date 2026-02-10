@@ -1,6 +1,7 @@
 import { ReactNode } from "react"
 import { Navigate } from "@tanstack/react-router"
 import { useFeatures, FeatureFlags } from "../../lib/context/feature-context"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 
 type FeatureKey = keyof Omit<FeatureFlags, 'config' | 'homepage' | 'navigation'>
 
@@ -13,8 +14,6 @@ interface FeatureGuardProps {
   redirectTo?: string
   /** Fallback content if feature is disabled and no redirect */
   fallback?: ReactNode
-  /** Country code for redirect */
-  countryCode?: string
 }
 
 /**
@@ -26,7 +25,7 @@ interface FeatureGuardProps {
  * </FeatureGuard>
  * 
  * With redirect:
- * <FeatureGuard feature="b2b" redirectTo="/" countryCode="us">
+ * <FeatureGuard feature="b2b" redirectTo="/">
  *   <BusinessPortal />
  * </FeatureGuard>
  * 
@@ -39,10 +38,10 @@ export function FeatureGuard({
   feature, 
   children, 
   redirectTo, 
-  fallback,
-  countryCode 
+  fallback 
 }: FeatureGuardProps) {
   const { isEnabled, loading } = useFeatures()
+  const prefix = useTenantPrefix()
 
   if (loading) {
     return (
@@ -54,7 +53,7 @@ export function FeatureGuard({
 
   if (!isEnabled(feature)) {
     if (redirectTo) {
-      const path = countryCode ? `/${countryCode}${redirectTo}` : redirectTo
+      const path = `${prefix}${redirectTo}`
       return <Navigate to={path} />
     }
     

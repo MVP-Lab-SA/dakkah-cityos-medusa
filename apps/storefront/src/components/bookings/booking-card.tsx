@@ -5,22 +5,23 @@ import {
   XCircle,
   ArrowPath,
 } from "@medusajs/icons"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 import type { Booking, BookingStatus } from "../../lib/types/bookings"
 import { ProviderCard } from "./provider-select"
 
 interface BookingCardProps {
   booking: Booking
-  countryCode: string
   onCancel?: (id: string) => void
   onReschedule?: (id: string) => void
 }
 
 export function BookingCard({
   booking,
-  countryCode,
   onCancel,
   onReschedule,
 }: BookingCardProps) {
+  const prefix = useTenantPrefix()
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       weekday: "long",
@@ -66,7 +67,6 @@ export function BookingCard({
 
   return (
     <div className="enterprise-card overflow-hidden">
-      {/* Header */}
       <div className="enterprise-card-header flex items-center justify-between">
         <div>
           <h3 className="font-semibold text-slate-900">
@@ -79,9 +79,7 @@ export function BookingCard({
         <span className={status.className}>{status.label}</span>
       </div>
 
-      {/* Body */}
       <div className="enterprise-card-body space-y-4">
-        {/* Date & Time */}
         <div className="flex items-start gap-3">
           <Calendar className="w-5 h-5 text-slate-400 mt-0.5" />
           <div>
@@ -94,7 +92,6 @@ export function BookingCard({
           </div>
         </div>
 
-        {/* Provider */}
         {booking.provider && (
           <div className="flex items-center gap-3">
             <div className="w-5 h-5 flex items-center justify-center">
@@ -104,7 +101,6 @@ export function BookingCard({
           </div>
         )}
 
-        {/* Location */}
         {booking.location && (
           <div className="flex items-start gap-3">
             <MapPin className="w-5 h-5 text-slate-400 mt-0.5" />
@@ -116,7 +112,6 @@ export function BookingCard({
           </div>
         )}
 
-        {/* Notes */}
         {booking.notes && (
           <div className="bg-slate-50 rounded-lg p-3">
             <div className="text-xs font-medium text-slate-500 mb-1">Notes</div>
@@ -124,7 +119,6 @@ export function BookingCard({
           </div>
         )}
 
-        {/* Price */}
         <div className="flex items-center justify-between pt-4 border-t border-slate-100">
           <span className="text-sm text-slate-500">Total Paid</span>
           <span className="font-semibold text-slate-900">
@@ -132,7 +126,6 @@ export function BookingCard({
           </span>
         </div>
 
-        {/* Actions */}
         {canModify && !isPast && (
           <div className="flex gap-2 pt-2">
             {onReschedule && (
@@ -160,11 +153,9 @@ export function BookingCard({
   )
 }
 
-interface BookingEmptyStateProps {
-  countryCode: string
-}
+export function BookingEmptyState() {
+  const prefix = useTenantPrefix()
 
-export function BookingEmptyState({ countryCode }: BookingEmptyStateProps) {
   return (
     <div className="empty-state">
       <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4">
@@ -175,7 +166,7 @@ export function BookingEmptyState({ countryCode }: BookingEmptyStateProps) {
         Book a service to get started with your appointments.
       </p>
       <a
-        href={`/${countryCode}/bookings`}
+        href={`${prefix}/bookings`}
         className="btn-enterprise-primary mt-6"
       >
         Browse Services

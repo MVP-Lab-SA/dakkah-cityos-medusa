@@ -1,4 +1,5 @@
 import { useFeatures } from "../../lib/context/feature-context"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 import { HeroSection } from "./sections/hero-section"
 import { FeaturedProductsSection } from "./sections/featured-products-section"
 import { CategoriesSection } from "./sections/categories-section"
@@ -9,8 +10,6 @@ import { ReviewsSection } from "./sections/reviews-section"
 import { NewsletterSection } from "./sections/newsletter-section"
 
 interface ModularHomepageProps {
-  countryCode: string
-  // Data passed from server
   featuredProducts?: any[]
   categories?: any[]
   vendors?: any[]
@@ -19,13 +18,13 @@ interface ModularHomepageProps {
 }
 
 export function ModularHomepage({
-  countryCode,
   featuredProducts = [],
   categories = [],
   vendors = [],
   services = [],
   reviews = []
 }: ModularHomepageProps) {
+  const tenantPrefix = useTenantPrefix()
   const { getHomepageSections, loading } = useFeatures()
   
   if (loading) {
@@ -44,7 +43,6 @@ export function ModularHomepage({
         return (
           <HeroSection
             key={section.id}
-            countryCode={countryCode}
             config={section.config}
           />
         )
@@ -53,7 +51,7 @@ export function ModularHomepage({
         return (
           <FeaturedProductsSection
             key={section.id}
-            countryCode={countryCode}
+            tenantPrefix={tenantPrefix}
             products={featuredProducts.slice(0, section.config.limit || 8)}
             config={section.config}
           />
@@ -63,7 +61,7 @@ export function ModularHomepage({
         return (
           <CategoriesSection
             key={section.id}
-            countryCode={countryCode}
+            tenantPrefix={tenantPrefix}
             categories={categories.slice(0, section.config.limit || 6)}
             config={section.config}
           />
@@ -73,7 +71,6 @@ export function ModularHomepage({
         return (
           <VendorsSection
             key={section.id}
-            countryCode={countryCode}
             vendors={vendors.slice(0, section.config.limit || 4)}
             config={section.config}
           />
@@ -83,7 +80,6 @@ export function ModularHomepage({
         return (
           <ServicesSection
             key={section.id}
-            countryCode={countryCode}
             services={services.slice(0, section.config.limit || 4)}
             config={section.config}
           />
@@ -93,7 +89,6 @@ export function ModularHomepage({
         return (
           <SubscriptionsSection
             key={section.id}
-            countryCode={countryCode}
             config={section.config}
           />
         )

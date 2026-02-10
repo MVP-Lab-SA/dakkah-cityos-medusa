@@ -1,5 +1,5 @@
-import { Link, useLocation } from "@tanstack/react-router"
-import { getCountryCodeFromPath } from "@/lib/utils/region"
+import { Link } from "@tanstack/react-router"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 import { formatPrice } from "@/lib/utils/price"
 import { ChevronRight, CreditCard, ArrowPath } from "@medusajs/icons"
 import type { Subscription } from "@/lib/types/subscriptions"
@@ -17,9 +17,7 @@ const statusColors: Record<string, string> = {
 }
 
 export function ActiveSubscriptions({ subscriptions, isLoading }: ActiveSubscriptionsProps) {
-  const location = useLocation()
-  const countryCode = getCountryCodeFromPath(location.pathname)
-  const baseHref = countryCode ? `/${countryCode}` : ""
+  const prefix = useTenantPrefix()
 
   if (isLoading) {
     return (
@@ -50,7 +48,7 @@ export function ActiveSubscriptions({ subscriptions, isLoading }: ActiveSubscrip
           <CreditCard className="h-12 w-12 text-zinc-300 mx-auto mb-4" />
           <p className="text-zinc-500">No active subscriptions</p>
           <Link
-            to={`${baseHref}/subscriptions` as any}
+            to={`${prefix}/subscriptions` as any}
             className="mt-4 inline-flex items-center text-sm font-medium text-zinc-900 hover:underline"
           >
             Browse plans
@@ -66,7 +64,7 @@ export function ActiveSubscriptions({ subscriptions, isLoading }: ActiveSubscrip
       <div className="p-4 border-b border-zinc-200 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-zinc-900">Active Subscriptions</h2>
         <Link
-          to={`${baseHref}/account/subscriptions` as any}
+          to={`${prefix}/account/subscriptions` as any}
           className="text-sm font-medium text-zinc-600 hover:text-zinc-900"
         >
           Manage
@@ -76,7 +74,7 @@ export function ActiveSubscriptions({ subscriptions, isLoading }: ActiveSubscrip
         {activeSubscriptions.slice(0, 2).map((subscription) => (
           <Link
             key={subscription.id}
-            to={`${baseHref}/account/subscriptions/${subscription.id}` as any}
+            to={`${prefix}/account/subscriptions/${subscription.id}` as any}
             className="flex items-center gap-4 p-4 hover:bg-zinc-50 transition-colors"
           >
             <div className="p-3 bg-zinc-100 rounded-lg">

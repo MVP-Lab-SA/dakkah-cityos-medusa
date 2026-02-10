@@ -1,14 +1,16 @@
 
 import { CheckCircleSolid } from "@medusajs/icons"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 import type { SubscriptionPlan } from "../../lib/types/subscriptions"
 
 interface PlanCardProps {
   plan: SubscriptionPlan
-  countryCode: string
   isCurrentPlan?: boolean
 }
 
-export function PlanCard({ plan, countryCode, isCurrentPlan }: PlanCardProps) {
+export function PlanCard({ plan, isCurrentPlan }: PlanCardProps) {
+  const prefix = useTenantPrefix()
+
   const formatPrice = (amount: number, currency: string) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -36,7 +38,6 @@ export function PlanCard({ plan, countryCode, isCurrentPlan }: PlanCardProps) {
         ${isCurrentPlan ? "ring-2 ring-emerald-500 ring-offset-2" : ""}
       `}
     >
-      {/* Popular Badge */}
       {plan.is_popular && (
         <div className="absolute -top-4 left-1/2 -translate-x-1/2">
           <span className="inline-flex items-center px-4 py-1.5 bg-slate-900 text-white text-xs font-semibold rounded-full uppercase tracking-wide">
@@ -45,7 +46,6 @@ export function PlanCard({ plan, countryCode, isCurrentPlan }: PlanCardProps) {
         </div>
       )}
 
-      {/* Current Plan Badge */}
       {isCurrentPlan && (
         <div className="absolute -top-4 right-4">
           <span className="inline-flex items-center px-3 py-1 bg-emerald-600 text-white text-xs font-semibold rounded-full">
@@ -55,7 +55,6 @@ export function PlanCard({ plan, countryCode, isCurrentPlan }: PlanCardProps) {
       )}
 
       <div className="p-8">
-        {/* Header */}
         <div className="text-center mb-8">
           <h3 className="text-xl font-semibold text-slate-900 mb-2">
             {plan.name}
@@ -63,7 +62,6 @@ export function PlanCard({ plan, countryCode, isCurrentPlan }: PlanCardProps) {
           <p className="text-sm text-slate-500">{plan.description}</p>
         </div>
 
-        {/* Pricing */}
         <div className="text-center mb-8">
           <div className="flex items-baseline justify-center gap-1">
             <span className="text-5xl font-bold text-slate-900">
@@ -85,7 +83,6 @@ export function PlanCard({ plan, countryCode, isCurrentPlan }: PlanCardProps) {
           )}
         </div>
 
-        {/* Features */}
         <div className="space-y-3 mb-8">
           {plan.features.map((feature, index) => (
             <div key={index} className="flex items-start gap-3">
@@ -95,7 +92,6 @@ export function PlanCard({ plan, countryCode, isCurrentPlan }: PlanCardProps) {
           ))}
         </div>
 
-        {/* CTA Button */}
         {isCurrentPlan ? (
           <button
             disabled
@@ -105,7 +101,7 @@ export function PlanCard({ plan, countryCode, isCurrentPlan }: PlanCardProps) {
           </button>
         ) : (
           <a
-            href={`/${countryCode}/subscriptions/checkout?plan=${plan.handle}`}
+            href={`${prefix}/subscriptions/checkout?plan=${plan.handle}`}
             className={`
               w-full py-3 px-6 rounded-xl font-medium text-center block transition-all duration-200
               ${
@@ -125,14 +121,13 @@ export function PlanCard({ plan, countryCode, isCurrentPlan }: PlanCardProps) {
 
 interface PlanComparisonTableProps {
   plans: SubscriptionPlan[]
-  countryCode: string
 }
 
 export function PlanComparisonTable({
   plans,
-  countryCode,
 }: PlanComparisonTableProps) {
-  // Get all unique features across all plans
+  const prefix = useTenantPrefix()
+
   const allFeatures = Array.from(
     new Set(plans.flatMap((plan) => plan.features))
   )
@@ -197,7 +192,7 @@ export function PlanComparisonTable({
                 className={`py-6 px-4 text-center ${plan.is_popular ? "bg-slate-50" : ""}`}
               >
                 <a
-                  href={`/${countryCode}/subscriptions/checkout?plan=${plan.handle}`}
+                  href={`${prefix}/subscriptions/checkout?plan=${plan.handle}`}
                   className={`
                     inline-flex items-center justify-center py-2.5 px-6 rounded-lg font-medium transition-all duration-200
                     ${

@@ -6,11 +6,11 @@ import {
   PlaySolid,
   PauseSolid,
 } from "@medusajs/icons"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 import type { Subscription, SubscriptionStatus } from "../../lib/types/subscriptions"
 
 interface SubscriptionCardProps {
   subscription: Subscription
-  countryCode: string
   onPause?: (id: string) => void
   onResume?: (id: string) => void
   onCancel?: (id: string) => void
@@ -18,11 +18,12 @@ interface SubscriptionCardProps {
 
 export function SubscriptionCard({
   subscription,
-  countryCode,
   onPause,
   onResume,
   onCancel,
 }: SubscriptionCardProps) {
+  const prefix = useTenantPrefix()
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -56,7 +57,6 @@ export function SubscriptionCard({
 
   return (
     <div className="enterprise-card overflow-hidden">
-      {/* Header */}
       <div className="enterprise-card-header flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-slate-900 flex items-center justify-center">
@@ -76,9 +76,7 @@ export function SubscriptionCard({
         <span className={status.className}>{status.label}</span>
       </div>
 
-      {/* Body */}
       <div className="enterprise-card-body">
-        {/* Dates */}
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div className="flex items-center gap-2 text-sm">
             <Calendar className="w-4 h-4 text-slate-400" />
@@ -100,7 +98,6 @@ export function SubscriptionCard({
           </div>
         </div>
 
-        {/* Trial Info */}
         {subscription.status === "trialing" && subscription.trial_end && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6">
             <p className="text-sm text-blue-700">
@@ -111,7 +108,6 @@ export function SubscriptionCard({
           </div>
         )}
 
-        {/* Pause Info */}
         {subscription.status === "paused" && subscription.pause_end && (
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-6">
             <p className="text-sm text-amber-700">
@@ -121,7 +117,6 @@ export function SubscriptionCard({
           </div>
         )}
 
-        {/* Past Due Warning */}
         {subscription.status === "past_due" && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
             <p className="text-sm text-red-700">
@@ -131,10 +126,9 @@ export function SubscriptionCard({
           </div>
         )}
 
-        {/* Actions */}
         <div className="flex flex-wrap gap-2">
           <a
-            href={`/${countryCode}/account/subscriptions/${subscription.id}`}
+            href={`${prefix}/account/subscriptions/${subscription.id}`}
             className="btn-enterprise-secondary"
           >
             View Details
@@ -176,13 +170,9 @@ export function SubscriptionCard({
   )
 }
 
-interface SubscriptionEmptyStateProps {
-  countryCode: string
-}
+export function SubscriptionEmptyState() {
+  const prefix = useTenantPrefix()
 
-export function SubscriptionEmptyState({
-  countryCode,
-}: SubscriptionEmptyStateProps) {
   return (
     <div className="empty-state">
       <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4">
@@ -193,7 +183,7 @@ export function SubscriptionEmptyState({
         Subscribe to a plan to unlock premium features and benefits.
       </p>
       <a
-        href={`/${countryCode}/subscriptions`}
+        href={`${prefix}/subscriptions`}
         className="btn-enterprise-primary mt-6"
       >
         View Plans

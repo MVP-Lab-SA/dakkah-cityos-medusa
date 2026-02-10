@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router"
 import { formatPrice } from "@/lib/utils/price"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 
 interface CartItem {
   id: string
@@ -16,7 +17,6 @@ interface CartVendorGroupProps {
   vendorHandle: string
   items: CartItem[]
   currencyCode: string
-  countryCode: string
   onUpdateQuantity?: (itemId: string, quantity: number) => void
   onRemoveItem?: (itemId: string) => void
 }
@@ -27,10 +27,10 @@ export function CartVendorGroup({
   vendorHandle,
   items,
   currencyCode,
-  countryCode,
   onUpdateQuantity,
   onRemoveItem,
 }: CartVendorGroupProps) {
+  const prefix = useTenantPrefix()
   const subtotal = items.reduce((sum, item) => sum + item.unit_price * item.quantity, 0)
 
   return (
@@ -39,7 +39,7 @@ export function CartVendorGroup({
       <div className="px-6 py-4 border-b border-zinc-200 bg-zinc-50">
         <div className="flex items-center justify-between">
           <Link
-            to={`/${countryCode}/vendors/${vendorHandle}` as any}
+            to={`${prefix}/vendors/${vendorHandle}` as any}
             className="font-semibold text-zinc-900 hover:text-zinc-600 transition-colors"
           >
             {vendorName}

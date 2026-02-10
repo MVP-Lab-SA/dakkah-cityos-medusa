@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router"
 import { formatPrice } from "@/lib/utils/price"
 import { ChevronRight } from "@medusajs/icons"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 
 interface OrderItem {
   title: string
@@ -16,7 +17,6 @@ interface OrderCardProps {
   total: number
   currencyCode: string
   items: OrderItem[]
-  countryCode: string
 }
 
 export function OrderCard({
@@ -27,8 +27,9 @@ export function OrderCard({
   total,
   currencyCode,
   items,
-  countryCode,
 }: OrderCardProps) {
+  const prefix = useTenantPrefix()
+
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "completed":
@@ -59,7 +60,7 @@ export function OrderCard({
 
   return (
     <Link
-      to={`/${countryCode}/account/orders/${id}` as any}
+      to={`${prefix}/account/orders/${id}` as any}
       className="block bg-white rounded-xl border border-zinc-200 p-6 hover:border-zinc-300 hover:shadow-sm transition-all"
     >
       <div className="flex items-start justify-between mb-4">

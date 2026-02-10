@@ -2,14 +2,16 @@ import { Link } from "@tanstack/react-router"
 import { PurchaseOrder } from "@/lib/hooks/use-purchase-orders"
 import { formatPrice } from "@/lib/utils/price"
 import { cn } from "@/lib/utils/cn"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 
 interface POCardProps {
   purchaseOrder: PurchaseOrder
-  countryCode: string
   compact?: boolean
 }
 
-export function POCard({ purchaseOrder: po, countryCode, compact = false }: POCardProps) {
+export function POCard({ purchaseOrder: po, compact = false }: POCardProps) {
+  const prefix = useTenantPrefix()
+
   const getStatusColor = (status: PurchaseOrder["status"]) => {
     switch (status) {
       case "draft":
@@ -32,7 +34,7 @@ export function POCard({ purchaseOrder: po, countryCode, compact = false }: POCa
   if (compact) {
     return (
       <Link
-        to={`/${countryCode}/account/purchase-orders/${po.id}` as any}
+        to={`${prefix}/account/purchase-orders/${po.id}` as any}
         className="flex items-center justify-between p-4 bg-white rounded-lg border border-zinc-200 hover:border-zinc-300 transition-colors"
       >
         <div>
@@ -56,7 +58,7 @@ export function POCard({ purchaseOrder: po, countryCode, compact = false }: POCa
       <div className="flex items-start justify-between mb-4">
         <div>
           <Link
-            to={`/${countryCode}/account/purchase-orders/${po.id}` as any}
+            to={`${prefix}/account/purchase-orders/${po.id}` as any}
             className="font-semibold text-zinc-900 hover:text-zinc-600"
           >
             {po.po_number}

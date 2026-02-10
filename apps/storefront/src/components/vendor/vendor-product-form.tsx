@@ -4,7 +4,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { sdk } from "@/lib/utils/sdk";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "@medusajs/icons";
-import { useCountryCode } from "@/lib/hooks/use-country-code";
+import { useTenantPrefix } from "@/lib/context/tenant-context";
 
 interface ProductFormData {
   title: string;
@@ -44,7 +44,7 @@ interface VendorProductFormProps {
 export function VendorProductForm({ initialData, mode = "create" }: VendorProductFormProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const countryCode = useCountryCode();
+  const prefix = useTenantPrefix();
 
   const [formData, setFormData] = useState<ProductFormData>({
     title: initialData?.title || "",
@@ -79,7 +79,7 @@ export function VendorProductForm({ initialData, mode = "create" }: VendorProduc
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["vendor-products"] });
-      navigate({ to: "/$countryCode/vendor/products", params: { countryCode } });
+      navigate({ to: `${prefix}/vendor/products` as any });
     },
     onError: (err: Error) => {
       setError(err.message);
@@ -96,7 +96,7 @@ export function VendorProductForm({ initialData, mode = "create" }: VendorProduc
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["vendor-products"] });
-      navigate({ to: "/$countryCode/vendor/products", params: { countryCode } });
+      navigate({ to: `${prefix}/vendor/products` as any });
     },
     onError: (err: Error) => {
       setError(err.message);
@@ -160,7 +160,7 @@ export function VendorProductForm({ initialData, mode = "create" }: VendorProduc
     <div className="max-w-3xl mx-auto">
       <button
         type="button"
-        onClick={() => navigate({ to: "/$countryCode/vendor/products", params: { countryCode } })}
+        onClick={() => navigate({ to: `${prefix}/vendor/products` as any })}
         className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
@@ -422,7 +422,7 @@ export function VendorProductForm({ initialData, mode = "create" }: VendorProduc
           <Button
             type="button"
             variant="secondary"
-            onClick={() => navigate({ to: "/$countryCode/vendor/products", params: { countryCode } })}
+            onClick={() => navigate({ to: `${prefix}/vendor/products` as any })}
           >
             Cancel
           </Button>

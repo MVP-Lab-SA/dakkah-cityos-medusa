@@ -30,7 +30,7 @@ function CompanyOrdersPage() {
           <p className="text-red-500">Failed to load company orders</p>
         </div>
       ) : (
-        <CompanyOrders orders={orders || []} countryCode={locale} />
+        <CompanyOrders orders={orders || []} />
       )}
     </AccountLayout>
   )

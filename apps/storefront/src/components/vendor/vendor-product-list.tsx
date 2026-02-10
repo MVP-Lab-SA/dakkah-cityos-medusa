@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { sdk } from "@/lib/utils/sdk";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash, PencilSquare } from "@medusajs/icons";
-import { useCountryCode } from "@/lib/hooks/use-country-code";
+import { useTenantPrefix } from "@/lib/context/tenant-context";
 
 interface VendorProduct {
   id: string;
@@ -21,7 +21,7 @@ interface VendorProduct {
 }
 
 export function VendorProductList() {
-  const countryCode = useCountryCode();
+  const prefix = useTenantPrefix();
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
@@ -70,7 +70,7 @@ export function VendorProductList() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Your Products</h1>
-        <Link to="/$countryCode/vendor/products" params={{ countryCode }}>
+        <Link to={`${prefix}/vendor/products/new` as any}>
           <Button>
             <Plus className="w-4 h-4 mr-2" />
             Add Product
@@ -81,7 +81,7 @@ export function VendorProductList() {
       {products.length === 0 ? (
         <div className="text-center py-12 border rounded-lg">
           <p className="text-muted-foreground mb-4">You haven't added any products yet</p>
-          <Link to="/$countryCode/vendor/products" params={{ countryCode }}>
+          <Link to={`${prefix}/vendor/products/new` as any}>
             <Button>
               <Plus className="w-4 h-4 mr-2" />
               Add Your First Product

@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useTenantPrefix } from "@/lib/context/tenant-context";
 
 interface Quote {
   id: string;
@@ -15,13 +16,14 @@ interface QuoteListProps {
 }
 
 export function QuoteList({ quotes }: QuoteListProps) {
+  const prefix = useTenantPrefix();
+
   if (quotes.length === 0) {
     return (
       <div className="text-center py-12 border rounded-lg">
         <p className="text-muted-foreground mb-4">No quotes found</p>
         <Link
-          to="/$countryCode/quotes/request"
-          params={{ countryCode: "us" }}
+          to={`${prefix}/quotes/request` as any}
           className="text-primary hover:underline"
         >
           Request your first quote
@@ -35,8 +37,7 @@ export function QuoteList({ quotes }: QuoteListProps) {
       {quotes.map((quote) => (
         <Link
           key={quote.id}
-          to="/$countryCode/quotes/$id"
-          params={{ countryCode: "us", id: quote.id }}
+          to={`${prefix}/quotes/${quote.id}` as any}
           className="block"
         >
           <div className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">

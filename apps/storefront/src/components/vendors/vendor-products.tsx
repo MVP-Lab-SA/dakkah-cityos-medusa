@@ -17,11 +17,11 @@ interface Product {
 
 interface VendorProductsProps {
   products: Product[]
-  countryCode: string
+  tenantPrefix: string
   vendorHandle: string
 }
 
-export function VendorProducts({ products, countryCode, vendorHandle }: VendorProductsProps) {
+export function VendorProducts({ products, tenantPrefix, vendorHandle }: VendorProductsProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [sortBy, setSortBy] = useState("newest")
 
@@ -77,7 +77,7 @@ export function VendorProducts({ products, countryCode, vendorHandle }: VendorPr
           {sortedProducts.map((product) => (
             <Link
               key={product.id}
-              to={`/${countryCode}/products/${product.handle}` as any}
+              to={`${tenantPrefix}/products/${product.handle}` as any}
               className="group"
             >
               <div className="aspect-square rounded-xl bg-zinc-100 overflow-hidden mb-3">

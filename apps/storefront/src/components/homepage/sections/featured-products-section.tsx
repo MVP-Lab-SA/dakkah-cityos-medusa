@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router"
+import { formatPrice } from "@/lib/utils/price"
 
 interface Product {
   id: string
@@ -14,20 +15,13 @@ interface Product {
 }
 
 interface FeaturedProductsSectionProps {
-  countryCode: string
+  tenantPrefix: string
   products: Product[]
   config: Record<string, any>
 }
 
-export function FeaturedProductsSection({ countryCode, products, config }: FeaturedProductsSectionProps) {
+export function FeaturedProductsSection({ tenantPrefix, products, config }: FeaturedProductsSectionProps) {
   if (products.length === 0) return null
-
-  const formatPrice = (amount: number, currency: string) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency.toUpperCase()
-    }).format(amount)
-  }
 
   return (
     <section className="py-16 bg-white">
@@ -37,7 +31,7 @@ export function FeaturedProductsSection({ countryCode, products, config }: Featu
             {config.title || "Featured Products"}
           </h2>
           <Link
-            to={`/${countryCode}/store` as any}
+            to={`${tenantPrefix}/store` as any}
             className="text-sm font-medium text-gray-600 hover:text-gray-900"
           >
             View All
@@ -51,7 +45,7 @@ export function FeaturedProductsSection({ countryCode, products, config }: Featu
             return (
               <Link
                 key={product.id}
-                to={`/${countryCode}/products/${product.handle}` as any}
+                to={`${tenantPrefix}/products/${product.handle}` as any}
                 className="group"
               >
                 <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-4">

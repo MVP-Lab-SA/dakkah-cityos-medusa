@@ -7,24 +7,22 @@ import {
   Adjustments
 } from "@medusajs/icons"
 import { cn } from "@/lib/utils/cn"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 
-interface AccountMobileNavProps {
-  countryCode: string
-}
-
-export function AccountMobileNav({ countryCode }: AccountMobileNavProps) {
+export function AccountMobileNav() {
   const location = useLocation()
+  const prefix = useTenantPrefix()
 
   const navItems = [
-    { label: "Home", href: `/${countryCode}/account`, icon: User },
-    { label: "Orders", href: `/${countryCode}/account/orders`, icon: ShoppingBag },
-    { label: "Subscriptions", href: `/${countryCode}/account/subscriptions`, icon: CreditCard },
-    { label: "Addresses", href: `/${countryCode}/account/addresses`, icon: MapPin },
-    { label: "Settings", href: `/${countryCode}/account/settings`, icon: Adjustments },
+    { label: "Home", href: `${prefix}/account`, icon: User },
+    { label: "Orders", href: `${prefix}/account/orders`, icon: ShoppingBag },
+    { label: "Subscriptions", href: `${prefix}/account/subscriptions`, icon: CreditCard },
+    { label: "Addresses", href: `${prefix}/account/addresses`, icon: MapPin },
+    { label: "Settings", href: `${prefix}/account/settings`, icon: Adjustments },
   ]
 
   const isActive = (href: string) => {
-    if (href === `/${countryCode}/account`) {
+    if (href === `${prefix}/account`) {
       return location.pathname === href
     }
     return location.pathname.startsWith(href)

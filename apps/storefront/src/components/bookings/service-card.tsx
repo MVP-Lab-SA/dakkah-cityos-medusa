@@ -1,12 +1,13 @@
 import { Clock, Users, ArrowRight } from "@medusajs/icons"
 import type { Service } from "../../lib/types/bookings"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 
 interface ServiceCardProps {
   service: Service
-  countryCode: string
 }
 
-export function ServiceCard({ service, countryCode }: ServiceCardProps) {
+export function ServiceCard({ service }: ServiceCardProps) {
+  const prefix = useTenantPrefix()
   const formatPrice = (amount: number, currency: string) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -24,7 +25,7 @@ export function ServiceCard({ service, countryCode }: ServiceCardProps) {
 
   return (
     <a
-      href={`/${countryCode}/bookings/${service.handle}`}
+      href={`${prefix}/bookings/${service.handle}`}
       className="group enterprise-card overflow-hidden hover:border-slate-300 block"
     >
       {/* Image */}
@@ -78,10 +79,9 @@ export function ServiceCard({ service, countryCode }: ServiceCardProps) {
 
 interface ServiceListProps {
   services: Service[]
-  countryCode: string
 }
 
-export function ServiceList({ services, countryCode }: ServiceListProps) {
+export function ServiceList({ services }: ServiceListProps) {
   if (services.length === 0) {
     return (
       <div className="empty-state">
@@ -102,7 +102,6 @@ export function ServiceList({ services, countryCode }: ServiceListProps) {
         <ServiceCard
           key={service.id}
           service={service}
-          countryCode={countryCode}
         />
       ))}
     </div>

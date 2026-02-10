@@ -5,14 +5,12 @@ import { Spinner } from "@medusajs/icons"
 interface SearchResultsProps {
   products: HttpTypes.StoreProduct[]
   isLoading: boolean
-  countryCode: string
   query: string
 }
 
 export function SearchResults({
   products,
   isLoading,
-  countryCode,
   query,
 }: SearchResultsProps) {
   if (isLoading) {

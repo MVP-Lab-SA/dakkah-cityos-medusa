@@ -1,12 +1,13 @@
 import { Link } from "@tanstack/react-router"
 import { CheckCircleSolid } from "@medusajs/icons"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 
 interface SubscriptionsSectionProps {
-  countryCode: string
   config: Record<string, any>
 }
 
-export function SubscriptionsSection({ countryCode, config }: SubscriptionsSectionProps) {
+export function SubscriptionsSection({ config }: SubscriptionsSectionProps) {
+  const prefix = useTenantPrefix()
   return (
     <section className="py-16 bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -36,7 +37,7 @@ export function SubscriptionsSection({ countryCode, config }: SubscriptionsSecti
               ))}
             </ul>
             <Link
-              to={`/${countryCode}/subscriptions` as any}
+              to={`${prefix}/subscriptions` as any}
               className="inline-flex items-center justify-center px-8 py-3 bg-white text-indigo-600 font-medium rounded-md hover:bg-gray-100 transition-colors"
             >
               Explore Subscriptions

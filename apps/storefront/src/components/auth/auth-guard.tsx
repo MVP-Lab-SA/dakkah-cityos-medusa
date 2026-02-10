@@ -1,7 +1,7 @@
 import { useEffect, type ReactNode } from "react"
 import { useNavigate, useLocation } from "@tanstack/react-router"
 import { useRequireAuth } from "@/lib/context/auth-context"
-import { getCountryCodeFromPath } from "@/lib/utils/region"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 import { Spinner } from "@medusajs/icons"
 
 interface AuthGuardProps {
@@ -26,14 +26,13 @@ function ClientAuthGuard({ children, requireB2B = false, fallbackPath }: AuthGua
   const { isAuthenticated, isB2B, isLoading } = useRequireAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const countryCode = getCountryCodeFromPath(location.pathname)
-  const baseHref = countryCode ? `/${countryCode}` : ""
+  const prefix = useTenantPrefix()
 
   useEffect(() => {
     if (isLoading) return
 
     if (!isAuthenticated) {
-      const redirectPath = fallbackPath || `${baseHref}/login`
+      const redirectPath = fallbackPath || `${prefix}/login`
       navigate({
         to: redirectPath as any,
       })
@@ -41,9 +40,9 @@ function ClientAuthGuard({ children, requireB2B = false, fallbackPath }: AuthGua
     }
 
     if (requireB2B && !isB2B) {
-      navigate({ to: `${baseHref}/account` as any })
+      navigate({ to: `${prefix}/account` as any })
     }
-  }, [isAuthenticated, isB2B, isLoading, requireB2B, navigate, location.pathname, baseHref, fallbackPath])
+  }, [isAuthenticated, isB2B, isLoading, requireB2B, navigate, location.pathname, prefix, fallbackPath])
 
   if (isLoading) {
     return (
@@ -67,7 +66,6 @@ function ClientAuthGuard({ children, requireB2B = false, fallbackPath }: AuthGua
   return <>{children}</>
 }
 
-// HOC version for route components
 export function withAuth<P extends object>(
   Component: React.ComponentType<P>,
   options?: { requireB2B?: boolean; fallbackPath?: string }

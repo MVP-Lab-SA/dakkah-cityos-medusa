@@ -49,7 +49,7 @@ function BookingsPage() {
               </p>
             </div>
           ) : services ? (
-            <ServiceList services={services} countryCode={locale} />
+            <ServiceList services={services} />
           ) : null}
         </div>
       </section>

@@ -1,5 +1,5 @@
-import { Link, useLocation } from "@tanstack/react-router"
-import { getCountryCodeFromPath } from "@/lib/utils/region"
+import { Link } from "@tanstack/react-router"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 import { formatPrice } from "@/lib/utils/price"
 import { ChevronRight, ShoppingBag } from "@medusajs/icons"
 
@@ -32,9 +32,7 @@ const statusColors: Record<string, string> = {
 }
 
 export function RecentOrders({ orders, isLoading }: RecentOrdersProps) {
-  const location = useLocation()
-  const countryCode = getCountryCodeFromPath(location.pathname)
-  const baseHref = countryCode ? `/${countryCode}` : ""
+  const prefix = useTenantPrefix()
 
   if (isLoading) {
     return (
@@ -63,7 +61,7 @@ export function RecentOrders({ orders, isLoading }: RecentOrdersProps) {
           <ShoppingBag className="h-12 w-12 text-zinc-300 mx-auto mb-4" />
           <p className="text-zinc-500">No orders yet</p>
           <Link
-            to={`${baseHref}/store` as any}
+            to={`${prefix}/store` as any}
             className="mt-4 inline-flex items-center text-sm font-medium text-zinc-900 hover:underline"
           >
             Start shopping
@@ -79,7 +77,7 @@ export function RecentOrders({ orders, isLoading }: RecentOrdersProps) {
       <div className="p-4 border-b border-zinc-200 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-zinc-900">Recent Orders</h2>
         <Link
-          to={`${baseHref}/account/orders` as any}
+          to={`${prefix}/account/orders` as any}
           className="text-sm font-medium text-zinc-600 hover:text-zinc-900"
         >
           View all
@@ -89,7 +87,7 @@ export function RecentOrders({ orders, isLoading }: RecentOrdersProps) {
         {orders.slice(0, 3).map((order) => (
           <Link
             key={order.id}
-            to={`${baseHref}/account/orders/${order.id}` as any}
+            to={`${prefix}/account/orders/${order.id}` as any}
             className="flex items-center gap-4 p-4 hover:bg-zinc-50 transition-colors"
           >
             {/* Thumbnails */}

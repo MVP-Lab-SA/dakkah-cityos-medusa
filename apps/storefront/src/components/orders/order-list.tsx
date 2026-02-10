@@ -1,5 +1,5 @@
-import { Link, useLocation } from "@tanstack/react-router"
-import { getCountryCodeFromPath } from "@/lib/utils/region"
+import { Link } from "@tanstack/react-router"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 import { formatPrice } from "@/lib/utils/price"
 import { ShoppingBag, ChevronRight, MagnifyingGlass } from "@medusajs/icons"
 import { useState } from "react"
@@ -50,9 +50,7 @@ const fulfillmentStatusLabels: Record<string, string> = {
 }
 
 export function OrderList({ orders, isLoading }: OrderListProps) {
-  const location = useLocation()
-  const countryCode = getCountryCodeFromPath(location.pathname)
-  const baseHref = countryCode ? `/${countryCode}` : ""
+  const prefix = useTenantPrefix()
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
 
@@ -113,7 +111,7 @@ export function OrderList({ orders, isLoading }: OrderListProps) {
           </p>
           {!searchQuery && statusFilter === "all" && (
             <Link
-              to={`${baseHref}/store` as any}
+              to={`${prefix}/store` as any}
               className="mt-4 inline-flex items-center text-sm font-medium text-zinc-900 hover:underline"
             >
               Start shopping
@@ -126,7 +124,7 @@ export function OrderList({ orders, isLoading }: OrderListProps) {
           {filteredOrders.map((order) => (
             <Link
               key={order.id}
-              to={`${baseHref}/account/orders/${order.id}` as any}
+              to={`${prefix}/account/orders/${order.id}` as any}
               className="flex items-center gap-4 p-4 bg-white rounded-lg border border-zinc-200 hover:border-zinc-300 transition-colors"
             >
               {/* Thumbnails */}

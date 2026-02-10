@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button"
 import { useCompleteCartOrder } from "@/lib/hooks/use-checkout"
 import { isManual, isStripe } from "@/lib/utils/checkout"
-import { getCountryCodeFromPath } from "@/lib/utils/region"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 import { HttpTypes } from "@medusajs/types"
-import { useLocation, useNavigate } from "@tanstack/react-router"
+import { useNavigate } from "@tanstack/react-router"
 import { useState } from "react"
 
 type PaymentButtonProps = {
@@ -40,21 +40,17 @@ const StripePaymentButton = ({
 }) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const navigate = useNavigate();
-  const location = useLocation();
-  const countryCode = getCountryCodeFromPath(location.pathname);
+  const prefix = useTenantPrefix();
   const completeOrderMutation = useCompleteCartOrder();
 
   const handlePayment = async () => {
     setErrorMessage(null);
 
     try {
-      // For demo purposes, we'll complete the order directly
-      // In production, you'd integrate with Stripe's confirmCardPayment
       const order = await completeOrderMutation.mutateAsync();
 
-      // Navigate to order confirmation
       navigate({
-        to: `/${countryCode}/order/${order.id}/confirmed` as any,
+        to: `${prefix}/order/${order.id}/confirmed` as any,
         replace: true,
       });
     } catch (error) {
@@ -91,8 +87,7 @@ const ManualPaymentButton = ({
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const navigate = useNavigate();
-  const location = useLocation();
-  const countryCode = getCountryCodeFromPath(location.pathname);
+  const prefix = useTenantPrefix();
   const completeOrderMutation = useCompleteCartOrder();
 
   const handlePayment = async () => {
@@ -102,9 +97,8 @@ const ManualPaymentButton = ({
     try {
       const order = await completeOrderMutation.mutateAsync();
 
-      // Navigate to order confirmation
       navigate({
-        to: `/${countryCode}/order/${order.id}/confirmed` as any,
+        to: `${prefix}/order/${order.id}/confirmed` as any,
         replace: true,
       });
     } catch (error) {

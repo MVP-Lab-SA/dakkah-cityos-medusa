@@ -1,11 +1,12 @@
 import { Link } from "@tanstack/react-router"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 
 interface HeroSectionProps {
-  countryCode: string
   config: Record<string, any>
 }
 
-export function HeroSection({ countryCode, config }: HeroSectionProps) {
+export function HeroSection({ config }: HeroSectionProps) {
+  const prefix = useTenantPrefix()
   return (
     <section className="relative bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
@@ -18,13 +19,13 @@ export function HeroSection({ countryCode, config }: HeroSectionProps) {
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4">
             <Link
-              to={`/${countryCode}/store` as any}
+              to={`${prefix}/store` as any}
               className="inline-flex items-center justify-center px-8 py-3 bg-white text-gray-900 font-medium rounded-md hover:bg-gray-100 transition-colors"
             >
               Shop Now
             </Link>
             <Link
-              to={`/${countryCode}/store` as any}
+              to={`${prefix}/store` as any}
               className="inline-flex items-center justify-center px-8 py-3 border border-white text-white font-medium rounded-md hover:bg-white/10 transition-colors"
             >
               Browse Categories

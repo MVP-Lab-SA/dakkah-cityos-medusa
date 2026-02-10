@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router"
 import { formatPrice } from "@/lib/utils/price"
 import { cn } from "@/lib/utils/cn"
 import { ChevronRight } from "@medusajs/icons"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 
 interface CompanyOrder {
   id: string
@@ -16,10 +17,10 @@ interface CompanyOrder {
 
 interface CompanyOrdersProps {
   orders: CompanyOrder[]
-  countryCode: string
 }
 
-export function CompanyOrders({ orders, countryCode }: CompanyOrdersProps) {
+export function CompanyOrders({ orders }: CompanyOrdersProps) {
+  const prefix = useTenantPrefix()
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "completed":
@@ -103,7 +104,7 @@ export function CompanyOrders({ orders, countryCode }: CompanyOrdersProps) {
                 </td>
                 <td className="px-6 py-4">
                   <Link
-                    to={`/${countryCode}/account/orders/${order.id}` as any}
+                    to={`${prefix}/account/orders/${order.id}` as any}
                     className="text-zinc-400 hover:text-zinc-600"
                   >
                     <ChevronRight className="w-5 h-5" />

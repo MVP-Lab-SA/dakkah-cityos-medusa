@@ -1,6 +1,7 @@
 import React from 'react'
-import { Link, useNavigate } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import { useBranding } from '@/lib/context/branding-context'
+import { useTenantPrefix } from '@/lib/context/tenant-context'
 
 interface Store {
   id: string
@@ -23,10 +24,11 @@ interface StoreSelectionProps {
 export const StoreSelection: React.FC<StoreSelectionProps> = ({ stores }) => {
   const { setTenantHandle } = useBranding()
   const navigate = useNavigate()
+  const prefix = useTenantPrefix()
 
   const handleStoreSelect = (handle: string) => {
     setTenantHandle(handle)
-    navigate({ to: '/$countryCode', params: { countryCode: 'us' } })
+    navigate({ to: `${prefix}` as any })
   }
 
   return (

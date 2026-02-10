@@ -4,7 +4,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { sdk } from "@/lib/utils/sdk";
 import { Button } from "@/components/ui/button";
 import { CheckCircleSolid } from "@medusajs/icons";
-import { useCountryCode } from "@/lib/hooks/use-country-code";
+import { useTenantPrefix } from "@/lib/context/tenant-context";
 import { useToast } from "@/components/ui/toast";
 
 interface VendorRegistrationData {
@@ -92,7 +92,7 @@ const MAX_NAME_LENGTH = 100;
 
 export function VendorRegistrationForm() {
   const navigate = useNavigate();
-  const countryCode = useCountryCode();
+  const prefix = useTenantPrefix();
   const { addToast } = useToast();
 
   const [step, setStep] = useState(1);
@@ -340,7 +340,7 @@ export function VendorRegistrationForm() {
           Thank you for applying to become a vendor! We will review your application
           and get back to you within 2-3 business days.
         </p>
-        <Button onClick={() => navigate({ to: "/$countryCode/store", params: { countryCode } })}>
+        <Button onClick={() => navigate({ to: `${prefix}/store` as any })}>
           Return to Store
         </Button>
       </div>

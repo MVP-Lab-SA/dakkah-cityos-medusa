@@ -1,13 +1,14 @@
 import { Link } from "@tanstack/react-router"
 import { Booking } from "@/lib/types/bookings"
 import { BellAlert, Calendar, Clock, ChevronRight } from "@medusajs/icons"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 
 interface BookingReminderProps {
   booking: Booking
-  countryCode: string
 }
 
-export function BookingReminder({ booking, countryCode }: BookingReminderProps) {
+export function BookingReminder({ booking }: BookingReminderProps) {
+  const prefix = useTenantPrefix()
   const formatDate = (date: string) => {
     const d = new Date(date)
     const now = new Date()
@@ -55,7 +56,7 @@ export function BookingReminder({ booking, countryCode }: BookingReminderProps) 
 
   return (
     <Link
-      to={`/${countryCode}/account/bookings/${booking.id}` as any}
+      to={`${prefix}/account/bookings/${booking.id}` as any}
       className={`block rounded-xl border p-4 transition-all hover:shadow-sm ${
         isToday 
           ? "bg-blue-50 border-blue-200 hover:border-blue-300" 

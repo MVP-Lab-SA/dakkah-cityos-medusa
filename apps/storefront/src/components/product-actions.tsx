@@ -5,11 +5,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/components/ui/toast"
 import { useCartDrawer } from "@/lib/context/cart"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 import { useAddToCart } from "@/lib/hooks/use-cart"
 import { getVariantOptionsKeymap, isVariantInStock } from "@/lib/utils/product"
-import { getCountryCodeFromPath } from "@/lib/utils/region"
 import { HttpTypes } from "@medusajs/types"
-import { useLocation, Link } from "@tanstack/react-router"
+import { Link } from "@tanstack/react-router"
 import { isEqual } from "lodash-es"
 import { useEffect, useMemo, useRef, useState, memo } from "react"
 import { VolumePricingDisplay } from "@/components/products/volume-pricing-display"
@@ -30,8 +30,7 @@ const ProductActions = memo(function ProductActions({
     Record<string, string | undefined>
   >({});
   const [quantity, setQuantity] = useState(1);
-  const location = useLocation();
-  const countryCode = getCountryCodeFromPath(location.pathname) || "dk";
+  const prefix = useTenantPrefix();
   const toast = useToast();
 
   const addToCartMutation = useAddToCart({
@@ -45,7 +44,6 @@ const ProductActions = memo(function ProductActions({
     setSelectedOptions({});
   }, [product?.handle]);
 
-  // If there is only 1 variant, preselect the options
   useEffect(() => {
     if (product?.variants?.length === 1) {
       const optionsKeymap = getVariantOptionsKeymap(
@@ -60,7 +58,6 @@ const ProductActions = memo(function ProductActions({
       return;
     }
 
-    // If there's only one variant and no options, select it directly
     if (
       product?.variants.length === 1 &&
       (!product?.options || product?.options.length === 0)
@@ -78,7 +75,6 @@ const ProductActions = memo(function ProductActions({
     return variant;
   }, [product?.variants, product?.options, selectedOptions]);
 
-  // update the options when a variant is selected
   const setOptionValue = (optionId: string, value: string) => {
     setSelectedOptions((prev) => ({
       ...prev,
@@ -86,7 +82,6 @@ const ProductActions = memo(function ProductActions({
     }));
   };
 
-  //check if the selected options produce a valid variant
   const isValidVariant = useMemo(() => {
     return product?.variants?.some((v) => {
       const optionsKeymap = getVariantOptionsKeymap(v?.options ?? []);
@@ -94,9 +89,7 @@ const ProductActions = memo(function ProductActions({
     });
   }, [product?.variants, selectedOptions]);
 
-  // check if the selected variant is in stock
   const inStock = useMemo(() => {
-    // If no variant is selected, we can't add to cart
     if (!selectedVariant) {
       return false;
     }
@@ -104,11 +97,9 @@ const ProductActions = memo(function ProductActions({
     return isVariantInStock(selectedVariant);
   }, [selectedVariant]);
 
-  // Quantity handlers
   const incrementQuantity = () => setQuantity((q) => q + 1);
   const decrementQuantity = () => setQuantity((q) => Math.max(1, q - 1));
 
-  // add the selected variant to the cart
   const handleAddToCart = async () => {
     if (!selectedVariant?.id) return null;
 
@@ -116,7 +107,7 @@ const ProductActions = memo(function ProductActions({
       {
         variant_id: selectedVariant.id,
         quantity: quantity,
-        country_code: countryCode,
+        country_code: prefix.split("/")[1] || "dk",
         product,
         variant: selectedVariant,
         region,
@@ -124,7 +115,7 @@ const ProductActions = memo(function ProductActions({
       {
         onSuccess: () => {
           toast.success("Item added to cart");
-          setQuantity(1); // Reset quantity after adding
+          setQuantity(1);
           openCart();
         },
         onError: () => {
@@ -204,8 +195,7 @@ const ProductActions = memo(function ProductActions({
       {/* B2B Quote Link */}
       <div className="text-sm text-muted-foreground">
         <Link
-          to="/$countryCode/quotes/request"
-          params={{ countryCode }}
+          to={`${prefix}/quotes/request` as any}
           className="text-primary hover:underline"
         >
           Need a custom quote for larger orders?

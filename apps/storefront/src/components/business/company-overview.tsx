@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router"
 import { formatPrice } from "@/lib/utils/price"
 import { BuildingStorefront, User, CreditCard, DocumentText, ChevronRight } from "@medusajs/icons"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 
 interface CompanyOverviewProps {
   company: {
@@ -17,27 +18,27 @@ interface CompanyOverviewProps {
     spentThisMonth: number
   }
   currencyCode: string
-  countryCode: string
 }
 
-export function CompanyOverview({ company, stats, currencyCode, countryCode }: CompanyOverviewProps) {
+export function CompanyOverview({ company, stats, currencyCode }: CompanyOverviewProps) {
+  const prefix = useTenantPrefix()
   const quickLinks = [
     {
       label: "Team Members",
-      href: `/${countryCode}/business/team`,
+      href: `${prefix}/business/team`,
       icon: User,
       value: `${stats.memberCount} members`,
     },
     {
       label: "Pending Approvals",
-      href: `/${countryCode}/business/approvals`,
+      href: `${prefix}/business/approvals`,
       icon: DocumentText,
       value: `${stats.pendingApprovals} pending`,
       highlight: stats.pendingApprovals > 0,
     },
     {
       label: "Company Orders",
-      href: `/${countryCode}/business/orders`,
+      href: `${prefix}/business/orders`,
       icon: BuildingStorefront,
       value: `${stats.ordersThisMonth} this month`,
     },

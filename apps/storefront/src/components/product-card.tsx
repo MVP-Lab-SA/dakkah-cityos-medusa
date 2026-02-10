@@ -1,21 +1,19 @@
 import ProductPrice from "@/components/product-price"
 import { Thumbnail } from "@/components/ui/thumbnail"
-import { getCountryCodeFromPath } from "@/lib/utils/region"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 import { HttpTypes } from "@medusajs/types"
-import { Link, useLocation } from "@tanstack/react-router"
+import { Link } from "@tanstack/react-router"
 
 interface ProductCardProps {
   product: HttpTypes.StoreProduct;
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
-  const location = useLocation();
-  const countryCode = getCountryCodeFromPath(location.pathname);
-  const baseHref = countryCode ? `/${countryCode}` : "";
+  const prefix = useTenantPrefix();
 
   return (
     <Link
-      to={`${baseHref}/products/${product.handle}` as any}
+      to={`${prefix}/products/${product.handle}` as any}
       className="group flex flex-col w-full"
     >
       <div className="aspect-[29/34] w-full overflow-hidden bg-zinc-50 relative">

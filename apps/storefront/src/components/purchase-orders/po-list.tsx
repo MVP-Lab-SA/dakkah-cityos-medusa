@@ -3,18 +3,19 @@ import { PurchaseOrder } from "@/lib/hooks/use-purchase-orders"
 import { formatPrice } from "@/lib/utils/price"
 import { ChevronRight, DocumentText } from "@medusajs/icons"
 import { cn } from "@/lib/utils/cn"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 
 interface POListProps {
   purchaseOrders: PurchaseOrder[]
-  countryCode: string
   emptyMessage?: string
 }
 
 export function POList({ 
   purchaseOrders, 
-  countryCode, 
   emptyMessage = "No purchase orders found" 
 }: POListProps) {
+  const prefix = useTenantPrefix()
+
   const getStatusColor = (status: PurchaseOrder["status"]) => {
     switch (status) {
       case "draft":
@@ -54,7 +55,7 @@ export function POList({
         <DocumentText className="w-12 h-12 text-zinc-300 mx-auto mb-4" />
         <p className="text-zinc-500">{emptyMessage}</p>
         <Link
-          to={`/${countryCode}/account/purchase-orders/new` as any}
+          to={`${prefix}/account/purchase-orders/new` as any}
           className="inline-block mt-4 text-sm font-medium text-zinc-900 hover:underline"
         >
           Create your first purchase order
@@ -68,7 +69,7 @@ export function POList({
       {purchaseOrders.map((po) => (
         <Link
           key={po.id}
-          to={`/${countryCode}/account/purchase-orders/${po.id}` as any}
+          to={`${prefix}/account/purchase-orders/${po.id}` as any}
           className="block bg-white rounded-xl border border-zinc-200 p-6 hover:border-zinc-300 hover:shadow-sm transition-all"
         >
           <div className="flex items-start justify-between mb-4">

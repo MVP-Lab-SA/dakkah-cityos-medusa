@@ -1,5 +1,5 @@
-import { Link, useLocation } from "@tanstack/react-router"
-import { getCountryCodeFromPath } from "@/lib/utils/region"
+import { Link } from "@tanstack/react-router"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 import { Star, CheckCircleSolid, MapPin } from "@medusajs/icons"
 import type { Vendor } from "@/lib/hooks/use-vendors"
 
@@ -8,13 +8,11 @@ interface VendorCardProps {
 }
 
 export function VendorCard({ vendor }: VendorCardProps) {
-  const location = useLocation()
-  const countryCode = getCountryCodeFromPath(location.pathname)
-  const baseHref = countryCode ? `/${countryCode}` : ""
+  const prefix = useTenantPrefix()
 
   return (
     <Link
-      to={`${baseHref}/vendors/${vendor.handle}` as any}
+      to={`${prefix}/vendors/${vendor.handle}` as any}
       className="group bg-white rounded-lg border border-zinc-200 overflow-hidden hover:border-zinc-300 hover:shadow-md transition-all"
     >
       {/* Banner */}

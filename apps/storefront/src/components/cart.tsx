@@ -19,12 +19,12 @@ import {
   useRemovePromoCode,
 } from "@/lib/hooks/use-cart"
 import { sortCartItems } from "@/lib/utils/cart"
-import { getCountryCodeFromPath } from "@/lib/utils/region"
 import { getPricePercentageDiff } from "@/lib/utils/price"
 import { useCartDrawer } from "@/lib/context/cart"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 import { Minus, Plus, Trash, XMark } from "@medusajs/icons"
 import { HttpTypes } from "@medusajs/types"
-import { Link, useLocation } from "@tanstack/react-router"
+import { Link } from "@tanstack/react-router"
 import { clsx } from "clsx"
 import { useState } from "react"
 
@@ -396,14 +396,13 @@ export const CartPromo = ({ cart }: CartPromoProps) => {
 
 
 export const CartEmpty = () => {
-  const location = useLocation()
-  const countryCode = getCountryCodeFromPath(location.pathname)
+  const prefix = useTenantPrefix()
 
   return (
     <div className="text-center py-16 flex flex-col items-center justify-center gap-4">
       <h2 className="text-lg font-bold text-zinc-900">Your cart is empty</h2>
       <p className="text-zinc-600 text-base font-medium">Start by adding some products</p>
-      <Link to={`/${countryCode}/store` as any}>
+      <Link to={`${prefix}/store` as any}>
         <Button variant="primary" size="fit">
           Continue shopping
         </Button>
@@ -420,9 +419,7 @@ export const CartDropdown = () => {
   const { data: cart } = useCart({
     fields: DEFAULT_CART_DROPDOWN_FIELDS,
   })
-  const location = useLocation()
-  const countryCode = getCountryCodeFromPath(location.pathname)
-  const baseHref = countryCode ? `/${countryCode}` : ""
+  const prefix = useTenantPrefix()
 
   const sortedItems = sortCartItems(cart?.items || [])
   const itemCount = sortedItems?.reduce((total, item) => total + item.quantity, 0) || 0
@@ -446,7 +443,7 @@ export const CartDropdown = () => {
             <span className="text-base font-medium text-zinc-600 mb-4">
               Your cart is empty
             </span>
-            <Link to={`${baseHref}/store` as any} onClick={closeCart}>
+            <Link to={`${prefix}/store` as any} onClick={closeCart}>
               <Button variant="secondary" size="fit">
                 Explore products
               </Button>
@@ -475,7 +472,7 @@ export const CartDropdown = () => {
                 <Price price={cart.item_subtotal} currencyCode={cart.currency_code} />
               </div>
 
-              <Link to={`${baseHref}/cart` as any} onClick={closeCart}>
+              <Link to={`${prefix}/cart` as any} onClick={closeCart}>
                 <Button className="w-full" variant="primary">
                   Go to cart
                 </Button>
@@ -488,5 +485,4 @@ export const CartDropdown = () => {
   )
 }
 
-// Default export for backwards compatibility
 export default CartLineItem

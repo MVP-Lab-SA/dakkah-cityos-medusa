@@ -4,7 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { sdk } from "@/lib/utils/sdk";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useCountryCode } from "@/lib/hooks/use-country-code";
+import { useTenantPrefix } from "@/lib/context/tenant-context";
 import { useToast } from "@/components/ui/toast";
 
 interface FieldErrors {
@@ -18,7 +18,6 @@ interface FieldErrors {
   postal_code?: string;
 }
 
-// Validation utilities
 const isValidEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
@@ -54,7 +53,7 @@ const MAX_NAME_LENGTH = 100;
 
 export function CompanyRegistrationForm() {
   const navigate = useNavigate();
-  const countryCode = useCountryCode();
+  const prefix = useTenantPrefix();
   const { addToast } = useToast();
   
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -74,7 +73,7 @@ export function CompanyRegistrationForm() {
       city: "",
       province: "",
       postal_code: "",
-      country_code: countryCode,
+      country_code: "us",
     },
   });
 
@@ -175,7 +174,7 @@ export function CompanyRegistrationForm() {
     },
     onSuccess: () => {
       addToast("success", "Company registration submitted successfully!");
-      navigate({ to: "/$countryCode", params: { countryCode } });
+      navigate({ to: `${prefix}` as any });
     },
     onError: (err: Error) => {
       addToast("error", err.message || "Failed to register company. Please try again.");
@@ -229,7 +228,6 @@ export function CompanyRegistrationForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
-      {/* Company Info */}
       <div className="border rounded-lg p-6 space-y-4">
         <h2 className="text-xl font-semibold mb-4">Company Information</h2>
         
@@ -308,7 +306,6 @@ export function CompanyRegistrationForm() {
         </div>
       </div>
 
-      {/* Billing Address */}
       <div className="border rounded-lg p-6 space-y-4">
         <h2 className="text-xl font-semibold mb-4">Billing Address</h2>
         
@@ -372,7 +369,6 @@ export function CompanyRegistrationForm() {
         </div>
       </div>
 
-      {/* Submit */}
       <div className="flex gap-4">
         <Button
           type="submit"
@@ -384,7 +380,7 @@ export function CompanyRegistrationForm() {
         <Button
           type="button"
           variant="secondary"
-          onClick={() => navigate({ to: "/$countryCode", params: { countryCode } })}
+          onClick={() => navigate({ to: `${prefix}` as any })}
         >
           Cancel
         </Button>

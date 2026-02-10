@@ -1,6 +1,6 @@
 import { type ReactNode } from "react"
 import { Link, useLocation } from "@tanstack/react-router"
-import { getCountryCodeFromPath } from "@/lib/utils/region"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 import { useAuth } from "@/lib/context/auth-context"
 import { AuthGuard } from "@/components/auth"
 import { clsx } from "clsx"
@@ -43,8 +43,8 @@ export function AccountLayout({ children, title, description }: AccountLayoutPro
 
 function ClientAccountLayout({ children, title, description }: AccountLayoutProps) {
   const location = useLocation()
-  const countryCode = getCountryCodeFromPath(location.pathname)
-  const baseHref = countryCode ? `/${countryCode}/account` : "/account"
+  const prefix = useTenantPrefix()
+  const baseHref = `${prefix}/account`
   const { customer, isB2B } = useAuth()
 
   const isActive = (path: string) => {
@@ -115,14 +115,14 @@ function ClientAccountLayout({ children, title, description }: AccountLayoutProp
                   <h3 className="text-sm font-semibold text-zinc-900 mb-3">Business</h3>
                   <div className="space-y-2">
                     <Link
-                      to={`/${countryCode}/business` as any}
+                      to={`${prefix}/business` as any}
                       className="flex items-center gap-2 text-sm text-zinc-600 hover:text-zinc-900"
                     >
                       <ChevronRight className="h-4 w-4" />
                       Company Dashboard
                     </Link>
                     <Link
-                      to={`/${countryCode}/business/quotes` as any}
+                      to={`${prefix}/business/quotes` as any}
                       className="flex items-center gap-2 text-sm text-zinc-600 hover:text-zinc-900"
                     >
                       <ChevronRight className="h-4 w-4" />

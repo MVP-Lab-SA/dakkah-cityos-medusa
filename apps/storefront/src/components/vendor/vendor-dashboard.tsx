@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { sdk } from "@/lib/utils/sdk";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, CurrencyDollar, ClockSolid } from "@medusajs/icons";
-import { useCountryCode } from "@/lib/hooks/use-country-code";
+import { useTenantPrefix } from "@/lib/context/tenant-context";
 
 interface VendorStats {
   total_earnings: number;
@@ -22,7 +22,7 @@ interface Payout {
 }
 
 export function VendorDashboard() {
-  const countryCode = useCountryCode();
+  const prefix = useTenantPrefix();
 
   // Fetch vendor dashboard data
   const { data: dashboardData, isLoading } = useQuery({
@@ -96,8 +96,7 @@ export function VendorDashboard() {
           </div>
           <p className="text-2xl font-bold">{stats?.products_count || 0}</p>
           <Link
-            to="/$countryCode/vendor/products"
-            params={{ countryCode }}
+            to={`${prefix}/vendor/products` as any}
             className="text-xs text-primary hover:underline"
           >
             Manage products
@@ -120,7 +119,7 @@ export function VendorDashboard() {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Link to="/$countryCode/vendor/products" params={{ countryCode }}>
+        <Link to={`${prefix}/vendor/products` as any}>
           <div className="border rounded-lg p-6 hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer">
             <ShoppingBag className="w-8 h-8 text-primary mb-3" />
             <h3 className="font-semibold mb-1">Manage Products</h3>
@@ -130,7 +129,7 @@ export function VendorDashboard() {
           </div>
         </Link>
 
-        <Link to="/$countryCode/vendor/orders" params={{ countryCode }}>
+        <Link to={`${prefix}/vendor/orders` as any}>
           <div className="border rounded-lg p-6 hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer">
             <ShoppingBag className="w-8 h-8 text-primary mb-3" />
             <h3 className="font-semibold mb-1">View Orders</h3>
@@ -140,7 +139,7 @@ export function VendorDashboard() {
           </div>
         </Link>
 
-        <Link to="/$countryCode/vendor/payouts" params={{ countryCode }}>
+        <Link to={`${prefix}/vendor/payouts` as any}>
           <div className="border rounded-lg p-6 hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer">
             <CurrencyDollar className="w-8 h-8 text-primary mb-3" />
             <h3 className="font-semibold mb-1">Payouts</h3>

@@ -11,12 +11,12 @@ interface Category {
 }
 
 interface CategoriesSectionProps {
-  countryCode: string
+  tenantPrefix: string
   categories: Category[]
   config: Record<string, any>
 }
 
-export function CategoriesSection({ countryCode, categories, config }: CategoriesSectionProps) {
+export function CategoriesSection({ tenantPrefix, categories, config }: CategoriesSectionProps) {
   if (categories.length === 0) return null
 
   return (
@@ -35,7 +35,7 @@ export function CategoriesSection({ countryCode, categories, config }: Categorie
           {categories.map(category => (
             <Link
               key={category.id}
-              to={`/${countryCode}/categories/${category.handle}` as any}
+              to={`${tenantPrefix}/categories/${category.handle}` as any}
               className="group"
             >
               <div className="aspect-square bg-white rounded-lg shadow-sm overflow-hidden mb-3 group-hover:shadow-md transition-shadow">

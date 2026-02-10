@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router"
 import { Button } from "@/components/ui/button"
 import { formatPrice } from "@/lib/utils/price"
 import { Clock, Check, XMark } from "@medusajs/icons"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 
 interface PendingApproval {
   id: string
@@ -16,17 +17,16 @@ interface PendingApproval {
 
 interface ApprovalQueueProps {
   items: PendingApproval[]
-  countryCode: string
   onApprove?: (id: string) => Promise<void>
   onReject?: (id: string) => Promise<void>
 }
 
 export function ApprovalQueue({
   items,
-  countryCode,
   onApprove,
   onReject,
 }: ApprovalQueueProps) {
+  const prefix = useTenantPrefix()
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString("en-US", {
       month: "short",
@@ -111,7 +111,7 @@ export function ApprovalQueue({
             <div className="flex items-center justify-between pt-4 border-t border-zinc-100">
               {item.type === "purchase_order" && (
                 <Link
-                  to={`/${countryCode}/account/purchase-orders/${item.id}` as any}
+                  to={`${prefix}/account/purchase-orders/${item.id}` as any}
                   className="text-sm text-zinc-600 hover:text-zinc-900"
                 >
                   View Details

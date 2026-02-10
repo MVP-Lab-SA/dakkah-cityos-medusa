@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router"
 import { useFeatures } from "../../lib/context/feature-context"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 import { 
   ShoppingBag,
   User,
@@ -13,7 +14,6 @@ import {
 } from "@medusajs/icons"
 
 interface AccountDashboardProps {
-  countryCode: string
   customer: {
     first_name?: string
     last_name?: string
@@ -34,44 +34,42 @@ interface DashboardLink {
   feature?: string
 }
 
-export function AccountDashboard({ countryCode, customer, stats }: AccountDashboardProps) {
+export function AccountDashboard({ customer, stats }: AccountDashboardProps) {
   const { isEnabled } = useFeatures()
+  const prefix = useTenantPrefix()
 
-  // Build dashboard links based on enabled features
   const dashboardLinks: DashboardLink[] = [
-    // Always available
     {
       label: "Orders",
       description: "View and track your orders",
-      href: `/${countryCode}/account/orders`,
+      href: `${prefix}/account/orders`,
       icon: ShoppingBag
     },
     {
       label: "Profile",
       description: "Manage your account details",
-      href: `/${countryCode}/account/profile`,
+      href: `${prefix}/account/profile`,
       icon: User
     },
     {
       label: "Addresses",
       description: "Manage shipping addresses",
-      href: `/${countryCode}/account/addresses`,
+      href: `${prefix}/account/addresses`,
       icon: MapPin
     },
     {
       label: "Payment Methods",
       description: "Manage saved payment methods",
-      href: `/${countryCode}/account/payment-methods`,
+      href: `${prefix}/account/payment-methods`,
       icon: CreditCard
     }
   ]
 
-  // Conditional links based on features
   if (isEnabled('subscriptions')) {
     dashboardLinks.push({
       label: "Subscriptions",
       description: "Manage your subscriptions",
-      href: `/${countryCode}/account/subscriptions`,
+      href: `${prefix}/account/subscriptions`,
       icon: ArrowRightMini,
       feature: 'subscriptions'
     })
@@ -81,7 +79,7 @@ export function AccountDashboard({ countryCode, customer, stats }: AccountDashbo
     dashboardLinks.push({
       label: "My Reviews",
       description: "View and manage your reviews",
-      href: `/${countryCode}/account/reviews`,
+      href: `${prefix}/account/reviews`,
       icon: Star,
       feature: 'reviews'
     })
@@ -91,7 +89,7 @@ export function AccountDashboard({ countryCode, customer, stats }: AccountDashbo
     dashboardLinks.push({
       label: "Bookings",
       description: "View your appointments",
-      href: `/${countryCode}/account/bookings`,
+      href: `${prefix}/account/bookings`,
       icon: Calendar,
       feature: 'bookings'
     })
@@ -101,7 +99,7 @@ export function AccountDashboard({ countryCode, customer, stats }: AccountDashbo
     dashboardLinks.push({
       label: "Business Portal",
       description: "Access B2B features",
-      href: `/${countryCode}/business`,
+      href: `${prefix}/business`,
       icon: Buildings,
       feature: 'b2b'
     })
@@ -111,7 +109,7 @@ export function AccountDashboard({ countryCode, customer, stats }: AccountDashbo
     dashboardLinks.push({
       label: "Quotes",
       description: "View your quote requests",
-      href: `/${countryCode}/account/quotes`,
+      href: `${prefix}/account/quotes`,
       icon: DocumentText,
       feature: 'quotes'
     })
@@ -121,7 +119,7 @@ export function AccountDashboard({ countryCode, customer, stats }: AccountDashbo
     dashboardLinks.push({
       label: "Invoices",
       description: "View your invoices",
-      href: `/${countryCode}/account/invoices`,
+      href: `${prefix}/account/invoices`,
       icon: DocumentText,
       feature: 'invoices'
     })
@@ -197,7 +195,7 @@ export function AccountDashboard({ countryCode, customer, stats }: AccountDashbo
         <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
         <div className="flex flex-wrap gap-3">
           <Link
-            to={`/${countryCode}/store` as any}
+            to={`${prefix}/store` as any}
             className="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-800"
           >
             <ShoppingBag className="h-4 w-4" />
@@ -206,7 +204,7 @@ export function AccountDashboard({ countryCode, customer, stats }: AccountDashbo
           
           {isEnabled('subscriptions') && (
             <Link
-              to={`/${countryCode}/subscriptions` as any}
+              to={`${prefix}/subscriptions` as any}
               className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
             >
               Start a Subscription
@@ -215,7 +213,7 @@ export function AccountDashboard({ countryCode, customer, stats }: AccountDashbo
           
           {isEnabled('bookings') && (
             <Link
-              to={`/${countryCode}/bookings` as any}
+              to={`${prefix}/bookings` as any}
               className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
             >
               <Calendar className="h-4 w-4" />

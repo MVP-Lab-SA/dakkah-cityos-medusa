@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router"
 import { Star, ChevronRight } from "@medusajs/icons"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 
 interface VendorMiniCardProps {
   vendorId: string
@@ -7,7 +8,6 @@ interface VendorMiniCardProps {
   vendorHandle: string
   vendorLogo?: string
   rating?: number
-  countryCode: string
 }
 
 export function VendorMiniCard({
@@ -16,11 +16,12 @@ export function VendorMiniCard({
   vendorHandle,
   vendorLogo,
   rating,
-  countryCode,
 }: VendorMiniCardProps) {
+  const prefix = useTenantPrefix()
+
   return (
     <Link
-      to={`/${countryCode}/vendors/${vendorHandle}` as any}
+      to={`${prefix}/vendors/${vendorHandle}` as any}
       className="inline-flex items-center gap-3 px-3 py-2 bg-zinc-50 rounded-lg hover:bg-zinc-100 transition-colors"
     >
       <div className="w-8 h-8 rounded-full bg-zinc-200 overflow-hidden flex-shrink-0">

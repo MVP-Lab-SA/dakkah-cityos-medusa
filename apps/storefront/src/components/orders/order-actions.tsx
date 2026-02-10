@@ -1,11 +1,11 @@
 import { Link } from "@tanstack/react-router"
 import { Button } from "@/components/ui/button"
 import { ArrowPath, DocumentText, ArrowUturnLeft, ChatBubbleLeftRight } from "@medusajs/icons"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 
 interface OrderActionsProps {
   orderId: string
   status: string
-  countryCode: string
   onReorder?: () => void
   onDownloadInvoice?: () => void
 }
@@ -13,10 +13,10 @@ interface OrderActionsProps {
 export function OrderActions({
   orderId,
   status,
-  countryCode,
   onReorder,
   onDownloadInvoice,
 }: OrderActionsProps) {
+  const prefix = useTenantPrefix()
   const canReturn = ["delivered", "completed"].includes(status.toLowerCase())
   const canTrack = ["shipped", "processing"].includes(status.toLowerCase())
 
@@ -47,7 +47,7 @@ export function OrderActions({
 
         {/* Track Order */}
         {canTrack && (
-          <Link to={`/${countryCode}/account/orders/${orderId}/track` as any}>
+          <Link to={`${prefix}/account/orders/${orderId}/track` as any}>
             <Button variant="outline" className="w-full justify-start">
               <DocumentText className="w-4 h-4 mr-2" />
               Track Shipment
@@ -57,7 +57,7 @@ export function OrderActions({
 
         {/* Return Request */}
         {canReturn && (
-          <Link to={`/${countryCode}/account/orders/${orderId}/return` as any}>
+          <Link to={`${prefix}/account/orders/${orderId}/return` as any}>
             <Button variant="outline" className="w-full justify-start">
               <ArrowUturnLeft className="w-4 h-4 mr-2" />
               Request Return

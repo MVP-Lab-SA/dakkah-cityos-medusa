@@ -5,7 +5,7 @@ import { sdk } from "@/lib/utils/sdk";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/hooks/use-cart";
 import { useToast } from "@/components/ui/toast";
-import { useCountryCode } from "@/lib/hooks/use-country-code";
+import { useTenantPrefix } from "@/lib/context/tenant-context";
 
 const MAX_NOTES_LENGTH = 2000;
 
@@ -21,7 +21,7 @@ export function QuoteRequestForm() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const { addToast } = useToast();
-  const countryCode = useCountryCode();
+  const prefix = useTenantPrefix();
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -61,8 +61,7 @@ export function QuoteRequestForm() {
     onSuccess: (data) => {
       addToast("success", "Quote request submitted successfully!");
       navigate({
-        to: "/$countryCode/quotes/$id",
-        params: { countryCode, id: data.quote.id },
+        to: `${prefix}/quotes/${data.quote.id}` as any,
       });
     },
     onError: (error: Error) => {
@@ -172,7 +171,7 @@ export function QuoteRequestForm() {
         <Button
           type="button"
           variant="secondary"
-          onClick={() => navigate({ to: "/$countryCode", params: { countryCode } })}
+          onClick={() => navigate({ to: `${prefix}` as any })}
         >
           Cancel
         </Button>

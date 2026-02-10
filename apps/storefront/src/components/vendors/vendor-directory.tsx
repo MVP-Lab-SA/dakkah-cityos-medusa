@@ -17,10 +17,9 @@ interface Vendor {
 
 interface VendorDirectoryProps {
   vendors: Vendor[]
-  countryCode: string
 }
 
-export function VendorDirectory({ vendors, countryCode }: VendorDirectoryProps) {
+export function VendorDirectory({ vendors }: VendorDirectoryProps) {
   const [filteredVendors, setFilteredVendors] = useState(vendors)
   const [page, setPage] = useState(1)
   const itemsPerPage = 12

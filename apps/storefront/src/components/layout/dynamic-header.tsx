@@ -1,72 +1,66 @@
 import { Link } from "@tanstack/react-router"
 import { useFeatures } from "../../lib/context/feature-context"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 import { ShoppingBag, User, XMark, ChevronDownMini } from "@medusajs/icons"
 import { useState } from "react"
 
 interface DynamicHeaderProps {
-  countryCode: string
   categories?: Array<{ id: string; name: string; handle: string }>
   cartItemCount?: number
   isLoggedIn?: boolean
 }
 
 export function DynamicHeader({ 
-  countryCode, 
   categories = [], 
   cartItemCount = 0,
   isLoggedIn = false 
 }: DynamicHeaderProps) {
   const { getNavigation, isEnabled } = useFeatures()
+  const prefix = useTenantPrefix()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   
   const navigation = getNavigation()
   const { header } = navigation
 
-  // Build navigation items based on feature flags
   const navItems: Array<{ label: string; href: string; children?: Array<{ label: string; href: string }> }> = []
 
-  // Categories dropdown
   if (header.showCategories && categories.length > 0) {
     navItems.push({
       label: "Shop",
-      href: `/${countryCode}/categories`,
+      href: `${prefix}/categories`,
       children: categories.map(cat => ({
         label: cat.name,
-        href: `/${countryCode}/categories/${cat.handle}`
+        href: `${prefix}/categories/${cat.handle}`
       }))
     })
   }
 
-  // Vendors (if marketplace enabled)
   if (header.showVendors && isEnabled('marketplace')) {
     navItems.push({
       label: "Vendors",
-      href: `/${countryCode}/vendors`
+      href: `${prefix}/vendors`
     })
   }
 
-  // Services (if bookings enabled)
   if (header.showServices && isEnabled('bookings')) {
     navItems.push({
       label: "Services",
-      href: `/${countryCode}/services`
+      href: `${prefix}/services`
     })
   }
 
-  // B2B Portal
   if (header.showB2BPortal && isEnabled('b2b')) {
     navItems.push({
       label: "Business",
-      href: `/${countryCode}/business`
+      href: `${prefix}/business`
     })
   }
 
-  // Custom links
   header.customLinks?.forEach(link => {
     navItems.push({
       label: link.label,
-      href: link.href.startsWith('/') ? `/${countryCode}${link.href}` : link.href
+      href: link.href.startsWith('/') ? `${prefix}${link.href}` : link.href
     })
   })
 
@@ -74,12 +68,10 @@ export function DynamicHeader({
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link to={`/${countryCode}` as any} className="flex-shrink-0">
+          <Link to={`${prefix}` as any} className="flex-shrink-0">
             <span className="text-xl font-bold">Store</span>
           </Link>
 
-          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             {navItems.map((item, index) => (
               <div 
@@ -96,7 +88,6 @@ export function DynamicHeader({
                   {item.children && <ChevronDownMini className="ml-1 h-4 w-4" />}
                 </Link>
                 
-                {/* Dropdown */}
                 {item.children && activeDropdown === item.label && (
                   <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                     {item.children.map((child, childIndex) => (
@@ -114,19 +105,16 @@ export function DynamicHeader({
             ))}
           </nav>
 
-          {/* Right side icons */}
           <div className="flex items-center space-x-4">
-            {/* Account */}
             <Link
-              to={(isLoggedIn ? `/${countryCode}/account` : `/${countryCode}/login`) as any}
+              to={(isLoggedIn ? `${prefix}/account` : `${prefix}/login`) as any}
               className="text-gray-700 hover:text-gray-900"
             >
               <User className="h-6 w-6" />
             </Link>
 
-            {/* Cart */}
             <Link
-              to={`/${countryCode}/cart` as any}
+              to={`${prefix}/cart` as any}
               className="text-gray-700 hover:text-gray-900 relative"
             >
               <ShoppingBag className="h-6 w-6" />
@@ -137,7 +125,6 @@ export function DynamicHeader({
               )}
             </Link>
 
-            {/* Mobile menu button */}
             <button
               className="md:hidden text-gray-700"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -148,7 +135,6 @@ export function DynamicHeader({
         </div>
       </div>
 
-      {/* Mobile Navigation */}
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-gray-200">
           <div className="px-4 py-2 space-y-1">

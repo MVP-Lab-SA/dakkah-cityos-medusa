@@ -48,6 +48,11 @@ export function useTenant() {
   return useContext(TenantContext)
 }
 
+export function useTenantPrefix(): string {
+  const { tenantSlug, locale } = useContext(TenantContext)
+  return `/${tenantSlug}/${locale}`
+}
+
 export function useLocale() {
   const { locale, direction } = useContext(TenantContext)
   return { locale, direction, isRTL: direction === "rtl" }

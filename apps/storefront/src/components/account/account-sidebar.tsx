@@ -12,6 +12,7 @@ import {
 } from "@medusajs/icons"
 import { useAuth } from "@/lib/context/auth-context"
 import { cn } from "@/lib/utils/cn"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 
 interface NavItem {
   label: string
@@ -20,33 +21,30 @@ interface NavItem {
   badge?: number
 }
 
-interface AccountSidebarProps {
-  countryCode: string
-}
-
-export function AccountSidebar({ countryCode }: AccountSidebarProps) {
+export function AccountSidebar() {
   const location = useLocation()
   const { customer, isB2B, logout } = useAuth()
+  const prefix = useTenantPrefix()
 
   const mainNavItems: NavItem[] = [
-    { label: "Dashboard", href: `/${countryCode}/account`, icon: User },
-    { label: "Orders", href: `/${countryCode}/account/orders`, icon: ShoppingBag },
-    { label: "Subscriptions", href: `/${countryCode}/account/subscriptions`, icon: CreditCard },
-    { label: "Bookings", href: `/${countryCode}/account/bookings`, icon: Calendar },
-    { label: "Addresses", href: `/${countryCode}/account/addresses`, icon: MapPin },
+    { label: "Dashboard", href: `${prefix}/account`, icon: User },
+    { label: "Orders", href: `${prefix}/account/orders`, icon: ShoppingBag },
+    { label: "Subscriptions", href: `${prefix}/account/subscriptions`, icon: CreditCard },
+    { label: "Bookings", href: `${prefix}/account/bookings`, icon: Calendar },
+    { label: "Addresses", href: `${prefix}/account/addresses`, icon: MapPin },
   ]
 
   const b2bNavItems: NavItem[] = isB2B ? [
-    { label: "Purchase Orders", href: `/${countryCode}/account/purchase-orders`, icon: DocumentText },
-    { label: "Company", href: `/${countryCode}/business/team`, icon: BuildingStorefront },
+    { label: "Purchase Orders", href: `${prefix}/account/purchase-orders`, icon: DocumentText },
+    { label: "Company", href: `${prefix}/business/team`, icon: BuildingStorefront },
   ] : []
 
   const settingsNavItems: NavItem[] = [
-    { label: "Settings", href: `/${countryCode}/account/settings`, icon: CogSixTooth },
+    { label: "Settings", href: `${prefix}/account/settings`, icon: CogSixTooth },
   ]
 
   const isActive = (href: string) => {
-    if (href === `/${countryCode}/account`) {
+    if (href === `${prefix}/account`) {
       return location.pathname === href
     }
     return location.pathname.startsWith(href)

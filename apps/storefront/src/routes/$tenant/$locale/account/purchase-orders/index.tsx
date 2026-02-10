@@ -37,7 +37,6 @@ function PurchaseOrdersPage() {
       ) : (
         <POList
           purchaseOrders={purchaseOrders}
-          countryCode={locale}
         />
       )}
     </AccountLayout>

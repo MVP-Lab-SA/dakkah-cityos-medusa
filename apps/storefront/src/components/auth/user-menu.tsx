@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useAuth } from "@/lib/context/auth-context"
-import { Link, useLocation } from "@tanstack/react-router"
-import { getCountryCodeFromPath } from "@/lib/utils/region"
+import { Link } from "@tanstack/react-router"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,9 +26,7 @@ export function UserMenu() {
   const { customer, isAuthenticated, isB2B, logout, isLoading } = useAuth()
   const [authModalOpen, setAuthModalOpen] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
-  const location = useLocation()
-  const countryCode = getCountryCodeFromPath(location.pathname)
-  const baseHref = countryCode ? `/${countryCode}` : ""
+  const prefix = useTenantPrefix()
 
   const handleLogout = async () => {
     setIsLoggingOut(true)
@@ -93,28 +91,28 @@ export function UserMenu() {
         <DropdownMenuSeparator />
 
         <DropdownMenuItem asChild>
-          <Link to={`${baseHref}/account` as any} className="cursor-pointer">
+          <Link to={`${prefix}/account` as any} className="cursor-pointer">
             <User className="mr-2 h-4 w-4" />
             My Account
           </Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
-          <Link to={`${baseHref}/account/orders` as any} className="cursor-pointer">
+          <Link to={`${prefix}/account/orders` as any} className="cursor-pointer">
             <ShoppingBag className="mr-2 h-4 w-4" />
             Orders
           </Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
-          <Link to={`${baseHref}/account/subscriptions` as any} className="cursor-pointer">
+          <Link to={`${prefix}/account/subscriptions` as any} className="cursor-pointer">
             <CreditCard className="mr-2 h-4 w-4" />
             Subscriptions
           </Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
-          <Link to={`${baseHref}/account/bookings` as any} className="cursor-pointer">
+          <Link to={`${prefix}/account/bookings` as any} className="cursor-pointer">
             <Calendar className="mr-2 h-4 w-4" />
             Bookings
           </Link>
@@ -125,7 +123,7 @@ export function UserMenu() {
             <DropdownMenuSeparator />
             <DropdownMenuLabel className="text-xs text-zinc-500">Business</DropdownMenuLabel>
             <DropdownMenuItem asChild>
-              <Link to={`${baseHref}/business` as any} className="cursor-pointer">
+              <Link to={`${prefix}/business` as any} className="cursor-pointer">
                 <BuildingStorefront className="mr-2 h-4 w-4" />
                 Company Dashboard
               </Link>
@@ -136,7 +134,7 @@ export function UserMenu() {
         <DropdownMenuSeparator />
 
         <DropdownMenuItem asChild>
-          <Link to={`${baseHref}/account/settings` as any} className="cursor-pointer">
+          <Link to={`${prefix}/account/settings` as any} className="cursor-pointer">
             <CogSixTooth className="mr-2 h-4 w-4" />
             Settings
           </Link>

@@ -152,7 +152,6 @@ function ApprovalsPage() {
       {!isLoading && !error && (
         <ApprovalQueue
           items={data || []}
-          countryCode={locale}
           onApprove={handleApprove}
           onReject={handleReject}
         />

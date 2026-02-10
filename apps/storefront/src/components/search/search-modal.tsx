@@ -4,16 +4,17 @@ import { XMark } from "@medusajs/icons"
 import { SearchInput } from "./search-input"
 import { SearchSuggestions } from "./search-suggestions"
 import { useSearchSuggestions } from "@/lib/hooks/use-search"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 
 interface SearchModalProps {
   open: boolean
   onClose: () => void
-  countryCode: string
 }
 
-export function SearchModal({ open, onClose, countryCode }: SearchModalProps) {
+export function SearchModal({ open, onClose }: SearchModalProps) {
   const [query, setQuery] = useState("")
   const navigate = useNavigate()
+  const tenantPrefix = useTenantPrefix()
   const { data: suggestions = [] } = useSearchSuggestions(query)
 
   useEffect(() => {
@@ -36,7 +37,7 @@ export function SearchModal({ open, onClose, countryCode }: SearchModalProps) {
 
   const handleSubmit = () => {
     if (query.length >= 2) {
-      window.location.href = `/${countryCode}/search?q=${encodeURIComponent(query)}`
+      window.location.href = `${tenantPrefix}/search?q=${encodeURIComponent(query)}`
       onClose()
       setQuery("")
     }
@@ -87,7 +88,7 @@ export function SearchModal({ open, onClose, countryCode }: SearchModalProps) {
             {suggestions.length > 0 && (
               <SearchSuggestions
                 suggestions={suggestions}
-                countryCode={countryCode}
+                tenantPrefix={tenantPrefix}
                 onSelect={handleSelect}
               />
             )}

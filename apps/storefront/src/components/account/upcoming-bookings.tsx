@@ -1,5 +1,5 @@
-import { Link, useLocation } from "@tanstack/react-router"
-import { getCountryCodeFromPath } from "@/lib/utils/region"
+import { Link } from "@tanstack/react-router"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 import { ChevronRight, Calendar, Clock } from "@medusajs/icons"
 import type { Booking } from "@/lib/types/bookings"
 
@@ -16,9 +16,7 @@ const statusColors: Record<string, string> = {
 }
 
 export function UpcomingBookings({ bookings, isLoading }: UpcomingBookingsProps) {
-  const location = useLocation()
-  const countryCode = getCountryCodeFromPath(location.pathname)
-  const baseHref = countryCode ? `/${countryCode}` : ""
+  const prefix = useTenantPrefix()
 
   if (isLoading) {
     return (
@@ -52,7 +50,7 @@ export function UpcomingBookings({ bookings, isLoading }: UpcomingBookingsProps)
           <Calendar className="h-12 w-12 text-zinc-300 mx-auto mb-4" />
           <p className="text-zinc-500">No upcoming bookings</p>
           <Link
-            to={`${baseHref}/bookings` as any}
+            to={`${prefix}/bookings` as any}
             className="mt-4 inline-flex items-center text-sm font-medium text-zinc-900 hover:underline"
           >
             Book a service
@@ -68,7 +66,7 @@ export function UpcomingBookings({ bookings, isLoading }: UpcomingBookingsProps)
       <div className="p-4 border-b border-zinc-200 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-zinc-900">Upcoming Bookings</h2>
         <Link
-          to={`${baseHref}/account/bookings` as any}
+          to={`${prefix}/account/bookings` as any}
           className="text-sm font-medium text-zinc-600 hover:text-zinc-900"
         >
           View all
@@ -80,7 +78,7 @@ export function UpcomingBookings({ bookings, isLoading }: UpcomingBookingsProps)
           return (
             <Link
               key={booking.id}
-              to={`${baseHref}/account/bookings/${booking.id}` as any}
+              to={`${prefix}/account/bookings/${booking.id}` as any}
               className="flex items-center gap-4 p-4 hover:bg-zinc-50 transition-colors"
             >
               <div className="flex flex-col items-center justify-center w-14 h-14 bg-zinc-100 rounded-lg">

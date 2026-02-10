@@ -1,24 +1,25 @@
 import { Link } from "@tanstack/react-router"
 import { Clock, MapPin } from "@medusajs/icons"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 
 interface Service {
   id: string
   name: string
   handle: string
   description?: string
-  duration?: number // in minutes
+  duration?: number
   price?: number
   currency_code?: string
   image?: string
 }
 
 interface ServicesSectionProps {
-  countryCode: string
   services: Service[]
   config: Record<string, any>
 }
 
-export function ServicesSection({ countryCode, services, config }: ServicesSectionProps) {
+export function ServicesSection({ services, config }: ServicesSectionProps) {
+  const prefix = useTenantPrefix()
   if (services.length === 0) return null
 
   const formatDuration = (minutes: number) => {
@@ -48,7 +49,7 @@ export function ServicesSection({ countryCode, services, config }: ServicesSecti
             </p>
           </div>
           <Link
-            to={`/${countryCode}/bookings` as any}
+            to={`${prefix}/bookings` as any}
             className="text-sm font-medium text-gray-600 hover:text-gray-900"
           >
             View All Services
@@ -59,7 +60,7 @@ export function ServicesSection({ countryCode, services, config }: ServicesSecti
           {services.map(service => (
             <Link
               key={service.id}
-              to={`/${countryCode}/bookings/${service.handle}` as any}
+              to={`${prefix}/bookings/${service.handle}` as any}
               className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
             >
               {service.image ? (

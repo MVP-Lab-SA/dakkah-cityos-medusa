@@ -9,7 +9,7 @@ import {
   Clock,
   CheckCircleSolid
 } from "@medusajs/icons";
-import { useCountryCode } from "@/lib/hooks/use-country-code";
+import { useTenantPrefix } from "@/lib/context/tenant-context";
 
 interface Company {
   id: string;
@@ -42,9 +42,8 @@ interface Quote {
 }
 
 export function B2BDashboard() {
-  const countryCode = useCountryCode();
+  const prefix = useTenantPrefix();
   
-  // Fetch company data
   const { data: companyData, isLoading: loadingCompany } = useQuery({
     queryKey: ["my-company"],
     queryFn: async () => {
@@ -55,7 +54,6 @@ export function B2BDashboard() {
     },
   });
 
-  // Fetch quotes
   const { data: quotesData, isLoading: loadingQuotes } = useQuery({
     queryKey: ["my-quotes"],
     queryFn: async () => {
@@ -69,7 +67,6 @@ export function B2BDashboard() {
   const company = companyData?.companies?.[0];
   const quotes = quotesData?.quotes || [];
 
-  // Calculate stats
   const creditAvailable = company?.credit_limit 
     ? company.credit_limit - (company.credit_used || 0) 
     : 0;
@@ -95,7 +92,7 @@ export function B2BDashboard() {
         <p className="text-muted-foreground mb-6">
           Register your company to access B2B features like quotes, volume pricing, and credit terms.
         </p>
-        <Link to="/$countryCode/b2b/register" params={{ countryCode }}>
+        <Link to={`${prefix}/b2b/register` as any}>
           <Button>Register Your Company</Button>
         </Link>
       </div>
@@ -104,7 +101,6 @@ export function B2BDashboard() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">{company.name}</h1>
@@ -132,7 +128,6 @@ export function B2BDashboard() {
         </div>
       </div>
 
-      {/* Pending Approval Notice */}
       {company.status === "pending" && (
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-start gap-3">
           <Clock className="w-5 h-5 text-yellow-600 mt-0.5" />
@@ -146,9 +141,7 @@ export function B2BDashboard() {
         </div>
       )}
 
-      {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Credit Available */}
         <div className="bg-white border rounded-lg p-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-muted-foreground">Credit Available</span>
@@ -172,7 +165,6 @@ export function B2BDashboard() {
           )}
         </div>
 
-        {/* Pending Quotes */}
         <div className="bg-white border rounded-lg p-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-muted-foreground">Pending Quotes</span>
@@ -184,7 +176,6 @@ export function B2BDashboard() {
           </p>
         </div>
 
-        {/* Approved Quotes */}
         <div className="bg-white border rounded-lg p-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-muted-foreground">Approved Quotes</span>
@@ -196,7 +187,6 @@ export function B2BDashboard() {
           </p>
         </div>
 
-        {/* Payment Terms */}
         <div className="bg-white border rounded-lg p-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-muted-foreground">Payment Terms</span>
@@ -209,9 +199,8 @@ export function B2BDashboard() {
         </div>
       </div>
 
-      {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Link to="/$countryCode/quotes/request" params={{ countryCode }}>
+        <Link to={`${prefix}/quotes/request` as any}>
           <div className="border rounded-lg p-6 hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer">
             <DocumentText className="w-8 h-8 text-primary mb-3" />
             <h3 className="font-semibold mb-1">Request a Quote</h3>
@@ -221,7 +210,7 @@ export function B2BDashboard() {
           </div>
         </Link>
 
-        <Link to="/$countryCode/quotes" params={{ countryCode }}>
+        <Link to={`${prefix}/quotes` as any}>
           <div className="border rounded-lg p-6 hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer">
             <Clock className="w-8 h-8 text-primary mb-3" />
             <h3 className="font-semibold mb-1">View All Quotes</h3>
@@ -231,7 +220,7 @@ export function B2BDashboard() {
           </div>
         </Link>
 
-        <Link to="/$countryCode/store" params={{ countryCode }}>
+        <Link to={`${prefix}/store` as any}>
           <div className="border rounded-lg p-6 hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer">
             <CreditCard className="w-8 h-8 text-primary mb-3" />
             <h3 className="font-semibold mb-1">Browse Products</h3>
@@ -242,11 +231,10 @@ export function B2BDashboard() {
         </Link>
       </div>
 
-      {/* Recent Quotes */}
       <div className="border rounded-lg">
         <div className="p-6 border-b flex items-center justify-between">
           <h2 className="text-xl font-semibold">Recent Quotes</h2>
-          <Link to="/$countryCode/quotes" params={{ countryCode }}>
+          <Link to={`${prefix}/quotes` as any}>
             <Button variant="secondary">View All</Button>
           </Link>
         </div>
@@ -262,8 +250,7 @@ export function B2BDashboard() {
             {quotes.slice(0, 5).map((quote) => (
               <Link
                 key={quote.id}
-                to="/$countryCode/quotes/$id"
-                params={{ countryCode: "us", id: quote.id }}
+                to={`${prefix}/quotes/${quote.id}` as any}
                 className="block"
               >
                 <div className="p-4 hover:bg-muted/50 transition-colors">
@@ -288,7 +275,6 @@ export function B2BDashboard() {
         )}
       </div>
 
-      {/* Company Details */}
       <div className="border rounded-lg p-6">
         <h2 className="text-xl font-semibold mb-4">Company Details</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

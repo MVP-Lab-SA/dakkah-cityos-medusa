@@ -6,38 +6,37 @@ import {
   Gift,
   Plus
 } from "@medusajs/icons"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 
-interface QuickActionsProps {
-  countryCode: string
-}
+export function QuickActions() {
+  const prefix = useTenantPrefix()
 
-export function QuickActions({ countryCode }: QuickActionsProps) {
   const actions = [
     {
       label: "Browse Products",
       description: "Continue shopping",
-      href: `/${countryCode}/store`,
+      href: `${prefix}/store`,
       icon: ShoppingBag,
       color: "bg-blue-50 text-blue-600 hover:bg-blue-100",
     },
     {
       label: "Reorder",
       description: "Quick reorder past items",
-      href: `/${countryCode}/account/orders`,
+      href: `${prefix}/account/orders`,
       icon: ArrowPath,
       color: "bg-green-50 text-green-600 hover:bg-green-100",
     },
     {
       label: "Track Order",
       description: "Check order status",
-      href: `/${countryCode}/account/orders`,
+      href: `${prefix}/account/orders`,
       icon: Plus,
       color: "bg-purple-50 text-purple-600 hover:bg-purple-100",
     },
     {
       label: "Get Support",
       description: "Contact our team",
-      href: `/${countryCode}/contact`,
+      href: `${prefix}/contact`,
       icon: ChatBubbleLeftRight,
       color: "bg-orange-50 text-orange-600 hover:bg-orange-100",
     },

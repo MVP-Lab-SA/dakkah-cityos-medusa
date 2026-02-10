@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router"
+import { useTenantPrefix } from "@/lib/context/tenant-context"
 
 interface Vendor {
   id: string
@@ -10,12 +11,12 @@ interface Vendor {
 }
 
 interface VendorsSectionProps {
-  countryCode: string
   vendors: Vendor[]
   config: Record<string, any>
 }
 
-export function VendorsSection({ countryCode, vendors, config }: VendorsSectionProps) {
+export function VendorsSection({ vendors, config }: VendorsSectionProps) {
+  const prefix = useTenantPrefix()
   if (vendors.length === 0) return null
 
   return (
@@ -31,7 +32,7 @@ export function VendorsSection({ countryCode, vendors, config }: VendorsSectionP
             </p>
           </div>
           <Link
-            to={`/${countryCode}/vendors` as any}
+            to={`${prefix}/vendors` as any}
             className="text-sm font-medium text-gray-600 hover:text-gray-900"
           >
             View All Vendors
@@ -42,7 +43,7 @@ export function VendorsSection({ countryCode, vendors, config }: VendorsSectionP
           {vendors.map(vendor => (
             <Link
               key={vendor.id}
-              to={`/${countryCode}/vendors/${vendor.handle}` as any}
+              to={`${prefix}/vendors/${vendor.handle}` as any}
               className="group border border-gray-200 rounded-lg p-6 hover:border-gray-300 hover:shadow-sm transition-all"
             >
               <div className="flex items-center gap-4 mb-4">

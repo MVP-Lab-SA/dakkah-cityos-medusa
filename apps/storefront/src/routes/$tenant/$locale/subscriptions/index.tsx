@@ -43,7 +43,6 @@ function SubscriptionPlansPage() {
                 <PlanCard
                   key={plan.id}
                   plan={plan}
-                  countryCode={locale}
                 />
               ))}
             </div>
