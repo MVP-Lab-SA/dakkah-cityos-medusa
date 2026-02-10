@@ -3,44 +3,6 @@
   text-align: right;
 }
 
-[dir="rtl"] .flex-row {
-  flex-direction: row-reverse;
-}
-
-[dir="rtl"] .border-l {
-  border-left: 0;
-  border-right: 1px solid;
-}
-
-[dir="rtl"] .border-r {
-  border-right: 0;
-  border-left: 1px solid;
-}
-
-[dir="rtl"] .rounded-l {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-  border-top-right-radius: var(--radius);
-  border-bottom-right-radius: var(--radius);
-}
-
-[dir="rtl"] .rounded-r {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-  border-top-left-radius: var(--radius);
-  border-bottom-left-radius: var(--radius);
-}
-
-[dir="rtl"] .space-x-2 > :not(:first-child) {
-  margin-left: 0;
-  margin-right: 0.5rem;
-}
-
-[dir="rtl"] .space-x-4 > :not(:first-child) {
-  margin-left: 0;
-  margin-right: 1rem;
-}
-
 [dir="rtl"] .slide-in-from-right {
   --tw-enter-translate-x: -100%;
 }

@@ -17,16 +17,16 @@ export const TemplateRenderer: React.FC<TemplateRendererProps> = ({ page, tenant
       return <VerticalDetailTemplate page={page} tenant={tenant} locale={locale} />
     case "landing":
     case "home":
-      return <DynamicPage page={page} branding={branding} />
+      return <DynamicPage page={page} branding={branding} locale={locale} />
     case "static":
-      return <StaticTemplate page={page} branding={branding} />
+      return <StaticTemplate page={page} branding={branding} locale={locale} />
     case "category":
       return <CategoryTemplate page={page} tenant={tenant} locale={locale} />
     case "node-browser":
       return <NodeBrowserTemplate page={page} tenant={tenant} locale={locale} />
     case "custom":
     default:
-      return <DynamicPage page={page} branding={branding} />
+      return <DynamicPage page={page} branding={branding} locale={locale} />
   }
 }
 
@@ -62,7 +62,7 @@ function VerticalListTemplate({ page, tenant, locale }: { page: CMSPage; tenant:
   return (
     <div className="min-h-screen bg-ds-muted">
       {page.layout && page.layout.length > 0 ? (
-        <DynamicPage page={{ ...page, layout: page.layout.filter((b: any) => b.blockType === "hero") }} />
+        <DynamicPage page={{ ...page, layout: page.layout.filter((b: any) => b.blockType === "hero") }} locale={locale} />
       ) : (
         <section className="bg-ds-primary text-ds-primary-foreground py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -112,7 +112,7 @@ function VerticalListTemplate({ page, tenant, locale }: { page: CMSPage; tenant:
       </div>
 
       {page.layout && page.layout.filter((b: any) => b.blockType !== "hero").length > 0 && (
-        <DynamicPage page={{ ...page, layout: page.layout.filter((b: any) => b.blockType !== "hero") }} />
+        <DynamicPage page={{ ...page, layout: page.layout.filter((b: any) => b.blockType !== "hero") }} locale={locale} />
       )}
     </div>
   )
@@ -318,13 +318,13 @@ function VerticalDetailTemplate({ page, tenant, locale }: { page: CMSPage; tenan
       </div>
 
       {page.layout && page.layout.length > 0 && (
-        <DynamicPage page={page} />
+        <DynamicPage page={page} locale={locale} />
       )}
     </div>
   )
 }
 
-function StaticTemplate({ page, branding }: { page: CMSPage; branding?: any }) {
+function StaticTemplate({ page, branding, locale }: { page: CMSPage; branding?: any; locale?: string }) {
   return (
     <div className="min-h-screen bg-ds-background">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -334,7 +334,7 @@ function StaticTemplate({ page, branding }: { page: CMSPage; branding?: any }) {
         )}
       </div>
       {page.layout && page.layout.length > 0 ? (
-        <DynamicPage page={page} branding={branding} />
+        <DynamicPage page={page} branding={branding} locale={locale} />
       ) : (
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
           <p className="text-ds-muted-foreground">This page has no content yet.</p>
@@ -356,7 +356,7 @@ function CategoryTemplate({ page, tenant, locale }: { page: CMSPage; tenant: { i
         </div>
       </section>
       {page.layout && page.layout.length > 0 && (
-        <DynamicPage page={page} />
+        <DynamicPage page={page} locale={locale} />
       )}
     </div>
   )
@@ -375,7 +375,7 @@ function NodeBrowserTemplate({ page, tenant, locale }: { page: CMSPage; tenant: 
       </section>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {page.layout && page.layout.length > 0 ? (
-          <DynamicPage page={page} />
+          <DynamicPage page={page} locale={locale} />
         ) : (
           <p className="text-ds-muted-foreground">Node hierarchy browser will load from platform context.</p>
         )}

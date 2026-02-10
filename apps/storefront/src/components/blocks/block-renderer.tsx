@@ -11,9 +11,10 @@ interface BlockData {
 interface BlockRendererProps {
   blocks: BlockData[]
   className?: string
+  locale?: string
 }
 
-export const BlockRenderer: React.FC<BlockRendererProps> = ({ blocks, className = "" }) => {
+export const BlockRenderer: React.FC<BlockRendererProps> = ({ blocks, className = "", locale }) => {
   if (!blocks || blocks.length === 0) return null
 
   return (
@@ -36,7 +37,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({ blocks, className 
 
         const { blockType, blockName, ...props } = block
 
-        return <Component key={block.id || index} {...props} />
+        return <Component key={block.id || index} {...props} locale={locale} />
       })}
     </div>
   )
