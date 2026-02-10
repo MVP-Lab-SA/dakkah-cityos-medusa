@@ -41,6 +41,19 @@ const EVENT_WORKFLOW_MAP: Record<string, string> = {
   "sync.products.scheduled": "xsystem.scheduled-product-sync",
   "sync.retry.scheduled": "xsystem.retry-failed-syncs",
   "sync.hierarchy.scheduled": "xsystem.scheduled-hierarchy-reconciliation",
+  "payout.initiated": "xsystem.payout-processing",
+  "payout.completed": "xsystem.payout-reconciliation",
+  "payout.failed": "xsystem.payout-failure-handling",
+  "booking.no_show": "xsystem.booking-no-show-processing",
+  "subscription.cancelled": "xsystem.subscription-cancellation-sync",
+  "subscription.payment_failed": "xsystem.subscription-payment-failure",
+  "vendor.deactivated": "xsystem.vendor-deactivation-cascade",
+  "vendor.inactivity_warning": "xsystem.vendor-inactivity-notification",
+  "invoice.overdue": "xsystem.invoice-overdue-processing",
+  "subscription.renewal_upcoming": "xsystem.subscription-renewal-notification",
+  "subscription.trial_ending": "xsystem.trial-ending-notification",
+  "subscription.trial_converted": "xsystem.trial-conversion-sync",
+  "subscription.trial_expired": "xsystem.trial-expiration-sync",
 }
 
 export function getWorkflowForEvent(eventType: string): string | null {

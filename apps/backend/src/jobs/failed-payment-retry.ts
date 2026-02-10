@@ -51,47 +51,37 @@ export default async function failedPaymentRetryJob(container: MedusaContainer) 
       }
       
       try {
-        if (process.env.STRIPE_SECRET_KEY && subscription.payment_method_id) {
-          const Stripe = require("stripe")
-          const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
-          
-          const stripeCustomerId = subscription.metadata?.stripe_customer_id
-          
-          if (stripeCustomerId) {
-            const paymentIntent = await stripe.paymentIntents.create({
-              amount: Math.round(Number(subscription.total) * 100),
-              currency: subscription.currency_code || "usd",
-              customer: stripeCustomerId,
-              payment_method: subscription.payment_method_id,
-              confirm: true,
-              off_session: true,
-              metadata: {
-                subscription_id: subscription.id,
-                retry_attempt: retryCount + 1
-              }
-            })
-            
-            if (paymentIntent.status === "succeeded") {
-              await subscriptionService.updateSubscriptions({
-                id: subscription.id,
-                status: "active",
-                retry_count: 0,
-                last_retry_at: new Date(),
-                metadata: {
-                  ...subscription.metadata,
-                  last_payment_date: new Date().toISOString(),
-                  last_payment_intent_id: paymentIntent.id
-                }
-              })
-              
-              successCount++
-              console.log(`[Payment Retry] Success for subscription ${subscription.id}`)
-              continue
+        const { dispatchEventToTemporal } = await import("../lib/event-dispatcher.js")
+        const result = await dispatchEventToTemporal("subscription.payment_failed", {
+          subscription_id: subscription.id,
+          customer_id: subscription.customer_id,
+          amount: subscription.total,
+          currency: subscription.currency_code || "usd",
+          payment_method_id: subscription.payment_method_id,
+          stripe_customer_id: subscription.metadata?.stripe_customer_id,
+          retry_attempt: retryCount + 1,
+          action: "retry_payment",
+        }, {
+          tenantId: subscription.metadata?.tenant_id,
+          source: "failed-payment-retry-job",
+        })
+
+        if (result.dispatched) {
+          await subscriptionService.updateSubscriptions({
+            id: subscription.id,
+            retry_count: retryCount + 1,
+            last_retry_at: new Date(),
+            metadata: {
+              ...subscription.metadata,
+              last_retry_workflow_run_id: result.runId,
             }
-          }
+          })
+          successCount++
+          console.log(`[Payment Retry] Dispatched to Temporal for subscription ${subscription.id}, runId: ${result.runId}`)
+          continue
         }
-        
-        throw new Error("Payment could not be processed")
+
+        throw new Error("Failed to dispatch payment retry to Temporal")
       } catch (error: any) {
         await subscriptionService.updateSubscriptions({
           id: subscription.id,

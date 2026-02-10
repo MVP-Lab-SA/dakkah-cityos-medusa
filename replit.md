@@ -127,7 +127,20 @@ Three systems work together, each owning specific domains:
 - Multi-tenant: platform root issuer DID, delegated issuers for large+ tiers
 - Integration spec: `apps/backend/src/lib/integrations/waltid-spec.ts`
 
-## Recent Changes (2026-02-09)
+## Recent Changes (2026-02-10)
+- **Deep Temporal Architecture Audit:** Comprehensive scan of all 32 subscribers, 14 jobs, and 100+ API routes. Fixed 8 total architecture violations:
+  1. Added `product.deleted` → `commerce.product-catalog-remove` mapping (bridge subscribed but unmapped)
+  2. Stripe webhook: replaced direct ERPNext invoice call with Temporal dispatch
+  3. Admin sync endpoints: replaced direct integration service calls with `startWorkflow()` dispatch
+  4. Admin node-hierarchy sync: replaced direct `syncFullHierarchy()` with Temporal dispatch
+  5. Commission settlement: replaced direct `processStripeConnectPayout()` with `payout.initiated` Temporal dispatch
+  6. Failed payment retry: replaced direct `stripe.paymentIntents.create()` with Temporal dispatch
+  7. Added 13 missing event-to-workflow mappings for events emitted by jobs (payout.initiated/completed/failed, booking.no_show, subscription.cancelled/payment_failed/renewal_upcoming/trial_ending/trial_converted/trial_expired, vendor.deactivated/inactivity_warning, invoice.overdue)
+  8. Fixed semantic mismatch: commission-settlement dispatches `payout.initiated` (not `payout.completed`) since the workflow handles the actual Stripe transfer
+- **EVENT_WORKFLOW_MAP:** Now has 53 entries (40 original + 13 new), fully aligned with bridge subscriber (50 non-scheduled events)
+- **Verified clean patterns:** All inbound webhooks (Payload, ERPNext, Fleetbase) correctly update only local Medusa data. Health check endpoint direct pings are acceptable (operational monitoring). Stripe payment processing in storefront routes is Medusa's own payment gateway.
+
+### Previous Changes (2026-02-09)
 - **Temporal-First Architecture:** Refactored ALL cross-system integration calls to flow through Temporal workflows. Removed direct API calls from subscribers and event dispatchers. Created typed activity definitions for all integration services.
 - **Integration Specs:** Created all 5 integration specs as TypeScript contract documents: Payload CMS (content), Fleetbase (geo/logistics), ERPNext (finance/ERP), Temporal (workflows), Walt.id (identity). Annotated implemented vs planned capabilities.
 - **Vendor-as-Tenant Architecture:** Vendors are now full tenants with scope tiers (nano→global), tenant types (platform/marketplace/vendor/brand), parent tenant hierarchy, POI collections, multi-channel services, and cross-tenant marketplace listings.

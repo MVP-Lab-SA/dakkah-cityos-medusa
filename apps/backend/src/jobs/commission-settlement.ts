@@ -101,22 +101,25 @@ export default async function commissionSettlementJob(container: MedusaContainer
         }
         
         // Process the payout if vendor has Stripe account
-        if (data.vendor?.stripe_account_id) {
-          try {
-            await payoutService.processStripeConnectPayout(payout.id, data.vendor.stripe_account_id as string)
-            await eventBus.emit("payout.completed", { 
-              id: payout.id, 
-              vendor_id: vendorId,
-              amount: netAmount 
-            })
-          } catch (stripeError) {
-            logger.error("Stripe payout failed", stripeError, { vendorId })
-            await eventBus.emit("payout.failed", { 
-              id: payout.id, 
-              vendor_id: vendorId,
-              error: (stripeError as Error).message 
-            })
-          }
+        try {
+          const { dispatchEventToTemporal } = await import("../lib/event-dispatcher.js")
+          await dispatchEventToTemporal("payout.initiated", {
+            id: payout.id,
+            vendor_id: vendorId,
+            amount: netAmount,
+            stripe_account_id: data.vendor?.stripe_account_id,
+            tenant_id: (data.vendor?.tenant_id as string) || "default",
+          }, {
+            tenantId: (data.vendor?.tenant_id as string) || "default",
+            source: "commission-settlement-job",
+          })
+        } catch (dispatchError) {
+          logger.error("Failed to dispatch payout to Temporal", dispatchError, { vendorId })
+          await eventBus.emit("payout.failed", {
+            id: payout.id,
+            vendor_id: vendorId,
+            error: (dispatchError as Error).message,
+          })
         }
         
         successCount++
