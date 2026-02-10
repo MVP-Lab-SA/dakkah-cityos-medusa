@@ -1,24 +1,26 @@
 import ProductCard from "@/components/product-card"
 import { Button } from "@/components/ui/button"
 import { useProducts } from "@/lib/hooks/use-products"
-import { useLoaderData } from "@tanstack/react-router"
+import { useRegion } from "@/lib/hooks/use-regions"
+import { useLoaderData, useParams } from "@tanstack/react-router"
 
-/**
- * Store Page Pattern
- *
- * Demonstrates:
- * - useLoaderData for SSR-loaded region
- * - useProducts hook with region_id for pricing
- * - Infinite scroll / pagination pattern
- * - Rendering product cards with region context
- */
+const LOCALE_TO_COUNTRY: Record<string, string> = {
+  en: "us",
+  fr: "fr",
+  ar: "sa",
+}
+
 const Store = () => {
-  const { region } = useLoaderData({ strict: false }) as any
+  const loaderData = useLoaderData({ strict: false }) as any
+  const { locale } = useParams({ strict: false }) as { locale: string }
+
+  const countryCode = LOCALE_TO_COUNTRY[locale?.toLowerCase()] || locale?.toLowerCase() || "us"
+  const { data: fetchedRegion } = useRegion({ country_code: countryCode })
+  const region = loaderData?.region || fetchedRegion
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching } = useProducts({
-    region_id: region?.id || "",
+    region_id: region?.id,
     query_params: { limit: 12 },
-    enabled: !!region?.id,
   })
 
   const products = data?.pages.flatMap((page) => page.products) || []

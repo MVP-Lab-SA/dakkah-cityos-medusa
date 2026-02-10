@@ -1,13 +1,17 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { TemplateRenderer } from '@/components/cms/template-renderer'
 import type { CMSPage } from '@/lib/types/cityos'
+
+const Store = lazy(() => import('@/pages/store'))
 
 const DEFAULT_TENANT_ID = "01KGZ2JRYX607FWMMYQNQRKVWS"
 
 const TENANT_SLUG_TO_ID: Record<string, string> = {
   dakkah: DEFAULT_TENANT_ID,
 }
+
+const BUILT_IN_ROUTES = new Set(["store"])
 
 async function resolvePageFromServer(tenantId: string, path: string, locale?: string): Promise<CMSPage | null> {
   try {
@@ -26,21 +30,21 @@ async function resolvePageFromServer(tenantId: string, path: string, locale?: st
 export const Route = createFileRoute('/$tenant/$locale/$slug')({
   loader: async ({ params }) => {
     const { slug, locale, tenant } = params
+    if (BUILT_IN_ROUTES.has(slug)) {
+      return { page: null, tenantSlug: tenant, locale, slug, isBuiltIn: true }
+    }
     const tenantId = TENANT_SLUG_TO_ID[tenant] || DEFAULT_TENANT_ID
     let page: CMSPage | null = null
     try {
       page = await resolvePageFromServer(tenantId, slug, locale)
     } catch {}
-    return { page, tenantSlug: tenant, locale, slug }
+    return { page, tenantSlug: tenant, locale, slug, isBuiltIn: false }
   },
   component: CMSSlugPageComponent,
   head: ({ loaderData }) => ({
     meta: [
-      { title: loaderData?.page?.seo?.title || loaderData?.page?.title || 'Page' },
+      { title: loaderData?.isBuiltIn && loaderData?.slug === 'store' ? 'Store | Dakkah CityOS' : (loaderData?.page?.seo?.title || loaderData?.page?.title || 'Page') },
       { name: 'description', content: loaderData?.page?.seo?.description || '' },
-      { property: 'og:title', content: loaderData?.page?.seo?.title || loaderData?.page?.title || 'Page' },
-      { property: 'og:description', content: loaderData?.page?.seo?.description || '' },
-      { property: 'og:image', content: loaderData?.page?.seo?.ogImage?.url || '' },
     ],
   }),
 })
@@ -48,6 +52,19 @@ export const Route = createFileRoute('/$tenant/$locale/$slug')({
 function CMSSlugPageComponent() {
   const data = Route.useLoaderData()
   const { tenant, locale, slug } = Route.useParams()
+
+  if (data?.isBuiltIn && slug === "store") {
+    return (
+      <Suspense fallback={<div className="content-container py-6"><div className="text-zinc-600">Loading store...</div></div>}>
+        <Store />
+      </Suspense>
+    )
+  }
+
+  return <CMSPageResolver data={data} tenant={tenant} locale={locale} slug={slug} />
+}
+
+function CMSPageResolver({ data, tenant, locale, slug }: { data: any; tenant: string; locale: string; slug: string }) {
   const tenantId = TENANT_SLUG_TO_ID[tenant] || DEFAULT_TENANT_ID
 
   const [page, setPage] = useState<CMSPage | null>(data?.page || null)

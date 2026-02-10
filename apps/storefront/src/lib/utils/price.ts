@@ -11,31 +11,42 @@ type FormatPriceParams = {
   locale?: string
 }
 
+const ZERO_DECIMAL_CURRENCIES = new Set([
+  "bif", "clp", "djf", "gnf", "jpy", "kmf", "krw", "mga",
+  "pyg", "rwf", "ugx", "vnd", "vuv", "xaf", "xof", "xpf",
+])
+
+function convertFromSmallestUnit(amount: number, currencyCode: string): number {
+  const code = currencyCode.toLowerCase()
+  if (ZERO_DECIMAL_CURRENCIES.has(code)) return amount
+  return amount / 100
+}
+
 export const formatPrice = (
   amountOrParams: number | FormatPriceParams,
   currencyCode?: string
 ): string => {
-  // Support both (amount, currency) and ({amount, currency_code}) signatures
   if (typeof amountOrParams === "number") {
-    const amount = amountOrParams
     const currency = currencyCode || "usd"
+    const displayAmount = convertFromSmallestUnit(amountOrParams, currency)
     return currency && !isEmpty(currency)
       ? new Intl.NumberFormat("en-US", {
           style: "currency",
           currency: currency,
-        }).format(amount)
-      : amount.toString()
+        }).format(displayAmount)
+      : displayAmount.toString()
   }
   
   const { amount, currency_code, minimumFractionDigits, maximumFractionDigits, locale = "en-US" } = amountOrParams
+  const displayAmount = convertFromSmallestUnit(amount, currency_code)
   return currency_code && !isEmpty(currency_code)
     ? new Intl.NumberFormat(locale, {
         style: "currency",
         currency: currency_code,
         minimumFractionDigits,
         maximumFractionDigits,
-      }).format(amount)
-    : amount.toString()
+      }).format(displayAmount)
+    : displayAmount.toString()
 }
 
 // ============ PERCENTAGE DIFF ============

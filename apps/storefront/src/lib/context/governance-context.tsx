@@ -29,6 +29,7 @@ export function useGovernanceContext() {
   if (typeof window === "undefined") {
     return defaultValue
   }
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   return useContext(GovernanceContext)
 }
 

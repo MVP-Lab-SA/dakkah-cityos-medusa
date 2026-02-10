@@ -1,10 +1,17 @@
 import { useLocation, useLoaderData, useParams } from "@tanstack/react-router"
 import { useProducts } from "@/lib/hooks/use-products"
 import { useCategories } from "@/lib/hooks/use-categories"
+import { useRegion } from "@/lib/hooks/use-regions"
 import ProductCard from "@/components/product-card"
 import { useGovernanceContext } from "@/lib/context/governance-context"
 import { useCMSVerticals } from "@/lib/hooks/use-cms"
 import { usePlatformContext } from "@/lib/hooks/use-platform-context"
+
+const LOCALE_TO_COUNTRY: Record<string, string> = {
+  en: "us",
+  fr: "fr",
+  ar: "sa",
+}
 
 function getBasePrefix(pathname: string): string {
   const segments = pathname.split("/").filter(Boolean)
@@ -40,8 +47,12 @@ const Home = () => {
   const location = useLocation()
   const prefix = getBasePrefix(location.pathname)
   const loaderData = useLoaderData({ strict: false }) as any
-  const region = loaderData?.region
-  const { tenant } = useParams({ strict: false }) as { tenant: string }
+  const loaderRegion = loaderData?.region
+  const { tenant, locale } = useParams({ strict: false }) as { tenant: string; locale: string }
+
+  const countryCode = LOCALE_TO_COUNTRY[locale?.toLowerCase()] || locale?.toLowerCase() || "us"
+  const { data: fetchedRegion } = useRegion({ country_code: countryCode })
+  const region = loaderRegion || fetchedRegion
 
   const { data: platformData } = usePlatformContext(tenant || "")
   const { data: verticals } = useCMSVerticals()
