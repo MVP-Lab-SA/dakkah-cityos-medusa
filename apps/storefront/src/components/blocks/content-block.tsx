@@ -13,12 +13,12 @@ export const ContentBlock: React.FC<ContentBlockProps> = ({
 }) => {
   return (
     <section
-      className="py-16"
+      className="py-12 md:py-16 lg:py-20"
       style={backgroundColor ? { backgroundColor } : undefined}
     >
-      <div className={`container mx-auto px-4 ${layout === 'two-column' ? 'grid md:grid-cols-2 gap-12' : 'max-w-4xl'}`}>
+      <div className={`container mx-auto px-4 md:px-6 ${layout === 'two-column' ? 'grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12' : 'max-w-4xl'}`}>
         <div
-          className="prose prose-lg max-w-none"
+          className="prose prose-base md:prose-lg max-w-none text-ds-foreground"
           dangerouslySetInnerHTML={{ __html: content }}
         />
       </div>

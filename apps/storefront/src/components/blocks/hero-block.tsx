@@ -23,11 +23,10 @@ export const HeroBlock: React.FC<HeroBlockProps> = ({
   cta,
   branding,
 }) => {
-  const primaryColor = branding?.theme?.primaryColor || '#000000'
-  const secondaryColor = branding?.theme?.secondaryColor || '#666666'
+  const primaryColor = branding?.theme?.primaryColor || ''
 
   return (
-    <section className="relative w-full min-h-[500px] flex items-center justify-center overflow-hidden">
+    <section className="relative w-full min-h-[300px] md:min-h-[400px] lg:min-h-[500px] flex items-center justify-center overflow-hidden">
       {image?.url && (
         <div className="absolute inset-0 z-0">
           <img
@@ -35,14 +34,14 @@ export const HeroBlock: React.FC<HeroBlockProps> = ({
             alt={image.alt || heading || 'Hero image'}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-black/40" />
+          <div className="absolute inset-0 bg-ds-foreground/40" />
         </div>
       )}
 
-      <div className="relative z-10 container mx-auto px-4 py-20 text-center">
+      <div className="relative z-10 container mx-auto px-4 md:px-6 py-12 md:py-16 lg:py-20 text-center">
         {heading && (
           <h1
-            className="text-5xl md:text-6xl font-bold mb-6 text-ds-primary-foreground"
+            className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 text-ds-primary-foreground"
             style={
               branding?.theme?.primaryColor
                 ? { color: branding.theme.primaryColor }
@@ -54,24 +53,24 @@ export const HeroBlock: React.FC<HeroBlockProps> = ({
         )}
 
         {subheading && (
-          <p className="text-xl md:text-2xl mb-8 text-ds-primary-foreground/90 max-w-3xl mx-auto">
+          <p className="text-base md:text-xl lg:text-2xl mb-8 text-ds-primary-foreground/90 max-w-3xl mx-auto">
             {subheading}
           </p>
         )}
 
         {cta && cta.length > 0 && (
-          <div className="flex flex-wrap gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 justify-center">
             {cta.map((button, index) => (
               <Link
                 key={index}
                 to={button.url}
-                className={`px-8 py-3 rounded-lg font-semibold transition-all ${
+                className={`px-6 py-3 rounded-lg font-semibold transition-all ${
                   button.style === 'primary'
                     ? 'text-ds-primary-foreground shadow-lg hover:shadow-xl'
                     : 'bg-ds-background text-ds-foreground hover:bg-ds-muted'
                 }`}
                 style={
-                  button.style === 'primary'
+                  button.style === 'primary' && primaryColor
                     ? { backgroundColor: primaryColor }
                     : undefined
                 }

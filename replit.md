@@ -28,6 +28,18 @@ The backend provides modularity for CityOS features including tenant management,
 ### Storefront Architecture
 The storefront utilizes TanStack Start with React for SSR, dynamic routing (`/$tenant/$locale/...`), and file-based routing. A centralized design system dictates design primitives, theming, and component interfaces. A robust provider chain ensures consistent context, including tenant-scoped routes wrapped with `TenantProvider` and `PlatformContextProvider`.
 
+### Block System & CMS Migration Readiness
+The storefront includes a comprehensive Payload CMS-compatible block system:
+- **27 block type contracts** defined in `packages/cityos-design-system/src/blocks/BlockTypes.ts` with `BlockBase`, shared field types (`MediaField`, `CTAField`, `RichTextField`), and a `BlockData` union type
+- **25 implemented blocks** in `apps/storefront/src/components/blocks/` (map and reviewList pending)
+- **BlockRenderer** (`block-renderer.tsx`) dynamically renders a `PageLayout` array by looking up components from `BLOCK_REGISTRY` (`block-registry.ts`)
+- **10 reusable UI components** (Badge, Avatar, Breadcrumb, Tabs, Alert, Rating, Skeleton, Accordion, Switch, Textarea) all using ds-* tokens
+- All blocks follow mobile-first responsive patterns: section py-12 md:py-16 lg:py-20, container px-4 md:px-6, responsive typography scales
+- Zero hardcoded colors: all blocks and UI components use exclusively ds-* design system token classes
+- SSR-safe: client-only logic (intervals, clipboard, window listeners) gated inside useEffect or event handlers
+- Design tokens expanded with motion/transition tokens (duration, easing), elevation tokens (6 levels), container tokens, and responsive spacing utilities in `packages/cityos-design-tokens/src/`
+- Commerce types (`ProductCard`, `PriceDisplay`, `Rating`, `CartItem`, `VendorCard`) and feedback types (`Modal`, `Alert`, `Toast`, `Notification`) defined in design-system package
+
 ### CMS Integration
 A local CMS registry (`apps/backend/src/lib/platform/cms-registry.ts`), compatible with Payload CMS, defines 27 commerce verticals and additional pages. The `TemplateRenderer` dynamically renders layouts. CMS pages support `countryCode` and `regionZone` for country-level unification and optional `nodeId` for hierarchy integration. Backend endpoints provide Payload-compatible responses, and frontend hooks use React Query for data fetching.
 
