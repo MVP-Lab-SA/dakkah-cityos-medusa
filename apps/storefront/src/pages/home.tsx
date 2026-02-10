@@ -1,8 +1,10 @@
-import { useLocation, useLoaderData } from "@tanstack/react-router"
+import { useLocation, useLoaderData, useParams } from "@tanstack/react-router"
 import { useProducts } from "@/lib/hooks/use-products"
 import { useCategories } from "@/lib/hooks/use-categories"
 import ProductCard from "@/components/product-card"
 import { useGovernanceContext } from "@/lib/context/governance-context"
+import { useCMSVerticals } from "@/lib/hooks/use-cms"
+import { usePlatformContext } from "@/lib/hooks/use-platform-context"
 
 function getBasePrefix(pathname: string): string {
   const segments = pathname.split("/").filter(Boolean)
@@ -15,77 +17,12 @@ function getBasePrefix(pathname: string): string {
   return ""
 }
 
-const verticalCategories = [
-  {
-    group: "Shopping",
-    verticals: [
-      { icon: "🏪", title: "Store", description: "Browse and buy products from our marketplace", path: "/store" },
-      { icon: "👥", title: "Vendors", description: "Discover trusted sellers and their collections", path: "/vendors" },
-      { icon: "🔨", title: "Auctions", description: "Bid on unique items and score great deals", path: "/auctions" },
-      { icon: "🔄", title: "Rentals", description: "Rent equipment, vehicles, and more", path: "/rentals" },
-      { icon: "📋", title: "Classifieds", description: "Post and browse local listings", path: "/classifieds" },
-      { icon: "💾", title: "Digital Products", description: "Download software, ebooks, and digital goods", path: "/digital-products" },
-    ],
-  },
-  {
-    group: "Food & Dining",
-    verticals: [
-      { icon: "🍽️", title: "Restaurants", description: "Order food from local restaurants", path: "/restaurants" },
-      { icon: "🛒", title: "Grocery", description: "Shop groceries for delivery or pickup", path: "/grocery" },
-    ],
-  },
-  {
-    group: "Health & Wellness",
-    verticals: [
-      { icon: "🏥", title: "Healthcare", description: "Book appointments and access health services", path: "/healthcare" },
-      { icon: "💪", title: "Fitness", description: "Find gyms, trainers, and wellness programs", path: "/fitness" },
-      { icon: "🐾", title: "Pet Services", description: "Care, grooming, and supplies for your pets", path: "/pet-services" },
-    ],
-  },
-  {
-    group: "Property & Transport",
-    verticals: [
-      { icon: "🏠", title: "Real Estate", description: "Buy, sell, or rent properties", path: "/real-estate" },
-      { icon: "🅿️", title: "Parking", description: "Find and reserve parking spaces", path: "/parking" },
-      { icon: "🚗", title: "Automotive", description: "Vehicles, parts, and auto services", path: "/automotive" },
-      { icon: "✈️", title: "Travel", description: "Plan trips, book flights, and accommodations", path: "/travel" },
-    ],
-  },
-  {
-    group: "Education & Professional",
-    verticals: [
-      { icon: "🎓", title: "Education", description: "Courses, tutoring, and learning resources", path: "/education" },
-      { icon: "⚖️", title: "Legal", description: "Legal services and consultation", path: "/legal" },
-      { icon: "💼", title: "Freelance", description: "Hire freelancers or offer your skills", path: "/freelance" },
-    ],
-  },
-  {
-    group: "Finance & Community",
-    verticals: [
-      { icon: "💰", title: "Financial Products", description: "Insurance, loans, and financial tools", path: "/financial-products" },
-      { icon: "🎫", title: "Memberships", description: "Join clubs, communities, and membership programs", path: "/memberships" },
-      { icon: "🚀", title: "Crowdfunding", description: "Back projects and launch campaigns", path: "/crowdfunding" },
-      { icon: "❤️", title: "Charity", description: "Donate to causes and support nonprofits", path: "/charity" },
-    ],
-  },
-  {
-    group: "Entertainment",
-    verticals: [
-      { icon: "🎪", title: "Events", description: "Discover and book tickets for events", path: "/events" },
-      { icon: "📱", title: "Social Commerce", description: "Shop through social experiences", path: "/social-commerce" },
-      { icon: "📢", title: "Advertising", description: "Promote your business and reach audiences", path: "/advertising" },
-    ],
-  },
-  {
-    group: "Services",
-    verticals: [
-      { icon: "📅", title: "Bookings", description: "Schedule appointments and services", path: "/bookings" },
-      { icon: "🏛️", title: "Government", description: "Access government services and permits", path: "/government" },
-      { icon: "⚡", title: "Utilities", description: "Manage utility services and payments", path: "/utilities" },
-      { icon: "🛡️", title: "Warranties", description: "Extended warranties and protection plans", path: "/warranties" },
-    ],
-  },
-]
+const categoryLabels: Record<string, string> = {
+  commerce: "Shopping & Commerce",
+  services: "Professional Services",
+  lifestyle: "Lifestyle & Entertainment",
+  community: "Community & Social",
+}
 
 const steps = [
   { number: "01", title: "Browse", description: "Explore 25+ verticals and find exactly what you need across shopping, services, dining, and more." },
@@ -104,6 +41,10 @@ const Home = () => {
   const prefix = getBasePrefix(location.pathname)
   const loaderData = useLoaderData({ strict: false }) as any
   const region = loaderData?.region
+  const { tenant } = useParams({ strict: false }) as { tenant: string }
+
+  const { data: platformData } = usePlatformContext(tenant || "")
+  const { data: verticals } = useCMSVerticals()
 
   const { data } = useProducts({
     region_id: region?.id,
@@ -120,16 +61,35 @@ const Home = () => {
 
   const products = data?.pages?.flatMap((page: any) => page.products) || []
 
+  const groupedVerticals = (() => {
+    if (!verticals || verticals.length === 0) return []
+    const groups: Record<string, { slug: string; title: string; seoDescription: string; category: string }[]> = {}
+    for (const v of verticals) {
+      if (!groups[v.category]) {
+        groups[v.category] = []
+      }
+      groups[v.category].push(v)
+    }
+    return Object.entries(groups).map(([category, items]) => ({
+      group: categoryLabels[category] || category,
+      verticals: items,
+    }))
+  })()
+
+  const tenantName = platformData?.tenant?.name || "Dakkah"
+  const heroTitle = `${tenantName} CityOS Commerce Platform`
+  const heroSubtitle = platformData?.tenant?.description || "Your gateway to 25+ commerce verticals — from shopping and dining to healthcare, education, real estate, and beyond"
+
   return (
     <div>
       <section className="bg-gradient-to-b from-zinc-900 to-zinc-800 text-white">
         <div className="content-container py-20 md:py-32">
           <div className="max-w-3xl">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight">
-              Dakkah CityOS Commerce Platform
+              {heroTitle}
             </h1>
             <p className="mt-6 text-lg md:text-xl text-zinc-300 leading-relaxed">
-              Your gateway to 25+ commerce verticals — from shopping and dining to healthcare, education, real estate, and beyond
+              {heroSubtitle}
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <a
@@ -189,7 +149,7 @@ const Home = () => {
           </div>
 
           <div className="space-y-12">
-            {verticalCategories.map((category) => {
+            {groupedVerticals.map((category) => {
               const allowedVerticals = category.verticals.filter(v =>
                 isVerticalAllowed(v.title)
               )
@@ -202,17 +162,19 @@ const Home = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {allowedVerticals.map((vertical) => (
                     <a
-                      key={vertical.path}
-                      href={`${prefix}${vertical.path}`}
+                      key={vertical.slug}
+                      href={`${prefix}/${vertical.slug}`}
                       className="group flex items-start gap-3 p-4 bg-white rounded-lg border border-zinc-200 hover:border-zinc-400 hover:shadow-sm transition-all"
                     >
-                      <span className="text-2xl flex-shrink-0 mt-0.5">{vertical.icon}</span>
+                      <span className="flex-shrink-0 mt-0.5 w-8 h-8 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center text-sm font-semibold text-zinc-600">
+                        {vertical.title.charAt(0)}
+                      </span>
                       <div className="min-w-0">
                         <h4 className="font-medium text-zinc-900 group-hover:text-zinc-700 transition-colors">
                           {vertical.title}
                         </h4>
                         <p className="text-sm text-zinc-500 mt-0.5 leading-snug">
-                          {vertical.description}
+                          {vertical.seoDescription}
                         </p>
                       </div>
                     </a>

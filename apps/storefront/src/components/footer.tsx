@@ -1,7 +1,8 @@
 import CountrySelect from "@/components/country-select"
 import { useCategories } from "@/lib/hooks/use-categories"
 import { useRegions } from "@/lib/hooks/use-regions"
-import { getCountryCodeFromPath } from "@/lib/utils/region"
+import { useCMSNavigation } from "@/lib/hooks/use-cms"
+import { getTenantLocalePrefix } from "@/lib/utils/region"
 import { Link, useLocation } from "@tanstack/react-router"
 
 const Footer = () => {
@@ -30,8 +31,7 @@ const Footer = () => {
   }
 
   const location = useLocation();
-  const countryCode = getCountryCodeFromPath(location.pathname);
-  const baseHref = countryCode ? `/${countryCode}` : "";
+  const baseHref = getTenantLocalePrefix(location.pathname);
 
   const { data: categories } = useCategories({
     fields: "name,handle",
@@ -44,6 +44,21 @@ const Footer = () => {
   const { data: regions } = useRegions({
     fields: "id, currency_code, *countries",
   });
+
+  const { data: footerNav } = useCMSNavigation("footer");
+
+  const groupNavItemsIntoColumns = (items: any[], itemsPerColumn: number = 9) => {
+    if (!items || items.length === 0) return [];
+    const columns = [];
+    for (let i = 0; i < items.length; i += itemsPerColumn) {
+      columns.push(items.slice(i, i + itemsPerColumn));
+    }
+    return columns;
+  };
+
+  const footerNavColumns = footerNav?.items
+    ? groupNavItemsIntoColumns(footerNav.items, 9)
+    : [];
 
   return (
     <footer
@@ -64,24 +79,28 @@ const Footer = () => {
             </p>
             <CountrySelect regions={regions ?? []} />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 lg:gap-12">
-            {categories && categories.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
+            {categories && categories.length > 0 && (
               <FooterColumn
-                title="Categories"
+                title="Shop"
                 links={categories.map((category) => ({
                   name: category.name,
                   url: `${baseHref}/categories/${category.handle}`,
                   isExternal: false,
                 }))}
               />
-            ) : (
-              <div className="flex flex-col gap-y-4">
-                <h3 className="text-zinc-900 text-sm font-medium uppercase tracking-wide">
-                  Categories
-                </h3>
-                <p className="text-sm text-zinc-600">No categories</p>
-              </div>
             )}
+            {footerNavColumns.map((column, columnIndex) => (
+              <FooterColumn
+                key={columnIndex}
+                title={`Services ${columnIndex + 1}`}
+                links={column.map((item: any) => ({
+                  name: item.label,
+                  url: `${baseHref}${item.url}`,
+                  isExternal: false,
+                }))}
+              />
+            ))}
           </div>
         </div>
         <div className="border-t border-zinc-300 py-6">

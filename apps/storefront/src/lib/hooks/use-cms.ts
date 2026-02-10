@@ -1,141 +1,62 @@
 import { useQuery } from "@tanstack/react-query"
 import { queryKeys } from "@/lib/utils/query-keys"
-import type { CMSPage, CMSNavigation, CMSVertical } from "@/lib/types/cityos"
 
-async function fetchCMSPage(
-  tenantId: string,
-  path: string,
-  locale?: string
-): Promise<CMSPage | null> {
-  try {
-    const params = new URLSearchParams({
-      path,
-      tenant_id: tenantId,
-    })
-    if (locale) {
-      params.set("locale", locale)
-    }
-
-    const baseUrl = typeof window === "undefined" ? "http://localhost:9000" : ""
-    const response = await fetch(`${baseUrl}/platform/cms/resolve?${params}`)
-    if (!response.ok) return null
-
-    const data = await response.json()
-    return data.payload?.docs?.[0] || data.data?.page || null
-  } catch {
-    return null
-  }
+interface VerticalDefinition {
+  slug: string
+  title: string
+  endpoint: string
+  seoDescription: string
+  filterFields: string[]
+  sortFields: string[]
+  cardLayout: "grid" | "list"
+  category: "commerce" | "services" | "lifestyle" | "community"
 }
 
-async function fetchCMSPageChildren(
-  tenantId: string,
-  parentId: string
-): Promise<CMSPage[]> {
-  try {
-    const baseUrl = typeof window === "undefined" ? "http://localhost:9000" : ""
-
-    const query = new URLSearchParams({
-      where: JSON.stringify({
-        parent: { equals: parentId },
-        tenant: { equals: tenantId },
-        _status: { equals: "published" },
-      }),
-      sort: "sortOrder",
-      limit: "100",
-      depth: "1",
-    })
-
-    const response = await fetch(`${baseUrl}/platform/cms/pages?${query}`)
-    if (!response.ok) return []
-
-    const data = await response.json()
-    return data.docs || []
-  } catch {
-    return []
-  }
+interface NavigationItem {
+  id: string
+  label: string
+  url: string
+  children?: NavigationItem[]
+  order: number
 }
 
-async function fetchCMSNavigation(
-  tenantId: string,
-  location: string,
-  locale?: string
-): Promise<CMSNavigation | null> {
-  try {
-    const params = new URLSearchParams({
-      tenant_id: tenantId,
-      location,
-    })
-    if (locale) {
-      params.set("locale", locale)
-    }
-
-    const baseUrl = typeof window === "undefined" ? "http://localhost:9000" : ""
-    const response = await fetch(`${baseUrl}/platform/cms/navigation?${params}`)
-    if (!response.ok) return null
-
-    const data = await response.json()
-    return data.docs?.[0] || data.data?.navigations?.[0] || null
-  } catch {
-    return null
-  }
+interface NavigationEntry {
+  id: string
+  name: string
+  slug: string
+  tenant: string
+  location: "header" | "footer" | "sidebar" | "mobile"
+  locale: string
+  items: NavigationItem[]
 }
 
-async function fetchCMSVerticals(
-  tenantId: string
-): Promise<CMSVertical[]> {
-  try {
-    const baseUrl = typeof window === "undefined" ? "http://localhost:9000" : ""
-
-    const query = new URLSearchParams({
-      sort: "sortOrder",
-      limit: "100",
-    })
-
-    const response = await fetch(`${baseUrl}/platform/cms/verticals?${query}`)
-    if (!response.ok) return []
-
-    const data = await response.json()
-    return data.docs || []
-  } catch {
-    return []
-  }
-}
-
-export function useCMSPage(tenantId: string | undefined, path: string, locale?: string) {
-  return useQuery({
-    queryKey: queryKeys.cms.pageByPath(tenantId || "", path, locale),
-    queryFn: () => fetchCMSPage(tenantId!, path, locale),
-    enabled: typeof window !== "undefined" && !!tenantId && !!path,
-    staleTime: 60_000,
-    retry: 1,
+export function useCMSVerticals() {
+  return useQuery<VerticalDefinition[]>({
+    queryKey: queryKeys.cms.verticals("default"),
+    queryFn: async () => {
+      const response = await fetch("/platform/cms/verticals?limit=50")
+      if (!response.ok) throw new Error("Failed to fetch verticals")
+      const json = await response.json()
+      return json.docs
+    },
+    enabled: typeof window !== "undefined",
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   })
 }
 
-export function useCMSPageChildren(tenantId: string | undefined, parentId: string | undefined) {
-  return useQuery({
-    queryKey: queryKeys.cms.pageChildren(tenantId || "", parentId || ""),
-    queryFn: () => fetchCMSPageChildren(tenantId!, parentId!),
-    enabled: typeof window !== "undefined" && !!tenantId && !!parentId,
-    staleTime: 60_000,
+export function useCMSNavigation(location: "header" | "footer" | "sidebar" | "mobile") {
+  return useQuery<NavigationEntry | null>({
+    queryKey: queryKeys.cms.navigation("default", location),
+    queryFn: async () => {
+      const where = JSON.stringify({ location: { equals: location } })
+      const response = await fetch(`/platform/cms/navigations?where=${encodeURIComponent(where)}&limit=1`)
+      if (!response.ok) throw new Error("Failed to fetch navigation")
+      const json = await response.json()
+      return json.docs?.[0] || null
+    },
+    enabled: typeof window !== "undefined",
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   })
 }
-
-export function useCMSNavigation(tenantId: string | undefined, location: string, locale?: string) {
-  return useQuery({
-    queryKey: queryKeys.cms.navigation(tenantId || "", location, locale),
-    queryFn: () => fetchCMSNavigation(tenantId!, location, locale),
-    enabled: typeof window !== "undefined" && !!tenantId,
-    staleTime: 300_000,
-  })
-}
-
-export function useCMSVerticals(tenantId: string | undefined) {
-  return useQuery({
-    queryKey: queryKeys.cms.verticals(tenantId || ""),
-    queryFn: () => fetchCMSVerticals(tenantId!),
-    enabled: typeof window !== "undefined" && !!tenantId,
-    staleTime: 300_000,
-  })
-}
-
-export { fetchCMSPage, fetchCMSPageChildren, fetchCMSNavigation, fetchCMSVerticals }

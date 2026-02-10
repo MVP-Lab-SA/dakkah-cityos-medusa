@@ -35,6 +35,19 @@ export function getCountryCodeFromPath(pathname: string): string | undefined {
   return undefined
 }
 
+// ============ TENANT/LOCALE PREFIX ============
+
+export function getTenantLocalePrefix(pathname: string): string {
+  const segments = pathname.split("/").filter(Boolean)
+  if (segments.length >= 2) {
+    return `/${segments[0]}/${segments[1]}`
+  }
+  if (segments.length === 1) {
+    return `/${segments[0]}`
+  }
+  return ""
+}
+
 // ============ DEFAULT COUNTRY CODE ============
 
 export default function getDefaultCountryCode(regions: HttpTypes.StoreRegion[]): string | undefined {

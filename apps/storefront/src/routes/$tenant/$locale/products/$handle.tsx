@@ -78,7 +78,7 @@ export const Route = createFileRoute("/$tenant/$locale/products/$handle")({
       return {
         meta: [
           {
-            title: "Product Not Found | Medusa Store",
+            title: "Product Not Found | Dakkah CityOS",
           },
         ],
       };
@@ -93,7 +93,7 @@ export const Route = createFileRoute("/$tenant/$locale/products/$handle")({
       image: product.images?.map((img: any) => img.url).filter(Boolean) || [],
       brand: {
         "@type": "Brand",
-        name: "Medusa Store",
+        name: "Dakkah CityOS",
       },
       offers: {
         "@type": "Offer",
@@ -111,7 +111,7 @@ export const Route = createFileRoute("/$tenant/$locale/products/$handle")({
     return {
       meta: [
         {
-          title: `${product.title} | Medusa Store`,
+          title: `${product.title} | Dakkah CityOS`,
         },
         {
           name: "description",
@@ -119,12 +119,12 @@ export const Route = createFileRoute("/$tenant/$locale/products/$handle")({
         },
         {
           property: "og:title",
-          content: `${product.title} | Medusa Store`,
+          content: `${product.title} | Dakkah CityOS`,
         },
         {
           property: "og:description",
           content:
-            product.description || "Check out this product on Medusa Store",
+            product.description || "Check out this product on Dakkah CityOS",
         },
         {
           property: "og:image",

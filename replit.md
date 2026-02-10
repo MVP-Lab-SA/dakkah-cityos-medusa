@@ -79,6 +79,16 @@ This layer provides integration services called by Temporal activities, includin
 
 ## Recent Changes (2026-02-10)
 
+### Hardcoded-to-Dynamic Data Migration
+- **CMS Hooks:** Created `use-cms.ts` with `useCMSVerticals()` and `useCMSNavigation(location)` hooks fetching from `/platform/cms/verticals` and `/platform/cms/navigations` backend APIs.
+- **Homepage Verticals:** Removed 27-item hardcoded `verticalCategories` array; now fetched dynamically from CMS verticals API, grouped by `category` field (commerce/services/lifestyle/community).
+- **Navbar Navigation:** Removed 10-group hardcoded `SERVICE_GROUPS` array; now fetched dynamically from CMS navigations API (header location). Navbar shows Commerce, Services, Lifestyle, Community dropdowns from CMS data.
+- **Footer Navigation:** Footer now fetches vertical links from CMS navigations API (footer location), organized in dynamic columns.
+- **Hero Section:** Title and description now dynamic from `usePlatformContext()` with tenant name/description from DB. Dakkah tenant metadata updated with proper description.
+- **Product SEO:** Replaced all 5 "Medusa Store" references with "Dakkah CityOS" in product page structured data and meta tags.
+- **Link Prefix:** Created `getTenantLocalePrefix()` utility for proper `/$tenant/$locale` prefix construction, replacing old `getCountryCodeFromPath()` in navbar/footer.
+- **Zero hardcoded data remaining** in storefront homepage, navbar, or footer. All content now from API endpoints.
+
 ### Storefront Route Consolidation & Data Migration
 - **Route Consolidation:** Removed bare root routes (cart, checkout, store, vendor, products, categories) and entire `$countryCode` route hierarchy. Only `$tenant/$locale` canonical routes remain.
 - **Hydration Fix:** Fixed `useStoreTheme` Rules of Hooks violation (hooks called conditionally). SSR uses minimal shell; client hydrates with full providers/navbar/footer.
