@@ -76,3 +76,26 @@ This layer provides integration services called by Temporal activities, includin
 - **Logistics:** Fleetbase
 - **Digital Identity:** Walt.id
 - **Payment Gateway:** Stripe
+
+## Recent Changes (2026-02-10)
+
+### Temporal-First Architecture Deep Audit (3 Passes)
+- **Pass 1 (8 fixes):** Fixed unmapped events, direct Stripe/ERPNext calls in jobs, admin sync endpoints
+- **Pass 2 (13 fixes):** Fixed admin payout processing, 7 unmapped route events, hardcoded tenant defaults
+- **Pass 3 — Product Route Audit (7 fixes):**
+  1. Deleted OLD `vendor/products/[id]/route.ts` (deprecated `metadata.vendor_id` + `cityosContext` pattern)
+  2. Deleted OLD `vendor/orders/[id]/fulfill/route.ts` (deprecated pattern, correct route at `[orderId]`)
+  3. Deleted duplicate `store/volume-pricing/[productId]/route.ts` (correct route at `store/products/[id]/volume-pricing`)
+  4. Added event emissions to vendor product CRUD: `vendor_product.created`, `vendor_product.updated`, `vendor_product.deactivated`
+  5. Added 3 new EVENT_WORKFLOW_MAP entries for vendor product lifecycle
+  6. Added 3 new events to temporal-event-bridge subscriber
+  7. Fixed `seed-complete.ts` hardcoded `tenant_id: "default"` → proper Dakkah tenant ID
+- **EVENT_WORKFLOW_MAP:** 63 entries total, fully aligned with bridge subscriber (60 non-scheduled events)
+- **Verified:** Zero direct cross-system outbound mutations, zero old `metadata.vendor_id` patterns in API routes, zero hardcoded "default" tenant in runtime code, all emitted events mapped
+
+### Previous Changes (2026-02-09)
+- **Temporal-First Architecture:** Refactored ALL cross-system integration calls to flow through Temporal workflows
+- **Integration Specs:** Created 5 integration specs (Payload CMS, Fleetbase, ERPNext, Temporal, Walt.id)
+- **Vendor-as-Tenant Architecture:** Vendors as full tenants with scope tiers, POI collections, multi-channel services, cross-tenant marketplace listings
+- **New Models:** TenantRelationship, TenantPOI, ServiceChannel, MarketplaceListing
+- **Platform Vendor APIs:** `/platform/vendors` endpoints for vendor discovery
