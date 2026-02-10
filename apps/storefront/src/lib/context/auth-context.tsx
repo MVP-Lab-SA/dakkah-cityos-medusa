@@ -92,7 +92,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 function ClientAuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient()
 
-  // Query for current customer
   const {
     data: customer,
     isLoading,
@@ -100,7 +99,7 @@ function ClientAuthProvider({ children }: { children: ReactNode }) {
   } = useQuery({
     queryKey: queryKeys.customer.current(),
     queryFn: fetchCurrentCustomer,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 5,
     retry: false,
   })
 
@@ -253,6 +252,10 @@ function ClientAuthProvider({ children }: { children: ReactNode }) {
 }
 
 export function useAuth() {
+  if (typeof window === "undefined") {
+    return defaultAuthValue
+  }
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const context = useContext(AuthContext)
   if (!context) {
     return defaultAuthValue

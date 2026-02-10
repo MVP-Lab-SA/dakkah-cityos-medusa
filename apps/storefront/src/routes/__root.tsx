@@ -53,10 +53,6 @@ function ClientProviders({ children, queryClient }: {
   children: ReactNode
   queryClient: QueryClient
 }) {
-  if (typeof window === "undefined") {
-    return <>{children}</>
-  }
-
   return (
     <QueryClientProvider client={queryClient}>
       <StoreProvider initialStore={null}>

@@ -44,16 +44,35 @@ export function TenantProvider({
   return <TenantContext.Provider value={value}>{children}</TenantContext.Provider>
 }
 
+const defaultTenantValue: TenantContextValue = {
+  tenant: null,
+  tenantSlug: "default",
+  locale: "en",
+  direction: "ltr",
+}
+
 export function useTenant() {
+  if (typeof window === "undefined") {
+    return defaultTenantValue
+  }
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   return useContext(TenantContext)
 }
 
 export function useTenantPrefix(): string {
+  if (typeof window === "undefined") {
+    return "/default/en"
+  }
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const { tenantSlug, locale } = useContext(TenantContext)
   return `/${tenantSlug}/${locale}`
 }
 
 export function useLocale() {
+  if (typeof window === "undefined") {
+    return { locale: "en", direction: "ltr" as const, isRTL: false }
+  }
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const { locale, direction } = useContext(TenantContext)
   return { locale, direction, isRTL: direction === "rtl" }
 }

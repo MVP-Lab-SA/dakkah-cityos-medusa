@@ -40,7 +40,13 @@ const BrandingContext = createContext<BrandingContextType>({
   isLoading: false,
 })
 
-export const useBranding = () => useContext(BrandingContext)
+export const useBranding = () => {
+  if (typeof window === "undefined") {
+    return { branding: null, tenantHandle: null, setTenantHandle: () => {}, isLoading: false }
+  }
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  return useContext(BrandingContext)
+}
 
 interface BrandingProviderProps {
   children: React.ReactNode

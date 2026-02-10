@@ -194,10 +194,27 @@ export function FeatureProvider({ children }: { children: ReactNode }) {
   )
 }
 
+const defaultFeatureContextValue: FeatureContextValue = {
+  features: null,
+  loading: false,
+  error: null,
+  isEnabled: () => false,
+  getConfig: () => undefined,
+  getHomepageSections: () => [],
+  getNavigation: () => ({
+    header: { showCategories: true, showVendors: false, showServices: false, showB2BPortal: false, customLinks: [] },
+    footer: { showCategories: true, showVendors: false, showServices: false, customSections: [] },
+  }),
+}
+
 export function useFeatures() {
+  if (typeof window === "undefined") {
+    return defaultFeatureContextValue
+  }
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const context = useContext(FeatureContext)
   if (!context) {
-    throw new Error("useFeatures must be used within a FeatureProvider")
+    return defaultFeatureContextValue
   }
   return context
 }

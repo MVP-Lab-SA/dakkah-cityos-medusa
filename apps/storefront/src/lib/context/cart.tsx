@@ -6,20 +6,24 @@ type CartContextType = {
   closeCart: () => void
 }
 
-const CartContext = createContext<CartContextType | undefined>(undefined)
-
-export const useCartDrawer = () => {
-  const context = useContext(CartContext)
-  if (!context) {
-    throw new Error("useCartDrawer must be used within CartProvider")
-  }
-  return context
-}
-
 const defaultCartValue: CartContextType = {
   isOpen: false,
   openCart: () => {},
   closeCart: () => {},
+}
+
+const CartContext = createContext<CartContextType | undefined>(undefined)
+
+export const useCartDrawer = () => {
+  if (typeof window === "undefined") {
+    return defaultCartValue
+  }
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const context = useContext(CartContext)
+  if (!context) {
+    return defaultCartValue
+  }
+  return context
 }
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
@@ -46,4 +50,3 @@ const ClientCartProvider = ({ children }: { children: ReactNode }) => {
     </CartContext.Provider>
   )
 }
-

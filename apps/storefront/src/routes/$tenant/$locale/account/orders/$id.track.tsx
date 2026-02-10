@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
 import { AccountLayout } from "@/components/account"
-import { TrackingInfo } from "@/components/orders/tracking-info"
-import { ArrowLeft, Spinner } from "@medusajs/icons"
+import { TrackingTimeline } from "@/components/delivery/tracking-timeline"
+import { TrackingMap } from "@/components/delivery/tracking-map"
+import { t } from "@/lib/i18n"
 import { getBackendUrl } from "@/lib/utils/env"
 
 export const Route = createFileRoute("/$tenant/$locale/account/orders/$id/track")({
@@ -13,7 +14,6 @@ function TrackOrderPage() {
   const { tenant, locale, id } = Route.useParams()
   const backendUrl = getBackendUrl()
 
-  // Fetch order with fulfillment data
   const { data: order, isLoading, error } = useQuery({
     queryKey: ["order-tracking", id],
     queryFn: async () => {
@@ -27,109 +27,177 @@ function TrackOrderPage() {
     },
   })
 
-  // Extract tracking info from fulfillments
   const getTrackingData = () => {
-    if (!order?.fulfillments?.length) {
-      return null
-    }
+    if (!order?.fulfillments?.length) return null
 
     const fulfillment = order.fulfillments[0]
     const label = fulfillment.labels?.[0]
 
-    if (!label?.tracking_number) {
-      return null
+    const events: Array<{
+      id: string
+      status: string
+      description: string
+      timestamp: string
+      location?: string
+    }> = []
+
+    if (fulfillment.created_at) {
+      events.push({
+        id: "created",
+        status: "preparing",
+        description: "Fulfillment created",
+        timestamp: fulfillment.created_at,
+        location: "Warehouse",
+      })
     }
 
-    // Build tracking URL based on common carriers
-    const getTrackingUrl = (carrier: string, trackingNumber: string) => {
-      const carrierUrls: Record<string, string> = {
-        fedex: `https://www.fedex.com/fedextrack/?trknbr=${trackingNumber}`,
-        ups: `https://www.ups.com/track?tracknum=${trackingNumber}`,
-        usps: `https://tools.usps.com/go/TrackConfirmAction?tLabels=${trackingNumber}`,
-        dhl: `https://www.dhl.com/en/express/tracking.html?AWB=${trackingNumber}`,
-      }
-      const normalizedCarrier = carrier?.toLowerCase() || ""
-      return carrierUrls[normalizedCarrier] || `https://www.google.com/search?q=${trackingNumber}+tracking`
-    }
-
-    // Build tracking events from fulfillment data
-    const events = []
-    
     if (fulfillment.shipped_at) {
       events.push({
-        date: fulfillment.shipped_at,
-        location: "Warehouse",
-        status: "Shipped",
+        id: "shipped",
+        status: "picked-up",
         description: "Shipment picked up by carrier",
-      })
-    }
-    
-    if (fulfillment.created_at && fulfillment.created_at !== fulfillment.shipped_at) {
-      events.unshift({
-        date: fulfillment.created_at,
+        timestamp: fulfillment.shipped_at,
         location: "Warehouse",
-        status: "Processing",
-        description: "Fulfillment created",
       })
     }
 
-    // If delivered
+    if (fulfillment.shipped_at && !fulfillment.delivered_at) {
+      events.push({
+        id: "in-transit",
+        status: "in-transit",
+        description: "Package is on its way",
+        timestamp: fulfillment.shipped_at,
+      })
+    }
+
     if (fulfillment.delivered_at) {
       events.push({
-        date: fulfillment.delivered_at,
-        location: "Delivery Address",
-        status: "Delivered",
+        id: "in-transit",
+        status: "in-transit",
+        description: "Package is on its way",
+        timestamp: fulfillment.shipped_at || fulfillment.delivered_at,
+      })
+      events.push({
+        id: "delivered",
+        status: "delivered",
         description: "Package delivered",
+        timestamp: fulfillment.delivered_at,
+        location: "Delivery Address",
       })
     }
 
+    let currentStatus = "preparing"
+    if (fulfillment.delivered_at) currentStatus = "delivered"
+    else if (fulfillment.shipped_at) currentStatus = "in-transit"
+
     return {
-      carrier: label.tracking_carrier || "Carrier",
-      trackingNumber: label.tracking_number,
-      trackingUrl: getTrackingUrl(label.tracking_carrier, label.tracking_number),
-      estimatedDelivery: fulfillment.metadata?.estimated_delivery || null,
-      events: events.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
+      carrier: label?.tracking_carrier || undefined,
+      trackingNumber: label?.tracking_number || undefined,
+      estimatedDelivery: fulfillment.metadata?.estimated_delivery || undefined,
+      events,
+      currentStatus,
+      destinationLocation: { lat: 0, lng: 0 },
+      pickupLocation: { lat: 0, lng: 0 },
     }
   }
 
   const trackingData = getTrackingData()
+  const mapStatus = (trackingData?.currentStatus || "preparing") as
+    "preparing" | "picked-up" | "in-transit" | "nearby" | "delivered"
 
   return (
     <AccountLayout>
       <div className="max-w-2xl">
-        {/* Back Link */}
         <Link
           to={`/${tenant}/${locale}/account/orders/${id}` as any}
           className="inline-flex items-center gap-2 text-sm text-ds-muted-foreground hover:text-ds-foreground mb-6"
         >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Order Details
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+          {t(locale, "delivery.back_to_order")}
         </Link>
 
-        <h1 className="text-2xl font-bold text-ds-foreground mb-6">Track Your Order</h1>
+        <h1 className="text-2xl font-bold text-ds-foreground mb-6">
+          {t(locale, "delivery.track_order")}
+        </h1>
 
         {isLoading && (
-          <div className="flex items-center justify-center py-12">
-            <Spinner className="w-6 h-6 animate-spin text-ds-muted-foreground" />
+          <div className="space-y-4">
+            <div className="h-[300px] bg-ds-muted rounded-xl animate-pulse" />
+            <div className="h-64 bg-ds-muted rounded-xl animate-pulse" />
           </div>
         )}
 
         {error && (
-          <div className="bg-ds-destructive border border-ds-destructive rounded-lg p-4 text-ds-destructive">
+          <div className="bg-ds-destructive/10 border border-ds-destructive/20 rounded-lg p-4 text-ds-destructive">
             Failed to load tracking information. Please try again later.
           </div>
         )}
 
         {!isLoading && !error && !trackingData && (
           <div className="bg-ds-muted border border-ds-border rounded-lg p-8 text-center">
-            <p className="text-ds-muted-foreground mb-2">No tracking information available yet.</p>
+            <svg
+              className="w-12 h-12 text-ds-muted-foreground mx-auto mb-3"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={1.5}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+            </svg>
+            <p className="text-ds-muted-foreground mb-2">
+              {t(locale, "delivery.no_tracking")}
+            </p>
             <p className="text-sm text-ds-muted-foreground">
-              Tracking details will appear here once your order has been shipped.
+              {t(locale, "delivery.tracking_available_after_ship")}
             </p>
           </div>
         )}
 
-        {trackingData && <TrackingInfo {...trackingData} />}
+        {trackingData && (
+          <div className="space-y-6">
+            {trackingData.carrier && trackingData.trackingNumber && (
+              <div className="bg-ds-background rounded-xl border border-ds-border p-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs text-ds-muted-foreground uppercase tracking-wider">
+                      {t(locale, "delivery.carrier")}
+                    </p>
+                    <p className="text-sm font-medium text-ds-foreground mt-1">
+                      {trackingData.carrier}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-ds-muted-foreground uppercase tracking-wider">
+                      {t(locale, "delivery.tracking_number")}
+                    </p>
+                    <p className="text-sm font-medium text-ds-foreground mt-1 font-mono">
+                      {trackingData.trackingNumber}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <TrackingMap
+              orderId={id}
+              destinationLocation={trackingData.destinationLocation}
+              pickupLocation={trackingData.pickupLocation}
+              estimatedArrival={trackingData.estimatedDelivery}
+              status={mapStatus}
+              locale={locale}
+              height="280px"
+            />
+
+            <TrackingTimeline
+              events={trackingData.events}
+              currentStatus={trackingData.currentStatus}
+              estimatedDelivery={trackingData.estimatedDelivery}
+              locale={locale}
+            />
+          </div>
+        )}
       </div>
     </AccountLayout>
   )

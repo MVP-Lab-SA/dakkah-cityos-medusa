@@ -60,7 +60,7 @@ function ClientGovernanceProvider({ children }: { children: React.ReactNode }) {
       })
       return response
     },
-    enabled: !!tenantId,
+    enabled: typeof window !== "undefined" && !!tenantId,
     staleTime: 5 * 60 * 1000,
   })
 

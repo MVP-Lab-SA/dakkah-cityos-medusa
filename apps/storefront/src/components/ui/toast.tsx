@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, ReactNode } from "react"
+import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react"
 import { CheckCircleSolid, XCircleSolid, ExclamationCircleSolid, XMark } from "@medusajs/icons"
 
 type ToastType = "success" | "error" | "warning" | "info"
@@ -46,27 +46,27 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
 function ClientToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([])
-  
+
   const addToast = useCallback((type: ToastType, message: string, duration = 5000) => {
     const id = Math.random().toString(36).slice(2)
     setToasts(prev => [...prev, { id, type, message, duration }])
-    
+
     if (duration > 0) {
       setTimeout(() => {
         setToasts(prev => prev.filter(t => t.id !== id))
       }, duration)
     }
   }, [])
-  
+
   const removeToast = useCallback((id: string) => {
     setToasts(prev => prev.filter(t => t.id !== id))
   }, [])
-  
+
   const success = useCallback((message: string, duration?: number) => addToast("success", message, duration), [addToast])
   const error = useCallback((message: string, duration?: number) => addToast("error", message, duration), [addToast])
   const warning = useCallback((message: string, duration?: number) => addToast("warning", message, duration), [addToast])
   const info = useCallback((message: string, duration?: number) => addToast("info", message, duration), [addToast])
-  
+
   return (
     <ToastContext.Provider value={{ toasts, addToast, removeToast, success, error, warning, info }}>
       {children}
@@ -76,9 +76,13 @@ function ClientToastProvider({ children }: { children: ReactNode }) {
 }
 
 export function useToast() {
+  if (typeof window === "undefined") {
+    return defaultToastValue
+  }
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const context = useContext(ToastContext)
   if (!context) {
-    throw new Error("useToast must be used within a ToastProvider")
+    return defaultToastValue
   }
   return context
 }

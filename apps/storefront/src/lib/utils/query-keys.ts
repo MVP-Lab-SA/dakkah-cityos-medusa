@@ -184,6 +184,27 @@ export const queryKeys = {
     ...createDomainKeys("vendor-team"),
   },
 
+  digitalProducts: {
+    ...createDomainKeys("digital-products"),
+    downloads: () => createDynamicKey("digital-products", "downloads"),
+  },
+
+  campaigns: {
+    ...createDomainKeys("campaigns"),
+  },
+
+  flashSales: {
+    ...createDomainKeys("flash-sales"),
+  },
+
+  bundles: {
+    ...createDomainKeys("bundles"),
+  },
+
+  wishlist: {
+    ...createDomainKeys("wishlist"),
+  },
+
   vendorAnalytics: {
     ...createDomainKeys("vendor-analytics"),
     snapshots: (...params: any[]) => createDynamicKey("vendor-analytics", "snapshots", ...params),
