@@ -1219,7 +1219,7 @@ export default async function seedComplete({ container }: ExecArgs) {
     const vendorData = [
       {
         handle: "riyadh-electronics",
-        tenant_id: tenantId || "default",
+        tenant_id: tenantId || "01KGZ2JRYX607FWMMYQNQRKVWS",
         business_name: "Riyadh Electronics Hub",
         legal_name: "Riyadh Electronics Trading LLC",
         business_type: "llc",
@@ -1236,7 +1236,7 @@ export default async function seedComplete({ container }: ExecArgs) {
       },
       {
         handle: "jeddah-fashion",
-        tenant_id: tenantId || "default",
+        tenant_id: tenantId || "01KGZ2JRYX607FWMMYQNQRKVWS",
         business_name: "Jeddah Fashion House",
         legal_name: "Jeddah Fashion Co.",
         business_type: "corporation",

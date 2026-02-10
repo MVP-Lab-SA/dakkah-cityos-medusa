@@ -98,6 +98,14 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       is_primary_vendor: true,
     })
 
+    const eventBus = req.scope.resolve("event_bus")
+    await eventBus.emit("vendor_product.created", {
+      vendor_product_id: vendorProduct.id,
+      vendor_id: vendorId,
+      product_id: product.id,
+      tenant_id: vendorProduct.tenant_id || "01KGZ2JRYX607FWMMYQNQRKVWS",
+    })
+
     res.status(201).json({ 
       product: {
         ...vendorProduct,

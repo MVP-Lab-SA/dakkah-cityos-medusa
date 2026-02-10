@@ -61,6 +61,9 @@ const EVENT_WORKFLOW_MAP: Record<string, string> = {
   "vendor.application_submitted": "xsystem.vendor-application-processing",
   "vendor_order.shipped": "xsystem.vendor-order-shipment-tracking",
   "vendor.stripe_connected": "xsystem.vendor-stripe-setup-sync",
+  "vendor_product.created": "commerce.vendor-product-catalog-sync",
+  "vendor_product.updated": "commerce.vendor-product-update-sync",
+  "vendor_product.deactivated": "commerce.vendor-product-deactivation",
 }
 
 export function getWorkflowForEvent(eventType: string): string | null {

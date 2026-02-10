@@ -121,6 +121,14 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
       await vendorModule.updateVendorProducts(productId, updates)
     }
 
+    const eventBus = req.scope.resolve("event_bus")
+    await eventBus.emit("vendor_product.updated", {
+      vendor_product_id: productId,
+      vendor_id: vendorId,
+      product_id: vp.product_id,
+      tenant_id: vp.tenant_id || "01KGZ2JRYX607FWMMYQNQRKVWS",
+    })
+
     res.json({ success: true })
   } catch (error: any) {
     res.status(400).json({ message: error.message })
@@ -152,9 +160,15 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
     return res.status(404).json({ message: "Product not found" })
   }
 
-  // Soft delete - mark as inactive
   await vendorModule.updateVendorProducts(productId, {
     status: "inactive",
+  })
+
+  const eventBus = req.scope.resolve("event_bus")
+  await eventBus.emit("vendor_product.deactivated", {
+    vendor_product_id: productId,
+    vendor_id: vendorId,
+    tenant_id: "01KGZ2JRYX607FWMMYQNQRKVWS",
   })
 
   res.json({ success: true })

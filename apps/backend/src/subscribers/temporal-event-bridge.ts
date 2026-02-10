@@ -100,6 +100,9 @@ export const config: SubscriberConfig = {
     "subscription.resumed",
     "vendor.application_submitted",
     "vendor_order.shipped",
+    "vendor_product.created",
+    "vendor_product.deactivated",
+    "vendor_product.updated",
     "vendor.stripe_connected",
   ],
 }
