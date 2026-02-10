@@ -54,8 +54,7 @@ export const useProduct = ({
       const { products } = await sdk.store.product.list({
         handle: handle,
         region_id,
-        fields: fields ||
-          "*variants, +variants.inventory_quantity, +variants.manage_inventory, +variants.allow_backorder, *images, *options, *options.values, *collection, *tags",
+        fields: fields || undefined,
       })
 
       if (!products || products.length === 0) {

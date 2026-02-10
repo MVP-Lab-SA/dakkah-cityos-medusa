@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react"
 import {
   CartLineItem,
   CartSummary,
@@ -7,26 +8,37 @@ import {
 import { Button } from "@/components/ui/button"
 import { Loading } from "@/components/ui/loading"
 import { useCart, useCreateCart } from "@/lib/hooks/use-cart"
+import { useRegion } from "@/lib/hooks/use-regions"
 import { sortCartItems } from "@/lib/utils/cart"
 import { useTenantPrefix } from "@/lib/context/tenant-context"
-import { Link, useLoaderData } from "@tanstack/react-router"
+import { Link, useParams } from "@tanstack/react-router"
+
+const LOCALE_TO_COUNTRY: Record<string, string> = {
+  en: "us",
+  fr: "fr",
+  ar: "sa",
+}
 
 const DEFAULT_CART_FIELDS =
   "id, *items, total, currency_code, subtotal, shipping_total, discount_total, tax_total, *promotions";
 
 const Cart = () => {
-  const { region } = useLoaderData({
-    strict: false,
-  }) as any;
+  const { locale } = useParams({ strict: false }) as { locale: string }
+  const countryCode = LOCALE_TO_COUNTRY[locale?.toLowerCase()] || "us"
+  const { data: region } = useRegion({ country_code: countryCode })
   const prefix = useTenantPrefix();
   const { data: cart, isLoading: cartLoading } = useCart({
     fields: DEFAULT_CART_FIELDS,
   });
   const createCartMutation = useCreateCart();
+  const cartCreationAttempted = useRef(false);
 
-  if (!cart && !cartLoading && !createCartMutation.isPending) {
-    createCartMutation.mutate({ region_id: region.id });
-  }
+  useEffect(() => {
+    if (!cart && !cartLoading && !createCartMutation.isPending && region?.id && !cartCreationAttempted.current) {
+      cartCreationAttempted.current = true;
+      createCartMutation.mutate({ region_id: region.id });
+    }
+  }, [cart, cartLoading, region?.id, createCartMutation.isPending]);
 
   const cartItems = sortCartItems(cart?.items || []);
 

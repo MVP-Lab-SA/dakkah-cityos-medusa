@@ -28,8 +28,6 @@ export const Route = createFileRoute("/$tenant/$locale/products/$handle")({
           return await retrieveProduct({
             handle,
             region_id: region.id,
-            fields:
-              "*variants, +variants.inventory_quantity, +variants.manage_inventory, +variants.allow_backorder, +variants.calculated_price, *images, *options, *options.values, *collection, *tags",
           });
         } catch {
           throw notFound();
