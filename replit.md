@@ -40,6 +40,14 @@ The storefront includes a comprehensive Payload CMS-compatible block system:
 - Design tokens expanded with motion/transition tokens (duration, easing), elevation tokens (6 levels), container tokens, and responsive spacing utilities in `packages/cityos-design-tokens/src/`
 - Commerce types (`ProductCard`, `PriceDisplay`, `Rating`, `CartItem`, `VendorCard`) and feedback types (`Modal`, `Alert`, `Toast`, `Notification`) defined in design-system package
 
+### RTL/LTR & i18n Architecture (Updated Feb 2026)
+- **Full logical CSS properties**: All blocks, UI components, and layout components use Tailwind CSS v4 logical property utilities (`ms-`/`me-`/`ps-`/`pe-`/`start-`/`end-`/`text-start`/`text-end`/`border-s-`/`border-e-`/`rounded-s-`/`rounded-e-`) instead of physical direction classes (`ml-`/`mr-`/`pl-`/`pr-`/`left-`/`right-`/`text-left`/`text-right`)
+- **RTL direction**: `$tenant.$locale.tsx` sets `dir="rtl"` for Arabic locale; `rtl.css` handles animation direction flips (`slide-in-from-left/right`), gradient direction overrides, and `flex-row` reversal
+- **Alignment fields**: BlockTypes.ts uses `"start" | "center" | "end"` for alignment/textAlign fields (backward-compatible with legacy `"left"`/`"right"` in renderers)
+- **i18n integration**: Blocks accept `locale` prop (default `'en'`) or use `useTenant()` hook; hardcoded UI strings use `t(locale, "blocks.key")` with prop override pattern. 53+ translation keys across `blocks` namespace in en/fr/ar JSON files
+- **Preserved exceptions**: Dialog centering (`left-[50%] translate-x-[-50%]`), Radix UI data attributes (`data-[side=left/right]`), animation class names (flipped via rtl.css)
+- **Locale files**: `apps/storefront/src/lib/i18n/locales/{en,fr,ar}.json` with namespaces: common, nav, home, product, cart, account, footer, blocks
+
 ### CMS Integration
 A local CMS registry (`apps/backend/src/lib/platform/cms-registry.ts`), compatible with Payload CMS, defines 27 commerce verticals and additional pages. The `TemplateRenderer` dynamically renders layouts. CMS pages support `countryCode` and `regionZone` for country-level unification and optional `nodeId` for hierarchy integration. Backend endpoints provide Payload-compatible responses, and frontend hooks use React Query for data fetching.
 
