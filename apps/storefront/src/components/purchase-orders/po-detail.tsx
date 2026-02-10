@@ -20,7 +20,7 @@ export function PODetail({ purchaseOrder: po }: PODetailProps) {
       case "submitted":
         return "bg-ds-info text-ds-info"
       case "fulfilled":
-        return "bg-purple-100 text-purple-800"
+        return "bg-ds-accent/10 text-ds-accent"
       default:
         return "bg-ds-muted text-ds-foreground"
     }

@@ -13,10 +13,10 @@ interface EscrowStatusProps {
 }
 
 const statusConfig: Record<string, { color: string; icon: string }> = {
-  held: { color: "bg-ds-warning/10 text-amber-700", icon: "🔒" },
-  released: { color: "bg-ds-success/10 text-green-700", icon: "✓" },
-  disputed: { color: "bg-ds-destructive/10 text-red-700", icon: "⚠" },
-  refunded: { color: "bg-blue-100 text-blue-700", icon: "↩" },
+  held: { color: "bg-ds-warning/10 text-ds-warning", icon: "🔒" },
+  released: { color: "bg-ds-success/10 text-ds-success", icon: "✓" },
+  disputed: { color: "bg-ds-destructive/10 text-ds-destructive", icon: "⚠" },
+  refunded: { color: "bg-ds-accent/10 text-ds-accent", icon: "↩" },
 }
 
 export function EscrowStatus({

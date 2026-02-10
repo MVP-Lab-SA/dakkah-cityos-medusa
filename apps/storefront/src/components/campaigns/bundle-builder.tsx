@@ -76,7 +76,7 @@ export function BundleBuilder({ bundle, onAddToCart }: BundleBuilderProps) {
           </div>
           {savings > 0 && (
             <div className="flex items-center justify-end">
-              <span className="text-sm font-medium text-green-600">
+              <span className="text-sm font-medium text-ds-success">
                 Save {formatCurrency(savings, bundle.currency_code, locale as SupportedLocale)} ({savingsPercent}%)
               </span>
             </div>

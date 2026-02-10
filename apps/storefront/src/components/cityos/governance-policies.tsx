@@ -89,7 +89,7 @@ function PolicyDisplay({ policies }: { policies: GovernancePolicy }) {
 
 function AuthorityCard({ authority }: { authority: GovernanceAuthority }) {
   const levelStyles: Record<string, string> = {
-    region: "bg-purple-100 text-purple-800",
+    region: "bg-ds-accent/10 text-ds-accent",
     country: "bg-ds-info text-ds-info",
     authority: "bg-ds-success text-ds-success",
     department: "bg-orange-100 text-orange-800",

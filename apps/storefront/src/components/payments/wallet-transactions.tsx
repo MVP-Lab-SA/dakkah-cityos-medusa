@@ -11,17 +11,17 @@ interface WalletTransactionsProps {
 }
 
 const typeConfig: Record<string, { icon: string; color: string; labelKey: string }> = {
-  credit: { icon: "↑", color: "text-green-600 bg-green-100", labelKey: "payment.credit" },
-  "top-up": { icon: "↑", color: "text-green-600 bg-green-100", labelKey: "payment.credit" },
-  debit: { icon: "↓", color: "text-red-600 bg-red-100", labelKey: "payment.debit" },
-  transfer: { icon: "→", color: "text-blue-600 bg-blue-100", labelKey: "payment.transfer" },
-  refund: { icon: "↩", color: "text-orange-600 bg-orange-100", labelKey: "payment.refund" },
+  credit: { icon: "↑", color: "text-ds-success bg-ds-success/10", labelKey: "payment.credit" },
+  "top-up": { icon: "↑", color: "text-ds-success bg-ds-success/10", labelKey: "payment.credit" },
+  debit: { icon: "↓", color: "text-ds-destructive bg-ds-destructive/10", labelKey: "payment.debit" },
+  transfer: { icon: "→", color: "text-ds-accent bg-ds-accent/10", labelKey: "payment.transfer" },
+  refund: { icon: "↩", color: "text-ds-warning bg-ds-warning/10", labelKey: "payment.refund" },
 }
 
 const statusStyles: Record<string, string> = {
-  completed: "bg-ds-success/10 text-green-700",
-  pending: "bg-ds-warning/10 text-amber-700",
-  failed: "bg-ds-destructive/10 text-red-700",
+  completed: "bg-ds-success/10 text-ds-success",
+  pending: "bg-ds-warning/10 text-ds-warning",
+  failed: "bg-ds-destructive/10 text-ds-destructive",
 }
 
 export function WalletTransactions({
@@ -92,7 +92,7 @@ export function WalletTransactions({
             </div>
 
             <div className="flex flex-col items-end gap-1 flex-shrink-0">
-              <span className={clsx("text-sm font-semibold", isPositive ? "text-green-600" : "text-ds-foreground")}>
+              <span className={clsx("text-sm font-semibold", isPositive ? "text-ds-success" : "text-ds-foreground")}>
                 {isPositive ? "+" : "-"}{formatCurrency(Math.abs(tx.amount), tx.currency, loc)}
               </span>
               <span className={clsx("text-xs px-2 py-0.5 rounded-full font-medium", statusStyles[tx.status] || statusStyles.pending)}>

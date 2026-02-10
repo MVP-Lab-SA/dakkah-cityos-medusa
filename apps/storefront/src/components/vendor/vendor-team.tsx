@@ -107,7 +107,7 @@ export function VendorTeam() {
 
 function RoleBadge({ role }: { role: string }) {
   const styles: Record<string, string> = {
-    owner: "bg-purple-100 text-purple-800",
+    owner: "bg-ds-accent/10 text-ds-accent",
     admin: "bg-ds-info text-ds-info",
     manager: "bg-ds-success text-ds-success",
     staff: "bg-ds-muted text-ds-foreground",

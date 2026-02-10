@@ -16,9 +16,9 @@ interface GiftCardDisplayProps {
 }
 
 const statusStyles: Record<string, string> = {
-  active: "bg-ds-success/10 text-green-700",
-  redeemed: "bg-blue-100 text-blue-700",
-  expired: "bg-ds-destructive/10 text-red-700",
+  active: "bg-ds-success/10 text-ds-success",
+  redeemed: "bg-ds-accent/10 text-ds-accent",
+  expired: "bg-ds-destructive/10 text-ds-destructive",
   disabled: "bg-ds-muted text-ds-muted-foreground",
 }
 

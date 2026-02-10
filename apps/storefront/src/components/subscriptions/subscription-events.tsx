@@ -67,7 +67,7 @@ function EventDot({ type }: { type: string }) {
     resumed: "bg-ds-success",
     cancelled: "bg-ds-destructive",
     renewed: "bg-ds-info",
-    plan_changed: "bg-purple-500",
+    plan_changed: "bg-ds-accent",
     payment_failed: "bg-ds-destructive",
     payment_succeeded: "bg-ds-success",
     trial_started: "bg-indigo-500",

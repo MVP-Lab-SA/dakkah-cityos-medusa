@@ -66,7 +66,7 @@ const statusColors: Record<string, string> = {
   completed: "bg-ds-success text-ds-success",
   canceled: "bg-ds-destructive text-ds-destructive",
   processing: "bg-ds-info text-ds-info",
-  shipped: "bg-purple-100 text-purple-700",
+  shipped: "bg-ds-accent/10 text-ds-accent",
   requires_action: "bg-orange-100 text-orange-700",
   not_fulfilled: "bg-ds-warning text-ds-warning",
   fulfilled: "bg-ds-success text-ds-success",

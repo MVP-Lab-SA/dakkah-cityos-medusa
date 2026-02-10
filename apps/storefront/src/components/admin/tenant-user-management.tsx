@@ -117,7 +117,7 @@ export function TenantUserManagement() {
 function RoleBadge({ role }: { role: RbacRole }) {
   const roleColors: Record<string, string> = {
     "super-admin": "bg-ds-destructive text-ds-destructive",
-    "city-manager": "bg-purple-100 text-purple-800",
+    "city-manager": "bg-ds-accent/10 text-ds-accent",
     "district-manager": "bg-ds-info text-ds-info",
     "zone-manager": "bg-ds-success text-ds-success",
     "facility-manager": "bg-ds-warning text-ds-warning",

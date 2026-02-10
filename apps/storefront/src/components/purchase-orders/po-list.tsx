@@ -29,7 +29,7 @@ export function POList({
       case "submitted":
         return "bg-ds-info text-ds-info"
       case "fulfilled":
-        return "bg-purple-100 text-purple-800"
+        return "bg-ds-accent/10 text-ds-accent"
       case "cancelled":
         return "bg-ds-muted text-ds-muted-foreground"
       default:

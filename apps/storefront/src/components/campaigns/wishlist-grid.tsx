@@ -85,7 +85,7 @@ export function WishlistGrid({ items, onRemove, onMoveToCart, loading }: Wishlis
               <span className="text-lg font-bold text-ds-foreground">
                 {formatCurrency(item.price, item.currency_code, locale as SupportedLocale)}
               </span>
-              <span className={`text-xs font-medium px-2 py-1 rounded ${item.in_stock ? "bg-green-100 text-green-700" : "bg-ds-muted text-ds-muted-foreground"}`}>
+              <span className={`text-xs font-medium px-2 py-1 rounded ${item.in_stock ? "bg-ds-success/10 text-ds-success" : "bg-ds-muted text-ds-muted-foreground"}`}>
                 {item.in_stock ? "In Stock" : "Out of Stock"}
               </span>
             </div>

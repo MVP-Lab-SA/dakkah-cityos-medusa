@@ -61,8 +61,8 @@ export function StoreCreditWidget({
       {isApplied ? (
         <div className="flex items-center justify-between bg-ds-success/10 rounded-lg px-4 py-3">
           <div>
-            <p className="text-sm font-medium text-green-700">{t(locale, "payment.credit_applied")}</p>
-            <p className="text-lg font-bold text-green-700">
+            <p className="text-sm font-medium text-ds-success">{t(locale, "payment.credit_applied")}</p>
+            <p className="text-lg font-bold text-ds-success">
               -{formatCurrency(appliedAmount, currency, loc)}
             </p>
           </div>

@@ -462,6 +462,25 @@
     "preorder": "Pre-order",
     "preorder_now": "Pre-order Now"
   },
+  "comparison": {
+    "addProduct": "Add a product to compare",
+    "feature": "Feature",
+    "remove": "Remove"
+  },
+  "megaMenu": {
+    "menu": "Menu",
+    "navigation": "Navigation"
+  },
+  "miniCart": {
+    "checkout": "Checkout",
+    "close": "Close",
+    "closeOverlay": "Close overlay",
+    "empty": "Your cart is empty",
+    "qty": "Qty",
+    "subtotal": "Subtotal",
+    "title": "Shopping Cart",
+    "viewCart": "View Cart"
+  },
   "content": {
     "title": "Content",
     "blog": "Blog",
@@ -640,5 +659,18 @@
     "status_expired": "Expired",
     "no_referrals_title": "No Referrals Yet",
     "no_referrals_description": "Share your referral code with friends to start earning rewards"
+  },
+  "socialProof": {
+    "daysAgo": "days ago",
+    "dismiss": "Dismiss",
+    "hoursAgo": "hours ago",
+    "justNow": "Just now",
+    "minutesAgo": "minutes ago",
+    "purchased": "purchased"
+  },
+  "socialShare": {
+    "copied": "Link copied!",
+    "copyLink": "Copy Link",
+    "shareVia": "Share via"
   }
 }

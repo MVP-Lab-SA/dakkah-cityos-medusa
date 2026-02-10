@@ -30,7 +30,7 @@ export function DashboardStats({
       icon: Calendar,
       label: "Upcoming Bookings",
       value: bookingCount,
-      color: "bg-purple-50 text-purple-600",
+      color: "bg-ds-accent/10 text-ds-accent",
     },
     {
       icon: TruckFast,

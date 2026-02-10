@@ -27,7 +27,7 @@ const badgeConfig: Record<BadgeType, { label: string; icon: React.ElementType; c
   responsive: {
     label: "Quick Responder",
     icon: Check,
-    color: "bg-purple-100 text-purple-700",
+    color: "bg-ds-accent/10 text-ds-accent",
   },
   trusted: {
     label: "Trusted Vendor",

@@ -93,8 +93,8 @@ export function BNPLSelector({
                 <span className={clsx(
                   "text-xs font-medium px-2.5 py-1 rounded-full",
                   provider.eligible
-                    ? "bg-ds-success/10 text-green-700"
-                    : "bg-ds-destructive/10 text-red-700"
+                    ? "bg-ds-success/10 text-ds-success"
+                    : "bg-ds-destructive/10 text-ds-destructive"
                 )}>
                   {provider.eligible ? t(locale, "payment.eligible") : t(locale, "payment.not_eligible")}
                 </span>

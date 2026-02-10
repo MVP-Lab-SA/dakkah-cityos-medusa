@@ -10,13 +10,13 @@ interface DigitalProductCardProps {
 }
 
 const fileTypeColors: Record<string, string> = {
-  pdf: "bg-red-100 text-red-700",
-  ebook: "bg-blue-100 text-blue-700",
-  audio: "bg-purple-100 text-purple-700",
-  video: "bg-green-100 text-green-700",
-  software: "bg-orange-100 text-orange-700",
-  image: "bg-pink-100 text-pink-700",
-  template: "bg-teal-100 text-teal-700",
+  pdf: "bg-ds-destructive/10 text-ds-destructive",
+  ebook: "bg-ds-accent/10 text-ds-accent",
+  audio: "bg-ds-accent/10 text-ds-accent",
+  video: "bg-ds-success/10 text-ds-success",
+  software: "bg-ds-warning/10 text-ds-warning",
+  image: "bg-ds-accent/10 text-ds-accent",
+  template: "bg-ds-success/10 text-ds-success",
 }
 
 export function DigitalProductCard({ product }: DigitalProductCardProps) {

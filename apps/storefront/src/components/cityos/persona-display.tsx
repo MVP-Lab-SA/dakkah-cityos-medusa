@@ -59,7 +59,7 @@ function PersonaCard({ persona, highlighted }: { persona: Persona; highlighted?:
     "tenant-default": "bg-ds-muted text-ds-foreground",
     "user-default": "bg-ds-info text-ds-info",
     membership: "bg-ds-success text-ds-success",
-    surface: "bg-purple-100 text-purple-800",
+    surface: "bg-ds-accent/10 text-ds-accent",
     session: "bg-orange-100 text-orange-800",
   }
 

@@ -56,7 +56,7 @@ function ZoneBadge({ zone }: { zone: string }) {
     GCC: "bg-ds-success text-ds-success",
     EU: "bg-ds-info text-ds-info",
     MENA: "bg-orange-100 text-orange-800",
-    APAC: "bg-purple-100 text-purple-800",
+    APAC: "bg-ds-accent/10 text-ds-accent",
     AMERICAS: "bg-ds-destructive text-ds-destructive",
     GLOBAL: "bg-ds-muted text-ds-foreground",
   }

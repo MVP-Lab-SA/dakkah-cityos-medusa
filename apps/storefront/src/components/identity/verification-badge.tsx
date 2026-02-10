@@ -11,7 +11,7 @@ interface VerificationBadgeProps {
 
 const typeColorMap: Record<string, string> = {
   identity: "text-ds-primary",
-  business: "text-blue-500",
+  business: "text-ds-accent",
   seller: "text-ds-success",
   premium: "text-ds-warning",
 }

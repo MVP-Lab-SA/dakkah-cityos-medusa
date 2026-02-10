@@ -53,7 +53,7 @@ export function ChannelMappingList() {
 function ChannelTypeBadge({ type }: { type: string }) {
   const styles: Record<string, string> = {
     web: "bg-ds-info text-ds-info",
-    mobile: "bg-purple-100 text-purple-800",
+    mobile: "bg-ds-accent/10 text-ds-accent",
     pos: "bg-ds-success text-ds-success",
     marketplace: "bg-orange-100 text-orange-800",
     social: "bg-pink-100 text-pink-800",

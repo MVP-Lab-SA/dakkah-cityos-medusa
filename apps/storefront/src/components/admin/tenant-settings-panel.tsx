@@ -44,7 +44,7 @@ function BillingCard({ billing }: { billing: TenantBilling }) {
   const planColors: Record<string, string> = {
     free: "bg-ds-muted text-ds-foreground",
     starter: "bg-ds-info text-ds-info",
-    professional: "bg-purple-100 text-purple-800",
+    professional: "bg-ds-accent/10 text-ds-accent",
     enterprise: "bg-orange-100 text-orange-800",
   }
 

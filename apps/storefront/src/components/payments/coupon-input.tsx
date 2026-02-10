@@ -50,12 +50,12 @@ export function CouponInput({
       <div className="bg-ds-success/10 rounded-lg px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-green-700">{t(locale, "payment.coupon_applied")}</p>
+            <p className="text-sm font-medium text-ds-success">{t(locale, "payment.coupon_applied")}</p>
             <div className="flex items-center gap-2 mt-1">
               <span className="text-xs font-mono bg-ds-background text-ds-foreground px-2 py-0.5 rounded border border-ds-border">
                 {appliedCoupon.code}
               </span>
-              <span className="text-sm font-semibold text-green-700">
+              <span className="text-sm font-semibold text-ds-success">
                 -{appliedCoupon.type === "percentage"
                   ? `${appliedCoupon.discount}%`
                   : formatCurrency(appliedCoupon.discount, currency, loc)}

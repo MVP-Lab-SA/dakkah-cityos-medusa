@@ -101,17 +101,17 @@ function ToastContainer({ toasts, removeToast }: { toasts: Toast[]; removeToast:
 
 function ToastItem({ toast, onClose }: { toast: Toast; onClose: () => void }) {
   const icons = {
-    success: <CheckCircleSolid className="w-5 h-5 text-green-500" />,
+    success: <CheckCircleSolid className="w-5 h-5 text-ds-success" />,
     error: <XCircleSolid className="w-5 h-5 text-ds-destructive" />,
-    warning: <ExclamationCircleSolid className="w-5 h-5 text-yellow-500" />,
-    info: <ExclamationCircleSolid className="w-5 h-5 text-blue-500" />
+    warning: <ExclamationCircleSolid className="w-5 h-5 text-ds-warning" />,
+    info: <ExclamationCircleSolid className="w-5 h-5 text-ds-accent" />
   }
   
   const backgrounds = {
-    success: "bg-green-50 border-green-200",
-    error: "bg-red-50 border-ds-destructive/20",
-    warning: "bg-yellow-50 border-yellow-200",
-    info: "bg-blue-50 border-blue-200"
+    success: "bg-ds-success/10 border-ds-success/20",
+    error: "bg-ds-destructive/10 border-ds-destructive/20",
+    warning: "bg-ds-warning/10 border-ds-warning/20",
+    info: "bg-ds-accent/10 border-ds-accent/20"
   }
   
   return (

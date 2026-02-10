@@ -41,7 +41,7 @@ export function TeamMembers({
   }
 
   const roleColors: Record<TeamMember["role"], string> = {
-    admin: "bg-purple-100 text-purple-800",
+    admin: "bg-ds-accent/10 text-ds-accent",
     buyer: "bg-ds-info text-ds-info",
     approver: "bg-ds-success text-ds-success",
     viewer: "bg-ds-muted text-ds-foreground",

@@ -92,7 +92,7 @@ export function VendorDashboard() {
         <div className="border rounded-lg p-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-muted-foreground">Products</span>
-            <ShoppingBag className="w-5 h-5 text-purple-600" />
+            <ShoppingBag className="w-5 h-5 text-ds-accent" />
           </div>
           <p className="text-2xl font-bold">{stats?.products_count || 0}</p>
           <Link

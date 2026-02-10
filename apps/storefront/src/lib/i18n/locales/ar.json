@@ -462,6 +462,25 @@
     "preorder": "طلب مسبق",
     "preorder_now": "اطلب مسبقاً"
   },
+  "comparison": {
+    "addProduct": "أضف منتجاً للمقارنة",
+    "feature": "الميزة",
+    "remove": "إزالة"
+  },
+  "megaMenu": {
+    "menu": "القائمة",
+    "navigation": "الملاحة"
+  },
+  "miniCart": {
+    "checkout": "إتمام الشراء",
+    "close": "إغلاق",
+    "closeOverlay": "إغلاق اللوحة",
+    "empty": "سلة التسوق فارغة",
+    "qty": "الكمية",
+    "subtotal": "المجموع الفرعي",
+    "title": "سلة التسوق",
+    "viewCart": "عرض السلة"
+  },
   "content": {
     "title": "المحتوى",
     "blog": "المدونة",
@@ -640,5 +659,18 @@
     "status_expired": "منتهي",
     "no_referrals_title": "لا توجد إحالات بعد",
     "no_referrals_description": "شارك رمز الإحالة مع أصدقائك لبدء كسب المكافآت"
+  },
+  "socialProof": {
+    "daysAgo": "منذ أيام",
+    "dismiss": "إغلاق",
+    "hoursAgo": "قبل ساعات",
+    "justNow": "للتو",
+    "minutesAgo": "قبل دقائق",
+    "purchased": "تم الشراء"
+  },
+  "socialShare": {
+    "copied": "تم نسخ الرابط!",
+    "copyLink": "نسخ الرابط",
+    "shareVia": "مشاركة عبر"
   }
 }

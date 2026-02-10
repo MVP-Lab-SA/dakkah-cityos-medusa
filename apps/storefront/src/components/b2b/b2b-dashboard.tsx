@@ -118,7 +118,7 @@ export function B2BDashboard() {
             {company.status.charAt(0).toUpperCase() + company.status.slice(1)}
           </span>
           <span className={`px-2 py-1 rounded text-xs font-medium ${
-            company.tier === "platinum" ? "bg-purple-100 text-purple-800" :
+            company.tier === "platinum" ? "bg-ds-accent/10 text-ds-accent" :
             company.tier === "gold" ? "bg-ds-warning text-ds-warning" :
             company.tier === "silver" ? "bg-ds-muted text-ds-foreground" :
             "bg-ds-warning text-ds-warning"
@@ -190,7 +190,7 @@ export function B2BDashboard() {
         <div className="bg-ds-background border rounded-lg p-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-muted-foreground">Payment Terms</span>
-            <CreditCard className="w-5 h-5 text-purple-600" />
+            <CreditCard className="w-5 h-5 text-ds-accent" />
           </div>
           <p className="text-2xl font-bold">{company.payment_terms || "Net 30"}</p>
           <p className="text-xs text-muted-foreground mt-2">
@@ -307,7 +307,7 @@ function TierBadge({ tier }: { tier: Company["tier"] }) {
     bronze: "bg-ds-warning text-ds-warning",
     silver: "bg-ds-muted text-ds-foreground",
     gold: "bg-ds-warning text-ds-warning",
-    platinum: "bg-purple-100 text-purple-800",
+    platinum: "bg-ds-accent/10 text-ds-accent",
   };
 
   return (

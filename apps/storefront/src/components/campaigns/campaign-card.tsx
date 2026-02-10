@@ -9,10 +9,10 @@ interface CampaignCardProps {
 }
 
 const statusStyles: Record<string, string> = {
-  active: "bg-green-100 text-green-700",
-  funded: "bg-blue-100 text-blue-700",
+  active: "bg-ds-success/10 text-ds-success",
+  funded: "bg-ds-accent/10 text-ds-accent",
   ended: "bg-ds-muted text-ds-muted-foreground",
-  cancelled: "bg-red-100 text-red-700",
+  cancelled: "bg-ds-destructive/10 text-ds-destructive",
 }
 
 export function CampaignCard({ campaign }: CampaignCardProps) {

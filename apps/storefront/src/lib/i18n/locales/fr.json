@@ -462,6 +462,25 @@
     "preorder": "Précommande",
     "preorder_now": "Précommander"
   },
+  "comparison": {
+    "addProduct": "Ajouter un produit à comparer",
+    "feature": "Fonctionnalité",
+    "remove": "Supprimer"
+  },
+  "megaMenu": {
+    "menu": "Menu",
+    "navigation": "Navigation"
+  },
+  "miniCart": {
+    "checkout": "Passer la commande",
+    "close": "Fermer",
+    "closeOverlay": "Fermer le panneau",
+    "empty": "Votre panier est vide",
+    "qty": "Qté",
+    "subtotal": "Sous-total",
+    "title": "Panier",
+    "viewCart": "Voir le panier"
+  },
   "content": {
     "title": "Contenu",
     "blog": "Blog",
@@ -640,5 +659,18 @@
     "status_expired": "Expiré",
     "no_referrals_title": "Pas encore de parrainages",
     "no_referrals_description": "Partagez votre code avec vos amis pour commencer à gagner"
+  },
+  "socialProof": {
+    "daysAgo": "il y a des jours",
+    "dismiss": "Fermer",
+    "hoursAgo": "il y a des heures",
+    "justNow": "À l'instant",
+    "minutesAgo": "il y a quelques minutes",
+    "purchased": "acheté"
+  },
+  "socialShare": {
+    "copied": "Lien copié !",
+    "copyLink": "Copier le lien",
+    "shareVia": "Partager via"
   }
 }

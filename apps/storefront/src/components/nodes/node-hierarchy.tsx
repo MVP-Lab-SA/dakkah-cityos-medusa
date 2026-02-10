@@ -18,7 +18,7 @@ const NODE_ICONS: Record<NodeType, string> = {
 }
 
 const NODE_COLORS: Record<NodeType, { bg: string; text: string; border: string }> = {
-  CITY: { bg: "bg-purple-50", text: "text-purple-700", border: "border-purple-200" },
+  CITY: { bg: "bg-ds-accent/10", text: "text-ds-accent", border: "border-ds-accent/20" },
   DISTRICT: { bg: "bg-ds-info", text: "text-ds-info", border: "border-ds-info" },
   ZONE: { bg: "bg-ds-success", text: "text-ds-success", border: "border-ds-success" },
   FACILITY: { bg: "bg-orange-50", text: "text-orange-700", border: "border-orange-200" },

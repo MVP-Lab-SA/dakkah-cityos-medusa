@@ -39,7 +39,7 @@ export function NodeHierarchyTree({ tenantId }: NodeHierarchyTreeProps) {
 
 function NodeItem({ node, depth }: { node: Node; depth: number }) {
   const typeColors: Record<NodeType, string> = {
-    CITY: "bg-purple-100 text-purple-800",
+    CITY: "bg-ds-accent/10 text-ds-accent",
     DISTRICT: "bg-ds-info text-ds-info",
     ZONE: "bg-ds-success text-ds-success",
     FACILITY: "bg-orange-100 text-orange-800",

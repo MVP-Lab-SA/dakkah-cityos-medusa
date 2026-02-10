@@ -52,7 +52,7 @@ export function ApprovalQueue({
       case "purchase_order":
         return "bg-ds-info text-ds-info"
       case "quote_request":
-        return "bg-purple-100 text-purple-800"
+        return "bg-ds-accent/10 text-ds-accent"
       case "limit_increase":
         return "bg-ds-warning text-ds-warning"
     }

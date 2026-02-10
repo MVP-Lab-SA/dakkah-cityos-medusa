@@ -31,7 +31,7 @@ export function QuickActions() {
       description: "Check order status",
       href: `${prefix}/account/orders`,
       icon: Plus,
-      color: "bg-purple-50 text-purple-600 hover:bg-purple-100",
+      color: "bg-ds-accent/10 text-ds-accent hover:bg-ds-accent/10",
     },
     {
       label: "Get Support",
