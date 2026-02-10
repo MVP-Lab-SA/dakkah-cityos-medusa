@@ -85,6 +85,13 @@ export async function POST(
         selector: { id },
         data: { stripe_account_id: stripeAccountId }
       })
+
+      const eventBus = req.scope.resolve("event_bus")
+      await eventBus.emit("vendor.stripe_connected", {
+        vendor_id: id,
+        stripe_account_id: stripeAccountId,
+        tenant_id: vendor.tenant_id || "01KGZ2JRYX607FWMMYQNQRKVWS",
+      })
     }
 
     // Create account link for onboarding

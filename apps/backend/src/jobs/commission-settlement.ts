@@ -81,7 +81,7 @@ export default async function commissionSettlementJob(container: MedusaContainer
         // Create payout
         const payout = await payoutService.createVendorPayout({
           vendorId,
-          tenantId: (data.vendor?.tenant_id as string) || "default",
+          tenantId: (data.vendor?.tenant_id as string) || "01KGZ2JRYX607FWMMYQNQRKVWS",
           periodStart: new Date(oldestTx.created_at as string),
           periodEnd: new Date(newestTx.created_at as string),
           transactionIds: data.transactions.map((tx) => tx.id as string),
@@ -108,9 +108,9 @@ export default async function commissionSettlementJob(container: MedusaContainer
             vendor_id: vendorId,
             amount: netAmount,
             stripe_account_id: data.vendor?.stripe_account_id,
-            tenant_id: (data.vendor?.tenant_id as string) || "default",
+            tenant_id: (data.vendor?.tenant_id as string) || "01KGZ2JRYX607FWMMYQNQRKVWS",
           }, {
-            tenantId: (data.vendor?.tenant_id as string) || "default",
+            tenantId: (data.vendor?.tenant_id as string) || "01KGZ2JRYX607FWMMYQNQRKVWS",
             source: "commission-settlement-job",
           })
         } catch (dispatchError) {

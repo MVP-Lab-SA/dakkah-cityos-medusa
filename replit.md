@@ -1,7 +1,7 @@
 # Medusa.js E-Commerce Monorepo — Dakkah CityOS Commerce Platform
 
 ## Overview
-This project is a Medusa.js e-commerce monorepo designed for multi-tenancy and seamless integration with the Dakkah CityOS CMS architecture. Dakkah is a comprehensive platform intended to power over 27 commerce verticals. Key features include a 5-level node hierarchy, a 10-role RBAC system, a 6-axis persona system, a 4-level governance chain, and localization for en/fr/ar (with RTL support). The primary super-app tenant is "Dakkah" (`01KGZ2JRYX607FWMMYQNQRKVWS`), containing all seeded data.
+This project is a Medusa.js e-commerce monorepo for multi-tenancy, seamlessly integrating with the Dakkah CityOS CMS architecture. Dakkah is designed to power over 27 commerce verticals, featuring a 5-level node hierarchy, a 10-role RBAC system, a 6-axis persona system, a 4-level governance chain, and localization for en/fr/ar (with RTL support). The platform aims to be a comprehensive commerce solution, with "Dakkah" as the primary super-app tenant containing all seeded data.
 
 ## User Preferences
 - Full alignment with CityOS CMS architecture required
@@ -14,25 +14,22 @@ This project is a Medusa.js e-commerce monorepo designed for multi-tenancy and s
 ## System Architecture
 
 ### Structure
-The project utilizes a Turborepo monorepo:
-- `apps/backend/`: Medusa.js v2 backend API (port 9000).
-- `apps/storefront/`: TanStack Start + React storefront (port 5000).
+The project uses a Turborepo monorepo with:
+- `apps/backend/`: Medusa.js v2 backend API.
+- `apps/storefront/`: TanStack Start + React storefront.
 - `packages/cityos-contracts/`: Shared TypeScript contracts.
 - `packages/cityos-design-tokens/`: Design token definitions.
 - `packages/cityos-design-runtime/`: Theme runtime and React providers.
 - `packages/cityos-design-system/`: Component type system.
 
-### Backend Modules and Features
-The backend provides modularity for CityOS features such as tenant management, a 5-level node hierarchy (CITY→DISTRICT→ZONE→FACILITY→ASSET), policy inheritance-based governance, a persona system, a CMS-compatible event outbox, and i18n. It supports multi-vendor marketplaces, subscriptions, B2B, bookings, promotions, and specialized services. API routes handle tenant, node, persona, and governance resolution using `NodeContext` middleware.
-
-### Vendor-as-Tenant Architecture
-Vendors are implemented as full tenants within the system, differentiated by `scope_tier` (nano, micro, small, medium, large, mega, global) and `tenant_type` (platform, marketplace, vendor, brand). Key models include `TenantRelationship` for linking vendor-tenants to marketplace-tenants, `TenantPOI` for physical locations, `ServiceChannel` for delivery methods, and `MarketplaceListing` for cross-tenant product listings.
+### Backend Features
+The backend provides modularity for CityOS features including tenant management, a 5-level node hierarchy (CITY→DISTRICT→ZONE→FACILITY→ASSET), policy inheritance-based governance, a persona system, a CMS-compatible event outbox, and i18n. It supports multi-vendor marketplaces, subscriptions, B2B, bookings, promotions, and specialized services. API routes handle tenant, node, persona, and governance resolution. Vendors are implemented as full tenants with `scope_tier` and `tenant_type` differentiation, linked via `TenantRelationship`. Key models include `TenantPOI`, `ServiceChannel`, and `MarketplaceListing`.
 
 ### Storefront Architecture
-The storefront uses TanStack Start with React for SSR, dynamic routing (`/$tenant/$locale/...`), and file-based routing. A centralized design system dictates design primitives, theming, and component interfaces. The provider chain (`ClientProviders` → `QueryClientProvider` → `StoreProvider` → `AuthProvider` → `BrandingProvider` → `GovernanceProvider` → `ToastProvider`) ensures consistent context. Tenant-scoped routes (`/$tenant/$locale/`) are wrapped with `TenantProvider` and `PlatformContextProvider`.
+The storefront utilizes TanStack Start with React for SSR, dynamic routing (`/$tenant/$locale/...`), and file-based routing. A centralized design system dictates design primitives, theming, and component interfaces. A robust provider chain ensures consistent context, including tenant-scoped routes wrapped with `TenantProvider` and `PlatformContextProvider`.
 
 ### CMS Integration
-A local CMS registry (`apps/backend/src/lib/platform/cms-registry.ts`), compatible with Payload CMS, serves as a stand-in for CMS data. It defines 27 commerce verticals and additional pages. The `TemplateRenderer` component dynamically renders layouts based on page templates. CMS pages include `countryCode` and `regionZone` for country-level unification, and optional `nodeId` for hierarchy integration. Backend endpoints `/platform/cms/pages`, `/platform/cms/navigations`, `/platform/cms/verticals`, `/platform/cms/resolve`, and `/platform/cms/navigation` provide Payload-compatible responses. Frontend hooks (`useCMSPage`, `useCMSPageChildren`, `useCMSNavigation`, `useCMSVerticals`) utilize React Query for data fetching from these endpoints.
+A local CMS registry (`apps/backend/src/lib/platform/cms-registry.ts`), compatible with Payload CMS, defines 27 commerce verticals and additional pages. The `TemplateRenderer` dynamically renders layouts. CMS pages support `countryCode` and `regionZone` for country-level unification and optional `nodeId` for hierarchy integration. Backend endpoints provide Payload-compatible responses, and frontend hooks use React Query for data fetching.
 
 ### Key Design Decisions
 - **Multi-tenant Isolation:** `tenantId` is used across all entities with node-scoped access.
@@ -46,106 +43,27 @@ A local CMS registry (`apps/backend/src/lib/platform/cms-registry.ts`), compatib
 - **Event Outbox:** CMS-compatible envelope format with correlation/causation IDs.
 - **Vite Proxy:** Frontend uses a Vite proxy for API communication.
 - **SSR Architecture:** Route loaders return minimal data during SSR, with client-side data fetching via React Query to prevent OOM errors.
-- **Memory Management:** Backend limited to 512MB, storefront to 1024MB.
 - **Authentication:** JWT-based authentication for customer SDK.
 - **API Key Usage:** All tenant/governance/node API calls must use `sdk.client.fetch()` for automatic `VITE_MEDUSA_PUBLISHABLE_KEY` inclusion.
-- **Tenant Resolution:** Default tenant "dakkah" (`01KGZ2JRYX607FWMMYQNQRKVWS`). Root `/` redirects to `/dakkah/en`. `DEFAULT_TENANT` and `TENANT_SLUG_TO_ID` are used for tenant ID resolution.
-- **Route Consolidation:** CMS-eligible routes are consolidated into catch-all routes, while transactional/authenticated routes remain dedicated files.
+- **Tenant Resolution:** Default tenant "dakkah". Root `/` redirects to `/dakkah/en`.
+- **Route Consolidation:** CMS-eligible routes are consolidated into catch-all routes.
 
 ### Platform Context API
 The backend exposes a unified Platform Context API at `/platform/*` (no authentication required) for context resolution, including `tenant`, `nodeHierarchy`, `governanceChain`, `capabilities`, and `systems`.
 
 ### Temporal-First Integration Architecture
-ALL cross-system integration calls flow through Temporal Cloud workflows:
-- **Event Flow:** Medusa event → `temporal-event-bridge` subscriber → `dispatchEventToTemporal()` → Temporal workflow → activities call integration services
-- **No Direct API Calls:** Subscribers and event dispatchers never call ERPNext/Payload/Fleetbase/Walt.id directly. All calls happen inside Temporal workflow activities.
-- **Benefits:** Durable execution, automatic retries, saga/compensation patterns, full observability, timeout management.
-- **Temporal Client:** Lazy-initialized client with health checks (`apps/backend/src/lib/temporal-client.ts`)
-- **Event Dispatcher:** Maps 39 event types to Temporal workflow IDs (`apps/backend/src/lib/event-dispatcher.ts`)
-- **Dynamic Workflows:** AI agent workflows on `cityos-dynamic-queue` (`apps/backend/src/lib/dynamic-workflow-client.ts`)
-- **Activity Definitions:** Typed contracts for all integration activities (`apps/backend/src/lib/temporal-activities.ts`)
-- **Scheduled Workflows:** Product sync, failed retry, hierarchy reconciliation dispatched via Temporal schedules
-- **Outbox Fallback:** Events without mapped workflows go to event outbox for reliable delivery
+All cross-system integration calls flow through Temporal Cloud workflows. Direct API calls to ERPNext, Payload, Fleetbase, or Walt.id are avoided; all calls occur within Temporal workflow activities for durable execution, retries, saga/compensation patterns, and observability. The architecture includes an event dispatcher mapping events to Temporal workflows and dynamic AI agent workflows.
 
 ### Cross-System Integration Layer
-This layer provides the integration services called by Temporal activities:
-- **Integration Services:** ERPNext, Payload CMS, Fleetbase, Walt.id service wrappers
-- **Integration Orchestrator:** Manages sync tracking, external system registry, retry state
-- **Webhook Receivers:** Handles inbound webhooks from external systems with signature verification
-- **Admin Integration APIs:** Provides dashboards, health checks, manual triggers, and logs
+This layer provides integration services called by Temporal activities, including wrappers for ERPNext, Payload CMS, Fleetbase, and Walt.id. It also manages sync tracking, an external system registry, retry states, and webhook receivers.
 
 ### System Responsibility Split
-Three systems work together, each owning specific domains:
-
-**Medusa (this codebase) — Commerce Engine:**
-- Products, orders, payments, commissions, marketplace listings
-- Vendor registration, KYC status, payout management (Stripe Connect)
-- TenantRelationship and MarketplaceListing management
-- ServiceChannel definitions (fulfillment types, order rules)
-- VendorProduct/VendorOrder attribution across tenant boundaries
-
-**Payload CMS — Entity & Content Management:**
-- Tenant profiles (branding, SEO, localized content, media)
-- POI content (descriptions, media galleries, operating hours display)
-- Vendor public profiles (about, story, team, FAQ, reviews display)
-- Pages and navigation (tenant-scoped, tier-gated)
-- Service channel display content (icons, promotional banners)
-- Integration spec: `apps/backend/src/lib/integrations/payload-cms-spec.ts`
-
-**Fleetbase — Geo & Logistics:**
-- Geocoding and address validation for POIs
-- Delivery zone management (polygons, radius-based)
-- Service area coverage checks
-- Fleet management per vendor-tenant (drivers, assignments)
-- Routing, ETA calculations, route optimization
-- Real-time driver tracking
-- Integration spec: `apps/backend/src/lib/integrations/fleetbase-spec.ts`
-
-**ERPNext — Finance, Accounting & ERP:**
-- Sales Invoices, Payment Entries, Credit Notes, GL Journal Entries
-- Inventory & Warehousing (Stock Entries, Batch tracking, Reconciliation)
-- Procurement (Purchase Orders bi-directional sync, Supplier management)
-- Customer & Product sync, Pricing Rules, BOM
-- Reporting (AR, P&L, Balance Sheet, Stock Ledger)
-- Multi-tenant: each tenant maps to ERPNext Company, vendor-tenants sync as Suppliers
-- Integration spec: `apps/backend/src/lib/integrations/erpnext-spec.ts`
-
-**Temporal Cloud — Workflow Orchestration:**
-- 35+ system workflows across 9 categories (Commerce, Vendor, Platform, Lifecycle, Sync, Fulfillment, Finance, Identity, Governance)
-- 2 task queues: `cityos-workflow-queue` (system) and `cityos-dynamic-queue` (AI agents)
-- Dynamic AI agent workflows with goal-based orchestration, signals, queries
-- Event outbox integration for reliable delivery with correlation/causation IDs
-- Cross-system dispatch fan-out (Temporal + direct integration calls)
-- Integration spec: `apps/backend/src/lib/integrations/temporal-spec.ts`
-
-**Walt.id — Decentralized Digital Identity:**
-- DID Management (did:key, did:web, did:ion methods)
-- 6 credential types: KYC, Vendor, Membership, TenantOperator, POI, MarketplaceSeller
-- W3C Verifiable Credentials standard, presentation exchange, selective disclosure
-- Wallet integration for credential storage and QR presentation
-- Trust registries and issuer verification
-- Multi-tenant: platform root issuer DID, delegated issuers for large+ tiers
-- Integration spec: `apps/backend/src/lib/integrations/waltid-spec.ts`
-
-## Recent Changes (2026-02-10)
-- **Deep Temporal Architecture Audit:** Comprehensive scan of all 32 subscribers, 14 jobs, and 100+ API routes. Fixed 8 total architecture violations:
-  1. Added `product.deleted` → `commerce.product-catalog-remove` mapping (bridge subscribed but unmapped)
-  2. Stripe webhook: replaced direct ERPNext invoice call with Temporal dispatch
-  3. Admin sync endpoints: replaced direct integration service calls with `startWorkflow()` dispatch
-  4. Admin node-hierarchy sync: replaced direct `syncFullHierarchy()` with Temporal dispatch
-  5. Commission settlement: replaced direct `processStripeConnectPayout()` with `payout.initiated` Temporal dispatch
-  6. Failed payment retry: replaced direct `stripe.paymentIntents.create()` with Temporal dispatch
-  7. Added 13 missing event-to-workflow mappings for events emitted by jobs (payout.initiated/completed/failed, booking.no_show, subscription.cancelled/payment_failed/renewal_upcoming/trial_ending/trial_converted/trial_expired, vendor.deactivated/inactivity_warning, invoice.overdue)
-  8. Fixed semantic mismatch: commission-settlement dispatches `payout.initiated` (not `payout.completed`) since the workflow handles the actual Stripe transfer
-- **EVENT_WORKFLOW_MAP:** Now has 53 entries (40 original + 13 new), fully aligned with bridge subscriber (50 non-scheduled events)
-- **Verified clean patterns:** All inbound webhooks (Payload, ERPNext, Fleetbase) correctly update only local Medusa data. Health check endpoint direct pings are acceptable (operational monitoring). Stripe payment processing in storefront routes is Medusa's own payment gateway.
-
-### Previous Changes (2026-02-09)
-- **Temporal-First Architecture:** Refactored ALL cross-system integration calls to flow through Temporal workflows. Removed direct API calls from subscribers and event dispatchers. Created typed activity definitions for all integration services.
-- **Integration Specs:** Created all 5 integration specs as TypeScript contract documents: Payload CMS (content), Fleetbase (geo/logistics), ERPNext (finance/ERP), Temporal (workflows), Walt.id (identity). Annotated implemented vs planned capabilities.
-- **Vendor-as-Tenant Architecture:** Vendors are now full tenants with scope tiers (nano→global), tenant types (platform/marketplace/vendor/brand), parent tenant hierarchy, POI collections, multi-channel services, and cross-tenant marketplace listings.
-- **New Models:** TenantRelationship, TenantPOI, ServiceChannel, MarketplaceListing added to backend modules.
-- **Platform Vendor APIs:** New `/platform/vendors` endpoints for vendor discovery with marketplace filtering, POI/channel/listing sub-resources.
+- **Medusa (Commerce Engine):** Products, orders, payments, commissions, marketplace listings, vendor registration, KYC, payouts, tenant/marketplace/service channel management.
+- **Payload CMS (Entity & Content Management):** Tenant profiles, POI content, vendor public profiles, pages, navigation, service channel display content.
+- **Fleetbase (Geo & Logistics):** Geocoding, address validation, delivery zone management, service area coverage, fleet management, routing, real-time tracking.
+- **ERPNext (Finance, Accounting & ERP):** Sales invoices, payment entries, GL, inventory, procurement, customer/product sync, reporting. Multi-tenant support with each tenant mapping to an ERPNext company.
+- **Temporal Cloud (Workflow Orchestration):** 35+ system workflows across 9 categories, 2 task queues (system and AI agents), dynamic AI agent workflows, event outbox integration.
+- **Walt.id (Decentralized Digital Identity):** DID management, 6 credential types (KYC, Vendor, Membership, TenantOperator, POI, MarketplaceSeller), W3C Verifiable Credentials, wallet integration, trust registries.
 
 ## External Dependencies
 - **Database:** PostgreSQL

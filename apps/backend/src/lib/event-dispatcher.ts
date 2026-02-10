@@ -54,6 +54,13 @@ const EVENT_WORKFLOW_MAP: Record<string, string> = {
   "subscription.trial_ending": "xsystem.trial-ending-notification",
   "subscription.trial_converted": "xsystem.trial-conversion-sync",
   "subscription.trial_expired": "xsystem.trial-expiration-sync",
+  "booking.confirmed": "xsystem.booking-confirmation-sync",
+  "subscription.plan_changed": "xsystem.subscription-plan-change-sync",
+  "subscription.paused": "xsystem.subscription-pause-sync",
+  "subscription.resumed": "xsystem.subscription-resume-sync",
+  "vendor.application_submitted": "xsystem.vendor-application-processing",
+  "vendor_order.shipped": "xsystem.vendor-order-shipment-tracking",
+  "vendor.stripe_connected": "xsystem.vendor-stripe-setup-sync",
 }
 
 export function getWorkflowForEvent(eventType: string): string | null {

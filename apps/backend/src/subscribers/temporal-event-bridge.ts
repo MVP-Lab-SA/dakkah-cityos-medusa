@@ -94,5 +94,12 @@ export const config: SubscriberConfig = {
     "subscription.trial_ending",
     "subscription.trial_converted",
     "subscription.trial_expired",
+    "booking.confirmed",
+    "subscription.plan_changed",
+    "subscription.paused",
+    "subscription.resumed",
+    "vendor.application_submitted",
+    "vendor_order.shipped",
+    "vendor.stripe_connected",
   ],
 }

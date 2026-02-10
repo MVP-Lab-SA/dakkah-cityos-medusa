@@ -121,7 +121,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     status: status || "active",
     starts_at: starts_at ? new Date(starts_at) : null,
     ends_at: ends_at ? new Date(ends_at) : null,
-    tenant_id: "default",
+    tenant_id: (req.query.tenant_id as string) || (req as any).tenant_id || "01KGZ2JRYX607FWMMYQNQRKVWS",
     metadata,
   })
   

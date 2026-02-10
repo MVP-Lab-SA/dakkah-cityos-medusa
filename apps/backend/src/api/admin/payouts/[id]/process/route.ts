@@ -32,19 +32,26 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       return res.status(400).json({ message: "Vendor has no connected Stripe account" })
     }
     
-    // Process the payout
-    const processedPayout = await payoutService.processStripeConnectPayout(
-      id, 
-      vendor.stripe_account_id
-    )
-    
-    await eventBus.emit("payout.completed", {
-      id,
+    // Dispatch to Temporal for processing (Temporal-first architecture)
+    const { dispatchEventToTemporal } = await import("../../../../../lib/event-dispatcher.js")
+    await dispatchEventToTemporal("payout.initiated", {
+      id: payout.id,
       vendor_id: payout.vendor_id,
-      amount: payout.net_amount
+      amount: payout.net_amount,
+      stripe_account_id: vendor.stripe_account_id,
+      tenant_id: vendor.tenant_id || "01KGZ2JRYX607FWMMYQNQRKVWS",
+    }, {
+      tenantId: vendor.tenant_id || "01KGZ2JRYX607FWMMYQNQRKVWS",
+      source: "admin-payout-process",
+    })
+
+    // Update payout status to processing locally
+    const updatedPayout = await payoutService.updatePayouts({
+      id,
+      status: "processing",
     })
     
-    res.json({ payout: processedPayout })
+    res.json({ payout: updatedPayout })
   } catch (error: any) {
     console.error("[Admin Payout Process] Error:", error)
     res.status(500).json({ message: error.message || "Failed to process payout" })
