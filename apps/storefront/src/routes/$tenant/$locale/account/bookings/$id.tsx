@@ -76,7 +76,7 @@ function BookingDetailPage() {
           to={`${baseHref}/account/bookings` as any}
           className="inline-flex items-center text-sm text-ds-muted-foreground hover:text-ds-foreground"
         >
-          <ArrowLeft className="h-4 w-4 mr-2" />
+          <ArrowLeft className="h-4 w-4 me-2" />
           Back to bookings
         </Link>
 
@@ -96,7 +96,7 @@ function BookingDetailPage() {
               </div>
               <p className="text-ds-muted-foreground mt-1">{booking.service.description}</p>
             </div>
-            <div className="text-right">
+            <div className="text-end">
               <p className="text-2xl font-bold text-ds-foreground">
                 {formatPrice(booking.service.price, booking.service.currency_code || "usd")}
               </p>
@@ -189,11 +189,11 @@ function BookingDetailPage() {
                   size="fit"
                   onClick={() => navigate({ to: `${baseHref}/bookings/${booking.service.handle}` as any })}
                 >
-                  <Calendar className="h-4 w-4 mr-2" />
+                  <Calendar className="h-4 w-4 me-2" />
                   Reschedule
                 </Button>
                 <Button variant="danger" size="fit" onClick={() => setShowCancelConfirm(true)}>
-                  <XMark className="h-4 w-4 mr-2" />
+                  <XMark className="h-4 w-4 me-2" />
                   Cancel booking
                 </Button>
               </div>
@@ -217,7 +217,7 @@ function BookingDetailPage() {
                     onClick={handleCancel}
                     disabled={cancelLoading}
                   >
-                    {cancelLoading ? <Spinner className="animate-spin h-4 w-4 mr-2" /> : null}
+                    {cancelLoading ? <Spinner className="animate-spin h-4 w-4 me-2" /> : null}
                     Yes, cancel
                   </Button>
                 </div>

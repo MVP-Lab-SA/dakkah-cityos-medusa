@@ -102,7 +102,7 @@ function ClientAccountLayout({ children, title, description }: AccountLayoutProp
                       <Icon className="h-5 w-5" />
                       {item.label}
                       <ChevronRight
-                        className={clsx("ml-auto h-4 w-4", active ? "text-ds-primary-foreground" : "text-ds-muted-foreground")}
+                        className={clsx("ms-auto h-4 w-4", active ? "text-ds-primary-foreground" : "text-ds-muted-foreground")}
                       />
                     </Link>
                   )

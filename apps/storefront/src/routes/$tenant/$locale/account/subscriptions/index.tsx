@@ -38,7 +38,7 @@ function SubscriptionsPage() {
             className="inline-flex items-center text-sm font-medium text-ds-foreground hover:underline"
           >
             Browse subscription plans
-            <ChevronRight className="h-4 w-4 ml-1" />
+            <ChevronRight className="h-4 w-4 ms-1" />
           </Link>
         </div>
       ) : (

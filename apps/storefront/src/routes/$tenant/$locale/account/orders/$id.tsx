@@ -47,7 +47,7 @@ function OrderDetailPage() {
           to={`${baseHref}/account/orders` as any}
           className="inline-flex items-center text-sm text-ds-muted-foreground hover:text-ds-foreground"
         >
-          <ArrowLeft className="h-4 w-4 mr-2" />
+          <ArrowLeft className="h-4 w-4 me-2" />
           Back to orders
         </Link>
 

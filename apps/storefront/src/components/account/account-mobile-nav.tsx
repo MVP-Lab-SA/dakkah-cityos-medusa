@@ -29,7 +29,7 @@ export function AccountMobileNav() {
   }
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-ds-background border-t border-ds-border md:hidden z-50">
+    <nav className="fixed bottom-0 inset-x-0 bg-ds-background border-t border-ds-border md:hidden z-50">
       <div className="flex justify-around items-center h-16 px-2">
         {navItems.map((item) => (
           <Link

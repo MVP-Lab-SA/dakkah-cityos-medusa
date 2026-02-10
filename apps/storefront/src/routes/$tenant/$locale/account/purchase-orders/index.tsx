@@ -24,7 +24,7 @@ function PurchaseOrdersPage() {
         </div>
         <Link to={`/${tenant}/${locale}/account/purchase-orders/new` as any}>
           <Button>
-            <Plus className="w-4 h-4 mr-2" />
+            <Plus className="w-4 h-4 me-2" />
             New PO
           </Button>
         </Link>

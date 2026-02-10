@@ -62,7 +62,7 @@ function AddressesPage() {
         {/* Add Address Button */}
         {!showForm && !editingAddress && (
           <Button onClick={() => setShowForm(true)} size="fit">
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus className="h-4 w-4 me-2" />
             Add new address
           </Button>
         )}
@@ -107,7 +107,7 @@ function AddressesPage() {
             <MapPin className="h-12 w-12 text-ds-muted-foreground mx-auto mb-4" />
             <p className="text-ds-muted-foreground mb-4">No addresses saved yet</p>
             <Button onClick={() => setShowForm(true)} size="fit">
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="h-4 w-4 me-2" />
               Add your first address
             </Button>
           </div>

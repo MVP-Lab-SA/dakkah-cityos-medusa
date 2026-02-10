@@ -38,7 +38,7 @@ function SubscriptionSuccessPage() {
         {plan?.trial_days && (
           <div className="enterprise-card mb-8">
             <div className="enterprise-card-body">
-              <div className="grid grid-cols-2 gap-4 text-left">
+              <div className="grid grid-cols-2 gap-4 text-start">
                 <div>
                   <div className="text-sm text-ds-muted-foreground">Trial Ends</div>
                   <div className="font-semibold text-ds-foreground">
@@ -61,7 +61,7 @@ function SubscriptionSuccessPage() {
         )}
 
         {/* Next Steps */}
-        <div className="enterprise-card text-left mb-8">
+        <div className="enterprise-card text-start mb-8">
           <div className="enterprise-card-header">
             <h2 className="font-semibold text-ds-foreground">Next Steps</h2>
           </div>

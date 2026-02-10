@@ -53,7 +53,7 @@ const ClientToastProvider = ({ children }: { children: ReactNode }) => {
       {children}
       {message && (
         <div
-          className="fixed right-6 top-16 z-40 mt-4 transition-all duration-300 ease-in-out"
+          className="fixed end-6 top-16 z-40 mt-4 transition-all duration-300 ease-in-out"
           style={{
             animation: "slideDown 0.3s ease-out",
           }}

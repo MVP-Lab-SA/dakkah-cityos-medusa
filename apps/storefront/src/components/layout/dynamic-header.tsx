@@ -119,7 +119,7 @@ export function DynamicHeader({
             >
               <ShoppingBag className="h-6 w-6" />
               {cartItemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-black text-ds-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                <span className="absolute -top-1 -end-1 bg-black text-ds-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
                   {cartItemCount}
                 </span>
               )}

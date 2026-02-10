@@ -94,7 +94,7 @@ function BookingConfirmationPage() {
         </div>
 
         {/* Booking Details Card */}
-        <div className="enterprise-card text-left mb-8">
+        <div className="enterprise-card text-start mb-8">
           <div className="enterprise-card-body space-y-4">
             {/* Service */}
             <div>
@@ -151,7 +151,7 @@ function BookingConfirmationPage() {
         </div>
 
         {/* What's Next */}
-        <div className="enterprise-card text-left mb-8">
+        <div className="enterprise-card text-start mb-8">
           <div className="enterprise-card-header">
             <h2 className="font-semibold text-ds-foreground">What's Next</h2>
           </div>

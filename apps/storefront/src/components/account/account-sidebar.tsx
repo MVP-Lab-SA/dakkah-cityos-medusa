@@ -63,7 +63,7 @@ export function AccountSidebar() {
       <item.icon className="w-5 h-5" />
       <span>{item.label}</span>
       {item.badge && (
-        <span className="ml-auto bg-ds-muted text-ds-foreground text-xs px-2 py-0.5 rounded-full">
+        <span className="ms-auto bg-ds-muted text-ds-foreground text-xs px-2 py-0.5 rounded-full">
           {item.badge}
         </span>
       )}

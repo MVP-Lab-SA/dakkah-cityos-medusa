@@ -154,7 +154,7 @@ export function QuoteRequestForm() {
           {errors.notes && (
             <p className="text-sm text-ds-destructive">{errors.notes}</p>
           )}
-          <p className={`text-sm ml-auto ${notes.length > MAX_NOTES_LENGTH ? "text-ds-destructive" : "text-muted-foreground"}`}>
+          <p className={`text-sm ms-auto ${notes.length > MAX_NOTES_LENGTH ? "text-ds-destructive" : "text-muted-foreground"}`}>
             {notes.length}/{MAX_NOTES_LENGTH}
           </p>
         </div>

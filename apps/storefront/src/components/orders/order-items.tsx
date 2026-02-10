@@ -60,7 +60,7 @@ export function OrderItems({ items, currencyCode }: OrderItemsProps) {
             </div>
 
             {/* Price */}
-            <div className="text-right">
+            <div className="text-end">
               <p className="font-semibold text-ds-foreground">
                 {formatPrice(item.total, currencyCode)}
               </p>

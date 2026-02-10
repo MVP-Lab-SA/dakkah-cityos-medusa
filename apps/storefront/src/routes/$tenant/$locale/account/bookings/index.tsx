@@ -71,7 +71,7 @@ function BookingsPage() {
             className="inline-flex items-center text-sm font-medium text-ds-foreground hover:underline"
           >
             Book a service
-            <ChevronRight className="h-4 w-4 ml-1" />
+            <ChevronRight className="h-4 w-4 ms-1" />
           </Link>
         </div>
       ) : (
@@ -119,7 +119,7 @@ function BookingsPage() {
                 </div>
 
                 {/* Price */}
-                <div className="text-right flex-shrink-0">
+                <div className="text-end flex-shrink-0">
                   <p className="font-semibold text-ds-foreground">
                     {formatPrice(booking.service.price, booking.service.currency_code || "usd")}
                   </p>

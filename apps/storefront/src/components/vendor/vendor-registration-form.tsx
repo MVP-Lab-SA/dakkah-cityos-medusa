@@ -490,7 +490,7 @@ export function VendorRegistrationForm() {
               />
               <div className="flex justify-between mt-1">
                 {renderFieldError("description")}
-                <span className={`text-sm ml-auto ${(formData.description?.length || 0) > MAX_DESCRIPTION_LENGTH ? "text-ds-destructive" : "text-muted-foreground"}`}>
+                <span className={`text-sm ms-auto ${(formData.description?.length || 0) > MAX_DESCRIPTION_LENGTH ? "text-ds-destructive" : "text-muted-foreground"}`}>
                   {formData.description?.length || 0}/{MAX_DESCRIPTION_LENGTH}
                 </span>
               </div>

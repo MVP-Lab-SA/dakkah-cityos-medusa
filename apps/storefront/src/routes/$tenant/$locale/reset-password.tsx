@@ -152,7 +152,7 @@ function ResetWithToken({
             >
               {isLoading ? (
                 <>
-                  <Spinner className="animate-spin mr-2 h-4 w-4" />
+                  <Spinner className="animate-spin me-2 h-4 w-4" />
                   Resetting...
                 </>
               ) : (

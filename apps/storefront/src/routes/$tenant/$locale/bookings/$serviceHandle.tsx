@@ -444,7 +444,7 @@ function ServiceBookingPage() {
                       {errors.notes && (
                         <p className="text-sm text-ds-destructive">{errors.notes}</p>
                       )}
-                      <span className={`text-sm ml-auto ${notes.length > MAX_NOTES_LENGTH ? "text-ds-destructive" : "text-ds-muted-foreground"}`}>
+                      <span className={`text-sm ms-auto ${notes.length > MAX_NOTES_LENGTH ? "text-ds-destructive" : "text-ds-muted-foreground"}`}>
                         {notes.length}/{MAX_NOTES_LENGTH}
                       </span>
                     </div>

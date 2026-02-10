@@ -93,7 +93,7 @@ function SubscriptionDetailPage() {
           to={`${baseHref}/account/subscriptions` as any}
           className="inline-flex items-center text-sm text-ds-muted-foreground hover:text-ds-foreground"
         >
-          <ArrowLeft className="h-4 w-4 mr-2" />
+          <ArrowLeft className="h-4 w-4 me-2" />
           Back to subscriptions
         </Link>
 
@@ -184,9 +184,9 @@ function SubscriptionDetailPage() {
                     disabled={actionLoading === "pause"}
                   >
                     {actionLoading === "pause" ? (
-                      <Spinner className="animate-spin h-4 w-4 mr-2" />
+                      <Spinner className="animate-spin h-4 w-4 me-2" />
                     ) : (
-                      <Pause className="h-4 w-4 mr-2" />
+                      <Pause className="h-4 w-4 me-2" />
                     )}
                     Pause subscription
                   </Button>
@@ -200,9 +200,9 @@ function SubscriptionDetailPage() {
                     disabled={actionLoading === "resume"}
                   >
                     {actionLoading === "resume" ? (
-                      <Spinner className="animate-spin h-4 w-4 mr-2" />
+                      <Spinner className="animate-spin h-4 w-4 me-2" />
                     ) : (
-                      <TriangleRightMini className="h-4 w-4 mr-2" />
+                      <TriangleRightMini className="h-4 w-4 me-2" />
                     )}
                     Resume subscription
                   </Button>
@@ -213,7 +213,7 @@ function SubscriptionDetailPage() {
                   size="fit"
                   onClick={() => setShowCancelConfirm(true)}
                 >
-                  <XMark className="h-4 w-4 mr-2" />
+                  <XMark className="h-4 w-4 me-2" />
                   Cancel subscription
                 </Button>
               </div>
@@ -238,7 +238,7 @@ function SubscriptionDetailPage() {
                     disabled={actionLoading === "cancel"}
                   >
                     {actionLoading === "cancel" ? (
-                      <Spinner className="animate-spin h-4 w-4 mr-2" />
+                      <Spinner className="animate-spin h-4 w-4 me-2" />
                     ) : null}
                     Yes, cancel
                   </Button>

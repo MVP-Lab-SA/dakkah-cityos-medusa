@@ -136,7 +136,7 @@ function SubscriptionCheckoutPage() {
                           : "border-ds-border hover:border-ds-border"
                       }`}
                     >
-                      <span className="absolute -top-2 right-2 badge-success text-xs">
+                      <span className="absolute -top-2 end-2 badge-success text-xs">
                         Save 17%
                       </span>
                       <div className="font-medium text-ds-foreground">Yearly</div>
@@ -220,7 +220,7 @@ function SubscriptionCheckoutPage() {
                         : "Billed monthly"}
                     </div>
                   </div>
-                  <div className="text-right">
+                  <div className="text-end">
                     <div className="font-medium text-ds-foreground">
                       {formatPrice(selectedPrice, plan.currency_code)}
                     </div>
