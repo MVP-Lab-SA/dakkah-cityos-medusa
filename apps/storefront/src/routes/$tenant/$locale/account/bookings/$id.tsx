@@ -11,10 +11,10 @@ export const Route = createFileRoute("/$tenant/$locale/account/bookings/$id")({
 })
 
 const statusColors: Record<string, string> = {
-  confirmed: "bg-green-100 text-green-700",
-  pending: "bg-yellow-100 text-yellow-700",
-  canceled: "bg-red-100 text-red-700",
-  completed: "bg-blue-100 text-blue-700",
+  confirmed: "bg-ds-success text-ds-success",
+  pending: "bg-ds-warning text-ds-warning",
+  canceled: "bg-ds-destructive text-ds-destructive",
+  completed: "bg-ds-info text-ds-info",
 }
 
 function BookingDetailPage() {
@@ -42,7 +42,7 @@ function BookingDetailPage() {
     return (
       <AccountLayout>
         <div className="flex items-center justify-center min-h-[400px]">
-          <Spinner className="w-8 h-8 animate-spin text-zinc-400" />
+          <Spinner className="w-8 h-8 animate-spin text-ds-muted-foreground" />
         </div>
       </AccountLayout>
     )
@@ -51,11 +51,11 @@ function BookingDetailPage() {
   if (!booking) {
     return (
       <AccountLayout>
-        <div className="bg-white rounded-lg border border-zinc-200 p-12 text-center">
-          <p className="text-zinc-500 mb-4">Booking not found</p>
+        <div className="bg-ds-background rounded-lg border border-ds-border p-12 text-center">
+          <p className="text-ds-muted-foreground mb-4">Booking not found</p>
           <Link
             to={`${baseHref}/account/bookings` as any}
-            className="text-sm font-medium text-zinc-900 hover:underline"
+            className="text-sm font-medium text-ds-foreground hover:underline"
           >
             Back to bookings
           </Link>
@@ -74,46 +74,46 @@ function BookingDetailPage() {
         {/* Back Link */}
         <Link
           to={`${baseHref}/account/bookings` as any}
-          className="inline-flex items-center text-sm text-zinc-600 hover:text-zinc-900"
+          className="inline-flex items-center text-sm text-ds-muted-foreground hover:text-ds-foreground"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to bookings
         </Link>
 
         {/* Header */}
-        <div className="bg-white rounded-lg border border-zinc-200 p-6">
+        <div className="bg-ds-background rounded-lg border border-ds-border p-6">
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-2xl font-bold text-zinc-900">{booking.service.name}</h1>
+                <h1 className="text-2xl font-bold text-ds-foreground">{booking.service.name}</h1>
                 <span
                   className={`inline-block px-2 py-1 text-xs font-medium rounded ${
-                    statusColors[booking.status] || "bg-zinc-100 text-zinc-700"
+                    statusColors[booking.status] || "bg-ds-muted text-ds-foreground"
                   }`}
                 >
                   {booking.status}
                 </span>
               </div>
-              <p className="text-zinc-600 mt-1">{booking.service.description}</p>
+              <p className="text-ds-muted-foreground mt-1">{booking.service.description}</p>
             </div>
             <div className="text-right">
-              <p className="text-2xl font-bold text-zinc-900">
+              <p className="text-2xl font-bold text-ds-foreground">
                 {formatPrice(booking.service.price, booking.service.currency_code || "usd")}
               </p>
-              <p className="text-sm text-zinc-500">{booking.service.duration} minutes</p>
+              <p className="text-sm text-ds-muted-foreground">{booking.service.duration} minutes</p>
             </div>
           </div>
         </div>
 
         {/* Appointment Details */}
-        <div className="bg-white rounded-lg border border-zinc-200 p-6">
-          <h2 className="text-lg font-semibold text-zinc-900 mb-4">Appointment Details</h2>
+        <div className="bg-ds-background rounded-lg border border-ds-border p-6">
+          <h2 className="text-lg font-semibold text-ds-foreground mb-4">Appointment Details</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="flex items-start gap-3">
-              <Calendar className="h-5 w-5 text-zinc-400 mt-0.5" />
+              <Calendar className="h-5 w-5 text-ds-muted-foreground mt-0.5" />
               <div>
-                <p className="text-sm text-zinc-500">Date</p>
-                <p className="font-medium text-zinc-900">
+                <p className="text-sm text-ds-muted-foreground">Date</p>
+                <p className="font-medium text-ds-foreground">
                   {scheduledDate.toLocaleDateString("en-US", {
                     weekday: "long",
                     year: "numeric",
@@ -124,10 +124,10 @@ function BookingDetailPage() {
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <Clock className="h-5 w-5 text-zinc-400 mt-0.5" />
+              <Clock className="h-5 w-5 text-ds-muted-foreground mt-0.5" />
               <div>
-                <p className="text-sm text-zinc-500">Time</p>
-                <p className="font-medium text-zinc-900">
+                <p className="text-sm text-ds-muted-foreground">Time</p>
+                <p className="font-medium text-ds-foreground">
                   {scheduledDate.toLocaleTimeString("en-US", {
                     hour: "numeric",
                     minute: "2-digit",
@@ -137,22 +137,22 @@ function BookingDetailPage() {
             </div>
             {booking.provider && (
               <div className="flex items-start gap-3">
-                <User className="h-5 w-5 text-zinc-400 mt-0.5" />
+                <User className="h-5 w-5 text-ds-muted-foreground mt-0.5" />
                 <div>
-                  <p className="text-sm text-zinc-500">Provider</p>
-                  <p className="font-medium text-zinc-900">{booking.provider.name}</p>
+                  <p className="text-sm text-ds-muted-foreground">Provider</p>
+                  <p className="font-medium text-ds-foreground">{booking.provider.name}</p>
                   {booking.provider.bio && (
-                    <p className="text-sm text-zinc-500">{booking.provider.bio}</p>
+                    <p className="text-sm text-ds-muted-foreground">{booking.provider.bio}</p>
                   )}
                 </div>
               </div>
             )}
             {booking.location && (
               <div className="flex items-start gap-3">
-                <MapPin className="h-5 w-5 text-zinc-400 mt-0.5" />
+                <MapPin className="h-5 w-5 text-ds-muted-foreground mt-0.5" />
                 <div>
-                  <p className="text-sm text-zinc-500">Location</p>
-                  <p className="font-medium text-zinc-900">{booking.location}</p>
+                  <p className="text-sm text-ds-muted-foreground">Location</p>
+                  <p className="font-medium text-ds-foreground">{booking.location}</p>
                 </div>
               </div>
             )}
@@ -161,9 +161,9 @@ function BookingDetailPage() {
 
         {/* Confirmation Code */}
         {booking.confirmation_code && (
-          <div className="bg-zinc-50 rounded-lg border border-zinc-200 p-6 text-center">
-            <p className="text-sm text-zinc-500 mb-2">Confirmation Code</p>
-            <p className="text-2xl font-mono font-bold text-zinc-900 tracking-wider">
+          <div className="bg-ds-muted rounded-lg border border-ds-border p-6 text-center">
+            <p className="text-sm text-ds-muted-foreground mb-2">Confirmation Code</p>
+            <p className="text-2xl font-mono font-bold text-ds-foreground tracking-wider">
               {booking.confirmation_code}
             </p>
           </div>
@@ -171,16 +171,16 @@ function BookingDetailPage() {
 
         {/* Notes */}
         {booking.notes && (
-          <div className="bg-white rounded-lg border border-zinc-200 p-6">
-            <h2 className="text-lg font-semibold text-zinc-900 mb-2">Notes</h2>
-            <p className="text-zinc-600">{booking.notes}</p>
+          <div className="bg-ds-background rounded-lg border border-ds-border p-6">
+            <h2 className="text-lg font-semibold text-ds-foreground mb-2">Notes</h2>
+            <p className="text-ds-muted-foreground">{booking.notes}</p>
           </div>
         )}
 
         {/* Actions */}
         {canCancel && (
-          <div className="bg-white rounded-lg border border-zinc-200 p-6">
-            <h2 className="text-lg font-semibold text-zinc-900 mb-4">Manage Booking</h2>
+          <div className="bg-ds-background rounded-lg border border-ds-border p-6">
+            <h2 className="text-lg font-semibold text-ds-foreground mb-4">Manage Booking</h2>
             
             {!showCancelConfirm ? (
               <div className="flex flex-wrap gap-3">
@@ -199,11 +199,11 @@ function BookingDetailPage() {
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="p-4 bg-red-50 rounded-lg">
-                  <p className="text-sm font-medium text-red-900">
+                <div className="p-4 bg-ds-destructive rounded-lg">
+                  <p className="text-sm font-medium text-ds-destructive">
                     Are you sure you want to cancel this booking?
                   </p>
-                  <p className="text-sm text-red-700 mt-1">
+                  <p className="text-sm text-ds-destructive mt-1">
                     This action cannot be undone. You may be subject to cancellation fees.
                   </p>
                 </div>

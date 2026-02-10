@@ -17,7 +17,7 @@ export const DynamicPage: React.FC<DynamicPageProps> = ({ page, branding }) => {
     return (
       <div className="container mx-auto px-4 py-12">
         <h1 className="text-3xl font-bold mb-4">{page.title}</h1>
-        {page.description && <p className="text-gray-600">{page.description}</p>}
+        {page.description && <p className="text-ds-muted-foreground">{page.description}</p>}
       </div>
     )
   }

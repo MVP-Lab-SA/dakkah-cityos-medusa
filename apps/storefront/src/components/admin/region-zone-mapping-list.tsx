@@ -35,7 +35,7 @@ export function RegionZoneMappingList() {
                   <ZoneBadge zone={mapping.residency_zone} />
                   <span className="font-medium">{mapping.data_storage_location}</span>
                 </div>
-                <span className={`px-2 py-0.5 rounded text-xs ${mapping.is_active ? "bg-green-100 text-green-800" : "bg-gray-100"}`}>
+                <span className={`px-2 py-0.5 rounded text-xs ${mapping.is_active ? "bg-ds-success text-ds-success" : "bg-ds-muted"}`}>
                   {mapping.is_active ? "Active" : "Inactive"}
                 </span>
               </div>
@@ -53,12 +53,12 @@ export function RegionZoneMappingList() {
 
 function ZoneBadge({ zone }: { zone: string }) {
   const styles: Record<string, string> = {
-    GCC: "bg-green-100 text-green-800",
-    EU: "bg-blue-100 text-blue-800",
+    GCC: "bg-ds-success text-ds-success",
+    EU: "bg-ds-info text-ds-info",
     MENA: "bg-orange-100 text-orange-800",
     APAC: "bg-purple-100 text-purple-800",
-    AMERICAS: "bg-red-100 text-red-800",
-    GLOBAL: "bg-gray-100 text-gray-800",
+    AMERICAS: "bg-ds-destructive text-ds-destructive",
+    GLOBAL: "bg-ds-muted text-ds-foreground",
   }
-  return <span className={`text-xs px-2 py-0.5 rounded font-medium ${styles[zone] || "bg-gray-100"}`}>{zone}</span>
+  return <span className={`text-xs px-2 py-0.5 rounded font-medium ${styles[zone] || "bg-ds-muted"}`}>{zone}</span>
 }

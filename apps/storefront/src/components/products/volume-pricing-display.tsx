@@ -59,7 +59,7 @@ export function VolumePricingDisplay({
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="w-5 h-5 text-green-600"
+          className="w-5 h-5 text-ds-success"
         >
           <path
             strokeLinecap="round"
@@ -90,16 +90,16 @@ export function VolumePricingDisplay({
             <div
               key={tier.id || `tier-${index}`}
               className={`flex justify-between items-center p-3 rounded ${
-                isActive ? "bg-green-100 border border-green-300" : "bg-background"
+                isActive ? "bg-ds-success border border-ds-success" : "bg-background"
               }`}
             >
               <div className="flex items-center gap-3">
                 <span className="font-medium">{quantityText} units</span>
                 {isActive && (
-                  <span className="bg-green-600 text-white text-xs px-2 py-0.5 rounded">Current</span>
+                  <span className="bg-ds-success text-ds-primary-foreground text-xs px-2 py-0.5 rounded">Current</span>
                 )}
               </div>
-              <span className="font-semibold text-green-700">
+              <span className="font-semibold text-ds-success">
                 {discountText}
               </span>
             </div>
@@ -110,7 +110,7 @@ export function VolumePricingDisplay({
       {activeTier && activeTier.discount_percentage && (
         <p className="text-sm text-muted-foreground mt-3">
           You're getting{" "}
-          <span className="font-semibold text-green-700">
+          <span className="font-semibold text-ds-success">
             {activeTier.discount_percentage}% off
           </span>{" "}
           for ordering {currentQuantity} units

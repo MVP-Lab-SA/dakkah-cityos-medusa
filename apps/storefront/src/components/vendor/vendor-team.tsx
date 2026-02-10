@@ -108,12 +108,12 @@ export function VendorTeam() {
 function RoleBadge({ role }: { role: string }) {
   const styles: Record<string, string> = {
     owner: "bg-purple-100 text-purple-800",
-    admin: "bg-blue-100 text-blue-800",
-    manager: "bg-green-100 text-green-800",
-    staff: "bg-gray-100 text-gray-800",
+    admin: "bg-ds-info text-ds-info",
+    manager: "bg-ds-success text-ds-success",
+    staff: "bg-ds-muted text-ds-foreground",
   }
   return (
-    <span className={`px-2 py-1 rounded text-xs font-medium ${styles[role] || "bg-gray-100"}`}>
+    <span className={`px-2 py-1 rounded text-xs font-medium ${styles[role] || "bg-ds-muted"}`}>
       {role.charAt(0).toUpperCase() + role.slice(1)}
     </span>
   )
@@ -121,7 +121,7 @@ function RoleBadge({ role }: { role: string }) {
 
 function StatusBadge({ active }: { active: boolean }) {
   return (
-    <span className={`px-2 py-1 rounded text-xs font-medium ${active ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+    <span className={`px-2 py-1 rounded text-xs font-medium ${active ? "bg-ds-success text-ds-success" : "bg-ds-destructive text-ds-destructive"}`}>
       {active ? "Active" : "Inactive"}
     </span>
   )

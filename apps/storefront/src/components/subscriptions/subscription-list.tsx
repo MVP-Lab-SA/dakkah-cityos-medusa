@@ -19,26 +19,26 @@ export function SubscriptionList({
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "active":
-        return "bg-green-100 text-green-800"
+        return "bg-ds-success text-ds-success"
       case "paused":
-        return "bg-yellow-100 text-yellow-800"
+        return "bg-ds-warning text-ds-warning"
       case "cancelled":
-        return "bg-red-100 text-red-800"
+        return "bg-ds-destructive text-ds-destructive"
       case "expired":
-        return "bg-zinc-100 text-zinc-800"
+        return "bg-ds-muted text-ds-foreground"
       default:
-        return "bg-zinc-100 text-zinc-800"
+        return "bg-ds-muted text-ds-foreground"
     }
   }
 
   if (subscriptions.length === 0) {
     return (
-      <div className="bg-white rounded-xl border border-zinc-200 p-12 text-center">
-        <CreditCard className="w-12 h-12 text-zinc-300 mx-auto mb-4" />
-        <p className="text-zinc-500">{emptyMessage}</p>
+      <div className="bg-ds-background rounded-xl border border-ds-border p-12 text-center">
+        <CreditCard className="w-12 h-12 text-ds-muted-foreground mx-auto mb-4" />
+        <p className="text-ds-muted-foreground">{emptyMessage}</p>
         <Link
           to={`${prefix}/subscriptions` as any}
-          className="inline-block mt-4 text-sm font-medium text-zinc-900 hover:underline"
+          className="inline-block mt-4 text-sm font-medium text-ds-foreground hover:underline"
         >
           Browse subscription plans
         </Link>
@@ -52,12 +52,12 @@ export function SubscriptionList({
         <Link
           key={subscription.id}
           to={`${prefix}/account/subscriptions/${subscription.id}` as any}
-          className="block bg-white rounded-xl border border-zinc-200 p-6 hover:border-zinc-300 hover:shadow-sm transition-all"
+          className="block bg-ds-background rounded-xl border border-ds-border p-6 hover:border-ds-border hover:shadow-sm transition-all"
         >
           <div className="flex items-start justify-between mb-4">
             <div>
-              <h3 className="font-semibold text-zinc-900">{subscription.plan.name}</h3>
-              <p className="text-sm text-zinc-500 mt-0.5">{subscription.plan.description}</p>
+              <h3 className="font-semibold text-ds-foreground">{subscription.plan.name}</h3>
+              <p className="text-sm text-ds-muted-foreground mt-0.5">{subscription.plan.description}</p>
             </div>
             <span className={cn(
               "px-3 py-1 rounded-full text-xs font-medium capitalize",
@@ -67,17 +67,17 @@ export function SubscriptionList({
             </span>
           </div>
 
-          <div className="flex items-center justify-between pt-4 border-t border-zinc-100">
+          <div className="flex items-center justify-between pt-4 border-t border-ds-border">
             <div className="flex items-center gap-4">
               <div>
-                <p className="text-xs text-zinc-400">Price</p>
-                <p className="font-semibold text-zinc-900">
+                <p className="text-xs text-ds-muted-foreground">Price</p>
+                <p className="font-semibold text-ds-foreground">
                   {formatPrice(subscription.plan.price, subscription.plan.currency_code)}/{subscription.plan.billing_interval}
                 </p>
               </div>
               <div>
-                <p className="text-xs text-zinc-400">Next Billing</p>
-                <p className="text-sm text-zinc-700">
+                <p className="text-xs text-ds-muted-foreground">Next Billing</p>
+                <p className="text-sm text-ds-foreground">
                   {subscription.next_billing_date 
                     ? new Date(subscription.next_billing_date).toLocaleDateString()
                     : "N/A"
@@ -85,7 +85,7 @@ export function SubscriptionList({
                 </p>
               </div>
             </div>
-            <span className="text-sm text-zinc-500 flex items-center gap-1">
+            <span className="text-sm text-ds-muted-foreground flex items-center gap-1">
               Manage
               <ChevronRight className="w-4 h-4" />
             </span>

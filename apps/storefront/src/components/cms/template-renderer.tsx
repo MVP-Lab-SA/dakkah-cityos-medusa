@@ -60,15 +60,15 @@ function VerticalListTemplate({ page, tenant, locale }: { page: CMSPage; tenant:
     : items
 
   return (
-    <div className="min-h-screen bg-zinc-50">
+    <div className="min-h-screen bg-ds-muted">
       {page.layout && page.layout.length > 0 ? (
         <DynamicPage page={{ ...page, layout: page.layout.filter((b: any) => b.blockType === "hero") }} />
       ) : (
-        <section className="bg-zinc-900 text-white py-16">
+        <section className="bg-ds-primary text-ds-primary-foreground py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h1 className="text-4xl font-bold mb-3">{page.title}</h1>
             {page.seo?.description && (
-              <p className="text-zinc-300 text-lg max-w-2xl">{page.seo.description}</p>
+              <p className="text-ds-muted-foreground text-lg max-w-2xl">{page.seo.description}</p>
             )}
           </div>
         </section>
@@ -81,17 +81,17 @@ function VerticalListTemplate({ page, tenant, locale }: { page: CMSPage; tenant:
             placeholder={`Search ${page.title?.toLowerCase() || "items"}...`}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full max-w-md px-4 py-2 border border-zinc-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-900"
+            className="w-full max-w-md px-4 py-2 border border-ds-border rounded-lg focus:outline-none focus:ring-2 focus:ring-ds-ring"
           />
         </div>
 
         {isLoading ? (
           <div className="flex justify-center py-20">
-            <div className="w-8 h-8 border-4 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
+            <div className="w-8 h-8 border-4 border-ds-border border-t-zinc-900 rounded-full animate-spin" />
           </div>
         ) : filteredItems.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-zinc-500 text-lg">No items found</p>
+            <p className="text-ds-muted-foreground text-lg">No items found</p>
           </div>
         ) : (
           <div className={`grid gap-6 ${
@@ -131,19 +131,19 @@ function VerticalCard({ item, verticalSlug, tenant, locale, cardLayout }: {
 
   if (cardLayout === "list") {
     return (
-      <a href={detailUrl} className="flex bg-white rounded-lg shadow-sm border border-zinc-200 overflow-hidden hover:shadow-md transition-shadow">
+      <a href={detailUrl} className="flex bg-ds-background rounded-lg shadow-sm border border-ds-border overflow-hidden hover:shadow-md transition-shadow">
         {image && (
           <div className="w-48 h-36 flex-shrink-0">
             <img src={image} alt={title} className="w-full h-full object-cover" />
           </div>
         )}
         <div className="p-4 flex-1">
-          <h3 className="font-semibold text-lg text-zinc-900">{title}</h3>
-          {category && <span className="text-xs bg-zinc-100 text-zinc-600 px-2 py-0.5 rounded mt-1 inline-block">{category}</span>}
-          {description && <p className="text-zinc-600 text-sm mt-2 line-clamp-2">{description}</p>}
+          <h3 className="font-semibold text-lg text-ds-foreground">{title}</h3>
+          {category && <span className="text-xs bg-ds-muted text-ds-muted-foreground px-2 py-0.5 rounded mt-1 inline-block">{category}</span>}
+          {description && <p className="text-ds-muted-foreground text-sm mt-2 line-clamp-2">{description}</p>}
           <div className="flex items-center gap-3 mt-2">
-            {rating && <span className="text-amber-500 text-sm">{"★".repeat(Math.round(Number(rating)))}</span>}
-            {price && <span className="text-zinc-900 font-medium">{typeof price === "number" ? `$${price}` : price}</span>}
+            {rating && <span className="text-ds-warning text-sm">{"★".repeat(Math.round(Number(rating)))}</span>}
+            {price && <span className="text-ds-foreground font-medium">{typeof price === "number" ? `$${price}` : price}</span>}
           </div>
         </div>
       </a>
@@ -151,19 +151,19 @@ function VerticalCard({ item, verticalSlug, tenant, locale, cardLayout }: {
   }
 
   return (
-    <a href={detailUrl} className="bg-white rounded-lg shadow-sm border border-zinc-200 overflow-hidden hover:shadow-md transition-shadow">
+    <a href={detailUrl} className="bg-ds-background rounded-lg shadow-sm border border-ds-border overflow-hidden hover:shadow-md transition-shadow">
       {image && (
         <div className="aspect-video">
           <img src={image} alt={title} className="w-full h-full object-cover" />
         </div>
       )}
       <div className="p-4">
-        <h3 className="font-semibold text-lg text-zinc-900">{title}</h3>
-        {category && <span className="text-xs bg-zinc-100 text-zinc-600 px-2 py-0.5 rounded mt-1 inline-block">{category}</span>}
-        {description && <p className="text-zinc-600 text-sm mt-2 line-clamp-3">{description}</p>}
+        <h3 className="font-semibold text-lg text-ds-foreground">{title}</h3>
+        {category && <span className="text-xs bg-ds-muted text-ds-muted-foreground px-2 py-0.5 rounded mt-1 inline-block">{category}</span>}
+        {description && <p className="text-ds-muted-foreground text-sm mt-2 line-clamp-3">{description}</p>}
         <div className="flex items-center justify-between mt-3">
-          {rating && <span className="text-amber-500 text-sm">{"★".repeat(Math.round(Number(rating)))}</span>}
-          {price && <span className="text-zinc-900 font-semibold">{typeof price === "number" ? `$${price}` : price}</span>}
+          {rating && <span className="text-ds-warning text-sm">{"★".repeat(Math.round(Number(rating)))}</span>}
+          {price && <span className="text-ds-foreground font-semibold">{typeof price === "number" ? `$${price}` : price}</span>}
         </div>
       </div>
     </a>
@@ -195,18 +195,18 @@ function VerticalDetailTemplate({ page, tenant, locale }: { page: CMSPage; tenan
   if (isLoading) {
     return (
       <div className="flex justify-center py-20">
-        <div className="w-8 h-8 border-4 border-zinc-200 border-t-zinc-900 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-ds-border border-t-zinc-900 rounded-full animate-spin" />
       </div>
     )
   }
 
   if (!item) {
     return (
-      <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
+      <div className="min-h-screen bg-ds-muted flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-zinc-900 mb-2">Not Found</h1>
-          <p className="text-zinc-600">The requested item could not be found.</p>
-          <a href={`/${tenant.slug}/${locale}`} className="mt-4 inline-block text-zinc-900 underline">Go back</a>
+          <h1 className="text-2xl font-bold text-ds-foreground mb-2">Not Found</h1>
+          <p className="text-ds-muted-foreground">The requested item could not be found.</p>
+          <a href={`/${tenant.slug}/${locale}`} className="mt-4 inline-block text-ds-foreground underline">Go back</a>
         </div>
       </div>
     )
@@ -228,24 +228,24 @@ function VerticalDetailTemplate({ page, tenant, locale }: { page: CMSPage; tenan
   )
 
   return (
-    <div className="min-h-screen bg-zinc-50">
-      <div className="bg-zinc-900 text-white py-8">
+    <div className="min-h-screen bg-ds-muted">
+      <div className="bg-ds-primary text-ds-primary-foreground py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="text-sm text-zinc-400 mb-4">
-            <a href={`/${tenant.slug}/${locale}`} className="hover:text-white">Home</a>
+          <nav className="text-sm text-ds-muted-foreground mb-4">
+            <a href={`/${tenant.slug}/${locale}`} className="hover:text-ds-primary-foreground">Home</a>
             <span className="mx-2">/</span>
             {config?.verticalSlug && (
               <>
-                <a href={`/${tenant.slug}/${locale}/${config.verticalSlug}`} className="hover:text-white capitalize">
+                <a href={`/${tenant.slug}/${locale}/${config.verticalSlug}`} className="hover:text-ds-primary-foreground capitalize">
                   {config.verticalSlug.replace(/-/g, " ")}
                 </a>
                 <span className="mx-2">/</span>
               </>
             )}
-            <span className="text-white">{title}</span>
+            <span className="text-ds-primary-foreground">{title}</span>
           </nav>
           <h1 className="text-3xl font-bold">{title}</h1>
-          {category && <span className="inline-block bg-white/10 px-3 py-1 rounded text-sm mt-2">{category}</span>}
+          {category && <span className="inline-block bg-ds-background/10 px-3 py-1 rounded text-sm mt-2">{category}</span>}
         </div>
       </div>
 
@@ -259,22 +259,22 @@ function VerticalDetailTemplate({ page, tenant, locale }: { page: CMSPage; tenan
             )}
 
             {description && (
-              <div className="bg-white rounded-lg p-6 shadow-sm border border-zinc-200 mb-6">
+              <div className="bg-ds-background rounded-lg p-6 shadow-sm border border-ds-border mb-6">
                 <h2 className="text-xl font-semibold mb-3">About</h2>
-                <p className="text-zinc-700 whitespace-pre-line">{description}</p>
+                <p className="text-ds-foreground whitespace-pre-line">{description}</p>
               </div>
             )}
 
             {extraFields.length > 0 && (
-              <div className="bg-white rounded-lg p-6 shadow-sm border border-zinc-200 mb-6">
+              <div className="bg-ds-background rounded-lg p-6 shadow-sm border border-ds-border mb-6">
                 <h2 className="text-xl font-semibold mb-3">Details</h2>
                 <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {extraFields.map(([key, value]) => {
                     if (typeof value === "object" || value === null || value === undefined) return null
                     return (
                       <div key={key}>
-                        <dt className="text-sm text-zinc-500 capitalize">{key.replace(/_/g, " ")}</dt>
-                        <dd className="text-zinc-900 font-medium">{String(value)}</dd>
+                        <dt className="text-sm text-ds-muted-foreground capitalize">{key.replace(/_/g, " ")}</dt>
+                        <dd className="text-ds-foreground font-medium">{String(value)}</dd>
                       </div>
                     )
                   })}
@@ -285,30 +285,30 @@ function VerticalDetailTemplate({ page, tenant, locale }: { page: CMSPage; tenan
 
           <div className="space-y-6">
             {(price || rating || location || contact) && (
-              <div className="bg-white rounded-lg p-6 shadow-sm border border-zinc-200">
+              <div className="bg-ds-background rounded-lg p-6 shadow-sm border border-ds-border">
                 <h3 className="font-semibold text-lg mb-4">Quick Info</h3>
                 {price && (
                   <div className="mb-3">
-                    <span className="text-sm text-zinc-500">Price</span>
-                    <p className="text-2xl font-bold text-zinc-900">{typeof price === "number" ? `$${price}` : price}</p>
+                    <span className="text-sm text-ds-muted-foreground">Price</span>
+                    <p className="text-2xl font-bold text-ds-foreground">{typeof price === "number" ? `$${price}` : price}</p>
                   </div>
                 )}
                 {rating && (
                   <div className="mb-3">
-                    <span className="text-sm text-zinc-500">Rating</span>
-                    <p className="text-amber-500 text-lg">{"★".repeat(Math.round(Number(rating)))}{"☆".repeat(5 - Math.round(Number(rating)))}</p>
+                    <span className="text-sm text-ds-muted-foreground">Rating</span>
+                    <p className="text-ds-warning text-lg">{"★".repeat(Math.round(Number(rating)))}{"☆".repeat(5 - Math.round(Number(rating)))}</p>
                   </div>
                 )}
                 {location && (
                   <div className="mb-3">
-                    <span className="text-sm text-zinc-500">Location</span>
-                    <p className="text-zinc-900">{typeof location === "object" ? (location as any).address || JSON.stringify(location) : location}</p>
+                    <span className="text-sm text-ds-muted-foreground">Location</span>
+                    <p className="text-ds-foreground">{typeof location === "object" ? (location as any).address || JSON.stringify(location) : location}</p>
                   </div>
                 )}
                 {contact && (
                   <div className="mb-3">
-                    <span className="text-sm text-zinc-500">Contact</span>
-                    <p className="text-zinc-900">{typeof contact === "object" ? (contact as any).phone || (contact as any).email || JSON.stringify(contact) : contact}</p>
+                    <span className="text-sm text-ds-muted-foreground">Contact</span>
+                    <p className="text-ds-foreground">{typeof contact === "object" ? (contact as any).phone || (contact as any).email || JSON.stringify(contact) : contact}</p>
                   </div>
                 )}
               </div>
@@ -326,18 +326,18 @@ function VerticalDetailTemplate({ page, tenant, locale }: { page: CMSPage; tenan
 
 function StaticTemplate({ page, branding }: { page: CMSPage; branding?: any }) {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-ds-background">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-4xl font-bold text-zinc-900 mb-4">{page.title}</h1>
+        <h1 className="text-4xl font-bold text-ds-foreground mb-4">{page.title}</h1>
         {page.seo?.description && (
-          <p className="text-lg text-zinc-600 mb-8">{page.seo.description}</p>
+          <p className="text-lg text-ds-muted-foreground mb-8">{page.seo.description}</p>
         )}
       </div>
       {page.layout && page.layout.length > 0 ? (
         <DynamicPage page={page} branding={branding} />
       ) : (
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-          <p className="text-zinc-600">This page has no content yet.</p>
+          <p className="text-ds-muted-foreground">This page has no content yet.</p>
         </div>
       )}
     </div>
@@ -346,12 +346,12 @@ function StaticTemplate({ page, branding }: { page: CMSPage; branding?: any }) {
 
 function CategoryTemplate({ page, tenant, locale }: { page: CMSPage; tenant: { id: string; slug: string }; locale: string }) {
   return (
-    <div className="min-h-screen bg-zinc-50">
-      <section className="bg-zinc-900 text-white py-16">
+    <div className="min-h-screen bg-ds-muted">
+      <section className="bg-ds-primary text-ds-primary-foreground py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-bold mb-3">{page.title}</h1>
           {page.seo?.description && (
-            <p className="text-zinc-300 text-lg max-w-2xl">{page.seo.description}</p>
+            <p className="text-ds-muted-foreground text-lg max-w-2xl">{page.seo.description}</p>
           )}
         </div>
       </section>
@@ -364,11 +364,11 @@ function CategoryTemplate({ page, tenant, locale }: { page: CMSPage; tenant: { i
 
 function NodeBrowserTemplate({ page, tenant, locale }: { page: CMSPage; tenant: { id: string; slug: string }; locale: string }) {
   return (
-    <div className="min-h-screen bg-zinc-50">
-      <section className="bg-zinc-900 text-white py-16">
+    <div className="min-h-screen bg-ds-muted">
+      <section className="bg-ds-primary text-ds-primary-foreground py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-bold mb-3">{page.title || "City Hierarchy"}</h1>
-          <p className="text-zinc-300 text-lg max-w-2xl">
+          <p className="text-ds-muted-foreground text-lg max-w-2xl">
             Browse the organizational structure from city level down to individual assets.
           </p>
         </div>
@@ -377,7 +377,7 @@ function NodeBrowserTemplate({ page, tenant, locale }: { page: CMSPage; tenant: 
         {page.layout && page.layout.length > 0 ? (
           <DynamicPage page={page} />
         ) : (
-          <p className="text-zinc-600">Node hierarchy browser will load from platform context.</p>
+          <p className="text-ds-muted-foreground">Node hierarchy browser will load from platform context.</p>
         )}
       </div>
     </div>

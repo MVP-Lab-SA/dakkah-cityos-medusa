@@ -19,21 +19,21 @@ export function POList({
   const getStatusColor = (status: PurchaseOrder["status"]) => {
     switch (status) {
       case "draft":
-        return "bg-zinc-100 text-zinc-800"
+        return "bg-ds-muted text-ds-foreground"
       case "pending_approval":
-        return "bg-yellow-100 text-yellow-800"
+        return "bg-ds-warning text-ds-warning"
       case "approved":
-        return "bg-green-100 text-green-800"
+        return "bg-ds-success text-ds-success"
       case "rejected":
-        return "bg-red-100 text-red-800"
+        return "bg-ds-destructive text-ds-destructive"
       case "submitted":
-        return "bg-blue-100 text-blue-800"
+        return "bg-ds-info text-ds-info"
       case "fulfilled":
         return "bg-purple-100 text-purple-800"
       case "cancelled":
-        return "bg-zinc-100 text-zinc-500"
+        return "bg-ds-muted text-ds-muted-foreground"
       default:
-        return "bg-zinc-100 text-zinc-800"
+        return "bg-ds-muted text-ds-foreground"
     }
   }
 
@@ -51,12 +51,12 @@ export function POList({
 
   if (purchaseOrders.length === 0) {
     return (
-      <div className="bg-white rounded-xl border border-zinc-200 p-12 text-center">
-        <DocumentText className="w-12 h-12 text-zinc-300 mx-auto mb-4" />
-        <p className="text-zinc-500">{emptyMessage}</p>
+      <div className="bg-ds-background rounded-xl border border-ds-border p-12 text-center">
+        <DocumentText className="w-12 h-12 text-ds-muted-foreground mx-auto mb-4" />
+        <p className="text-ds-muted-foreground">{emptyMessage}</p>
         <Link
           to={`${prefix}/account/purchase-orders/new` as any}
-          className="inline-block mt-4 text-sm font-medium text-zinc-900 hover:underline"
+          className="inline-block mt-4 text-sm font-medium text-ds-foreground hover:underline"
         >
           Create your first purchase order
         </Link>
@@ -70,12 +70,12 @@ export function POList({
         <Link
           key={po.id}
           to={`${prefix}/account/purchase-orders/${po.id}` as any}
-          className="block bg-white rounded-xl border border-zinc-200 p-6 hover:border-zinc-300 hover:shadow-sm transition-all"
+          className="block bg-ds-background rounded-xl border border-ds-border p-6 hover:border-ds-border hover:shadow-sm transition-all"
         >
           <div className="flex items-start justify-between mb-4">
             <div>
-              <h3 className="font-semibold text-zinc-900">{po.po_number}</h3>
-              <p className="text-sm text-zinc-500 mt-0.5">
+              <h3 className="font-semibold text-ds-foreground">{po.po_number}</h3>
+              <p className="text-sm text-ds-muted-foreground mt-0.5">
                 Created {formatDate(po.created_at)}
               </p>
             </div>
@@ -87,20 +87,20 @@ export function POList({
             </span>
           </div>
 
-          <div className="flex items-center justify-between pt-4 border-t border-zinc-100">
+          <div className="flex items-center justify-between pt-4 border-t border-ds-border">
             <div className="flex items-center gap-4">
               <div>
-                <p className="text-xs text-zinc-400">Items</p>
-                <p className="font-medium text-zinc-900">{po.items.length}</p>
+                <p className="text-xs text-ds-muted-foreground">Items</p>
+                <p className="font-medium text-ds-foreground">{po.items.length}</p>
               </div>
               <div>
-                <p className="text-xs text-zinc-400">Total</p>
-                <p className="font-semibold text-zinc-900">
+                <p className="text-xs text-ds-muted-foreground">Total</p>
+                <p className="font-semibold text-ds-foreground">
                   {formatPrice(po.total, po.currency_code)}
                 </p>
               </div>
             </div>
-            <span className="text-sm text-zinc-500 flex items-center gap-1">
+            <span className="text-sm text-ds-muted-foreground flex items-center gap-1">
               View details
               <ChevronRight className="w-4 h-4" />
             </span>

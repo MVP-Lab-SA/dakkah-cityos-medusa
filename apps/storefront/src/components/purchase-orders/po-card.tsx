@@ -15,15 +15,15 @@ export function POCard({ purchaseOrder: po, compact = false }: POCardProps) {
   const getStatusColor = (status: PurchaseOrder["status"]) => {
     switch (status) {
       case "draft":
-        return "bg-zinc-100 text-zinc-800"
+        return "bg-ds-muted text-ds-foreground"
       case "pending_approval":
-        return "bg-yellow-100 text-yellow-800"
+        return "bg-ds-warning text-ds-warning"
       case "approved":
-        return "bg-green-100 text-green-800"
+        return "bg-ds-success text-ds-success"
       case "rejected":
-        return "bg-red-100 text-red-800"
+        return "bg-ds-destructive text-ds-destructive"
       default:
-        return "bg-zinc-100 text-zinc-800"
+        return "bg-ds-muted text-ds-foreground"
     }
   }
 
@@ -35,11 +35,11 @@ export function POCard({ purchaseOrder: po, compact = false }: POCardProps) {
     return (
       <Link
         to={`${prefix}/account/purchase-orders/${po.id}` as any}
-        className="flex items-center justify-between p-4 bg-white rounded-lg border border-zinc-200 hover:border-zinc-300 transition-colors"
+        className="flex items-center justify-between p-4 bg-ds-background rounded-lg border border-ds-border hover:border-ds-border transition-colors"
       >
         <div>
-          <p className="font-medium text-zinc-900">{po.po_number}</p>
-          <p className="text-sm text-zinc-500">
+          <p className="font-medium text-ds-foreground">{po.po_number}</p>
+          <p className="text-sm text-ds-muted-foreground">
             {formatPrice(po.total, po.currency_code)}
           </p>
         </div>
@@ -54,16 +54,16 @@ export function POCard({ purchaseOrder: po, compact = false }: POCardProps) {
   }
 
   return (
-    <div className="bg-white rounded-xl border border-zinc-200 p-6">
+    <div className="bg-ds-background rounded-xl border border-ds-border p-6">
       <div className="flex items-start justify-between mb-4">
         <div>
           <Link
             to={`${prefix}/account/purchase-orders/${po.id}` as any}
-            className="font-semibold text-zinc-900 hover:text-zinc-600"
+            className="font-semibold text-ds-foreground hover:text-ds-muted-foreground"
           >
             {po.po_number}
           </Link>
-          <p className="text-sm text-zinc-500 mt-0.5">
+          <p className="text-sm text-ds-muted-foreground mt-0.5">
             {new Date(po.created_at).toLocaleDateString()}
           </p>
         </div>
@@ -75,18 +75,18 @@ export function POCard({ purchaseOrder: po, compact = false }: POCardProps) {
         </span>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 pt-4 border-t border-zinc-100">
+      <div className="grid grid-cols-3 gap-4 pt-4 border-t border-ds-border">
         <div>
-          <p className="text-xs text-zinc-400">Items</p>
-          <p className="font-medium text-zinc-900">{po.items.length}</p>
+          <p className="text-xs text-ds-muted-foreground">Items</p>
+          <p className="font-medium text-ds-foreground">{po.items.length}</p>
         </div>
         <div>
-          <p className="text-xs text-zinc-400">Created By</p>
-          <p className="font-medium text-zinc-900">{po.created_by_name || "You"}</p>
+          <p className="text-xs text-ds-muted-foreground">Created By</p>
+          <p className="font-medium text-ds-foreground">{po.created_by_name || "You"}</p>
         </div>
         <div className="text-right">
-          <p className="text-xs text-zinc-400">Total</p>
-          <p className="font-semibold text-zinc-900">
+          <p className="text-xs text-ds-muted-foreground">Total</p>
+          <p className="font-semibold text-ds-foreground">
             {formatPrice(po.total, po.currency_code)}
           </p>
         </div>

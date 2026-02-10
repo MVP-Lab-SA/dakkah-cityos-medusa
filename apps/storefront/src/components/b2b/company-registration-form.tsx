@@ -216,14 +216,14 @@ export function CompanyRegistrationForm() {
 
   const getFieldClass = (field: keyof FieldErrors) => {
     if (touched[field] && errors[field]) {
-      return "border-red-500 focus:ring-red-500";
+      return "border-ds-destructive focus:ring-red-500";
     }
     return "";
   };
 
   const renderFieldError = (field: keyof FieldErrors) => {
     if (!touched[field] || !errors[field]) return null;
-    return <p className="text-sm text-red-500 mt-1">{errors[field]}</p>;
+    return <p className="text-sm text-ds-destructive mt-1">{errors[field]}</p>;
   };
 
   return (

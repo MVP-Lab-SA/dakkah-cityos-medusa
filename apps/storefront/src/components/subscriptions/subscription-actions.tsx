@@ -42,9 +42,9 @@ export function SubscriptionActions({
 
   if (isCancelled) {
     return (
-      <div className="bg-white rounded-xl border border-zinc-200 p-6">
-        <h3 className="text-lg font-semibold text-zinc-900 mb-2">Subscription Cancelled</h3>
-        <p className="text-sm text-zinc-500 mb-4">
+      <div className="bg-ds-background rounded-xl border border-ds-border p-6">
+        <h3 className="text-lg font-semibold text-ds-foreground mb-2">Subscription Cancelled</h3>
+        <p className="text-sm text-ds-muted-foreground mb-4">
           This subscription has been cancelled. You can resubscribe anytime.
         </p>
         <Button>Resubscribe</Button>
@@ -53,8 +53,8 @@ export function SubscriptionActions({
   }
 
   return (
-    <div className="bg-white rounded-xl border border-zinc-200 p-6">
-      <h3 className="text-lg font-semibold text-zinc-900 mb-4">Manage Subscription</h3>
+    <div className="bg-ds-background rounded-xl border border-ds-border p-6">
+      <h3 className="text-lg font-semibold text-ds-foreground mb-4">Manage Subscription</h3>
       
       <div className="space-y-3">
         {/* Pause/Resume */}
@@ -99,7 +99,7 @@ export function SubscriptionActions({
         {!isCancelled && onCancel && (
           <Button
             variant="ghost"
-            className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+            className="w-full justify-start text-ds-destructive hover:text-ds-destructive hover:bg-ds-destructive"
             onClick={() => handleAction("cancel", onCancel)}
             disabled={isProcessing !== null}
           >
@@ -111,7 +111,7 @@ export function SubscriptionActions({
 
       {/* Warning for pause */}
       {isPaused && (
-        <p className="mt-4 text-xs text-amber-600 bg-amber-50 p-3 rounded-lg">
+        <p className="mt-4 text-xs text-ds-warning bg-ds-warning p-3 rounded-lg">
           Your subscription is paused. You won't be charged until you resume, but you also won't have access to subscription benefits.
         </p>
       )}

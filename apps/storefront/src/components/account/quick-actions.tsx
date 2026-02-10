@@ -17,14 +17,14 @@ export function QuickActions() {
       description: "Continue shopping",
       href: `${prefix}/store`,
       icon: ShoppingBag,
-      color: "bg-blue-50 text-blue-600 hover:bg-blue-100",
+      color: "bg-ds-info text-ds-info hover:bg-ds-info",
     },
     {
       label: "Reorder",
       description: "Quick reorder past items",
       href: `${prefix}/account/orders`,
       icon: ArrowPath,
-      color: "bg-green-50 text-green-600 hover:bg-green-100",
+      color: "bg-ds-success text-ds-success hover:bg-ds-success",
     },
     {
       label: "Track Order",
@@ -43,8 +43,8 @@ export function QuickActions() {
   ]
 
   return (
-    <div className="bg-white rounded-xl border border-zinc-200 p-6">
-      <h2 className="text-lg font-semibold text-zinc-900 mb-4">Quick Actions</h2>
+    <div className="bg-ds-background rounded-xl border border-ds-border p-6">
+      <h2 className="text-lg font-semibold text-ds-foreground mb-4">Quick Actions</h2>
       <div className="grid grid-cols-2 gap-3">
         {actions.map((action) => (
           <Link

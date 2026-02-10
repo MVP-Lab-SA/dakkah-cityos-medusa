@@ -31,7 +31,7 @@ export function StarRating({
         return (
           <span key={i} className="relative">
             {filled ? (
-              <StarSolid className={clx(sizeClasses[size], "text-amber-400")} />
+              <StarSolid className={clx(sizeClasses[size], "text-ds-warning")} />
             ) : partial ? (
               <div className="relative">
                 <Star className={clx(sizeClasses[size], "text-ui-fg-muted")} />
@@ -39,7 +39,7 @@ export function StarRating({
                   className="absolute inset-0 overflow-hidden"
                   style={{ width: `${(rating % 1) * 100}%` }}
                 >
-                  <StarSolid className={clx(sizeClasses[size], "text-amber-400")} />
+                  <StarSolid className={clx(sizeClasses[size], "text-ds-warning")} />
                 </div>
               </div>
             ) : (
@@ -90,9 +90,9 @@ export function StarRatingInput({
             className="focus:outline-none focus:ring-2 focus:ring-amber-400 rounded"
           >
             {filled ? (
-              <StarSolid className={clx(sizeClasses[size], "text-amber-400")} />
+              <StarSolid className={clx(sizeClasses[size], "text-ds-warning")} />
             ) : (
-              <Star className={clx(sizeClasses[size], "text-ui-fg-muted hover:text-amber-300 transition-colors")} />
+              <Star className={clx(sizeClasses[size], "text-ui-fg-muted hover:text-ds-warning transition-colors")} />
             )}
           </button>
         )

@@ -172,7 +172,7 @@ export function VendorProductForm({ initialData, mode = "create" }: VendorProduc
       </h1>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+        <div className="bg-ds-destructive border border-ds-destructive text-ds-destructive px-4 py-3 rounded mb-6">
           {error}
         </div>
       )}
@@ -244,7 +244,7 @@ export function VendorProductForm({ initialData, mode = "create" }: VendorProduc
                   <button
                     type="button"
                     onClick={() => removeVariant(index)}
-                    className="text-red-600 text-sm hover:underline"
+                    className="text-ds-destructive text-sm hover:underline"
                   >
                     Remove
                   </button>

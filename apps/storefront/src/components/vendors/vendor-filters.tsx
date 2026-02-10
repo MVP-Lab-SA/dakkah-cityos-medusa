@@ -42,11 +42,11 @@ export function VendorFilters({ onFilterChange }: VendorFiltersProps) {
   const hasFilters = search || rating || sort
 
   return (
-    <div className="bg-white rounded-xl border border-zinc-200 p-4">
+    <div className="bg-ds-background rounded-xl border border-ds-border p-4">
       <div className="flex flex-col sm:flex-row gap-4">
         {/* Search */}
         <div className="relative flex-1">
-          <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
+          <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ds-muted-foreground" />
           <Input
             placeholder="Search vendors..."
             value={search}
@@ -59,7 +59,7 @@ export function VendorFilters({ onFilterChange }: VendorFiltersProps) {
         <select
           value={rating}
           onChange={(e) => handleRatingChange(e.target.value)}
-          className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+          className="rounded-lg border border-ds-border px-3 py-2 text-sm"
         >
           <option value="">All Ratings</option>
           <option value="4.5">4.5+ Stars</option>
@@ -71,7 +71,7 @@ export function VendorFilters({ onFilterChange }: VendorFiltersProps) {
         <select
           value={sort}
           onChange={(e) => handleSortChange(e.target.value)}
-          className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+          className="rounded-lg border border-ds-border px-3 py-2 text-sm"
         >
           <option value="">Sort By</option>
           <option value="rating">Highest Rated</option>

@@ -39,7 +39,7 @@ export function ReviewSummary({ summary }: ReviewSummaryProps) {
               <span className="text-sm text-ui-fg-muted w-12">{rating} star</span>
               <div className="flex-1 h-2 bg-ui-bg-base rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-amber-400 rounded-full transition-all duration-300"
+                  className="h-full bg-ds-warning rounded-full transition-all duration-300"
                   style={{ width: `${percentage}%` }}
                 />
               </div>

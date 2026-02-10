@@ -43,15 +43,15 @@ export function POApprovalFlow({
 
   if (po.status === "approved") {
     return (
-      <div className="bg-green-50 rounded-xl border border-green-200 p-6">
+      <div className="bg-ds-success rounded-xl border border-ds-success p-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-            <Check className="w-5 h-5 text-green-600" />
+          <div className="w-10 h-10 rounded-full bg-ds-success flex items-center justify-center">
+            <Check className="w-5 h-5 text-ds-success" />
           </div>
           <div>
-            <h3 className="font-semibold text-green-800">Approved</h3>
+            <h3 className="font-semibold text-ds-success">Approved</h3>
             {po.approved_by_name && (
-              <p className="text-sm text-green-700">
+              <p className="text-sm text-ds-success">
                 By {po.approved_by_name} on {new Date(po.approved_at || "").toLocaleDateString()}
               </p>
             )}
@@ -63,14 +63,14 @@ export function POApprovalFlow({
 
   if (po.status === "rejected") {
     return (
-      <div className="bg-red-50 rounded-xl border border-red-200 p-6">
+      <div className="bg-ds-destructive rounded-xl border border-ds-destructive p-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
-            <XMark className="w-5 h-5 text-red-600" />
+          <div className="w-10 h-10 rounded-full bg-ds-destructive flex items-center justify-center">
+            <XMark className="w-5 h-5 text-ds-destructive" />
           </div>
           <div>
-            <h3 className="font-semibold text-red-800">Rejected</h3>
-            <p className="text-sm text-red-700">
+            <h3 className="font-semibold text-ds-destructive">Rejected</h3>
+            <p className="text-sm text-ds-destructive">
               This purchase order was rejected. Please review and resubmit.
             </p>
           </div>
@@ -81,15 +81,15 @@ export function POApprovalFlow({
 
   if (po.status === "pending_approval") {
     return (
-      <div className="bg-yellow-50 rounded-xl border border-yellow-200 p-6">
+      <div className="bg-ds-warning rounded-xl border border-ds-warning p-6">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center">
-              <Clock className="w-5 h-5 text-yellow-600" />
+            <div className="w-10 h-10 rounded-full bg-ds-warning flex items-center justify-center">
+              <Clock className="w-5 h-5 text-ds-warning" />
             </div>
             <div>
-              <h3 className="font-semibold text-yellow-800">Pending Approval</h3>
-              <p className="text-sm text-yellow-700">
+              <h3 className="font-semibold text-ds-warning">Pending Approval</h3>
+              <p className="text-sm text-ds-warning">
                 {canApprove
                   ? "This purchase order requires your approval"
                   : "Waiting for manager approval"
@@ -110,7 +110,7 @@ export function POApprovalFlow({
               <Button
                 onClick={handleApprove}
                 disabled={isProcessing !== null}
-                className="bg-green-600 hover:bg-green-700"
+                className="bg-ds-success hover:bg-ds-success"
               >
                 {isProcessing === "approve" ? "Approving..." : "Approve"}
               </Button>
@@ -119,8 +119,8 @@ export function POApprovalFlow({
         </div>
 
         {showRejectReason && (
-          <div className="mt-4 pt-4 border-t border-yellow-200">
-            <label className="block text-sm font-medium text-yellow-800 mb-2">
+          <div className="mt-4 pt-4 border-t border-ds-warning">
+            <label className="block text-sm font-medium text-ds-warning mb-2">
               Reason for rejection (optional)
             </label>
             <textarea
@@ -128,7 +128,7 @@ export function POApprovalFlow({
               onChange={(e) => setRejectReason(e.target.value)}
               placeholder="Provide a reason..."
               rows={2}
-              className="w-full rounded-lg border border-yellow-300 px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              className="w-full rounded-lg border border-ds-warning px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-yellow-500"
             />
             <div className="flex gap-2 mt-3">
               <Button
@@ -142,7 +142,7 @@ export function POApprovalFlow({
                 size="sm"
                 onClick={handleReject}
                 disabled={isProcessing !== null}
-                className="bg-red-600 hover:bg-red-700"
+                className="bg-ds-destructive hover:bg-ds-destructive"
               >
                 {isProcessing === "reject" ? "Rejecting..." : "Confirm Rejection"}
               </Button>

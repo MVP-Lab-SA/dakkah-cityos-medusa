@@ -29,18 +29,18 @@ export function PlanCard({ plan, isCurrentPlan }: PlanCardProps) {
   return (
     <div
       className={`
-        relative bg-white rounded-2xl border-2 transition-all duration-300
+        relative bg-ds-background rounded-2xl border-2 transition-all duration-300
         ${
           plan.is_popular
-            ? "border-slate-900 shadow-xl scale-[1.02]"
-            : "border-slate-200 hover:border-slate-300 hover:shadow-lg"
+            ? "border-ds-foreground shadow-xl scale-[1.02]"
+            : "border-ds-border hover:border-ds-border hover:shadow-lg"
         }
         ${isCurrentPlan ? "ring-2 ring-emerald-500 ring-offset-2" : ""}
       `}
     >
       {plan.is_popular && (
         <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-          <span className="inline-flex items-center px-4 py-1.5 bg-slate-900 text-white text-xs font-semibold rounded-full uppercase tracking-wide">
+          <span className="inline-flex items-center px-4 py-1.5 bg-ds-primary text-ds-primary-foreground text-xs font-semibold rounded-full uppercase tracking-wide">
             Most Popular
           </span>
         </div>
@@ -48,7 +48,7 @@ export function PlanCard({ plan, isCurrentPlan }: PlanCardProps) {
 
       {isCurrentPlan && (
         <div className="absolute -top-4 right-4">
-          <span className="inline-flex items-center px-3 py-1 bg-emerald-600 text-white text-xs font-semibold rounded-full">
+          <span className="inline-flex items-center px-3 py-1 bg-ds-success text-ds-primary-foreground text-xs font-semibold rounded-full">
             Current Plan
           </span>
         </div>
@@ -56,28 +56,28 @@ export function PlanCard({ plan, isCurrentPlan }: PlanCardProps) {
 
       <div className="p-8">
         <div className="text-center mb-8">
-          <h3 className="text-xl font-semibold text-slate-900 mb-2">
+          <h3 className="text-xl font-semibold text-ds-foreground mb-2">
             {plan.name}
           </h3>
-          <p className="text-sm text-slate-500">{plan.description}</p>
+          <p className="text-sm text-ds-muted-foreground">{plan.description}</p>
         </div>
 
         <div className="text-center mb-8">
           <div className="flex items-baseline justify-center gap-1">
-            <span className="text-5xl font-bold text-slate-900">
+            <span className="text-5xl font-bold text-ds-foreground">
               {formatPrice(plan.price, plan.currency_code)}
             </span>
-            <span className="text-slate-500 text-lg">
+            <span className="text-ds-muted-foreground text-lg">
               {intervalLabel[plan.billing_interval]}
             </span>
           </div>
           {plan.trial_days && (
-            <p className="text-sm text-emerald-600 font-medium mt-2">
+            <p className="text-sm text-ds-success font-medium mt-2">
               {plan.trial_days}-day free trial
             </p>
           )}
           {plan.setup_fee && (
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-ds-muted-foreground mt-1">
               + {formatPrice(plan.setup_fee, plan.currency_code)} setup fee
             </p>
           )}
@@ -86,8 +86,8 @@ export function PlanCard({ plan, isCurrentPlan }: PlanCardProps) {
         <div className="space-y-3 mb-8">
           {plan.features.map((feature, index) => (
             <div key={index} className="flex items-start gap-3">
-              <CheckCircleSolid className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-              <span className="text-sm text-slate-600">{feature}</span>
+              <CheckCircleSolid className="w-5 h-5 text-ds-success flex-shrink-0 mt-0.5" />
+              <span className="text-sm text-ds-muted-foreground">{feature}</span>
             </div>
           ))}
         </div>
@@ -95,7 +95,7 @@ export function PlanCard({ plan, isCurrentPlan }: PlanCardProps) {
         {isCurrentPlan ? (
           <button
             disabled
-            className="w-full py-3 px-6 rounded-xl bg-slate-100 text-slate-400 font-medium cursor-not-allowed"
+            className="w-full py-3 px-6 rounded-xl bg-ds-muted text-ds-muted-foreground font-medium cursor-not-allowed"
           >
             Current Plan
           </button>
@@ -106,8 +106,8 @@ export function PlanCard({ plan, isCurrentPlan }: PlanCardProps) {
               w-full py-3 px-6 rounded-xl font-medium text-center block transition-all duration-200
               ${
                 plan.is_popular
-                  ? "bg-slate-900 text-white hover:bg-slate-800"
-                  : "bg-white text-slate-900 border-2 border-slate-900 hover:bg-slate-900 hover:text-white"
+                  ? "bg-ds-primary text-ds-primary-foreground hover:bg-ds-primary"
+                  : "bg-ds-background text-ds-foreground border-2 border-ds-foreground hover:bg-ds-primary hover:text-ds-primary-foreground"
               }
             `}
           >
@@ -144,19 +144,19 @@ export function PlanComparisonTable({
     <div className="overflow-x-auto">
       <table className="w-full">
         <thead>
-          <tr className="border-b border-slate-200">
-            <th className="text-left py-4 px-4 text-sm font-medium text-slate-500">
+          <tr className="border-b border-ds-border">
+            <th className="text-left py-4 px-4 text-sm font-medium text-ds-muted-foreground">
               Features
             </th>
             {plans.map((plan) => (
               <th
                 key={plan.id}
-                className={`text-center py-4 px-4 ${plan.is_popular ? "bg-slate-50" : ""}`}
+                className={`text-center py-4 px-4 ${plan.is_popular ? "bg-ds-muted" : ""}`}
               >
-                <div className="font-semibold text-slate-900">{plan.name}</div>
-                <div className="text-2xl font-bold text-slate-900 mt-1">
+                <div className="font-semibold text-ds-foreground">{plan.name}</div>
+                <div className="text-2xl font-bold text-ds-foreground mt-1">
                   {formatPrice(plan.price, plan.currency_code)}
-                  <span className="text-sm font-normal text-slate-500">
+                  <span className="text-sm font-normal text-ds-muted-foreground">
                     /mo
                   </span>
                 </div>
@@ -164,19 +164,19 @@ export function PlanComparisonTable({
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100">
+        <tbody className="divide-y divide-ds-border">
           {allFeatures.map((feature, index) => (
             <tr key={index}>
-              <td className="py-3 px-4 text-sm text-slate-600">{feature}</td>
+              <td className="py-3 px-4 text-sm text-ds-muted-foreground">{feature}</td>
               {plans.map((plan) => (
                 <td
                   key={plan.id}
-                  className={`py-3 px-4 text-center ${plan.is_popular ? "bg-slate-50" : ""}`}
+                  className={`py-3 px-4 text-center ${plan.is_popular ? "bg-ds-muted" : ""}`}
                 >
                   {plan.features.includes(feature) ? (
-                    <CheckCircleSolid className="w-5 h-5 text-emerald-500 mx-auto" />
+                    <CheckCircleSolid className="w-5 h-5 text-ds-success mx-auto" />
                   ) : (
-                    <span className="text-slate-300">-</span>
+                    <span className="text-ds-muted-foreground">-</span>
                   )}
                 </td>
               ))}
@@ -184,12 +184,12 @@ export function PlanComparisonTable({
           ))}
         </tbody>
         <tfoot>
-          <tr className="border-t border-slate-200">
+          <tr className="border-t border-ds-border">
             <td className="py-6 px-4"></td>
             {plans.map((plan) => (
               <td
                 key={plan.id}
-                className={`py-6 px-4 text-center ${plan.is_popular ? "bg-slate-50" : ""}`}
+                className={`py-6 px-4 text-center ${plan.is_popular ? "bg-ds-muted" : ""}`}
               >
                 <a
                   href={`${prefix}/subscriptions/checkout?plan=${plan.handle}`}
@@ -197,8 +197,8 @@ export function PlanComparisonTable({
                     inline-flex items-center justify-center py-2.5 px-6 rounded-lg font-medium transition-all duration-200
                     ${
                       plan.is_popular
-                        ? "bg-slate-900 text-white hover:bg-slate-800"
-                        : "bg-white text-slate-900 border border-slate-300 hover:bg-slate-50"
+                        ? "bg-ds-primary text-ds-primary-foreground hover:bg-ds-primary"
+                        : "bg-ds-background text-ds-foreground border border-ds-border hover:bg-ds-muted"
                     }
                   `}
                 >

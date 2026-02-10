@@ -69,8 +69,8 @@ function AddressesPage() {
 
         {/* Add Form */}
         {showForm && (
-          <div className="bg-white rounded-lg border border-zinc-200 p-6">
-            <h2 className="text-lg font-semibold text-zinc-900 mb-6">Add New Address</h2>
+          <div className="bg-ds-background rounded-lg border border-ds-border p-6">
+            <h2 className="text-lg font-semibold text-ds-foreground mb-6">Add New Address</h2>
             <AddressForm
               onSubmit={async (data) => {
                 await createAddressMutation.mutateAsync(data)
@@ -82,8 +82,8 @@ function AddressesPage() {
 
         {/* Edit Form */}
         {editingAddress && (
-          <div className="bg-white rounded-lg border border-zinc-200 p-6">
-            <h2 className="text-lg font-semibold text-zinc-900 mb-6">Edit Address</h2>
+          <div className="bg-ds-background rounded-lg border border-ds-border p-6">
+            <h2 className="text-lg font-semibold text-ds-foreground mb-6">Edit Address</h2>
             <AddressForm
               initialData={editingAddress}
               onSubmit={async (data) => {
@@ -99,13 +99,13 @@ function AddressesPage() {
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[1, 2].map((i) => (
-              <div key={i} className="h-48 bg-zinc-100 rounded-lg animate-pulse" />
+              <div key={i} className="h-48 bg-ds-muted rounded-lg animate-pulse" />
             ))}
           </div>
         ) : addresses.length === 0 && !showForm ? (
-          <div className="bg-white rounded-lg border border-zinc-200 p-12 text-center">
-            <MapPin className="h-12 w-12 text-zinc-300 mx-auto mb-4" />
-            <p className="text-zinc-500 mb-4">No addresses saved yet</p>
+          <div className="bg-ds-background rounded-lg border border-ds-border p-12 text-center">
+            <MapPin className="h-12 w-12 text-ds-muted-foreground mx-auto mb-4" />
+            <p className="text-ds-muted-foreground mb-4">No addresses saved yet</p>
             <Button onClick={() => setShowForm(true)} size="fit">
               <Plus className="h-4 w-4 mr-2" />
               Add your first address

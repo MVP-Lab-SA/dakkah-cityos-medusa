@@ -32,9 +32,9 @@ function SettingsPage() {
     <AccountLayout title="Settings" description="Manage your account settings and preferences">
       <div className="space-y-6">
         {/* Password Change */}
-        <div className="bg-white rounded-lg border border-zinc-200 p-6">
-          <h2 className="text-lg font-semibold text-zinc-900 mb-4">Change Password</h2>
-          <p className="text-sm text-zinc-600 mb-4">
+        <div className="bg-ds-background rounded-lg border border-ds-border p-6">
+          <h2 className="text-lg font-semibold text-ds-foreground mb-4">Change Password</h2>
+          <p className="text-sm text-ds-muted-foreground mb-4">
             To change your password, we'll send you a reset link to your email.
           </p>
           <Button
@@ -47,41 +47,41 @@ function SettingsPage() {
         </div>
 
         {/* Notifications */}
-        <div className="bg-white rounded-lg border border-zinc-200 p-6">
-          <h2 className="text-lg font-semibold text-zinc-900 mb-4">Notifications</h2>
+        <div className="bg-ds-background rounded-lg border border-ds-border p-6">
+          <h2 className="text-lg font-semibold text-ds-foreground mb-4">Notifications</h2>
           <div className="space-y-4">
             <label className="flex items-center gap-3">
-              <input type="checkbox" defaultChecked className="w-4 h-4 rounded border-zinc-300" />
+              <input type="checkbox" defaultChecked className="w-4 h-4 rounded border-ds-border" />
               <div>
-                <p className="text-sm font-medium text-zinc-900">Order updates</p>
-                <p className="text-xs text-zinc-500">
+                <p className="text-sm font-medium text-ds-foreground">Order updates</p>
+                <p className="text-xs text-ds-muted-foreground">
                   Get notified about order status changes and shipping updates
                 </p>
               </div>
             </label>
             <label className="flex items-center gap-3">
-              <input type="checkbox" defaultChecked className="w-4 h-4 rounded border-zinc-300" />
+              <input type="checkbox" defaultChecked className="w-4 h-4 rounded border-ds-border" />
               <div>
-                <p className="text-sm font-medium text-zinc-900">Promotional emails</p>
-                <p className="text-xs text-zinc-500">
+                <p className="text-sm font-medium text-ds-foreground">Promotional emails</p>
+                <p className="text-xs text-ds-muted-foreground">
                   Receive special offers, discounts, and new product announcements
                 </p>
               </div>
             </label>
             <label className="flex items-center gap-3">
-              <input type="checkbox" defaultChecked className="w-4 h-4 rounded border-zinc-300" />
+              <input type="checkbox" defaultChecked className="w-4 h-4 rounded border-ds-border" />
               <div>
-                <p className="text-sm font-medium text-zinc-900">Subscription reminders</p>
-                <p className="text-xs text-zinc-500">
+                <p className="text-sm font-medium text-ds-foreground">Subscription reminders</p>
+                <p className="text-xs text-ds-muted-foreground">
                   Get reminded before subscription renewals
                 </p>
               </div>
             </label>
             <label className="flex items-center gap-3">
-              <input type="checkbox" defaultChecked className="w-4 h-4 rounded border-zinc-300" />
+              <input type="checkbox" defaultChecked className="w-4 h-4 rounded border-ds-border" />
               <div>
-                <p className="text-sm font-medium text-zinc-900">Booking reminders</p>
-                <p className="text-xs text-zinc-500">
+                <p className="text-sm font-medium text-ds-foreground">Booking reminders</p>
+                <p className="text-xs text-ds-muted-foreground">
                   Receive reminders before your scheduled bookings
                 </p>
               </div>
@@ -90,9 +90,9 @@ function SettingsPage() {
         </div>
 
         {/* Session */}
-        <div className="bg-white rounded-lg border border-zinc-200 p-6">
-          <h2 className="text-lg font-semibold text-zinc-900 mb-4">Session</h2>
-          <p className="text-sm text-zinc-600 mb-4">Sign out of your account on this device.</p>
+        <div className="bg-ds-background rounded-lg border border-ds-border p-6">
+          <h2 className="text-lg font-semibold text-ds-foreground mb-4">Session</h2>
+          <p className="text-sm text-ds-muted-foreground mb-4">Sign out of your account on this device.</p>
           <Button variant="outline" size="fit" onClick={handleLogout} disabled={isLoggingOut}>
             {isLoggingOut ? (
               <>
@@ -106,12 +106,12 @@ function SettingsPage() {
         </div>
 
         {/* Danger Zone */}
-        <div className="bg-white rounded-lg border border-red-200 p-6">
-          <h2 className="text-lg font-semibold text-red-600 mb-4">Danger Zone</h2>
+        <div className="bg-ds-background rounded-lg border border-ds-destructive p-6">
+          <h2 className="text-lg font-semibold text-ds-destructive mb-4">Danger Zone</h2>
 
           {!showDeleteConfirm ? (
             <>
-              <p className="text-sm text-zinc-600 mb-4">
+              <p className="text-sm text-ds-muted-foreground mb-4">
                 Once you delete your account, there is no going back. Please be certain.
               </p>
               <Button variant="danger" size="fit" onClick={() => setShowDeleteConfirm(true)}>
@@ -120,13 +120,13 @@ function SettingsPage() {
             </>
           ) : (
             <div className="space-y-4">
-              <div className="flex items-start gap-3 p-4 bg-red-50 rounded-lg">
-                <ExclamationCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <div className="flex items-start gap-3 p-4 bg-ds-destructive rounded-lg">
+                <ExclamationCircle className="h-5 w-5 text-ds-destructive flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-medium text-red-900">
+                  <p className="text-sm font-medium text-ds-destructive">
                     Are you sure you want to delete your account?
                   </p>
-                  <p className="text-sm text-red-700 mt-1">
+                  <p className="text-sm text-ds-destructive mt-1">
                     This will permanently delete all your data including orders, subscriptions, and
                     bookings.
                   </p>

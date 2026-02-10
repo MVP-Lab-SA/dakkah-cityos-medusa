@@ -63,14 +63,14 @@ export function InvoiceList({ statusFilter }: InvoiceListProps) {
 
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    draft: "bg-gray-100 text-gray-800",
-    issued: "bg-blue-100 text-blue-800",
+    draft: "bg-ds-muted text-ds-foreground",
+    issued: "bg-ds-info text-ds-info",
     sent: "bg-indigo-100 text-indigo-800",
-    paid: "bg-green-100 text-green-800",
-    partially_paid: "bg-yellow-100 text-yellow-800",
-    overdue: "bg-red-100 text-red-800",
-    void: "bg-gray-100 text-gray-600",
-    cancelled: "bg-gray-100 text-gray-600",
+    paid: "bg-ds-success text-ds-success",
+    partially_paid: "bg-ds-warning text-ds-warning",
+    overdue: "bg-ds-destructive text-ds-destructive",
+    void: "bg-ds-muted text-ds-muted-foreground",
+    cancelled: "bg-ds-muted text-ds-muted-foreground",
   }
-  return <span className={`px-2 py-0.5 rounded text-xs font-medium ${styles[status] || "bg-gray-100"}`}>{status.replace("_", " ")}</span>
+  return <span className={`px-2 py-0.5 rounded text-xs font-medium ${styles[status] || "bg-ds-muted"}`}>{status.replace("_", " ")}</span>
 }

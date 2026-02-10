@@ -37,7 +37,7 @@ export const FeaturesBlock: React.FC<FeaturesBlockProps> = ({
                 <div className="text-4xl mb-4">{feature.icon}</div>
               )}
               <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-              <p className="text-gray-600">{feature.description}</p>
+              <p className="text-ds-muted-foreground">{feature.description}</p>
             </div>
           ))}
         </div>

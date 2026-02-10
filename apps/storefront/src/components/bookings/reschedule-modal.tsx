@@ -99,14 +99,14 @@ export function RescheduleModal({
         <DialogHeader>
           <DialogTitle>Reschedule Appointment</DialogTitle>
         </DialogHeader>
-        <p className="text-sm text-zinc-500">{serviceName}</p>
+        <p className="text-sm text-ds-muted-foreground">{serviceName}</p>
 
         {/* Calendar */}
         <div className="mt-4">
           <div className="flex items-center justify-between mb-4">
             <button
               onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))}
-              className="p-1 hover:bg-zinc-100 rounded"
+              className="p-1 hover:bg-ds-muted rounded"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -115,7 +115,7 @@ export function RescheduleModal({
             </span>
             <button
               onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))}
-              className="p-1 hover:bg-zinc-100 rounded"
+              className="p-1 hover:bg-ds-muted rounded"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
@@ -123,7 +123,7 @@ export function RescheduleModal({
 
           <div className="grid grid-cols-7 gap-1 text-center">
             {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
-              <div key={day} className="text-xs font-medium text-zinc-400 py-2">
+              <div key={day} className="text-xs font-medium text-ds-muted-foreground py-2">
                 {day}
               </div>
             ))}
@@ -140,9 +140,9 @@ export function RescheduleModal({
                   className={cn(
                     "py-2 rounded-lg text-sm",
                     !date && "invisible",
-                    isSelectable && !isSelected && "hover:bg-zinc-100",
-                    !isSelectable && date && "text-zinc-300 cursor-not-allowed",
-                    isSelected && "bg-zinc-900 text-white"
+                    isSelectable && !isSelected && "hover:bg-ds-muted",
+                    !isSelectable && date && "text-ds-muted-foreground cursor-not-allowed",
+                    isSelected && "bg-ds-primary text-ds-primary-foreground"
                   )}
                 >
                   {date?.getDate()}
@@ -155,7 +155,7 @@ export function RescheduleModal({
         {/* Time Slots */}
         {selectedDate && (
           <div className="mt-6">
-            <h4 className="text-sm font-medium text-zinc-900 mb-3">Available Times</h4>
+            <h4 className="text-sm font-medium text-ds-foreground mb-3">Available Times</h4>
             <div className="grid grid-cols-4 gap-2">
               {timeSlots.map((slot) => (
                 <button
@@ -164,9 +164,9 @@ export function RescheduleModal({
                   disabled={!slot.available}
                   className={cn(
                     "py-2 px-3 rounded-lg text-sm border",
-                    slot.available && selectedTime !== slot.time && "border-zinc-200 hover:border-zinc-300",
-                    !slot.available && "border-zinc-100 text-zinc-300 cursor-not-allowed",
-                    selectedTime === slot.time && "border-zinc-900 bg-zinc-900 text-white"
+                    slot.available && selectedTime !== slot.time && "border-ds-border hover:border-ds-border",
+                    !slot.available && "border-ds-border text-ds-muted-foreground cursor-not-allowed",
+                    selectedTime === slot.time && "border-ds-foreground bg-ds-primary text-ds-primary-foreground"
                   )}
                 >
                   {slot.time}

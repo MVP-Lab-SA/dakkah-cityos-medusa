@@ -17,7 +17,7 @@ function OrderDetailPage() {
     return (
       <AccountLayout>
         <div className="flex items-center justify-center min-h-[400px]">
-          <Spinner className="w-8 h-8 animate-spin text-zinc-400" />
+          <Spinner className="w-8 h-8 animate-spin text-ds-muted-foreground" />
         </div>
       </AccountLayout>
     )
@@ -26,11 +26,11 @@ function OrderDetailPage() {
   if (error || !order) {
     return (
       <AccountLayout>
-        <div className="bg-white rounded-lg border border-zinc-200 p-12 text-center">
-          <p className="text-zinc-500 mb-4">Order not found</p>
+        <div className="bg-ds-background rounded-lg border border-ds-border p-12 text-center">
+          <p className="text-ds-muted-foreground mb-4">Order not found</p>
           <Link
             to={`${baseHref}/account/orders` as any}
-            className="text-sm font-medium text-zinc-900 hover:underline"
+            className="text-sm font-medium text-ds-foreground hover:underline"
           >
             Back to orders
           </Link>
@@ -45,7 +45,7 @@ function OrderDetailPage() {
         {/* Back Link */}
         <Link
           to={`${baseHref}/account/orders` as any}
-          className="inline-flex items-center text-sm text-zinc-600 hover:text-zinc-900"
+          className="inline-flex items-center text-sm text-ds-muted-foreground hover:text-ds-foreground"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to orders

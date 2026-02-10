@@ -37,11 +37,11 @@ export function VendorOrderDetail({ orderId }: VendorOrderDetailProps) {
         </div>
         <div className="border rounded-lg p-4">
           <p className="text-sm text-muted-foreground mb-1">Commission</p>
-          <p className="text-2xl font-bold text-red-600">-${Number(order.commission_amount).toFixed(2)}</p>
+          <p className="text-2xl font-bold text-ds-destructive">-${Number(order.commission_amount).toFixed(2)}</p>
         </div>
         <div className="border rounded-lg p-4">
           <p className="text-sm text-muted-foreground mb-1">Net Amount</p>
-          <p className="text-2xl font-bold text-green-700">${Number(order.net_amount).toFixed(2)}</p>
+          <p className="text-2xl font-bold text-ds-success">${Number(order.net_amount).toFixed(2)}</p>
         </div>
       </div>
 
@@ -115,15 +115,15 @@ export function VendorOrderDetail({ orderId }: VendorOrderDetailProps) {
 
 function OrderStatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    pending: "bg-yellow-100 text-yellow-800",
-    processing: "bg-blue-100 text-blue-800",
+    pending: "bg-ds-warning text-ds-warning",
+    processing: "bg-ds-info text-ds-info",
     shipped: "bg-indigo-100 text-indigo-800",
-    delivered: "bg-green-100 text-green-800",
-    cancelled: "bg-red-100 text-red-800",
+    delivered: "bg-ds-success text-ds-success",
+    cancelled: "bg-ds-destructive text-ds-destructive",
     refunded: "bg-orange-100 text-orange-800",
   }
   return (
-    <span className={`px-3 py-1 rounded-full text-sm font-medium ${styles[status] || "bg-gray-100"}`}>
+    <span className={`px-3 py-1 rounded-full text-sm font-medium ${styles[status] || "bg-ds-muted"}`}>
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </span>
   )

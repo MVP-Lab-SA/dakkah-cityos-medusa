@@ -19,17 +19,17 @@ const NODE_ICONS: Record<NodeType, string> = {
 
 const NODE_COLORS: Record<NodeType, { bg: string; text: string; border: string }> = {
   CITY: { bg: "bg-purple-50", text: "text-purple-700", border: "border-purple-200" },
-  DISTRICT: { bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200" },
-  ZONE: { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200" },
+  DISTRICT: { bg: "bg-ds-info", text: "text-ds-info", border: "border-ds-info" },
+  ZONE: { bg: "bg-ds-success", text: "text-ds-success", border: "border-ds-success" },
   FACILITY: { bg: "bg-orange-50", text: "text-orange-700", border: "border-orange-200" },
-  ASSET: { bg: "bg-zinc-50", text: "text-zinc-700", border: "border-zinc-200" },
+  ASSET: { bg: "bg-ds-muted", text: "text-ds-foreground", border: "border-ds-border" },
 }
 
 const STATUS_COLORS: Record<string, { dot: string; text: string }> = {
-  active: { dot: "bg-green-500", text: "text-green-700" },
-  inactive: { dot: "bg-red-400", text: "text-red-600" },
-  maintenance: { dot: "bg-amber-400", text: "text-amber-600" },
-  archived: { dot: "bg-zinc-400", text: "text-zinc-500" },
+  active: { dot: "bg-ds-success", text: "text-ds-success" },
+  inactive: { dot: "bg-ds-destructive", text: "text-ds-destructive" },
+  maintenance: { dot: "bg-ds-warning", text: "text-ds-warning" },
+  archived: { dot: "bg-ds-muted-foreground", text: "text-ds-muted-foreground" },
 }
 
 const HIERARCHY_ORDER: NodeType[] = ["CITY", "DISTRICT", "ZONE", "FACILITY", "ASSET"]
@@ -53,10 +53,10 @@ function NodeBreadcrumbs({ breadcrumbs }: { breadcrumbs?: Array<{ id?: string; n
   if (!breadcrumbs || breadcrumbs.length === 0) return null
 
   return (
-    <div className="flex items-center gap-1.5 text-xs text-zinc-500 mt-1.5 flex-wrap">
+    <div className="flex items-center gap-1.5 text-xs text-ds-muted-foreground mt-1.5 flex-wrap">
       {breadcrumbs.map((crumb, i) => (
         <span key={i} className="flex items-center gap-1">
-          {i > 0 && <span className="text-zinc-300">›</span>}
+          {i > 0 && <span className="text-ds-muted-foreground">›</span>}
           <span>{crumb.name}</span>
         </span>
       ))}
@@ -100,13 +100,13 @@ function NodeCard({
         className={`w-full text-left group rounded-lg border transition-all duration-200 ${
           selected
             ? `${colors.bg} ${colors.border}`
-            : "bg-white border-zinc-200 hover:border-zinc-300 hover:shadow-sm"
+            : "bg-ds-background border-ds-border hover:border-ds-border hover:shadow-sm"
         } ${depth === 0 ? "mb-2" : "mb-1.5"}`}
       >
         <div className="flex items-center gap-3 p-3 sm:p-4">
           {!isLeaf && (
             <span
-              className={`text-zinc-400 transition-transform duration-200 text-sm flex-shrink-0 ${
+              className={`text-ds-muted-foreground transition-transform duration-200 text-sm flex-shrink-0 ${
                 expanded ? "rotate-90" : ""
               }`}
             >
@@ -119,7 +119,7 @@ function NodeCard({
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-medium text-zinc-900 truncate">{node.name}</span>
+              <span className="font-medium text-ds-foreground truncate">{node.name}</span>
               <span
                 className={`px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide ${colors.bg} ${colors.text}`}
               >
@@ -132,7 +132,7 @@ function NodeCard({
             </div>
 
             {node.code && (
-              <span className="text-xs text-zinc-400 font-mono">{node.code}</span>
+              <span className="text-xs text-ds-muted-foreground font-mono">{node.code}</span>
             )}
 
             {selected && node.breadcrumbs && (
@@ -140,7 +140,7 @@ function NodeCard({
             )}
 
             {selected && node.location && (
-              <div className="flex items-center gap-1.5 text-xs text-zinc-500 mt-1">
+              <div className="flex items-center gap-1.5 text-xs text-ds-muted-foreground mt-1">
                 <span>📌</span>
                 <span>
                   {[node.location.address, node.location.city, node.location.country]
@@ -148,7 +148,7 @@ function NodeCard({
                     .join(", ")}
                 </span>
                 {node.location.lat && node.location.lng && (
-                  <span className="text-zinc-400">
+                  <span className="text-ds-muted-foreground">
                     ({node.location.lat.toFixed(4)}, {node.location.lng.toFixed(4)})
                   </span>
                 )}
@@ -162,7 +162,7 @@ function NodeCard({
         <div className="transition-all duration-200">
           {childrenLoading ? (
             <div style={{ marginLeft: `${(depth + 1) * 16}px` }} className="py-3">
-              <div className="flex items-center gap-2 text-sm text-zinc-400">
+              <div className="flex items-center gap-2 text-sm text-ds-muted-foreground">
                 <span className="animate-spin">⏳</span>
                 <span>Loading children...</span>
               </div>
@@ -179,7 +179,7 @@ function NodeCard({
           ) : (
             <div
               style={{ marginLeft: `${(depth + 1) * 16}px` }}
-              className="py-2 text-sm text-zinc-400 italic"
+              className="py-2 text-sm text-ds-muted-foreground italic"
             >
               No child nodes
             </div>
@@ -214,8 +214,8 @@ export function NodeHierarchy({ tenantId, initialNodes }: NodeHierarchyProps) {
   return (
     <div className="max-w-4xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-zinc-900">Node Hierarchy</h1>
-        <p className="mt-2 text-zinc-500">
+        <h1 className="text-2xl md:text-3xl font-bold text-ds-foreground">Node Hierarchy</h1>
+        <p className="mt-2 text-ds-muted-foreground">
           Explore the organizational structure: City → District → Zone → Facility → Asset
         </p>
       </div>
@@ -233,24 +233,24 @@ export function NodeHierarchy({ tenantId, initialNodes }: NodeHierarchyProps) {
                 {type}
               </span>
               {typeCounts[type] !== undefined && (
-                <span className="text-xs text-zinc-500 mt-0.5">{typeCounts[type]}</span>
+                <span className="text-xs text-ds-muted-foreground mt-0.5">{typeCounts[type]}</span>
               )}
             </div>
           )
         })}
       </div>
 
-      <div className="bg-white rounded-xl border border-zinc-200 p-4 sm:p-6">
+      <div className="bg-ds-background rounded-xl border border-ds-border p-4 sm:p-6">
         {isLoading ? (
           <div className="text-center py-12">
             <span className="text-4xl mb-4 block animate-spin">⏳</span>
-            <h3 className="text-lg font-medium text-zinc-700">Loading nodes...</h3>
+            <h3 className="text-lg font-medium text-ds-foreground">Loading nodes...</h3>
           </div>
         ) : nodes.length === 0 ? (
           <div className="text-center py-12">
             <span className="text-4xl mb-4 block">🏙️</span>
-            <h3 className="text-lg font-medium text-zinc-700">No nodes configured</h3>
-            <p className="text-sm text-zinc-400 mt-1">
+            <h3 className="text-lg font-medium text-ds-foreground">No nodes configured</h3>
+            <p className="text-sm text-ds-muted-foreground mt-1">
               This tenant does not have any nodes in its hierarchy yet.
             </p>
           </div>

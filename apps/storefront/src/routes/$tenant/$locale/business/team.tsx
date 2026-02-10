@@ -51,18 +51,18 @@ function TeamPage() {
   return (
     <AccountLayout>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-zinc-900">Team Management</h1>
-        <p className="text-zinc-500 mt-1">Manage your company's team members and permissions</p>
+        <h1 className="text-2xl font-bold text-ds-foreground">Team Management</h1>
+        <p className="text-ds-muted-foreground mt-1">Manage your company's team members and permissions</p>
       </div>
 
       {isLoading && (
         <div className="flex items-center justify-center py-12">
-          <Spinner className="w-6 h-6 animate-spin text-zinc-400" />
+          <Spinner className="w-6 h-6 animate-spin text-ds-muted-foreground" />
         </div>
       )}
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-600">
+        <div className="bg-ds-destructive border border-ds-destructive rounded-lg p-4 text-ds-destructive">
           Failed to load team members. Please try again later.
         </div>
       )}

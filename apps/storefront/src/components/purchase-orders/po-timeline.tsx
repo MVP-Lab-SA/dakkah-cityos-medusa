@@ -69,8 +69,8 @@ export function POTimeline({ purchaseOrder: po }: POTimelineProps) {
   const steps = getSteps()
 
   return (
-    <div className="bg-white rounded-xl border border-zinc-200 p-6">
-      <h3 className="text-lg font-semibold text-zinc-900 mb-6">Timeline</h3>
+    <div className="bg-ds-background rounded-xl border border-ds-border p-6">
+      <h3 className="text-lg font-semibold text-ds-foreground mb-6">Timeline</h3>
 
       <div className="relative">
         {steps.map((step, index) => {
@@ -84,17 +84,17 @@ export function POTimeline({ purchaseOrder: po }: POTimelineProps) {
                 <div
                   className={cn(
                     "w-10 h-10 rounded-full flex items-center justify-center",
-                    step.completed && !isRejected && "bg-green-100",
-                    step.completed && isRejected && "bg-red-100",
-                    !step.completed && "bg-zinc-100"
+                    step.completed && !isRejected && "bg-ds-success",
+                    step.completed && isRejected && "bg-ds-destructive",
+                    !step.completed && "bg-ds-muted"
                   )}
                 >
                   <step.icon
                     className={cn(
                       "w-5 h-5",
-                      step.completed && !isRejected && "text-green-600",
-                      step.completed && isRejected && "text-red-600",
-                      !step.completed && "text-zinc-400"
+                      step.completed && !isRejected && "text-ds-success",
+                      step.completed && isRejected && "text-ds-destructive",
+                      !step.completed && "text-ds-muted-foreground"
                     )}
                   />
                 </div>
@@ -102,7 +102,7 @@ export function POTimeline({ purchaseOrder: po }: POTimelineProps) {
                   <div
                     className={cn(
                       "absolute left-1/2 top-10 w-0.5 h-full -translate-x-1/2",
-                      step.completed ? "bg-green-200" : "bg-zinc-200"
+                      step.completed ? "bg-ds-success" : "bg-ds-muted"
                     )}
                   />
                 )}
@@ -113,15 +113,15 @@ export function POTimeline({ purchaseOrder: po }: POTimelineProps) {
                 <p
                   className={cn(
                     "font-medium",
-                    step.completed && !isRejected && "text-green-700",
-                    step.completed && isRejected && "text-red-700",
-                    !step.completed && "text-zinc-400"
+                    step.completed && !isRejected && "text-ds-success",
+                    step.completed && isRejected && "text-ds-destructive",
+                    !step.completed && "text-ds-muted-foreground"
                   )}
                 >
                   {step.label}
                 </p>
                 {step.date && (
-                  <p className="text-sm text-zinc-500 mt-0.5">{formatDate(step.date)}</p>
+                  <p className="text-sm text-ds-muted-foreground mt-0.5">{formatDate(step.date)}</p>
                 )}
               </div>
             </div>

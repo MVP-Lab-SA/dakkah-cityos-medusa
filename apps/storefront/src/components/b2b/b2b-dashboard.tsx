@@ -110,18 +110,18 @@ export function B2BDashboard() {
         </div>
         <div className="flex items-center gap-2">
           <span className={`px-2 py-1 rounded text-xs font-medium ${
-            company.status === "active" ? "bg-green-100 text-green-800" :
-            company.status === "pending" ? "bg-yellow-100 text-yellow-800" :
-            company.status === "suspended" ? "bg-red-100 text-red-800" :
-            "bg-gray-100 text-gray-800"
+            company.status === "active" ? "bg-ds-success text-ds-success" :
+            company.status === "pending" ? "bg-ds-warning text-ds-warning" :
+            company.status === "suspended" ? "bg-ds-destructive text-ds-destructive" :
+            "bg-ds-muted text-ds-foreground"
           }`}>
             {company.status.charAt(0).toUpperCase() + company.status.slice(1)}
           </span>
           <span className={`px-2 py-1 rounded text-xs font-medium ${
             company.tier === "platinum" ? "bg-purple-100 text-purple-800" :
-            company.tier === "gold" ? "bg-yellow-100 text-yellow-800" :
-            company.tier === "silver" ? "bg-slate-200 text-slate-800" :
-            "bg-amber-100 text-amber-800"
+            company.tier === "gold" ? "bg-ds-warning text-ds-warning" :
+            company.tier === "silver" ? "bg-ds-muted text-ds-foreground" :
+            "bg-ds-warning text-ds-warning"
           }`}>
             {company.tier.charAt(0).toUpperCase() + company.tier.slice(1)}
           </span>
@@ -129,11 +129,11 @@ export function B2BDashboard() {
       </div>
 
       {company.status === "pending" && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-start gap-3">
-          <Clock className="w-5 h-5 text-yellow-600 mt-0.5" />
+        <div className="bg-ds-warning border border-ds-warning rounded-lg p-4 flex items-start gap-3">
+          <Clock className="w-5 h-5 text-ds-warning mt-0.5" />
           <div>
-            <h3 className="font-semibold text-yellow-800">Account Pending Approval</h3>
-            <p className="text-sm text-yellow-700">
+            <h3 className="font-semibold text-ds-warning">Account Pending Approval</h3>
+            <p className="text-sm text-ds-warning">
               Your B2B account is under review. You'll receive an email once approved.
               Some features may be limited until approval.
             </p>
@@ -142,19 +142,19 @@ export function B2BDashboard() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white border rounded-lg p-6">
+        <div className="bg-ds-background border rounded-lg p-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-muted-foreground">Credit Available</span>
-            <CreditCard className="w-5 h-5 text-green-600" color="green" />
+            <CreditCard className="w-5 h-5 text-ds-success" color="green" />
           </div>
           <p className="text-2xl font-bold">
             ${creditAvailable.toLocaleString()}
           </p>
           {company.credit_limit && (
             <div className="mt-2">
-              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-2 bg-ds-muted rounded-full overflow-hidden">
                 <div 
-                  className={`h-full ${creditUsagePercent > 80 ? 'bg-red-500' : 'bg-green-500'}`}
+                  className={`h-full ${creditUsagePercent > 80 ? 'bg-ds-destructive' : 'bg-ds-success'}`}
                   style={{ width: `${100 - creditUsagePercent}%` }}
                 />
               </div>
@@ -165,10 +165,10 @@ export function B2BDashboard() {
           )}
         </div>
 
-        <div className="bg-white border rounded-lg p-6">
+        <div className="bg-ds-background border rounded-lg p-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-muted-foreground">Pending Quotes</span>
-            <DocumentText className="w-5 h-5 text-blue-600" />
+            <DocumentText className="w-5 h-5 text-ds-info" />
           </div>
           <p className="text-2xl font-bold">{pendingQuotes}</p>
           <p className="text-xs text-muted-foreground mt-2">
@@ -176,10 +176,10 @@ export function B2BDashboard() {
           </p>
         </div>
 
-        <div className="bg-white border rounded-lg p-6">
+        <div className="bg-ds-background border rounded-lg p-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-muted-foreground">Approved Quotes</span>
-            <CheckCircleSolid className="w-5 h-5 text-green-600" />
+            <CheckCircleSolid className="w-5 h-5 text-ds-success" />
           </div>
           <p className="text-2xl font-bold">{approvedQuotes}</p>
           <p className="text-xs text-muted-foreground mt-2">
@@ -187,7 +187,7 @@ export function B2BDashboard() {
           </p>
         </div>
 
-        <div className="bg-white border rounded-lg p-6">
+        <div className="bg-ds-background border rounded-lg p-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-muted-foreground">Payment Terms</span>
             <CreditCard className="w-5 h-5 text-purple-600" />
@@ -304,9 +304,9 @@ export function B2BDashboard() {
 
 function TierBadge({ tier }: { tier: Company["tier"] }) {
   const styles = {
-    bronze: "bg-amber-100 text-amber-800",
-    silver: "bg-slate-200 text-slate-800",
-    gold: "bg-yellow-100 text-yellow-800",
+    bronze: "bg-ds-warning text-ds-warning",
+    silver: "bg-ds-muted text-ds-foreground",
+    gold: "bg-ds-warning text-ds-warning",
     platinum: "bg-purple-100 text-purple-800",
   };
 
@@ -319,14 +319,14 @@ function TierBadge({ tier }: { tier: Company["tier"] }) {
 
 function QuoteStatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    draft: "bg-gray-100 text-gray-800",
-    submitted: "bg-blue-100 text-blue-800",
-    under_review: "bg-yellow-100 text-yellow-800",
-    approved: "bg-green-100 text-green-800",
-    rejected: "bg-red-100 text-red-800",
-    accepted: "bg-emerald-100 text-emerald-800",
+    draft: "bg-ds-muted text-ds-foreground",
+    submitted: "bg-ds-info text-ds-info",
+    under_review: "bg-ds-warning text-ds-warning",
+    approved: "bg-ds-success text-ds-success",
+    rejected: "bg-ds-destructive text-ds-destructive",
+    accepted: "bg-ds-success text-ds-success",
     declined: "bg-orange-100 text-orange-800",
-    expired: "bg-gray-100 text-gray-800",
+    expired: "bg-ds-muted text-ds-foreground",
   };
 
   const labels: Record<string, string> = {
@@ -341,7 +341,7 @@ function QuoteStatusBadge({ status }: { status: string }) {
   };
 
   return (
-    <span className={`px-2 py-1 rounded text-xs font-medium ${styles[status] || "bg-gray-100"}`}>
+    <span className={`px-2 py-1 rounded text-xs font-medium ${styles[status] || "bg-ds-muted"}`}>
       {labels[status] || status}
     </span>
   );

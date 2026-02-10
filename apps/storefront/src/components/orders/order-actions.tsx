@@ -21,8 +21,8 @@ export function OrderActions({
   const canTrack = ["shipped", "processing"].includes(status.toLowerCase())
 
   return (
-    <div className="bg-white rounded-xl border border-zinc-200 p-6">
-      <h3 className="text-lg font-semibold text-zinc-900 mb-4">Actions</h3>
+    <div className="bg-ds-background rounded-xl border border-ds-border p-6">
+      <h3 className="text-lg font-semibold text-ds-foreground mb-4">Actions</h3>
       
       <div className="space-y-3">
         {/* Reorder */}
@@ -66,7 +66,7 @@ export function OrderActions({
         )}
 
         {/* Get Help */}
-        <Button variant="ghost" className="w-full justify-start text-zinc-600">
+        <Button variant="ghost" className="w-full justify-start text-ds-muted-foreground">
           <ChatBubbleLeftRight className="w-4 h-4 mr-2" />
           Get Help with Order
         </Button>

@@ -83,13 +83,13 @@ export function AuditLogViewer() {
 
 function ClassificationBadge({ classification }: { classification: string }) {
   const styles: Record<string, string> = {
-    public: "bg-green-100 text-green-800",
-    internal: "bg-blue-100 text-blue-800",
-    confidential: "bg-yellow-100 text-yellow-800",
-    restricted: "bg-red-100 text-red-800",
+    public: "bg-ds-success text-ds-success",
+    internal: "bg-ds-info text-ds-info",
+    confidential: "bg-ds-warning text-ds-warning",
+    restricted: "bg-ds-destructive text-ds-destructive",
   }
   return (
-    <span className={`text-xs px-2 py-0.5 rounded ${styles[classification] || "bg-gray-100"}`}>
+    <span className={`text-xs px-2 py-0.5 rounded ${styles[classification] || "bg-ds-muted"}`}>
       {classification}
     </span>
   )

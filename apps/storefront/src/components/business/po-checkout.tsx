@@ -20,9 +20,9 @@ export function POCheckout({ onSubmit, isSubmitting = false }: POCheckoutProps) 
   }
 
   return (
-    <div className="bg-white rounded-xl border border-zinc-200 overflow-hidden">
-      <div className="px-6 py-4 border-b border-zinc-200">
-        <h3 className="text-lg font-semibold text-zinc-900">Purchase Order</h3>
+    <div className="bg-ds-background rounded-xl border border-ds-border overflow-hidden">
+      <div className="px-6 py-4 border-b border-ds-border">
+        <h3 className="text-lg font-semibold text-ds-foreground">Purchase Order</h3>
       </div>
 
       <div className="p-6">
@@ -33,13 +33,13 @@ export function POCheckout({ onSubmit, isSubmitting = false }: POCheckoutProps) 
             onClick={() => setUsePO(!usePO)}
             className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-colors ${
               usePO
-                ? "bg-zinc-900 border-zinc-900"
-                : "border-zinc-300 hover:border-zinc-400"
+                ? "bg-ds-primary border-ds-foreground"
+                : "border-ds-border hover:border-ds-border"
             }`}
           >
-            {usePO && <Check className="w-4 h-4 text-white" />}
+            {usePO && <Check className="w-4 h-4 text-ds-primary-foreground" />}
           </button>
-          <span className="text-sm font-medium text-zinc-900">
+          <span className="text-sm font-medium text-ds-foreground">
             Use a Purchase Order Number for this order
           </span>
         </label>
@@ -65,12 +65,12 @@ export function POCheckout({ onSubmit, isSubmitting = false }: POCheckoutProps) 
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Add any special instructions..."
                 rows={3}
-                className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-zinc-900"
+                className="mt-1 w-full rounded-lg border border-ds-border px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ds-ring"
               />
             </div>
 
-            <div className="bg-zinc-50 rounded-lg p-4">
-              <p className="text-sm text-zinc-600">
+            <div className="bg-ds-muted rounded-lg p-4">
+              <p className="text-sm text-ds-muted-foreground">
                 By submitting a purchase order, you agree to our Net 30 payment terms. 
                 An invoice will be sent to your company's billing contact.
               </p>
@@ -80,7 +80,7 @@ export function POCheckout({ onSubmit, isSubmitting = false }: POCheckoutProps) 
       </div>
 
       {usePO && (
-        <div className="px-6 py-4 border-t border-zinc-200">
+        <div className="px-6 py-4 border-t border-ds-border">
           <Button
             onClick={handleSubmit}
             disabled={!poNumber || isSubmitting}

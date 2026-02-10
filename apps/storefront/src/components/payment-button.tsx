@@ -71,7 +71,7 @@ const StripePaymentButton = ({
         Place Order
       </Button>
       {errorMessage && (
-        <div className="text-red-500 text-sm mt-2">{errorMessage}</div>
+        <div className="text-ds-destructive text-sm mt-2">{errorMessage}</div>
       )}
     </>
   );
@@ -121,7 +121,7 @@ const ManualPaymentButton = ({
         Place Order
       </Button>
       {errorMessage && (
-        <div className="text-red-500 text-sm mt-2">{errorMessage}</div>
+        <div className="text-ds-destructive text-sm mt-2">{errorMessage}</div>
       )}
     </>
   );

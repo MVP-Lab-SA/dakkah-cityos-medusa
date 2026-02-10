@@ -42,8 +42,8 @@ export function TenantSettingsPanel() {
 
 function BillingCard({ billing }: { billing: TenantBilling }) {
   const planColors: Record<string, string> = {
-    free: "bg-gray-100 text-gray-800",
-    starter: "bg-blue-100 text-blue-800",
+    free: "bg-ds-muted text-ds-foreground",
+    starter: "bg-ds-info text-ds-info",
     professional: "bg-purple-100 text-purple-800",
     enterprise: "bg-orange-100 text-orange-800",
   }
@@ -57,7 +57,7 @@ function BillingCard({ billing }: { billing: TenantBilling }) {
       <div className="grid grid-cols-2 gap-4">
         <div>
           <p className="text-sm text-muted-foreground">Plan</p>
-          <span className={`px-3 py-1 rounded text-sm font-medium ${planColors[planKey] || "bg-gray-100"}`}>
+          <span className={`px-3 py-1 rounded text-sm font-medium ${planColors[planKey] || "bg-ds-muted"}`}>
             {String(planName).charAt(0).toUpperCase() + String(planName).slice(1)}
           </span>
         </div>
@@ -169,7 +169,7 @@ function InvoicesList({ invoices }: { invoices: TenantInvoice[] }) {
             <div className="flex items-center gap-3">
               {invoice.total !== undefined && <span className="font-bold">${invoice.total.toFixed(2)}</span>}
               {invoice.status && (
-                <span className={`px-2 py-0.5 rounded text-xs ${invoice.status === "paid" ? "bg-green-100 text-green-800" : invoice.status === "overdue" ? "bg-red-100 text-red-800" : "bg-yellow-100 text-yellow-800"}`}>
+                <span className={`px-2 py-0.5 rounded text-xs ${invoice.status === "paid" ? "bg-ds-success text-ds-success" : invoice.status === "overdue" ? "bg-ds-destructive text-ds-destructive" : "bg-ds-warning text-ds-warning"}`}>
                   {invoice.status}
                 </span>
               )}

@@ -13,16 +13,16 @@ export const Thumbnail = ({ thumbnail, alt, className }: ThumbnailProps) => {
         <img
           src={thumbnail}
           alt={alt}
-          className={clsx("w-20 h-20 object-cover bg-zinc-50", className)}
+          className={clsx("w-20 h-20 object-cover bg-ds-muted", className)}
         />
       ) : (
         <div
           className={clsx(
-            "w-20 h-20 bg-zinc-50 flex items-center justify-center",
+            "w-20 h-20 bg-ds-muted flex items-center justify-center",
             className
           )}
         >
-          <span className="text-xs text-zinc-600">No image</span>
+          <span className="text-xs text-ds-muted-foreground">No image</span>
         </div>
       )}
     </>

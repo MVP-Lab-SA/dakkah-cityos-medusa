@@ -87,14 +87,14 @@ export function DynamicFooter({ categories = [] }: DynamicFooterProps) {
   })
 
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-ds-primary text-ds-primary-foreground">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
           <div className="col-span-2 md:col-span-1">
             <Link to={`${prefix}` as any} className="text-xl font-bold">
               Store
             </Link>
-            <p className="mt-4 text-gray-400 text-sm">
+            <p className="mt-4 text-ds-muted-foreground text-sm">
               Your one-stop shop for quality products and services.
             </p>
           </div>
@@ -109,7 +109,7 @@ export function DynamicFooter({ categories = [] }: DynamicFooterProps) {
                   <li key={linkIndex}>
                     <Link
                       to={link.href}
-                      className="text-gray-400 hover:text-white text-sm"
+                      className="text-ds-muted-foreground hover:text-ds-primary-foreground text-sm"
                     >
                       {link.label}
                     </Link>
@@ -120,16 +120,16 @@ export function DynamicFooter({ categories = [] }: DynamicFooterProps) {
           ))}
         </div>
 
-        <div className="mt-12 pt-8 border-t border-gray-800">
+        <div className="mt-12 pt-8 border-t border-ds-border">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 text-sm">
+            <p className="text-ds-muted-foreground text-sm">
               {new Date().getFullYear()} Store. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <Link to={`${prefix}/privacy` as any} className="text-gray-400 hover:text-white text-sm">
+              <Link to={`${prefix}/privacy` as any} className="text-ds-muted-foreground hover:text-ds-primary-foreground text-sm">
                 Privacy Policy
               </Link>
-              <Link to={`${prefix}/terms` as any} className="text-gray-400 hover:text-white text-sm">
+              <Link to={`${prefix}/terms` as any} className="text-ds-muted-foreground hover:text-ds-primary-foreground text-sm">
                 Terms of Service
               </Link>
             </div>

@@ -40,10 +40,10 @@ export function NodeHierarchyTree({ tenantId }: NodeHierarchyTreeProps) {
 function NodeItem({ node, depth }: { node: Node; depth: number }) {
   const typeColors: Record<NodeType, string> = {
     CITY: "bg-purple-100 text-purple-800",
-    DISTRICT: "bg-blue-100 text-blue-800",
-    ZONE: "bg-green-100 text-green-800",
+    DISTRICT: "bg-ds-info text-ds-info",
+    ZONE: "bg-ds-success text-ds-success",
     FACILITY: "bg-orange-100 text-orange-800",
-    ASSET: "bg-gray-100 text-gray-800",
+    ASSET: "bg-ds-muted text-ds-foreground",
   }
 
   return (
@@ -59,7 +59,7 @@ function NodeItem({ node, depth }: { node: Node; depth: number }) {
         <span className="font-medium">{node.name}</span>
         <span className="text-xs text-muted-foreground">{node.code}</span>
         {!node.is_active && (
-          <span className="px-1.5 py-0.5 bg-red-100 text-red-800 text-xs rounded">Inactive</span>
+          <span className="px-1.5 py-0.5 bg-ds-destructive text-ds-destructive text-xs rounded">Inactive</span>
         )}
       </div>
       {node.children?.map((child) => (

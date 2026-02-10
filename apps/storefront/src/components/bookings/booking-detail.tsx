@@ -11,15 +11,15 @@ export function BookingDetail({ booking }: BookingDetailProps) {
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "confirmed":
-        return "bg-green-100 text-green-800"
+        return "bg-ds-success text-ds-success"
       case "pending":
-        return "bg-yellow-100 text-yellow-800"
+        return "bg-ds-warning text-ds-warning"
       case "cancelled":
-        return "bg-red-100 text-red-800"
+        return "bg-ds-destructive text-ds-destructive"
       case "completed":
-        return "bg-blue-100 text-blue-800"
+        return "bg-ds-info text-ds-info"
       default:
-        return "bg-zinc-100 text-zinc-800"
+        return "bg-ds-muted text-ds-foreground"
     }
   }
 
@@ -40,13 +40,13 @@ export function BookingDetail({ booking }: BookingDetailProps) {
   }
 
   return (
-    <div className="bg-white rounded-xl border border-zinc-200 overflow-hidden">
+    <div className="bg-ds-background rounded-xl border border-ds-border overflow-hidden">
       {/* Header */}
-      <div className="p-6 border-b border-zinc-200">
+      <div className="p-6 border-b border-ds-border">
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-zinc-900">{booking.service.name}</h2>
-            <p className="text-zinc-500 mt-1">{booking.service.description}</p>
+            <h2 className="text-xl font-semibold text-ds-foreground">{booking.service.name}</h2>
+            <p className="text-ds-muted-foreground mt-1">{booking.service.description}</p>
           </div>
           <span className={cn(
             "px-3 py-1 rounded-full text-sm font-medium capitalize",
@@ -61,9 +61,9 @@ export function BookingDetail({ booking }: BookingDetailProps) {
       <div className="p-6 space-y-6">
         {/* Confirmation Code */}
         {booking.confirmation_code && (
-          <div className="bg-zinc-50 rounded-lg p-4">
-            <p className="text-xs text-zinc-400 uppercase tracking-wider">Confirmation Code</p>
-            <p className="text-lg font-mono font-semibold text-zinc-900 mt-1">
+          <div className="bg-ds-muted rounded-lg p-4">
+            <p className="text-xs text-ds-muted-foreground uppercase tracking-wider">Confirmation Code</p>
+            <p className="text-lg font-mono font-semibold text-ds-foreground mt-1">
               {booking.confirmation_code}
             </p>
           </div>
@@ -72,21 +72,21 @@ export function BookingDetail({ booking }: BookingDetailProps) {
         {/* Date & Time */}
         <div className="grid grid-cols-2 gap-4">
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-lg bg-zinc-100 flex items-center justify-center">
-              <Calendar className="w-5 h-5 text-zinc-600" />
+            <div className="w-10 h-10 rounded-lg bg-ds-muted flex items-center justify-center">
+              <Calendar className="w-5 h-5 text-ds-muted-foreground" />
             </div>
             <div>
-              <p className="text-xs text-zinc-400 uppercase tracking-wider">Date</p>
-              <p className="text-sm text-zinc-900 mt-1">{formatDate(booking.scheduled_at)}</p>
+              <p className="text-xs text-ds-muted-foreground uppercase tracking-wider">Date</p>
+              <p className="text-sm text-ds-foreground mt-1">{formatDate(booking.scheduled_at)}</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-lg bg-zinc-100 flex items-center justify-center">
-              <Clock className="w-5 h-5 text-zinc-600" />
+            <div className="w-10 h-10 rounded-lg bg-ds-muted flex items-center justify-center">
+              <Clock className="w-5 h-5 text-ds-muted-foreground" />
             </div>
             <div>
-              <p className="text-xs text-zinc-400 uppercase tracking-wider">Time</p>
-              <p className="text-sm text-zinc-900 mt-1">{formatTime(booking.scheduled_at)}</p>
+              <p className="text-xs text-ds-muted-foreground uppercase tracking-wider">Time</p>
+              <p className="text-sm text-ds-foreground mt-1">{formatTime(booking.scheduled_at)}</p>
             </div>
           </div>
         </div>
@@ -94,12 +94,12 @@ export function BookingDetail({ booking }: BookingDetailProps) {
         {/* Provider */}
         {booking.provider && (
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-lg bg-zinc-100 flex items-center justify-center">
-              <User className="w-5 h-5 text-zinc-600" />
+            <div className="w-10 h-10 rounded-lg bg-ds-muted flex items-center justify-center">
+              <User className="w-5 h-5 text-ds-muted-foreground" />
             </div>
             <div>
-              <p className="text-xs text-zinc-400 uppercase tracking-wider">Provider</p>
-              <p className="text-sm text-zinc-900 mt-1">{booking.provider.name}</p>
+              <p className="text-xs text-ds-muted-foreground uppercase tracking-wider">Provider</p>
+              <p className="text-sm text-ds-foreground mt-1">{booking.provider.name}</p>
             </div>
           </div>
         )}
@@ -107,26 +107,26 @@ export function BookingDetail({ booking }: BookingDetailProps) {
         {/* Location */}
         {booking.location && (
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-lg bg-zinc-100 flex items-center justify-center">
-              <MapPin className="w-5 h-5 text-zinc-600" />
+            <div className="w-10 h-10 rounded-lg bg-ds-muted flex items-center justify-center">
+              <MapPin className="w-5 h-5 text-ds-muted-foreground" />
             </div>
             <div>
-              <p className="text-xs text-zinc-400 uppercase tracking-wider">Location</p>
-              <p className="text-sm text-zinc-900 mt-1">{booking.location}</p>
+              <p className="text-xs text-ds-muted-foreground uppercase tracking-wider">Location</p>
+              <p className="text-sm text-ds-foreground mt-1">{booking.location}</p>
             </div>
           </div>
         )}
 
         {/* Pricing */}
-        <div className="pt-4 border-t border-zinc-200">
+        <div className="pt-4 border-t border-ds-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-zinc-600">Duration</p>
-              <p className="text-zinc-900">{booking.service.duration} minutes</p>
+              <p className="text-sm text-ds-muted-foreground">Duration</p>
+              <p className="text-ds-foreground">{booking.service.duration} minutes</p>
             </div>
             <div className="text-right">
-              <p className="text-sm text-zinc-600">Total</p>
-              <p className="text-xl font-semibold text-zinc-900">
+              <p className="text-sm text-ds-muted-foreground">Total</p>
+              <p className="text-xl font-semibold text-ds-foreground">
                 {formatPrice(booking.service.price, booking.service.currency_code)}
               </p>
             </div>
@@ -135,9 +135,9 @@ export function BookingDetail({ booking }: BookingDetailProps) {
 
         {/* Notes */}
         {booking.notes && (
-          <div className="pt-4 border-t border-zinc-200">
-            <p className="text-xs text-zinc-400 uppercase tracking-wider mb-2">Notes</p>
-            <p className="text-sm text-zinc-600">{booking.notes}</p>
+          <div className="pt-4 border-t border-ds-border">
+            <p className="text-xs text-ds-muted-foreground uppercase tracking-wider mb-2">Notes</p>
+            <p className="text-sm text-ds-muted-foreground">{booking.notes}</p>
           </div>
         )}
       </div>

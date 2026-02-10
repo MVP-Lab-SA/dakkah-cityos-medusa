@@ -39,7 +39,7 @@ export function UserMenu() {
 
   if (isLoading) {
     return (
-      <div className="w-8 h-8 rounded-full bg-zinc-100 animate-pulse" />
+      <div className="w-8 h-8 rounded-full bg-ds-muted animate-pulse" />
     )
   }
 
@@ -50,7 +50,7 @@ export function UserMenu() {
           variant="ghost"
           size="sm"
           onClick={() => setAuthModalOpen(true)}
-          className="text-zinc-600 hover:text-zinc-900"
+          className="text-ds-muted-foreground hover:text-ds-foreground"
         >
           <User className="h-5 w-5 mr-1" />
           <span className="hidden sm:inline">Sign in</span>
@@ -67,8 +67,8 @@ export function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="flex items-center gap-2 text-zinc-600 hover:text-zinc-900 focus:outline-none">
-          <div className="w-8 h-8 rounded-full bg-zinc-900 text-white flex items-center justify-center text-sm font-medium">
+        <button className="flex items-center gap-2 text-ds-muted-foreground hover:text-ds-foreground focus:outline-none">
+          <div className="w-8 h-8 rounded-full bg-ds-primary text-ds-primary-foreground flex items-center justify-center text-sm font-medium">
             {initials}
           </div>
           <span className="hidden sm:inline text-sm font-medium">
@@ -82,9 +82,9 @@ export function UserMenu() {
             <p className="text-sm font-medium">
               {customer?.first_name} {customer?.last_name}
             </p>
-            <p className="text-xs text-zinc-500 truncate">{customer?.email}</p>
+            <p className="text-xs text-ds-muted-foreground truncate">{customer?.email}</p>
             {isB2B && customer?.company && (
-              <p className="text-xs text-blue-600 font-medium">{customer.company.name}</p>
+              <p className="text-xs text-ds-info font-medium">{customer.company.name}</p>
             )}
           </div>
         </DropdownMenuLabel>
@@ -121,7 +121,7 @@ export function UserMenu() {
         {isB2B && (
           <>
             <DropdownMenuSeparator />
-            <DropdownMenuLabel className="text-xs text-zinc-500">Business</DropdownMenuLabel>
+            <DropdownMenuLabel className="text-xs text-ds-muted-foreground">Business</DropdownMenuLabel>
             <DropdownMenuItem asChild>
               <Link to={`${prefix}/business` as any} className="cursor-pointer">
                 <BuildingStorefront className="mr-2 h-4 w-4" />
@@ -143,7 +143,7 @@ export function UserMenu() {
         <DropdownMenuItem
           onClick={handleLogout}
           disabled={isLoggingOut}
-          className="text-red-600 focus:text-red-600 cursor-pointer"
+          className="text-ds-destructive focus:text-ds-destructive cursor-pointer"
         >
           <ArrowRightOnRectangle className="mr-2 h-4 w-4" />
           {isLoggingOut ? "Signing out..." : "Sign out"}

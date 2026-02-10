@@ -10,13 +10,13 @@ export function SubscriptionDetail({ subscription }: SubscriptionDetailProps) {
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "active":
-        return "bg-green-100 text-green-800"
+        return "bg-ds-success text-ds-success"
       case "paused":
-        return "bg-yellow-100 text-yellow-800"
+        return "bg-ds-warning text-ds-warning"
       case "cancelled":
-        return "bg-red-100 text-red-800"
+        return "bg-ds-destructive text-ds-destructive"
       default:
-        return "bg-zinc-100 text-zinc-800"
+        return "bg-ds-muted text-ds-foreground"
     }
   }
 
@@ -30,13 +30,13 @@ export function SubscriptionDetail({ subscription }: SubscriptionDetailProps) {
   }
 
   return (
-    <div className="bg-white rounded-xl border border-zinc-200 overflow-hidden">
+    <div className="bg-ds-background rounded-xl border border-ds-border overflow-hidden">
       {/* Header */}
-      <div className="p-6 border-b border-zinc-200">
+      <div className="p-6 border-b border-ds-border">
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-zinc-900">{subscription.plan.name}</h2>
-            <p className="text-zinc-500 mt-1">{subscription.plan.description}</p>
+            <h2 className="text-xl font-semibold text-ds-foreground">{subscription.plan.name}</h2>
+            <p className="text-ds-muted-foreground mt-1">{subscription.plan.description}</p>
           </div>
           <span className={cn(
             "px-3 py-1 rounded-full text-sm font-medium capitalize",
@@ -51,36 +51,36 @@ export function SubscriptionDetail({ subscription }: SubscriptionDetailProps) {
       <div className="p-6 space-y-6">
         {/* Pricing */}
         <div>
-          <h3 className="text-sm font-semibold text-zinc-900 mb-3">Pricing</h3>
-          <div className="bg-zinc-50 rounded-lg p-4">
+          <h3 className="text-sm font-semibold text-ds-foreground mb-3">Pricing</h3>
+          <div className="bg-ds-muted rounded-lg p-4">
             <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-bold text-zinc-900">
+              <span className="text-3xl font-bold text-ds-foreground">
                 {formatPrice(subscription.plan.price, subscription.plan.currency_code)}
               </span>
-              <span className="text-zinc-500">/{subscription.plan.billing_interval}</span>
+              <span className="text-ds-muted-foreground">/{subscription.plan.billing_interval}</span>
             </div>
           </div>
         </div>
 
         {/* Billing Info */}
         <div>
-          <h3 className="text-sm font-semibold text-zinc-900 mb-3">Billing Information</h3>
+          <h3 className="text-sm font-semibold text-ds-foreground mb-3">Billing Information</h3>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-xs text-zinc-400 uppercase tracking-wider">Start Date</p>
-              <p className="text-sm text-zinc-900 mt-1">{formatDate(subscription.current_period_start)}</p>
+              <p className="text-xs text-ds-muted-foreground uppercase tracking-wider">Start Date</p>
+              <p className="text-sm text-ds-foreground mt-1">{formatDate(subscription.current_period_start)}</p>
             </div>
             <div>
-              <p className="text-xs text-zinc-400 uppercase tracking-wider">Next Billing</p>
-              <p className="text-sm text-zinc-900 mt-1">{formatDate(subscription.next_billing_date)}</p>
+              <p className="text-xs text-ds-muted-foreground uppercase tracking-wider">Next Billing</p>
+              <p className="text-sm text-ds-foreground mt-1">{formatDate(subscription.next_billing_date)}</p>
             </div>
             <div>
-              <p className="text-xs text-zinc-400 uppercase tracking-wider">Billing Cycle</p>
-              <p className="text-sm text-zinc-900 mt-1 capitalize">{subscription.plan.billing_interval}ly</p>
+              <p className="text-xs text-ds-muted-foreground uppercase tracking-wider">Billing Cycle</p>
+              <p className="text-sm text-ds-foreground mt-1 capitalize">{subscription.plan.billing_interval}ly</p>
             </div>
             <div>
-              <p className="text-xs text-zinc-400 uppercase tracking-wider">Auto-Renew</p>
-              <p className="text-sm text-zinc-900 mt-1">
+              <p className="text-xs text-ds-muted-foreground uppercase tracking-wider">Auto-Renew</p>
+              <p className="text-sm text-ds-foreground mt-1">
                 {subscription.status === "active" ? "Yes" : "No"}
               </p>
             </div>
@@ -90,11 +90,11 @@ export function SubscriptionDetail({ subscription }: SubscriptionDetailProps) {
         {/* Features */}
         {subscription.plan.features && subscription.plan.features.length > 0 && (
           <div>
-            <h3 className="text-sm font-semibold text-zinc-900 mb-3">Included Features</h3>
+            <h3 className="text-sm font-semibold text-ds-foreground mb-3">Included Features</h3>
             <ul className="space-y-2">
               {subscription.plan.features.map((feature, index) => (
-                <li key={index} className="flex items-center gap-2 text-sm text-zinc-600">
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                <li key={index} className="flex items-center gap-2 text-sm text-ds-muted-foreground">
+                  <div className="w-1.5 h-1.5 rounded-full bg-ds-success" />
                   {feature}
                 </li>
               ))}

@@ -32,8 +32,8 @@ const navItems = [
 export function AccountLayout({ children, title, description }: AccountLayoutProps) {
   if (typeof window === "undefined") {
     return (
-      <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
-        <p className="text-sm text-zinc-500">Loading account...</p>
+      <div className="min-h-screen bg-ds-muted flex items-center justify-center">
+        <p className="text-sm text-ds-muted-foreground">Loading account...</p>
       </div>
     )
   }
@@ -57,21 +57,21 @@ function ClientAccountLayout({ children, title, description }: AccountLayoutProp
 
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-zinc-50">
+      <div className="min-h-screen bg-ds-muted">
         {/* Header */}
-        <div className="bg-white border-b border-zinc-200">
+        <div className="bg-ds-background border-b border-ds-border">
           <div className="content-container py-8">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-zinc-900">
+                <h1 className="text-2xl font-bold text-ds-foreground">
                   {title || `Welcome back, ${customer?.first_name || "there"}`}
                 </h1>
-                {description && <p className="mt-1 text-zinc-600">{description}</p>}
+                {description && <p className="mt-1 text-ds-muted-foreground">{description}</p>}
               </div>
               {isB2B && customer?.company && (
-                <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-lg">
-                  <span className="text-sm font-medium text-blue-700">{customer.company.name}</span>
-                  <span className="text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded">
+                <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-ds-info rounded-lg">
+                  <span className="text-sm font-medium text-ds-info">{customer.company.name}</span>
+                  <span className="text-xs text-ds-info bg-ds-info px-2 py-0.5 rounded">
                     Business
                   </span>
                 </div>
@@ -84,7 +84,7 @@ function ClientAccountLayout({ children, title, description }: AccountLayoutProp
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Sidebar */}
             <aside className="lg:w-64 flex-shrink-0">
-              <nav className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
+              <nav className="bg-ds-background rounded-lg border border-ds-border overflow-hidden">
                 {navItems.map((item) => {
                   const Icon = item.icon
                   const active = isActive(item.path)
@@ -93,16 +93,16 @@ function ClientAccountLayout({ children, title, description }: AccountLayoutProp
                       key={item.path}
                       to={`${baseHref}${item.path}` as any}
                       className={clsx(
-                        "flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors border-b border-zinc-100 last:border-b-0",
+                        "flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors border-b border-ds-border last:border-b-0",
                         active
-                          ? "bg-zinc-900 text-white"
-                          : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900"
+                          ? "bg-ds-primary text-ds-primary-foreground"
+                          : "text-ds-muted-foreground hover:bg-ds-muted hover:text-ds-foreground"
                       )}
                     >
                       <Icon className="h-5 w-5" />
                       {item.label}
                       <ChevronRight
-                        className={clsx("ml-auto h-4 w-4", active ? "text-white" : "text-zinc-400")}
+                        className={clsx("ml-auto h-4 w-4", active ? "text-ds-primary-foreground" : "text-ds-muted-foreground")}
                       />
                     </Link>
                   )
@@ -111,19 +111,19 @@ function ClientAccountLayout({ children, title, description }: AccountLayoutProp
 
               {/* B2B Quick Access */}
               {isB2B && (
-                <div className="mt-4 bg-white rounded-lg border border-zinc-200 p-4">
-                  <h3 className="text-sm font-semibold text-zinc-900 mb-3">Business</h3>
+                <div className="mt-4 bg-ds-background rounded-lg border border-ds-border p-4">
+                  <h3 className="text-sm font-semibold text-ds-foreground mb-3">Business</h3>
                   <div className="space-y-2">
                     <Link
                       to={`${prefix}/business` as any}
-                      className="flex items-center gap-2 text-sm text-zinc-600 hover:text-zinc-900"
+                      className="flex items-center gap-2 text-sm text-ds-muted-foreground hover:text-ds-foreground"
                     >
                       <ChevronRight className="h-4 w-4" />
                       Company Dashboard
                     </Link>
                     <Link
                       to={`${prefix}/business/quotes` as any}
-                      className="flex items-center gap-2 text-sm text-zinc-600 hover:text-zinc-900"
+                      className="flex items-center gap-2 text-sm text-ds-muted-foreground hover:text-ds-foreground"
                     >
                       <ChevronRight className="h-4 w-4" />
                       Quotes

@@ -12,14 +12,14 @@ function SubscriptionPlansPage() {
   const { data: plans, isLoading, error } = useSubscriptionPlans()
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-ds-muted">
       {/* Hero Section */}
-      <section className="bg-slate-900 text-white py-20">
+      <section className="bg-ds-primary text-ds-primary-foreground py-20">
         <div className="content-container text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Choose Your Plan
           </h1>
-          <p className="text-lg text-slate-300 max-w-2xl mx-auto">
+          <p className="text-lg text-ds-muted-foreground max-w-2xl mx-auto">
             Select the perfect plan for your business. All plans include a 14-day
             free trial with no credit card required.
           </p>
@@ -31,11 +31,11 @@ function SubscriptionPlansPage() {
         <div className="content-container">
           {isLoading ? (
             <div className="flex items-center justify-center py-20">
-              <Spinner className="w-8 h-8 text-slate-400 animate-spin" />
+              <Spinner className="w-8 h-8 text-ds-muted-foreground animate-spin" />
             </div>
           ) : error ? (
             <div className="text-center py-20">
-              <p className="text-red-600">Failed to load plans. Please try again.</p>
+              <p className="text-ds-destructive">Failed to load plans. Please try again.</p>
             </div>
           ) : plans && plans.length > 0 ? (
             <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -48,16 +48,16 @@ function SubscriptionPlansPage() {
             </div>
           ) : (
             <div className="text-center py-20">
-              <p className="text-slate-500">No plans available at the moment.</p>
+              <p className="text-ds-muted-foreground">No plans available at the moment.</p>
             </div>
           )}
         </div>
       </section>
 
       {/* FAQ Section */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-ds-background">
         <div className="content-container max-w-3xl">
-          <h2 className="text-2xl font-bold text-slate-900 text-center mb-12">
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">
             Frequently Asked Questions
           </h2>
           <div className="space-y-6">
@@ -86,15 +86,15 @@ function SubscriptionPlansPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-slate-900 text-white">
+      <section className="py-16 bg-ds-primary text-ds-primary-foreground">
         <div className="content-container text-center">
           <h2 className="text-3xl font-bold mb-4">Still have questions?</h2>
-          <p className="text-slate-300 mb-8">
+          <p className="text-ds-muted-foreground mb-8">
             Our team is here to help you find the perfect plan for your needs.
           </p>
           <a
             href="mailto:support@dakkah.com"
-            className="btn-enterprise bg-white text-slate-900 hover:bg-slate-100"
+            className="btn-enterprise bg-ds-background text-ds-foreground hover:bg-ds-muted"
           >
             Contact Sales
           </a>
@@ -106,9 +106,9 @@ function SubscriptionPlansPage() {
 
 function FaqItem({ question, answer }: { question: string; answer: string }) {
   return (
-    <div className="border-b border-slate-200 pb-6">
-      <h3 className="text-lg font-semibold text-slate-900 mb-2">{question}</h3>
-      <p className="text-slate-600">{answer}</p>
+    <div className="border-b border-ds-border pb-6">
+      <h3 className="text-lg font-semibold text-ds-foreground mb-2">{question}</h3>
+      <p className="text-ds-muted-foreground">{answer}</p>
     </div>
   )
 }

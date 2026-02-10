@@ -226,20 +226,20 @@ function ServiceBookingPage() {
 
   if (serviceLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <Spinner className="w-8 h-8 text-slate-400 animate-spin" />
+      <div className="min-h-screen bg-ds-muted flex items-center justify-center">
+        <Spinner className="w-8 h-8 text-ds-muted-foreground animate-spin" />
       </div>
     )
   }
 
   if (!service) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-ds-muted flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-slate-900 mb-2">
+          <h1 className="text-2xl font-bold text-ds-foreground mb-2">
             Service Not Found
           </h1>
-          <p className="text-slate-500 mb-6">
+          <p className="text-ds-muted-foreground mb-6">
             The requested service could not be found.
           </p>
           <button
@@ -254,7 +254,7 @@ function ServiceBookingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-12">
+    <div className="min-h-screen bg-ds-muted py-12">
       <div className="content-container max-w-5xl">
         {/* Back Button */}
         <button
@@ -263,7 +263,7 @@ function ServiceBookingPage() {
             else if (step === "datetime") setStep("provider")
             else navigate({ to: `/${tenant}/${locale}/bookings` })
           }}
-          className="flex items-center gap-2 text-slate-600 hover:text-slate-900 mb-8"
+          className="flex items-center gap-2 text-ds-muted-foreground hover:text-ds-foreground mb-8"
         >
           <ArrowLeft className="w-4 h-4" />
           {step === "provider" ? "All Services" : "Back"}
@@ -284,10 +284,10 @@ function ServiceBookingPage() {
                     />
                   )}
                   <div>
-                    <h1 className="text-2xl font-bold text-slate-900 mb-2">
+                    <h1 className="text-2xl font-bold text-ds-foreground mb-2">
                       {service.name}
                     </h1>
-                    <div className="flex items-center gap-4 text-sm text-slate-500">
+                    <div className="flex items-center gap-4 text-sm text-ds-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Clock className="w-4 h-4" />
                         {formatDuration(service.duration)}
@@ -299,7 +299,7 @@ function ServiceBookingPage() {
                         </span>
                       )}
                     </div>
-                    <p className="text-slate-600 mt-2">{service.description}</p>
+                    <p className="text-ds-muted-foreground mt-2">{service.description}</p>
                   </div>
                 </div>
               </div>
@@ -309,14 +309,14 @@ function ServiceBookingPage() {
             {step === "provider" && (
               <div className="enterprise-card">
                 <div className="enterprise-card-header">
-                  <h2 className="font-semibold text-slate-900">
+                  <h2 className="font-semibold text-ds-foreground">
                     Select a Provider
                   </h2>
                 </div>
                 <div className="enterprise-card-body">
                   {providersLoading ? (
                     <div className="flex items-center justify-center py-8">
-                      <Spinner className="w-6 h-6 text-slate-400 animate-spin" />
+                      <Spinner className="w-6 h-6 text-ds-muted-foreground animate-spin" />
                     </div>
                   ) : providers && providers.length > 0 ? (
                     <ProviderSelect
@@ -325,7 +325,7 @@ function ServiceBookingPage() {
                       onProviderSelect={handleProviderSelect}
                     />
                   ) : (
-                    <p className="text-center text-slate-500 py-8">
+                    <p className="text-center text-ds-muted-foreground py-8">
                       No providers available for this service.
                     </p>
                   )}
@@ -337,7 +337,7 @@ function ServiceBookingPage() {
             {step === "datetime" && (
               <div className="enterprise-card">
                 <div className="enterprise-card-header">
-                  <h2 className="font-semibold text-slate-900">
+                  <h2 className="font-semibold text-ds-foreground">
                     Select Date & Time
                   </h2>
                 </div>
@@ -345,7 +345,7 @@ function ServiceBookingPage() {
                   <div className="grid md:grid-cols-2 gap-8">
                     {/* Calendar */}
                     <div>
-                      <h3 className="text-sm font-medium text-slate-700 mb-4">
+                      <h3 className="text-sm font-medium text-ds-foreground mb-4">
                         Choose a Date
                       </h3>
                       <CalendarPicker
@@ -353,13 +353,13 @@ function ServiceBookingPage() {
                         onDateSelect={handleDateSelect}
                       />
                       {errors.date && (
-                        <p className="text-sm text-red-500 mt-2">{errors.date}</p>
+                        <p className="text-sm text-ds-destructive mt-2">{errors.date}</p>
                       )}
                     </div>
 
                     {/* Time Slots */}
                     <div>
-                      <h3 className="text-sm font-medium text-slate-700 mb-4">
+                      <h3 className="text-sm font-medium text-ds-foreground mb-4">
                         {selectedDate ? "Available Times" : "Select a date first"}
                       </h3>
                       {selectedDate ? (
@@ -370,19 +370,19 @@ function ServiceBookingPage() {
                           isLoading={slotsLoading}
                         />
                       ) : (
-                        <div className="text-center py-8 text-slate-400">
+                        <div className="text-center py-8 text-ds-muted-foreground">
                           Select a date to see available times
                         </div>
                       )}
                       {errors.slot && (
-                        <p className="text-sm text-red-500 mt-2">{errors.slot}</p>
+                        <p className="text-sm text-ds-destructive mt-2">{errors.slot}</p>
                       )}
                     </div>
                   </div>
 
                   {/* Continue Button */}
                   {selectedSlot && (
-                    <div className="mt-8 pt-6 border-t border-slate-100">
+                    <div className="mt-8 pt-6 border-t border-ds-border">
                       <button
                         onClick={handleContinueToConfirm}
                         className="w-full btn-enterprise-primary py-3"
@@ -399,7 +399,7 @@ function ServiceBookingPage() {
             {step === "confirm" && (
               <div className="enterprise-card">
                 <div className="enterprise-card-header">
-                  <h2 className="font-semibold text-slate-900">
+                  <h2 className="font-semibold text-ds-foreground">
                     Confirm Your Booking
                   </h2>
                 </div>
@@ -407,13 +407,13 @@ function ServiceBookingPage() {
                   {/* Additional Options */}
                   {service.capacity && service.capacity > 1 && (
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                      <label className="block text-sm font-medium text-ds-foreground mb-2">
                         Number of Attendees
                       </label>
                       <select
                         value={attendees}
                         onChange={(e) => handleAttendeesChange(Number(e.target.value))}
-                        className={`input-enterprise max-w-xs ${errors.attendees ? "border-red-500" : ""}`}
+                        className={`input-enterprise max-w-xs ${errors.attendees ? "border-ds-destructive" : ""}`}
                       >
                         {[...Array(service.capacity)].map((_, i) => (
                           <option key={i + 1} value={i + 1}>
@@ -422,14 +422,14 @@ function ServiceBookingPage() {
                         ))}
                       </select>
                       {errors.attendees && (
-                        <p className="text-sm text-red-500 mt-1">{errors.attendees}</p>
+                        <p className="text-sm text-ds-destructive mt-1">{errors.attendees}</p>
                       )}
                     </div>
                   )}
 
                   {/* Notes */}
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                    <label className="block text-sm font-medium text-ds-foreground mb-2">
                       Additional Notes (Optional)
                     </label>
                     <textarea
@@ -437,14 +437,14 @@ function ServiceBookingPage() {
                       onChange={(e) => handleNotesChange(e.target.value)}
                       placeholder="Any specific topics you'd like to discuss?"
                       rows={3}
-                      className={`input-enterprise resize-none ${errors.notes ? "border-red-500" : ""}`}
+                      className={`input-enterprise resize-none ${errors.notes ? "border-ds-destructive" : ""}`}
                       maxLength={MAX_NOTES_LENGTH + 50}
                     />
                     <div className="flex justify-between mt-1">
                       {errors.notes && (
-                        <p className="text-sm text-red-500">{errors.notes}</p>
+                        <p className="text-sm text-ds-destructive">{errors.notes}</p>
                       )}
-                      <span className={`text-sm ml-auto ${notes.length > MAX_NOTES_LENGTH ? "text-red-500" : "text-slate-400"}`}>
+                      <span className={`text-sm ml-auto ${notes.length > MAX_NOTES_LENGTH ? "text-ds-destructive" : "text-ds-muted-foreground"}`}>
                         {notes.length}/{MAX_NOTES_LENGTH}
                       </span>
                     </div>
@@ -475,21 +475,21 @@ function ServiceBookingPage() {
           <div className="lg:col-span-1">
             <div className="enterprise-card sticky top-24">
               <div className="enterprise-card-header">
-                <h3 className="font-semibold text-slate-900">Booking Summary</h3>
+                <h3 className="font-semibold text-ds-foreground">Booking Summary</h3>
               </div>
               <div className="enterprise-card-body space-y-4">
                 {/* Service */}
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Service</span>
-                  <span className="font-medium text-slate-900">
+                  <span className="text-ds-muted-foreground">Service</span>
+                  <span className="font-medium text-ds-foreground">
                     {service.name}
                   </span>
                 </div>
 
                 {/* Duration */}
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Duration</span>
-                  <span className="text-slate-900">
+                  <span className="text-ds-muted-foreground">Duration</span>
+                  <span className="text-ds-foreground">
                     {formatDuration(service.duration)}
                   </span>
                 </div>
@@ -497,8 +497,8 @@ function ServiceBookingPage() {
                 {/* Provider */}
                 {selectedProviderData && (
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-500">Provider</span>
-                    <span className="text-slate-900">
+                    <span className="text-ds-muted-foreground">Provider</span>
+                    <span className="text-ds-foreground">
                       {selectedProviderData.name}
                     </span>
                   </div>
@@ -507,8 +507,8 @@ function ServiceBookingPage() {
                 {/* Date & Time */}
                 {selectedDate && (
                   <div className="flex justify-between">
-                    <span className="text-slate-500">Date</span>
-                    <span className="text-slate-900">
+                    <span className="text-ds-muted-foreground">Date</span>
+                    <span className="text-ds-foreground">
                       {new Date(selectedDate).toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",
@@ -520,8 +520,8 @@ function ServiceBookingPage() {
 
                 {selectedSlot && (
                   <div className="flex justify-between">
-                    <span className="text-slate-500">Time</span>
-                    <span className="text-slate-900">
+                    <span className="text-ds-muted-foreground">Time</span>
+                    <span className="text-ds-foreground">
                       {new Date(selectedSlot).toLocaleTimeString("en-US", {
                         hour: "numeric",
                         minute: "2-digit",
@@ -532,10 +532,10 @@ function ServiceBookingPage() {
                 )}
 
                 {/* Divider */}
-                <div className="border-t border-slate-200 pt-4">
+                <div className="border-t border-ds-border pt-4">
                   <div className="flex justify-between items-center">
-                    <span className="font-semibold text-slate-900">Total</span>
-                    <span className="text-xl font-bold text-slate-900">
+                    <span className="font-semibold text-ds-foreground">Total</span>
+                    <span className="text-xl font-bold text-ds-foreground">
                       {formatPrice(service.price, service.currency_code)}
                     </span>
                   </div>

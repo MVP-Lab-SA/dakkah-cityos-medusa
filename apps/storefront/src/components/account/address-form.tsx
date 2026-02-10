@@ -64,7 +64,7 @@ export function AddressForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
+        <div className="bg-ds-destructive border border-ds-destructive text-ds-destructive px-4 py-3 rounded-md text-sm">
           {error}
         </div>
       )}
@@ -167,7 +167,7 @@ export function AddressForm({
             name="country_code"
             value={formData.country_code}
             onChange={handleChange}
-            className="w-full h-10 px-3 border border-zinc-200 rounded-md text-sm"
+            className="w-full h-10 px-3 border border-ds-border rounded-md text-sm"
             required
           >
             <option value="us">United States</option>

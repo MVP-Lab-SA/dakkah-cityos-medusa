@@ -62,7 +62,7 @@ export default defineConfig(({ mode }) => {
     },
 
     ssr: {
-      noExternal: ["@medusajs/js-sdk", "@medusajs/types"],
+      noExternal: ["@medusajs/js-sdk", "@medusajs/types", "@dakkah-cityos/design-runtime", "@dakkah-cityos/design-tokens", "@dakkah-cityos/design-system"],
       optimizeDeps: {
         noDiscovery: true,
         include: [],

@@ -149,12 +149,12 @@ export function VendorProductList() {
 
 function ProductStatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    published: "bg-green-100 text-green-800",
-    draft: "bg-gray-100 text-gray-800",
+    published: "bg-ds-success text-ds-success",
+    draft: "bg-ds-muted text-ds-foreground",
   };
 
   return (
-    <span className={`px-2 py-1 rounded text-xs font-medium ${styles[status] || "bg-gray-100"}`}>
+    <span className={`px-2 py-1 rounded text-xs font-medium ${styles[status] || "bg-ds-muted"}`}>
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </span>
   );

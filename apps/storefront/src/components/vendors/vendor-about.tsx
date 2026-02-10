@@ -26,25 +26,25 @@ export function VendorAbout({
   }
 
   return (
-    <div className="bg-white rounded-xl border border-zinc-200 overflow-hidden">
-      <div className="px-6 py-4 border-b border-zinc-200">
-        <h3 className="text-lg font-semibold text-zinc-900">About</h3>
+    <div className="bg-ds-background rounded-xl border border-ds-border overflow-hidden">
+      <div className="px-6 py-4 border-b border-ds-border">
+        <h3 className="text-lg font-semibold text-ds-foreground">About</h3>
       </div>
       
       <div className="p-6 space-y-6">
         {description && (
-          <p className="text-zinc-600">{description}</p>
+          <p className="text-ds-muted-foreground">{description}</p>
         )}
 
         <div className="flex flex-wrap gap-6">
           {location && (
-            <div className="flex items-center gap-2 text-sm text-zinc-600">
+            <div className="flex items-center gap-2 text-sm text-ds-muted-foreground">
               <MapPin className="w-4 h-4" />
               {location}
             </div>
           )}
           {joinedDate && (
-            <div className="flex items-center gap-2 text-sm text-zinc-600">
+            <div className="flex items-center gap-2 text-sm text-ds-muted-foreground">
               <Clock className="w-4 h-4" />
               Selling since {formatDate(joinedDate)}
             </div>
@@ -54,7 +54,7 @@ export function VendorAbout({
               href={website}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700"
+              className="flex items-center gap-2 text-sm text-ds-info hover:text-ds-info"
             >
               <ArrowUpRightOnBox className="w-4 h-4" />
               Visit Website
@@ -63,17 +63,17 @@ export function VendorAbout({
         </div>
 
         {policies && (
-          <div className="pt-4 border-t border-zinc-200 space-y-4">
+          <div className="pt-4 border-t border-ds-border space-y-4">
             {policies.shipping && (
               <div>
-                <h4 className="text-sm font-medium text-zinc-900 mb-1">Shipping Policy</h4>
-                <p className="text-sm text-zinc-600">{policies.shipping}</p>
+                <h4 className="text-sm font-medium text-ds-foreground mb-1">Shipping Policy</h4>
+                <p className="text-sm text-ds-muted-foreground">{policies.shipping}</p>
               </div>
             )}
             {policies.returns && (
               <div>
-                <h4 className="text-sm font-medium text-zinc-900 mb-1">Return Policy</h4>
-                <p className="text-sm text-zinc-600">{policies.returns}</p>
+                <h4 className="text-sm font-medium text-ds-foreground mb-1">Return Policy</h4>
+                <p className="text-sm text-ds-muted-foreground">{policies.returns}</p>
               </div>
             )}
           </div>

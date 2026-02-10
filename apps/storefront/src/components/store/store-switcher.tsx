@@ -30,7 +30,7 @@ export const StoreSwitcher: React.FC = () => {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+        className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-ds-muted transition-colors"
       >
         {branding?.logo?.url && (
           <img
@@ -61,13 +61,13 @@ export const StoreSwitcher: React.FC = () => {
             className="fixed inset-0 z-10"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl z-20 max-h-96 overflow-y-auto">
+          <div className="absolute right-0 mt-2 w-64 bg-ds-background rounded-lg shadow-xl z-20 max-h-96 overflow-y-auto">
             {stores.map((store: any) => (
               <button
                 key={store.id}
                 onClick={() => handleStoreChange(store.handle)}
-                className={`w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors flex items-center gap-3 ${
-                  store.handle === tenantHandle ? 'bg-gray-100' : ''
+                className={`w-full text-left px-4 py-3 hover:bg-ds-muted transition-colors flex items-center gap-3 ${
+                  store.handle === tenantHandle ? 'bg-ds-muted' : ''
                 }`}
               >
                 {store.logo?.url && (
@@ -80,14 +80,14 @@ export const StoreSwitcher: React.FC = () => {
                 <div className="flex-1">
                   <div className="font-medium">{store.name}</div>
                   {store.seo?.description && (
-                    <div className="text-sm text-gray-500 truncate">
+                    <div className="text-sm text-ds-muted-foreground truncate">
                       {store.seo.description}
                     </div>
                   )}
                 </div>
                 {store.handle === tenantHandle && (
                   <svg
-                    className="w-5 h-5 text-green-600"
+                    className="w-5 h-5 text-ds-success"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >

@@ -18,15 +18,15 @@ export function BookingList({
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "confirmed":
-        return "bg-green-100 text-green-800"
+        return "bg-ds-success text-ds-success"
       case "pending":
-        return "bg-yellow-100 text-yellow-800"
+        return "bg-ds-warning text-ds-warning"
       case "cancelled":
-        return "bg-red-100 text-red-800"
+        return "bg-ds-destructive text-ds-destructive"
       case "completed":
-        return "bg-blue-100 text-blue-800"
+        return "bg-ds-info text-ds-info"
       default:
-        return "bg-zinc-100 text-zinc-800"
+        return "bg-ds-muted text-ds-foreground"
     }
   }
 
@@ -42,12 +42,12 @@ export function BookingList({
 
   if (bookings.length === 0) {
     return (
-      <div className="bg-white rounded-xl border border-zinc-200 p-12 text-center">
-        <Calendar className="w-12 h-12 text-zinc-300 mx-auto mb-4" />
-        <p className="text-zinc-500">{emptyMessage}</p>
+      <div className="bg-ds-background rounded-xl border border-ds-border p-12 text-center">
+        <Calendar className="w-12 h-12 text-ds-muted-foreground mx-auto mb-4" />
+        <p className="text-ds-muted-foreground">{emptyMessage}</p>
         <Link
           to={`${prefix}/bookings` as any}
-          className="inline-block mt-4 text-sm font-medium text-zinc-900 hover:underline"
+          className="inline-block mt-4 text-sm font-medium text-ds-foreground hover:underline"
         >
           Browse available services
         </Link>
@@ -61,12 +61,12 @@ export function BookingList({
         <Link
           key={booking.id}
           to={`${prefix}/account/bookings/${booking.id}` as any}
-          className="block bg-white rounded-xl border border-zinc-200 p-6 hover:border-zinc-300 hover:shadow-sm transition-all"
+          className="block bg-ds-background rounded-xl border border-ds-border p-6 hover:border-ds-border hover:shadow-sm transition-all"
         >
           <div className="flex items-start justify-between mb-4">
             <div>
-              <h3 className="font-semibold text-zinc-900">{booking.service.name}</h3>
-              <p className="text-sm text-zinc-500 mt-0.5">
+              <h3 className="font-semibold text-ds-foreground">{booking.service.name}</h3>
+              <p className="text-sm text-ds-muted-foreground mt-0.5">
                 {formatDateTime(booking.scheduled_at)}
               </p>
             </div>
@@ -79,25 +79,25 @@ export function BookingList({
           </div>
 
           {booking.provider && (
-            <p className="text-sm text-zinc-600 mb-4">
+            <p className="text-sm text-ds-muted-foreground mb-4">
               With: {booking.provider.name}
             </p>
           )}
 
-          <div className="flex items-center justify-between pt-4 border-t border-zinc-100">
+          <div className="flex items-center justify-between pt-4 border-t border-ds-border">
             <div className="flex items-center gap-4">
               <div>
-                <p className="text-xs text-zinc-400">Duration</p>
-                <p className="text-sm text-zinc-700">{booking.service.duration} min</p>
+                <p className="text-xs text-ds-muted-foreground">Duration</p>
+                <p className="text-sm text-ds-foreground">{booking.service.duration} min</p>
               </div>
               <div>
-                <p className="text-xs text-zinc-400">Price</p>
-                <p className="font-semibold text-zinc-900">
+                <p className="text-xs text-ds-muted-foreground">Price</p>
+                <p className="font-semibold text-ds-foreground">
                   {formatPrice(booking.service.price, booking.service.currency_code)}
                 </p>
               </div>
             </div>
-            <span className="text-sm text-zinc-500 flex items-center gap-1">
+            <span className="text-sm text-ds-muted-foreground flex items-center gap-1">
               View details
               <ChevronRight className="w-4 h-4" />
             </span>

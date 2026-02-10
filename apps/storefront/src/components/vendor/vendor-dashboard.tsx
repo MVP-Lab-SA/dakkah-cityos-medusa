@@ -68,7 +68,7 @@ export function VendorDashboard() {
         <div className="border rounded-lg p-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-muted-foreground">Total Earnings</span>
-            <CurrencyDollar className="w-5 h-5 text-green-600" />
+            <CurrencyDollar className="w-5 h-5 text-ds-success" />
           </div>
           <p className="text-2xl font-bold">
             ${(stats?.total_earnings || 0).toLocaleString()}
@@ -81,7 +81,7 @@ export function VendorDashboard() {
         <div className="border rounded-lg p-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-muted-foreground">Total Orders</span>
-            <ShoppingBag className="w-5 h-5 text-blue-600" />
+            <ShoppingBag className="w-5 h-5 text-ds-info" />
           </div>
           <p className="text-2xl font-bold">{stats?.total_orders || 0}</p>
           <p className="text-xs text-muted-foreground mt-1">
@@ -194,14 +194,14 @@ export function VendorDashboard() {
 
 function PayoutStatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    pending: "bg-yellow-100 text-yellow-800",
-    processing: "bg-blue-100 text-blue-800",
-    completed: "bg-green-100 text-green-800",
-    failed: "bg-red-100 text-red-800",
+    pending: "bg-ds-warning text-ds-warning",
+    processing: "bg-ds-info text-ds-info",
+    completed: "bg-ds-success text-ds-success",
+    failed: "bg-ds-destructive text-ds-destructive",
   };
 
   return (
-    <span className={`px-2 py-1 rounded text-xs font-medium ${styles[status] || "bg-gray-100"}`}>
+    <span className={`px-2 py-1 rounded text-xs font-medium ${styles[status] || "bg-ds-muted"}`}>
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </span>
   );

@@ -55,12 +55,12 @@ export function SpendingLimits({
   }
 
   return (
-    <div className="bg-white rounded-xl border border-zinc-200 overflow-hidden">
-      <div className="px-6 py-4 border-b border-zinc-200">
-        <h3 className="text-lg font-semibold text-zinc-900">Spending Limits</h3>
+    <div className="bg-ds-background rounded-xl border border-ds-border overflow-hidden">
+      <div className="px-6 py-4 border-b border-ds-border">
+        <h3 className="text-lg font-semibold text-ds-foreground">Spending Limits</h3>
       </div>
 
-      <div className="divide-y divide-zinc-100">
+      <div className="divide-y divide-ds-border">
         {limits.map((limit) => {
           const percentage = (limit.spent / limit.limit) * 100
           const isNearLimit = percentage >= 80
@@ -69,9 +69,9 @@ export function SpendingLimits({
           return (
             <div key={limit.type} className="p-6">
               <div className="flex items-center justify-between mb-3">
-                <span className="font-medium text-zinc-900">{typeLabels[limit.type]}</span>
+                <span className="font-medium text-ds-foreground">{typeLabels[limit.type]}</span>
                 <div className="flex items-center gap-3">
-                  <span className="text-sm text-zinc-500">
+                  <span className="text-sm text-ds-muted-foreground">
                     {formatPrice(limit.spent, currencyCode)} of {formatPrice(limit.limit, currencyCode)}
                   </span>
                   {canRequest && (
@@ -85,25 +85,25 @@ export function SpendingLimits({
                   )}
                 </div>
               </div>
-              <div className="h-2 bg-zinc-100 rounded-full overflow-hidden">
+              <div className="h-2 bg-ds-muted rounded-full overflow-hidden">
                 <div
                   className={`h-full rounded-full transition-all ${
                     isOverLimit
-                      ? "bg-red-500"
+                      ? "bg-ds-destructive"
                       : isNearLimit
-                      ? "bg-yellow-500"
-                      : "bg-green-500"
+                      ? "bg-ds-warning"
+                      : "bg-ds-success"
                   }`}
                   style={{ width: `${Math.min(percentage, 100)}%` }}
                 />
               </div>
               {isNearLimit && !isOverLimit && (
-                <p className="text-xs text-yellow-600 mt-2">
+                <p className="text-xs text-ds-warning mt-2">
                   You're approaching your {typeLabels[limit.type].toLowerCase()}
                 </p>
               )}
               {isOverLimit && (
-                <p className="text-xs text-red-600 mt-2">
+                <p className="text-xs text-ds-destructive mt-2">
                   You've exceeded your {typeLabels[limit.type].toLowerCase()}
                 </p>
               )}
@@ -114,13 +114,13 @@ export function SpendingLimits({
 
       {/* Request Form Modal */}
       {showRequestForm && selectedLimit && (
-        <div className="p-6 border-t border-zinc-200 bg-zinc-50">
-          <h4 className="font-medium text-zinc-900 mb-4">
+        <div className="p-6 border-t border-ds-border bg-ds-muted">
+          <h4 className="font-medium text-ds-foreground mb-4">
             Request {typeLabels[selectedLimit]} Increase
           </h4>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-zinc-700 mb-1">
+              <label className="block text-sm font-medium text-ds-foreground mb-1">
                 Requested Amount
               </label>
               <Input
@@ -131,7 +131,7 @@ export function SpendingLimits({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-700 mb-1">
+              <label className="block text-sm font-medium text-ds-foreground mb-1">
                 Reason for Request
               </label>
               <textarea
@@ -139,7 +139,7 @@ export function SpendingLimits({
                 onChange={(e) => setReason(e.target.value)}
                 placeholder="Explain why you need a higher limit..."
                 rows={3}
-                className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm resize-none"
+                className="w-full rounded-lg border border-ds-border px-3 py-2 text-sm resize-none"
               />
             </div>
             <div className="flex gap-3">

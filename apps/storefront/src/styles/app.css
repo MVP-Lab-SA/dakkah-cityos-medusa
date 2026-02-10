@@ -5,120 +5,206 @@
 
 @layer base {
   :root {
-    @apply bg-slate-50 text-slate-900 antialiased;
+    @apply antialiased;
+    background-color: var(--color-ds-background);
+    color: var(--color-ds-foreground);
     text-rendering: optimizeLegibility;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }
 
 @layer components {
-  /* Content container */
   .content-container {
     @apply max-w-[1440px] w-full mx-auto px-6;
   }
 
-  /* Enterprise Card Styles */
   .enterprise-card {
-    @apply bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200;
+    background-color: var(--color-ds-card);
+    color: var(--color-ds-card-foreground);
+    border: 1px solid var(--color-ds-border);
+    border-radius: var(--radius-ds-xl);
+    box-shadow: var(--shadow-ds-sm);
+    transition: box-shadow 0.2s;
+  }
+  .enterprise-card:hover {
+    box-shadow: var(--shadow-ds-md);
   }
 
   .enterprise-card-header {
-    @apply px-6 py-4 border-b border-slate-100;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--color-ds-border);
   }
 
   .enterprise-card-body {
     @apply p-6;
   }
 
-  /* Enterprise Button Styles */
   .btn-enterprise {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200;
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium transition-all duration-200;
+    border-radius: var(--radius-ds-lg);
   }
 
   .btn-enterprise-primary {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 bg-slate-900 text-white hover:bg-slate-800 active:bg-slate-950;
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium transition-all duration-200;
+    border-radius: var(--radius-ds-lg);
+    background-color: var(--color-ds-primary);
+    color: var(--color-ds-primary-foreground);
+  }
+  .btn-enterprise-primary:hover {
+    opacity: 0.9;
   }
 
   .btn-enterprise-secondary {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 active:bg-slate-100;
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium transition-all duration-200;
+    border-radius: var(--radius-ds-lg);
+    background-color: var(--color-ds-card);
+    color: var(--color-ds-foreground);
+    border: 1px solid var(--color-ds-border);
+  }
+  .btn-enterprise-secondary:hover {
+    background-color: var(--color-ds-muted);
   }
 
   .btn-enterprise-ghost {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 hover:bg-slate-100 active:bg-slate-200;
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium transition-all duration-200;
+    border-radius: var(--radius-ds-lg);
+    color: var(--color-ds-muted-foreground);
+  }
+  .btn-enterprise-ghost:hover {
+    background-color: var(--color-ds-muted);
   }
 
   .btn-enterprise-success {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800;
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium transition-all duration-200;
+    border-radius: var(--radius-ds-lg);
+    background-color: var(--color-ds-success);
+    color: var(--color-ds-success-foreground);
+  }
+  .btn-enterprise-success:hover {
+    opacity: 0.9;
   }
 
   .btn-enterprise-danger {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 bg-red-600 text-white hover:bg-red-700 active:bg-red-800;
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium transition-all duration-200;
+    border-radius: var(--radius-ds-lg);
+    background-color: var(--color-ds-destructive);
+    color: var(--color-ds-destructive-foreground);
+  }
+  .btn-enterprise-danger:hover {
+    opacity: 0.9;
   }
 
-  /* Enterprise Badge Styles */
   .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    @apply inline-flex items-center px-2.5 py-0.5 text-xs font-medium;
+    border-radius: var(--radius-ds-full);
   }
 
   .badge-primary {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700;
+    @apply inline-flex items-center px-2.5 py-0.5 text-xs font-medium;
+    border-radius: var(--radius-ds-full);
+    background-color: var(--color-ds-primary);
+    color: var(--color-ds-primary-foreground);
+    opacity: 0.85;
   }
 
   .badge-success {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700;
+    @apply inline-flex items-center px-2.5 py-0.5 text-xs font-medium;
+    border-radius: var(--radius-ds-full);
+    background-color: var(--color-ds-success);
+    color: var(--color-ds-success-foreground);
+    opacity: 0.85;
   }
 
   .badge-warning {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700;
+    @apply inline-flex items-center px-2.5 py-0.5 text-xs font-medium;
+    border-radius: var(--radius-ds-full);
+    background-color: var(--color-ds-warning);
+    color: var(--color-ds-warning-foreground);
+    opacity: 0.85;
   }
 
   .badge-danger {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700;
+    @apply inline-flex items-center px-2.5 py-0.5 text-xs font-medium;
+    border-radius: var(--radius-ds-full);
+    background-color: var(--color-ds-destructive);
+    color: var(--color-ds-destructive-foreground);
+    opacity: 0.85;
   }
 
   .badge-neutral {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700;
+    @apply inline-flex items-center px-2.5 py-0.5 text-xs font-medium;
+    border-radius: var(--radius-ds-full);
+    background-color: var(--color-ds-muted);
+    color: var(--color-ds-muted-foreground);
   }
 
-  /* Enterprise Input Styles */
   .input-enterprise {
-    @apply w-full px-4 py-2.5 text-sm bg-white border border-slate-300 rounded-lg 
-           placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/10 
-           focus:border-slate-900 transition-colors duration-200;
+    @apply w-full px-4 py-2.5 text-sm transition-colors duration-200;
+    background-color: var(--color-ds-background);
+    border: 1px solid var(--color-ds-input);
+    border-radius: var(--radius-ds-lg);
+    color: var(--color-ds-foreground);
+  }
+  .input-enterprise::placeholder {
+    color: var(--color-ds-muted-foreground);
+  }
+  .input-enterprise:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-ds-ring);
+    border-color: var(--color-ds-primary);
   }
 
   .input-enterprise-error {
-    @apply w-full px-4 py-2.5 text-sm bg-white border rounded-lg placeholder:text-slate-400 focus:outline-none focus:ring-2 transition-colors duration-200 border-red-300 focus:ring-red-500/10 focus:border-red-500;
+    @apply w-full px-4 py-2.5 text-sm transition-colors duration-200;
+    background-color: var(--color-ds-background);
+    border: 1px solid var(--color-ds-destructive);
+    border-radius: var(--radius-ds-lg);
+    color: var(--color-ds-foreground);
+  }
+  .input-enterprise-error::placeholder {
+    color: var(--color-ds-muted-foreground);
+  }
+  .input-enterprise-error:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-ds-destructive);
   }
 
-  /* Enterprise Table Styles */
   .table-enterprise {
     @apply w-full text-sm;
   }
 
   .table-enterprise th {
-    @apply text-left font-medium text-slate-500 uppercase tracking-wider text-xs px-4 py-3 bg-slate-50 border-b border-slate-200;
+    @apply text-left font-medium uppercase tracking-wider text-xs px-4 py-3;
+    color: var(--color-ds-muted-foreground);
+    background-color: var(--color-ds-muted);
+    border-bottom: 1px solid var(--color-ds-border);
   }
 
   .table-enterprise td {
-    @apply px-4 py-4 border-b border-slate-100;
+    @apply px-4 py-4;
+    border-bottom: 1px solid var(--color-ds-border);
   }
 
   .table-enterprise tr:hover td {
-    @apply bg-slate-50;
+    background-color: var(--color-ds-muted);
   }
 
-  /* Enterprise Stats Card */
   .stats-card {
-    @apply bg-white rounded-xl border border-slate-200 shadow-sm p-6;
+    @apply p-6;
+    background-color: var(--color-ds-card);
+    border: 1px solid var(--color-ds-border);
+    border-radius: var(--radius-ds-xl);
+    box-shadow: var(--shadow-ds-sm);
   }
 
   .stats-card-label {
-    @apply text-sm font-medium text-slate-500;
+    @apply text-sm font-medium;
+    color: var(--color-ds-muted-foreground);
   }
 
   .stats-card-value {
-    @apply text-2xl font-semibold text-slate-900 mt-1;
+    @apply text-2xl font-semibold mt-1;
+    color: var(--color-ds-foreground);
   }
 
   .stats-card-change {
@@ -126,106 +212,134 @@
   }
 
   .stats-card-change-positive {
-    @apply text-sm mt-2 text-emerald-600;
+    @apply text-sm mt-2;
+    color: var(--color-ds-success);
   }
 
   .stats-card-change-negative {
-    @apply text-sm mt-2 text-red-600;
+    @apply text-sm mt-2;
+    color: var(--color-ds-destructive);
   }
 
-  /* Enterprise Section Headers */
   .section-header {
     @apply flex items-center justify-between mb-6;
   }
 
   .section-title {
-    @apply text-xl font-semibold text-slate-900;
+    @apply text-xl font-semibold;
+    color: var(--color-ds-foreground);
   }
 
   .section-subtitle {
-    @apply text-sm text-slate-500 mt-1;
+    @apply text-sm mt-1;
+    color: var(--color-ds-muted-foreground);
   }
 
-  /* Enterprise Navigation */
   .nav-enterprise {
     @apply flex items-center gap-1;
   }
 
   .nav-enterprise-link {
-    @apply px-4 py-2 text-sm font-medium text-slate-600 rounded-lg hover:bg-slate-100 transition-colors;
+    @apply px-4 py-2 text-sm font-medium transition-colors;
+    color: var(--color-ds-muted-foreground);
+    border-radius: var(--radius-ds-lg);
+  }
+  .nav-enterprise-link:hover {
+    background-color: var(--color-ds-muted);
   }
 
   .nav-enterprise-link-active {
-    @apply px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-slate-900 text-white hover:bg-slate-800;
+    @apply px-4 py-2 text-sm font-medium transition-colors;
+    border-radius: var(--radius-ds-lg);
+    background-color: var(--color-ds-primary);
+    color: var(--color-ds-primary-foreground);
+  }
+  .nav-enterprise-link-active:hover {
+    opacity: 0.9;
   }
 
-  /* Enterprise Tabs */
   .tabs-enterprise {
-    @apply flex border-b border-slate-200;
+    @apply flex;
+    border-bottom: 1px solid var(--color-ds-border);
   }
 
   .tab-enterprise {
-    @apply px-4 py-3 text-sm font-medium text-slate-500 border-b-2 border-transparent 
-           hover:text-slate-700 hover:border-slate-300 transition-colors -mb-px;
+    @apply px-4 py-3 text-sm font-medium -mb-px transition-colors;
+    color: var(--color-ds-muted-foreground);
+    border-bottom: 2px solid transparent;
+  }
+  .tab-enterprise:hover {
+    color: var(--color-ds-foreground);
+    border-bottom-color: var(--color-ds-border);
   }
 
   .tab-enterprise-active {
-    @apply px-4 py-3 text-sm font-medium border-b-2 transition-colors -mb-px text-slate-900 border-slate-900;
+    @apply px-4 py-3 text-sm font-medium -mb-px transition-colors;
+    color: var(--color-ds-foreground);
+    border-bottom: 2px solid var(--color-ds-foreground);
   }
 
-  /* Enterprise Status Indicators */
   .status-dot {
     @apply w-2 h-2 rounded-full;
   }
 
   .status-dot-active {
-    @apply w-2 h-2 rounded-full bg-emerald-500;
+    @apply w-2 h-2 rounded-full;
+    background-color: var(--color-ds-success);
   }
 
   .status-dot-pending {
-    @apply w-2 h-2 rounded-full bg-amber-500;
+    @apply w-2 h-2 rounded-full;
+    background-color: var(--color-ds-warning);
   }
 
   .status-dot-inactive {
-    @apply w-2 h-2 rounded-full bg-slate-300;
+    @apply w-2 h-2 rounded-full;
+    background-color: var(--color-ds-muted-foreground);
   }
 
   .status-dot-error {
-    @apply w-2 h-2 rounded-full bg-red-500;
+    @apply w-2 h-2 rounded-full;
+    background-color: var(--color-ds-destructive);
   }
 
-  /* Enterprise Progress Bar */
   .progress-bar {
-    @apply h-2 bg-slate-200 rounded-full overflow-hidden;
+    @apply h-2 rounded-full overflow-hidden;
+    background-color: var(--color-ds-muted);
   }
 
   .progress-bar-fill {
-    @apply h-full bg-slate-900 rounded-full transition-all duration-500;
+    @apply h-full rounded-full transition-all duration-500;
+    background-color: var(--color-ds-foreground);
   }
 
   .progress-bar-fill-success {
-    @apply h-full rounded-full transition-all duration-500 bg-emerald-600;
+    @apply h-full rounded-full transition-all duration-500;
+    background-color: var(--color-ds-success);
   }
 
   .progress-bar-fill-warning {
-    @apply h-full rounded-full transition-all duration-500 bg-amber-500;
+    @apply h-full rounded-full transition-all duration-500;
+    background-color: var(--color-ds-warning);
   }
 
-  /* Enterprise Empty State */
   .empty-state {
     @apply flex flex-col items-center justify-center py-16 text-center;
   }
 
   .empty-state-icon {
-    @apply w-16 h-16 text-slate-300 mb-4;
+    @apply w-16 h-16 mb-4;
+    color: var(--color-ds-muted-foreground);
   }
 
   .empty-state-title {
-    @apply text-lg font-medium text-slate-900;
+    @apply text-lg font-medium;
+    color: var(--color-ds-foreground);
   }
 
   .empty-state-description {
-    @apply text-sm text-slate-500 mt-1 max-w-sm;
+    @apply text-sm mt-1 max-w-sm;
+    color: var(--color-ds-muted-foreground);
   }
 }
 
@@ -262,15 +376,15 @@
 
   /* Enterprise shadows */
   .shadow-enterprise {
-    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
+    box-shadow: var(--shadow-ds-sm);
   }
 
   .shadow-enterprise-md {
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    box-shadow: var(--shadow-ds-md);
   }
 
   .shadow-enterprise-lg {
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+    box-shadow: var(--shadow-ds-lg);
   }
 }
 

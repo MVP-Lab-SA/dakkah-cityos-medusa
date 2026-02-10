@@ -69,10 +69,10 @@ export function BookingCard({
     <div className="enterprise-card overflow-hidden">
       <div className="enterprise-card-header flex items-center justify-between">
         <div>
-          <h3 className="font-semibold text-slate-900">
+          <h3 className="font-semibold text-ds-foreground">
             {booking.service?.name || "Booking"}
           </h3>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-ds-muted-foreground">
             Confirmation: {booking.confirmation_code}
           </p>
         </div>
@@ -81,12 +81,12 @@ export function BookingCard({
 
       <div className="enterprise-card-body space-y-4">
         <div className="flex items-start gap-3">
-          <Calendar className="w-5 h-5 text-slate-400 mt-0.5" />
+          <Calendar className="w-5 h-5 text-ds-muted-foreground mt-0.5" />
           <div>
-            <div className="font-medium text-slate-900">
+            <div className="font-medium text-ds-foreground">
               {formatDate(booking.start_time)}
             </div>
-            <div className="text-sm text-slate-500">
+            <div className="text-sm text-ds-muted-foreground">
               {formatTime(booking.start_time)} - {formatTime(booking.end_time)}
             </div>
           </div>
@@ -95,7 +95,7 @@ export function BookingCard({
         {booking.provider && (
           <div className="flex items-center gap-3">
             <div className="w-5 h-5 flex items-center justify-center">
-              <div className="w-3 h-3 rounded-full bg-slate-300" />
+              <div className="w-3 h-3 rounded-full bg-ds-muted" />
             </div>
             <ProviderCard provider={booking.provider} compact />
           </div>
@@ -103,9 +103,9 @@ export function BookingCard({
 
         {booking.location && (
           <div className="flex items-start gap-3">
-            <MapPin className="w-5 h-5 text-slate-400 mt-0.5" />
+            <MapPin className="w-5 h-5 text-ds-muted-foreground mt-0.5" />
             <div>
-              <div className="text-sm text-slate-500">
+              <div className="text-sm text-ds-muted-foreground">
                 {booking.location}
               </div>
             </div>
@@ -113,15 +113,15 @@ export function BookingCard({
         )}
 
         {booking.notes && (
-          <div className="bg-slate-50 rounded-lg p-3">
-            <div className="text-xs font-medium text-slate-500 mb-1">Notes</div>
-            <p className="text-sm text-slate-700">{booking.notes}</p>
+          <div className="bg-ds-muted rounded-lg p-3">
+            <div className="text-xs font-medium text-ds-muted-foreground mb-1">Notes</div>
+            <p className="text-sm text-ds-foreground">{booking.notes}</p>
           </div>
         )}
 
-        <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-          <span className="text-sm text-slate-500">Total Paid</span>
-          <span className="font-semibold text-slate-900">
+        <div className="flex items-center justify-between pt-4 border-t border-ds-border">
+          <span className="text-sm text-ds-muted-foreground">Total Paid</span>
+          <span className="font-semibold text-ds-foreground">
             {formatPrice(booking.price, booking.currency_code)}
           </span>
         </div>
@@ -140,7 +140,7 @@ export function BookingCard({
             {onCancel && (
               <button
                 onClick={() => onCancel(booking.id)}
-                className="btn-enterprise-ghost text-red-600 hover:bg-red-50 flex-1"
+                className="btn-enterprise-ghost text-ds-destructive hover:bg-ds-destructive flex-1"
               >
                 <XCircle className="w-4 h-4" />
                 Cancel
@@ -158,8 +158,8 @@ export function BookingEmptyState() {
 
   return (
     <div className="empty-state">
-      <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4">
-        <Calendar className="w-8 h-8 text-slate-400" />
+      <div className="w-16 h-16 rounded-full bg-ds-muted flex items-center justify-center mb-4">
+        <Calendar className="w-8 h-8 text-ds-muted-foreground" />
       </div>
       <h3 className="empty-state-title">No bookings yet</h3>
       <p className="empty-state-description">

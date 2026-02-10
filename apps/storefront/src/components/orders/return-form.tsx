@@ -82,12 +82,12 @@ export function ReturnForm({ orderId, items, onSubmit, onCancel }: ReturnFormPro
 
   if (submitted) {
     return (
-      <div className="bg-white rounded-xl border border-zinc-200 p-8 text-center">
-        <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
-          <Check className="w-8 h-8 text-green-600" />
+      <div className="bg-ds-background rounded-xl border border-ds-border p-8 text-center">
+        <div className="w-16 h-16 rounded-full bg-ds-success flex items-center justify-center mx-auto mb-4">
+          <Check className="w-8 h-8 text-ds-success" />
         </div>
-        <h3 className="text-xl font-semibold text-zinc-900 mb-2">Return Request Submitted</h3>
-        <p className="text-zinc-600 mb-6">
+        <h3 className="text-xl font-semibold text-ds-foreground mb-2">Return Request Submitted</h3>
+        <p className="text-ds-muted-foreground mb-6">
           We have received your return request. You will receive an email with further instructions.
         </p>
         <Button onClick={onCancel}>Back to Order</Button>
@@ -96,13 +96,13 @@ export function ReturnForm({ orderId, items, onSubmit, onCancel }: ReturnFormPro
   }
 
   return (
-    <div className="bg-white rounded-xl border border-zinc-200 overflow-hidden">
-      <div className="px-6 py-4 border-b border-zinc-200">
-        <h3 className="text-lg font-semibold text-zinc-900">Request Return</h3>
-        <p className="text-sm text-zinc-500 mt-1">Select items you want to return</p>
+    <div className="bg-ds-background rounded-xl border border-ds-border overflow-hidden">
+      <div className="px-6 py-4 border-b border-ds-border">
+        <h3 className="text-lg font-semibold text-ds-foreground">Request Return</h3>
+        <p className="text-sm text-ds-muted-foreground mt-1">Select items you want to return</p>
       </div>
 
-      <div className="divide-y divide-zinc-100">
+      <div className="divide-y divide-ds-border">
         {items.map((item) => {
           const isSelected = !!selectedItems[item.id]
           const selectedData = selectedItems[item.id]
@@ -115,15 +115,15 @@ export function ReturnForm({ orderId, items, onSubmit, onCancel }: ReturnFormPro
                   onClick={() => toggleItem(item.id, item.maxQuantity)}
                   className={`w-6 h-6 rounded border-2 flex items-center justify-center flex-shrink-0 mt-1 ${
                     isSelected
-                      ? "bg-zinc-900 border-zinc-900"
-                      : "border-zinc-300 hover:border-zinc-400"
+                      ? "bg-ds-primary border-ds-foreground"
+                      : "border-ds-border hover:border-ds-border"
                   }`}
                 >
-                  {isSelected && <Check className="w-4 h-4 text-white" />}
+                  {isSelected && <Check className="w-4 h-4 text-ds-primary-foreground" />}
                 </button>
 
                 {/* Thumbnail */}
-                <div className="w-16 h-16 rounded-lg bg-zinc-100 overflow-hidden flex-shrink-0">
+                <div className="w-16 h-16 rounded-lg bg-ds-muted overflow-hidden flex-shrink-0">
                   {item.thumbnail ? (
                     <img
                       src={item.thumbnail}
@@ -131,7 +131,7 @@ export function ReturnForm({ orderId, items, onSubmit, onCancel }: ReturnFormPro
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-zinc-400 text-xs">
+                    <div className="w-full h-full flex items-center justify-center text-ds-muted-foreground text-xs">
                       No img
                     </div>
                   )}
@@ -139,8 +139,8 @@ export function ReturnForm({ orderId, items, onSubmit, onCancel }: ReturnFormPro
 
                 {/* Details */}
                 <div className="flex-1">
-                  <h4 className="font-medium text-zinc-900">{item.title}</h4>
-                  <p className="text-sm text-zinc-500">Qty: {item.maxQuantity}</p>
+                  <h4 className="font-medium text-ds-foreground">{item.title}</h4>
+                  <p className="text-sm text-ds-muted-foreground">Qty: {item.maxQuantity}</p>
 
                   {isSelected && (
                     <div className="mt-4 space-y-3">
@@ -151,7 +151,7 @@ export function ReturnForm({ orderId, items, onSubmit, onCancel }: ReturnFormPro
                           onChange={(e) =>
                             updateQuantity(item.id, parseInt(e.target.value))
                           }
-                          className="mt-1 block w-full max-w-[100px] rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+                          className="mt-1 block w-full max-w-[100px] rounded-lg border border-ds-border px-3 py-2 text-sm"
                         >
                           {Array.from({ length: item.maxQuantity }, (_, i) => i + 1).map(
                             (num) => (
@@ -167,7 +167,7 @@ export function ReturnForm({ orderId, items, onSubmit, onCancel }: ReturnFormPro
                         <select
                           value={selectedData.reason}
                           onChange={(e) => updateReason(item.id, e.target.value)}
-                          className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+                          className="mt-1 block w-full rounded-lg border border-ds-border px-3 py-2 text-sm"
                         >
                           {reasons.map((reason) => (
                             <option key={reason} value={reason}>
@@ -185,7 +185,7 @@ export function ReturnForm({ orderId, items, onSubmit, onCancel }: ReturnFormPro
         })}
       </div>
 
-      <div className="px-6 py-4 border-t border-zinc-200 flex justify-between">
+      <div className="px-6 py-4 border-t border-ds-border flex justify-between">
         <Button variant="ghost" onClick={onCancel}>
           Cancel
         </Button>

@@ -39,7 +39,7 @@ export function ReviewCard({ review }: ReviewCardProps) {
           <div className="flex items-center gap-2 text-sm text-ui-fg-muted">
             <span>{review.customer_name || "Anonymous"}</span>
             {review.is_verified_purchase && (
-              <span className="flex items-center gap-1 text-green-600">
+              <span className="flex items-center gap-1 text-ds-success">
                 <Check className="w-3 h-3" />
                 Verified Purchase
               </span>

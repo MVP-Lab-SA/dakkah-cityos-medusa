@@ -103,7 +103,7 @@ export function ReviewForm({
 
       {/* Error */}
       {error && (
-        <p className="text-sm text-red-600">{error}</p>
+        <p className="text-sm text-ds-destructive">{error}</p>
       )}
 
       {/* Submit */}

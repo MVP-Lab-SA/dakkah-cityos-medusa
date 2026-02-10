@@ -81,15 +81,15 @@ export function DiscountCodeInput({
 
   if (appliedDiscount) {
     return (
-      <div className="border border-green-200 bg-green-50 rounded-lg p-4">
+      <div className="border border-ds-success bg-ds-success rounded-lg p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <CheckCircleSolid className="w-5 h-5 text-green-600" />
+            <CheckCircleSolid className="w-5 h-5 text-ds-success" />
             <div>
-              <p className="font-medium text-green-800">
+              <p className="font-medium text-ds-success">
                 {appliedDiscount.code}
               </p>
-              <p className="text-sm text-green-700">
+              <p className="text-sm text-ds-success">
                 {appliedDiscount.discount_type === "percentage"
                   ? `${appliedDiscount.discount_value}% off`
                   : `$${appliedDiscount.discount_value} off`}
@@ -110,7 +110,7 @@ export function DiscountCodeInput({
 
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium text-zinc-700">
+      <label className="text-sm font-medium text-ds-foreground">
         Discount Code
       </label>
       <div className="flex gap-2">
@@ -137,7 +137,7 @@ export function DiscountCodeInput({
         </Button>
       </div>
       {error && (
-        <div className="flex items-center gap-1 text-sm text-red-600">
+        <div className="flex items-center gap-1 text-sm text-ds-destructive">
           <XCircleSolid className="w-4 h-4" />
           {error}
         </div>

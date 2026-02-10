@@ -320,13 +320,13 @@ export function VendorRegistrationForm() {
 
   const renderFieldError = (field: keyof FieldErrors) => {
     if (!touched[field] || !errors[field]) return null;
-    return <p className="text-sm text-red-500 mt-1">{errors[field]}</p>;
+    return <p className="text-sm text-ds-destructive mt-1">{errors[field]}</p>;
   };
 
   const getFieldClass = (field: keyof FieldErrors) => {
     const base = "w-full px-3 py-2 border rounded-md";
     if (touched[field] && errors[field]) {
-      return `${base} border-red-500 focus:ring-red-500`;
+      return `${base} border-ds-destructive focus:ring-red-500`;
     }
     return base;
   };
@@ -334,7 +334,7 @@ export function VendorRegistrationForm() {
   if (submitted) {
     return (
       <div className="max-w-lg mx-auto text-center py-12">
-        <CheckCircleSolid className="w-16 h-16 text-green-600 mx-auto mb-6" />
+        <CheckCircleSolid className="w-16 h-16 text-ds-success mx-auto mb-6" />
         <h2 className="text-2xl font-bold mb-4">Application Submitted</h2>
         <p className="text-muted-foreground mb-6">
           Thank you for applying to become a vendor! We will review your application
@@ -490,7 +490,7 @@ export function VendorRegistrationForm() {
               />
               <div className="flex justify-between mt-1">
                 {renderFieldError("description")}
-                <span className={`text-sm ml-auto ${(formData.description?.length || 0) > MAX_DESCRIPTION_LENGTH ? "text-red-500" : "text-muted-foreground"}`}>
+                <span className={`text-sm ml-auto ${(formData.description?.length || 0) > MAX_DESCRIPTION_LENGTH ? "text-ds-destructive" : "text-muted-foreground"}`}>
                   {formData.description?.length || 0}/{MAX_DESCRIPTION_LENGTH}
                 </span>
               </div>
@@ -645,7 +645,7 @@ export function VendorRegistrationForm() {
             </div>
 
             {/* Terms Agreement */}
-            <div className={`border rounded-lg p-4 ${errors.terms ? "border-red-500 bg-red-50" : "bg-muted/20"}`}>
+            <div className={`border rounded-lg p-4 ${errors.terms ? "border-ds-destructive bg-ds-destructive" : "bg-muted/20"}`}>
               <label className="flex items-start gap-3">
                 <input
                   type="checkbox"
@@ -664,7 +664,7 @@ export function VendorRegistrationForm() {
                   provided is accurate and complete.
                 </span>
               </label>
-              {errors.terms && <p className="text-sm text-red-500 mt-2">{errors.terms}</p>}
+              {errors.terms && <p className="text-sm text-ds-destructive mt-2">{errors.terms}</p>}
             </div>
 
             <div className="flex justify-between">

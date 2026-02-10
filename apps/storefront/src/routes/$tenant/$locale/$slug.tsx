@@ -55,7 +55,7 @@ function CMSSlugPageComponent() {
 
   if (data?.isBuiltIn && slug === "store") {
     return (
-      <Suspense fallback={<div className="content-container py-6"><div className="text-zinc-600">Loading store...</div></div>}>
+      <Suspense fallback={<div className="content-container py-6"><div className="text-ds-muted-foreground">Loading store...</div></div>}>
         <Store />
       </Suspense>
     )
@@ -94,10 +94,10 @@ function CMSPageResolver({ data, tenant, locale, slug }: { data: any; tenant: st
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
+      <div className="min-h-screen bg-ds-muted flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-4 border-zinc-200 border-t-zinc-900 rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-zinc-600">Loading...</p>
+          <div className="w-8 h-8 border-4 border-ds-border border-t-zinc-900 rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-ds-muted-foreground">Loading...</p>
         </div>
       </div>
     )
@@ -105,11 +105,11 @@ function CMSPageResolver({ data, tenant, locale, slug }: { data: any; tenant: st
 
   if (!page || hasError) {
     return (
-      <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
+      <div className="min-h-screen bg-ds-muted flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-zinc-900 mb-4">Page Not Found</h1>
-          <p className="text-zinc-600 mb-6">The page you're looking for doesn't exist or hasn't been published yet.</p>
-          <a href={`/${tenant}/${locale}`} className="text-zinc-900 underline hover:no-underline">Return home</a>
+          <h1 className="text-4xl font-bold text-ds-foreground mb-4">Page Not Found</h1>
+          <p className="text-ds-muted-foreground mb-6">The page you're looking for doesn't exist or hasn't been published yet.</p>
+          <a href={`/${tenant}/${locale}`} className="text-ds-foreground underline hover:no-underline">Return home</a>
         </div>
       </div>
     )

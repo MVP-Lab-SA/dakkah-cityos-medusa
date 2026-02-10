@@ -20,7 +20,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
     ref={ref}
     className={clsx(
       "flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none",
-      "focus:bg-zinc-100 data-[state=open]:bg-zinc-100",
+      "focus:bg-ds-accent data-[state=open]:bg-ds-accent",
       inset && "pl-8",
       className
     )}
@@ -39,7 +39,7 @@ const DropdownMenuSubContent = React.forwardRef<
   <DropdownMenuPrimitive.SubContent
     ref={ref}
     className={clsx(
-      "z-50 min-w-[8rem] overflow-hidden rounded-md border border-zinc-200 bg-white p-1 text-zinc-950 shadow-lg",
+      "z-50 min-w-[8rem] overflow-hidden rounded-md border border-ds-border bg-ds-background p-1 text-ds-foreground shadow-lg",
       "data-[state=open]:animate-in data-[state=closed]:animate-out",
       "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
@@ -61,7 +61,7 @@ const DropdownMenuContent = React.forwardRef<
       ref={ref}
       sideOffset={sideOffset}
       className={clsx(
-        "z-50 min-w-[8rem] overflow-hidden rounded-md border border-zinc-200 bg-white p-1 text-zinc-950 shadow-md",
+        "z-50 min-w-[8rem] overflow-hidden rounded-md border border-ds-border bg-ds-background p-1 text-ds-foreground shadow-md",
         "data-[state=open]:animate-in data-[state=closed]:animate-out",
         "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
         "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
@@ -85,7 +85,7 @@ const DropdownMenuItem = React.forwardRef<
     ref={ref}
     className={clsx(
       "relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors",
-      "focus:bg-zinc-100 focus:text-zinc-900",
+      "focus:bg-ds-accent focus:text-ds-accent-foreground",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       inset && "pl-8",
       className
@@ -103,7 +103,7 @@ const DropdownMenuCheckboxItem = React.forwardRef<
     ref={ref}
     className={clsx(
       "relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors",
-      "focus:bg-zinc-100 focus:text-zinc-900",
+      "focus:bg-ds-accent focus:text-ds-accent-foreground",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className
     )}
@@ -128,7 +128,7 @@ const DropdownMenuRadioItem = React.forwardRef<
     ref={ref}
     className={clsx(
       "relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors",
-      "focus:bg-zinc-100 focus:text-zinc-900",
+      "focus:bg-ds-accent focus:text-ds-accent-foreground",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className
     )}
@@ -152,7 +152,7 @@ const DropdownMenuLabel = React.forwardRef<
 >(({ className, inset, ...props }, ref) => (
   <DropdownMenuPrimitive.Label
     ref={ref}
-    className={clsx("px-2 py-1.5 text-sm font-semibold text-zinc-900", inset && "pl-8", className)}
+    className={clsx("px-2 py-1.5 text-sm font-semibold text-ds-foreground", inset && "pl-8", className)}
     {...props}
   />
 ))
@@ -164,7 +164,7 @@ const DropdownMenuSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DropdownMenuPrimitive.Separator
     ref={ref}
-    className={clsx("-mx-1 my-1 h-px bg-zinc-100", className)}
+    className={clsx("-mx-1 my-1 h-px bg-ds-border", className)}
     {...props}
   />
 ))

@@ -43,12 +43,12 @@ export function SubscriptionPauseResume({ subscription }: SubscriptionPauseResum
 
   if (subscription.status === "paused") {
     return (
-      <div className="border border-yellow-200 bg-yellow-50 rounded-lg p-4">
+      <div className="border border-ds-warning bg-ds-warning rounded-lg p-4">
         <div className="flex items-center justify-between">
           <div>
-            <p className="font-medium text-yellow-800">Subscription Paused</p>
+            <p className="font-medium text-ds-warning">Subscription Paused</p>
             {subscription.pause_end && (
-              <p className="text-sm text-yellow-700">
+              <p className="text-sm text-ds-warning">
                 Resumes: {new Date(subscription.pause_end).toLocaleDateString()}
               </p>
             )}

@@ -8,19 +8,19 @@ import { Link, useLocation } from "@tanstack/react-router"
 const Footer = () => {
   if (typeof window === "undefined") {
     return (
-      <footer className="bg-zinc-50 border-t border-zinc-300 w-full" data-testid="footer">
+      <footer className="bg-ds-muted border-t border-ds-border w-full" data-testid="footer">
         <div className="content-container flex flex-col w-full">
           <div className="flex flex-col gap-y-12 lg:flex-row items-start justify-between py-16">
             <div className="lg:w-1/3 flex flex-col gap-y-4">
-              <span className="text-xl font-bold text-zinc-900">Dakkah CityOS</span>
-              <p className="text-zinc-600 max-w-md text-base font-medium">
+              <span className="text-xl font-bold text-ds-foreground">Dakkah CityOS</span>
+              <p className="text-ds-muted-foreground max-w-md text-base font-medium">
                 Dakkah CityOS — Multi-tenant, city-scale commerce platform powering 25+ verticals across MENA and beyond.
               </p>
             </div>
           </div>
-          <div className="border-t border-zinc-300 py-6">
+          <div className="border-t border-ds-border py-6">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-              <span className="text-xs text-zinc-600">
+              <span className="text-xs text-ds-muted-foreground">
                 © {new Date().getFullYear()} Dakkah CityOS. All rights reserved.
               </span>
             </div>
@@ -62,7 +62,7 @@ const Footer = () => {
 
   return (
     <footer
-      className="bg-zinc-50 border-t border-zinc-300 w-full"
+      className="bg-ds-muted border-t border-ds-border w-full"
       data-testid="footer"
     >
       <div className="content-container flex flex-col w-full">
@@ -70,11 +70,11 @@ const Footer = () => {
           <div className="lg:w-1/3 flex flex-col gap-y-4">
             <Link
               to={baseHref || "/"}
-              className="text-xl font-bold text-zinc-900 hover:text-zinc-600 transition-colors w-fit"
+              className="text-xl font-bold text-ds-foreground hover:text-ds-muted-foreground transition-colors w-fit"
             >
               Dakkah CityOS
             </Link>
-            <p className="text-zinc-600 max-w-md text-base font-medium">
+            <p className="text-ds-muted-foreground max-w-md text-base font-medium">
               Dakkah CityOS — Multi-tenant, city-scale commerce platform powering 25+ verticals across MENA and beyond.
             </p>
             <CountrySelect regions={regions ?? []} />
@@ -103,20 +103,20 @@ const Footer = () => {
             ))}
           </div>
         </div>
-        <div className="border-t border-zinc-300 py-6">
+        <div className="border-t border-ds-border py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <span className="text-xs text-zinc-600">
+            <span className="text-xs text-ds-muted-foreground">
               © {new Date().getFullYear()} Dakkah CityOS. All rights reserved.
             </span>
             <div className="flex gap-6">
               <Link
-                className="text-xs text-zinc-600 hover:text-zinc-500 transition-colors"
+                className="text-xs text-ds-muted-foreground hover:text-ds-muted-foreground transition-colors"
                 to={"/"}
               >
                 Privacy Policy
               </Link>
               <Link
-                className="text-xs text-zinc-600 hover:text-zinc-500 transition-colors"
+                className="text-xs text-ds-muted-foreground hover:text-ds-muted-foreground transition-colors"
                 to={"/"}
               >
                 Terms of Service
@@ -142,7 +142,7 @@ const FooterColumn = ({
 }) => {
   return (
     <div className="flex flex-col gap-y-4">
-      <h3 className="text-zinc-900 text-sm font-medium uppercase tracking-wide">
+      <h3 className="text-ds-foreground text-sm font-medium uppercase tracking-wide">
         {title}
       </h3>
       <ul className="space-y-3">
@@ -153,14 +153,14 @@ const FooterColumn = ({
                 href={link.url}
                 target="_blank"
                 rel="noreferrer"
-                className="text-zinc-600 hover:text-zinc-500 transition-colors"
+                className="text-ds-muted-foreground hover:text-ds-muted-foreground transition-colors"
               >
                 {link.name}
               </a>
             ) : (
               <Link
                 to={link.url}
-                className="text-zinc-600 hover:text-zinc-500 transition-colors"
+                className="text-ds-muted-foreground hover:text-ds-muted-foreground transition-colors"
               >
                 {link.name}
               </Link>

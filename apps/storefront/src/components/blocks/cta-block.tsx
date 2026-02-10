@@ -33,7 +33,7 @@ export const CTABlock: React.FC<CTABlockProps> = ({
         )}
 
         {description && (
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+          <p className="text-xl text-ds-muted-foreground mb-8 max-w-3xl mx-auto">
             {description}
           </p>
         )}
@@ -46,8 +46,8 @@ export const CTABlock: React.FC<CTABlockProps> = ({
                 to={button.url}
                 className={`px-8 py-3 rounded-lg font-semibold transition-all ${
                   button.style === 'primary'
-                    ? 'text-white shadow-lg hover:shadow-xl'
-                    : 'bg-white text-gray-900 hover:bg-gray-100 border border-gray-300'
+                    ? 'text-ds-primary-foreground shadow-lg hover:shadow-xl'
+                    : 'bg-ds-background text-ds-foreground hover:bg-ds-muted border border-ds-border'
                 }`}
                 style={
                   button.style === 'primary'

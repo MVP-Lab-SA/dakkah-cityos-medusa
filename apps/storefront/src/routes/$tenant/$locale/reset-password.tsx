@@ -26,7 +26,7 @@ function ResetPasswordPage() {
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4">
       <div className="w-full max-w-md">
-        <div className="bg-white border border-zinc-200 rounded-lg p-6 shadow-sm">
+        <div className="bg-ds-background border border-ds-border rounded-lg p-6 shadow-sm">
           <ForgotPasswordForm onBack={() => navigate({ to: `${baseHref}/login` as any })} />
         </div>
       </div>
@@ -79,19 +79,19 @@ function ResetWithToken({
     return (
       <div className="min-h-[80vh] flex items-center justify-center px-4">
         <div className="w-full max-w-md">
-          <div className="bg-white border border-zinc-200 rounded-lg p-6 shadow-sm text-center space-y-4">
-            <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-              <CheckCircleSolid className="w-6 h-6 text-green-600" />
+          <div className="bg-ds-background border border-ds-border rounded-lg p-6 shadow-sm text-center space-y-4">
+            <div className="mx-auto w-12 h-12 bg-ds-success rounded-full flex items-center justify-center">
+              <CheckCircleSolid className="w-6 h-6 text-ds-success" />
             </div>
             <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-zinc-900">Password reset successful</h3>
-              <p className="text-sm text-zinc-600">
+              <h3 className="text-lg font-semibold text-ds-foreground">Password reset successful</h3>
+              <p className="text-sm text-ds-muted-foreground">
                 Your password has been updated. You can now sign in with your new password.
               </p>
             </div>
             <Button
               onClick={() => navigate({ to: `${baseHref}/login` as any })}
-              className="w-full h-11 bg-zinc-900 hover:bg-zinc-800"
+              className="w-full h-11 bg-ds-primary hover:bg-ds-primary"
             >
               Sign in
             </Button>
@@ -105,14 +105,14 @@ function ResetWithToken({
     <div className="min-h-[80vh] flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-zinc-900">Set new password</h1>
-          <p className="mt-2 text-zinc-600">Enter your new password below</p>
+          <h1 className="text-3xl font-bold text-ds-foreground">Set new password</h1>
+          <p className="mt-2 text-ds-muted-foreground">Enter your new password below</p>
         </div>
 
-        <div className="bg-white border border-zinc-200 rounded-lg p-6 shadow-sm">
+        <div className="bg-ds-background border border-ds-border rounded-lg p-6 shadow-sm">
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
+              <div className="bg-ds-destructive border border-ds-destructive text-ds-destructive px-4 py-3 rounded-md text-sm">
                 {error}
               </div>
             )}
@@ -148,7 +148,7 @@ function ResetWithToken({
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full h-11 bg-zinc-900 hover:bg-zinc-800"
+              className="w-full h-11 bg-ds-primary hover:bg-ds-primary"
             >
               {isLoading ? (
                 <>

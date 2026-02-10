@@ -26,7 +26,7 @@ export function VendorAnalyticsChart() {
             <button
               key={p}
               onClick={() => setPeriod(p)}
-              className={`px-3 py-1 rounded text-sm ${period === p ? "bg-white shadow-sm font-medium" : "text-muted-foreground"}`}
+              className={`px-3 py-1 rounded text-sm ${period === p ? "bg-ds-background shadow-sm font-medium" : "text-muted-foreground"}`}
             >
               {p.charAt(0).toUpperCase() + p.slice(1)}
             </button>

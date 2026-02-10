@@ -56,8 +56,8 @@ export function StripeConnectSetup({ vendorId }: StripeConnectSetupProps) {
   if (isLoading) {
     return (
       <div className="border rounded-lg p-6 animate-pulse">
-        <div className="h-6 bg-zinc-200 rounded w-1/3 mb-4"></div>
-        <div className="h-4 bg-zinc-200 rounded w-2/3"></div>
+        <div className="h-6 bg-ds-muted rounded w-1/3 mb-4"></div>
+        <div className="h-4 bg-ds-muted rounded w-2/3"></div>
       </div>
     )
   }
@@ -67,9 +67,9 @@ export function StripeConnectSetup({ vendorId }: StripeConnectSetupProps) {
 
   return (
     <div className="border rounded-lg overflow-hidden">
-      <div className="bg-zinc-50 px-6 py-4 border-b">
-        <h3 className="font-semibold text-zinc-900">Payment Setup</h3>
-        <p className="text-sm text-zinc-500 mt-1">
+      <div className="bg-ds-muted px-6 py-4 border-b">
+        <h3 className="font-semibold text-ds-foreground">Payment Setup</h3>
+        <p className="text-sm text-ds-muted-foreground mt-1">
           Connect your bank account to receive payouts
         </p>
       </div>
@@ -77,10 +77,10 @@ export function StripeConnectSetup({ vendorId }: StripeConnectSetupProps) {
       <div className="p-6">
         {isFullyOnboarded ? (
           <div className="flex items-start gap-3">
-            <CheckCircleSolid className="w-5 h-5 text-green-600 mt-0.5" />
+            <CheckCircleSolid className="w-5 h-5 text-ds-success mt-0.5" />
             <div>
-              <p className="font-medium text-green-800">Payment setup complete</p>
-              <p className="text-sm text-zinc-600 mt-1">
+              <p className="font-medium text-ds-success">Payment setup complete</p>
+              <p className="text-sm text-ds-muted-foreground mt-1">
                 Your account is fully configured to receive payouts. Earnings will be 
                 automatically transferred to your bank account.
               </p>
@@ -98,15 +98,15 @@ export function StripeConnectSetup({ vendorId }: StripeConnectSetupProps) {
           </div>
         ) : hasPartialSetup ? (
           <div className="flex items-start gap-3">
-            <ExclamationCircle className="w-5 h-5 text-yellow-600 mt-0.5" />
+            <ExclamationCircle className="w-5 h-5 text-ds-warning mt-0.5" />
             <div>
-              <p className="font-medium text-yellow-800">Setup incomplete</p>
-              <p className="text-sm text-zinc-600 mt-1">
+              <p className="font-medium text-ds-warning">Setup incomplete</p>
+              <p className="text-sm text-ds-muted-foreground mt-1">
                 Your payment account setup is incomplete. Please complete the remaining 
                 steps to start receiving payouts.
               </p>
               {status?.requirements?.currently_due && status.requirements.currently_due.length > 0 && (
-                <div className="mt-3 text-sm text-zinc-500">
+                <div className="mt-3 text-sm text-ds-muted-foreground">
                   <p className="font-medium">Required information:</p>
                   <ul className="list-disc ml-4 mt-1">
                     {status.requirements.currently_due.slice(0, 3).map((req) => (
@@ -129,14 +129,14 @@ export function StripeConnectSetup({ vendorId }: StripeConnectSetupProps) {
           </div>
         ) : (
           <div className="flex items-start gap-3">
-            <div className="w-5 h-5 rounded-full border-2 border-zinc-300 mt-0.5" />
+            <div className="w-5 h-5 rounded-full border-2 border-ds-border mt-0.5" />
             <div>
-              <p className="font-medium text-zinc-900">Connect your bank account</p>
-              <p className="text-sm text-zinc-600 mt-1">
+              <p className="font-medium text-ds-foreground">Connect your bank account</p>
+              <p className="text-sm text-ds-muted-foreground mt-1">
                 To receive payouts for your sales, you need to set up a Stripe Connect 
                 account. This is a secure way to receive payments directly to your bank.
               </p>
-              <ul className="text-sm text-zinc-500 mt-3 space-y-1">
+              <ul className="text-sm text-ds-muted-foreground mt-3 space-y-1">
                 <li>- Secure bank account connection</li>
                 <li>- Automatic payout processing</li>
                 <li>- Detailed earning reports</li>

@@ -71,13 +71,13 @@ export function VendorPayouts() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="border rounded-lg p-6">
           <p className="text-sm text-muted-foreground mb-1">Available Balance</p>
-          <p className="text-3xl font-bold text-green-700">
+          <p className="text-3xl font-bold text-ds-success">
             ${(summary?.available_balance || 0).toFixed(2)}
           </p>
         </div>
         <div className="border rounded-lg p-6">
           <p className="text-sm text-muted-foreground mb-1">Pending</p>
-          <p className="text-3xl font-bold text-yellow-700">
+          <p className="text-3xl font-bold text-ds-warning">
             ${(summary?.pending_balance || 0).toFixed(2)}
           </p>
         </div>
@@ -91,11 +91,11 @@ export function VendorPayouts() {
 
       {/* Request Payout */}
       {(summary?.available_balance || 0) > 0 && (
-        <div className="border rounded-lg p-6 bg-green-50">
+        <div className="border rounded-lg p-6 bg-ds-success">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-semibold text-green-800">Request Payout</h3>
-              <p className="text-sm text-green-700">
+              <h3 className="font-semibold text-ds-success">Request Payout</h3>
+              <p className="text-sm text-ds-success">
                 You have ${summary?.available_balance.toFixed(2)} available for withdrawal
               </p>
             </div>
@@ -143,14 +143,14 @@ export function VendorPayouts() {
 
 function PayoutStatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    pending: "bg-yellow-100 text-yellow-800",
-    processing: "bg-blue-100 text-blue-800",
-    completed: "bg-green-100 text-green-800",
-    failed: "bg-red-100 text-red-800",
+    pending: "bg-ds-warning text-ds-warning",
+    processing: "bg-ds-info text-ds-info",
+    completed: "bg-ds-success text-ds-success",
+    failed: "bg-ds-destructive text-ds-destructive",
   };
 
   return (
-    <span className={`px-2 py-1 rounded text-xs font-medium ${styles[status] || "bg-gray-100"}`}>
+    <span className={`px-2 py-1 rounded text-xs font-medium ${styles[status] || "bg-ds-muted"}`}>
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </span>
   );

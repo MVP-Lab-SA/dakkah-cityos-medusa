@@ -51,20 +51,20 @@ export function SettingsForm({ onSave }: SettingsFormProps) {
     label: string
     description: string
   }) => (
-    <div className="flex items-center justify-between py-4 border-b border-zinc-100 last:border-0">
+    <div className="flex items-center justify-between py-4 border-b border-ds-border last:border-0">
       <div>
-        <p className="font-medium text-zinc-900">{label}</p>
-        <p className="text-sm text-zinc-500">{description}</p>
+        <p className="font-medium text-ds-foreground">{label}</p>
+        <p className="text-sm text-ds-muted-foreground">{description}</p>
       </div>
       <button
         type="button"
         onClick={onChange}
         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-          checked ? "bg-zinc-900" : "bg-zinc-200"
+          checked ? "bg-ds-primary" : "bg-ds-muted"
         }`}
       >
         <span
-          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+          className={`inline-block h-4 w-4 transform rounded-full bg-ds-background transition-transform ${
             checked ? "translate-x-6" : "translate-x-1"
           }`}
         />
@@ -76,8 +76,8 @@ export function SettingsForm({ onSave }: SettingsFormProps) {
     <div className="space-y-8">
       {/* Notification Preferences */}
       <div>
-        <h3 className="text-lg font-semibold text-zinc-900 mb-4">Notifications</h3>
-        <div className="bg-white rounded-xl border border-zinc-200 px-6">
+        <h3 className="text-lg font-semibold text-ds-foreground mb-4">Notifications</h3>
+        <div className="bg-ds-background rounded-xl border border-ds-border px-6">
           <Toggle
             checked={settings.orderUpdates}
             onChange={() => handleToggle("orderUpdates")}
@@ -107,9 +107,9 @@ export function SettingsForm({ onSave }: SettingsFormProps) {
 
       {/* Privacy */}
       <div>
-        <h3 className="text-lg font-semibold text-zinc-900 mb-4">Privacy</h3>
-        <div className="bg-white rounded-xl border border-zinc-200 p-6 space-y-4">
-          <p className="text-sm text-zinc-600">
+        <h3 className="text-lg font-semibold text-ds-foreground mb-4">Privacy</h3>
+        <div className="bg-ds-background rounded-xl border border-ds-border p-6 space-y-4">
+          <p className="text-sm text-ds-muted-foreground">
             We value your privacy. Your data is used only to improve your shopping experience 
             and is never shared with third parties without your consent.
           </p>
@@ -117,7 +117,7 @@ export function SettingsForm({ onSave }: SettingsFormProps) {
             <Button variant="outline" size="sm">
               Download My Data
             </Button>
-            <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50">
+            <Button variant="outline" size="sm" className="text-ds-destructive hover:text-ds-destructive hover:bg-ds-destructive">
               Delete Account
             </Button>
           </div>
@@ -126,8 +126,8 @@ export function SettingsForm({ onSave }: SettingsFormProps) {
 
       {/* Password Change */}
       <div>
-        <h3 className="text-lg font-semibold text-zinc-900 mb-4">Change Password</h3>
-        <div className="bg-white rounded-xl border border-zinc-200 p-6 space-y-4">
+        <h3 className="text-lg font-semibold text-ds-foreground mb-4">Change Password</h3>
+        <div className="bg-ds-background rounded-xl border border-ds-border p-6 space-y-4">
           <div>
             <Label htmlFor="current-password">Current Password</Label>
             <Input

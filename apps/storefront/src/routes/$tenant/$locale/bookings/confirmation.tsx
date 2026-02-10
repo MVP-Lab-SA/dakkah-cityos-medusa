@@ -42,20 +42,20 @@ function BookingConfirmationPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <Spinner className="w-8 h-8 text-slate-400 animate-spin" />
+      <div className="min-h-screen bg-ds-muted flex items-center justify-center">
+        <Spinner className="w-8 h-8 text-ds-muted-foreground animate-spin" />
       </div>
     )
   }
 
   if (!booking) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-ds-muted flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-slate-900 mb-2">
+          <h1 className="text-2xl font-bold text-ds-foreground mb-2">
             Booking Not Found
           </h1>
-          <p className="text-slate-500 mb-6">
+          <p className="text-ds-muted-foreground mb-6">
             We couldn't find this booking. It may have been canceled or doesn't
             exist.
           </p>
@@ -71,24 +71,24 @@ function BookingConfirmationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center py-12">
+    <div className="min-h-screen bg-ds-muted flex items-center justify-center py-12">
       <div className="content-container max-w-lg text-center">
         {/* Success Icon */}
-        <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-6">
-          <CheckCircleSolid className="w-10 h-10 text-emerald-600" />
+        <div className="w-20 h-20 rounded-full bg-ds-success flex items-center justify-center mx-auto mb-6">
+          <CheckCircleSolid className="w-10 h-10 text-ds-success" />
         </div>
 
         {/* Heading */}
-        <h1 className="text-3xl font-bold text-slate-900 mb-3">
+        <h1 className="text-3xl font-bold text-ds-foreground mb-3">
           Booking Confirmed!
         </h1>
 
         {/* Confirmation Code */}
-        <p className="text-lg text-slate-600 mb-2">
+        <p className="text-lg text-ds-muted-foreground mb-2">
           Your confirmation code is:
         </p>
-        <div className="inline-block bg-slate-100 rounded-lg px-4 py-2 mb-8">
-          <span className="text-xl font-mono font-bold text-slate-900">
+        <div className="inline-block bg-ds-muted rounded-lg px-4 py-2 mb-8">
+          <span className="text-xl font-mono font-bold text-ds-foreground">
             {booking.confirmation_code}
           </span>
         </div>
@@ -98,8 +98,8 @@ function BookingConfirmationPage() {
           <div className="enterprise-card-body space-y-4">
             {/* Service */}
             <div>
-              <div className="text-sm text-slate-500">Service</div>
-              <div className="font-semibold text-slate-900">
+              <div className="text-sm text-ds-muted-foreground">Service</div>
+              <div className="font-semibold text-ds-foreground">
                 {booking.service?.name}
               </div>
             </div>
@@ -107,16 +107,16 @@ function BookingConfirmationPage() {
             {/* Date & Time */}
             <div className="flex gap-4">
               <div className="flex-1">
-                <div className="text-sm text-slate-500">Date</div>
-                <div className="flex items-center gap-2 font-medium text-slate-900">
-                  <Calendar className="w-4 h-4 text-slate-400" />
+                <div className="text-sm text-ds-muted-foreground">Date</div>
+                <div className="flex items-center gap-2 font-medium text-ds-foreground">
+                  <Calendar className="w-4 h-4 text-ds-muted-foreground" />
                   {formatDate(booking.start_time)}
                 </div>
               </div>
               <div className="flex-1">
-                <div className="text-sm text-slate-500">Time</div>
-                <div className="flex items-center gap-2 font-medium text-slate-900">
-                  <Clock className="w-4 h-4 text-slate-400" />
+                <div className="text-sm text-ds-muted-foreground">Time</div>
+                <div className="flex items-center gap-2 font-medium text-ds-foreground">
+                  <Clock className="w-4 h-4 text-ds-muted-foreground" />
                   {formatTime(booking.start_time)} - {formatTime(booking.end_time)}
                 </div>
               </div>
@@ -125,7 +125,7 @@ function BookingConfirmationPage() {
             {/* Provider */}
             {booking.provider && (
               <div>
-                <div className="text-sm text-slate-500 mb-2">Provider</div>
+                <div className="text-sm text-ds-muted-foreground mb-2">Provider</div>
                 <ProviderCard provider={booking.provider} />
               </div>
             )}
@@ -133,16 +133,16 @@ function BookingConfirmationPage() {
             {/* Notes */}
             {booking.notes && (
               <div>
-                <div className="text-sm text-slate-500">Notes</div>
-                <div className="text-slate-700">{booking.notes}</div>
+                <div className="text-sm text-ds-muted-foreground">Notes</div>
+                <div className="text-ds-foreground">{booking.notes}</div>
               </div>
             )}
 
             {/* Price */}
-            <div className="border-t border-slate-100 pt-4">
+            <div className="border-t border-ds-border pt-4">
               <div className="flex justify-between items-center">
-                <span className="text-slate-500">Total Paid</span>
-                <span className="text-xl font-bold text-slate-900">
+                <span className="text-ds-muted-foreground">Total Paid</span>
+                <span className="text-xl font-bold text-ds-foreground">
                   {formatPrice(booking.price, booking.currency_code)}
                 </span>
               </div>
@@ -153,25 +153,25 @@ function BookingConfirmationPage() {
         {/* What's Next */}
         <div className="enterprise-card text-left mb-8">
           <div className="enterprise-card-header">
-            <h2 className="font-semibold text-slate-900">What's Next</h2>
+            <h2 className="font-semibold text-ds-foreground">What's Next</h2>
           </div>
           <div className="enterprise-card-body">
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-3">
-                <CheckCircleSolid className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                <span className="text-slate-600">
+                <CheckCircleSolid className="w-5 h-5 text-ds-success flex-shrink-0" />
+                <span className="text-ds-muted-foreground">
                   A confirmation email has been sent to your email address.
                 </span>
               </li>
               <li className="flex items-start gap-3">
-                <CheckCircleSolid className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                <span className="text-slate-600">
+                <CheckCircleSolid className="w-5 h-5 text-ds-success flex-shrink-0" />
+                <span className="text-ds-muted-foreground">
                   You'll receive a reminder 24 hours before your appointment.
                 </span>
               </li>
               <li className="flex items-start gap-3">
-                <CheckCircleSolid className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                <span className="text-slate-600">
+                <CheckCircleSolid className="w-5 h-5 text-ds-success flex-shrink-0" />
+                <span className="text-ds-muted-foreground">
                   You can reschedule or cancel up to 24 hours before the
                   appointment.
                 </span>

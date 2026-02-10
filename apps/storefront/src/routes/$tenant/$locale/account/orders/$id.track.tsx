@@ -100,30 +100,30 @@ function TrackOrderPage() {
         {/* Back Link */}
         <Link
           to={`/${tenant}/${locale}/account/orders/${id}` as any}
-          className="inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-zinc-900 mb-6"
+          className="inline-flex items-center gap-2 text-sm text-ds-muted-foreground hover:text-ds-foreground mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Order Details
         </Link>
 
-        <h1 className="text-2xl font-bold text-zinc-900 mb-6">Track Your Order</h1>
+        <h1 className="text-2xl font-bold text-ds-foreground mb-6">Track Your Order</h1>
 
         {isLoading && (
           <div className="flex items-center justify-center py-12">
-            <Spinner className="w-6 h-6 animate-spin text-zinc-400" />
+            <Spinner className="w-6 h-6 animate-spin text-ds-muted-foreground" />
           </div>
         )}
 
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-600">
+          <div className="bg-ds-destructive border border-ds-destructive rounded-lg p-4 text-ds-destructive">
             Failed to load tracking information. Please try again later.
           </div>
         )}
 
         {!isLoading && !error && !trackingData && (
-          <div className="bg-zinc-50 border border-zinc-200 rounded-lg p-8 text-center">
-            <p className="text-zinc-600 mb-2">No tracking information available yet.</p>
-            <p className="text-sm text-zinc-500">
+          <div className="bg-ds-muted border border-ds-border rounded-lg p-8 text-center">
+            <p className="text-ds-muted-foreground mb-2">No tracking information available yet.</p>
+            <p className="text-sm text-ds-muted-foreground">
               Tracking details will appear here once your order has been shipped.
             </p>
           </div>

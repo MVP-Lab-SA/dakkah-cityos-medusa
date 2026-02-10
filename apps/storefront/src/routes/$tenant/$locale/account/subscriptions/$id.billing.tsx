@@ -109,7 +109,7 @@ function BillingPage() {
     return (
       <AccountLayout>
         <div className="flex items-center justify-center py-12">
-          <Spinner className="w-8 h-8 animate-spin text-zinc-400" />
+          <Spinner className="w-8 h-8 animate-spin text-ds-muted-foreground" />
         </div>
       </AccountLayout>
     )
@@ -119,8 +119,8 @@ function BillingPage() {
     return (
       <AccountLayout>
         <div className="text-center py-12">
-          <h1 className="text-2xl font-bold text-zinc-900 mb-2">Subscription not found</h1>
-          <Link to={`/${tenant}/${locale}/account/subscriptions` as any} className="text-blue-600 hover:underline">
+          <h1 className="text-2xl font-bold text-ds-foreground mb-2">Subscription not found</h1>
+          <Link to={`/${tenant}/${locale}/account/subscriptions` as any} className="text-ds-info hover:underline">
             View all subscriptions
           </Link>
         </div>
@@ -134,13 +134,13 @@ function BillingPage() {
         {/* Back Link */}
         <Link
           to={`/${tenant}/${locale}/account/subscriptions/${id}` as any}
-          className="inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-zinc-900 mb-6"
+          className="inline-flex items-center gap-2 text-sm text-ds-muted-foreground hover:text-ds-foreground mb-6"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Subscription
         </Link>
 
-        <h1 className="text-2xl font-bold text-zinc-900 mb-6">Billing & Payments</h1>
+        <h1 className="text-2xl font-bold text-ds-foreground mb-6">Billing & Payments</h1>
 
         <div className="space-y-6">
           {paymentMethod ? (
@@ -149,12 +149,12 @@ function BillingPage() {
               onUpdate={handleUpdatePayment}
             />
           ) : (
-            <div className="bg-white rounded-xl border border-zinc-200 p-6">
-              <h3 className="font-semibold text-zinc-900 mb-2">Payment Method</h3>
-              <p className="text-zinc-500 text-sm mb-4">No payment method on file</p>
+            <div className="bg-ds-background rounded-xl border border-ds-border p-6">
+              <h3 className="font-semibold text-ds-foreground mb-2">Payment Method</h3>
+              <p className="text-ds-muted-foreground text-sm mb-4">No payment method on file</p>
               <button
                 onClick={handleUpdatePayment}
-                className="px-4 py-2 bg-zinc-900 text-white rounded-lg hover:bg-zinc-800 transition-colors text-sm"
+                className="px-4 py-2 bg-ds-primary text-ds-primary-foreground rounded-lg hover:bg-ds-primary transition-colors text-sm"
               >
                 Add Payment Method
               </button>
@@ -167,9 +167,9 @@ function BillingPage() {
               onDownload={handleDownloadInvoice}
             />
           ) : (
-            <div className="bg-white rounded-xl border border-zinc-200 p-6">
-              <h3 className="font-semibold text-zinc-900 mb-2">Billing History</h3>
-              <p className="text-zinc-500 text-sm">No invoices yet</p>
+            <div className="bg-ds-background rounded-xl border border-ds-border p-6">
+              <h3 className="font-semibold text-ds-foreground mb-2">Billing History</h3>
+              <p className="text-ds-muted-foreground text-sm">No invoices yet</p>
             </div>
           )}
         </div>

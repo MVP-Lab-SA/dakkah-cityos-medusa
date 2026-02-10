@@ -62,37 +62,37 @@ export function EarlyPaymentBanner({
   }
 
   return (
-    <div className="border border-green-200 bg-green-50 rounded-lg p-4 mb-6">
+    <div className="border border-ds-success bg-ds-success rounded-lg p-4 mb-6">
       <div className="flex items-start gap-3">
         <div className="flex-shrink-0">
-          <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-            <ClockSolid className="w-5 h-5 text-green-600" />
+          <div className="w-10 h-10 rounded-full bg-ds-success flex items-center justify-center">
+            <ClockSolid className="w-5 h-5 text-ds-success" />
           </div>
         </div>
         
         <div className="flex-1">
-          <h3 className="font-semibold text-green-800">Early Payment Discount Available</h3>
-          <p className="text-sm text-green-700 mt-1">
+          <h3 className="font-semibold text-ds-success">Early Payment Discount Available</h3>
+          <p className="text-sm text-ds-success mt-1">
             Pay within {data.days_remaining} day{data.days_remaining !== 1 ? "s" : ""} and 
             save {data.discount_percentage}% on this invoice.
           </p>
           
           <div className="mt-3 flex items-center gap-6">
             <div>
-              <p className="text-xs text-green-600 uppercase tracking-wider">Original Amount</p>
-              <p className="font-medium text-zinc-600 line-through">
+              <p className="text-xs text-ds-success uppercase tracking-wider">Original Amount</p>
+              <p className="font-medium text-ds-muted-foreground line-through">
                 {formatCurrency(invoiceTotal)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-green-600 uppercase tracking-wider">Discounted Amount</p>
-              <p className="font-bold text-green-800 text-lg">
+              <p className="text-xs text-ds-success uppercase tracking-wider">Discounted Amount</p>
+              <p className="font-bold text-ds-success text-lg">
                 {formatCurrency(data.discounted_amount)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-green-600 uppercase tracking-wider">You Save</p>
-              <p className="font-bold text-green-700">
+              <p className="text-xs text-ds-success uppercase tracking-wider">You Save</p>
+              <p className="font-bold text-ds-success">
                 {formatCurrency(data.savings)}
               </p>
             </div>
@@ -101,7 +101,7 @@ export function EarlyPaymentBanner({
           <div className="mt-4 flex items-center gap-3">
             {showConfirm ? (
               <>
-                <p className="text-sm text-green-700">Apply discount and pay now?</p>
+                <p className="text-sm text-ds-success">Apply discount and pay now?</p>
                 <Button
                   size="sm"
                   onClick={() => applyMutation.mutate()}
@@ -127,7 +127,7 @@ export function EarlyPaymentBanner({
             )}
           </div>
 
-          <p className="text-xs text-green-600 mt-3">
+          <p className="text-xs text-ds-success mt-3">
             Offer expires: {new Date(data.deadline).toLocaleDateString()}
           </p>
         </div>

@@ -20,11 +20,11 @@ export function BillingHistory({ invoices, onDownload }: BillingHistoryProps) {
   const getStatusIcon = (status: Invoice["status"]) => {
     switch (status) {
       case "paid":
-        return <Check className="w-4 h-4 text-green-600" />
+        return <Check className="w-4 h-4 text-ds-success" />
       case "pending":
-        return <Clock className="w-4 h-4 text-yellow-600" />
+        return <Clock className="w-4 h-4 text-ds-warning" />
       case "failed":
-        return <XMark className="w-4 h-4 text-red-600" />
+        return <XMark className="w-4 h-4 text-ds-destructive" />
     }
   }
 
@@ -49,34 +49,34 @@ export function BillingHistory({ invoices, onDownload }: BillingHistoryProps) {
 
   if (invoices.length === 0) {
     return (
-      <div className="bg-white rounded-xl border border-zinc-200 p-8 text-center">
-        <p className="text-zinc-500">No billing history yet.</p>
+      <div className="bg-ds-background rounded-xl border border-ds-border p-8 text-center">
+        <p className="text-ds-muted-foreground">No billing history yet.</p>
       </div>
     )
   }
 
   return (
-    <div className="bg-white rounded-xl border border-zinc-200 overflow-hidden">
-      <div className="px-6 py-4 border-b border-zinc-200">
-        <h3 className="text-lg font-semibold text-zinc-900">Billing History</h3>
+    <div className="bg-ds-background rounded-xl border border-ds-border overflow-hidden">
+      <div className="px-6 py-4 border-b border-ds-border">
+        <h3 className="text-lg font-semibold text-ds-foreground">Billing History</h3>
       </div>
       
-      <div className="divide-y divide-zinc-100">
+      <div className="divide-y divide-ds-border">
         {invoices.map((invoice) => (
           <div key={invoice.id} className="flex items-center justify-between px-6 py-4">
             <div className="flex items-center gap-4">
-              <div className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-ds-muted flex items-center justify-center">
                 {getStatusIcon(invoice.status)}
               </div>
               <div>
-                <p className="text-sm font-medium text-zinc-900">
+                <p className="text-sm font-medium text-ds-foreground">
                   {formatDate(invoice.date)}
                 </p>
-                <p className="text-xs text-zinc-500">{getStatusText(invoice.status)}</p>
+                <p className="text-xs text-ds-muted-foreground">{getStatusText(invoice.status)}</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <span className="font-medium text-zinc-900">
+              <span className="font-medium text-ds-foreground">
                 {formatPrice(invoice.amount, invoice.currency_code)}
               </span>
               {invoice.status === "paid" && (

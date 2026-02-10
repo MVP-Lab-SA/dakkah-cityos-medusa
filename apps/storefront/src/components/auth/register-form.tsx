@@ -62,7 +62,7 @@ export function RegisterForm({ onSuccess, onLogin }: RegisterFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
+        <div className="bg-ds-destructive border border-ds-destructive text-ds-destructive px-4 py-3 rounded-md text-sm">
           {error}
         </div>
       )}
@@ -160,7 +160,7 @@ export function RegisterForm({ onSuccess, onLogin }: RegisterFormProps) {
       <Button
         type="submit"
         disabled={isLoading}
-        className="w-full h-11 bg-zinc-900 hover:bg-zinc-800"
+        className="w-full h-11 bg-ds-primary hover:bg-ds-primary"
       >
         {isLoading ? (
           <>
@@ -173,12 +173,12 @@ export function RegisterForm({ onSuccess, onLogin }: RegisterFormProps) {
       </Button>
 
       {onLogin && (
-        <p className="text-center text-sm text-zinc-600">
+        <p className="text-center text-sm text-ds-muted-foreground">
           Already have an account?{" "}
           <button
             type="button"
             onClick={onLogin}
-            className="font-medium text-zinc-900 hover:underline"
+            className="font-medium text-ds-foreground hover:underline"
           >
             Sign in
           </button>

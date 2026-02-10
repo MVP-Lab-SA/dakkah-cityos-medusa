@@ -22,10 +22,10 @@ export function PersonaDisplay({ tenantId }: PersonaDisplayProps) {
   return (
     <div className="space-y-6">
       {data.resolved_persona && (
-        <div className="border-2 border-blue-200 rounded-lg p-6 bg-blue-50">
+        <div className="border-2 border-ds-info rounded-lg p-6 bg-ds-info">
           <div className="flex items-center gap-2 mb-4">
             <h3 className="font-semibold text-lg">Active Persona</h3>
-            <span className="bg-blue-200 text-blue-800 text-xs px-2 py-0.5 rounded">Resolved</span>
+            <span className="bg-ds-info text-ds-info text-xs px-2 py-0.5 rounded">Resolved</span>
           </div>
           <PersonaCard persona={data.resolved_persona} highlighted />
         </div>
@@ -56,9 +56,9 @@ function PersonaCard({ persona, highlighted }: { persona: Persona; highlighted?:
   }
 
   const precedenceColors: Record<string, string> = {
-    "tenant-default": "bg-gray-100 text-gray-800",
-    "user-default": "bg-blue-100 text-blue-800",
-    membership: "bg-green-100 text-green-800",
+    "tenant-default": "bg-ds-muted text-ds-foreground",
+    "user-default": "bg-ds-info text-ds-info",
+    membership: "bg-ds-success text-ds-success",
     surface: "bg-purple-100 text-purple-800",
     session: "bg-orange-100 text-orange-800",
   }
@@ -66,14 +66,14 @@ function PersonaCard({ persona, highlighted }: { persona: Persona; highlighted?:
   const axes = Object.entries(persona.axes || {}) as [PersonaAxis, any][]
 
   return (
-    <div className={`border rounded p-4 ${highlighted ? "border-blue-300" : ""}`}>
+    <div className={`border rounded p-4 ${highlighted ? "border-ds-info" : ""}`}>
       <div className="flex items-center justify-between mb-2">
         <h4 className="font-medium">{persona.name}</h4>
         <div className="flex gap-2">
-          <span className={`text-xs px-2 py-0.5 rounded ${precedenceColors[persona.precedence] || "bg-gray-100"}`}>
+          <span className={`text-xs px-2 py-0.5 rounded ${precedenceColors[persona.precedence] || "bg-ds-muted"}`}>
             {persona.precedence} ({persona.precedence_weight})
           </span>
-          {!persona.is_active && <span className="text-xs px-2 py-0.5 bg-red-100 text-red-800 rounded">Inactive</span>}
+          {!persona.is_active && <span className="text-xs px-2 py-0.5 bg-ds-destructive text-ds-destructive rounded">Inactive</span>}
         </div>
       </div>
       {persona.description && <p className="text-sm text-muted-foreground mb-2">{persona.description}</p>}

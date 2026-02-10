@@ -24,7 +24,7 @@ export function FeaturedProductsSection({ tenantPrefix, products, config }: Feat
   if (products.length === 0) return null
 
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-ds-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-2xl md:text-3xl font-bold">
@@ -32,7 +32,7 @@ export function FeaturedProductsSection({ tenantPrefix, products, config }: Feat
           </h2>
           <Link
             to={`${tenantPrefix}/store` as any}
-            className="text-sm font-medium text-gray-600 hover:text-gray-900"
+            className="text-sm font-medium text-ds-muted-foreground hover:text-ds-foreground"
           >
             View All
           </Link>
@@ -48,7 +48,7 @@ export function FeaturedProductsSection({ tenantPrefix, products, config }: Feat
                 to={`${tenantPrefix}/products/${product.handle}` as any}
                 className="group"
               >
-                <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-4">
+                <div className="aspect-square bg-ds-muted rounded-lg overflow-hidden mb-4">
                   {product.thumbnail ? (
                     <img
                       src={product.thumbnail}
@@ -56,16 +56,16 @@ export function FeaturedProductsSection({ tenantPrefix, products, config }: Feat
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                    <div className="w-full h-full flex items-center justify-center text-ds-muted-foreground">
                       No image
                     </div>
                   )}
                 </div>
-                <h3 className="font-medium text-gray-900 group-hover:text-gray-600 transition-colors">
+                <h3 className="font-medium text-ds-foreground group-hover:text-ds-muted-foreground transition-colors">
                   {product.title}
                 </h3>
                 {price && (
-                  <p className="mt-1 text-gray-600">
+                  <p className="mt-1 text-ds-muted-foreground">
                     {formatPrice(price.calculated_amount, price.currency_code)}
                   </p>
                 )}

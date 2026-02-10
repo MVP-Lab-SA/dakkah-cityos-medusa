@@ -10,7 +10,7 @@ export function VerifiedBadge({ isVerified, className = "" }: VerifiedBadgeProps
 
   return (
     <span 
-      className={`inline-flex items-center gap-1 text-xs font-medium text-green-700 ${className}`}
+      className={`inline-flex items-center gap-1 text-xs font-medium text-ds-success ${className}`}
       title="This reviewer purchased this product"
     >
       <CheckCircleSolid className="w-3.5 h-3.5" />

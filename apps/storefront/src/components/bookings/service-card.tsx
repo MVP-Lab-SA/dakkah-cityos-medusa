@@ -26,11 +26,11 @@ export function ServiceCard({ service }: ServiceCardProps) {
   return (
     <a
       href={`${prefix}/bookings/${service.handle}`}
-      className="group enterprise-card overflow-hidden hover:border-slate-300 block"
+      className="group enterprise-card overflow-hidden hover:border-ds-border block"
     >
       {/* Image */}
       {service.images && service.images[0] && (
-        <div className="aspect-[16/9] overflow-hidden bg-slate-100">
+        <div className="aspect-[16/9] overflow-hidden bg-ds-muted">
           <img
             src={service.images[0].url}
             alt={service.name}
@@ -41,33 +41,33 @@ export function ServiceCard({ service }: ServiceCardProps) {
 
       {/* Content */}
       <div className="p-6">
-        <h3 className="text-lg font-semibold text-slate-900 mb-2 group-hover:text-slate-700 transition-colors">
+        <h3 className="text-lg font-semibold text-ds-foreground mb-2 group-hover:text-ds-foreground transition-colors">
           {service.name}
         </h3>
-        <p className="text-sm text-slate-500 mb-4 line-clamp-2">
+        <p className="text-sm text-ds-muted-foreground mb-4 line-clamp-2">
           {service.description}
         </p>
 
         {/* Details */}
-        <div className="flex items-center gap-4 text-sm text-slate-600 mb-4">
+        <div className="flex items-center gap-4 text-sm text-ds-muted-foreground mb-4">
           <div className="flex items-center gap-1.5">
-            <Clock className="w-4 h-4 text-slate-400" />
+            <Clock className="w-4 h-4 text-ds-muted-foreground" />
             {formatDuration(service.duration)}
           </div>
           {service.capacity && service.capacity > 1 && (
             <div className="flex items-center gap-1.5">
-              <Users className="w-4 h-4 text-slate-400" />
+              <Users className="w-4 h-4 text-ds-muted-foreground" />
               Up to {service.capacity}
             </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-          <div className="text-xl font-bold text-slate-900">
+        <div className="flex items-center justify-between pt-4 border-t border-ds-border">
+          <div className="text-xl font-bold text-ds-foreground">
             {formatPrice(service.price, service.currency_code)}
           </div>
-          <span className="flex items-center gap-1 text-sm font-medium text-slate-600 group-hover:text-slate-900 transition-colors">
+          <span className="flex items-center gap-1 text-sm font-medium text-ds-muted-foreground group-hover:text-ds-foreground transition-colors">
             Book Now
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </span>
@@ -85,8 +85,8 @@ export function ServiceList({ services }: ServiceListProps) {
   if (services.length === 0) {
     return (
       <div className="empty-state">
-        <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4">
-          <Clock className="w-8 h-8 text-slate-400" />
+        <div className="w-16 h-16 rounded-full bg-ds-muted flex items-center justify-center mb-4">
+          <Clock className="w-8 h-8 text-ds-muted-foreground" />
         </div>
         <h3 className="empty-state-title">No services available</h3>
         <p className="empty-state-description">

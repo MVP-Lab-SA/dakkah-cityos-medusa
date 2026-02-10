@@ -42,7 +42,7 @@ export const HeroBlock: React.FC<HeroBlockProps> = ({
       <div className="relative z-10 container mx-auto px-4 py-20 text-center">
         {heading && (
           <h1
-            className="text-5xl md:text-6xl font-bold mb-6 text-white"
+            className="text-5xl md:text-6xl font-bold mb-6 text-ds-primary-foreground"
             style={
               branding?.theme?.primaryColor
                 ? { color: branding.theme.primaryColor }
@@ -54,7 +54,7 @@ export const HeroBlock: React.FC<HeroBlockProps> = ({
         )}
 
         {subheading && (
-          <p className="text-xl md:text-2xl mb-8 text-white/90 max-w-3xl mx-auto">
+          <p className="text-xl md:text-2xl mb-8 text-ds-primary-foreground/90 max-w-3xl mx-auto">
             {subheading}
           </p>
         )}
@@ -67,8 +67,8 @@ export const HeroBlock: React.FC<HeroBlockProps> = ({
                 to={button.url}
                 className={`px-8 py-3 rounded-lg font-semibold transition-all ${
                   button.style === 'primary'
-                    ? 'text-white shadow-lg hover:shadow-xl'
-                    : 'bg-white text-gray-900 hover:bg-gray-100'
+                    ? 'text-ds-primary-foreground shadow-lg hover:shadow-xl'
+                    : 'bg-ds-background text-ds-foreground hover:bg-ds-muted'
                 }`}
                 style={
                   button.style === 'primary'

@@ -32,11 +32,11 @@ export const StoreSelection: React.FC<StoreSelectionProps> = ({ stores }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-ds-muted py-12">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">Welcome to Our Marketplace</h1>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-ds-muted-foreground">
             Select a store to start shopping
           </p>
         </div>
@@ -46,7 +46,7 @@ export const StoreSelection: React.FC<StoreSelectionProps> = ({ stores }) => {
             <button
               key={store.id}
               onClick={() => handleStoreSelect(store.handle)}
-              className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all p-8 text-left group"
+              className="bg-ds-background rounded-lg shadow-md hover:shadow-xl transition-all p-8 text-left group"
             >
               {store.logo?.url && (
                 <div className="mb-6 h-20 flex items-center justify-center">
@@ -70,10 +70,10 @@ export const StoreSelection: React.FC<StoreSelectionProps> = ({ stores }) => {
               </h2>
 
               {store.storeDescription && (
-                <p className="text-gray-600 mb-4">{store.storeDescription}</p>
+                <p className="text-ds-muted-foreground mb-4">{store.storeDescription}</p>
               )}
 
-              <div className="text-sm font-semibold text-gray-900 group-hover:translate-x-2 transition-transform inline-flex items-center">
+              <div className="text-sm font-semibold text-ds-foreground group-hover:translate-x-2 transition-transform inline-flex items-center">
                 Visit Store
                 <svg
                   className="w-4 h-4 ml-2"
@@ -95,7 +95,7 @@ export const StoreSelection: React.FC<StoreSelectionProps> = ({ stores }) => {
 
         {stores.length === 0 && (
           <div className="text-center py-20">
-            <p className="text-xl text-gray-500">
+            <p className="text-xl text-ds-muted-foreground">
               No stores available at the moment
             </p>
           </div>

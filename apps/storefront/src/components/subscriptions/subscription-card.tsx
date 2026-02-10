@@ -59,14 +59,14 @@ export function SubscriptionCard({
     <div className="enterprise-card overflow-hidden">
       <div className="enterprise-card-header flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-slate-900 flex items-center justify-center">
-            <CreditCard className="w-5 h-5 text-white" />
+          <div className="w-10 h-10 rounded-lg bg-ds-primary flex items-center justify-center">
+            <CreditCard className="w-5 h-5 text-ds-primary-foreground" />
           </div>
           <div>
-            <h3 className="font-semibold text-slate-900">
+            <h3 className="font-semibold text-ds-foreground">
               {subscription.plan?.name || "Subscription"}
             </h3>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-ds-muted-foreground">
               {subscription.plan
                 ? `${formatPrice(subscription.plan.price, subscription.plan.currency_code)}/${subscription.plan.billing_interval}`
                 : ""}
@@ -79,19 +79,19 @@ export function SubscriptionCard({
       <div className="enterprise-card-body">
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div className="flex items-center gap-2 text-sm">
-            <Calendar className="w-4 h-4 text-slate-400" />
+            <Calendar className="w-4 h-4 text-ds-muted-foreground" />
             <div>
-              <span className="text-slate-500">Started: </span>
-              <span className="text-slate-900">
+              <span className="text-ds-muted-foreground">Started: </span>
+              <span className="text-ds-foreground">
                 {formatDate(subscription.current_period_start)}
               </span>
             </div>
           </div>
           <div className="flex items-center gap-2 text-sm">
-            <ArrowPath className="w-4 h-4 text-slate-400" />
+            <ArrowPath className="w-4 h-4 text-ds-muted-foreground" />
             <div>
-              <span className="text-slate-500">Renews: </span>
-              <span className="text-slate-900">
+              <span className="text-ds-muted-foreground">Renews: </span>
+              <span className="text-ds-foreground">
                 {formatDate(subscription.next_billing_date)}
               </span>
             </div>
@@ -99,8 +99,8 @@ export function SubscriptionCard({
         </div>
 
         {subscription.status === "trialing" && subscription.trial_end && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6">
-            <p className="text-sm text-blue-700">
+          <div className="bg-ds-info border border-ds-info rounded-lg p-3 mb-6">
+            <p className="text-sm text-ds-info">
               Your trial ends on{" "}
               <strong>{formatDate(subscription.trial_end)}</strong>. You won't be
               charged until then.
@@ -109,8 +109,8 @@ export function SubscriptionCard({
         )}
 
         {subscription.status === "paused" && subscription.pause_end && (
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-6">
-            <p className="text-sm text-amber-700">
+          <div className="bg-ds-warning border border-ds-warning rounded-lg p-3 mb-6">
+            <p className="text-sm text-ds-warning">
               Subscription paused. Will resume on{" "}
               <strong>{formatDate(subscription.pause_end)}</strong>.
             </p>
@@ -118,8 +118,8 @@ export function SubscriptionCard({
         )}
 
         {subscription.status === "past_due" && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
-            <p className="text-sm text-red-700">
+          <div className="bg-ds-destructive border border-ds-destructive rounded-lg p-3 mb-6">
+            <p className="text-sm text-ds-destructive">
               Payment failed. Please update your payment method to continue your
               subscription.
             </p>
@@ -158,7 +158,7 @@ export function SubscriptionCard({
             onCancel && (
               <button
                 onClick={() => onCancel(subscription.id)}
-                className="btn-enterprise-ghost text-red-600 hover:bg-red-50"
+                className="btn-enterprise-ghost text-ds-destructive hover:bg-ds-destructive"
               >
                 <XCircle className="w-4 h-4" />
                 Cancel
@@ -175,8 +175,8 @@ export function SubscriptionEmptyState() {
 
   return (
     <div className="empty-state">
-      <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4">
-        <CreditCard className="w-8 h-8 text-slate-400" />
+      <div className="w-16 h-16 rounded-full bg-ds-muted flex items-center justify-center mb-4">
+        <CreditCard className="w-8 h-8 text-ds-muted-foreground" />
       </div>
       <h3 className="empty-state-title">No active subscriptions</h3>
       <p className="empty-state-description">

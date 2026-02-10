@@ -95,7 +95,7 @@ export function TenantUserManagement() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span className={`px-2 py-0.5 rounded text-xs ${user.is_active ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+              <span className={`px-2 py-0.5 rounded text-xs ${user.is_active ? "bg-ds-success text-ds-success" : "bg-ds-destructive text-ds-destructive"}`}>
                 {user.is_active ? "Active" : "Inactive"}
               </span>
               <Button
@@ -116,19 +116,19 @@ export function TenantUserManagement() {
 
 function RoleBadge({ role }: { role: RbacRole }) {
   const roleColors: Record<string, string> = {
-    "super-admin": "bg-red-100 text-red-800",
+    "super-admin": "bg-ds-destructive text-ds-destructive",
     "city-manager": "bg-purple-100 text-purple-800",
-    "district-manager": "bg-blue-100 text-blue-800",
-    "zone-manager": "bg-green-100 text-green-800",
-    "facility-manager": "bg-yellow-100 text-yellow-800",
+    "district-manager": "bg-ds-info text-ds-info",
+    "zone-manager": "bg-ds-success text-ds-success",
+    "facility-manager": "bg-ds-warning text-ds-warning",
     "asset-manager": "bg-orange-100 text-orange-800",
     "vendor-admin": "bg-indigo-100 text-indigo-800",
     "content-editor": "bg-pink-100 text-pink-800",
     analyst: "bg-teal-100 text-teal-800",
-    viewer: "bg-gray-100 text-gray-800",
+    viewer: "bg-ds-muted text-ds-foreground",
   }
   return (
-    <span className={`px-2 py-0.5 rounded text-xs font-medium ${roleColors[role] || "bg-gray-100"}`}>
+    <span className={`px-2 py-0.5 rounded text-xs font-medium ${roleColors[role] || "bg-ds-muted"}`}>
       {role}
     </span>
   )

@@ -56,19 +56,19 @@ export function InvoiceDetail({ invoiceId }: InvoiceDetailProps) {
         </div>
         <div className="border rounded-lg p-4">
           <p className="text-sm text-muted-foreground mb-1">Amount Due</p>
-          <p className="text-xl font-bold text-red-600">${Number(invoice.amount_due).toFixed(2)}</p>
+          <p className="text-xl font-bold text-ds-destructive">${Number(invoice.amount_due).toFixed(2)}</p>
         </div>
       </div>
 
       {earlyPayment && invoice.status !== "paid" && (
-        <div className="border-2 border-green-200 bg-green-50 rounded-lg p-4">
+        <div className="border-2 border-ds-success bg-ds-success rounded-lg p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="font-medium text-green-800">Early Payment Discount Available</p>
-              <p className="text-sm text-green-700">
+              <p className="font-medium text-ds-success">Early Payment Discount Available</p>
+              <p className="text-sm text-ds-success">
                 Pay by {new Date(earlyPayment.deadline).toLocaleDateString()} and save ${earlyPayment.savings.toFixed(2)} ({earlyPayment.discount_percentage}% off)
               </p>
-              <p className="text-sm font-medium text-green-800 mt-1">
+              <p className="text-sm font-medium text-ds-success mt-1">
                 Discounted total: ${earlyPayment.discounted_total.toFixed(2)}
               </p>
             </div>
@@ -131,17 +131,17 @@ export function InvoiceDetail({ invoiceId }: InvoiceDetailProps) {
 
 function InvoiceStatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    draft: "bg-gray-100 text-gray-800",
-    issued: "bg-blue-100 text-blue-800",
+    draft: "bg-ds-muted text-ds-foreground",
+    issued: "bg-ds-info text-ds-info",
     sent: "bg-indigo-100 text-indigo-800",
-    paid: "bg-green-100 text-green-800",
-    partially_paid: "bg-yellow-100 text-yellow-800",
-    overdue: "bg-red-100 text-red-800",
-    void: "bg-gray-100 text-gray-600",
-    cancelled: "bg-gray-100 text-gray-600",
+    paid: "bg-ds-success text-ds-success",
+    partially_paid: "bg-ds-warning text-ds-warning",
+    overdue: "bg-ds-destructive text-ds-destructive",
+    void: "bg-ds-muted text-ds-muted-foreground",
+    cancelled: "bg-ds-muted text-ds-muted-foreground",
   }
   return (
-    <span className={`px-3 py-1 rounded-full text-sm font-medium ${styles[status] || "bg-gray-100"}`}>
+    <span className={`px-3 py-1 rounded-full text-sm font-medium ${styles[status] || "bg-ds-muted"}`}>
       {status.replace("_", " ")}
     </span>
   )

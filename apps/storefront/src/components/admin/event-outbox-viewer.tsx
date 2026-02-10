@@ -70,7 +70,7 @@ export function EventOutboxViewer() {
                 )}
               </div>
               {event.error_message && (
-                <p className="text-xs text-red-600 mt-1">{event.error_message}</p>
+                <p className="text-xs text-ds-destructive mt-1">{event.error_message}</p>
               )}
             </div>
           ))
@@ -82,13 +82,13 @@ export function EventOutboxViewer() {
 
 function EventStatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    pending: "bg-yellow-100 text-yellow-800",
-    published: "bg-green-100 text-green-800",
-    failed: "bg-red-100 text-red-800",
-    dead_letter: "bg-gray-100 text-gray-800",
+    pending: "bg-ds-warning text-ds-warning",
+    published: "bg-ds-success text-ds-success",
+    failed: "bg-ds-destructive text-ds-destructive",
+    dead_letter: "bg-ds-muted text-ds-foreground",
   }
   return (
-    <span className={`text-xs px-2 py-0.5 rounded ${styles[status] || "bg-gray-100"}`}>
+    <span className={`text-xs px-2 py-0.5 rounded ${styles[status] || "bg-ds-muted"}`}>
       {status.replace("_", " ")}
     </span>
   )

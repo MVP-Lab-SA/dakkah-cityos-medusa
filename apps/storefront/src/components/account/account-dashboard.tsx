@@ -129,32 +129,32 @@ export function AccountDashboard({ customer, stats }: AccountDashboardProps) {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Welcome Section */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-ds-foreground">
           Welcome back, {customer.first_name || 'there'}!
         </h1>
-        <p className="mt-1 text-gray-600">{customer.email}</p>
+        <p className="mt-1 text-ds-muted-foreground">{customer.email}</p>
       </div>
 
       {/* Stats Cards */}
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="bg-ds-background rounded-lg border border-ds-border p-4">
             <div className="flex items-center gap-3">
-              <ShoppingBag className="h-8 w-8 text-gray-400" />
+              <ShoppingBag className="h-8 w-8 text-ds-muted-foreground" />
               <div>
                 <p className="text-2xl font-bold">{stats.orderCount || 0}</p>
-                <p className="text-sm text-gray-600">Orders</p>
+                <p className="text-sm text-ds-muted-foreground">Orders</p>
               </div>
             </div>
           </div>
           
           {isEnabled('reviews') && (
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
+            <div className="bg-ds-background rounded-lg border border-ds-border p-4">
               <div className="flex items-center gap-3">
-                <Star className="h-8 w-8 text-gray-400" />
+                <Star className="h-8 w-8 text-ds-muted-foreground" />
                 <div>
                   <p className="text-2xl font-bold">{stats.reviewCount || 0}</p>
-                  <p className="text-sm text-gray-600">Reviews</p>
+                  <p className="text-sm text-ds-muted-foreground">Reviews</p>
                 </div>
               </div>
             </div>
@@ -170,17 +170,17 @@ export function AccountDashboard({ customer, stats }: AccountDashboardProps) {
             <Link
               key={index}
               to={link.href as any}
-              className="group bg-white rounded-lg border border-gray-200 p-6 hover:border-gray-300 hover:shadow-sm transition-all"
+              className="group bg-ds-background rounded-lg border border-ds-border p-6 hover:border-ds-border hover:shadow-sm transition-all"
             >
               <div className="flex items-start gap-4">
-                <div className="p-3 bg-gray-100 rounded-lg group-hover:bg-gray-200 transition-colors">
-                  <Icon className="h-6 w-6 text-gray-600" />
+                <div className="p-3 bg-ds-muted rounded-lg group-hover:bg-ds-muted transition-colors">
+                  <Icon className="h-6 w-6 text-ds-muted-foreground" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 group-hover:text-gray-600">
+                  <h3 className="font-semibold text-ds-foreground group-hover:text-ds-muted-foreground">
                     {link.label}
                   </h3>
-                  <p className="mt-1 text-sm text-gray-600">
+                  <p className="mt-1 text-sm text-ds-muted-foreground">
                     {link.description}
                   </p>
                 </div>
@@ -191,12 +191,12 @@ export function AccountDashboard({ customer, stats }: AccountDashboardProps) {
       </div>
 
       {/* Quick Actions */}
-      <div className="mt-8 pt-8 border-t border-gray-200">
+      <div className="mt-8 pt-8 border-t border-ds-border">
         <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
         <div className="flex flex-wrap gap-3">
           <Link
             to={`${prefix}/store` as any}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-800"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-ds-primary text-ds-primary-foreground rounded-md hover:bg-ds-primary"
           >
             <ShoppingBag className="h-4 w-4" />
             Continue Shopping
@@ -205,7 +205,7 @@ export function AccountDashboard({ customer, stats }: AccountDashboardProps) {
           {isEnabled('subscriptions') && (
             <Link
               to={`${prefix}/subscriptions` as any}
-              className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+              className="inline-flex items-center gap-2 px-4 py-2 border border-ds-border rounded-md hover:bg-ds-muted"
             >
               Start a Subscription
             </Link>
@@ -214,7 +214,7 @@ export function AccountDashboard({ customer, stats }: AccountDashboardProps) {
           {isEnabled('bookings') && (
             <Link
               to={`${prefix}/bookings` as any}
-              className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+              className="inline-flex items-center gap-2 px-4 py-2 border border-ds-border rounded-md hover:bg-ds-muted"
             >
               <Calendar className="h-4 w-4" />
               Book a Service

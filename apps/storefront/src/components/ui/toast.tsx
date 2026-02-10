@@ -98,14 +98,14 @@ function ToastContainer({ toasts, removeToast }: { toasts: Toast[]; removeToast:
 function ToastItem({ toast, onClose }: { toast: Toast; onClose: () => void }) {
   const icons = {
     success: <CheckCircleSolid className="w-5 h-5 text-green-500" />,
-    error: <XCircleSolid className="w-5 h-5 text-red-500" />,
+    error: <XCircleSolid className="w-5 h-5 text-ds-destructive" />,
     warning: <ExclamationCircleSolid className="w-5 h-5 text-yellow-500" />,
     info: <ExclamationCircleSolid className="w-5 h-5 text-blue-500" />
   }
   
   const backgrounds = {
     success: "bg-green-50 border-green-200",
-    error: "bg-red-50 border-red-200",
+    error: "bg-red-50 border-ds-destructive/20",
     warning: "bg-yellow-50 border-yellow-200",
     info: "bg-blue-50 border-blue-200"
   }
@@ -116,10 +116,10 @@ function ToastItem({ toast, onClose }: { toast: Toast; onClose: () => void }) {
       role="alert"
     >
       {icons[toast.type]}
-      <p className="flex-1 text-sm text-gray-800">{toast.message}</p>
+      <p className="flex-1 text-sm text-ds-foreground">{toast.message}</p>
       <button 
         onClick={onClose} 
-        className="text-gray-400 hover:text-gray-600 transition-colors"
+        className="text-ds-muted-foreground hover:text-ds-foreground transition-colors"
         aria-label="Close notification"
       >
         <XMark className="w-4 h-4" />

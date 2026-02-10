@@ -44,7 +44,7 @@ export function OrderFilters({ onSearch, onFilterChange }: OrderFiltersProps) {
       {/* Search & Filter Toggle */}
       <div className="flex gap-3">
         <form onSubmit={handleSearch} className="flex-1 relative">
-          <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
+          <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ds-muted-foreground" />
           <Input
             placeholder="Search orders by ID or product..."
             value={searchQuery}
@@ -55,7 +55,7 @@ export function OrderFilters({ onSearch, onFilterChange }: OrderFiltersProps) {
         <Button
           variant="outline"
           onClick={() => setShowFilters(!showFilters)}
-          className={showFilters ? "bg-zinc-100" : ""}
+          className={showFilters ? "bg-ds-muted" : ""}
         >
           <Funnel className="w-4 h-4 mr-2" />
           Filters
@@ -64,17 +64,17 @@ export function OrderFilters({ onSearch, onFilterChange }: OrderFiltersProps) {
 
       {/* Filter Panel */}
       {showFilters && (
-        <div className="bg-white rounded-xl border border-zinc-200 p-4">
+        <div className="bg-ds-background rounded-xl border border-ds-border p-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Status Filter */}
             <div>
-              <label className="block text-sm font-medium text-zinc-700 mb-1">
+              <label className="block text-sm font-medium text-ds-foreground mb-1">
                 Status
               </label>
               <select
                 value={filters.status || ""}
                 onChange={(e) => handleFilterChange("status", e.target.value)}
-                className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-ds-border px-3 py-2 text-sm"
               >
                 <option value="">All Statuses</option>
                 <option value="pending">Pending</option>
@@ -87,13 +87,13 @@ export function OrderFilters({ onSearch, onFilterChange }: OrderFiltersProps) {
 
             {/* Date Range Filter */}
             <div>
-              <label className="block text-sm font-medium text-zinc-700 mb-1">
+              <label className="block text-sm font-medium text-ds-foreground mb-1">
                 Date Range
               </label>
               <select
                 value={filters.dateRange || ""}
                 onChange={(e) => handleFilterChange("dateRange", e.target.value)}
-                className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-ds-border px-3 py-2 text-sm"
               >
                 <option value="">All Time</option>
                 <option value="7d">Last 7 days</option>
@@ -105,13 +105,13 @@ export function OrderFilters({ onSearch, onFilterChange }: OrderFiltersProps) {
 
             {/* Sort By */}
             <div>
-              <label className="block text-sm font-medium text-zinc-700 mb-1">
+              <label className="block text-sm font-medium text-ds-foreground mb-1">
                 Sort By
               </label>
               <select
                 value={filters.sortBy || ""}
                 onChange={(e) => handleFilterChange("sortBy", e.target.value)}
-                className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-ds-border px-3 py-2 text-sm"
               >
                 <option value="">Newest First</option>
                 <option value="oldest">Oldest First</option>
@@ -123,7 +123,7 @@ export function OrderFilters({ onSearch, onFilterChange }: OrderFiltersProps) {
 
           {/* Clear Filters */}
           {hasActiveFilters && (
-            <div className="mt-4 pt-4 border-t border-zinc-200 flex justify-end">
+            <div className="mt-4 pt-4 border-t border-ds-border flex justify-end">
               <Button variant="ghost" size="sm" onClick={clearFilters}>
                 <XMark className="w-4 h-4 mr-1" />
                 Clear all filters

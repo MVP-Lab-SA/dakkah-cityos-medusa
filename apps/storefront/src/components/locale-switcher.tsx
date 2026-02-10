@@ -25,8 +25,8 @@ export function LocaleSwitcher() {
           onClick={() => handleChange(locale)}
           className={`px-2 py-1 text-xs rounded transition-colors ${
             locale === currentLocale
-              ? "bg-primary text-white font-semibold"
-              : "text-gray-600 hover:bg-gray-100"
+              ? "bg-primary text-ds-primary-foreground font-semibold"
+              : "text-ds-muted-foreground hover:bg-ds-muted"
           }`}
           title={LOCALE_CONFIG[locale].name}
         >

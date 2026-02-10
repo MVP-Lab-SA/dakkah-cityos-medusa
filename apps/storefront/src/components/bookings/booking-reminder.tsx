@@ -59,30 +59,30 @@ export function BookingReminder({ booking }: BookingReminderProps) {
       to={`${prefix}/account/bookings/${booking.id}` as any}
       className={`block rounded-xl border p-4 transition-all hover:shadow-sm ${
         isToday 
-          ? "bg-blue-50 border-blue-200 hover:border-blue-300" 
-          : "bg-white border-zinc-200 hover:border-zinc-300"
+          ? "bg-ds-info border-ds-info hover:border-ds-info" 
+          : "bg-ds-background border-ds-border hover:border-ds-border"
       }`}
     >
       <div className="flex items-start gap-4">
         <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-          isToday ? "bg-blue-100" : "bg-zinc-100"
+          isToday ? "bg-ds-info" : "bg-ds-muted"
         }`}>
-          <BellAlert className={`w-5 h-5 ${isToday ? "text-blue-600" : "text-zinc-600"}`} />
+          <BellAlert className={`w-5 h-5 ${isToday ? "text-ds-info" : "text-ds-muted-foreground"}`} />
         </div>
         
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <h4 className="font-semibold text-zinc-900 truncate">{booking.service.name}</h4>
+            <h4 className="font-semibold text-ds-foreground truncate">{booking.service.name}</h4>
             <span className={`text-xs px-2 py-0.5 rounded-full ${
               isToday 
-                ? "bg-blue-200 text-blue-800" 
-                : "bg-zinc-200 text-zinc-600"
+                ? "bg-ds-info text-ds-info" 
+                : "bg-ds-muted text-ds-muted-foreground"
             }`}>
               {getTimeUntil(booking.scheduled_at)}
             </span>
           </div>
           
-          <div className="flex items-center gap-4 mt-2 text-sm text-zinc-600">
+          <div className="flex items-center gap-4 mt-2 text-sm text-ds-muted-foreground">
             <span className="flex items-center gap-1">
               <Calendar className="w-4 h-4" />
               {formatDate(booking.scheduled_at)}
@@ -94,13 +94,13 @@ export function BookingReminder({ booking }: BookingReminderProps) {
           </div>
 
           {booking.provider && (
-            <p className="text-sm text-zinc-500 mt-1">
+            <p className="text-sm text-ds-muted-foreground mt-1">
               With: {booking.provider.name}
             </p>
           )}
         </div>
 
-        <ChevronRight className="w-5 h-5 text-zinc-400" />
+        <ChevronRight className="w-5 h-5 text-ds-muted-foreground" />
       </div>
     </Link>
   )

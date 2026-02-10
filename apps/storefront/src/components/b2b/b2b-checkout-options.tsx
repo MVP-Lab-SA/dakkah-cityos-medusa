@@ -74,12 +74,12 @@ export function B2BCheckoutOptions({ cartId, onOptionsChange }: B2BCheckoutOptio
   // Don't show for pending companies
   if (company.status === "pending") {
     return (
-      <div className="border border-yellow-200 rounded-lg p-4 bg-yellow-50">
-        <div className="flex items-center gap-2 text-yellow-800">
+      <div className="border border-ds-warning rounded-lg p-4 bg-ds-warning">
+        <div className="flex items-center gap-2 text-ds-warning">
           <Buildings className="w-5 h-5" />
           <span className="font-medium">B2B Account Pending</span>
         </div>
-        <p className="text-sm text-yellow-700 mt-1">
+        <p className="text-sm text-ds-warning mt-1">
           Your company account is pending approval. Standard checkout is available.
         </p>
       </div>
@@ -113,7 +113,7 @@ export function B2BCheckoutOptions({ cartId, onOptionsChange }: B2BCheckoutOptio
 
       {/* Use Company Credit */}
       {hasCredit && (
-        <div className="flex items-start gap-3 p-4 border rounded-lg bg-green-50/50">
+        <div className="flex items-start gap-3 p-4 border rounded-lg bg-ds-success/50">
           <input
             type="checkbox"
             id="use_credit"
@@ -123,14 +123,14 @@ export function B2BCheckoutOptions({ cartId, onOptionsChange }: B2BCheckoutOptio
           />
           <div className="flex-1">
             <label htmlFor="use_credit" className="flex items-center gap-2 cursor-pointer text-sm font-medium">
-              <CreditCard className="w-4 h-4 text-green-600" />
+              <CreditCard className="w-4 h-4 text-ds-success" />
               Use Company Credit
             </label>
             <p className="text-sm text-muted-foreground mt-1">
               Pay using your company credit line
             </p>
             <div className="flex items-center gap-2 mt-2">
-              <span className="text-sm font-medium text-green-700">
+              <span className="text-sm font-medium text-ds-success">
                 ${creditAvailable.toLocaleString()} available
               </span>
               <span className="text-xs text-muted-foreground">
@@ -162,8 +162,8 @@ export function B2BCheckoutOptions({ cartId, onOptionsChange }: B2BCheckoutOptio
 
       {/* Credit Info */}
       {useCredit && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm">
-          <p className="text-blue-800">
+        <div className="bg-ds-info border border-ds-info rounded-lg p-4 text-sm">
+          <p className="text-ds-info">
             <strong>Credit Payment:</strong> Your order will be invoiced to your company account.
             Payment is due according to your agreed terms ({company.credit_limit ? "Net 30" : "On receipt"}).
           </p>

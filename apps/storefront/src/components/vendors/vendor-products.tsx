@@ -47,7 +47,7 @@ export function VendorProducts({ products, tenantPrefix, vendorHandle }: VendorP
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <div className="relative flex-1">
-          <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
+          <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ds-muted-foreground" />
           <Input
             placeholder="Search products..."
             value={searchQuery}
@@ -58,7 +58,7 @@ export function VendorProducts({ products, tenantPrefix, vendorHandle }: VendorP
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
-          className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+          className="rounded-lg border border-ds-border px-3 py-2 text-sm"
         >
           <option value="newest">Newest</option>
           <option value="price-low">Price: Low to High</option>
@@ -70,7 +70,7 @@ export function VendorProducts({ products, tenantPrefix, vendorHandle }: VendorP
       {/* Products Grid */}
       {sortedProducts.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-zinc-500">No products found</p>
+          <p className="text-ds-muted-foreground">No products found</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -80,7 +80,7 @@ export function VendorProducts({ products, tenantPrefix, vendorHandle }: VendorP
               to={`${tenantPrefix}/products/${product.handle}` as any}
               className="group"
             >
-              <div className="aspect-square rounded-xl bg-zinc-100 overflow-hidden mb-3">
+              <div className="aspect-square rounded-xl bg-ds-muted overflow-hidden mb-3">
                 {product.thumbnail ? (
                   <img
                     src={product.thumbnail}
@@ -88,15 +88,15 @@ export function VendorProducts({ products, tenantPrefix, vendorHandle }: VendorP
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-zinc-400">
+                  <div className="w-full h-full flex items-center justify-center text-ds-muted-foreground">
                     No image
                   </div>
                 )}
               </div>
-              <h4 className="font-medium text-zinc-900 truncate group-hover:text-zinc-600 transition-colors">
+              <h4 className="font-medium text-ds-foreground truncate group-hover:text-ds-muted-foreground transition-colors">
                 {product.title}
               </h4>
-              <p className="text-zinc-600 mt-1">
+              <p className="text-ds-muted-foreground mt-1">
                 {formatPrice(product.price, product.currency_code)}
               </p>
             </Link>

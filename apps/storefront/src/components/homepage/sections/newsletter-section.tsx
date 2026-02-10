@@ -39,20 +39,20 @@ export function NewsletterSection({ config }: NewsletterSectionProps) {
   }
 
   return (
-    <section className="py-16 bg-gray-900 text-white">
+    <section className="py-16 bg-ds-primary text-ds-primary-foreground">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl mx-auto text-center">
-          <div className="h-12 w-12 mx-auto mb-6 text-gray-400 flex items-center justify-center text-4xl">&#9993;</div>
+          <div className="h-12 w-12 mx-auto mb-6 text-ds-muted-foreground flex items-center justify-center text-4xl">&#9993;</div>
           <h2 className="text-2xl md:text-3xl font-bold mb-4">
             {config.title || "Stay in the Loop"}
           </h2>
-          <p className="text-gray-400 mb-8">
+          <p className="text-ds-muted-foreground mb-8">
             {config.subtitle || "Subscribe to our newsletter for exclusive deals, new arrivals, and insider updates."}
           </p>
           
           {status === 'success' ? (
-            <div className="bg-green-500/20 border border-green-500/50 rounded-lg p-4">
-              <p className="text-green-400">{message}</p>
+            <div className="bg-ds-success/20 border border-ds-success/50 rounded-lg p-4">
+              <p className="text-ds-success">{message}</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
@@ -61,13 +61,13 @@ export function NewsletterSection({ config }: NewsletterSectionProps) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
-                className="flex-1 px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50"
+                className="flex-1 px-4 py-3 rounded-lg bg-ds-background/10 border border-white/20 text-ds-primary-foreground placeholder-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-white/50"
                 required
               />
               <button
                 type="submit"
                 disabled={status === 'loading'}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-gray-900 font-medium rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-ds-background text-ds-foreground font-medium rounded-lg hover:bg-ds-muted transition-colors disabled:opacity-50"
               >
                 {status === 'loading' ? (
                   "Subscribing..."
@@ -82,10 +82,10 @@ export function NewsletterSection({ config }: NewsletterSectionProps) {
           )}
           
           {status === 'error' && (
-            <p className="mt-4 text-red-400 text-sm">{message}</p>
+            <p className="mt-4 text-ds-destructive text-sm">{message}</p>
           )}
           
-          <p className="mt-6 text-sm text-gray-500">
+          <p className="mt-6 text-sm text-ds-muted-foreground">
             {config.disclaimer || "No spam, unsubscribe anytime."}
           </p>
         </div>

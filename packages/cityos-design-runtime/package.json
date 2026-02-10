@@ -10,6 +10,12 @@
     "./context": "./src/context/ThemeContext.ts",
     "./css": "./src/css/CSSVariables.ts"
   },
+  "dependencies": {
+    "@dakkah-cityos/design-tokens": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/react": ">=18.0.0"
+  },
   "peerDependencies": {
     "react": ">=18.0.0"
   }

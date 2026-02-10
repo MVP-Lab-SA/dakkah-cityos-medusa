@@ -43,11 +43,11 @@ function MetricRow({ metric }: { metric: VendorPerformanceMetric }) {
   }
 
   const ratingStyles: Record<string, string> = {
-    excellent: "text-green-700 bg-green-100",
-    good: "text-blue-700 bg-blue-100",
-    average: "text-yellow-700 bg-yellow-100",
+    excellent: "text-ds-success bg-ds-success",
+    good: "text-ds-info bg-ds-info",
+    average: "text-ds-warning bg-ds-warning",
     below_average: "text-orange-700 bg-orange-100",
-    poor: "text-red-700 bg-red-100",
+    poor: "text-ds-destructive bg-ds-destructive",
   }
 
   const trendIcons: Record<string, string> = {
@@ -64,17 +64,17 @@ function MetricRow({ metric }: { metric: VendorPerformanceMetric }) {
         <div className="flex items-center justify-between mb-1">
           <span className="text-sm font-medium">{labels[metric.metric_type] || metric.metric_type}</span>
           <div className="flex items-center gap-2">
-            <span className={`text-xs px-2 py-0.5 rounded ${ratingStyles[metric.rating] || "bg-gray-100"}`}>
+            <span className={`text-xs px-2 py-0.5 rounded ${ratingStyles[metric.rating] || "bg-ds-muted"}`}>
               {metric.rating.replace("_", " ")}
             </span>
-            <span className={`text-sm ${metric.trend === "up" ? "text-green-600" : metric.trend === "down" ? "text-red-600" : "text-gray-600"}`}>
+            <span className={`text-sm ${metric.trend === "up" ? "text-ds-success" : metric.trend === "down" ? "text-ds-destructive" : "text-ds-muted-foreground"}`}>
               {trendIcons[metric.trend]}
             </span>
           </div>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
+        <div className="w-full bg-ds-muted rounded-full h-2">
           <div
-            className={`h-2 rounded-full ${percentage >= 80 ? "bg-green-500" : percentage >= 60 ? "bg-yellow-500" : "bg-red-500"}`}
+            className={`h-2 rounded-full ${percentage >= 80 ? "bg-ds-success" : percentage >= 60 ? "bg-ds-warning" : "bg-ds-destructive"}`}
             style={{ width: `${Math.min(percentage, 100)}%` }}
           ></div>
         </div>

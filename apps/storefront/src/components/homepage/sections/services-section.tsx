@@ -37,20 +37,20 @@ export function ServicesSection({ services, config }: ServicesSectionProps) {
   }
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16 bg-ds-muted">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-8">
           <div>
             <h2 className="text-2xl md:text-3xl font-bold">
               {config.title || "Book a Service"}
             </h2>
-            <p className="mt-2 text-gray-600">
+            <p className="mt-2 text-ds-muted-foreground">
               {config.subtitle || "Professional services available for booking"}
             </p>
           </div>
           <Link
             to={`${prefix}/bookings` as any}
-            className="text-sm font-medium text-gray-600 hover:text-gray-900"
+            className="text-sm font-medium text-ds-muted-foreground hover:text-ds-foreground"
           >
             View All Services
           </Link>
@@ -61,7 +61,7 @@ export function ServicesSection({ services, config }: ServicesSectionProps) {
             <Link
               key={service.id}
               to={`${prefix}/bookings/${service.handle}` as any}
-              className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+              className="group bg-ds-background rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
             >
               {service.image ? (
                 <div className="aspect-video">
@@ -72,28 +72,28 @@ export function ServicesSection({ services, config }: ServicesSectionProps) {
                   />
                 </div>
               ) : (
-                <div className="aspect-video bg-gray-100 flex items-center justify-center">
-                  <Clock className="h-12 w-12 text-gray-300" />
+                <div className="aspect-video bg-ds-muted flex items-center justify-center">
+                  <Clock className="h-12 w-12 text-ds-muted-foreground" />
                 </div>
               )}
               <div className="p-4">
-                <h3 className="font-semibold text-gray-900 group-hover:text-gray-600">
+                <h3 className="font-semibold text-ds-foreground group-hover:text-ds-muted-foreground">
                   {service.name}
                 </h3>
                 {service.description && (
-                  <p className="mt-1 text-sm text-gray-600 line-clamp-2">
+                  <p className="mt-1 text-sm text-ds-muted-foreground line-clamp-2">
                     {service.description}
                   </p>
                 )}
                 <div className="mt-3 flex items-center justify-between">
                   {service.duration && (
-                    <div className="flex items-center text-sm text-gray-500">
+                    <div className="flex items-center text-sm text-ds-muted-foreground">
                       <Clock className="h-4 w-4 mr-1" />
                       {formatDuration(service.duration)}
                     </div>
                   )}
                   {service.price !== undefined && service.currency_code && (
-                    <span className="font-medium text-gray-900">
+                    <span className="font-medium text-ds-foreground">
                       {formatPrice(service.price, service.currency_code)}
                     </span>
                   )}

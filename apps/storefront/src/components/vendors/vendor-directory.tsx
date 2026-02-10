@@ -71,8 +71,8 @@ export function VendorDirectory({ vendors }: VendorDirectoryProps) {
 
       <div className="mt-6">
         {filteredVendors.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-xl border border-zinc-200">
-            <p className="text-zinc-500">No vendors found matching your criteria</p>
+          <div className="text-center py-12 bg-ds-background rounded-xl border border-ds-border">
+            <p className="text-ds-muted-foreground">No vendors found matching your criteria</p>
           </div>
         ) : (
           <>
@@ -93,7 +93,7 @@ export function VendorDirectory({ vendors }: VendorDirectoryProps) {
               </div>
             )}
 
-            <p className="text-sm text-zinc-500 text-center mt-4">
+            <p className="text-sm text-ds-muted-foreground text-center mt-4">
               Showing {paginatedVendors.length} of {filteredVendors.length} vendors
             </p>
           </>

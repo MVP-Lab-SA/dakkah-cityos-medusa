@@ -61,9 +61,9 @@ export const ProductsBlock: React.FC<ProductsBlockProps> = ({
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[...Array(limit)].map((_, i) => (
               <div key={i} className="animate-pulse">
-                <div className="bg-gray-200 aspect-square rounded-lg mb-4" />
-                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
-                <div className="h-4 bg-gray-200 rounded w-1/2" />
+                <div className="bg-ds-muted aspect-square rounded-lg mb-4" />
+                <div className="h-4 bg-ds-muted rounded w-3/4 mb-2" />
+                <div className="h-4 bg-ds-muted rounded w-1/2" />
               </div>
             ))}
           </div>
@@ -73,13 +73,13 @@ export const ProductsBlock: React.FC<ProductsBlockProps> = ({
   }
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16 bg-ds-muted">
       <div className="container mx-auto px-4">
         {title && (
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">{title}</h2>
             {description && (
-              <p className="text-gray-600 max-w-2xl mx-auto">{description}</p>
+              <p className="text-ds-muted-foreground max-w-2xl mx-auto">{description}</p>
             )}
           </div>
         )}

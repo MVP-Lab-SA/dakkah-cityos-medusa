@@ -47,14 +47,14 @@ export function CompanyOverview({ company, stats, currencyCode }: CompanyOvervie
   return (
     <div className="space-y-6">
       {/* Company Header */}
-      <div className="bg-white rounded-xl border border-zinc-200 p-6">
+      <div className="bg-ds-background rounded-xl border border-ds-border p-6">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-xl bg-zinc-900 flex items-center justify-center">
-            <BuildingStorefront className="w-8 h-8 text-white" />
+          <div className="w-16 h-16 rounded-xl bg-ds-primary flex items-center justify-center">
+            <BuildingStorefront className="w-8 h-8 text-ds-primary-foreground" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-zinc-900">{company.name}</h1>
-            <p className="text-zinc-500">Business Account</p>
+            <h1 className="text-2xl font-bold text-ds-foreground">{company.name}</h1>
+            <p className="text-ds-muted-foreground">Business Account</p>
           </div>
         </div>
       </div>
@@ -62,64 +62,64 @@ export function CompanyOverview({ company, stats, currencyCode }: CompanyOvervie
       {/* Credit & Spending */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {company.credit_limit && (
-          <div className="bg-white rounded-xl border border-zinc-200 p-6">
+          <div className="bg-ds-background rounded-xl border border-ds-border p-6">
             <div className="flex items-center gap-3 mb-3">
-              <CreditCard className="w-5 h-5 text-zinc-600" />
-              <span className="text-sm font-medium text-zinc-600">Credit Limit</span>
+              <CreditCard className="w-5 h-5 text-ds-muted-foreground" />
+              <span className="text-sm font-medium text-ds-muted-foreground">Credit Limit</span>
             </div>
-            <p className="text-2xl font-bold text-zinc-900">
+            <p className="text-2xl font-bold text-ds-foreground">
               {formatPrice(company.credit_limit, currencyCode)}
             </p>
           </div>
         )}
         {company.available_credit !== undefined && (
-          <div className="bg-white rounded-xl border border-zinc-200 p-6">
+          <div className="bg-ds-background rounded-xl border border-ds-border p-6">
             <div className="flex items-center gap-3 mb-3">
-              <CreditCard className="w-5 h-5 text-green-600" />
-              <span className="text-sm font-medium text-zinc-600">Available Credit</span>
+              <CreditCard className="w-5 h-5 text-ds-success" />
+              <span className="text-sm font-medium text-ds-muted-foreground">Available Credit</span>
             </div>
-            <p className="text-2xl font-bold text-green-600">
+            <p className="text-2xl font-bold text-ds-success">
               {formatPrice(company.available_credit, currencyCode)}
             </p>
           </div>
         )}
-        <div className="bg-white rounded-xl border border-zinc-200 p-6">
+        <div className="bg-ds-background rounded-xl border border-ds-border p-6">
           <div className="flex items-center gap-3 mb-3">
-            <DocumentText className="w-5 h-5 text-zinc-600" />
-            <span className="text-sm font-medium text-zinc-600">Spent This Month</span>
+            <DocumentText className="w-5 h-5 text-ds-muted-foreground" />
+            <span className="text-sm font-medium text-ds-muted-foreground">Spent This Month</span>
           </div>
-          <p className="text-2xl font-bold text-zinc-900">
+          <p className="text-2xl font-bold text-ds-foreground">
             {formatPrice(stats.spentThisMonth, currencyCode)}
           </p>
         </div>
       </div>
 
       {/* Quick Links */}
-      <div className="bg-white rounded-xl border border-zinc-200 overflow-hidden">
+      <div className="bg-ds-background rounded-xl border border-ds-border overflow-hidden">
         {quickLinks.map((link, index) => (
           <Link
             key={link.href}
             to={link.href}
-            className={`flex items-center justify-between p-4 hover:bg-zinc-50 transition-colors ${
-              index < quickLinks.length - 1 ? "border-b border-zinc-100" : ""
+            className={`flex items-center justify-between p-4 hover:bg-ds-muted transition-colors ${
+              index < quickLinks.length - 1 ? "border-b border-ds-border" : ""
             }`}
           >
             <div className="flex items-center gap-3">
               <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                link.highlight ? "bg-yellow-100" : "bg-zinc-100"
+                link.highlight ? "bg-ds-warning" : "bg-ds-muted"
               }`}>
                 <link.icon className={`w-5 h-5 ${
-                  link.highlight ? "text-yellow-600" : "text-zinc-600"
+                  link.highlight ? "text-ds-warning" : "text-ds-muted-foreground"
                 }`} />
               </div>
               <div>
-                <p className="font-medium text-zinc-900">{link.label}</p>
-                <p className={`text-sm ${link.highlight ? "text-yellow-600 font-medium" : "text-zinc-500"}`}>
+                <p className="font-medium text-ds-foreground">{link.label}</p>
+                <p className={`text-sm ${link.highlight ? "text-ds-warning font-medium" : "text-ds-muted-foreground"}`}>
                   {link.value}
                 </p>
               </div>
             </div>
-            <ChevronRight className="w-5 h-5 text-zinc-400" />
+            <ChevronRight className="w-5 h-5 text-ds-muted-foreground" />
           </Link>
         ))}
       </div>

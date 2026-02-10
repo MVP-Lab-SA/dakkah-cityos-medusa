@@ -17,11 +17,11 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           type="checkbox"
           className={clsx(
             "appearance-none shadow-none outline-none focus:outline-none",
-            "border border-zinc-200",
+            "border border-ds-input",
             "rounded-none",
-            "text-base font-medium text-zinc-900",
+            "text-base font-medium text-ds-foreground",
             "w-full h-full",
-            "bg-white",
+            "bg-ds-background",
             "absolute top-0 left-0 z-10",
             className
           )}
@@ -39,7 +39,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
             }
           )}
         >
-          <Check className="text-zinc-900" />
+          <Check className="text-ds-foreground" />
         </span>
       </div>
     );

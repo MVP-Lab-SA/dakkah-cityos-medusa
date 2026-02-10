@@ -14,7 +14,7 @@ export function AuthGuard({ children, requireB2B = false, fallbackPath }: AuthGu
   if (typeof window === "undefined") {
     return (
       <div className="min-h-[400px] flex items-center justify-center">
-        <p className="text-sm text-zinc-500">Loading...</p>
+        <p className="text-sm text-ds-muted-foreground">Loading...</p>
       </div>
     )
   }
@@ -48,8 +48,8 @@ function ClientAuthGuard({ children, requireB2B = false, fallbackPath }: AuthGua
     return (
       <div className="min-h-[400px] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <Spinner className="w-8 h-8 animate-spin text-zinc-400 mx-auto" />
-          <p className="text-sm text-zinc-500">Loading...</p>
+          <Spinner className="w-8 h-8 animate-spin text-ds-muted-foreground mx-auto" />
+          <p className="text-sm text-ds-muted-foreground">Loading...</p>
         </div>
       </div>
     )

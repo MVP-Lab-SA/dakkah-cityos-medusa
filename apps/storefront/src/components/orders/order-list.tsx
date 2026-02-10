@@ -30,10 +30,10 @@ interface OrderListProps {
 }
 
 const statusColors: Record<string, string> = {
-  pending: "bg-yellow-100 text-yellow-700",
-  completed: "bg-green-100 text-green-700",
-  canceled: "bg-red-100 text-red-700",
-  processing: "bg-blue-100 text-blue-700",
+  pending: "bg-ds-warning text-ds-warning",
+  completed: "bg-ds-success text-ds-success",
+  canceled: "bg-ds-destructive text-ds-destructive",
+  processing: "bg-ds-info text-ds-info",
   shipped: "bg-purple-100 text-purple-700",
   requires_action: "bg-orange-100 text-orange-700",
 }
@@ -69,7 +69,7 @@ export function OrderList({ orders, isLoading }: OrderListProps) {
     return (
       <div className="space-y-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-24 bg-zinc-100 rounded-lg animate-pulse" />
+          <div key={i} className="h-24 bg-ds-muted rounded-lg animate-pulse" />
         ))}
       </div>
     )
@@ -80,7 +80,7 @@ export function OrderList({ orders, isLoading }: OrderListProps) {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
-          <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+          <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ds-muted-foreground" />
           <Input
             type="text"
             placeholder="Search orders..."
@@ -92,7 +92,7 @@ export function OrderList({ orders, isLoading }: OrderListProps) {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="h-10 px-3 border border-zinc-200 rounded-md text-sm"
+          className="h-10 px-3 border border-ds-border rounded-md text-sm"
         >
           <option value="all">All statuses</option>
           <option value="not_fulfilled">Processing</option>
@@ -104,15 +104,15 @@ export function OrderList({ orders, isLoading }: OrderListProps) {
 
       {/* Order List */}
       {!filteredOrders?.length ? (
-        <div className="bg-white rounded-lg border border-zinc-200 p-12 text-center">
-          <ShoppingBag className="h-12 w-12 text-zinc-300 mx-auto mb-4" />
-          <p className="text-zinc-500">
+        <div className="bg-ds-background rounded-lg border border-ds-border p-12 text-center">
+          <ShoppingBag className="h-12 w-12 text-ds-muted-foreground mx-auto mb-4" />
+          <p className="text-ds-muted-foreground">
             {searchQuery || statusFilter !== "all" ? "No orders match your filters" : "No orders yet"}
           </p>
           {!searchQuery && statusFilter === "all" && (
             <Link
               to={`${prefix}/store` as any}
-              className="mt-4 inline-flex items-center text-sm font-medium text-zinc-900 hover:underline"
+              className="mt-4 inline-flex items-center text-sm font-medium text-ds-foreground hover:underline"
             >
               Start shopping
               <ChevronRight className="h-4 w-4 ml-1" />
@@ -125,14 +125,14 @@ export function OrderList({ orders, isLoading }: OrderListProps) {
             <Link
               key={order.id}
               to={`${prefix}/account/orders/${order.id}` as any}
-              className="flex items-center gap-4 p-4 bg-white rounded-lg border border-zinc-200 hover:border-zinc-300 transition-colors"
+              className="flex items-center gap-4 p-4 bg-ds-background rounded-lg border border-ds-border hover:border-ds-border transition-colors"
             >
               {/* Thumbnails */}
               <div className="flex -space-x-2 flex-shrink-0">
                 {order.items.slice(0, 3).map((item, i) => (
                   <div
                     key={item.id}
-                    className="w-12 h-12 rounded-md bg-zinc-100 border-2 border-white overflow-hidden"
+                    className="w-12 h-12 rounded-md bg-ds-muted border-2 border-white overflow-hidden"
                     style={{ zIndex: 3 - i }}
                   >
                     {item.thumbnail ? (
@@ -142,14 +142,14 @@ export function OrderList({ orders, isLoading }: OrderListProps) {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-zinc-400">
+                      <div className="w-full h-full flex items-center justify-center text-ds-muted-foreground">
                         <ShoppingBag className="h-5 w-5" />
                       </div>
                     )}
                   </div>
                 ))}
                 {order.items.length > 3 && (
-                  <div className="w-12 h-12 rounded-md bg-zinc-200 border-2 border-white flex items-center justify-center text-xs font-medium text-zinc-600">
+                  <div className="w-12 h-12 rounded-md bg-ds-muted border-2 border-white flex items-center justify-center text-xs font-medium text-ds-muted-foreground">
                     +{order.items.length - 3}
                   </div>
                 )}
@@ -158,35 +158,35 @@ export function OrderList({ orders, isLoading }: OrderListProps) {
               {/* Order Info */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <p className="text-sm font-semibold text-zinc-900">Order #{order.display_id}</p>
+                  <p className="text-sm font-semibold text-ds-foreground">Order #{order.display_id}</p>
                   <span
                     className={`inline-block px-2 py-0.5 text-xs font-medium rounded ${
-                      statusColors[order.fulfillment_status] || "bg-zinc-100 text-zinc-700"
+                      statusColors[order.fulfillment_status] || "bg-ds-muted text-ds-foreground"
                     }`}
                   >
                     {fulfillmentStatusLabels[order.fulfillment_status] || order.fulfillment_status}
                   </span>
                 </div>
-                <p className="text-sm text-zinc-500 mt-1">
+                <p className="text-sm text-ds-muted-foreground mt-1">
                   {new Date(order.created_at).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "long",
                     day: "numeric",
                   })}
                 </p>
-                <p className="text-sm text-zinc-500">
+                <p className="text-sm text-ds-muted-foreground">
                   {order.items.length} {order.items.length === 1 ? "item" : "items"}
                 </p>
               </div>
 
               {/* Total */}
               <div className="text-right flex-shrink-0">
-                <p className="text-lg font-semibold text-zinc-900">
+                <p className="text-lg font-semibold text-ds-foreground">
                   {formatPrice(order.total, order.currency_code)}
                 </p>
               </div>
 
-              <ChevronRight className="h-5 w-5 text-zinc-400 flex-shrink-0" />
+              <ChevronRight className="h-5 w-5 text-ds-muted-foreground flex-shrink-0" />
             </Link>
           ))}
         </div>

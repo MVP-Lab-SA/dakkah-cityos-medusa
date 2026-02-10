@@ -39,7 +39,7 @@ export function ChannelMappingList() {
                   </span>
                 </div>
               </div>
-              <span className={`px-2 py-0.5 rounded text-xs ${mapping.is_active ? "bg-green-100 text-green-800" : "bg-gray-100"}`}>
+              <span className={`px-2 py-0.5 rounded text-xs ${mapping.is_active ? "bg-ds-success text-ds-success" : "bg-ds-muted"}`}>
                 {mapping.is_active ? "Active" : "Inactive"}
               </span>
             </div>
@@ -52,11 +52,11 @@ export function ChannelMappingList() {
 
 function ChannelTypeBadge({ type }: { type: string }) {
   const styles: Record<string, string> = {
-    web: "bg-blue-100 text-blue-800",
+    web: "bg-ds-info text-ds-info",
     mobile: "bg-purple-100 text-purple-800",
-    pos: "bg-green-100 text-green-800",
+    pos: "bg-ds-success text-ds-success",
     marketplace: "bg-orange-100 text-orange-800",
     social: "bg-pink-100 text-pink-800",
   }
-  return <span className={`text-xs px-2 py-0.5 rounded ${styles[type] || "bg-gray-100"}`}>{type}</span>
+  return <span className={`text-xs px-2 py-0.5 rounded ${styles[type] || "bg-ds-muted"}`}>{type}</span>
 }

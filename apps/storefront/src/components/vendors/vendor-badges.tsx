@@ -12,17 +12,17 @@ const badgeConfig: Record<BadgeType, { label: string; icon: React.ElementType; c
   verified: {
     label: "Verified Seller",
     icon: Check,
-    color: "bg-blue-100 text-blue-700",
+    color: "bg-ds-info text-ds-info",
   },
   top_seller: {
     label: "Top Seller",
     icon: Star,
-    color: "bg-yellow-100 text-yellow-700",
+    color: "bg-ds-warning text-ds-warning",
   },
   fast_shipper: {
     label: "Fast Shipper",
     icon: Bolt,
-    color: "bg-green-100 text-green-700",
+    color: "bg-ds-success text-ds-success",
   },
   responsive: {
     label: "Quick Responder",
@@ -32,7 +32,7 @@ const badgeConfig: Record<BadgeType, { label: string; icon: React.ElementType; c
   trusted: {
     label: "Trusted Vendor",
     icon: ShieldCheck,
-    color: "bg-zinc-100 text-zinc-700",
+    color: "bg-ds-muted text-ds-foreground",
   },
 }
 

@@ -30,7 +30,7 @@ export function PaymentTermsDisplay({ terms }: PaymentTermsDisplayProps) {
         {terms.early_payment_discount_percentage && (
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">Early Payment Discount</span>
-            <span className="font-medium text-green-700">
+            <span className="font-medium text-ds-success">
               {terms.early_payment_discount_percentage}% if paid within {terms.early_payment_discount_days} days
             </span>
           </div>
@@ -38,7 +38,7 @@ export function PaymentTermsDisplay({ terms }: PaymentTermsDisplayProps) {
         {terms.late_fee_percentage && (
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">Late Fee</span>
-            <span className="font-medium text-red-600">{terms.late_fee_percentage}%</span>
+            <span className="font-medium text-ds-destructive">{terms.late_fee_percentage}%</span>
           </div>
         )}
         {terms.credit_limit && (

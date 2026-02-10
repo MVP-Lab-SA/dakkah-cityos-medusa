@@ -14,10 +14,10 @@ const ErrorFallback = ({ error, reset }: ErrorFallbackProps) => {
   return (
     <div className="content-container py-16">
       <div className="max-w-2xl mx-auto">
-        <div className="bg-white border border-zinc-200 shadow-sm p-8">
+        <div className="bg-ds-background border border-ds-border shadow-sm p-8">
           <div className="w-16 h-16 mx-auto mb-6 bg-rose-500 flex items-center justify-center">
             <svg
-              className="w-8 h-8 text-white"
+              className="w-8 h-8 text-ds-primary-foreground"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -32,10 +32,10 @@ const ErrorFallback = ({ error, reset }: ErrorFallbackProps) => {
           </div>
 
           <div className="text-center mb-8">
-            <h2 className="text-xl font-bold text-zinc-900 mb-3">
+            <h2 className="text-xl font-bold text-ds-foreground mb-3">
               Oops! Something went wrong
             </h2>
-            <p className="text-zinc-600 text-lg">
+            <p className="text-ds-muted-foreground text-lg">
               We encountered an unexpected error.
             </p>
           </div>
@@ -80,7 +80,7 @@ const ErrorFallback = ({ error, reset }: ErrorFallbackProps) => {
           </div>
 
           {isDev && (
-            <div className="border-t border-zinc-200 pt-6">
+            <div className="border-t border-ds-border pt-6">
               <Button
                 onClick={() => setShowDetails(!showDetails)}
                 variant="secondary"
@@ -104,10 +104,10 @@ const ErrorFallback = ({ error, reset }: ErrorFallbackProps) => {
               </Button>
 
               {showDetails && (
-                <div className="mt-4 p-4 bg-zinc-50">
+                <div className="mt-4 p-4 bg-ds-muted">
                   <div className="text-left space-y-3">
                     <div>
-                      <p className="text-xs font-medium text-zinc-900 uppercase tracking-wide mb-1">
+                      <p className="text-xs font-medium text-ds-foreground uppercase tracking-wide mb-1">
                         Error Message
                       </p>
                       <code className="text-sm text-rose-900 break-all">
@@ -117,10 +117,10 @@ const ErrorFallback = ({ error, reset }: ErrorFallbackProps) => {
 
                     {error.stack && (
                       <div>
-                        <p className="text-xs font-medium text-zinc-900 uppercase tracking-wide mb-1">
+                        <p className="text-xs font-medium text-ds-foreground uppercase tracking-wide mb-1">
                           Stack Trace
                         </p>
-                        <pre className="text-xs text-zinc-600 bg-white border border-zinc-300 p-3 overflow-auto max-h-40">
+                        <pre className="text-xs text-ds-muted-foreground bg-ds-background border border-ds-border p-3 overflow-auto max-h-40">
                           {error.stack}
                         </pre>
                       </div>

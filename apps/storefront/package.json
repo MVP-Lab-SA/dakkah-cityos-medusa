@@ -15,6 +15,9 @@
     "test:e2e:debug": "playwright test --debug"
   },
   "dependencies": {
+    "@dakkah-cityos/design-runtime": "workspace:*",
+    "@dakkah-cityos/design-system": "workspace:*",
+    "@dakkah-cityos/design-tokens": "workspace:*",
     "@medusajs/icons": "2.11.3-preview-20251103060142",
     "@medusajs/js-sdk": "2.11.3-preview-20251103060142",
     "@radix-ui/react-dialog": "^1.1.15",

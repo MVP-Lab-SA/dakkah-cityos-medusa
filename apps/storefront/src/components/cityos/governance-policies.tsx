@@ -90,8 +90,8 @@ function PolicyDisplay({ policies }: { policies: GovernancePolicy }) {
 function AuthorityCard({ authority }: { authority: GovernanceAuthority }) {
   const levelStyles: Record<string, string> = {
     region: "bg-purple-100 text-purple-800",
-    country: "bg-blue-100 text-blue-800",
-    authority: "bg-green-100 text-green-800",
+    country: "bg-ds-info text-ds-info",
+    authority: "bg-ds-success text-ds-success",
     department: "bg-orange-100 text-orange-800",
   }
 
@@ -99,11 +99,11 @@ function AuthorityCard({ authority }: { authority: GovernanceAuthority }) {
     <div className="border rounded p-4 flex items-center justify-between">
       <div>
         <p className="font-medium">{authority.name}</p>
-        <span className={`text-xs px-2 py-0.5 rounded ${levelStyles[authority.jurisdiction_level] || "bg-gray-100"}`}>
+        <span className={`text-xs px-2 py-0.5 rounded ${levelStyles[authority.jurisdiction_level] || "bg-ds-muted"}`}>
           {authority.jurisdiction_level}
         </span>
       </div>
-      <span className={`text-xs px-2 py-0.5 rounded ${authority.is_active ? "bg-green-100 text-green-800" : "bg-gray-100"}`}>
+      <span className={`text-xs px-2 py-0.5 rounded ${authority.is_active ? "bg-ds-success text-ds-success" : "bg-ds-muted"}`}>
         {authority.is_active ? "Active" : "Inactive"}
       </span>
     </div>

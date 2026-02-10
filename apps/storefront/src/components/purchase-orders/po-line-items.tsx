@@ -18,58 +18,58 @@ export function POLineItems({
 }: POLineItemsProps) {
   if (items.length === 0) {
     return (
-      <div className="bg-white rounded-xl border border-zinc-200 p-8 text-center">
-        <p className="text-zinc-500">No items in this purchase order</p>
+      <div className="bg-ds-background rounded-xl border border-ds-border p-8 text-center">
+        <p className="text-ds-muted-foreground">No items in this purchase order</p>
       </div>
     )
   }
 
   return (
-    <div className="bg-white rounded-xl border border-zinc-200 overflow-hidden">
-      <div className="px-6 py-4 border-b border-zinc-200">
-        <h3 className="text-lg font-semibold text-zinc-900">
+    <div className="bg-ds-background rounded-xl border border-ds-border overflow-hidden">
+      <div className="px-6 py-4 border-b border-ds-border">
+        <h3 className="text-lg font-semibold text-ds-foreground">
           Line Items ({items.length})
         </h3>
       </div>
 
-      <div className="divide-y divide-zinc-100">
+      <div className="divide-y divide-ds-border">
         {items.map((item) => (
           <div key={item.id} className="flex items-center justify-between p-6">
             <div className="flex-1 min-w-0">
-              <h4 className="font-medium text-zinc-900">{item.product_title}</h4>
+              <h4 className="font-medium text-ds-foreground">{item.product_title}</h4>
               {item.variant_title && (
-                <p className="text-sm text-zinc-500">{item.variant_title}</p>
+                <p className="text-sm text-ds-muted-foreground">{item.variant_title}</p>
               )}
-              <p className="text-sm text-zinc-600 mt-1">
+              <p className="text-sm text-ds-muted-foreground mt-1">
                 {formatPrice(item.unit_price, currencyCode)} each
               </p>
             </div>
 
             <div className="flex items-center gap-6">
               {editable ? (
-                <div className="flex items-center border border-zinc-200 rounded-lg">
+                <div className="flex items-center border border-ds-border rounded-lg">
                   <button
                     onClick={() =>
                       onUpdateQuantity?.(item.id, Math.max(1, item.quantity - 1))
                     }
-                    className="px-3 py-1 text-zinc-600 hover:bg-zinc-100"
+                    className="px-3 py-1 text-ds-muted-foreground hover:bg-ds-muted"
                   >
                     -
                   </button>
                   <span className="px-4 py-1 text-sm font-medium">{item.quantity}</span>
                   <button
                     onClick={() => onUpdateQuantity?.(item.id, item.quantity + 1)}
-                    className="px-3 py-1 text-zinc-600 hover:bg-zinc-100"
+                    className="px-3 py-1 text-ds-muted-foreground hover:bg-ds-muted"
                   >
                     +
                   </button>
                 </div>
               ) : (
-                <span className="text-sm text-zinc-600">Qty: {item.quantity}</span>
+                <span className="text-sm text-ds-muted-foreground">Qty: {item.quantity}</span>
               )}
 
               <div className="text-right min-w-[100px]">
-                <p className="font-semibold text-zinc-900">
+                <p className="font-semibold text-ds-foreground">
                   {formatPrice(item.total, currencyCode)}
                 </p>
               </div>
@@ -77,7 +77,7 @@ export function POLineItems({
               {editable && onRemoveItem && (
                 <button
                   onClick={() => onRemoveItem(item.id)}
-                  className="text-sm text-red-600 hover:text-red-700"
+                  className="text-sm text-ds-destructive hover:text-ds-destructive"
                 >
                   Remove
                 </button>
@@ -88,10 +88,10 @@ export function POLineItems({
       </div>
 
       {/* Summary Footer */}
-      <div className="px-6 py-4 bg-zinc-50 border-t border-zinc-200">
+      <div className="px-6 py-4 bg-ds-muted border-t border-ds-border">
         <div className="flex justify-between">
-          <span className="font-medium text-zinc-900">Items Total</span>
-          <span className="font-semibold text-zinc-900">
+          <span className="font-medium text-ds-foreground">Items Total</span>
+          <span className="font-semibold text-ds-foreground">
             {formatPrice(
               items.reduce((sum, item) => sum + item.total, 0),
               currencyCode

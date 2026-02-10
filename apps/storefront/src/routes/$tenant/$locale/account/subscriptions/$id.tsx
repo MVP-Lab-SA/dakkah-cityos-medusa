@@ -11,9 +11,9 @@ export const Route = createFileRoute("/$tenant/$locale/account/subscriptions/$id
 })
 
 const statusColors: Record<string, string> = {
-  active: "bg-green-100 text-green-700",
-  paused: "bg-yellow-100 text-yellow-700",
-  canceled: "bg-red-100 text-red-700",
+  active: "bg-ds-success text-ds-success",
+  paused: "bg-ds-warning text-ds-warning",
+  canceled: "bg-ds-destructive text-ds-destructive",
   past_due: "bg-orange-100 text-orange-700",
 }
 
@@ -63,7 +63,7 @@ function SubscriptionDetailPage() {
     return (
       <AccountLayout>
         <div className="flex items-center justify-center min-h-[400px]">
-          <Spinner className="w-8 h-8 animate-spin text-zinc-400" />
+          <Spinner className="w-8 h-8 animate-spin text-ds-muted-foreground" />
         </div>
       </AccountLayout>
     )
@@ -72,11 +72,11 @@ function SubscriptionDetailPage() {
   if (!subscription) {
     return (
       <AccountLayout>
-        <div className="bg-white rounded-lg border border-zinc-200 p-12 text-center">
-          <p className="text-zinc-500 mb-4">Subscription not found</p>
+        <div className="bg-ds-background rounded-lg border border-ds-border p-12 text-center">
+          <p className="text-ds-muted-foreground mb-4">Subscription not found</p>
           <Link
             to={`${baseHref}/account/subscriptions` as any}
-            className="text-sm font-medium text-zinc-900 hover:underline"
+            className="text-sm font-medium text-ds-foreground hover:underline"
           >
             Back to subscriptions
           </Link>
@@ -91,30 +91,30 @@ function SubscriptionDetailPage() {
         {/* Back Link */}
         <Link
           to={`${baseHref}/account/subscriptions` as any}
-          className="inline-flex items-center text-sm text-zinc-600 hover:text-zinc-900"
+          className="inline-flex items-center text-sm text-ds-muted-foreground hover:text-ds-foreground"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to subscriptions
         </Link>
 
         {/* Header */}
-        <div className="bg-white rounded-lg border border-zinc-200 p-6">
+        <div className="bg-ds-background rounded-lg border border-ds-border p-6">
           <div className="flex items-start gap-4">
-            <div className="p-3 bg-zinc-100 rounded-lg">
-              <ArrowPath className="h-6 w-6 text-zinc-600" />
+            <div className="p-3 bg-ds-muted rounded-lg">
+              <ArrowPath className="h-6 w-6 text-ds-muted-foreground" />
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-3">
-                <h1 className="text-2xl font-bold text-zinc-900">{subscription.plan.name}</h1>
+                <h1 className="text-2xl font-bold text-ds-foreground">{subscription.plan.name}</h1>
                 <span
                   className={`inline-block px-2 py-1 text-xs font-medium rounded ${
-                    statusColors[subscription.status] || "bg-zinc-100 text-zinc-700"
+                    statusColors[subscription.status] || "bg-ds-muted text-ds-foreground"
                   }`}
                 >
                   {subscription.status}
                 </span>
               </div>
-              <p className="text-zinc-600 mt-1">
+              <p className="text-ds-muted-foreground mt-1">
                 {formatPrice(subscription.plan.price, subscription.plan.currency_code)} /{" "}
                 {subscription.billing_interval}
               </p>
@@ -123,33 +123,33 @@ function SubscriptionDetailPage() {
         </div>
 
         {/* Billing Info */}
-        <div className="bg-white rounded-lg border border-zinc-200 p-6">
-          <h2 className="text-lg font-semibold text-zinc-900 mb-4">Billing Information</h2>
+        <div className="bg-ds-background rounded-lg border border-ds-border p-6">
+          <h2 className="text-lg font-semibold text-ds-foreground mb-4">Billing Information</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <p className="text-sm text-zinc-500">Current Period</p>
-              <p className="text-sm font-medium text-zinc-900">
+              <p className="text-sm text-ds-muted-foreground">Current Period</p>
+              <p className="text-sm font-medium text-ds-foreground">
                 {new Date(subscription.current_period_start).toLocaleDateString()} -{" "}
                 {new Date(subscription.current_period_end).toLocaleDateString()}
               </p>
             </div>
             <div>
-              <p className="text-sm text-zinc-500">Next Billing Date</p>
-              <p className="text-sm font-medium text-zinc-900">
+              <p className="text-sm text-ds-muted-foreground">Next Billing Date</p>
+              <p className="text-sm font-medium text-ds-foreground">
                 {subscription.status === "active"
                   ? new Date(subscription.current_period_end).toLocaleDateString()
                   : "N/A"}
               </p>
             </div>
             <div>
-              <p className="text-sm text-zinc-500">Started</p>
-              <p className="text-sm font-medium text-zinc-900">
+              <p className="text-sm text-ds-muted-foreground">Started</p>
+              <p className="text-sm font-medium text-ds-foreground">
                 {new Date(subscription.created_at).toLocaleDateString()}
               </p>
             </div>
             <div>
-              <p className="text-sm text-zinc-500">Billing Interval</p>
-              <p className="text-sm font-medium text-zinc-900 capitalize">
+              <p className="text-sm text-ds-muted-foreground">Billing Interval</p>
+              <p className="text-sm font-medium text-ds-foreground capitalize">
                 {subscription.billing_interval}
               </p>
             </div>
@@ -157,13 +157,13 @@ function SubscriptionDetailPage() {
         </div>
 
         {/* Plan Features */}
-        <div className="bg-white rounded-lg border border-zinc-200 p-6">
-          <h2 className="text-lg font-semibold text-zinc-900 mb-4">Plan Features</h2>
+        <div className="bg-ds-background rounded-lg border border-ds-border p-6">
+          <h2 className="text-lg font-semibold text-ds-foreground mb-4">Plan Features</h2>
           <ul className="space-y-3">
             {subscription.plan.features?.map((feature, idx) => (
               <li key={idx} className="flex items-center gap-3">
-                <CheckCircleSolid className="h-5 w-5 text-green-500" />
-                <span className="text-sm text-zinc-700">{feature}</span>
+                <CheckCircleSolid className="h-5 w-5 text-ds-success" />
+                <span className="text-sm text-ds-foreground">{feature}</span>
               </li>
             ))}
           </ul>
@@ -171,8 +171,8 @@ function SubscriptionDetailPage() {
 
         {/* Actions */}
         {subscription.status !== "canceled" && (
-          <div className="bg-white rounded-lg border border-zinc-200 p-6">
-            <h2 className="text-lg font-semibold text-zinc-900 mb-4">Manage Subscription</h2>
+          <div className="bg-ds-background rounded-lg border border-ds-border p-6">
+            <h2 className="text-lg font-semibold text-ds-foreground mb-4">Manage Subscription</h2>
             
             {!showCancelConfirm ? (
               <div className="flex flex-wrap gap-3">
@@ -219,11 +219,11 @@ function SubscriptionDetailPage() {
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="p-4 bg-red-50 rounded-lg">
-                  <p className="text-sm font-medium text-red-900">
+                <div className="p-4 bg-ds-destructive rounded-lg">
+                  <p className="text-sm font-medium text-ds-destructive">
                     Are you sure you want to cancel?
                   </p>
-                  <p className="text-sm text-red-700 mt-1">
+                  <p className="text-sm text-ds-destructive mt-1">
                     You'll lose access to all features at the end of your current billing period.
                   </p>
                 </div>

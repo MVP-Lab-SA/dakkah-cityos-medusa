@@ -1,4 +1,43 @@
 @theme {
+  /* === CityOS Design System Semantic Colors === */
+  --color-ds-primary: var(--color-primary, hsl(221 83% 53%));
+  --color-ds-primary-foreground: var(--color-primary-foreground, hsl(0 0% 100%));
+  --color-ds-secondary: var(--color-secondary, hsl(210 40% 96%));
+  --color-ds-secondary-foreground: var(--color-secondary-foreground, hsl(222 47% 11%));
+  --color-ds-accent: var(--color-accent, hsl(210 40% 96%));
+  --color-ds-accent-foreground: var(--color-accent-foreground, hsl(222 47% 11%));
+  --color-ds-background: var(--color-background, hsl(0 0% 100%));
+  --color-ds-foreground: var(--color-foreground, hsl(222 47% 11%));
+  --color-ds-muted: var(--color-muted, hsl(210 40% 96%));
+  --color-ds-muted-foreground: var(--color-muted-foreground, hsl(215 16% 47%));
+  --color-ds-card: var(--color-card, hsl(0 0% 100%));
+  --color-ds-card-foreground: var(--color-card-foreground, hsl(222 47% 11%));
+  --color-ds-border: var(--color-border, hsl(214 32% 91%));
+  --color-ds-input: var(--color-input, hsl(214 32% 91%));
+  --color-ds-ring: var(--color-ring, hsl(221 83% 53%));
+  --color-ds-destructive: var(--color-destructive, hsl(0 84% 60%));
+  --color-ds-destructive-foreground: var(--color-destructive-foreground, hsl(0 0% 100%));
+  --color-ds-success: var(--color-success, hsl(142 76% 36%));
+  --color-ds-success-foreground: var(--color-success-foreground, hsl(0 0% 100%));
+  --color-ds-warning: var(--color-warning, hsl(45 93% 47%));
+  --color-ds-warning-foreground: var(--color-warning-foreground, hsl(0 0% 0%));
+  --color-ds-info: var(--color-info, hsl(199 95% 53%));
+  --color-ds-info-foreground: var(--color-info-foreground, hsl(0 0% 100%));
+
+  /* === CityOS Design System Shadows === */
+  --shadow-ds-sm: var(--shadow-sm, 0 1px 2px 0 rgb(0 0 0 / 0.05));
+  --shadow-ds-md: var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1));
+  --shadow-ds-lg: var(--shadow-lg, 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1));
+  --shadow-ds-xl: var(--shadow-xl, 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1));
+
+  /* === CityOS Design System Border Radius === */
+  --radius-ds-sm: var(--border-radius-sm, 0.125rem);
+  --radius-ds-md: var(--border-radius-md, 0.375rem);
+  --radius-ds-lg: var(--border-radius-lg, 0.5rem);
+  --radius-ds-xl: var(--border-radius-xl, 0.75rem);
+  --radius-ds-2xl: var(--border-radius-2xl, 1rem);
+  --radius-ds-full: var(--border-radius-full, 9999px);
+
   /* Enterprise Font Family - Professional & Modern */
   --font-sans: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", Ubuntu, sans-serif;

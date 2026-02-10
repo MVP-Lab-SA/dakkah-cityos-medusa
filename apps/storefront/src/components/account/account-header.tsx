@@ -21,15 +21,15 @@ export function AccountHeader({ title, description }: AccountHeaderProps) {
     <div className="mb-8">
       {title ? (
         <>
-          <h1 className="text-2xl font-bold text-zinc-900">{title}</h1>
-          {description && <p className="mt-1 text-zinc-500">{description}</p>}
+          <h1 className="text-2xl font-bold text-ds-foreground">{title}</h1>
+          {description && <p className="mt-1 text-ds-muted-foreground">{description}</p>}
         </>
       ) : (
         <>
-          <h1 className="text-2xl font-bold text-zinc-900">
+          <h1 className="text-2xl font-bold text-ds-foreground">
             {greeting()}, {displayName}
           </h1>
-          <p className="mt-1 text-zinc-500">
+          <p className="mt-1 text-ds-muted-foreground">
             {isB2B 
               ? `Manage your business account and orders`
               : `Manage your account, orders, and preferences`

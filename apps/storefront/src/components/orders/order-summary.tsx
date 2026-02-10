@@ -22,38 +22,38 @@ export function OrderSummary({
   paymentMethod,
 }: OrderSummaryProps) {
   return (
-    <div className="bg-white rounded-xl border border-zinc-200 p-6">
-      <h3 className="text-lg font-semibold text-zinc-900 mb-4">Order Summary</h3>
+    <div className="bg-ds-background rounded-xl border border-ds-border p-6">
+      <h3 className="text-lg font-semibold text-ds-foreground mb-4">Order Summary</h3>
       
       <div className="space-y-3">
         <div className="flex justify-between text-sm">
-          <span className="text-zinc-600">Subtotal</span>
-          <span className="text-zinc-900">{formatPrice(subtotal, currencyCode)}</span>
+          <span className="text-ds-muted-foreground">Subtotal</span>
+          <span className="text-ds-foreground">{formatPrice(subtotal, currencyCode)}</span>
         </div>
         
         <div className="flex justify-between text-sm">
-          <span className="text-zinc-600">Shipping</span>
-          <span className="text-zinc-900">
+          <span className="text-ds-muted-foreground">Shipping</span>
+          <span className="text-ds-foreground">
             {shippingTotal === 0 ? "Free" : formatPrice(shippingTotal, currencyCode)}
           </span>
         </div>
         
         <div className="flex justify-between text-sm">
-          <span className="text-zinc-600">Tax</span>
-          <span className="text-zinc-900">{formatPrice(taxTotal, currencyCode)}</span>
+          <span className="text-ds-muted-foreground">Tax</span>
+          <span className="text-ds-foreground">{formatPrice(taxTotal, currencyCode)}</span>
         </div>
         
         {discountTotal && discountTotal > 0 && (
           <div className="flex justify-between text-sm">
-            <span className="text-green-600">Discount</span>
-            <span className="text-green-600">-{formatPrice(discountTotal, currencyCode)}</span>
+            <span className="text-ds-success">Discount</span>
+            <span className="text-ds-success">-{formatPrice(discountTotal, currencyCode)}</span>
           </div>
         )}
         
-        <div className="pt-3 border-t border-zinc-200">
+        <div className="pt-3 border-t border-ds-border">
           <div className="flex justify-between">
-            <span className="font-semibold text-zinc-900">Total</span>
-            <span className="font-semibold text-zinc-900">
+            <span className="font-semibold text-ds-foreground">Total</span>
+            <span className="font-semibold text-ds-foreground">
               {formatPrice(total, currencyCode)}
             </span>
           </div>
@@ -62,17 +62,17 @@ export function OrderSummary({
 
       {/* Payment & Shipping Info */}
       {(shippingMethod || paymentMethod) && (
-        <div className="mt-6 pt-4 border-t border-zinc-200 space-y-3">
+        <div className="mt-6 pt-4 border-t border-ds-border space-y-3">
           {shippingMethod && (
             <div>
-              <p className="text-xs text-zinc-400 uppercase tracking-wider">Shipping Method</p>
-              <p className="text-sm text-zinc-900 mt-1">{shippingMethod}</p>
+              <p className="text-xs text-ds-muted-foreground uppercase tracking-wider">Shipping Method</p>
+              <p className="text-sm text-ds-foreground mt-1">{shippingMethod}</p>
             </div>
           )}
           {paymentMethod && (
             <div>
-              <p className="text-xs text-zinc-400 uppercase tracking-wider">Payment Method</p>
-              <p className="text-sm text-zinc-900 mt-1">{paymentMethod}</p>
+              <p className="text-xs text-ds-muted-foreground uppercase tracking-wider">Payment Method</p>
+              <p className="text-sm text-ds-foreground mt-1">{paymentMethod}</p>
             </div>
           )}
         </div>

@@ -65,7 +65,7 @@ export function DynamicHeader({
   })
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <header className="bg-ds-background border-b border-ds-border sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link to={`${prefix}` as any} className="flex-shrink-0">
@@ -82,19 +82,19 @@ export function DynamicHeader({
               >
                 <Link
                   to={item.href}
-                  className="flex items-center text-gray-700 hover:text-gray-900 text-sm font-medium"
+                  className="flex items-center text-ds-foreground hover:text-ds-foreground text-sm font-medium"
                 >
                   {item.label}
                   {item.children && <ChevronDownMini className="ml-1 h-4 w-4" />}
                 </Link>
                 
                 {item.children && activeDropdown === item.label && (
-                  <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                  <div className="absolute left-0 mt-2 w-48 bg-ds-background rounded-md shadow-lg py-1 z-50">
                     {item.children.map((child, childIndex) => (
                       <Link
                         key={childIndex}
                         to={child.href}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        className="block px-4 py-2 text-sm text-ds-foreground hover:bg-ds-muted"
                       >
                         {child.label}
                       </Link>
@@ -108,25 +108,25 @@ export function DynamicHeader({
           <div className="flex items-center space-x-4">
             <Link
               to={(isLoggedIn ? `${prefix}/account` : `${prefix}/login`) as any}
-              className="text-gray-700 hover:text-gray-900"
+              className="text-ds-foreground hover:text-ds-foreground"
             >
               <User className="h-6 w-6" />
             </Link>
 
             <Link
               to={`${prefix}/cart` as any}
-              className="text-gray-700 hover:text-gray-900 relative"
+              className="text-ds-foreground hover:text-ds-foreground relative"
             >
               <ShoppingBag className="h-6 w-6" />
               {cartItemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-black text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-black text-ds-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
                   {cartItemCount}
                 </span>
               )}
             </Link>
 
             <button
-              className="md:hidden text-gray-700"
+              className="md:hidden text-ds-foreground"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <XMark className="h-6 w-6" /> : <span className="text-2xl">&#9776;</span>}
@@ -136,13 +136,13 @@ export function DynamicHeader({
       </div>
 
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-gray-200">
+        <div className="md:hidden border-t border-ds-border">
           <div className="px-4 py-2 space-y-1">
             {navItems.map((item, index) => (
               <div key={index}>
                 <Link
                   to={item.href}
-                  className="block py-2 text-gray-700 hover:text-gray-900 font-medium"
+                  className="block py-2 text-ds-foreground hover:text-ds-foreground font-medium"
                   onClick={() => !item.children && setMobileMenuOpen(false)}
                 >
                   {item.label}
@@ -153,7 +153,7 @@ export function DynamicHeader({
                       <Link
                         key={childIndex}
                         to={child.href}
-                        className="block py-1 text-sm text-gray-600 hover:text-gray-900"
+                        className="block py-1 text-sm text-ds-muted-foreground hover:text-ds-foreground"
                         onClick={() => setMobileMenuOpen(false)}
                       >
                         {child.label}

@@ -10,11 +10,11 @@ export const Route = createFileRoute("/$tenant/$locale/account/bookings/")({
 })
 
 const statusColors: Record<string, string> = {
-  confirmed: "bg-green-100 text-green-700",
-  pending: "bg-yellow-100 text-yellow-700",
-  canceled: "bg-red-100 text-red-700",
-  completed: "bg-blue-100 text-blue-700",
-  no_show: "bg-zinc-100 text-zinc-700",
+  confirmed: "bg-ds-success text-ds-success",
+  pending: "bg-ds-warning text-ds-warning",
+  canceled: "bg-ds-destructive text-ds-destructive",
+  completed: "bg-ds-info text-ds-info",
+  no_show: "bg-ds-muted text-ds-foreground",
 }
 
 function BookingsPage() {
@@ -41,8 +41,8 @@ function BookingsPage() {
             onClick={() => setFilter(f)}
             className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
               filter === f
-                ? "bg-zinc-900 text-white"
-                : "bg-white text-zinc-600 border border-zinc-200 hover:bg-zinc-50"
+                ? "bg-ds-primary text-ds-primary-foreground"
+                : "bg-ds-background text-ds-muted-foreground border border-ds-border hover:bg-ds-muted"
             }`}
           >
             {f.charAt(0).toUpperCase() + f.slice(1)}
@@ -53,13 +53,13 @@ function BookingsPage() {
       {isLoading ? (
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-28 bg-zinc-100 rounded-lg animate-pulse" />
+            <div key={i} className="h-28 bg-ds-muted rounded-lg animate-pulse" />
           ))}
         </div>
       ) : !filteredBookings?.length ? (
-        <div className="bg-white rounded-lg border border-zinc-200 p-12 text-center">
-          <Calendar className="h-12 w-12 text-zinc-300 mx-auto mb-4" />
-          <p className="text-zinc-500 mb-4">
+        <div className="bg-ds-background rounded-lg border border-ds-border p-12 text-center">
+          <Calendar className="h-12 w-12 text-ds-muted-foreground mx-auto mb-4" />
+          <p className="text-ds-muted-foreground mb-4">
             {filter === "upcoming"
               ? "No upcoming bookings"
               : filter === "past"
@@ -68,7 +68,7 @@ function BookingsPage() {
           </p>
           <Link
             to={`${baseHref}/bookings` as any}
-            className="inline-flex items-center text-sm font-medium text-zinc-900 hover:underline"
+            className="inline-flex items-center text-sm font-medium text-ds-foreground hover:underline"
           >
             Book a service
             <ChevronRight className="h-4 w-4 ml-1" />
@@ -82,23 +82,23 @@ function BookingsPage() {
               <Link
                 key={booking.id}
                 to={`${baseHref}/account/bookings/${booking.id}` as any}
-                className="flex items-center gap-4 p-4 bg-white rounded-lg border border-zinc-200 hover:border-zinc-300 transition-colors"
+                className="flex items-center gap-4 p-4 bg-ds-background rounded-lg border border-ds-border hover:border-ds-border transition-colors"
               >
                 {/* Date Box */}
-                <div className="flex flex-col items-center justify-center w-16 h-16 bg-zinc-100 rounded-lg flex-shrink-0">
-                  <span className="text-xs font-medium text-zinc-500 uppercase">
+                <div className="flex flex-col items-center justify-center w-16 h-16 bg-ds-muted rounded-lg flex-shrink-0">
+                  <span className="text-xs font-medium text-ds-muted-foreground uppercase">
                     {scheduledDate.toLocaleDateString("en-US", { month: "short" })}
                   </span>
-                  <span className="text-2xl font-bold text-zinc-900">
+                  <span className="text-2xl font-bold text-ds-foreground">
                     {scheduledDate.getDate()}
                   </span>
                 </div>
 
                 {/* Info */}
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-zinc-900">{booking.service.name}</h3>
+                  <h3 className="font-semibold text-ds-foreground">{booking.service.name}</h3>
                   <div className="flex items-center gap-3 mt-1">
-                    <div className="flex items-center gap-1 text-sm text-zinc-500">
+                    <div className="flex items-center gap-1 text-sm text-ds-muted-foreground">
                       <Clock className="h-4 w-4" />
                       {scheduledDate.toLocaleTimeString("en-US", {
                         hour: "numeric",
@@ -106,12 +106,12 @@ function BookingsPage() {
                       })}
                     </div>
                     {booking.provider && (
-                      <span className="text-sm text-zinc-500">with {booking.provider.name}</span>
+                      <span className="text-sm text-ds-muted-foreground">with {booking.provider.name}</span>
                     )}
                   </div>
                   <span
                     className={`inline-block mt-2 px-2 py-1 text-xs font-medium rounded ${
-                      statusColors[booking.status] || "bg-zinc-100 text-zinc-700"
+                      statusColors[booking.status] || "bg-ds-muted text-ds-foreground"
                     }`}
                   >
                     {booking.status}
@@ -120,13 +120,13 @@ function BookingsPage() {
 
                 {/* Price */}
                 <div className="text-right flex-shrink-0">
-                  <p className="font-semibold text-zinc-900">
+                  <p className="font-semibold text-ds-foreground">
                     {formatPrice(booking.service.price, booking.service.currency_code || "usd")}
                   </p>
-                  <p className="text-sm text-zinc-500">{booking.service.duration} min</p>
+                  <p className="text-sm text-ds-muted-foreground">{booking.service.duration} min</p>
                 </div>
 
-                <ChevronRight className="h-5 w-5 text-zinc-400 flex-shrink-0" />
+                <ChevronRight className="h-5 w-5 text-ds-muted-foreground flex-shrink-0" />
               </Link>
             )
           })}

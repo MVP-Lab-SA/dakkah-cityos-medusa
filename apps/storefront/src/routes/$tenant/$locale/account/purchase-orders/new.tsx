@@ -80,7 +80,7 @@ function NewPurchaseOrderPage() {
       {/* Back Link */}
       <Link
         to={`/${tenant}/${locale}/account/purchase-orders` as any}
-        className="inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-zinc-900 mb-6"
+        className="inline-flex items-center gap-2 text-sm text-ds-muted-foreground hover:text-ds-foreground mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
         Back to Purchase Orders

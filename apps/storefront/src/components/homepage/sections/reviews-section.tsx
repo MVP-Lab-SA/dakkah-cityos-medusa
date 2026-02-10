@@ -27,8 +27,8 @@ export function ReviewsSection({ reviews, config }: ReviewsSectionProps) {
             key={star}
             className={`h-4 w-4 ${
               star <= rating 
-                ? 'text-yellow-400 fill-yellow-400' 
-                : 'text-gray-300'
+                ? 'text-ds-warning fill-ds-warning' 
+                : 'text-ds-muted-foreground'
             }`}
           />
         ))}
@@ -45,13 +45,13 @@ export function ReviewsSection({ reviews, config }: ReviewsSectionProps) {
   }
 
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-ds-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-2xl md:text-3xl font-bold">
             {config.title || "What Our Customers Say"}
           </h2>
-          <p className="mt-4 text-gray-600">
+          <p className="mt-4 text-ds-muted-foreground">
             {config.subtitle || "Real reviews from real customers"}
           </p>
         </div>
@@ -60,34 +60,34 @@ export function ReviewsSection({ reviews, config }: ReviewsSectionProps) {
           {reviews.map(review => (
             <div
               key={review.id}
-              className="bg-gray-50 rounded-lg p-6"
+              className="bg-ds-muted rounded-lg p-6"
             >
               <div className="flex items-center justify-between mb-4">
                 {renderStars(review.rating)}
                 {review.is_verified_purchase && (
-                  <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
+                  <span className="text-xs bg-ds-success text-ds-success px-2 py-1 rounded">
                     Verified Purchase
                   </span>
                 )}
               </div>
               {review.title && (
-                <h3 className="font-semibold text-gray-900 mb-2">
+                <h3 className="font-semibold text-ds-foreground mb-2">
                   {review.title}
                 </h3>
               )}
-              <p className="text-gray-600 text-sm line-clamp-4 mb-4">
+              <p className="text-ds-muted-foreground text-sm line-clamp-4 mb-4">
                 "{review.content}"
               </p>
               <div className="flex items-center justify-between text-sm">
-                <span className="font-medium text-gray-900">
+                <span className="font-medium text-ds-foreground">
                   {review.customer_name || "Anonymous"}
                 </span>
-                <span className="text-gray-500">
+                <span className="text-ds-muted-foreground">
                   {formatDate(review.created_at)}
                 </span>
               </div>
               {review.product_name && (
-                <p className="mt-2 text-xs text-gray-500">
+                <p className="mt-2 text-xs text-ds-muted-foreground">
                   Review for: {review.product_name}
                 </p>
               )}

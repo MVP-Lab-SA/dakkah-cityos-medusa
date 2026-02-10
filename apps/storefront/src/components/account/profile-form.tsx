@@ -45,13 +45,13 @@ export function ProfileForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
+        <div className="bg-ds-destructive border border-ds-destructive text-ds-destructive px-4 py-3 rounded-md text-sm">
           {error}
         </div>
       )}
 
       {success && (
-        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md text-sm flex items-center gap-2">
+        <div className="bg-ds-success border border-ds-success text-ds-success px-4 py-3 rounded-md text-sm flex items-center gap-2">
           <CheckCircleSolid className="h-4 w-4" />
           Profile updated successfully
         </div>
@@ -90,9 +90,9 @@ export function ProfileForm() {
           type="email"
           value={formData.email}
           disabled
-          className="h-11 bg-zinc-50 text-zinc-500"
+          className="h-11 bg-ds-muted text-ds-muted-foreground"
         />
-        <p className="text-xs text-zinc-500">Email cannot be changed</p>
+        <p className="text-xs text-ds-muted-foreground">Email cannot be changed</p>
       </div>
 
       <div className="space-y-2">

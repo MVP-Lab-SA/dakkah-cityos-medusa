@@ -50,8 +50,8 @@ const ShippingItemSelector = ({
       <div
         className={`flex items-center justify-between p-5 border transition-colors ${
           isSelected
-            ? "border-zinc-900 bg-zinc-50"
-            : "border-zinc-200 hover:border-zinc-300"
+            ? "border-ds-foreground bg-ds-muted"
+            : "border-ds-border hover:border-ds-border"
         }`}
       >
         <div className="flex items-center gap-4">
@@ -63,12 +63,12 @@ const ShippingItemSelector = ({
 
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
-              <p className="text-base font-semibold text-zinc-900">
+              <p className="text-base font-semibold text-ds-foreground">
                 {shippingOption.name}
               </p>
             </div>
             {shippingOption.data?.description !== undefined && (
-              <p className="text-xs text-zinc-600 mt-1">
+              <p className="text-xs text-ds-muted-foreground mt-1">
                 {shippingOption.data.description as string}
               </p>
             )}

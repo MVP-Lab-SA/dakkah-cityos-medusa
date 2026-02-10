@@ -82,15 +82,15 @@ export function BulkOrderForm({ onSubmit }: BulkOrderFormProps) {
   const invalidCount = parsedItems.filter((item) => !item.valid).length
 
   return (
-    <div className="bg-white rounded-xl border border-zinc-200 overflow-hidden">
-      <div className="px-6 py-4 border-b border-zinc-200">
-        <h3 className="text-lg font-semibold text-zinc-900">Bulk Order Upload</h3>
-        <p className="text-sm text-zinc-500 mt-1">Upload a CSV file with SKUs and quantities</p>
+    <div className="bg-ds-background rounded-xl border border-ds-border overflow-hidden">
+      <div className="px-6 py-4 border-b border-ds-border">
+        <h3 className="text-lg font-semibold text-ds-foreground">Bulk Order Upload</h3>
+        <p className="text-sm text-ds-muted-foreground mt-1">Upload a CSV file with SKUs and quantities</p>
       </div>
 
       <div className="p-6">
         {!file ? (
-          <div className="border-2 border-dashed border-zinc-200 rounded-xl p-8 text-center">
+          <div className="border-2 border-dashed border-ds-border rounded-xl p-8 text-center">
             <input
               ref={fileInputRef}
               type="file"
@@ -100,11 +100,11 @@ export function BulkOrderForm({ onSubmit }: BulkOrderFormProps) {
               id="csv-upload"
             />
             <label htmlFor="csv-upload" className="cursor-pointer">
-              <ArrowUpTray className="w-12 h-12 text-zinc-300 mx-auto mb-4" />
-              <p className="text-zinc-900 font-medium mb-1">
+              <ArrowUpTray className="w-12 h-12 text-ds-muted-foreground mx-auto mb-4" />
+              <p className="text-ds-foreground font-medium mb-1">
                 Drop your CSV file here or click to browse
               </p>
-              <p className="text-sm text-zinc-500">
+              <p className="text-sm text-ds-muted-foreground">
                 CSV should have columns: SKU, Quantity
               </p>
             </label>
@@ -112,63 +112,63 @@ export function BulkOrderForm({ onSubmit }: BulkOrderFormProps) {
         ) : (
           <div>
             {/* File Info */}
-            <div className="flex items-center justify-between p-4 bg-zinc-50 rounded-lg mb-4">
+            <div className="flex items-center justify-between p-4 bg-ds-muted rounded-lg mb-4">
               <div className="flex items-center gap-3">
-                <DocumentText className="w-8 h-8 text-zinc-600" />
+                <DocumentText className="w-8 h-8 text-ds-muted-foreground" />
                 <div>
-                  <p className="font-medium text-zinc-900">{file.name}</p>
-                  <p className="text-sm text-zinc-500">
+                  <p className="font-medium text-ds-foreground">{file.name}</p>
+                  <p className="text-sm text-ds-muted-foreground">
                     {(file.size / 1024).toFixed(1)} KB
                   </p>
                 </div>
               </div>
               <button
                 onClick={clearFile}
-                className="p-2 hover:bg-zinc-200 rounded-lg transition-colors"
+                className="p-2 hover:bg-ds-muted rounded-lg transition-colors"
               >
-                <XMark className="w-5 h-5 text-zinc-500" />
+                <XMark className="w-5 h-5 text-ds-muted-foreground" />
               </button>
             </div>
 
             {/* Results */}
             {isUploading ? (
-              <p className="text-center text-zinc-500 py-4">Parsing file...</p>
+              <p className="text-center text-ds-muted-foreground py-4">Parsing file...</p>
             ) : parsedItems.length > 0 ? (
               <div className="space-y-4">
                 {/* Summary */}
                 <div className="flex gap-4">
-                  <div className="flex items-center gap-2 px-3 py-2 bg-green-50 rounded-lg">
-                    <Check className="w-4 h-4 text-green-600" />
-                    <span className="text-sm text-green-700">{validCount} valid items</span>
+                  <div className="flex items-center gap-2 px-3 py-2 bg-ds-success rounded-lg">
+                    <Check className="w-4 h-4 text-ds-success" />
+                    <span className="text-sm text-ds-success">{validCount} valid items</span>
                   </div>
                   {invalidCount > 0 && (
-                    <div className="flex items-center gap-2 px-3 py-2 bg-red-50 rounded-lg">
-                      <XMark className="w-4 h-4 text-red-600" />
-                      <span className="text-sm text-red-700">{invalidCount} invalid items</span>
+                    <div className="flex items-center gap-2 px-3 py-2 bg-ds-destructive rounded-lg">
+                      <XMark className="w-4 h-4 text-ds-destructive" />
+                      <span className="text-sm text-ds-destructive">{invalidCount} invalid items</span>
                     </div>
                   )}
                 </div>
 
                 {/* Item List Preview */}
-                <div className="max-h-60 overflow-auto border border-zinc-200 rounded-lg">
+                <div className="max-h-60 overflow-auto border border-ds-border rounded-lg">
                   <table className="w-full text-sm">
-                    <thead className="bg-zinc-50 sticky top-0">
+                    <thead className="bg-ds-muted sticky top-0">
                       <tr>
                         <th className="px-4 py-2 text-left">SKU</th>
                         <th className="px-4 py-2 text-left">Quantity</th>
                         <th className="px-4 py-2 text-left">Status</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-zinc-100">
+                    <tbody className="divide-y divide-ds-border">
                       {parsedItems.slice(0, 10).map((item, index) => (
                         <tr key={index}>
                           <td className="px-4 py-2 font-mono">{item.sku || "-"}</td>
                           <td className="px-4 py-2">{item.quantity}</td>
                           <td className="px-4 py-2">
                             {item.valid ? (
-                              <span className="text-green-600">Valid</span>
+                              <span className="text-ds-success">Valid</span>
                             ) : (
-                              <span className="text-red-600">{item.error}</span>
+                              <span className="text-ds-destructive">{item.error}</span>
                             )}
                           </td>
                         </tr>
@@ -176,7 +176,7 @@ export function BulkOrderForm({ onSubmit }: BulkOrderFormProps) {
                     </tbody>
                   </table>
                   {parsedItems.length > 10 && (
-                    <p className="px-4 py-2 text-sm text-zinc-500 bg-zinc-50">
+                    <p className="px-4 py-2 text-sm text-ds-muted-foreground bg-ds-muted">
                       And {parsedItems.length - 10} more items...
                     </p>
                   )}
@@ -188,7 +188,7 @@ export function BulkOrderForm({ onSubmit }: BulkOrderFormProps) {
       </div>
 
       {parsedItems.length > 0 && validCount > 0 && (
-        <div className="px-6 py-4 border-t border-zinc-200">
+        <div className="px-6 py-4 border-t border-ds-border">
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting}

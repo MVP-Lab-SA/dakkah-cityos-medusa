@@ -76,37 +76,37 @@ export function PlanChangeModal({
                 disabled={isCurrent}
                 className={cn(
                   "w-full text-left p-4 rounded-xl border-2 transition-all",
-                  isCurrent && "border-zinc-200 bg-zinc-50 opacity-60 cursor-not-allowed",
-                  isSelected && !isCurrent && "border-zinc-900 bg-zinc-50",
-                  !isCurrent && !isSelected && "border-zinc-200 hover:border-zinc-300"
+                  isCurrent && "border-ds-border bg-ds-muted opacity-60 cursor-not-allowed",
+                  isSelected && !isCurrent && "border-ds-foreground bg-ds-muted",
+                  !isCurrent && !isSelected && "border-ds-border hover:border-ds-border"
                 )}
               >
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-zinc-900">{plan.name}</h3>
+                      <h3 className="font-semibold text-ds-foreground">{plan.name}</h3>
                       {isCurrent && (
-                        <span className="px-2 py-0.5 rounded text-xs bg-zinc-200 text-zinc-600">
+                        <span className="px-2 py-0.5 rounded text-xs bg-ds-muted text-ds-muted-foreground">
                           Current
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-zinc-500 mt-1">{plan.description}</p>
+                    <p className="text-sm text-ds-muted-foreground mt-1">{plan.description}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold text-zinc-900">
+                    <p className="font-semibold text-ds-foreground">
                       {formatPrice(plan.price, plan.currency_code)}
                     </p>
-                    <p className="text-xs text-zinc-500">/{plan.billing_interval}</p>
+                    <p className="text-xs text-ds-muted-foreground">/{plan.billing_interval}</p>
                   </div>
                 </div>
 
                 {plan.features.length > 0 && (
-                  <div className="mt-3 pt-3 border-t border-zinc-100">
+                  <div className="mt-3 pt-3 border-t border-ds-border">
                     <ul className="grid grid-cols-2 gap-2">
                       {plan.features.slice(0, 4).map((feature, index) => (
-                        <li key={index} className="flex items-center gap-2 text-sm text-zinc-600">
-                          <Check className="w-4 h-4 text-green-500" />
+                        <li key={index} className="flex items-center gap-2 text-sm text-ds-muted-foreground">
+                          <Check className="w-4 h-4 text-ds-success" />
                           {feature}
                         </li>
                       ))}
@@ -120,15 +120,15 @@ export function PlanChangeModal({
 
         {/* Summary */}
         {selectedPlan && (
-          <div className="mt-6 p-4 bg-zinc-50 rounded-xl">
+          <div className="mt-6 p-4 bg-ds-muted rounded-xl">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-zinc-600">
+                <p className="text-sm text-ds-muted-foreground">
                   Switching from <span className="font-medium">{currentPlan?.name}</span> to{" "}
                   <span className="font-medium">{selectedPlan.name}</span>
                 </p>
                 {getPriceDifference() && (
-                  <p className="text-sm text-zinc-500 mt-1">
+                  <p className="text-sm text-ds-muted-foreground mt-1">
                     Price change: {getPriceDifference()}
                   </p>
                 )}

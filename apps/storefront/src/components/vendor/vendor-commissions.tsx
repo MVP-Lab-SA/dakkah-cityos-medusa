@@ -65,13 +65,13 @@ export function VendorCommissions() {
         </div>
         <div className="border rounded-lg p-6">
           <p className="text-sm text-muted-foreground mb-1">Commission Paid</p>
-          <p className="text-2xl font-bold text-red-600">
+          <p className="text-2xl font-bold text-ds-destructive">
             -${(summary?.total_commission || 0).toFixed(2)}
           </p>
         </div>
         <div className="border rounded-lg p-6">
           <p className="text-sm text-muted-foreground mb-1">Net Earnings</p>
-          <p className="text-2xl font-bold text-green-700">
+          <p className="text-2xl font-bold text-ds-success">
             ${(summary?.total_net || 0).toFixed(2)}
           </p>
         </div>
@@ -114,10 +114,10 @@ export function VendorCommissions() {
                     <td className="p-4 text-right">
                       ${Number(commission.gross_amount).toFixed(2)}
                     </td>
-                    <td className="p-4 text-right text-red-600">
+                    <td className="p-4 text-right text-ds-destructive">
                       -${Number(commission.commission_amount).toFixed(2)}
                     </td>
-                    <td className="p-4 text-right text-green-700 font-medium">
+                    <td className="p-4 text-right text-ds-success font-medium">
                       ${Number(commission.net_amount).toFixed(2)}
                     </td>
                   </tr>

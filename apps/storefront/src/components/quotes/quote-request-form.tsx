@@ -146,15 +146,15 @@ export function QuoteRequestForm() {
           onBlur={() => setTouched(prev => ({ ...prev, notes: true }))}
           placeholder="Tell us about your needs, timeline, or any special requirements..."
           className={`w-full min-h-32 p-3 border rounded-lg resize-none ${
-            errors.notes ? "border-red-500" : ""
+            errors.notes ? "border-ds-destructive" : ""
           }`}
           maxLength={MAX_NOTES_LENGTH + 100}
         />
         <div className="flex justify-between mt-1">
           {errors.notes && (
-            <p className="text-sm text-red-500">{errors.notes}</p>
+            <p className="text-sm text-ds-destructive">{errors.notes}</p>
           )}
-          <p className={`text-sm ml-auto ${notes.length > MAX_NOTES_LENGTH ? "text-red-500" : "text-muted-foreground"}`}>
+          <p className={`text-sm ml-auto ${notes.length > MAX_NOTES_LENGTH ? "text-ds-destructive" : "text-muted-foreground"}`}>
             {notes.length}/{MAX_NOTES_LENGTH}
           </p>
         </div>

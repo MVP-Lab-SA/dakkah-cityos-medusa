@@ -1,8 +1,8 @@
-import { ColorTokens } from "../../cityos-design-tokens/src/colors/ColorTokens"
-import { TypographyTokens } from "../../cityos-design-tokens/src/typography/TypographyTokens"
-import { SpacingTokens } from "../../cityos-design-tokens/src/spacing/SpacingTokens"
-import { ShadowTokens } from "../../cityos-design-tokens/src/shadows/ShadowTokens"
-import { BorderTokens } from "../../cityos-design-tokens/src/borders/BorderTokens"
+import { ColorTokens } from "@dakkah-cityos/design-tokens/colors"
+import { TypographyTokens } from "@dakkah-cityos/design-tokens/typography"
+import { SpacingTokens } from "@dakkah-cityos/design-tokens/spacing"
+import { ShadowTokens } from "@dakkah-cityos/design-tokens/shadows"
+import { BorderTokens } from "@dakkah-cityos/design-tokens/borders"
 import type { Theme, CreateThemeOptions, DeepPartial } from "./ThemeTypes"
 
 export const lightTheme: Theme = {

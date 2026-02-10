@@ -42,9 +42,9 @@ export function BookingActions({
 
   if (isCancelled) {
     return (
-      <div className="bg-white rounded-xl border border-zinc-200 p-6">
-        <h3 className="text-lg font-semibold text-zinc-900 mb-2">Booking Cancelled</h3>
-        <p className="text-sm text-zinc-500 mb-4">
+      <div className="bg-ds-background rounded-xl border border-ds-border p-6">
+        <h3 className="text-lg font-semibold text-ds-foreground mb-2">Booking Cancelled</h3>
+        <p className="text-sm text-ds-muted-foreground mb-4">
           This booking has been cancelled. You can book a new appointment anytime.
         </p>
         <Button>Book New Appointment</Button>
@@ -54,9 +54,9 @@ export function BookingActions({
 
   if (isCompleted) {
     return (
-      <div className="bg-white rounded-xl border border-zinc-200 p-6">
-        <h3 className="text-lg font-semibold text-zinc-900 mb-2">Booking Completed</h3>
-        <p className="text-sm text-zinc-500 mb-4">
+      <div className="bg-ds-background rounded-xl border border-ds-border p-6">
+        <h3 className="text-lg font-semibold text-ds-foreground mb-2">Booking Completed</h3>
+        <p className="text-sm text-ds-muted-foreground mb-4">
           This appointment has been completed. Thank you for your visit!
         </p>
         <div className="space-y-3">
@@ -70,8 +70,8 @@ export function BookingActions({
   }
 
   return (
-    <div className="bg-white rounded-xl border border-zinc-200 p-6">
-      <h3 className="text-lg font-semibold text-zinc-900 mb-4">Manage Booking</h3>
+    <div className="bg-ds-background rounded-xl border border-ds-border p-6">
+      <h3 className="text-lg font-semibold text-ds-foreground mb-4">Manage Booking</h3>
       
       <div className="space-y-3">
         {/* Reschedule */}
@@ -90,7 +90,7 @@ export function BookingActions({
         {canCancel && isActive && onCancel && (
           <Button
             variant="ghost"
-            className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+            className="w-full justify-start text-ds-destructive hover:text-ds-destructive hover:bg-ds-destructive"
             onClick={handleCancel}
             disabled={isCancelling}
           >
@@ -100,7 +100,7 @@ export function BookingActions({
         )}
 
         {/* Get Help */}
-        <Button variant="ghost" className="w-full justify-start text-zinc-600">
+        <Button variant="ghost" className="w-full justify-start text-ds-muted-foreground">
           <ChatBubbleLeftRight className="w-4 h-4 mr-2" />
           Contact Support
         </Button>
@@ -108,7 +108,7 @@ export function BookingActions({
 
       {/* Cancellation Policy */}
       {isActive && (
-        <p className="mt-4 text-xs text-zinc-500">
+        <p className="mt-4 text-xs text-ds-muted-foreground">
           Free cancellation up to 24 hours before your appointment. 
           Late cancellations may incur a fee.
         </p>

@@ -19,8 +19,8 @@ function PurchaseOrdersPage() {
     <AccountLayout>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900">Purchase Orders</h1>
-          <p className="text-zinc-500 mt-1">Manage your company's purchase orders</p>
+          <h1 className="text-2xl font-bold text-ds-foreground">Purchase Orders</h1>
+          <p className="text-ds-muted-foreground mt-1">Manage your company's purchase orders</p>
         </div>
         <Link to={`/${tenant}/${locale}/account/purchase-orders/new` as any}>
           <Button>
@@ -32,7 +32,7 @@ function PurchaseOrdersPage() {
 
       {isLoading ? (
         <div className="text-center py-12">
-          <p className="text-zinc-500">Loading purchase orders...</p>
+          <p className="text-ds-muted-foreground">Loading purchase orders...</p>
         </div>
       ) : (
         <POList

@@ -61,18 +61,18 @@ export function SubscriptionEvents({ subscriptionId }: SubscriptionEventsProps) 
 
 function EventDot({ type }: { type: string }) {
   const colors: Record<string, string> = {
-    created: "bg-blue-500",
-    activated: "bg-green-500",
-    paused: "bg-yellow-500",
-    resumed: "bg-green-500",
-    cancelled: "bg-red-500",
-    renewed: "bg-blue-500",
+    created: "bg-ds-info",
+    activated: "bg-ds-success",
+    paused: "bg-ds-warning",
+    resumed: "bg-ds-success",
+    cancelled: "bg-ds-destructive",
+    renewed: "bg-ds-info",
     plan_changed: "bg-purple-500",
-    payment_failed: "bg-red-500",
-    payment_succeeded: "bg-green-500",
+    payment_failed: "bg-ds-destructive",
+    payment_succeeded: "bg-ds-success",
     trial_started: "bg-indigo-500",
     trial_ended: "bg-orange-500",
   }
 
-  return <div className={`w-3 h-3 rounded-full ${colors[type] || "bg-gray-400"}`}></div>
+  return <div className={`w-3 h-3 rounded-full ${colors[type] || "bg-ds-muted"}`}></div>
 }

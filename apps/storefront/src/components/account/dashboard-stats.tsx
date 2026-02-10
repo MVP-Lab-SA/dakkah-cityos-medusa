@@ -18,13 +18,13 @@ export function DashboardStats({
       icon: ShoppingBag,
       label: "Total Orders",
       value: orderCount,
-      color: "bg-blue-50 text-blue-600",
+      color: "bg-ds-info text-ds-info",
     },
     {
       icon: CreditCard,
       label: "Active Subscriptions",
       value: subscriptionCount,
-      color: "bg-green-50 text-green-600",
+      color: "bg-ds-success text-ds-success",
     },
     {
       icon: Calendar,
@@ -47,14 +47,14 @@ export function DashboardStats({
         return (
           <div
             key={stat.label}
-            className="bg-white rounded-lg border border-zinc-200 p-4 flex items-center gap-4"
+            className="bg-ds-background rounded-lg border border-ds-border p-4 flex items-center gap-4"
           >
             <div className={`p-3 rounded-lg ${stat.color}`}>
               <Icon className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-zinc-900">{stat.value}</p>
-              <p className="text-sm text-zinc-500">{stat.label}</p>
+              <p className="text-2xl font-bold text-ds-foreground">{stat.value}</p>
+              <p className="text-sm text-ds-muted-foreground">{stat.label}</p>
             </div>
           </div>
         )

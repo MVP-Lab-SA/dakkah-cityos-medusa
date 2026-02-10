@@ -115,21 +115,21 @@ export function ApprovalRequestDetail({ requestId }: ApprovalRequestDetailProps)
 
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    pending: "bg-yellow-100 text-yellow-800",
-    approved: "bg-green-100 text-green-800",
-    rejected: "bg-red-100 text-red-800",
-    cancelled: "bg-gray-100 text-gray-800",
+    pending: "bg-ds-warning text-ds-warning",
+    approved: "bg-ds-success text-ds-success",
+    rejected: "bg-ds-destructive text-ds-destructive",
+    cancelled: "bg-ds-muted text-ds-foreground",
     expired: "bg-orange-100 text-orange-800",
   }
-  return <span className={`px-3 py-1 rounded-full text-sm font-medium ${styles[status] || "bg-gray-100"}`}>{status}</span>
+  return <span className={`px-3 py-1 rounded-full text-sm font-medium ${styles[status] || "bg-ds-muted"}`}>{status}</span>
 }
 
 function ActionBadge({ action }: { action: string }) {
   const styles: Record<string, string> = {
-    approve: "bg-green-100 text-green-800",
-    reject: "bg-red-100 text-red-800",
-    request_changes: "bg-yellow-100 text-yellow-800",
-    escalate: "bg-blue-100 text-blue-800",
+    approve: "bg-ds-success text-ds-success",
+    reject: "bg-ds-destructive text-ds-destructive",
+    request_changes: "bg-ds-warning text-ds-warning",
+    escalate: "bg-ds-info text-ds-info",
   }
-  return <span className={`px-2 py-0.5 rounded text-xs font-medium ${styles[action] || "bg-gray-100"}`}>{action}</span>
+  return <span className={`px-2 py-0.5 rounded text-xs font-medium ${styles[action] || "bg-ds-muted"}`}>{action}</span>
 }

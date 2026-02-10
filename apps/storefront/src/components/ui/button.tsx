@@ -28,17 +28,17 @@ export const Button = ({
         size === "sm" && "h-9 px-3 text-sm",
         size === "lg" && "h-12 px-6 text-lg",
         {
-          "bg-zinc-800 text-white hover:bg-zinc-700 active:bg-zinc-600 border-transparent":
+          "bg-ds-primary text-ds-primary-foreground hover:opacity-90 active:opacity-80 border-transparent":
             variant === "primary",
-          "bg-white text-zinc-900 hover:bg-zinc-100 active:bg-zinc-200 border-zinc-900":
+          "bg-ds-secondary text-ds-secondary-foreground hover:bg-ds-muted border-ds-border":
             variant === "secondary",
-          "bg-rose-500 text-white hover:bg-rose-600 active:bg-rose-900 border-transparent":
+          "bg-ds-destructive text-ds-destructive-foreground hover:opacity-90 active:opacity-80 border-transparent":
             variant === "danger",
-          "bg-transparent text-zinc-900 hover:bg-transparent active:bg-transparent border-transparent":
+          "bg-transparent text-ds-foreground hover:bg-transparent active:bg-transparent border-transparent":
             variant === "transparent",
-          "bg-transparent text-zinc-900 hover:bg-zinc-100 active:bg-zinc-200 border-zinc-200":
+          "bg-transparent text-ds-foreground hover:bg-ds-muted active:bg-ds-accent border-ds-border":
             variant === "outline",
-          "bg-transparent text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 border-transparent":
+          "bg-transparent text-ds-muted-foreground hover:bg-ds-muted hover:text-ds-foreground border-transparent":
             variant === "ghost",
         },
         className

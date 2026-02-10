@@ -62,15 +62,15 @@ interface OrderDetailProps {
 }
 
 const statusColors: Record<string, string> = {
-  pending: "bg-yellow-100 text-yellow-700",
-  completed: "bg-green-100 text-green-700",
-  canceled: "bg-red-100 text-red-700",
-  processing: "bg-blue-100 text-blue-700",
+  pending: "bg-ds-warning text-ds-warning",
+  completed: "bg-ds-success text-ds-success",
+  canceled: "bg-ds-destructive text-ds-destructive",
+  processing: "bg-ds-info text-ds-info",
   shipped: "bg-purple-100 text-purple-700",
   requires_action: "bg-orange-100 text-orange-700",
-  not_fulfilled: "bg-yellow-100 text-yellow-700",
-  fulfilled: "bg-green-100 text-green-700",
-  partially_fulfilled: "bg-blue-100 text-blue-700",
+  not_fulfilled: "bg-ds-warning text-ds-warning",
+  fulfilled: "bg-ds-success text-ds-success",
+  partially_fulfilled: "bg-ds-info text-ds-info",
 }
 
 const statusLabels: Record<string, string> = {
@@ -85,11 +85,11 @@ export function OrderDetail({ order }: OrderDetailProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white rounded-lg border border-zinc-200 p-6">
+      <div className="bg-ds-background rounded-lg border border-ds-border p-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-zinc-900">Order #{order.display_id}</h1>
-            <p className="text-sm text-zinc-500 mt-1">
+            <h1 className="text-2xl font-bold text-ds-foreground">Order #{order.display_id}</h1>
+            <p className="text-sm text-ds-muted-foreground mt-1">
               Placed on{" "}
               {new Date(order.created_at).toLocaleDateString("en-US", {
                 year: "numeric",
@@ -102,7 +102,7 @@ export function OrderDetail({ order }: OrderDetailProps) {
           </div>
           <span
             className={`inline-block px-3 py-1.5 text-sm font-medium rounded-full ${
-              statusColors[order.fulfillment_status] || "bg-zinc-100 text-zinc-700"
+              statusColors[order.fulfillment_status] || "bg-ds-muted text-ds-foreground"
             }`}
           >
             {statusLabels[order.fulfillment_status] || order.fulfillment_status}
@@ -112,16 +112,16 @@ export function OrderDetail({ order }: OrderDetailProps) {
 
       {/* Tracking */}
       {order.fulfillments?.some((f) => f.tracking_numbers?.length) && (
-        <div className="bg-white rounded-lg border border-zinc-200 p-6">
+        <div className="bg-ds-background rounded-lg border border-ds-border p-6">
           <div className="flex items-center gap-3 mb-4">
-            <TruckFast className="h-5 w-5 text-zinc-600" />
-            <h2 className="text-lg font-semibold text-zinc-900">Tracking</h2>
+            <TruckFast className="h-5 w-5 text-ds-muted-foreground" />
+            <h2 className="text-lg font-semibold text-ds-foreground">Tracking</h2>
           </div>
           {order.fulfillments?.map((fulfillment) =>
             fulfillment.tracking_numbers?.map((tracking, idx) => (
               <div key={tracking} className="flex items-center justify-between py-2">
-                <span className="text-sm text-zinc-600">Tracking #{idx + 1}</span>
-                <span className="text-sm font-medium text-zinc-900">{tracking}</span>
+                <span className="text-sm text-ds-muted-foreground">Tracking #{idx + 1}</span>
+                <span className="text-sm font-medium text-ds-foreground">{tracking}</span>
               </div>
             ))
           )}
@@ -129,14 +129,14 @@ export function OrderDetail({ order }: OrderDetailProps) {
       )}
 
       {/* Items */}
-      <div className="bg-white rounded-lg border border-zinc-200 overflow-hidden">
-        <div className="p-4 border-b border-zinc-200">
-          <h2 className="text-lg font-semibold text-zinc-900">Items</h2>
+      <div className="bg-ds-background rounded-lg border border-ds-border overflow-hidden">
+        <div className="p-4 border-b border-ds-border">
+          <h2 className="text-lg font-semibold text-ds-foreground">Items</h2>
         </div>
-        <div className="divide-y divide-zinc-100">
+        <div className="divide-y divide-ds-border">
           {order.items.map((item) => (
             <div key={item.id} className="flex gap-4 p-4">
-              <div className="w-20 h-20 rounded-md bg-zinc-100 overflow-hidden flex-shrink-0">
+              <div className="w-20 h-20 rounded-md bg-ds-muted overflow-hidden flex-shrink-0">
                 {item.thumbnail ? (
                   <img
                     src={item.thumbnail}
@@ -144,23 +144,23 @@ export function OrderDetail({ order }: OrderDetailProps) {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-zinc-400">
+                  <div className="w-full h-full flex items-center justify-center text-ds-muted-foreground">
                     <ShoppingBag className="h-8 w-8" />
                   </div>
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-zinc-900">{item.title}</p>
+                <p className="font-medium text-ds-foreground">{item.title}</p>
                 {item.description && (
-                  <p className="text-sm text-zinc-500 mt-1">{item.description}</p>
+                  <p className="text-sm text-ds-muted-foreground mt-1">{item.description}</p>
                 )}
-                <p className="text-sm text-zinc-500 mt-1">Qty: {item.quantity}</p>
+                <p className="text-sm text-ds-muted-foreground mt-1">Qty: {item.quantity}</p>
               </div>
               <div className="text-right">
-                <p className="font-medium text-zinc-900">
+                <p className="font-medium text-ds-foreground">
                   {formatPrice(item.total, order.currency_code)}
                 </p>
-                <p className="text-sm text-zinc-500">
+                <p className="text-sm text-ds-muted-foreground">
                   {formatPrice(item.unit_price, order.currency_code)} each
                 </p>
               </div>
@@ -170,36 +170,36 @@ export function OrderDetail({ order }: OrderDetailProps) {
       </div>
 
       {/* Summary */}
-      <div className="bg-white rounded-lg border border-zinc-200 p-6">
-        <h2 className="text-lg font-semibold text-zinc-900 mb-4">Order Summary</h2>
+      <div className="bg-ds-background rounded-lg border border-ds-border p-6">
+        <h2 className="text-lg font-semibold text-ds-foreground mb-4">Order Summary</h2>
         <div className="space-y-3">
           <div className="flex justify-between text-sm">
-            <span className="text-zinc-600">Subtotal</span>
-            <span className="text-zinc-900">{formatPrice(order.subtotal, order.currency_code)}</span>
+            <span className="text-ds-muted-foreground">Subtotal</span>
+            <span className="text-ds-foreground">{formatPrice(order.subtotal, order.currency_code)}</span>
           </div>
           {order.discount_total > 0 && (
             <div className="flex justify-between text-sm">
-              <span className="text-zinc-600">Discount</span>
-              <span className="text-green-600">
+              <span className="text-ds-muted-foreground">Discount</span>
+              <span className="text-ds-success">
                 -{formatPrice(order.discount_total, order.currency_code)}
               </span>
             </div>
           )}
           <div className="flex justify-between text-sm">
-            <span className="text-zinc-600">Shipping</span>
-            <span className="text-zinc-900">
+            <span className="text-ds-muted-foreground">Shipping</span>
+            <span className="text-ds-foreground">
               {order.shipping_total === 0
                 ? "Free"
                 : formatPrice(order.shipping_total, order.currency_code)}
             </span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-zinc-600">Tax</span>
-            <span className="text-zinc-900">{formatPrice(order.tax_total, order.currency_code)}</span>
+            <span className="text-ds-muted-foreground">Tax</span>
+            <span className="text-ds-foreground">{formatPrice(order.tax_total, order.currency_code)}</span>
           </div>
-          <div className="flex justify-between text-lg font-semibold pt-3 border-t border-zinc-200">
-            <span className="text-zinc-900">Total</span>
-            <span className="text-zinc-900">{formatPrice(order.total, order.currency_code)}</span>
+          <div className="flex justify-between text-lg font-semibold pt-3 border-t border-ds-border">
+            <span className="text-ds-foreground">Total</span>
+            <span className="text-ds-foreground">{formatPrice(order.total, order.currency_code)}</span>
           </div>
         </div>
       </div>
@@ -207,13 +207,13 @@ export function OrderDetail({ order }: OrderDetailProps) {
       {/* Addresses */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {order.shipping_address && (
-          <div className="bg-white rounded-lg border border-zinc-200 p-6">
+          <div className="bg-ds-background rounded-lg border border-ds-border p-6">
             <div className="flex items-center gap-3 mb-4">
-              <MapPin className="h-5 w-5 text-zinc-600" />
-              <h2 className="text-lg font-semibold text-zinc-900">Shipping Address</h2>
+              <MapPin className="h-5 w-5 text-ds-muted-foreground" />
+              <h2 className="text-lg font-semibold text-ds-foreground">Shipping Address</h2>
             </div>
-            <div className="text-sm text-zinc-600 space-y-1">
-              <p className="font-medium text-zinc-900">
+            <div className="text-sm text-ds-muted-foreground space-y-1">
+              <p className="font-medium text-ds-foreground">
                 {order.shipping_address.first_name} {order.shipping_address.last_name}
               </p>
               <p>{order.shipping_address.address_1}</p>
@@ -230,13 +230,13 @@ export function OrderDetail({ order }: OrderDetailProps) {
         )}
 
         {order.billing_address && (
-          <div className="bg-white rounded-lg border border-zinc-200 p-6">
+          <div className="bg-ds-background rounded-lg border border-ds-border p-6">
             <div className="flex items-center gap-3 mb-4">
-              <CreditCard className="h-5 w-5 text-zinc-600" />
-              <h2 className="text-lg font-semibold text-zinc-900">Billing Address</h2>
+              <CreditCard className="h-5 w-5 text-ds-muted-foreground" />
+              <h2 className="text-lg font-semibold text-ds-foreground">Billing Address</h2>
             </div>
-            <div className="text-sm text-zinc-600 space-y-1">
-              <p className="font-medium text-zinc-900">
+            <div className="text-sm text-ds-muted-foreground space-y-1">
+              <p className="font-medium text-ds-foreground">
                 {order.billing_address.first_name} {order.billing_address.last_name}
               </p>
               <p>{order.billing_address.address_1}</p>

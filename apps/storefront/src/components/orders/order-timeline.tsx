@@ -65,8 +65,8 @@ export function OrderTimeline({ currentStatus, events }: OrderTimelineProps) {
   })
 
   return (
-    <div className="bg-white rounded-xl border border-zinc-200 p-6">
-      <h3 className="text-lg font-semibold text-zinc-900 mb-6">Order Timeline</h3>
+    <div className="bg-ds-background rounded-xl border border-ds-border p-6">
+      <h3 className="text-lg font-semibold text-ds-foreground mb-6">Order Timeline</h3>
       
       <div className="relative">
         {stepsWithDates.map((step, index) => {
@@ -80,23 +80,23 @@ export function OrderTimeline({ currentStatus, events }: OrderTimelineProps) {
                 <div
                   className={cn(
                     "w-10 h-10 rounded-full flex items-center justify-center",
-                    status === "completed" && "bg-green-100",
-                    status === "current" && "bg-blue-100",
-                    status === "pending" && "bg-zinc-100",
-                    status === "cancelled" && "bg-red-100"
+                    status === "completed" && "bg-ds-success",
+                    status === "current" && "bg-ds-info",
+                    status === "pending" && "bg-ds-muted",
+                    status === "cancelled" && "bg-ds-destructive"
                   )}
                 >
                   {status === "completed" && (
-                    <Check className="w-5 h-5 text-green-600" />
+                    <Check className="w-5 h-5 text-ds-success" />
                   )}
                   {status === "current" && (
-                    <Clock className="w-5 h-5 text-blue-600" />
+                    <Clock className="w-5 h-5 text-ds-info" />
                   )}
                   {status === "pending" && (
-                    <div className="w-2 h-2 rounded-full bg-zinc-300" />
+                    <div className="w-2 h-2 rounded-full bg-ds-muted" />
                   )}
                   {status === "cancelled" && (
-                    <XMark className="w-5 h-5 text-red-600" />
+                    <XMark className="w-5 h-5 text-ds-destructive" />
                   )}
                 </div>
                 {/* Line */}
@@ -104,7 +104,7 @@ export function OrderTimeline({ currentStatus, events }: OrderTimelineProps) {
                   <div
                     className={cn(
                       "absolute left-1/2 top-10 w-0.5 h-full -translate-x-1/2",
-                      status === "completed" ? "bg-green-200" : "bg-zinc-200"
+                      status === "completed" ? "bg-ds-success" : "bg-ds-muted"
                     )}
                   />
                 )}
@@ -115,21 +115,21 @@ export function OrderTimeline({ currentStatus, events }: OrderTimelineProps) {
                 <p
                   className={cn(
                     "font-medium",
-                    status === "completed" && "text-green-700",
-                    status === "current" && "text-blue-700",
-                    status === "pending" && "text-zinc-400",
-                    status === "cancelled" && "text-red-700"
+                    status === "completed" && "text-ds-success",
+                    status === "current" && "text-ds-info",
+                    status === "pending" && "text-ds-muted-foreground",
+                    status === "cancelled" && "text-ds-destructive"
                   )}
                 >
                   {step.label}
                 </p>
                 {step.date && (
-                  <p className="text-sm text-zinc-500 mt-0.5">
+                  <p className="text-sm text-ds-muted-foreground mt-0.5">
                     {formatDate(step.date)}
                   </p>
                 )}
                 {step.description && (
-                  <p className="text-sm text-zinc-600 mt-1">{step.description}</p>
+                  <p className="text-sm text-ds-muted-foreground mt-1">{step.description}</p>
                 )}
               </div>
             </div>
@@ -138,15 +138,15 @@ export function OrderTimeline({ currentStatus, events }: OrderTimelineProps) {
 
         {/* Cancelled/Refunded status */}
         {(isCancelled || isRefunded) && (
-          <div className="flex gap-4 pt-4 border-t border-zinc-200 mt-4">
-            <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
-              <XMark className="w-5 h-5 text-red-600" />
+          <div className="flex gap-4 pt-4 border-t border-ds-border mt-4">
+            <div className="w-10 h-10 rounded-full bg-ds-destructive flex items-center justify-center">
+              <XMark className="w-5 h-5 text-ds-destructive" />
             </div>
             <div className="pt-2">
-              <p className="font-medium text-red-700">
+              <p className="font-medium text-ds-destructive">
                 {isCancelled ? "Order Cancelled" : "Order Refunded"}
               </p>
-              <p className="text-sm text-zinc-500 mt-0.5">
+              <p className="text-sm text-ds-muted-foreground mt-0.5">
                 {isCancelled
                   ? "This order has been cancelled"
                   : "This order has been refunded"}

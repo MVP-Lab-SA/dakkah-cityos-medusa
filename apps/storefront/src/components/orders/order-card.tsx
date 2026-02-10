@@ -34,17 +34,17 @@ export function OrderCard({
     switch (status.toLowerCase()) {
       case "completed":
       case "delivered":
-        return "bg-green-100 text-green-800"
+        return "bg-ds-success text-ds-success"
       case "pending":
       case "processing":
-        return "bg-yellow-100 text-yellow-800"
+        return "bg-ds-warning text-ds-warning"
       case "shipped":
-        return "bg-blue-100 text-blue-800"
+        return "bg-ds-info text-ds-info"
       case "cancelled":
       case "refunded":
-        return "bg-red-100 text-red-800"
+        return "bg-ds-destructive text-ds-destructive"
       default:
-        return "bg-zinc-100 text-zinc-800"
+        return "bg-ds-muted text-ds-foreground"
     }
   }
 
@@ -61,12 +61,12 @@ export function OrderCard({
   return (
     <Link
       to={`${prefix}/account/orders/${id}` as any}
-      className="block bg-white rounded-xl border border-zinc-200 p-6 hover:border-zinc-300 hover:shadow-sm transition-all"
+      className="block bg-ds-background rounded-xl border border-ds-border p-6 hover:border-ds-border hover:shadow-sm transition-all"
     >
       <div className="flex items-start justify-between mb-4">
         <div>
-          <p className="font-semibold text-zinc-900">Order #{displayId}</p>
-          <p className="text-sm text-zinc-500">{formatDate(createdAt)}</p>
+          <p className="font-semibold text-ds-foreground">Order #{displayId}</p>
+          <p className="text-sm text-ds-muted-foreground">{formatDate(createdAt)}</p>
         </div>
         <span className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(status)}`}>
           {status}
@@ -78,33 +78,33 @@ export function OrderCard({
           {items.slice(0, 3).map((item, index) => (
             <div
               key={index}
-              className="w-12 h-12 rounded-lg bg-zinc-100 border-2 border-white overflow-hidden"
+              className="w-12 h-12 rounded-lg bg-ds-muted border-2 border-white overflow-hidden"
             >
               {item.thumbnail ? (
                 <img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-zinc-400 text-xs">
+                <div className="w-full h-full flex items-center justify-center text-ds-muted-foreground text-xs">
                   No img
                 </div>
               )}
             </div>
           ))}
           {items.length > 3 && (
-            <div className="w-12 h-12 rounded-lg bg-zinc-200 border-2 border-white flex items-center justify-center text-xs font-medium text-zinc-600">
+            <div className="w-12 h-12 rounded-lg bg-ds-muted border-2 border-white flex items-center justify-center text-xs font-medium text-ds-muted-foreground">
               +{items.length - 3}
             </div>
           )}
         </div>
-        <span className="text-sm text-zinc-500">
+        <span className="text-sm text-ds-muted-foreground">
           {itemCount} {itemCount === 1 ? "item" : "items"}
         </span>
       </div>
 
-      <div className="flex items-center justify-between pt-4 border-t border-zinc-100">
-        <span className="font-semibold text-zinc-900">
+      <div className="flex items-center justify-between pt-4 border-t border-ds-border">
+        <span className="font-semibold text-ds-foreground">
           {formatPrice(total, currencyCode)}
         </span>
-        <span className="text-sm text-zinc-500 flex items-center gap-1">
+        <span className="text-sm text-ds-muted-foreground flex items-center gap-1">
           View details
           <ChevronRight className="w-4 h-4" />
         </span>

@@ -10,9 +10,9 @@ interface ActiveSubscriptionsProps {
 }
 
 const statusColors: Record<string, string> = {
-  active: "bg-green-100 text-green-700",
-  paused: "bg-yellow-100 text-yellow-700",
-  canceled: "bg-red-100 text-red-700",
+  active: "bg-ds-success text-ds-success",
+  paused: "bg-ds-warning text-ds-warning",
+  canceled: "bg-ds-destructive text-ds-destructive",
   past_due: "bg-orange-100 text-orange-700",
 }
 
@@ -21,14 +21,14 @@ export function ActiveSubscriptions({ subscriptions, isLoading }: ActiveSubscrip
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg border border-zinc-200">
-        <div className="p-4 border-b border-zinc-200">
-          <h2 className="text-lg font-semibold text-zinc-900">Active Subscriptions</h2>
+      <div className="bg-ds-background rounded-lg border border-ds-border">
+        <div className="p-4 border-b border-ds-border">
+          <h2 className="text-lg font-semibold text-ds-foreground">Active Subscriptions</h2>
         </div>
         <div className="p-8 text-center">
           <div className="animate-pulse space-y-4">
             {[1, 2].map((i) => (
-              <div key={i} className="h-20 bg-zinc-100 rounded" />
+              <div key={i} className="h-20 bg-ds-muted rounded" />
             ))}
           </div>
         </div>
@@ -40,16 +40,16 @@ export function ActiveSubscriptions({ subscriptions, isLoading }: ActiveSubscrip
 
   if (!activeSubscriptions.length) {
     return (
-      <div className="bg-white rounded-lg border border-zinc-200">
-        <div className="p-4 border-b border-zinc-200">
-          <h2 className="text-lg font-semibold text-zinc-900">Active Subscriptions</h2>
+      <div className="bg-ds-background rounded-lg border border-ds-border">
+        <div className="p-4 border-b border-ds-border">
+          <h2 className="text-lg font-semibold text-ds-foreground">Active Subscriptions</h2>
         </div>
         <div className="p-8 text-center">
-          <CreditCard className="h-12 w-12 text-zinc-300 mx-auto mb-4" />
-          <p className="text-zinc-500">No active subscriptions</p>
+          <CreditCard className="h-12 w-12 text-ds-muted-foreground mx-auto mb-4" />
+          <p className="text-ds-muted-foreground">No active subscriptions</p>
           <Link
             to={`${prefix}/subscriptions` as any}
-            className="mt-4 inline-flex items-center text-sm font-medium text-zinc-900 hover:underline"
+            className="mt-4 inline-flex items-center text-sm font-medium text-ds-foreground hover:underline"
           >
             Browse plans
             <ChevronRight className="h-4 w-4 ml-1" />
@@ -60,30 +60,30 @@ export function ActiveSubscriptions({ subscriptions, isLoading }: ActiveSubscrip
   }
 
   return (
-    <div className="bg-white rounded-lg border border-zinc-200">
-      <div className="p-4 border-b border-zinc-200 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-zinc-900">Active Subscriptions</h2>
+    <div className="bg-ds-background rounded-lg border border-ds-border">
+      <div className="p-4 border-b border-ds-border flex items-center justify-between">
+        <h2 className="text-lg font-semibold text-ds-foreground">Active Subscriptions</h2>
         <Link
           to={`${prefix}/account/subscriptions` as any}
-          className="text-sm font-medium text-zinc-600 hover:text-zinc-900"
+          className="text-sm font-medium text-ds-muted-foreground hover:text-ds-foreground"
         >
           Manage
         </Link>
       </div>
-      <div className="divide-y divide-zinc-100">
+      <div className="divide-y divide-ds-border">
         {activeSubscriptions.slice(0, 2).map((subscription) => (
           <Link
             key={subscription.id}
             to={`${prefix}/account/subscriptions/${subscription.id}` as any}
-            className="flex items-center gap-4 p-4 hover:bg-zinc-50 transition-colors"
+            className="flex items-center gap-4 p-4 hover:bg-ds-muted transition-colors"
           >
-            <div className="p-3 bg-zinc-100 rounded-lg">
-              <ArrowPath className="h-5 w-5 text-zinc-600" />
+            <div className="p-3 bg-ds-muted rounded-lg">
+              <ArrowPath className="h-5 w-5 text-ds-muted-foreground" />
             </div>
 
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-zinc-900">{subscription.plan.name}</p>
-              <p className="text-sm text-zinc-500">
+              <p className="text-sm font-medium text-ds-foreground">{subscription.plan.name}</p>
+              <p className="text-sm text-ds-muted-foreground">
                 {formatPrice(subscription.plan.price, subscription.plan.currency_code)} /{" "}
                 {subscription.billing_interval}
               </p>
@@ -92,17 +92,17 @@ export function ActiveSubscriptions({ subscriptions, isLoading }: ActiveSubscrip
             <div className="text-right">
               <span
                 className={`inline-block px-2 py-1 text-xs font-medium rounded ${
-                  statusColors[subscription.status] || "bg-zinc-100 text-zinc-700"
+                  statusColors[subscription.status] || "bg-ds-muted text-ds-foreground"
                 }`}
               >
                 {subscription.status}
               </span>
-              <p className="mt-1 text-xs text-zinc-500">
+              <p className="mt-1 text-xs text-ds-muted-foreground">
                 Next: {new Date(subscription.current_period_end).toLocaleDateString()}
               </p>
             </div>
 
-            <ChevronRight className="h-5 w-5 text-zinc-400" />
+            <ChevronRight className="h-5 w-5 text-ds-muted-foreground" />
           </Link>
         ))}
       </div>

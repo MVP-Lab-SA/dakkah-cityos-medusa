@@ -42,9 +42,9 @@ export function TeamMembers({
 
   const roleColors: Record<TeamMember["role"], string> = {
     admin: "bg-purple-100 text-purple-800",
-    buyer: "bg-blue-100 text-blue-800",
-    approver: "bg-green-100 text-green-800",
-    viewer: "bg-zinc-100 text-zinc-800",
+    buyer: "bg-ds-info text-ds-info",
+    approver: "bg-ds-success text-ds-success",
+    viewer: "bg-ds-muted text-ds-foreground",
   }
 
   const handleInvite = async () => {
@@ -60,9 +60,9 @@ export function TeamMembers({
   }
 
   return (
-    <div className="bg-white rounded-xl border border-zinc-200 overflow-hidden">
-      <div className="px-6 py-4 border-b border-zinc-200 flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-zinc-900">Team Members</h3>
+    <div className="bg-ds-background rounded-xl border border-ds-border overflow-hidden">
+      <div className="px-6 py-4 border-b border-ds-border flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-ds-foreground">Team Members</h3>
         {canManage && (
           <Button size="sm" onClick={() => setShowInviteForm(!showInviteForm)}>
             <Plus className="w-4 h-4 mr-1" />
@@ -73,7 +73,7 @@ export function TeamMembers({
 
       {/* Invite Form */}
       {showInviteForm && (
-        <div className="p-6 border-b border-zinc-200 bg-zinc-50">
+        <div className="p-6 border-b border-ds-border bg-ds-muted">
           <div className="flex gap-4">
             <Input
               type="email"
@@ -85,7 +85,7 @@ export function TeamMembers({
             <select
               value={inviteRole}
               onChange={(e) => setInviteRole(e.target.value as TeamMember["role"])}
-              className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+              className="rounded-lg border border-ds-border px-3 py-2 text-sm"
             >
               <option value="buyer">Buyer</option>
               <option value="approver">Approver</option>
@@ -100,22 +100,22 @@ export function TeamMembers({
       )}
 
       {/* Members List */}
-      <div className="divide-y divide-zinc-100">
+      <div className="divide-y divide-ds-border">
         {members.length === 0 ? (
           <div className="p-8 text-center">
-            <User className="w-12 h-12 text-zinc-300 mx-auto mb-4" />
-            <p className="text-zinc-500">No team members yet</p>
+            <User className="w-12 h-12 text-ds-muted-foreground mx-auto mb-4" />
+            <p className="text-ds-muted-foreground">No team members yet</p>
           </div>
         ) : (
           members.map((member) => (
             <div key={member.id} className="flex items-center justify-between p-6">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center">
-                  <User className="w-5 h-5 text-zinc-600" />
+                <div className="w-10 h-10 rounded-full bg-ds-muted flex items-center justify-center">
+                  <User className="w-5 h-5 text-ds-muted-foreground" />
                 </div>
                 <div>
-                  <p className="font-medium text-zinc-900">{member.name}</p>
-                  <p className="text-sm text-zinc-500">{member.email}</p>
+                  <p className="font-medium text-ds-foreground">{member.name}</p>
+                  <p className="text-sm text-ds-muted-foreground">{member.email}</p>
                 </div>
               </div>
 
@@ -125,7 +125,7 @@ export function TeamMembers({
                 </span>
 
                 {member.status === "invited" && (
-                  <span className="px-2 py-0.5 rounded text-xs bg-yellow-100 text-yellow-800">
+                  <span className="px-2 py-0.5 rounded text-xs bg-ds-warning text-ds-warning">
                     Pending
                   </span>
                 )}
@@ -138,7 +138,7 @@ export function TeamMembers({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-red-600 hover:text-red-700"
+                      className="text-ds-destructive hover:text-ds-destructive"
                       onClick={() => onRemove?.(member.id)}
                     >
                       <Trash className="w-4 h-4" />

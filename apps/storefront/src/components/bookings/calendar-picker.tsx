@@ -115,18 +115,18 @@ export function CalendarPicker({
         <button
           onClick={goToPreviousMonth}
           disabled={!canGoPrevious()}
-          className="p-2 rounded-lg hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="p-2 rounded-lg hover:bg-ds-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           aria-label="Previous month"
         >
-          <ChevronLeft className="w-5 h-5 text-slate-600" />
+          <ChevronLeft className="w-5 h-5 text-ds-muted-foreground" />
         </button>
-        <h3 className="text-lg font-semibold text-slate-900">{monthLabel}</h3>
+        <h3 className="text-lg font-semibold text-ds-foreground">{monthLabel}</h3>
         <button
           onClick={goToNextMonth}
-          className="p-2 rounded-lg hover:bg-slate-100 transition-colors"
+          className="p-2 rounded-lg hover:bg-ds-muted transition-colors"
           aria-label="Next month"
         >
-          <ChevronRight className="w-5 h-5 text-slate-600" />
+          <ChevronRight className="w-5 h-5 text-ds-muted-foreground" />
         </button>
       </div>
 
@@ -135,7 +135,7 @@ export function CalendarPicker({
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
           <div
             key={day}
-            className="text-center text-xs font-medium text-slate-400 py-2"
+            className="text-center text-xs font-medium text-ds-muted-foreground py-2"
           >
             {day}
           </div>
@@ -167,12 +167,12 @@ export function CalendarPicker({
                 transition-all duration-200
                 ${
                   selected
-                    ? "bg-slate-900 text-white"
+                    ? "bg-ds-primary text-ds-primary-foreground"
                     : disabled
-                      ? "text-slate-300 cursor-not-allowed"
+                      ? "text-ds-muted-foreground cursor-not-allowed"
                       : today
-                        ? "bg-slate-100 text-slate-900 hover:bg-slate-200"
-                        : "text-slate-700 hover:bg-slate-100"
+                        ? "bg-ds-muted text-ds-foreground hover:bg-ds-muted"
+                        : "text-ds-foreground hover:bg-ds-muted"
                 }
               `}
             >
@@ -217,7 +217,7 @@ export function TimeSlotPicker({
         {[...Array(6)].map((_, i) => (
           <div
             key={i}
-            className="h-12 rounded-lg bg-slate-100 animate-pulse"
+            className="h-12 rounded-lg bg-ds-muted animate-pulse"
           />
         ))}
       </div>
@@ -229,8 +229,8 @@ export function TimeSlotPicker({
   if (availableSlots.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-slate-500">No available times for this date.</p>
-        <p className="text-sm text-slate-400 mt-1">
+        <p className="text-ds-muted-foreground">No available times for this date.</p>
+        <p className="text-sm text-ds-muted-foreground mt-1">
           Please select a different date.
         </p>
       </div>
@@ -250,8 +250,8 @@ export function TimeSlotPicker({
               py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200
               ${
                 isSelected
-                  ? "bg-slate-900 text-white"
-                  : "bg-white border border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+                  ? "bg-ds-primary text-ds-primary-foreground"
+                  : "bg-ds-background border border-ds-border text-ds-foreground hover:border-ds-border hover:bg-ds-muted"
               }
             `}
           >

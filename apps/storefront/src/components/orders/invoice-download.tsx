@@ -33,14 +33,14 @@ export function InvoiceDownload({ orderId, displayId, onDownload }: InvoiceDownl
   }
 
   return (
-    <div className="bg-white rounded-xl border border-zinc-200 p-6">
+    <div className="bg-ds-background rounded-xl border border-ds-border p-6">
       <div className="flex items-start gap-4">
-        <div className="w-12 h-12 rounded-lg bg-zinc-100 flex items-center justify-center">
-          <DocumentText className="w-6 h-6 text-zinc-600" />
+        <div className="w-12 h-12 rounded-lg bg-ds-muted flex items-center justify-center">
+          <DocumentText className="w-6 h-6 text-ds-muted-foreground" />
         </div>
         <div className="flex-1">
-          <h3 className="font-semibold text-zinc-900">Invoice</h3>
-          <p className="text-sm text-zinc-500 mt-0.5">
+          <h3 className="font-semibold text-ds-foreground">Invoice</h3>
+          <p className="text-sm text-ds-muted-foreground mt-0.5">
             Invoice for Order #{displayId}
           </p>
           <Button
@@ -52,7 +52,7 @@ export function InvoiceDownload({ orderId, displayId, onDownload }: InvoiceDownl
           >
             {downloaded ? (
               <>
-                <Check className="w-4 h-4 mr-2 text-green-600" />
+                <Check className="w-4 h-4 mr-2 text-ds-success" />
                 Downloaded
               </>
             ) : isDownloading ? (

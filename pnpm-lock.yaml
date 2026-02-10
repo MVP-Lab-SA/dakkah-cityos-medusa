@@ -264,6 +264,15 @@ importers:
 
   apps/storefront:
     dependencies:
+      '@dakkah-cityos/design-runtime':
+        specifier: workspace:*
+        version: link:../../packages/cityos-design-runtime
+      '@dakkah-cityos/design-system':
+        specifier: workspace:*
+        version: link:../../packages/cityos-design-system
+      '@dakkah-cityos/design-tokens':
+        specifier: workspace:*
+        version: link:../../packages/cityos-design-tokens
       '@medusajs/icons':
         specifier: 2.11.3-preview-20251103060142
         version: 2.11.3-preview-20251103060142(react@19.1.1)
@@ -396,8 +405,15 @@ importers:
 
   packages/cityos-design-runtime:
     dependencies:
+      '@dakkah-cityos/design-tokens':
+        specifier: workspace:*
+        version: link:../cityos-design-tokens
       react:
         specifier: 19.1.1
+        version: 19.1.1
+    devDependencies:
+      '@types/react':
+        specifier: '>=18.0.0'
         version: 19.1.1
 
   packages/cityos-design-system: {}

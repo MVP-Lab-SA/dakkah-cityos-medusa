@@ -84,8 +84,8 @@ export function QuoteDetails({ quote }: QuoteDetailsProps) {
 
       {/* Expiration Warning */}
       {quote.valid_until && (
-        <div className={`p-4 rounded-lg ${isExpired ? "bg-red-50 border-red-200" : "bg-blue-50 border-blue-200"} border`}>
-          <p className={isExpired ? "text-red-800" : "text-blue-800"}>
+        <div className={`p-4 rounded-lg ${isExpired ? "bg-ds-destructive border-ds-destructive" : "bg-ds-info border-ds-info"} border`}>
+          <p className={isExpired ? "text-ds-destructive" : "text-ds-info"}>
             {isExpired 
               ? `This quote expired on ${new Date(quote.valid_until).toLocaleDateString()}`
               : `Valid until ${new Date(quote.valid_until).toLocaleDateString()}`
@@ -119,7 +119,7 @@ export function QuoteDetails({ quote }: QuoteDetailsProps) {
               <div className="text-right">
                 {item.custom_price && item.custom_price !== item.unit_price ? (
                   <>
-                    <p className="font-semibold text-green-700">
+                    <p className="font-semibold text-ds-success">
                       ${Number(item.custom_price).toFixed(2)}
                     </p>
                     <p className="text-sm text-muted-foreground line-through">
@@ -147,7 +147,7 @@ export function QuoteDetails({ quote }: QuoteDetailsProps) {
           <span>${Number(quote.subtotal).toFixed(2)}</span>
         </div>
         {quote.discount_total > 0 && (
-          <div className="flex justify-between text-green-700">
+          <div className="flex justify-between text-ds-success">
             <span>Discount</span>
             <span>-${Number(quote.discount_total).toFixed(2)}</span>
           </div>
@@ -171,9 +171,9 @@ export function QuoteDetails({ quote }: QuoteDetailsProps) {
       )}
 
       {quote.discount_reason && (
-        <div className="border rounded-lg p-4 bg-green-50">
-          <h3 className="font-semibold mb-2 text-green-800">Discount Reason</h3>
-          <p className="text-green-700">{quote.discount_reason}</p>
+        <div className="border rounded-lg p-4 bg-ds-success">
+          <h3 className="font-semibold mb-2 text-ds-success">Discount Reason</h3>
+          <p className="text-ds-success">{quote.discount_reason}</p>
         </div>
       )}
 
@@ -228,14 +228,14 @@ export function QuoteDetails({ quote }: QuoteDetailsProps) {
 
 function QuoteStatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    draft: "bg-gray-100 text-gray-800",
-    submitted: "bg-blue-100 text-blue-800",
-    under_review: "bg-yellow-100 text-yellow-800",
-    approved: "bg-green-100 text-green-800",
-    rejected: "bg-red-100 text-red-800",
-    accepted: "bg-emerald-100 text-emerald-800",
+    draft: "bg-ds-muted text-ds-foreground",
+    submitted: "bg-ds-info text-ds-info",
+    under_review: "bg-ds-warning text-ds-warning",
+    approved: "bg-ds-success text-ds-success",
+    rejected: "bg-ds-destructive text-ds-destructive",
+    accepted: "bg-ds-success text-ds-success",
     declined: "bg-orange-100 text-orange-800",
-    expired: "bg-gray-100 text-gray-800",
+    expired: "bg-ds-muted text-ds-foreground",
   };
 
   const labels: Record<string, string> = {
@@ -250,7 +250,7 @@ function QuoteStatusBadge({ status }: { status: string }) {
   };
 
   return (
-    <span className={`px-3 py-1.5 rounded text-sm font-medium ${styles[status] || "bg-gray-100"}`}>
+    <span className={`px-3 py-1.5 rounded text-sm font-medium ${styles[status] || "bg-ds-muted"}`}>
       {labels[status] || status}
     </span>
   );
