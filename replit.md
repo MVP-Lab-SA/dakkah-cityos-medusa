@@ -85,6 +85,11 @@ This layer provides integration services called by Temporal activities, includin
 - **Temporal Cloud (Workflow Orchestration):** 80 system workflows across 35 categories, 21 specialized task queues mapped to 10 systems, dynamic AI agent workflows, event outbox integration. Workflows route to domain-specific queues (commerce-queue, xsystem-platform-queue, xsystem-logistics-queue, etc.) based on the Workflow Discovery Guide. Full architecture documented in `docs/CROSS_SYSTEM_ARCHITECTURE.md` (6,667 lines, 15 sections).
 - **Walt.id (Decentralized Digital Identity):** DID management, 6 credential types (KYC, Vendor, Membership, TenantOperator, POI, MarketplaceSeller), W3C Verifiable Credentials, wallet integration, trust registries.
 
+## Gap Analysis & Implementation Planning (Feb 2026)
+- **Gap Analysis**: `docs/GAP_ANALYSIS.md` — Comprehensive comparison of all 53 commerce models from the medusa-core-nrd4 reference design document against our platform. Covers backend status, storefront status, gap categories (A/B/C/D), priority levels (P0-P3), and effort estimates for each model across 8 parts: Commerce (20), Alternative Commerce (10), Payment/Financial (8), Identity/Verification (5), Logistics/Delivery (6), Content/CMS (4), UI Patterns (100+), Data Architecture.
+- **Implementation Plan**: `docs/IMPLEMENTATION_PLAN.md` — 7-phase implementation roadmap: Phase 0 (Design System Foundation — 11 new type files, ~110 interfaces), Phase 1 (Storefront for Existing Backend — 17 models), Phase 2 (Logistics & Delivery UX), Phase 3 (Payment & Financial Models), Phase 4 (Missing Commerce Models), Phase 5 (Content & Identity), Phase 6 (Advanced UI Patterns). Includes design system consistency checklist, backend implementation patterns, Temporal workflow integration map, effort estimates (~118 dev days, ~205 new files, 36 new routes), and risk assessment.
+- **Key Gap Metrics**: 12 Complete (D), 18 Partial (C), 17 Backend-only (A), 6 Missing (B). ~24 missing routes, ~7 missing component directories, ~75+ missing design system types, ~65 missing UI patterns.
+
 ## External Dependencies
 - **Database:** PostgreSQL
 - **Frontend Framework:** TanStack Start, React
