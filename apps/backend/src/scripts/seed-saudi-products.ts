@@ -54,26 +54,35 @@ export default async function ({ container }: ExecArgs) {
       handle: "classic-white-thobe",
       status: ProductStatus.PUBLISHED,
       images: [
-        { url: "https://cdn.mignite.app/ws/works_01KEHVFPGZ53M34NBTD8M54K7V/generated-01KEJGX0KYM3CD483R3QR9M049-01KEJGX0KY9XQEZ1PP4PM96P3S.jpeg" }
+        { url: "https://images.unsplash.com/photo-1589656966895-2f33e7653819?w=800&q=80" }
       ],
       category_ids: getCategoryId("mens-thobes") ? [getCategoryId("mens-thobes")!] : [],
       variants: [
         {
           title: "Small",
           sku: "THOBE-WH-SM",
-          prices: [{ amount: 200, currency_code: "sar" }],
+          prices: [
+            { amount: 200, currency_code: "sar" },
+            { amount: 53, currency_code: "usd" }
+          ],
           manage_inventory: true,
         },
         {
           title: "Medium",
           sku: "THOBE-WH-MD",
-          prices: [{ amount: 200, currency_code: "sar" }],
+          prices: [
+            { amount: 200, currency_code: "sar" },
+            { amount: 53, currency_code: "usd" }
+          ],
           manage_inventory: true,
         },
         {
           title: "Large",
           sku: "THOBE-WH-LG",
-          prices: [{ amount: 200, currency_code: "sar" }],
+          prices: [
+            { amount: 200, currency_code: "sar" },
+            { amount: 53, currency_code: "usd" }
+          ],
           manage_inventory: true,
         },
       ],
@@ -85,26 +94,35 @@ export default async function ({ container }: ExecArgs) {
       handle: "classic-black-abaya",
       status: ProductStatus.PUBLISHED,
       images: [
-        { url: "https://cdn.mignite.app/ws/works_01KEHVFPGZ53M34NBTD8M54K7V/generated-01KEJGX213JHEZF9TB8M1E47JS-01KEJGX2136WY9QFAFKBPMPXMM.jpeg" }
+        { url: "https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=800&q=80" }
       ],
       category_ids: getCategoryId("womens-abayas") ? [getCategoryId("womens-abayas")!] : [],
       variants: [
         {
           title: "Size 54",
           sku: "ABAYA-BK-54",
-          prices: [{ amount: 250, currency_code: "sar" }],
+          prices: [
+            { amount: 250, currency_code: "sar" },
+            { amount: 67, currency_code: "usd" }
+          ],
           manage_inventory: true,
         },
         {
           title: "Size 56",
           sku: "ABAYA-BK-56",
-          prices: [{ amount: 250, currency_code: "sar" }],
+          prices: [
+            { amount: 250, currency_code: "sar" },
+            { amount: 67, currency_code: "usd" }
+          ],
           manage_inventory: true,
         },
         {
           title: "Size 58",
           sku: "ABAYA-BK-58",
-          prices: [{ amount: 250, currency_code: "sar" }],
+          prices: [
+            { amount: 250, currency_code: "sar" },
+            { amount: 67, currency_code: "usd" }
+          ],
           manage_inventory: true,
         },
       ],
@@ -116,14 +134,17 @@ export default async function ({ container }: ExecArgs) {
       handle: "red-white-shemagh",
       status: ProductStatus.PUBLISHED,
       images: [
-        { url: "https://cdn.mignite.app/ws/works_01KEHVFPGZ53M34NBTD8M54K7V/generated-01KEJGX19YJXMMF4F32P1Q4E2V-01KEJGX19Y8Q76PJZ5E21ZS8N2.jpeg" }
+        { url: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&q=80" }
       ],
       category_ids: getCategoryId("shemagh-ghutra") ? [getCategoryId("shemagh-ghutra")!] : [],
       variants: [
         {
           title: "Standard",
           sku: "SHMGH-RW-STD",
-          prices: [{ amount: 80, currency_code: "sar" }],
+          prices: [
+            { amount: 80, currency_code: "sar" },
+            { amount: 21, currency_code: "usd" }
+          ],
           manage_inventory: true,
         },
       ],
@@ -135,20 +156,26 @@ export default async function ({ container }: ExecArgs) {
       handle: "cambodian-oud-oil",
       status: ProductStatus.PUBLISHED,
       images: [
-        { url: "https://cdn.mignite.app/ws/works_01KEHVFPGZ53M34NBTD8M54K7V/generated-01KEJGX5QAF048VC3HSFS3YTP7-01KEJGX5QAGXEQ31SAKCTHGXZN.jpeg" }
+        { url: "https://images.unsplash.com/photo-1594035910387-fea081acb591?w=800&q=80" }
       ],
       category_ids: getCategoryId("oud-oil") ? [getCategoryId("oud-oil")!] : getCategoryId("fragrances-oud") ? [getCategoryId("fragrances-oud")!] : [],
       variants: [
         {
           title: "10ml",
           sku: "OUD-CAM-10ML",
-          prices: [{ amount: 1200, currency_code: "sar" }],
+          prices: [
+            { amount: 1200, currency_code: "sar" },
+            { amount: 320, currency_code: "usd" }
+          ],
           manage_inventory: true,
         },
         {
           title: "20ml",
           sku: "OUD-CAM-20ML",
-          prices: [{ amount: 2200, currency_code: "sar" }],
+          prices: [
+            { amount: 2200, currency_code: "sar" },
+            { amount: 587, currency_code: "usd" }
+          ],
           manage_inventory: true,
         },
       ],
@@ -160,20 +187,26 @@ export default async function ({ container }: ExecArgs) {
       handle: "ajwa-dates-madinah",
       status: ProductStatus.PUBLISHED,
       images: [
-        { url: "https://cdn.mignite.app/ws/works_01KEHVFPGZ53M34NBTD8M54K7V/generated-01KEJGX58DY6KC26GNFSK5J948-01KEJGX58DVAR84GVERJJXNT5Z.jpeg" }
+        { url: "https://images.unsplash.com/photo-1563699743-35a41d15c232?w=800&q=80" }
       ],
       category_ids: getCategoryId("premium-dates") ? [getCategoryId("premium-dates")!] : getCategoryId("dates-sweets") ? [getCategoryId("dates-sweets")!] : [],
       variants: [
         {
           title: "500g",
           sku: "DATE-AJWA-500G",
-          prices: [{ amount: 80, currency_code: "sar" }],
+          prices: [
+            { amount: 80, currency_code: "sar" },
+            { amount: 21, currency_code: "usd" }
+          ],
           manage_inventory: true,
         },
         {
           title: "1kg",
           sku: "DATE-AJWA-1KG",
-          prices: [{ amount: 150, currency_code: "sar" }],
+          prices: [
+            { amount: 150, currency_code: "sar" },
+            { amount: 40, currency_code: "usd" }
+          ],
           manage_inventory: true,
         },
       ],
@@ -185,26 +218,35 @@ export default async function ({ container }: ExecArgs) {
       handle: "saudi-khawlani-coffee",
       status: ProductStatus.PUBLISHED,
       images: [
-        { url: "https://cdn.mignite.app/ws/works_01KEHVFPGZ53M34NBTD8M54K7V/generated-01KEJGX741M5A77WXZ8M1DBQHJ-01KEJGX74159WAX1489J5D9A3G.jpeg" }
+        { url: "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=800&q=80" }
       ],
       category_ids: getCategoryId("arabic-coffee") ? [getCategoryId("arabic-coffee")!] : getCategoryId("coffee-tea") ? [getCategoryId("coffee-tea")!] : [],
       variants: [
         {
           title: "250g",
           sku: "COFF-KHAW-250G",
-          prices: [{ amount: 45, currency_code: "sar" }],
+          prices: [
+            { amount: 45, currency_code: "sar" },
+            { amount: 12, currency_code: "usd" }
+          ],
           manage_inventory: true,
         },
         {
           title: "500g",
           sku: "COFF-KHAW-500G",
-          prices: [{ amount: 85, currency_code: "sar" }],
+          prices: [
+            { amount: 85, currency_code: "sar" },
+            { amount: 23, currency_code: "usd" }
+          ],
           manage_inventory: true,
         },
         {
           title: "1kg",
           sku: "COFF-KHAW-1KG",
-          prices: [{ amount: 160, currency_code: "sar" }],
+          prices: [
+            { amount: 160, currency_code: "sar" },
+            { amount: 43, currency_code: "usd" }
+          ],
           manage_inventory: true,
         },
       ],

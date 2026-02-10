@@ -385,7 +385,7 @@ export default async function seedComplete({ container }: ExecArgs) {
         slug: "dakkah",
         domain: null,
         residency_zone: "MENA",
-        default_locale: "ar",
+        default_locale: "en",
         supported_locales: ["ar", "en"],
         timezone: "Asia/Riyadh",
         default_currency: "sar",
@@ -965,9 +965,9 @@ export default async function seedComplete({ container }: ExecArgs) {
       ],
     },
     {
-      title: "Medusa Hoodie",
+      title: "Riyadh Season Hoodie",
       handle: "medusa-hoodie",
-      description: "Comfortable and stylish hoodie. Perfect for casual wear in cool weather.",
+      description: "Celebrate Riyadh Season style with this comfortable and fashionable hoodie. Perfect for casual wear during cooler seasons in the Gulf region.",
       status: "published",
       thumbnail: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&q=80",
       images: [
@@ -1013,9 +1013,9 @@ export default async function seedComplete({ container }: ExecArgs) {
       ],
     },
     {
-      title: "Medusa T-Shirt",
+      title: "Saudi Heritage T-Shirt",
       handle: "medusa-t-shirt",
-      description: "Classic cotton t-shirt with modern design. Comfortable fit for all-day wear.",
+      description: "Celebrate Saudi culture with this premium cotton heritage t-shirt. Featuring authentic Saudi design with comfortable modern fit for everyday wear.",
       status: "published",
       thumbnail: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=80",
       images: [
@@ -1061,9 +1061,9 @@ export default async function seedComplete({ container }: ExecArgs) {
       ],
     },
     {
-      title: "Stainless Steel Water Bottle",
+      title: "Zamzam Water Flask",
       handle: "stainless-steel-water-bottle",
-      description: "Insulated stainless steel water bottle. Keeps drinks hot or cold for hours.",
+      description: "Premium insulated stainless steel flask inspired by the purity of Zamzam water. Keeps your beverages at perfect temperature for extended periods.",
       status: "published",
       thumbnail: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=800&q=80",
       images: [
@@ -1099,9 +1099,9 @@ export default async function seedComplete({ container }: ExecArgs) {
       ],
     },
     {
-      title: "Wireless Earbuds",
+      title: "JBL Wireless Earbuds",
       handle: "wireless-earbuds",
-      description: "Premium wireless earbuds with noise cancellation. Crystal clear sound and long battery life.",
+      description: "Premium JBL wireless earbuds with advanced noise cancellation technology. Crystal clear sound quality and extended battery life for all-day listening.",
       status: "published",
       thumbnail: "https://images.unsplash.com/photo-1590658268037-6bf12f032f55?w=800&q=80",
       images: [

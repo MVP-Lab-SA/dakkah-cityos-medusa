@@ -79,6 +79,16 @@ This layer provides integration services called by Temporal activities, includin
 
 ## Recent Changes (2026-02-10)
 
+### Seed Data & Image Migration to Dakkah
+- **seed-complete.ts:** Fixed `default_locale: "ar"` → `"en"`. Renamed generic products (Medusa T-Shirt → Saudi Heritage T-Shirt, Stainless Steel Water Bottle → Zamzam Water Flask, Wireless Earbuds → JBL Wireless Earbuds, Medusa Hoodie → Riyadh Season Hoodie) with Saudi-themed descriptions.
+- **seed-vendors.ts:** Migrated 5 Nordic/Scandinavian vendors to Saudi/MENA-themed vendors (Al Baik Fresh, Jarir Bookstore, Saudi Luxury Perfumes, Madinah Dates Co, Riyadh Home Décor).
+- **seed-saudi-products.ts:** Replaced all broken `cdn.mignite.app` image URLs with Unsplash. Added USD pricing to all SAR-only variants.
+- **seed-services.ts:** Renamed Nordic services (Swedish Massage → Arabian Massage, Nordic Glow Facial → Arabian Gold Facial).
+- **DB Vendors:** Added 3 new Saudi vendors (Saudi Luxury Perfumes, Madinah Dates Co, Riyadh Home Décor). Total: 5 active vendors.
+- **DB Products:** All 13 products now have `tenant_id` in metadata linking to Dakkah tenant (01KGZ2JRYX607FWMMYQNQRKVWS).
+- **Contact Emails:** Updated `mailto:support@example.com` and `mailto:sales@example.com` to `@dakkah.com` in subscriptions and bookings pages.
+- **Zero non-Dakkah branded data** remaining in seed files or live database.
+
 ### Hardcoded-to-Dynamic Data Migration
 - **CMS Hooks:** Created `use-cms.ts` with `useCMSVerticals()` and `useCMSNavigation(location)` hooks fetching from `/platform/cms/verticals` and `/platform/cms/navigations` backend APIs.
 - **Homepage Verticals:** Removed 27-item hardcoded `verticalCategories` array; now fetched dynamically from CMS verticals API, grouped by `category` field (commerce/services/lifestyle/community).

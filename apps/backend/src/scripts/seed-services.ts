@@ -2,9 +2,9 @@ import { ExecArgs } from "@medusajs/framework/types"
 
 const services = [
   {
-    handle: "swedish-massage",
-    name: "Swedish Relaxation Massage",
-    description: "Classic Swedish massage techniques to promote relaxation, improve circulation, and relieve muscle tension. Perfect for stress relief and overall wellness.",
+    handle: "arabian-massage",
+    name: "Arabian Relaxation Massage",
+    description: "Traditional Arabian massage techniques to promote relaxation, improve circulation, and relieve muscle tension. Perfect for stress relief and overall wellness.",
     service_type: "appointment",
     category: "massage",
     duration_minutes: 60,
@@ -44,9 +44,9 @@ const services = [
     cancellation_policy_hours: 24,
   },
   {
-    handle: "nordic-glow-facial",
-    name: "Nordic Glow Facial",
-    description: "Luxurious facial treatment using Arctic botanicals and Nordic skincare techniques. Includes cleansing, exfoliation, mask, and hydration.",
+    handle: "arabian-gold-facial",
+    name: "Arabian Gold Facial",
+    description: "Luxurious facial using argan oil and Arabian skincare techniques. Includes cleansing, exfoliation, mask, and hydration.",
     service_type: "appointment",
     category: "facial",
     duration_minutes: 50,

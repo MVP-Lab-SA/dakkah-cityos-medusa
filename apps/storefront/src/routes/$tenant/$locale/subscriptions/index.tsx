@@ -94,7 +94,7 @@ function SubscriptionPlansPage() {
             Our team is here to help you find the perfect plan for your needs.
           </p>
           <a
-            href="mailto:support@example.com"
+            href="mailto:support@dakkah.com"
             className="btn-enterprise bg-white text-slate-900 hover:bg-slate-100"
           >
             Contact Sales

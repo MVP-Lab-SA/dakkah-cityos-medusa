@@ -109,7 +109,7 @@ function BookingsPage() {
             Contact our sales team for custom services and enterprise packages.
           </p>
           <a
-            href="mailto:sales@example.com"
+            href="mailto:sales@dakkah.com"
             className="btn-enterprise bg-white text-slate-900 hover:bg-slate-100"
           >
             Contact Sales
