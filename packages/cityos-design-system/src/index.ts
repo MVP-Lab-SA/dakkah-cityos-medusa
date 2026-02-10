@@ -161,4 +161,149 @@ export type {
   SortSelectProps,
   ProductQuickViewProps,
   VendorCardProps,
+  CompareProductProps,
+  FlashSaleProductProps,
+  BundleCardProps,
+  QuickBuyButtonProps,
+  MiniCartProps,
+  TradeInCardProps,
+  ConsignmentListingProps,
 } from "./commerce/CommerceTypes"
+
+export type {
+  KYCFormProps,
+  KYCSubmission,
+  VerificationStatusProps,
+  DocumentUploadProps,
+  AgeGateProps,
+  ConsentBannerProps,
+  ConsentCategory,
+  ConsentPreferencesProps,
+  CredentialCardProps,
+  VerificationBadgeProps,
+} from "./identity/IdentityTypes"
+
+export type {
+  ShoppablePostProps,
+  TaggedProduct,
+  SocialSharePanelProps,
+  LiveShoppingEmbedProps,
+  SocialProofPopupProps,
+  ReferralWidgetProps,
+  WishlistGridProps,
+  WishlistItem,
+} from "./social/SocialTypes"
+
+export type {
+  AuctionCardProps,
+  BidPanelProps,
+  AuctionCountdownProps,
+  BidHistoryProps,
+  BidEntry,
+  AuctionFilterProps,
+  AuctionResultProps,
+} from "./auction/AuctionTypes"
+
+export type {
+  RentalCardProps,
+  RentalCalendarProps,
+  RentalAgreementViewProps,
+  RentalReturnFormProps,
+  DamageClaimProps,
+  RentalPricingTableProps,
+} from "./rental/RentalTypes"
+
+export type {
+  EventCardProps,
+  VenueInfo,
+  TicketSelectorProps,
+  TicketTypeInfo,
+  SeatMapProps,
+  SeatSection,
+  SeatRow,
+  Seat,
+  EventFilterProps,
+  EventCountdownProps,
+} from "./events/EventTypes"
+
+export type {
+  DeliverySlotPickerProps,
+  DeliverySlot,
+  TrackingMapProps,
+  TrackingTimelineProps,
+  TrackingEvent,
+  ReturnRequestFormProps,
+  ReturnableItem,
+  ReturnRequestData,
+  ExchangeSelectorProps,
+  ExchangeOption,
+  StorePickupSelectorProps,
+  StoreLocation,
+  ExpressDeliveryBadgeProps,
+} from "./delivery/DeliveryTypes"
+
+export type {
+  WalletBalanceProps,
+  WalletTransactionProps,
+  WalletTransaction,
+  BNPLSelectorProps,
+  BNPLProvider,
+  InstallmentPickerProps,
+  InstallmentPlan,
+  StoreCreditWidgetProps,
+  EscrowStatusProps,
+  DisputeFormProps,
+  RefundStatusProps,
+  GiftCardProps,
+  GiftCardPurchaseFormProps,
+} from "./payment/PaymentTypes"
+
+export type {
+  MembershipTierCardProps,
+  MembershipBenefit,
+  MembershipStatusProps,
+  BenefitsListProps,
+  MembershipComparisonProps,
+  LoyaltyPointsDisplayProps,
+  RewardsCatalogProps,
+  RewardItem,
+  PointsHistoryProps,
+  PointsEntry,
+} from "./membership/MembershipTypes"
+
+export type {
+  DigitalProductCardProps,
+  DownloadManagerProps,
+  DownloadItem,
+  LicenseViewerProps,
+  DigitalLibraryProps,
+  FilePreviewProps,
+} from "./digital/DigitalTypes"
+
+export type {
+  BlogPostCardProps,
+  BlogPostDetailProps,
+  BlogSidebarProps,
+  ArticleSearchProps,
+  HelpCenterProps,
+  HelpCategory,
+  HelpArticle,
+  POICardProps,
+  POIMapViewProps,
+  POIDetailProps,
+  AnnouncementCardProps,
+} from "./content/ContentTypes"
+
+export type {
+  CampaignCardProps,
+  CampaignProgressBarProps,
+  BackerListProps,
+  Backer,
+  RewardTierProps,
+  FlashSaleCardProps,
+  CountdownTimerProps,
+  BundleBuilderProps,
+  BundleItem,
+  BundleSavingsProps,
+  CouponInputProps,
+} from "./campaign/CampaignTypes"

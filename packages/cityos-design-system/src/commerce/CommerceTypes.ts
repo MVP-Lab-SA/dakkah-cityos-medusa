@@ -125,3 +125,68 @@ export interface VendorCardProps extends BaseComponentProps {
   verified?: boolean
   variant?: "default" | "compact" | "featured"
 }
+
+export interface CompareProductProps extends BaseComponentProps {
+  products: ProductCardProps[]
+  features: string[]
+  onRemoveProduct?: (productId: string) => void
+  maxProducts?: number
+}
+
+export interface FlashSaleProductProps extends BaseComponentProps {
+  product: ProductCardProps
+  originalPrice: PriceData
+  salePrice: PriceData
+  endsAt: string
+  quantityRemaining?: number
+  quantityTotal?: number
+}
+
+export interface BundleCardProps extends BaseComponentProps {
+  id: string
+  title: string
+  description?: string
+  items: { id: string; title: string; thumbnail?: string; price: PriceData }[]
+  bundlePrice: PriceData
+  individualTotal: PriceData
+  savingsPercentage: number
+  onAddToCart?: () => void
+}
+
+export interface QuickBuyButtonProps extends BaseComponentProps {
+  productId: string
+  variantId?: string
+  label?: string
+  onQuickBuy: () => void
+  loading?: boolean
+}
+
+export interface MiniCartProps extends BaseComponentProps {
+  items: CartItemProps[]
+  subtotal: PriceData
+  itemCount: number
+  onCheckout: () => void
+  onViewCart: () => void
+  open: boolean
+  onClose: () => void
+}
+
+export interface TradeInCardProps extends BaseComponentProps {
+  id: string
+  title: string
+  thumbnail?: string
+  estimatedValue: PriceData
+  condition?: "excellent" | "good" | "fair" | "poor"
+  status?: "pending" | "evaluated" | "accepted" | "rejected"
+  onSubmit?: () => void
+}
+
+export interface ConsignmentListingProps extends BaseComponentProps {
+  id: string
+  title: string
+  thumbnail?: string
+  askingPrice: PriceData
+  commission: number
+  status: "pending" | "listed" | "sold" | "returned"
+  listedAt?: string
+}
