@@ -277,7 +277,183 @@ export const TEMPORAL_TASK_QUEUES = {
       global: { workers: -1, max_concurrent_activities: -1, description: "Auto-scale. -1 means auto" },
     } as Record<ScopeTier, { workers: number; max_concurrent_activities: number; description: string }>,
   },
+
+  "cityos-main": {
+    name: "cityos-main" as const,
+    description: "Main CityOS task queue — general-purpose core platform workflows",
+    primary_system: "cityos-core",
+    domain: "core",
+    workflow_type: "cityOSWorkflow",
+  },
+
+  "commerce-queue": {
+    name: "commerce-queue" as const,
+    description: "Commerce order processing — order lifecycle, payments, refunds, returns, product catalog",
+    primary_system: "medusa",
+    domain: "commerce",
+    workflow_type: "cityOSWorkflow",
+  },
+
+  "commerce-booking-queue": {
+    name: "commerce-booking-queue" as const,
+    description: "Commerce booking and subscription processing — bookings, subscriptions, trials, renewals",
+    primary_system: "medusa",
+    domain: "commerce",
+    workflow_type: "cityOSWorkflow",
+  },
+
+  "payload-queue": {
+    name: "payload-queue" as const,
+    description: "Payload CMS content operations — content sync, page management, media processing",
+    primary_system: "payload-cms",
+    domain: "payload",
+    workflow_type: "cityOSWorkflow",
+  },
+
+  "payload-moderation-queue": {
+    name: "payload-moderation-queue" as const,
+    description: "Payload CMS content moderation — review, approval, and rejection workflows",
+    primary_system: "payload-cms",
+    domain: "moderation",
+    workflow_type: "cityOSWorkflow",
+  },
+
+  "payload-notifications-queue": {
+    name: "payload-notifications-queue" as const,
+    description: "Payload CMS notification delivery — email templates, push notifications, in-app messages",
+    primary_system: "payload-cms",
+    domain: "notifications",
+    workflow_type: "cityOSWorkflow",
+  },
+
+  "xsystem-platform-queue": {
+    name: "xsystem-platform-queue" as const,
+    description: "Cross-system platform orchestration — tenant/node management, vendor lifecycle, KYC, identity, finance, governance via ERPNext",
+    primary_system: "erpnext",
+    domain: "xsystem",
+    workflow_type: "cityOSWorkflow",
+  },
+
+  "xsystem-content-queue": {
+    name: "xsystem-content-queue" as const,
+    description: "Cross-system content synchronization — bidirectional sync between Medusa and Payload CMS",
+    primary_system: "payload-cms",
+    domain: "xsystem",
+    workflow_type: "cityOSWorkflow",
+  },
+
+  "xsystem-logistics-queue": {
+    name: "xsystem-logistics-queue" as const,
+    description: "Cross-system logistics orchestration — fulfillment dispatch, shipment tracking, delivery confirmation via Fleetbase",
+    primary_system: "fleetbase",
+    domain: "logistics",
+    workflow_type: "cityOSWorkflow",
+  },
+
+  "xsystem-vertical-queue": {
+    name: "xsystem-vertical-queue" as const,
+    description: "Cross-system vertical-specific orchestration — industry vertical workflows via ERPNext",
+    primary_system: "erpnext",
+    domain: "xsystem",
+    workflow_type: "cityOSWorkflow",
+  },
+
+  "core-queue": {
+    name: "core-queue" as const,
+    description: "Core platform operations — system health, configuration, platform management",
+    primary_system: "cityos-core",
+    domain: "core",
+    workflow_type: "cityOSWorkflow",
+  },
+
+  "core-maintenance-queue": {
+    name: "core-maintenance-queue" as const,
+    description: "Core maintenance and scheduled tasks — product sync, retry failed syncs, hierarchy reconciliation",
+    primary_system: "cityos-core",
+    domain: "core",
+    workflow_type: "cityOSWorkflow",
+  },
+
+  "zes-queue": {
+    name: "zes-queue" as const,
+    description: "ZES engine processing — zone experience system workflows",
+    primary_system: "zes-engine",
+    domain: "zes",
+    workflow_type: "cityOSWorkflow",
+  },
+
+  "zes-analytics-queue": {
+    name: "zes-analytics-queue" as const,
+    description: "ZES analytics processing — zone analytics, engagement metrics, experience scoring",
+    primary_system: "zes-engine",
+    domain: "zes",
+    workflow_type: "cityOSWorkflow",
+  },
+
+  "storage-queue": {
+    name: "storage-queue" as const,
+    description: "Storage operations — file processing, media optimization, backup workflows via MinIO",
+    primary_system: "minio",
+    domain: "storage",
+    workflow_type: "cityOSWorkflow",
+  },
+
+  "notifications-queue": {
+    name: "notifications-queue" as const,
+    description: "Notification delivery — email, SMS, push, in-app notification orchestration",
+    primary_system: "cityos-core",
+    domain: "notifications",
+    workflow_type: "cityOSWorkflow",
+  },
+
+  "moderation-queue": {
+    name: "moderation-queue" as const,
+    description: "Content moderation — review moderation, listing approval, compliance checking",
+    primary_system: "cityos-core",
+    domain: "moderation",
+    workflow_type: "cityOSWorkflow",
+  },
+
+  "poi-realtime-queue": {
+    name: "poi-realtime-queue" as const,
+    description: "POI realtime processing — point-of-interest live updates, geofencing, proximity events",
+    primary_system: "cityos-core",
+    domain: "poi",
+    workflow_type: "cityOSWorkflow",
+  },
+
+  "poi-views-queue": {
+    name: "poi-views-queue" as const,
+    description: "POI view tracking — point-of-interest view counts, analytics, trending calculations",
+    primary_system: "cityos-core",
+    domain: "poi",
+    workflow_type: "cityOSWorkflow",
+  },
 } as const
+
+export const QUEUE_SYSTEM_MAP: Record<string, { system: string; domain: string; description: string }> = {
+  "cityos-workflow-queue": { system: "cityos-core", domain: "core", description: "Default CityOS workflow queue" },
+  "cityos-dynamic-queue": { system: "ai-services", domain: "dynamic", description: "Dynamic AI agent workflows" },
+  "cityos-main": { system: "cityos-core", domain: "core", description: "Main CityOS task queue" },
+  "commerce-queue": { system: "medusa", domain: "commerce", description: "Commerce order processing" },
+  "commerce-booking-queue": { system: "medusa", domain: "commerce", description: "Commerce booking and subscription processing" },
+  "payload-queue": { system: "payload-cms", domain: "payload", description: "Payload CMS content operations" },
+  "payload-moderation-queue": { system: "payload-cms", domain: "moderation", description: "Payload CMS content moderation" },
+  "payload-notifications-queue": { system: "payload-cms", domain: "notifications", description: "Payload CMS notification delivery" },
+  "xsystem-platform-queue": { system: "erpnext", domain: "xsystem", description: "Cross-system platform orchestration via ERPNext" },
+  "xsystem-content-queue": { system: "payload-cms", domain: "xsystem", description: "Cross-system content synchronization" },
+  "xsystem-logistics-queue": { system: "fleetbase", domain: "logistics", description: "Cross-system logistics orchestration via Fleetbase" },
+  "xsystem-vertical-queue": { system: "erpnext", domain: "xsystem", description: "Cross-system vertical-specific orchestration" },
+  "core-queue": { system: "cityos-core", domain: "core", description: "Core platform operations" },
+  "core-maintenance-queue": { system: "cityos-core", domain: "core", description: "Core maintenance and scheduled tasks" },
+  "zes-queue": { system: "zes-engine", domain: "zes", description: "ZES engine processing" },
+  "zes-analytics-queue": { system: "zes-engine", domain: "zes", description: "ZES analytics processing" },
+  "storage-queue": { system: "minio", domain: "storage", description: "Storage operations via MinIO" },
+  "notifications-queue": { system: "cityos-core", domain: "notifications", description: "Notification delivery" },
+  "moderation-queue": { system: "cityos-core", domain: "moderation", description: "Content moderation" },
+  "poi-realtime-queue": { system: "cityos-core", domain: "poi", description: "POI realtime processing" },
+  "poi-views-queue": { system: "cityos-core", domain: "poi", description: "POI view tracking" },
+}
 
 // ---------------------------------------------------------------------------
 // 3. SYSTEM_WORKFLOWS — EVENT_WORKFLOW_MAP
@@ -1454,7 +1630,7 @@ export const TEMPORAL_CONFIG = {
 
   event_workflow_map: {
     description: "Complete mapping of Medusa events to Temporal workflow IDs. Defined in EVENT_WORKFLOW_MAP constant in event-dispatcher.ts.",
-    total_mapped_events: 35,
+    total_mapped_events: 65,
     categories: {
       commerce: 5,
       vendor: 5,

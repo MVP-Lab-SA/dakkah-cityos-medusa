@@ -45,11 +45,12 @@ export async function getTemporalClient(): Promise<any> {
 export async function startWorkflow(
   workflowId: string,
   input: any,
-  nodeContext: any
+  nodeContext: any,
+  taskQueue?: string
 ): Promise<{ runId: string }> {
   const c = await getTemporalClient()
   const handle = await c.workflow.start("cityOSWorkflow", {
-    taskQueue: "cityos-workflow-queue",
+    taskQueue: taskQueue || "cityos-workflow-queue",
     workflowId: `${workflowId}-${Date.now()}`,
     args: [
       {

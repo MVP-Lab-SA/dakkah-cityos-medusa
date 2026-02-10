@@ -22,12 +22,12 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
   const { workflowId, input, nodeContext, eventType } = validation.data
 
-  const resolvedWorkflowId = eventType
-    ? getWorkflowForEvent(eventType) || workflowId
-    : workflowId
+  const mapping = eventType ? getWorkflowForEvent(eventType) : null
+  const resolvedWorkflowId = mapping ? mapping.workflowId : workflowId
+  const resolvedTaskQueue = mapping ? mapping.taskQueue : undefined
 
   try {
-    const result = await startWorkflow(resolvedWorkflowId, input, nodeContext)
+    const result = await startWorkflow(resolvedWorkflowId, input, nodeContext, resolvedTaskQueue)
     return res.status(201).json({
       message: "Workflow triggered successfully",
       workflowId: resolvedWorkflowId,

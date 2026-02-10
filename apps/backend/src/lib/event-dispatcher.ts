@@ -1,72 +1,77 @@
 import { startWorkflow } from "./temporal-client"
 
-const EVENT_WORKFLOW_MAP: Record<string, string> = {
-  "order.placed": "xsystem.unified-order-orchestrator",
-  "order.cancelled": "xsystem.order-cancellation-saga",
-  "payment.initiated": "xsystem.multi-gateway-payment",
-  "refund.requested": "xsystem.refund-compensation-saga",
-  "vendor.registered": "xsystem.vendor-onboarding-verification",
-  "vendor.created": "commerce.vendor-onboarding",
-  "dispute.opened": "xsystem.vendor-dispute-resolution",
-  "return.initiated": "xsystem.returns-processing",
-  "kyc.requested": "xsystem.kyc-verification",
-  "subscription.created": "xsystem.subscription-lifecycle",
-  "booking.created": "xsystem.service-booking-orchestrator",
-  "auction.started": "xsystem.auction-lifecycle",
-  "restaurant-order.placed": "xsystem.restaurant-order-orchestrator",
-  "product.updated": "commerce.sync-product-to-cms",
-  "workflow.dynamic.start": "dynamic-agent-orchestrator",
-  "governance.policy.changed": "xsystem.governance-policy-propagation",
-  "node.created": "xsystem.node-provisioning",
-  "tenant.provisioned": "xsystem.tenant-setup-saga",
-  "node.updated": "xsystem.node-update-propagation",
-  "node.deleted": "xsystem.node-decommission",
-  "tenant.updated": "xsystem.tenant-config-sync",
-  "store.created": "commerce.store-setup",
-  "store.updated": "commerce.store-config-sync",
-  "product.created": "commerce.product-catalog-sync",
-  "product.deleted": "commerce.product-catalog-remove",
-  "customer.created": "xsystem.customer-onboarding",
-  "customer.updated": "xsystem.customer-profile-sync",
-  "vendor.approved": "xsystem.vendor-ecosystem-setup",
-  "vendor.suspended": "xsystem.vendor-suspension-cascade",
-  "inventory.updated": "xsystem.inventory-reconciliation",
-  "fulfillment.created": "xsystem.fulfillment-dispatch",
-  "fulfillment.shipped": "xsystem.shipment-tracking-start",
-  "fulfillment.delivered": "xsystem.delivery-confirmation",
-  "invoice.created": "xsystem.invoice-processing",
-  "payment.completed": "xsystem.payment-reconciliation",
-  "kyc.completed": "xsystem.kyc-credential-issuance",
-  "membership.created": "xsystem.membership-credential-issuance",
-  "sync.products.scheduled": "xsystem.scheduled-product-sync",
-  "sync.retry.scheduled": "xsystem.retry-failed-syncs",
-  "sync.hierarchy.scheduled": "xsystem.scheduled-hierarchy-reconciliation",
-  "payout.initiated": "xsystem.payout-processing",
-  "payout.completed": "xsystem.payout-reconciliation",
-  "payout.failed": "xsystem.payout-failure-handling",
-  "booking.no_show": "xsystem.booking-no-show-processing",
-  "subscription.cancelled": "xsystem.subscription-cancellation-sync",
-  "subscription.payment_failed": "xsystem.subscription-payment-failure",
-  "vendor.deactivated": "xsystem.vendor-deactivation-cascade",
-  "vendor.inactivity_warning": "xsystem.vendor-inactivity-notification",
-  "invoice.overdue": "xsystem.invoice-overdue-processing",
-  "subscription.renewal_upcoming": "xsystem.subscription-renewal-notification",
-  "subscription.trial_ending": "xsystem.trial-ending-notification",
-  "subscription.trial_converted": "xsystem.trial-conversion-sync",
-  "subscription.trial_expired": "xsystem.trial-expiration-sync",
-  "booking.confirmed": "xsystem.booking-confirmation-sync",
-  "subscription.plan_changed": "xsystem.subscription-plan-change-sync",
-  "subscription.paused": "xsystem.subscription-pause-sync",
-  "subscription.resumed": "xsystem.subscription-resume-sync",
-  "vendor.application_submitted": "xsystem.vendor-application-processing",
-  "vendor_order.shipped": "xsystem.vendor-order-shipment-tracking",
-  "vendor.stripe_connected": "xsystem.vendor-stripe-setup-sync",
-  "vendor_product.created": "commerce.vendor-product-catalog-sync",
-  "vendor_product.updated": "commerce.vendor-product-update-sync",
-  "vendor_product.deactivated": "commerce.vendor-product-deactivation",
+const EVENT_WORKFLOW_MAP: Record<string, { workflowId: string; taskQueue: string }> = {
+  "order.placed": { workflowId: "xsystem.unified-order-orchestrator", taskQueue: "commerce-queue" },
+  "order.cancelled": { workflowId: "xsystem.order-cancellation-saga", taskQueue: "commerce-queue" },
+  "payment.initiated": { workflowId: "xsystem.multi-gateway-payment", taskQueue: "commerce-queue" },
+  "refund.requested": { workflowId: "xsystem.refund-compensation-saga", taskQueue: "commerce-queue" },
+  "return.initiated": { workflowId: "xsystem.returns-processing", taskQueue: "commerce-queue" },
+  "store.created": { workflowId: "commerce.store-setup", taskQueue: "commerce-queue" },
+  "store.updated": { workflowId: "commerce.store-config-sync", taskQueue: "commerce-queue" },
+  "product.created": { workflowId: "commerce.product-catalog-sync", taskQueue: "commerce-queue" },
+  "product.updated": { workflowId: "commerce.sync-product-to-cms", taskQueue: "commerce-queue" },
+  "product.deleted": { workflowId: "commerce.product-catalog-remove", taskQueue: "commerce-queue" },
+  "vendor_product.created": { workflowId: "commerce.vendor-product-catalog-sync", taskQueue: "commerce-queue" },
+  "vendor_product.updated": { workflowId: "commerce.vendor-product-update-sync", taskQueue: "commerce-queue" },
+  "vendor_product.deactivated": { workflowId: "commerce.vendor-product-deactivation", taskQueue: "commerce-queue" },
+  "auction.started": { workflowId: "xsystem.auction-lifecycle", taskQueue: "commerce-queue" },
+  "restaurant-order.placed": { workflowId: "xsystem.restaurant-order-orchestrator", taskQueue: "commerce-queue" },
+
+  "booking.created": { workflowId: "xsystem.service-booking-orchestrator", taskQueue: "commerce-booking-queue" },
+  "booking.confirmed": { workflowId: "xsystem.booking-confirmation-sync", taskQueue: "commerce-booking-queue" },
+  "booking.no_show": { workflowId: "xsystem.booking-no-show-processing", taskQueue: "commerce-booking-queue" },
+  "subscription.created": { workflowId: "xsystem.subscription-lifecycle", taskQueue: "commerce-booking-queue" },
+  "subscription.cancelled": { workflowId: "xsystem.subscription-cancellation-sync", taskQueue: "commerce-booking-queue" },
+  "subscription.payment_failed": { workflowId: "xsystem.subscription-payment-failure", taskQueue: "commerce-booking-queue" },
+  "subscription.renewal_upcoming": { workflowId: "xsystem.subscription-renewal-notification", taskQueue: "commerce-booking-queue" },
+  "subscription.trial_ending": { workflowId: "xsystem.trial-ending-notification", taskQueue: "commerce-booking-queue" },
+  "subscription.trial_converted": { workflowId: "xsystem.trial-conversion-sync", taskQueue: "commerce-booking-queue" },
+  "subscription.trial_expired": { workflowId: "xsystem.trial-expiration-sync", taskQueue: "commerce-booking-queue" },
+  "subscription.plan_changed": { workflowId: "xsystem.subscription-plan-change-sync", taskQueue: "commerce-booking-queue" },
+  "subscription.paused": { workflowId: "xsystem.subscription-pause-sync", taskQueue: "commerce-booking-queue" },
+  "subscription.resumed": { workflowId: "xsystem.subscription-resume-sync", taskQueue: "commerce-booking-queue" },
+
+  "tenant.provisioned": { workflowId: "xsystem.tenant-setup-saga", taskQueue: "xsystem-platform-queue" },
+  "tenant.updated": { workflowId: "xsystem.tenant-config-sync", taskQueue: "xsystem-platform-queue" },
+  "node.created": { workflowId: "xsystem.node-provisioning", taskQueue: "xsystem-platform-queue" },
+  "node.updated": { workflowId: "xsystem.node-update-propagation", taskQueue: "xsystem-platform-queue" },
+  "node.deleted": { workflowId: "xsystem.node-decommission", taskQueue: "xsystem-platform-queue" },
+  "customer.created": { workflowId: "xsystem.customer-onboarding", taskQueue: "xsystem-platform-queue" },
+  "customer.updated": { workflowId: "xsystem.customer-profile-sync", taskQueue: "xsystem-platform-queue" },
+  "vendor.registered": { workflowId: "xsystem.vendor-onboarding-verification", taskQueue: "xsystem-platform-queue" },
+  "vendor.created": { workflowId: "commerce.vendor-onboarding", taskQueue: "xsystem-platform-queue" },
+  "vendor.approved": { workflowId: "xsystem.vendor-ecosystem-setup", taskQueue: "xsystem-platform-queue" },
+  "vendor.suspended": { workflowId: "xsystem.vendor-suspension-cascade", taskQueue: "xsystem-platform-queue" },
+  "vendor.deactivated": { workflowId: "xsystem.vendor-deactivation-cascade", taskQueue: "xsystem-platform-queue" },
+  "vendor.inactivity_warning": { workflowId: "xsystem.vendor-inactivity-notification", taskQueue: "xsystem-platform-queue" },
+  "vendor.application_submitted": { workflowId: "xsystem.vendor-application-processing", taskQueue: "xsystem-platform-queue" },
+  "vendor.stripe_connected": { workflowId: "xsystem.vendor-stripe-setup-sync", taskQueue: "xsystem-platform-queue" },
+  "dispute.opened": { workflowId: "xsystem.vendor-dispute-resolution", taskQueue: "xsystem-platform-queue" },
+  "kyc.requested": { workflowId: "xsystem.kyc-verification", taskQueue: "xsystem-platform-queue" },
+  "kyc.completed": { workflowId: "xsystem.kyc-credential-issuance", taskQueue: "xsystem-platform-queue" },
+  "membership.created": { workflowId: "xsystem.membership-credential-issuance", taskQueue: "xsystem-platform-queue" },
+  "governance.policy.changed": { workflowId: "xsystem.governance-policy-propagation", taskQueue: "xsystem-platform-queue" },
+  "payout.initiated": { workflowId: "xsystem.payout-processing", taskQueue: "xsystem-platform-queue" },
+  "payout.completed": { workflowId: "xsystem.payout-reconciliation", taskQueue: "xsystem-platform-queue" },
+  "payout.failed": { workflowId: "xsystem.payout-failure-handling", taskQueue: "xsystem-platform-queue" },
+  "invoice.created": { workflowId: "xsystem.invoice-processing", taskQueue: "xsystem-platform-queue" },
+  "invoice.overdue": { workflowId: "xsystem.invoice-overdue-processing", taskQueue: "xsystem-platform-queue" },
+  "payment.completed": { workflowId: "xsystem.payment-reconciliation", taskQueue: "xsystem-platform-queue" },
+  "inventory.updated": { workflowId: "xsystem.inventory-reconciliation", taskQueue: "xsystem-platform-queue" },
+
+  "fulfillment.created": { workflowId: "xsystem.fulfillment-dispatch", taskQueue: "xsystem-logistics-queue" },
+  "fulfillment.shipped": { workflowId: "xsystem.shipment-tracking-start", taskQueue: "xsystem-logistics-queue" },
+  "fulfillment.delivered": { workflowId: "xsystem.delivery-confirmation", taskQueue: "xsystem-logistics-queue" },
+  "vendor_order.shipped": { workflowId: "xsystem.vendor-order-shipment-tracking", taskQueue: "xsystem-logistics-queue" },
+
+  "sync.products.scheduled": { workflowId: "xsystem.scheduled-product-sync", taskQueue: "core-maintenance-queue" },
+  "sync.retry.scheduled": { workflowId: "xsystem.retry-failed-syncs", taskQueue: "core-maintenance-queue" },
+  "sync.hierarchy.scheduled": { workflowId: "xsystem.scheduled-hierarchy-reconciliation", taskQueue: "core-maintenance-queue" },
+
+  "workflow.dynamic.start": { workflowId: "dynamic-agent-orchestrator", taskQueue: "cityos-dynamic-queue" },
 }
 
-export function getWorkflowForEvent(eventType: string): string | null {
+export function getWorkflowForEvent(eventType: string): { workflowId: string; taskQueue: string } | null {
   return EVENT_WORKFLOW_MAP[eventType] || null
 }
 
@@ -79,14 +84,14 @@ export async function dispatchEventToTemporal(
   payload: any,
   nodeContext?: any
 ): Promise<{ dispatched: boolean; runId?: string; error?: string }> {
-  const workflowId = getWorkflowForEvent(eventType)
+  const mapping = getWorkflowForEvent(eventType)
 
-  if (!workflowId) {
+  if (!mapping) {
     return { dispatched: false, error: `No workflow mapped for event: ${eventType}` }
   }
 
   try {
-    const result = await startWorkflow(workflowId, payload, nodeContext || {})
+    const result = await startWorkflow(mapping.workflowId, payload, nodeContext || {}, mapping.taskQueue)
     return { dispatched: true, runId: result.runId }
   } catch (err: any) {
     console.warn(`[EventDispatcher] Failed to dispatch ${eventType} to Temporal:`, err.message)
@@ -108,19 +113,19 @@ export async function processOutboxEvents(container: any): Promise<{
     const pendingEvents = await eventOutboxService.listPendingEvents(undefined, 50)
 
     for (const event of pendingEvents) {
-      const workflowId = getWorkflowForEvent(event.event_type)
-      if (!workflowId) {
+      const mapping = getWorkflowForEvent(event.event_type)
+      if (!mapping) {
         continue
       }
 
       try {
         const envelope = eventOutboxService.buildEnvelope(event)
-        await startWorkflow(workflowId, envelope.payload, {
+        await startWorkflow(mapping.workflowId, envelope.payload, {
           tenantId: event.tenant_id,
           nodeId: event.node_id,
           correlationId: event.correlation_id,
           channel: event.channel,
-        })
+        }, mapping.taskQueue)
         await eventOutboxService.markPublished(event.id)
         processed++
       } catch (err: any) {

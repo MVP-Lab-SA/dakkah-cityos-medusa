@@ -11,7 +11,7 @@ export default async function temporalEventBridge({
     return
   }
 
-  if (!getWorkflowForEvent(eventName)) {
+  if (!getWorkflowForEvent(eventName)?.workflowId) {
     return
   }
 

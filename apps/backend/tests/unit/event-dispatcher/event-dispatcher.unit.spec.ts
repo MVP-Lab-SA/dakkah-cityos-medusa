@@ -80,8 +80,11 @@ describe("event-dispatcher", () => {
   })
 
   describe("getWorkflowForEvent", () => {
-    it("returns correct workflow ID for a known event", () => {
-      expect(getWorkflowForEvent("order.placed")).toBe("xsystem.unified-order-orchestrator")
+    it("returns correct workflow mapping for a known event", () => {
+      expect(getWorkflowForEvent("order.placed")).toEqual({
+        workflowId: "xsystem.unified-order-orchestrator",
+        taskQueue: "commerce-queue",
+      })
     })
 
     it("returns null for an unknown event", () => {
@@ -89,17 +92,24 @@ describe("event-dispatcher", () => {
     })
 
     it('maps "governance.policy.changed" to "xsystem.governance-policy-propagation"', () => {
-      expect(getWorkflowForEvent("governance.policy.changed")).toBe(
-        "xsystem.governance-policy-propagation"
-      )
+      expect(getWorkflowForEvent("governance.policy.changed")).toEqual({
+        workflowId: "xsystem.governance-policy-propagation",
+        taskQueue: "xsystem-platform-queue",
+      })
     })
 
     it("returns correct workflow for vendor.created", () => {
-      expect(getWorkflowForEvent("vendor.created")).toBe("commerce.vendor-onboarding")
+      expect(getWorkflowForEvent("vendor.created")).toEqual({
+        workflowId: "commerce.vendor-onboarding",
+        taskQueue: "xsystem-platform-queue",
+      })
     })
 
     it("returns correct workflow for product.updated", () => {
-      expect(getWorkflowForEvent("product.updated")).toBe("commerce.sync-product-to-cms")
+      expect(getWorkflowForEvent("product.updated")).toEqual({
+        workflowId: "commerce.sync-product-to-cms",
+        taskQueue: "commerce-queue",
+      })
     })
   })
 
@@ -135,7 +145,8 @@ describe("event-dispatcher", () => {
       expect(mockStartWorkflow).toHaveBeenCalledWith(
         "xsystem.unified-order-orchestrator",
         { id: "order-1" },
-        {}
+        {},
+        "commerce-queue"
       )
     })
 
@@ -148,7 +159,8 @@ describe("event-dispatcher", () => {
       expect(mockStartWorkflow).toHaveBeenCalledWith(
         "xsystem.unified-order-orchestrator",
         { id: "o1" },
-        ctx
+        ctx,
+        "commerce-queue"
       )
     })
 

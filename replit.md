@@ -62,7 +62,7 @@ This layer provides integration services called by Temporal activities, includin
 - **Payload CMS (Entity & Content Management):** Tenant profiles, POI content, vendor public profiles, pages, navigation, service channel display content.
 - **Fleetbase (Geo & Logistics):** Geocoding, address validation, delivery zone management, service area coverage, fleet management, routing, real-time tracking.
 - **ERPNext (Finance, Accounting & ERP):** Sales invoices, payment entries, GL, inventory, procurement, customer/product sync, reporting. Multi-tenant support with each tenant mapping to an ERPNext company.
-- **Temporal Cloud (Workflow Orchestration):** 35+ system workflows across 9 categories, 2 task queues (system and AI agents), dynamic AI agent workflows, event outbox integration.
+- **Temporal Cloud (Workflow Orchestration):** 65 system workflows across 9 categories, 21 specialized task queues mapped to 10 systems, dynamic AI agent workflows, event outbox integration. Workflows route to domain-specific queues (commerce-queue, xsystem-platform-queue, xsystem-logistics-queue, etc.) based on the Workflow Discovery Guide.
 - **Walt.id (Decentralized Digital Identity):** DID management, 6 credential types (KYC, Vendor, Membership, TenantOperator, POI, MarketplaceSeller), W3C Verifiable Credentials, wallet integration, trust registries.
 
 ## External Dependencies
@@ -78,6 +78,15 @@ This layer provides integration services called by Temporal activities, includin
 - **Payment Gateway:** Stripe
 
 ## Recent Changes (2026-02-10)
+
+### Per-Workflow Task Queue Routing & Workflow Discovery Guide
+- **Workflow Discovery Guide:** Saved comprehensive reference documentation at `docs/workflow-discovery-integration-guide.md` covering 10 registered systems, 21 task queues, 14 domain packs, and discovery APIs.
+- **EVENT_WORKFLOW_MAP:** Upgraded from flat `Record<string, string>` to `Record<string, { workflowId: string; taskQueue: string }>` with per-event queue routing. 65 events now route to 6 specialized queues: `commerce-queue` (15 events), `commerce-booking-queue` (13 events), `xsystem-platform-queue` (27 events), `xsystem-logistics-queue` (4 events), `core-maintenance-queue` (3 events), `cityos-dynamic-queue` (1 event).
+- **startWorkflow:** Updated `temporal-client.ts` to accept optional `taskQueue` parameter (defaults to `cityos-workflow-queue`).
+- **TEMPORAL_TASK_QUEUES:** Expanded from 2 queues to 21 queues in `temporal-spec.ts`, each with primary_system, domain, and description.
+- **QUEUE_SYSTEM_MAP:** Added new export in `temporal-spec.ts` mapping all 21 queues to their system/domain/description.
+- **Caller updates:** Updated `temporal-event-bridge.ts` subscriber, `admin/temporal/trigger/route.ts`, and unit tests to match new `getWorkflowForEvent` return shape.
+- **Zero single-queue bottleneck** — workflows now route to domain-specific queues for proper isolation and independent scaling.
 
 ### Seed Data & Image Migration to Dakkah
 - **seed-complete.ts:** Fixed `default_locale: "ar"` → `"en"`. Renamed generic products (Medusa T-Shirt → Saudi Heritage T-Shirt, Stainless Steel Water Bottle → Zamzam Water Flask, Wireless Earbuds → JBL Wireless Earbuds, Medusa Hoodie → Riyadh Season Hoodie) with Saudi-themed descriptions.
