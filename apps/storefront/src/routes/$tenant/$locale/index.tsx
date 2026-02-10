@@ -39,8 +39,8 @@ export const Route = createFileRoute("/$tenant/$locale/")({
     }
   },
   head: () => {
-    const title = `Welcome to Medusa Store`
-    const description = `Discover our curated collection of products. Browse our latest featured items and shop with confidence.`
+    const title = `Dakkah CityOS Commerce`
+    const description = `Explore the Dakkah CityOS Commerce marketplace. Browse our latest featured items and shop with confidence.`
 
     return {
       meta: [

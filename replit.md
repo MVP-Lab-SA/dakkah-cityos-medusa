@@ -79,6 +79,13 @@ This layer provides integration services called by Temporal activities, includin
 
 ## Recent Changes (2026-02-10)
 
+### Storefront Route Consolidation & Data Migration
+- **Route Consolidation:** Removed bare root routes (cart, checkout, store, vendor, products, categories) and entire `$countryCode` route hierarchy. Only `$tenant/$locale` canonical routes remain.
+- **Hydration Fix:** Fixed `useStoreTheme` Rules of Hooks violation (hooks called conditionally). SSR uses minimal shell; client hydrates with full providers/navbar/footer.
+- **Product Migration to Dakkah:** Renamed 6 old Medusa starter products to Saudi-themed Dakkah products (Saudi Heritage T-Shirt, Riyadh Season Hoodie, Arabic Coffee Cup Set, Woven Palm Basket Bag, Zamzam Water Flask, JBL Wireless Earbuds). Added SAR pricing for all. Assigned to proper categories.
+- **Tenant Default Locale:** Fixed from 'ar' to 'en' for better default UX.
+- **All 13 products** now have Unsplash thumbnails, SAR/USD/EUR pricing, and category assignments.
+
 ### Temporal-First Architecture Deep Audit (3 Passes)
 - **Pass 1 (8 fixes):** Fixed unmapped events, direct Stripe/ERPNext calls in jobs, admin sync endpoints
 - **Pass 2 (13 fixes):** Fixed admin payout processing, 7 unmapped route events, hardcoded tenant defaults

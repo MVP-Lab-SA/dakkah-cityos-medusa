@@ -51,11 +51,36 @@ export const BrandingProvider: React.FC<BrandingProviderProps> = ({
   children,
   initialTenantHandle = null,
 }) => {
+  if (typeof window === 'undefined') {
+    return (
+      <BrandingContext.Provider
+        value={{
+          branding: null,
+          tenantHandle: initialTenantHandle,
+          setTenantHandle: () => {},
+          isLoading: false,
+        }}
+      >
+        {children}
+      </BrandingContext.Provider>
+    )
+  }
+
+  return (
+    <ClientBrandingProvider initialTenantHandle={initialTenantHandle}>
+      {children}
+    </ClientBrandingProvider>
+  )
+}
+
+const ClientBrandingProvider: React.FC<BrandingProviderProps> = ({
+  children,
+  initialTenantHandle = null,
+}) => {
   const [tenantHandle, setTenantHandle] = useState<string | null>(
-    initialTenantHandle || (typeof window !== 'undefined' ? localStorage.getItem('tenant_handle') : null)
+    initialTenantHandle || localStorage.getItem('tenant_handle')
   )
 
-  // Fetch branding data when tenant is set
   const { data: branding, isLoading } = useQuery({
     queryKey: queryKeys.tenants.byHandle(tenantHandle || 'default'),
     queryFn: async () => {
@@ -68,10 +93,8 @@ export const BrandingProvider: React.FC<BrandingProviderProps> = ({
     enabled: !!tenantHandle,
   })
 
-  // Apply branding to document
   useEffect(() => {
-    if (branding && typeof window !== 'undefined') {
-      // Apply theme colors as CSS variables
+    if (branding) {
       if (branding.themeConfig?.primaryColor) {
         document.documentElement.style.setProperty(
           '--color-primary',
@@ -91,12 +114,10 @@ export const BrandingProvider: React.FC<BrandingProviderProps> = ({
         )
       }
 
-      // Update page title
       if (branding.name) {
         document.title = branding.name
       }
 
-      // Update favicon
       if (branding.favicon?.url) {
         const favicon = document.querySelector(
           'link[rel="icon"]'
@@ -108,14 +129,11 @@ export const BrandingProvider: React.FC<BrandingProviderProps> = ({
     }
   }, [branding])
 
-  // Persist tenant selection
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      if (tenantHandle) {
-        localStorage.setItem('tenant_handle', tenantHandle)
-      } else {
-        localStorage.removeItem('tenant_handle')
-      }
+    if (tenantHandle) {
+      localStorage.setItem('tenant_handle', tenantHandle)
+    } else {
+      localStorage.removeItem('tenant_handle')
     }
   }, [tenantHandle])
 

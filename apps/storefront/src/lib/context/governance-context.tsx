@@ -33,6 +33,18 @@ export function useGovernanceContext() {
 }
 
 export function GovernanceProvider({ children }: { children: React.ReactNode }) {
+  if (typeof window === "undefined") {
+    return (
+      <GovernanceContext.Provider value={defaultValue}>
+        {children}
+      </GovernanceContext.Provider>
+    )
+  }
+
+  return <ClientGovernanceProvider>{children}</ClientGovernanceProvider>
+}
+
+function ClientGovernanceProvider({ children }: { children: React.ReactNode }) {
   const { tenant } = useTenant()
   const tenantId = tenant?.id || ""
 

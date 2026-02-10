@@ -5,6 +5,30 @@ import { getCountryCodeFromPath } from "@/lib/utils/region"
 import { Link, useLocation } from "@tanstack/react-router"
 
 const Footer = () => {
+  if (typeof window === "undefined") {
+    return (
+      <footer className="bg-zinc-50 border-t border-zinc-300 w-full" data-testid="footer">
+        <div className="content-container flex flex-col w-full">
+          <div className="flex flex-col gap-y-12 lg:flex-row items-start justify-between py-16">
+            <div className="lg:w-1/3 flex flex-col gap-y-4">
+              <span className="text-xl font-bold text-zinc-900">Dakkah CityOS</span>
+              <p className="text-zinc-600 max-w-md text-base font-medium">
+                Dakkah CityOS — Multi-tenant, city-scale commerce platform powering 25+ verticals across MENA and beyond.
+              </p>
+            </div>
+          </div>
+          <div className="border-t border-zinc-300 py-6">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <span className="text-xs text-zinc-600">
+                © {new Date().getFullYear()} Dakkah CityOS. All rights reserved.
+              </span>
+            </div>
+          </div>
+        </div>
+      </footer>
+    )
+  }
+
   const location = useLocation();
   const countryCode = getCountryCodeFromPath(location.pathname);
   const baseHref = countryCode ? `/${countryCode}` : "";

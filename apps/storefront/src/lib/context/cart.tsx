@@ -16,7 +16,25 @@ export const useCartDrawer = () => {
   return context
 }
 
+const defaultCartValue: CartContextType = {
+  isOpen: false,
+  openCart: () => {},
+  closeCart: () => {},
+}
+
 export const CartProvider = ({ children }: { children: ReactNode }) => {
+  if (typeof window === "undefined") {
+    return (
+      <CartContext.Provider value={defaultCartValue}>
+        {children}
+      </CartContext.Provider>
+    )
+  }
+
+  return <ClientCartProvider>{children}</ClientCartProvider>
+}
+
+const ClientCartProvider = ({ children }: { children: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false)
 
   const openCart = () => setIsOpen(true)

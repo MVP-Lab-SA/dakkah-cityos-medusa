@@ -22,7 +22,29 @@ interface ToastContextType {
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined)
 
+const defaultToastValue: ToastContextType = {
+  toasts: [],
+  addToast: () => {},
+  removeToast: () => {},
+  success: () => {},
+  error: () => {},
+  warning: () => {},
+  info: () => {},
+}
+
 export function ToastProvider({ children }: { children: ReactNode }) {
+  if (typeof window === "undefined") {
+    return (
+      <ToastContext.Provider value={defaultToastValue}>
+        {children}
+      </ToastContext.Provider>
+    )
+  }
+
+  return <ClientToastProvider>{children}</ClientToastProvider>
+}
+
+function ClientToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([])
   
   const addToast = useCallback((type: ToastType, message: string, duration = 5000) => {

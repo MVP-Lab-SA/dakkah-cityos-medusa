@@ -16,12 +16,29 @@ export const useToast = () => {
   return context;
 };
 
+const defaultToastContextValue: ToastContextType = {
+  message: null,
+  showToast: () => {},
+  hideToast: () => {},
+};
+
 export const ToastProvider = ({ children }: { children: ReactNode }) => {
+  if (typeof window === "undefined") {
+    return (
+      <ToastContext.Provider value={defaultToastContextValue}>
+        {children}
+      </ToastContext.Provider>
+    );
+  }
+
+  return <ClientToastProvider>{children}</ClientToastProvider>;
+};
+
+const ClientToastProvider = ({ children }: { children: ReactNode }) => {
   const [message, setMessage] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
     setMessage(msg);
-    // Auto-dismiss after 3 seconds
     setTimeout(() => {
       setMessage(null);
     }, 3000);

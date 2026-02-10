@@ -95,6 +95,20 @@ const SERVICE_GROUPS = [
 ] as const
 
 export const Navbar = () => {
+  if (typeof window === "undefined") {
+    return (
+      <div className="sticky top-0 inset-x-0 z-40">
+        <header className="relative h-16 mx-auto border-b bg-white border-zinc-200">
+          <nav className="content-container text-sm font-medium text-zinc-600 flex items-center justify-between w-full h-full">
+            <div className="flex items-center h-full absolute left-1/2 transform -translate-x-1/2">
+              <span className="text-xl font-bold uppercase">Dakkah CityOS</span>
+            </div>
+          </nav>
+        </header>
+      </div>
+    )
+  }
+
   const location = useLocation()
   const countryCode = getCountryCodeFromPath(location.pathname)
   const baseHref = countryCode ? `/${countryCode}` : ""
