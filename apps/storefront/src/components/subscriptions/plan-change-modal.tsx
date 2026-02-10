@@ -75,7 +75,7 @@ export function PlanChangeModal({
                 onClick={() => !isCurrent && setSelectedPlanId(plan.id)}
                 disabled={isCurrent}
                 className={cn(
-                  "w-full text-left p-4 rounded-xl border-2 transition-all",
+                  "w-full text-start p-4 rounded-xl border-2 transition-all",
                   isCurrent && "border-ds-border bg-ds-muted opacity-60 cursor-not-allowed",
                   isSelected && !isCurrent && "border-ds-foreground bg-ds-muted",
                   !isCurrent && !isSelected && "border-ds-border hover:border-ds-border"
@@ -93,7 +93,7 @@ export function PlanChangeModal({
                     </div>
                     <p className="text-sm text-ds-muted-foreground mt-1">{plan.description}</p>
                   </div>
-                  <div className="text-right">
+                  <div className="text-end">
                     <p className="font-semibold text-ds-foreground">
                       {formatPrice(plan.price, plan.currency_code)}
                     </p>

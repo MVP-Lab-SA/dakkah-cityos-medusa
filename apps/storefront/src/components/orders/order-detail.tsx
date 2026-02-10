@@ -156,7 +156,7 @@ export function OrderDetail({ order }: OrderDetailProps) {
                 )}
                 <p className="text-sm text-ds-muted-foreground mt-1">Qty: {item.quantity}</p>
               </div>
-              <div className="text-right">
+              <div className="text-end">
                 <p className="font-medium text-ds-foreground">
                   {formatPrice(item.total, order.currency_code)}
                 </p>

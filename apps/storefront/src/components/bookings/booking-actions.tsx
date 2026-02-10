@@ -81,7 +81,7 @@ export function BookingActions({
             className="w-full justify-start"
             onClick={onReschedule}
           >
-            <Calendar className="w-4 h-4 mr-2" />
+            <Calendar className="w-4 h-4 me-2" />
             Reschedule Appointment
           </Button>
         )}
@@ -94,14 +94,14 @@ export function BookingActions({
             onClick={handleCancel}
             disabled={isCancelling}
           >
-            <XMark className="w-4 h-4 mr-2" />
+            <XMark className="w-4 h-4 me-2" />
             {isCancelling ? "Cancelling..." : "Cancel Booking"}
           </Button>
         )}
 
         {/* Get Help */}
         <Button variant="ghost" className="w-full justify-start text-ds-muted-foreground">
-          <ChatBubbleLeftRight className="w-4 h-4 mr-2" />
+          <ChatBubbleLeftRight className="w-4 h-4 me-2" />
           Contact Support
         </Button>
       </div>

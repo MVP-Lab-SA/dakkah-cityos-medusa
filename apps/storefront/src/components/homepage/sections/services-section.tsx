@@ -88,7 +88,7 @@ export function ServicesSection({ services, config }: ServicesSectionProps) {
                 <div className="mt-3 flex items-center justify-between">
                   {service.duration && (
                     <div className="flex items-center text-sm text-ds-muted-foreground">
-                      <Clock className="h-4 w-4 mr-1" />
+                      <Clock className="h-4 w-4 me-1" />
                       {formatDuration(service.duration)}
                     </div>
                   )}

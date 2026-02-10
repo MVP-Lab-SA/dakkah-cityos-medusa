@@ -52,7 +52,7 @@ export function ActiveSubscriptions({ subscriptions, isLoading }: ActiveSubscrip
             className="mt-4 inline-flex items-center text-sm font-medium text-ds-foreground hover:underline"
           >
             Browse plans
-            <ChevronRight className="h-4 w-4 ml-1" />
+            <ChevronRight className="h-4 w-4 ms-1" />
           </Link>
         </div>
       </div>
@@ -89,7 +89,7 @@ export function ActiveSubscriptions({ subscriptions, isLoading }: ActiveSubscrip
               </p>
             </div>
 
-            <div className="text-right">
+            <div className="text-end">
               <span
                 className={`inline-block px-2 py-1 text-xs font-medium rounded ${
                   statusColors[subscription.status] || "bg-ds-muted text-ds-foreground"

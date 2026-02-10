@@ -31,7 +31,7 @@ export function OrderActions({
           className="w-full justify-start"
           onClick={onReorder}
         >
-          <ArrowPath className="w-4 h-4 mr-2" />
+          <ArrowPath className="w-4 h-4 me-2" />
           Reorder Items
         </Button>
 
@@ -41,7 +41,7 @@ export function OrderActions({
           className="w-full justify-start"
           onClick={onDownloadInvoice}
         >
-          <DocumentText className="w-4 h-4 mr-2" />
+          <DocumentText className="w-4 h-4 me-2" />
           Download Invoice
         </Button>
 
@@ -49,7 +49,7 @@ export function OrderActions({
         {canTrack && (
           <Link to={`${prefix}/account/orders/${orderId}/track` as any}>
             <Button variant="outline" className="w-full justify-start">
-              <DocumentText className="w-4 h-4 mr-2" />
+              <DocumentText className="w-4 h-4 me-2" />
               Track Shipment
             </Button>
           </Link>
@@ -59,7 +59,7 @@ export function OrderActions({
         {canReturn && (
           <Link to={`${prefix}/account/orders/${orderId}/return` as any}>
             <Button variant="outline" className="w-full justify-start">
-              <ArrowUturnLeft className="w-4 h-4 mr-2" />
+              <ArrowUturnLeft className="w-4 h-4 me-2" />
               Request Return
             </Button>
           </Link>
@@ -67,7 +67,7 @@ export function OrderActions({
 
         {/* Get Help */}
         <Button variant="ghost" className="w-full justify-start text-ds-muted-foreground">
-          <ChatBubbleLeftRight className="w-4 h-4 mr-2" />
+          <ChatBubbleLeftRight className="w-4 h-4 me-2" />
           Get Help with Order
         </Button>
       </div>

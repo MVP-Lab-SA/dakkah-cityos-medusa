@@ -13,7 +13,7 @@ export interface HeroBlockData extends BlockBase {
   backgroundImage?: MediaField
   backgroundVideo?: MediaField
   overlay?: "none" | "light" | "dark" | "gradient"
-  alignment?: "left" | "center" | "right"
+  alignment?: "start" | "center" | "end"
   minHeight?: "sm" | "md" | "lg" | "xl" | "full"
   cta?: CTAField[]
   badge?: string
@@ -24,7 +24,7 @@ export interface RichTextBlockData extends BlockBase {
   content: string
   columns?: 1 | 2
   maxWidth?: "sm" | "md" | "lg" | "xl" | "full"
-  textAlign?: "left" | "center" | "right"
+  textAlign?: "start" | "center" | "end"
 }
 
 export interface FeatureGridBlockData extends BlockBase {
@@ -420,7 +420,7 @@ export interface BannerSlide {
   image: MediaField
   overlay?: "none" | "light" | "dark" | "gradient"
   cta?: CTAField[]
-  alignment?: "left" | "center" | "right"
+  alignment?: "start" | "center" | "end"
 }
 
 export type BlockData =

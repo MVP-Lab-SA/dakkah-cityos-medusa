@@ -65,7 +65,7 @@ export function SubscriptionActions({
             onClick={() => handleAction("pause", onPause)}
             disabled={isProcessing !== null}
           >
-            <PauseSolid className="w-4 h-4 mr-2" />
+            <PauseSolid className="w-4 h-4 me-2" />
             {isProcessing === "pause" ? "Pausing..." : "Pause Subscription"}
           </Button>
         )}
@@ -77,7 +77,7 @@ export function SubscriptionActions({
             onClick={() => handleAction("resume", onResume)}
             disabled={isProcessing !== null}
           >
-            <PlaySolid className="w-4 h-4 mr-2" />
+            <PlaySolid className="w-4 h-4 me-2" />
             {isProcessing === "resume" ? "Resuming..." : "Resume Subscription"}
           </Button>
         )}
@@ -90,7 +90,7 @@ export function SubscriptionActions({
             onClick={onChangePlan}
             disabled={isProcessing !== null}
           >
-            <ArrowUpDown className="w-4 h-4 mr-2" />
+            <ArrowUpDown className="w-4 h-4 me-2" />
             Change Plan
           </Button>
         )}
@@ -103,7 +103,7 @@ export function SubscriptionActions({
             onClick={() => handleAction("cancel", onCancel)}
             disabled={isProcessing !== null}
           >
-            <XMark className="w-4 h-4 mr-2" />
+            <XMark className="w-4 h-4 me-2" />
             {isProcessing === "cancel" ? "Cancelling..." : "Cancel Subscription"}
           </Button>
         )}

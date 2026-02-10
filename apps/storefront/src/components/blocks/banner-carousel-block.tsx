@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { Link } from '@tanstack/react-router'
+import { t } from '@/lib/i18n'
 
 interface SlideItem {
   heading?: string
@@ -14,7 +15,7 @@ interface SlideItem {
     url: string
     style?: 'primary' | 'secondary'
   }[]
-  alignment?: 'left' | 'center' | 'right'
+  alignment?: 'start' | 'center' | 'end' | 'left' | 'right'
 }
 
 interface BannerCarouselBlockProps {
@@ -24,6 +25,7 @@ interface BannerCarouselBlockProps {
   showDots?: boolean
   showArrows?: boolean
   height?: 'sm' | 'md' | 'lg' | 'xl' | 'full'
+  locale?: string
 }
 
 const heightClasses: Record<string, string> = {
@@ -42,9 +44,11 @@ const overlayClasses: Record<string, string> = {
 }
 
 const alignmentClasses: Record<string, string> = {
-  left: 'items-start text-left',
+  start: 'items-start text-start',
   center: 'items-center text-center',
-  right: 'items-end text-right',
+  end: 'items-end text-end',
+  left: 'items-start text-start',
+  right: 'items-end text-end',
 }
 
 export const BannerCarouselBlock: React.FC<BannerCarouselBlockProps> = ({
@@ -54,6 +58,7 @@ export const BannerCarouselBlock: React.FC<BannerCarouselBlockProps> = ({
   showDots = true,
   showArrows = true,
   height = 'lg',
+  locale = 'en',
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0)
 
@@ -100,7 +105,7 @@ export const BannerCarouselBlock: React.FC<BannerCarouselBlockProps> = ({
                 className={`flex flex-col ${
                   alignmentClasses[slide.alignment || 'center']
                 } max-w-3xl ${
-                  slide.alignment === 'right' ? 'ml-auto' : slide.alignment === 'left' ? '' : 'mx-auto'
+                  (slide.alignment === 'right' || slide.alignment === 'end') ? 'ms-auto' : (slide.alignment === 'left' || slide.alignment === 'start') ? '' : 'mx-auto'
                 }`}
               >
                 {slide.heading && (
@@ -140,8 +145,8 @@ export const BannerCarouselBlock: React.FC<BannerCarouselBlockProps> = ({
         <>
           <button
             onClick={goToPrev}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-ds-background/80 text-ds-foreground hover:bg-ds-background transition-colors"
-            aria-label="Previous slide"
+            className="absolute start-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-ds-background/80 text-ds-foreground hover:bg-ds-background transition-colors"
+            aria-label={t(locale, 'blocks.previous_slide')}
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 4l-6 6 6 6" />
@@ -149,8 +154,8 @@ export const BannerCarouselBlock: React.FC<BannerCarouselBlockProps> = ({
           </button>
           <button
             onClick={goToNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-ds-background/80 text-ds-foreground hover:bg-ds-background transition-colors"
-            aria-label="Next slide"
+            className="absolute end-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-ds-background/80 text-ds-foreground hover:bg-ds-background transition-colors"
+            aria-label={t(locale, 'blocks.next_slide')}
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M8 4l6 6-6 6" />
@@ -170,7 +175,7 @@ export const BannerCarouselBlock: React.FC<BannerCarouselBlockProps> = ({
                   ? 'bg-ds-primary'
                   : 'bg-ds-background/60 hover:bg-ds-background'
               }`}
-              aria-label={`Go to slide ${index + 1}`}
+              aria-label={`${t(locale, 'blocks.go_to_slide')} ${index + 1}`}
             />
           ))}
         </div>

@@ -17,7 +17,7 @@ export function SearchSuggestions({
   }
 
   return (
-    <div className="absolute top-full left-0 right-0 mt-2 bg-ui-bg-base border border-ui-border-base rounded-lg shadow-lg overflow-hidden z-50">
+    <div className="absolute top-full inset-x-0 mt-2 bg-ui-bg-base border border-ui-border-base rounded-lg shadow-lg overflow-hidden z-50">
       <div className="p-2">
         <p className="text-xs text-ui-fg-muted px-2 py-1">Suggestions</p>
         <ul>

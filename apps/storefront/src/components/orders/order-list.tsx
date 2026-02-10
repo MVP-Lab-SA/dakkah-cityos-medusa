@@ -80,13 +80,13 @@ export function OrderList({ orders, isLoading }: OrderListProps) {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
-          <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ds-muted-foreground" />
+          <MagnifyingGlass className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ds-muted-foreground" />
           <Input
             type="text"
             placeholder="Search orders..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 h-10"
+            className="ps-10 h-10"
           />
         </div>
         <select
@@ -115,7 +115,7 @@ export function OrderList({ orders, isLoading }: OrderListProps) {
               className="mt-4 inline-flex items-center text-sm font-medium text-ds-foreground hover:underline"
             >
               Start shopping
-              <ChevronRight className="h-4 w-4 ml-1" />
+              <ChevronRight className="h-4 w-4 ms-1" />
             </Link>
           )}
         </div>
@@ -180,7 +180,7 @@ export function OrderList({ orders, isLoading }: OrderListProps) {
               </div>
 
               {/* Total */}
-              <div className="text-right flex-shrink-0">
+              <div className="text-end flex-shrink-0">
                 <p className="text-lg font-semibold text-ds-foreground">
                   {formatPrice(order.total, order.currency_code)}
                 </p>

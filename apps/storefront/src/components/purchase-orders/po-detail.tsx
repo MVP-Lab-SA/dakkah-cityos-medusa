@@ -97,7 +97,7 @@ export function PODetail({ purchaseOrder: po }: PODetailProps) {
                   <p className="text-sm text-ds-muted-foreground">{item.variant_title}</p>
                 )}
               </div>
-              <div className="text-right">
+              <div className="text-end">
                 <p className="text-sm text-ds-muted-foreground">
                   {formatPrice(item.unit_price, po.currency_code)} x {item.quantity}
                 </p>

@@ -261,7 +261,7 @@ export function B2BDashboard() {
                         {new Date(quote.created_at).toLocaleDateString()}
                       </p>
                     </div>
-                    <div className="text-right">
+                    <div className="text-end">
                       <QuoteStatusBadge status={quote.status} />
                       <p className="text-sm font-semibold mt-1">
                         ${Number(quote.total || 0).toLocaleString()}

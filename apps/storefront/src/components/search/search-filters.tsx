@@ -33,7 +33,7 @@ export function SearchFilters({
             <button
               onClick={() => onCategoryChange(undefined)}
               className={clx(
-                "text-sm w-full text-left px-2 py-1 rounded hover:bg-ui-bg-base-hover transition-colors",
+                "text-sm w-full text-start px-2 py-1 rounded hover:bg-ui-bg-base-hover transition-colors",
                 !selectedCategory
                   ? "text-ui-fg-base font-medium"
                   : "text-ui-fg-muted"
@@ -47,7 +47,7 @@ export function SearchFilters({
               <button
                 onClick={() => onCategoryChange(category.id)}
                 className={clx(
-                  "text-sm w-full text-left px-2 py-1 rounded hover:bg-ui-bg-base-hover transition-colors",
+                  "text-sm w-full text-start px-2 py-1 rounded hover:bg-ui-bg-base-hover transition-colors",
                   selectedCategory === category.id
                     ? "text-ui-fg-base font-medium"
                     : "text-ui-fg-muted"
@@ -71,7 +71,7 @@ export function SearchFilters({
               <button
                 onClick={() => onCollectionChange(undefined)}
                 className={clx(
-                  "text-sm w-full text-left px-2 py-1 rounded hover:bg-ui-bg-base-hover transition-colors",
+                  "text-sm w-full text-start px-2 py-1 rounded hover:bg-ui-bg-base-hover transition-colors",
                   !selectedCollection
                     ? "text-ui-fg-base font-medium"
                     : "text-ui-fg-muted"
@@ -85,7 +85,7 @@ export function SearchFilters({
                 <button
                   onClick={() => onCollectionChange(collection.id)}
                   className={clx(
-                    "text-sm w-full text-left px-2 py-1 rounded hover:bg-ui-bg-base-hover transition-colors",
+                    "text-sm w-full text-start px-2 py-1 rounded hover:bg-ui-bg-base-hover transition-colors",
                     selectedCollection === collection.id
                       ? "text-ui-fg-base font-medium"
                       : "text-ui-fg-muted"

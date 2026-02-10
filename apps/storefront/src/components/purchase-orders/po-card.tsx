@@ -84,7 +84,7 @@ export function POCard({ purchaseOrder: po, compact = false }: POCardProps) {
           <p className="text-xs text-ds-muted-foreground">Created By</p>
           <p className="font-medium text-ds-foreground">{po.created_by_name || "You"}</p>
         </div>
-        <div className="text-right">
+        <div className="text-end">
           <p className="text-xs text-ds-muted-foreground">Total</p>
           <p className="font-semibold text-ds-foreground">
             {formatPrice(po.total, po.currency_code)}

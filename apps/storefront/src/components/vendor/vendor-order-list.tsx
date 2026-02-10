@@ -82,7 +82,7 @@ export function VendorOrderList() {
               <div className="p-4 border-b bg-muted/20 flex items-center justify-between">
                 <div>
                   <span className="font-semibold">Order #{order.display_id}</span>
-                  <span className="text-muted-foreground ml-4">
+                  <span className="text-muted-foreground ms-4">
                     {new Date(order.created_at).toLocaleDateString()}
                   </span>
                 </div>

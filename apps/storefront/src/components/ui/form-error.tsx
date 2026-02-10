@@ -30,7 +30,7 @@ export function FormField({ label, error, required, children, className = "", ht
     <div className={className}>
       <label htmlFor={htmlFor} className="block text-sm font-medium text-ds-foreground mb-1">
         {label}
-        {required && <span className="text-ds-destructive ml-1">*</span>}
+        {required && <span className="text-ds-destructive ms-1">*</span>}
       </label>
       {children}
       <FormError error={error} />

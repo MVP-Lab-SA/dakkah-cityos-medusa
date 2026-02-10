@@ -44,7 +44,7 @@ const ErrorFallback = ({ error, reset }: ErrorFallbackProps) => {
             {reset && (
               <Button variant="secondary" onClick={reset} className="sm:w-auto">
                 <svg
-                  className="w-4 h-4 mr-2"
+                  className="w-4 h-4 me-2"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -62,7 +62,7 @@ const ErrorFallback = ({ error, reset }: ErrorFallbackProps) => {
             <Link to="/">
               <Button className="w-full sm:w-auto">
                 <svg
-                  className="w-4 h-4 mr-2"
+                  className="w-4 h-4 me-2"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -86,7 +86,7 @@ const ErrorFallback = ({ error, reset }: ErrorFallbackProps) => {
                 variant="secondary"
               >
                 <svg
-                  className={`w-4 h-4 mr-2 transition-transform ${
+                  className={`w-4 h-4 me-2 transition-transform ${
                     showDetails ? "rotate-90" : ""
                   }`}
                   fill="none"
@@ -105,7 +105,7 @@ const ErrorFallback = ({ error, reset }: ErrorFallbackProps) => {
 
               {showDetails && (
                 <div className="mt-4 p-4 bg-ds-muted">
-                  <div className="text-left space-y-3">
+                  <div className="text-start space-y-3">
                     <div>
                       <p className="text-xs font-medium text-ds-foreground uppercase tracking-wide mb-1">
                         Error Message

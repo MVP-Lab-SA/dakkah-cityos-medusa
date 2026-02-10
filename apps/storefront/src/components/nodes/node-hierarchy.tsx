@@ -97,7 +97,7 @@ function NodeCard({
     <div style={{ marginLeft: `${depth * 16}px` }}>
       <button
         onClick={handleToggle}
-        className={`w-full text-left group rounded-lg border transition-all duration-200 ${
+        className={`w-full text-start group rounded-lg border transition-all duration-200 ${
           selected
             ? `${colors.bg} ${colors.border}`
             : "bg-ds-background border-ds-border hover:border-ds-border hover:shadow-sm"

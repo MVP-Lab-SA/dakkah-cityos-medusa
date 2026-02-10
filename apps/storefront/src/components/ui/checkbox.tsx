@@ -22,7 +22,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
             "text-base font-medium text-ds-foreground",
             "w-full h-full",
             "bg-ds-background",
-            "absolute top-0 left-0 z-10",
+            "absolute top-0 start-0 z-10",
             className
           )}
           checked={checked}
@@ -31,7 +31,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         />
         <span
           className={clsx(
-            "absolute top-0 left-0 w-full h-full flex items-center justify-center pointer-events-none",
+            "absolute top-0 start-0 w-full h-full flex items-center justify-center pointer-events-none",
             "z-20",
             {
               "opacity-0": !checked,

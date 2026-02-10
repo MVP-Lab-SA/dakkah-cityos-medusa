@@ -49,7 +49,7 @@ export function StarRating({
         )
       })}
       {showValue && (
-        <span className="ml-1 text-sm text-ui-fg-muted">
+        <span className="ms-1 text-sm text-ui-fg-muted">
           {rating.toFixed(1)}
         </span>
       )}

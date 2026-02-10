@@ -1,5 +1,7 @@
 import React from 'react'
 import { Link } from '@tanstack/react-router'
+import { t } from '@/lib/i18n'
+import { useTenant } from '@/lib/context/tenant-context'
 
 interface Category {
   id: string
@@ -37,6 +39,7 @@ export const CategoryGridBlock: React.FC<CategoryGridBlockProps> = ({
   showCount = false,
   tenantPrefix = '',
 }) => {
+  const { locale } = useTenant()
   const buildLink = (slug: string) =>
     tenantPrefix ? `${tenantPrefix}/categories/${slug}` : `/categories/${slug}`
 
@@ -64,7 +67,7 @@ export const CategoryGridBlock: React.FC<CategoryGridBlockProps> = ({
         )}
         {showCount && category.count !== undefined && (
           <span className="text-xs text-ds-muted-foreground mt-2 block">
-            {category.count} items
+            {category.count} {t(locale, 'blocks.items')}
           </span>
         )}
       </div>
@@ -90,7 +93,7 @@ export const CategoryGridBlock: React.FC<CategoryGridBlockProps> = ({
         <div>
           <h3 className="font-semibold text-ds-background">{category.title}</h3>
           {showCount && category.count !== undefined && (
-            <span className="text-sm text-ds-background/80">{category.count} items</span>
+            <span className="text-sm text-ds-background/80">{category.count} {t(locale, 'blocks.items')}</span>
           )}
         </div>
       </div>
@@ -108,7 +111,7 @@ export const CategoryGridBlock: React.FC<CategoryGridBlockProps> = ({
       )}
       <h3 className="font-semibold text-ds-foreground">{category.title}</h3>
       {showCount && category.count !== undefined && (
-        <span className="text-xs text-ds-muted-foreground mt-1">{category.count} items</span>
+        <span className="text-xs text-ds-muted-foreground mt-1">{category.count} {t(locale, 'blocks.items')}</span>
       )}
     </Link>
   )
@@ -124,7 +127,7 @@ export const CategoryGridBlock: React.FC<CategoryGridBlockProps> = ({
         {category.title}
       </span>
       {showCount && category.count !== undefined && (
-        <span className="text-xs text-ds-muted-foreground ml-auto">{category.count}</span>
+        <span className="text-xs text-ds-muted-foreground ms-auto">{category.count}</span>
       )}
     </Link>
   )

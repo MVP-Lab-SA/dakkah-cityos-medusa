@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from '@tanstack/react-router'
+import { t } from '@/lib/i18n'
 
 interface EventItem {
   id: string
@@ -23,11 +24,14 @@ interface EventListBlockProps {
   events: EventItem[]
   layout?: 'timeline' | 'grid' | 'list' | 'calendar'
   showPastEvents?: boolean
+  locale?: string
 }
 
-function formatDate(dateStr: string): string {
+const localeMap: Record<string, string> = { en: 'en-US', fr: 'fr-FR', ar: 'ar-SA' }
+
+function formatDate(dateStr: string, locale: string = 'en'): string {
   try {
-    return new Date(dateStr).toLocaleDateString(undefined, {
+    return new Date(dateStr).toLocaleDateString(localeMap[locale] || 'en-US', {
       weekday: 'short',
       year: 'numeric',
       month: 'short',
@@ -38,9 +42,9 @@ function formatDate(dateStr: string): string {
   }
 }
 
-function formatTime(dateStr: string): string {
+function formatTime(dateStr: string, locale: string = 'en'): string {
   try {
-    return new Date(dateStr).toLocaleTimeString(undefined, {
+    return new Date(dateStr).toLocaleTimeString(localeMap[locale] || 'en-US', {
       hour: '2-digit',
       minute: '2-digit',
     })
@@ -63,6 +67,7 @@ export const EventListBlock: React.FC<EventListBlockProps> = ({
   events,
   layout = 'grid',
   showPastEvents = true,
+  locale = 'en',
 }) => {
   const filteredEvents = showPastEvents
     ? events
@@ -99,7 +104,7 @@ export const EventListBlock: React.FC<EventListBlockProps> = ({
             )}
             {isPast(event.endDate || event.date) && (
               <span className="text-xs font-medium px-2 py-1 rounded-full bg-ds-muted text-ds-muted-foreground">
-                Past
+                {t(locale, 'blocks.past')}
               </span>
             )}
           </div>
@@ -112,7 +117,7 @@ export const EventListBlock: React.FC<EventListBlockProps> = ({
             </p>
           )}
           <div className="flex flex-col gap-1 text-sm text-ds-muted-foreground">
-            <span>{formatDate(event.date)}{event.endDate ? ` - ${formatDate(event.endDate)}` : ''}</span>
+            <span>{formatDate(event.date, locale)}{event.endDate ? ` - ${formatDate(event.endDate, locale)}` : ''}</span>
             {event.location && <span>{event.location}</span>}
             {event.price && (
               <span className="font-semibold text-ds-foreground">{event.price}</span>
@@ -125,13 +130,13 @@ export const EventListBlock: React.FC<EventListBlockProps> = ({
 
   const renderTimeline = () => (
     <div className="relative">
-      <div className="absolute left-4 md:left-8 top-0 bottom-0 w-0.5 bg-ds-border" />
+      <div className="absolute start-4 md:start-8 top-0 bottom-0 w-0.5 bg-ds-border" />
       <div className="flex flex-col gap-8">
         {filteredEvents.map((event) => (
-          <div key={event.id} className="relative pl-10 md:pl-20">
-            <div className="absolute left-3 md:left-7 top-2 w-3 h-3 rounded-full bg-ds-primary border-2 border-ds-background" />
+          <div key={event.id} className="relative ps-10 md:ps-20">
+            <div className="absolute start-3 md:start-7 top-2 w-3 h-3 rounded-full bg-ds-primary border-2 border-ds-background" />
             <div className="text-sm font-medium text-ds-muted-foreground mb-2">
-              {formatDate(event.date)} {formatTime(event.date)}
+              {formatDate(event.date, locale)} {formatTime(event.date, locale)}
             </div>
             <EventCard event={event} />
           </div>
@@ -164,7 +169,7 @@ export const EventListBlock: React.FC<EventListBlockProps> = ({
               <p className="text-ds-muted-foreground text-sm mb-2 line-clamp-2">{event.description}</p>
             )}
             <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-ds-muted-foreground">
-              <span>{formatDate(event.date)}</span>
+              <span>{formatDate(event.date, locale)}</span>
               {event.location && <span>{event.location}</span>}
               {event.price && <span className="font-semibold text-ds-foreground">{event.price}</span>}
             </div>

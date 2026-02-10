@@ -45,7 +45,7 @@ export function VendorShippingSelect({
               key={option.id}
               onClick={() => onSelect?.(option.id)}
               className={cn(
-                "w-full flex items-center justify-between p-4 rounded-lg border-2 transition-all text-left",
+                "w-full flex items-center justify-between p-4 rounded-lg border-2 transition-all text-start",
                 isSelected
                   ? "border-ds-foreground bg-ds-muted"
                   : "border-ds-border hover:border-ds-border"

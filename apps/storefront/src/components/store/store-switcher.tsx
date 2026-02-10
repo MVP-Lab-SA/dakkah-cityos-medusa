@@ -61,12 +61,12 @@ export const StoreSwitcher: React.FC = () => {
             className="fixed inset-0 z-10"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute right-0 mt-2 w-64 bg-ds-background rounded-lg shadow-xl z-20 max-h-96 overflow-y-auto">
+          <div className="absolute end-0 mt-2 w-64 bg-ds-background rounded-lg shadow-xl z-20 max-h-96 overflow-y-auto">
             {stores.map((store: any) => (
               <button
                 key={store.id}
                 onClick={() => handleStoreChange(store.handle)}
-                className={`w-full text-left px-4 py-3 hover:bg-ds-muted transition-colors flex items-center gap-3 ${
+                className={`w-full text-start px-4 py-3 hover:bg-ds-muted transition-colors flex items-center gap-3 ${
                   store.handle === tenantHandle ? 'bg-ds-muted' : ''
                 }`}
               >

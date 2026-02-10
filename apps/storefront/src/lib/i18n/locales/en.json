@@ -149,6 +149,17 @@
     "dismiss": "Dismiss",
     "expires": "Expires",
     "limited_time": "Limited Time Offer",
-    "all_categories": "All"
+    "all_categories": "All",
+    "verified": "Verified",
+    "items": "items",
+    "subscribe_heading": "Subscribe to our newsletter",
+    "subscribe_success": "Thank you for subscribing!",
+    "subscribe_success_message": "You'll receive our latest updates in your inbox.",
+    "book_appointment": "Book Your Appointment",
+    "view_pricing": "View pricing",
+    "past": "Past",
+    "feature": "Feature",
+    "go_to_slide": "Go to slide",
+    "select_option": "Select"
   }
 }

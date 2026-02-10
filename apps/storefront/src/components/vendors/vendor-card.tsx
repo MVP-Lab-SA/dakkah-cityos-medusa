@@ -25,7 +25,7 @@ export function VendorCard({ vendor }: VendorCardProps) {
           />
         )}
         {/* Logo */}
-        <div className="absolute -bottom-8 left-4">
+        <div className="absolute -bottom-8 start-4">
           <div className="w-16 h-16 rounded-lg bg-ds-background border-2 border-white shadow-md overflow-hidden">
             {vendor.logo ? (
               <img

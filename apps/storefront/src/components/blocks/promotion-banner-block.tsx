@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { t } from '@/lib/i18n'
 
 interface PromotionBannerBlockProps {
   heading?: string
@@ -11,6 +12,7 @@ interface PromotionBannerBlockProps {
   }
   variant?: 'banner' | 'card' | 'floating' | 'countdown'
   dismissible?: boolean
+  locale?: string
 }
 
 function formatExpiry(dateStr: string): string {
@@ -33,6 +35,7 @@ export const PromotionBannerBlock: React.FC<PromotionBannerBlockProps> = ({
   image,
   variant = 'banner',
   dismissible = false,
+  locale = 'en',
 }) => {
   const [dismissed, setDismissed] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -54,8 +57,8 @@ export const PromotionBannerBlock: React.FC<PromotionBannerBlockProps> = ({
     dismissible ? (
       <button
         onClick={() => setDismissed(true)}
-        className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full hover:bg-ds-muted/20 transition-colors text-current"
-        aria-label="Dismiss"
+        className="absolute top-3 end-3 w-8 h-8 flex items-center justify-center rounded-full hover:bg-ds-muted/20 transition-colors text-current"
+        aria-label={t(locale, 'blocks.dismiss')}
       >
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M4 4l8 8M12 4l-8 8" />
@@ -74,14 +77,14 @@ export const PromotionBannerBlock: React.FC<PromotionBannerBlockProps> = ({
           <rect x="5" y="5" width="9" height="9" rx="1.5" />
           <path d="M11 5V3.5A1.5 1.5 0 009.5 2h-6A1.5 1.5 0 002 3.5v6A1.5 1.5 0 003.5 11H5" />
         </svg>
-        {copied && <span className="text-xs">Copied!</span>}
+        {copied && <span className="text-xs">{t(locale, 'blocks.copied')}</span>}
       </button>
     ) : null
 
   const ExpiryInfo = () =>
     expiresAt ? (
       <p className="text-sm opacity-80">
-        Expires {formatExpiry(expiresAt)}
+        {t(locale, 'blocks.expires')} {formatExpiry(expiresAt)}
       </p>
     ) : null
 
@@ -122,10 +125,10 @@ export const PromotionBannerBlock: React.FC<PromotionBannerBlockProps> = ({
 
   if (variant === 'floating') {
     return (
-      <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 z-50">
+      <div className="fixed bottom-4 start-4 end-4 md:start-auto md:end-4 md:w-96 z-50">
         <div className="relative bg-ds-card border border-ds-border rounded-xl p-4 shadow-lg">
           <DismissButton />
-          <div className="pr-8">
+          <div className="pe-8">
             {heading && (
               <h3 className="text-lg font-bold text-ds-foreground mb-1">{heading}</h3>
             )}
@@ -146,7 +149,7 @@ export const PromotionBannerBlock: React.FC<PromotionBannerBlockProps> = ({
     <section className="relative bg-ds-accent">
       <DismissButton />
       <div className="container mx-auto px-4 md:px-6 py-4 md:py-6">
-        <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-center md:text-left">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-center md:text-start">
           <div>
             {heading && (
               <h2 className="text-lg md:text-xl font-bold text-ds-accent-foreground">

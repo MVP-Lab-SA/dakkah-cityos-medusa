@@ -89,7 +89,7 @@ export function POForm({ onSubmit, onSaveDraft, onCancel }: POFormProps) {
           <div className="flex items-center justify-between mb-4">
             <Label>Line Items</Label>
             <Button variant="outline" size="sm" onClick={addItem}>
-              <Plus className="w-4 h-4 mr-1" />
+              <Plus className="w-4 h-4 me-1" />
               Add Item
             </Button>
           </div>
@@ -137,7 +137,7 @@ export function POForm({ onSubmit, onSaveDraft, onCancel }: POFormProps) {
                       }
                     />
                   </div>
-                  <div className="w-24 text-right pt-2">
+                  <div className="w-24 text-end pt-2">
                     <p className="font-medium">
                       {formatPrice(item.quantity * item.unit_price, "usd")}
                     </p>

@@ -1,5 +1,6 @@
 import React from 'react'
 import { Rating } from '../ui/rating'
+import { t } from '@/lib/i18n'
 
 interface Service {
   id: string
@@ -24,6 +25,7 @@ interface ServiceListBlockProps {
   columns?: 2 | 3 | 4
   showBooking?: boolean
   showPricing?: boolean
+  locale?: string
 }
 
 const columnClasses: Record<number, string> = {
@@ -40,6 +42,7 @@ export const ServiceListBlock: React.FC<ServiceListBlockProps> = ({
   columns = 3,
   showBooking = false,
   showPricing = true,
+  locale = 'en',
 }) => {
   const formatPrice = (price: Service['price']) => {
     if (!price) return null
@@ -95,7 +98,7 @@ export const ServiceListBlock: React.FC<ServiceListBlockProps> = ({
             href={service.bookingUrl}
             className="block w-full text-center py-2 px-4 rounded-md bg-ds-primary text-ds-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
           >
-            Book Now
+            {t(locale, 'blocks.book_now')}
           </a>
         )}
       </div>
@@ -145,7 +148,7 @@ export const ServiceListBlock: React.FC<ServiceListBlockProps> = ({
             href={service.bookingUrl}
             className="inline-block py-2 px-4 rounded-md bg-ds-primary text-ds-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
           >
-            Book Now
+            {t(locale, 'blocks.book_now')}
           </a>
         </div>
       )}

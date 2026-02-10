@@ -21,13 +21,13 @@ const DropdownMenuSubTrigger = React.forwardRef<
     className={clsx(
       "flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none",
       "focus:bg-ds-accent data-[state=open]:bg-ds-accent",
-      inset && "pl-8",
+      inset && "ps-8",
       className
     )}
     {...props}
   >
     {children}
-    <ChevronRight className="ml-auto h-4 w-4" />
+    <ChevronRight className="ms-auto h-4 w-4" />
   </DropdownMenuPrimitive.SubTrigger>
 ))
 DropdownMenuSubTrigger.displayName = DropdownMenuPrimitive.SubTrigger.displayName
@@ -87,7 +87,7 @@ const DropdownMenuItem = React.forwardRef<
       "relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors",
       "focus:bg-ds-accent focus:text-ds-accent-foreground",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-      inset && "pl-8",
+      inset && "ps-8",
       className
     )}
     {...props}
@@ -102,7 +102,7 @@ const DropdownMenuCheckboxItem = React.forwardRef<
   <DropdownMenuPrimitive.CheckboxItem
     ref={ref}
     className={clsx(
-      "relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors",
+      "relative flex cursor-pointer select-none items-center rounded-sm py-1.5 ps-8 pe-2 text-sm outline-none transition-colors",
       "focus:bg-ds-accent focus:text-ds-accent-foreground",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className
@@ -110,7 +110,7 @@ const DropdownMenuCheckboxItem = React.forwardRef<
     checked={checked}
     {...props}
   >
-    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+    <span className="absolute start-2 flex h-3.5 w-3.5 items-center justify-center">
       <DropdownMenuPrimitive.ItemIndicator>
         <Check className="h-4 w-4" />
       </DropdownMenuPrimitive.ItemIndicator>
@@ -127,14 +127,14 @@ const DropdownMenuRadioItem = React.forwardRef<
   <DropdownMenuPrimitive.RadioItem
     ref={ref}
     className={clsx(
-      "relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors",
+      "relative flex cursor-pointer select-none items-center rounded-sm py-1.5 ps-8 pe-2 text-sm outline-none transition-colors",
       "focus:bg-ds-accent focus:text-ds-accent-foreground",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className
     )}
     {...props}
   >
-    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+    <span className="absolute start-2 flex h-3.5 w-3.5 items-center justify-center">
       <DropdownMenuPrimitive.ItemIndicator>
         <div className="h-2 w-2 rounded-full bg-current" />
       </DropdownMenuPrimitive.ItemIndicator>
@@ -152,7 +152,7 @@ const DropdownMenuLabel = React.forwardRef<
 >(({ className, inset, ...props }, ref) => (
   <DropdownMenuPrimitive.Label
     ref={ref}
-    className={clsx("px-2 py-1.5 text-sm font-semibold text-ds-foreground", inset && "pl-8", className)}
+    className={clsx("px-2 py-1.5 text-sm font-semibold text-ds-foreground", inset && "ps-8", className)}
     {...props}
   />
 ))
@@ -171,7 +171,7 @@ const DropdownMenuSeparator = React.forwardRef<
 DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName
 
 const DropdownMenuShortcut = ({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) => {
-  return <span className={clsx("ml-auto text-xs tracking-widest opacity-60", className)} {...props} />
+  return <span className={clsx("ms-auto text-xs tracking-widest opacity-60", className)} {...props} />
 }
 DropdownMenuShortcut.displayName = "DropdownMenuShortcut"
 

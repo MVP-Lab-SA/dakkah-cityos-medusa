@@ -149,6 +149,17 @@
     "dismiss": "إخفاء",
     "expires": "ينتهي",
     "limited_time": "عرض لفترة محدودة",
-    "all_categories": "الكل"
+    "all_categories": "الكل",
+    "verified": "موثّق",
+    "items": "عناصر",
+    "subscribe_heading": "اشترك في نشرتنا الإخبارية",
+    "subscribe_success": "شكراً لاشتراكك!",
+    "subscribe_success_message": "ستتلقى آخر التحديثات في بريدك الإلكتروني.",
+    "book_appointment": "احجز موعدك",
+    "view_pricing": "عرض الأسعار",
+    "past": "ماضي",
+    "feature": "الميزة",
+    "go_to_slide": "انتقل إلى الشريحة",
+    "select_option": "اختر"
   }
 }

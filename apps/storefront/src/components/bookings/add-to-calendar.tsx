@@ -114,7 +114,7 @@ export function AddToCalendar({
       </Button>
 
       {showOptions && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-ds-background rounded-lg border border-ds-border shadow-lg z-10 overflow-hidden">
+        <div className="absolute top-full inset-x-0 mt-2 bg-ds-background rounded-lg border border-ds-border shadow-lg z-10 overflow-hidden">
           {calendarOptions.map((option) => (
             <button
               key={option.name}
@@ -122,7 +122,7 @@ export function AddToCalendar({
                 option.action()
                 setShowOptions(false)
               }}
-              className="w-full text-left px-4 py-3 text-sm hover:bg-ds-muted transition-colors"
+              className="w-full text-start px-4 py-3 text-sm hover:bg-ds-muted transition-colors"
             >
               {option.name}
             </button>

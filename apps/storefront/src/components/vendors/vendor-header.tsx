@@ -23,7 +23,7 @@ export function VendorHeader({ vendor }: VendorHeaderProps) {
       {/* Info */}
       <div className="content-container relative">
         {/* Logo */}
-        <div className="absolute -top-12 left-0">
+        <div className="absolute -top-12 start-0">
           <div className="w-24 h-24 rounded-lg bg-ds-background border-4 border-white shadow-lg overflow-hidden">
             {vendor.logo ? (
               <img

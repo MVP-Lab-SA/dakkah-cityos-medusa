@@ -178,7 +178,7 @@ export function VendorAnalyticsDashboard() {
                       {new Date(order.created_at).toLocaleDateString()}
                     </p>
                   </div>
-                  <div className="text-right">
+                  <div className="text-end">
                     <p className="font-medium text-ds-foreground">
                       {formatCurrency(order.total)}
                     </p>

@@ -85,7 +85,7 @@ export function CancellationFlow({
                 <button
                   key={reason}
                   onClick={() => handleReasonSelect(reason)}
-                  className="w-full text-left px-4 py-3 rounded-lg border border-ds-border hover:border-ds-border hover:bg-ds-muted transition-colors"
+                  className="w-full text-start px-4 py-3 rounded-lg border border-ds-border hover:border-ds-border hover:bg-ds-muted transition-colors"
                 >
                   {reason}
                 </button>

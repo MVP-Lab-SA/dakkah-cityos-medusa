@@ -164,7 +164,7 @@ export function SettingsForm({ onSave }: SettingsFormProps) {
         <Button onClick={handleSave} disabled={isSaving}>
           {saved ? (
             <>
-              <Check className="w-4 h-4 mr-2" />
+              <Check className="w-4 h-4 me-2" />
               Saved
             </>
           ) : isSaving ? (

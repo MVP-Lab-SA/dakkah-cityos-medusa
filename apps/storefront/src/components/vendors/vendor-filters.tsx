@@ -46,12 +46,12 @@ export function VendorFilters({ onFilterChange }: VendorFiltersProps) {
       <div className="flex flex-col sm:flex-row gap-4">
         {/* Search */}
         <div className="relative flex-1">
-          <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ds-muted-foreground" />
+          <MagnifyingGlass className="absolute start-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ds-muted-foreground" />
           <Input
             placeholder="Search vendors..."
             value={search}
             onChange={(e) => handleSearchChange(e.target.value)}
-            className="pl-10"
+            className="ps-10"
           />
         </div>
 
@@ -82,7 +82,7 @@ export function VendorFilters({ onFilterChange }: VendorFiltersProps) {
         {/* Clear */}
         {hasFilters && (
           <Button variant="ghost" size="sm" onClick={clearFilters}>
-            <XMark className="w-4 h-4 mr-1" />
+            <XMark className="w-4 h-4 me-1" />
             Clear
           </Button>
         )}

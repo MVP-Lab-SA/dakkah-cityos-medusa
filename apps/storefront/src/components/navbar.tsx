@@ -76,7 +76,7 @@ export const Navbar = () => {
               <NavigationMenu.Item className="h-full flex items-center">
                 <NavigationMenu.Trigger className="text-ds-muted-foreground hover:text-ds-muted-foreground h-full flex items-center gap-1 select-none">
                   Shop
-                  <svg className="w-3 h-3 ml-0.5 transition-transform duration-200 group-data-[state=open]:rotate-180" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  <svg className="w-3 h-3 ms-0.5 transition-transform duration-200 group-data-[state=open]:rotate-180" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </NavigationMenu.Trigger>
                 <NavigationMenu.Content className="content-container py-8">
                   <div className="flex flex-col gap-4">
@@ -105,7 +105,7 @@ export const Navbar = () => {
                     <NavigationMenu.Item key={group.label} className="h-full flex items-center">
                       <NavigationMenu.Trigger className="text-ds-muted-foreground hover:text-ds-muted-foreground h-full flex items-center gap-1 select-none">
                         {group.label}
-                        <svg className="w-3 h-3 ml-0.5 transition-transform duration-200 group-data-[state=open]:rotate-180" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        <svg className="w-3 h-3 ms-0.5 transition-transform duration-200 group-data-[state=open]:rotate-180" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
                       </NavigationMenu.Trigger>
                       <NavigationMenu.Content className="content-container py-8">
                         <div className="grid grid-cols-5 gap-x-8 gap-y-6">
@@ -210,7 +210,7 @@ export const Navbar = () => {
               <div className="flex flex-col py-4 overflow-y-auto max-h-[calc(100vh-80px)]">
                 <button
                   onClick={() => toggleMobileSection("shop")}
-                  className="px-6 py-4 text-ds-foreground text-lg font-medium flex items-center justify-between w-full text-left"
+                  className="px-6 py-4 text-ds-foreground text-lg font-medium flex items-center justify-between w-full text-start"
                 >
                   Shop
                   <svg className={`w-4 h-4 transition-transform duration-200 ${openMobileSections["shop"] ? "rotate-180" : ""}`} viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -237,7 +237,7 @@ export const Navbar = () => {
                         <>
                           <button
                             onClick={() => toggleMobileSection(`nav-${group.label}`)}
-                            className="px-6 py-4 text-ds-foreground text-lg font-medium flex items-center justify-between w-full text-left"
+                            className="px-6 py-4 text-ds-foreground text-lg font-medium flex items-center justify-between w-full text-start"
                           >
                             {group.label}
                             <svg className={`w-4 h-4 transition-transform duration-200 ${openMobileSections[`nav-${group.label}`] ? "rotate-180" : ""}`} viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>

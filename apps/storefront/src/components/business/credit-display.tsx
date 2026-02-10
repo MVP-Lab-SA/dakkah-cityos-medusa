@@ -113,7 +113,7 @@ export function CreditDisplay({
                     <p className="text-xs text-ds-muted-foreground">{formatDate(tx.date)}</p>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="text-end">
                   <p className={`font-medium ${
                     tx.type === "charge" ? "text-ds-destructive" : "text-ds-success"
                   }`}>

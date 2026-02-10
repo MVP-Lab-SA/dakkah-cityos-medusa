@@ -60,19 +60,19 @@ export function CompanyOrders({ orders }: CompanyOrdersProps) {
         <table className="w-full">
           <thead className="bg-ds-muted border-b border-ds-border">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-ds-muted-foreground uppercase tracking-wider">
+              <th className="px-6 py-3 text-start text-xs font-semibold text-ds-muted-foreground uppercase tracking-wider">
                 Order
               </th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-ds-muted-foreground uppercase tracking-wider">
+              <th className="px-6 py-3 text-start text-xs font-semibold text-ds-muted-foreground uppercase tracking-wider">
                 Ordered By
               </th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-ds-muted-foreground uppercase tracking-wider">
+              <th className="px-6 py-3 text-start text-xs font-semibold text-ds-muted-foreground uppercase tracking-wider">
                 Date
               </th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-ds-muted-foreground uppercase tracking-wider">
+              <th className="px-6 py-3 text-start text-xs font-semibold text-ds-muted-foreground uppercase tracking-wider">
                 Status
               </th>
-              <th className="px-6 py-3 text-right text-xs font-semibold text-ds-muted-foreground uppercase tracking-wider">
+              <th className="px-6 py-3 text-end text-xs font-semibold text-ds-muted-foreground uppercase tracking-wider">
                 Total
               </th>
               <th className="px-6 py-3"></th>
@@ -99,7 +99,7 @@ export function CompanyOrders({ orders }: CompanyOrdersProps) {
                     {order.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-right font-medium text-ds-foreground">
+                <td className="px-6 py-4 text-end font-medium text-ds-foreground">
                   {formatPrice(order.total, order.currency_code)}
                 </td>
                 <td className="px-6 py-4">

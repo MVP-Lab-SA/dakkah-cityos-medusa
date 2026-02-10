@@ -49,7 +49,7 @@ export function QuoteList({ quotes }: QuoteListProps) {
                   {quote.items && ` - ${quote.items.length} items`}
                 </p>
               </div>
-              <div className="text-right">
+              <div className="text-end">
                 <QuoteStatusBadge status={quote.status} />
                 <p className="text-sm font-semibold mt-1">
                   ${Number(quote.total || 0).toLocaleString()}

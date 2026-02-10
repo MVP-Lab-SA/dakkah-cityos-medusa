@@ -116,7 +116,7 @@ export function QuoteDetails({ quote }: QuoteDetailsProps) {
                 )}
                 <p className="text-sm">Qty: {item.quantity}</p>
               </div>
-              <div className="text-right">
+              <div className="text-end">
                 {item.custom_price && item.custom_price !== item.unit_price ? (
                   <>
                     <p className="font-semibold text-ds-success">

@@ -75,7 +75,7 @@ const ShippingItemSelector = ({
           </div>
         </div>
 
-        <div className="text-right">
+        <div className="text-end">
           {price ? (
             <Price
               price={price}

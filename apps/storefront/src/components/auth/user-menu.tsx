@@ -52,7 +52,7 @@ export function UserMenu() {
           onClick={() => setAuthModalOpen(true)}
           className="text-ds-muted-foreground hover:text-ds-foreground"
         >
-          <User className="h-5 w-5 mr-1" />
+          <User className="h-5 w-5 me-1" />
           <span className="hidden sm:inline">Sign in</span>
         </Button>
         <AuthModal open={authModalOpen} onOpenChange={setAuthModalOpen} />
@@ -92,28 +92,28 @@ export function UserMenu() {
 
         <DropdownMenuItem asChild>
           <Link to={`${prefix}/account` as any} className="cursor-pointer">
-            <User className="mr-2 h-4 w-4" />
+            <User className="me-2 h-4 w-4" />
             My Account
           </Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
           <Link to={`${prefix}/account/orders` as any} className="cursor-pointer">
-            <ShoppingBag className="mr-2 h-4 w-4" />
+            <ShoppingBag className="me-2 h-4 w-4" />
             Orders
           </Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
           <Link to={`${prefix}/account/subscriptions` as any} className="cursor-pointer">
-            <CreditCard className="mr-2 h-4 w-4" />
+            <CreditCard className="me-2 h-4 w-4" />
             Subscriptions
           </Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
           <Link to={`${prefix}/account/bookings` as any} className="cursor-pointer">
-            <Calendar className="mr-2 h-4 w-4" />
+            <Calendar className="me-2 h-4 w-4" />
             Bookings
           </Link>
         </DropdownMenuItem>
@@ -124,7 +124,7 @@ export function UserMenu() {
             <DropdownMenuLabel className="text-xs text-ds-muted-foreground">Business</DropdownMenuLabel>
             <DropdownMenuItem asChild>
               <Link to={`${prefix}/business` as any} className="cursor-pointer">
-                <BuildingStorefront className="mr-2 h-4 w-4" />
+                <BuildingStorefront className="me-2 h-4 w-4" />
                 Company Dashboard
               </Link>
             </DropdownMenuItem>
@@ -135,7 +135,7 @@ export function UserMenu() {
 
         <DropdownMenuItem asChild>
           <Link to={`${prefix}/account/settings` as any} className="cursor-pointer">
-            <CogSixTooth className="mr-2 h-4 w-4" />
+            <CogSixTooth className="me-2 h-4 w-4" />
             Settings
           </Link>
         </DropdownMenuItem>
@@ -145,7 +145,7 @@ export function UserMenu() {
           disabled={isLoggingOut}
           className="text-ds-destructive focus:text-ds-destructive cursor-pointer"
         >
-          <ArrowRightOnRectangle className="mr-2 h-4 w-4" />
+          <ArrowRightOnRectangle className="me-2 h-4 w-4" />
           {isLoggingOut ? "Signing out..." : "Sign out"}
         </DropdownMenuItem>
       </DropdownMenuContent>

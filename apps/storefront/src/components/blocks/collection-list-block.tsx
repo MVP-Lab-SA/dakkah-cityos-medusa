@@ -56,7 +56,7 @@ export const CollectionListBlock: React.FC<CollectionListBlockProps> = ({
         )}
       </div>
       <div className="absolute inset-0 bg-ds-foreground/20 group-hover:bg-ds-foreground/30 transition-colors" />
-      <div className="absolute bottom-0 left-0 right-0 p-4">
+      <div className="absolute bottom-0 start-0 end-0 p-4">
         <h3 className="text-lg font-semibold text-ds-primary-foreground drop-shadow-md">
           {collection.title}
         </h3>

@@ -65,7 +65,7 @@ export function TeamMembers({
         <h3 className="text-lg font-semibold text-ds-foreground">Team Members</h3>
         {canManage && (
           <Button size="sm" onClick={() => setShowInviteForm(!showInviteForm)}>
-            <Plus className="w-4 h-4 mr-1" />
+            <Plus className="w-4 h-4 me-1" />
             Invite Member
           </Button>
         )}

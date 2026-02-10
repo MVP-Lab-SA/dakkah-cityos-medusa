@@ -162,7 +162,7 @@ export const ImageGalleryBlock: React.FC<ImageGalleryBlockProps> = ({
             <button
               type="button"
               onClick={closeLightbox}
-              className="absolute top-4 right-4 p-2 rounded-full text-ds-foreground hover:bg-ds-muted transition-colors"
+              className="absolute top-4 end-4 p-2 rounded-full text-ds-foreground hover:bg-ds-muted transition-colors"
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -172,7 +172,7 @@ export const ImageGalleryBlock: React.FC<ImageGalleryBlockProps> = ({
             <button
               type="button"
               onClick={prevImage}
-              className="absolute left-4 p-2 rounded-full text-ds-foreground hover:bg-ds-muted transition-colors"
+              className="absolute start-4 p-2 rounded-full text-ds-foreground hover:bg-ds-muted transition-colors"
             >
               <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -195,7 +195,7 @@ export const ImageGalleryBlock: React.FC<ImageGalleryBlockProps> = ({
             <button
               type="button"
               onClick={nextImage}
-              className="absolute right-4 p-2 rounded-full text-ds-foreground hover:bg-ds-muted transition-colors"
+              className="absolute end-4 p-2 rounded-full text-ds-foreground hover:bg-ds-muted transition-colors"
             >
               <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />

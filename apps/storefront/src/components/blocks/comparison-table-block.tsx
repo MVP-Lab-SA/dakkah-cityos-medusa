@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from '@tanstack/react-router'
+import { t } from '@/lib/i18n'
 
 interface ComparisonItem {
   id: string
@@ -22,6 +23,7 @@ interface ComparisonTableBlockProps {
   features: string[]
   items: ComparisonItem[]
   highlightedItem?: string
+  locale?: string
 }
 
 const CheckIcon = () => (
@@ -42,6 +44,7 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
   features,
   items,
   highlightedItem,
+  locale = 'en',
 }) => {
   if (!features || !items || items.length === 0) return null
 
@@ -63,8 +66,8 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
           <table className="w-full min-w-[600px] border-collapse">
             <thead>
               <tr>
-                <th className="sticky left-0 z-10 bg-ds-background p-4 text-left text-sm font-semibold text-ds-foreground border-b border-ds-border min-w-[160px]">
-                  Feature
+                <th className="sticky start-0 z-10 bg-ds-background p-4 text-start text-sm font-semibold text-ds-foreground border-b border-ds-border min-w-[160px]">
+                  {t(locale, 'blocks.feature')}
                 </th>
                 {items.map((item) => (
                   <th
@@ -93,7 +96,7 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
             <tbody>
               {features.map((feature, idx) => (
                 <tr key={feature} className={idx % 2 === 0 ? 'bg-ds-muted/30' : 'bg-ds-background'}>
-                  <td className="sticky left-0 z-10 p-4 text-sm font-medium text-ds-foreground border-b border-ds-border bg-inherit">
+                  <td className="sticky start-0 z-10 p-4 text-sm font-medium text-ds-foreground border-b border-ds-border bg-inherit">
                     {feature}
                   </td>
                   {items.map((item) => {
@@ -118,7 +121,7 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
             </tbody>
             <tfoot>
               <tr>
-                <td className="sticky left-0 z-10 bg-ds-background p-4" />
+                <td className="sticky start-0 z-10 bg-ds-background p-4" />
                 {items.map((item) => (
                   <td key={item.id} className="p-4 text-center">
                     {item.cta && (

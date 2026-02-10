@@ -124,7 +124,7 @@ export function BookingDetail({ booking }: BookingDetailProps) {
               <p className="text-sm text-ds-muted-foreground">Duration</p>
               <p className="text-ds-foreground">{booking.service.duration} minutes</p>
             </div>
-            <div className="text-right">
+            <div className="text-end">
               <p className="text-sm text-ds-muted-foreground">Total</p>
               <p className="text-xl font-semibold text-ds-foreground">
                 {formatPrice(booking.service.price, booking.service.currency_code)}

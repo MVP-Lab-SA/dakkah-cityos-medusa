@@ -39,7 +39,7 @@ export function VendorStats({ productCount, rating, reviewCount, salesCount }: V
             <p className="font-semibold text-ds-foreground">
               {stat.value}
               {stat.suffix && (
-                <span className="text-sm font-normal text-ds-muted-foreground ml-1">{stat.suffix}</span>
+                <span className="text-sm font-normal text-ds-muted-foreground ms-1">{stat.suffix}</span>
               )}
             </p>
           </div>

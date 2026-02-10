@@ -44,12 +44,12 @@ export function OrderFilters({ onSearch, onFilterChange }: OrderFiltersProps) {
       {/* Search & Filter Toggle */}
       <div className="flex gap-3">
         <form onSubmit={handleSearch} className="flex-1 relative">
-          <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ds-muted-foreground" />
+          <MagnifyingGlass className="absolute start-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ds-muted-foreground" />
           <Input
             placeholder="Search orders by ID or product..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
+            className="ps-10"
           />
         </form>
         <Button
@@ -57,7 +57,7 @@ export function OrderFilters({ onSearch, onFilterChange }: OrderFiltersProps) {
           onClick={() => setShowFilters(!showFilters)}
           className={showFilters ? "bg-ds-muted" : ""}
         >
-          <Funnel className="w-4 h-4 mr-2" />
+          <Funnel className="w-4 h-4 me-2" />
           Filters
         </Button>
       </div>
@@ -125,7 +125,7 @@ export function OrderFilters({ onSearch, onFilterChange }: OrderFiltersProps) {
           {hasActiveFilters && (
             <div className="mt-4 pt-4 border-t border-ds-border flex justify-end">
               <Button variant="ghost" size="sm" onClick={clearFilters}>
-                <XMark className="w-4 h-4 mr-1" />
+                <XMark className="w-4 h-4 me-1" />
                 Clear all filters
               </Button>
             </div>

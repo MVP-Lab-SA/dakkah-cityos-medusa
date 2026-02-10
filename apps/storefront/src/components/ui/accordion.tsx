@@ -47,7 +47,7 @@ export const Accordion: React.FC<AccordionProps> = ({
               type="button"
               onClick={() => !item.disabled && toggle(item.key)}
               disabled={item.disabled}
-              className={`flex w-full items-center justify-between py-4 text-left font-medium transition-colors ${item.disabled ? "opacity-50 cursor-not-allowed" : "hover:text-ds-primary cursor-pointer"} text-ds-foreground`}
+              className={`flex w-full items-center justify-between py-4 text-start font-medium transition-colors ${item.disabled ? "opacity-50 cursor-not-allowed" : "hover:text-ds-primary cursor-pointer"} text-ds-foreground`}
               aria-expanded={isOpen}
             >
               <span className="text-sm md:text-base">{item.title}</span>

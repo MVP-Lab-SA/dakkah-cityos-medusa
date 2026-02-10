@@ -56,19 +56,19 @@ export function AddressCard({ address, onEdit, onDelete, onSetDefault }: Address
       <div className="flex items-center gap-2 mt-4 pt-4 border-t border-ds-border">
         {onEdit && (
           <Button variant="ghost" size="sm" onClick={onEdit} className="text-ds-muted-foreground">
-            <PencilSquare className="h-4 w-4 mr-1" />
+            <PencilSquare className="h-4 w-4 me-1" />
             Edit
           </Button>
         )}
         {onSetDefault && !isDefault && (
           <Button variant="ghost" size="sm" onClick={onSetDefault} className="text-ds-muted-foreground">
-            <Check className="h-4 w-4 mr-1" />
+            <Check className="h-4 w-4 me-1" />
             Set as default
           </Button>
         )}
         {onDelete && (
-          <Button variant="ghost" size="sm" onClick={onDelete} className="text-ds-destructive ml-auto">
-            <Trash className="h-4 w-4 mr-1" />
+          <Button variant="ghost" size="sm" onClick={onDelete} className="text-ds-destructive ms-auto">
+            <Trash className="h-4 w-4 me-1" />
             Delete
           </Button>
         )}

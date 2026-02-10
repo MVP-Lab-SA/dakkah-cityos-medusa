@@ -97,11 +97,11 @@ export function VendorCommissions() {
             <table className="w-full">
               <thead className="bg-muted/50">
                 <tr>
-                  <th className="text-left p-4 font-medium">Order</th>
-                  <th className="text-left p-4 font-medium">Date</th>
-                  <th className="text-right p-4 font-medium">Gross</th>
-                  <th className="text-right p-4 font-medium">Commission</th>
-                  <th className="text-right p-4 font-medium">Net</th>
+                  <th className="text-start p-4 font-medium">Order</th>
+                  <th className="text-start p-4 font-medium">Date</th>
+                  <th className="text-end p-4 font-medium">Gross</th>
+                  <th className="text-end p-4 font-medium">Commission</th>
+                  <th className="text-end p-4 font-medium">Net</th>
                 </tr>
               </thead>
               <tbody className="divide-y">
@@ -111,13 +111,13 @@ export function VendorCommissions() {
                     <td className="p-4 text-muted-foreground">
                       {new Date(commission.created_at).toLocaleDateString()}
                     </td>
-                    <td className="p-4 text-right">
+                    <td className="p-4 text-end">
                       ${Number(commission.gross_amount).toFixed(2)}
                     </td>
-                    <td className="p-4 text-right text-ds-destructive">
+                    <td className="p-4 text-end text-ds-destructive">
                       -${Number(commission.commission_amount).toFixed(2)}
                     </td>
-                    <td className="p-4 text-right text-ds-success font-medium">
+                    <td className="p-4 text-end text-ds-success font-medium">
                       ${Number(commission.net_amount).toFixed(2)}
                     </td>
                   </tr>

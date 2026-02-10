@@ -72,7 +72,7 @@ export function VendorProductList() {
         <h1 className="text-2xl font-bold">Your Products</h1>
         <Link to={`${prefix}/vendor/products/new` as any}>
           <Button>
-            <Plus className="w-4 h-4 mr-2" />
+            <Plus className="w-4 h-4 me-2" />
             Add Product
           </Button>
         </Link>
@@ -83,7 +83,7 @@ export function VendorProductList() {
           <p className="text-muted-foreground mb-4">You haven't added any products yet</p>
           <Link to={`${prefix}/vendor/products/new` as any}>
             <Button>
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="w-4 h-4 me-2" />
               Add Your First Product
             </Button>
           </Link>
@@ -124,7 +124,7 @@ export function VendorProductList() {
                     )}
                     <div className="flex gap-2">
                       <Button variant="secondary" className="h-8 px-3">
-                        <PencilSquare className="w-4 h-4 mr-1" />
+                        <PencilSquare className="w-4 h-4 me-1" />
                         Edit
                       </Button>
                       <Button

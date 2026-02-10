@@ -1,4 +1,5 @@
 import React from 'react'
+import { t } from '@/lib/i18n'
 
 interface TimelineStep {
   title: string
@@ -13,6 +14,7 @@ interface TimelineBlockProps {
   steps: TimelineStep[]
   variant?: 'vertical' | 'horizontal' | 'alternating'
   numbered?: boolean
+  locale?: string
 }
 
 const statusColors: Record<string, { dot: string; line: string; text: string }> = {
@@ -38,6 +40,7 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
   steps,
   variant = 'vertical',
   numbered = false,
+  locale = 'en',
 }) => {
   const getStatus = (step: TimelineStep) => step.status || 'upcoming'
 
@@ -136,8 +139,8 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
 
         return (
           <div key={index} className="relative flex items-start gap-4 pb-8 last:pb-0 md:gap-0">
-            <div className={`hidden md:flex md:w-1/2 ${isEven ? 'justify-end pr-8' : 'order-2 pl-8'}`}>
-              <div className={`max-w-xs ${isEven ? 'text-right' : 'text-left'}`}>
+            <div className={`hidden md:flex md:w-1/2 ${isEven ? 'justify-end pe-8' : 'order-2 ps-8'}`}>
+              <div className={`max-w-xs ${isEven ? 'text-end' : 'text-start'}`}>
                 <h3 className={`font-semibold ${colors.text}`}>{step.title}</h3>
                 {step.date && (
                   <span className="text-xs text-ds-muted-foreground">{step.date}</span>

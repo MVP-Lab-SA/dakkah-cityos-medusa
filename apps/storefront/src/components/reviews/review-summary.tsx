@@ -15,7 +15,7 @@ export function ReviewSummary({ summary }: ReviewSummaryProps) {
   return (
     <div className="flex flex-col md:flex-row gap-8 p-6 bg-ui-bg-subtle rounded-lg">
       {/* Average Rating */}
-      <div className="text-center md:text-left">
+      <div className="text-center md:text-start">
         <div className="text-5xl font-bold text-ui-fg-base mb-2">
           {summary.average_rating.toFixed(1)}
         </div>
@@ -43,7 +43,7 @@ export function ReviewSummary({ summary }: ReviewSummaryProps) {
                   style={{ width: `${percentage}%` }}
                 />
               </div>
-              <span className="text-sm text-ui-fg-muted w-8 text-right">
+              <span className="text-sm text-ui-fg-muted w-8 text-end">
                 {count}
               </span>
             </div>

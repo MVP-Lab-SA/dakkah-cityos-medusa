@@ -1,6 +1,8 @@
 import React from 'react'
 import { Rating } from '../ui/rating'
 import { Badge } from '../ui/badge'
+import { t } from '@/lib/i18n'
+import { useTenant } from '@/lib/context/tenant-context'
 
 interface Vendor {
   id: string
@@ -33,6 +35,7 @@ export const VendorShowcaseBlock: React.FC<VendorShowcaseBlockProps> = ({
   showRating = true,
   showProducts = false,
 }) => {
+  const { locale } = useTenant()
   const gridClass =
     layout === 'featured'
       ? 'grid grid-cols-1 md:grid-cols-2 gap-6'
@@ -74,7 +77,7 @@ export const VendorShowcaseBlock: React.FC<VendorShowcaseBlockProps> = ({
 
               <div className="flex items-center gap-2 mb-1">
                 <h3 className="font-semibold text-ds-foreground">{vendor.name}</h3>
-                {vendor.verified && <Badge variant="success" size="sm">Verified</Badge>}
+                {vendor.verified && <Badge variant="success" size="sm">{t(locale, 'blocks.verified')}</Badge>}
               </div>
 
               {vendor.description && layout === 'featured' && (
@@ -94,7 +97,7 @@ export const VendorShowcaseBlock: React.FC<VendorShowcaseBlockProps> = ({
 
               {showProducts && vendor.productCount !== undefined && (
                 <span className="text-xs text-ds-muted-foreground mt-2">
-                  {vendor.productCount} products
+                  {vendor.productCount} {t(locale, 'blocks.products')}
                 </span>
               )}
             </div>

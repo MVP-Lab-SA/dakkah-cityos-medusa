@@ -52,14 +52,14 @@ export function InvoiceDownload({ orderId, displayId, onDownload }: InvoiceDownl
           >
             {downloaded ? (
               <>
-                <Check className="w-4 h-4 mr-2 text-ds-success" />
+                <Check className="w-4 h-4 me-2 text-ds-success" />
                 Downloaded
               </>
             ) : isDownloading ? (
               "Generating..."
             ) : (
               <>
-                <ArrowDownTray className="w-4 h-4 mr-2" />
+                <ArrowDownTray className="w-4 h-4 me-2" />
                 Download PDF
               </>
             )}

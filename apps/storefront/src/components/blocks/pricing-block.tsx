@@ -1,5 +1,6 @@
 import React from 'react'
 import { Badge } from '../ui/badge'
+import { t } from '@/lib/i18n'
 
 interface PlanFeature {
   text: string
@@ -30,6 +31,7 @@ interface PricingBlockProps {
   plans: Plan[]
   billingToggle?: boolean
   highlightedPlan?: string
+  locale?: string
 }
 
 export const PricingBlock: React.FC<PricingBlockProps> = ({
@@ -38,6 +40,7 @@ export const PricingBlock: React.FC<PricingBlockProps> = ({
   plans,
   billingToggle = true,
   highlightedPlan,
+  locale = 'en',
 }) => {
   const [isYearly, setIsYearly] = React.useState(false)
 
@@ -72,7 +75,7 @@ export const PricingBlock: React.FC<PricingBlockProps> = ({
         {billingToggle && (
           <div className="flex items-center justify-center gap-3 mb-8 md:mb-12">
             <span className={`text-sm font-medium ${!isYearly ? 'text-ds-foreground' : 'text-ds-muted-foreground'}`}>
-              Monthly
+              {t(locale, 'blocks.monthly')}
             </span>
             <button
               type="button"
@@ -84,7 +87,7 @@ export const PricingBlock: React.FC<PricingBlockProps> = ({
               />
             </button>
             <span className={`text-sm font-medium ${isYearly ? 'text-ds-foreground' : 'text-ds-muted-foreground'}`}>
-              Yearly
+              {t(locale, 'blocks.yearly')}
             </span>
           </div>
         )}
@@ -122,8 +125,8 @@ export const PricingBlock: React.FC<PricingBlockProps> = ({
                   <span className="text-3xl md:text-4xl font-bold text-ds-foreground">
                     {formatPrice(isYearly ? plan.price.yearly : plan.price.monthly, plan.price.currency)}
                   </span>
-                  <span className="text-ds-muted-foreground text-sm ml-1">
-                    /{isYearly ? 'year' : 'month'}
+                  <span className="text-ds-muted-foreground text-sm ms-1">
+                    {isYearly ? t(locale, 'blocks.per_year') : t(locale, 'blocks.per_month')}
                   </span>
                 </div>
 

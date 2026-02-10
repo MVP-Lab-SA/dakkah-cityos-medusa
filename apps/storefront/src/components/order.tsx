@@ -64,7 +64,7 @@ export const OrderLineItem = ({ item, order }: OrderLineItemProps) => {
         )}
         <span className="text-sm text-ds-muted-foreground">Quantity: {item.quantity}</span>
       </div>
-      <div className="text-right">
+      <div className="text-end">
         <Price
           price={item.total}
           currencyCode={order.currency_code}

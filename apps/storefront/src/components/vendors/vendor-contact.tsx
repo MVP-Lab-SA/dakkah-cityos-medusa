@@ -108,7 +108,7 @@ export function VendorContact({ vendorId, vendorName, onSubmit }: VendorContactP
         </div>
 
         <Button type="submit" disabled={isSubmitting} className="w-full">
-          <Envelope className="w-4 h-4 mr-2" />
+          <Envelope className="w-4 h-4 me-2" />
           {isSubmitting ? "Sending..." : "Send Message"}
         </Button>
       </form>

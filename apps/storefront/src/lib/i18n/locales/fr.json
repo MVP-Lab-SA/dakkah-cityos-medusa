@@ -149,6 +149,17 @@
     "dismiss": "Fermer",
     "expires": "Expire",
     "limited_time": "Offre à durée limitée",
-    "all_categories": "Toutes"
+    "all_categories": "Toutes",
+    "verified": "Vérifié",
+    "items": "articles",
+    "subscribe_heading": "Abonnez-vous à notre newsletter",
+    "subscribe_success": "Merci de votre abonnement !",
+    "subscribe_success_message": "Vous recevrez nos dernières mises à jour dans votre boîte de réception.",
+    "book_appointment": "Réservez votre rendez-vous",
+    "view_pricing": "Voir les tarifs",
+    "past": "Passé",
+    "feature": "Fonctionnalité",
+    "go_to_slide": "Aller à la diapositive",
+    "select_option": "Sélectionner"
   }
 }

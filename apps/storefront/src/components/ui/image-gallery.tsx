@@ -57,7 +57,7 @@ const ImageGallery = memo(function ImageGallery({ images }: ImageGalleryProps) {
             <>
               <Button
                 onClick={goToPrevious}
-                className="absolute left-2 top-1/2 -translate-y-1/2 z-10 hover:bg-transparent active:bg-transparent cursor-pointer"
+                className="absolute start-2 top-1/2 -translate-y-1/2 z-10 hover:bg-transparent active:bg-transparent cursor-pointer"
                 aria-label="Previous image"
                 variant="transparent"
                 size="fit"
@@ -67,7 +67,7 @@ const ImageGallery = memo(function ImageGallery({ images }: ImageGalleryProps) {
               
               <Button
                 onClick={goToNext}
-                className="absolute right-2 top-1/2 -translate-y-1/2 z-10 hover:bg-transparent active:bg-transparent cursor-pointer"
+                className="absolute end-2 top-1/2 -translate-y-1/2 z-10 hover:bg-transparent active:bg-transparent cursor-pointer"
                 aria-label="Next image"
                 variant="transparent"
                 size="fit"

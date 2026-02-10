@@ -70,7 +70,7 @@ export const CartDeleteItem = ({ item, fields }: CartDeleteItemProps) => {
     <Button
       onClick={() => deleteLineItemMutation.mutate({ line_id: item.id })}
       disabled={deleteLineItemMutation.isPending}
-      className="text-ds-muted-foreground hover:text-ds-muted-foreground transition-colors ml-2"
+      className="text-ds-muted-foreground hover:text-ds-muted-foreground transition-colors ms-2"
       variant="transparent"
       size="fit"
     >
@@ -111,7 +111,7 @@ export const CartItemQuantitySelector = ({
         onClick={() => handleQuantityChange(item.quantity - 1)}
         className={clsx(
           type === "compact" &&
-            "text-ds-muted-foreground hover:text-ds-muted-foreground transition-colors p-1 ml-2"
+            "text-ds-muted-foreground hover:text-ds-muted-foreground transition-colors p-1 ms-2"
         )}
         variant="transparent"
         size="fit"
@@ -131,7 +131,7 @@ export const CartItemQuantitySelector = ({
         onClick={() => handleQuantityChange(item.quantity + 1)}
         className={clsx(
           type === "compact" &&
-            "text-ds-muted-foreground hover:text-ds-muted-foreground transition-colors p-1 ml-2"
+            "text-ds-muted-foreground hover:text-ds-muted-foreground transition-colors p-1 ms-2"
         )}
         variant="transparent"
         size="fit"
@@ -199,7 +199,7 @@ const DisplayCartLineItem = ({ item, cart, className }: CartLineItemProps) => {
         )}
         <p className="text-sm text-ds-muted-foreground">Quantity: {item.quantity}</p>
       </div>
-      <div className="text-right">
+      <div className="text-end">
         <Price price={item.total || 0} currencyCode={cart.currency_code} textWeight="plus" />
       </div>
     </div>
@@ -237,7 +237,7 @@ export const CartLineItem = ({
       <div className="flex items-center gap-4">
         <CartItemQuantitySelector item={item} fields={fields} />
 
-        <div className="text-right">
+        <div className="text-end">
           <LineItemPrice item={item} currencyCode={cart.currency_code} />
         </div>
 
@@ -356,7 +356,7 @@ export const CartPromo = ({ cart }: CartPromoProps) => {
               {promotion.code}
               <XMark
                 onClick={() => handleRemove(promotion.code || "")}
-                className="ml-2 text-ds-muted-foreground hover:text-ds-muted-foreground cursor-pointer"
+                className="ms-2 text-ds-muted-foreground hover:text-ds-muted-foreground cursor-pointer"
               />
             </Button>
           ))}

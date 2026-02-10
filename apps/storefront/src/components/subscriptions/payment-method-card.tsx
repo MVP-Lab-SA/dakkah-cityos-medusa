@@ -40,7 +40,7 @@ export function PaymentMethodCard({ paymentMethod, onUpdate }: PaymentMethodCard
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-ds-foreground">Payment Method</h3>
         <Button variant="ghost" size="sm" onClick={onUpdate}>
-          <PencilSquare className="w-4 h-4 mr-1" />
+          <PencilSquare className="w-4 h-4 me-1" />
           Update
         </Button>
       </div>

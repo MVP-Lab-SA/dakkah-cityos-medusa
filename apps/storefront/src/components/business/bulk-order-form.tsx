@@ -154,9 +154,9 @@ export function BulkOrderForm({ onSubmit }: BulkOrderFormProps) {
                   <table className="w-full text-sm">
                     <thead className="bg-ds-muted sticky top-0">
                       <tr>
-                        <th className="px-4 py-2 text-left">SKU</th>
-                        <th className="px-4 py-2 text-left">Quantity</th>
-                        <th className="px-4 py-2 text-left">Status</th>
+                        <th className="px-4 py-2 text-start">SKU</th>
+                        <th className="px-4 py-2 text-start">Quantity</th>
+                        <th className="px-4 py-2 text-start">Status</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-ds-border">

@@ -126,11 +126,11 @@ export function ApprovalQueue({
                   onClick={() => onReject?.(item.id)}
                   className="text-ds-destructive hover:text-ds-destructive hover:bg-ds-destructive"
                 >
-                  <XMark className="w-4 h-4 mr-1" />
+                  <XMark className="w-4 h-4 me-1" />
                   Reject
                 </Button>
                 <Button size="sm" onClick={() => onApprove?.(item.id)}>
-                  <Check className="w-4 h-4 mr-1" />
+                  <Check className="w-4 h-4 me-1" />
                   Approve
                 </Button>
               </div>

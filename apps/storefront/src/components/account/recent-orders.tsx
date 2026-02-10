@@ -65,7 +65,7 @@ export function RecentOrders({ orders, isLoading }: RecentOrdersProps) {
             className="mt-4 inline-flex items-center text-sm font-medium text-ds-foreground hover:underline"
           >
             Start shopping
-            <ChevronRight className="h-4 w-4 ml-1" />
+            <ChevronRight className="h-4 w-4 ms-1" />
           </Link>
         </div>
       </div>
@@ -127,7 +127,7 @@ export function RecentOrders({ orders, isLoading }: RecentOrdersProps) {
             </div>
 
             {/* Status & Total */}
-            <div className="text-right">
+            <div className="text-end">
               <span
                 className={`inline-block px-2 py-1 text-xs font-medium rounded ${
                   statusColors[order.status] || "bg-ds-muted text-ds-foreground"

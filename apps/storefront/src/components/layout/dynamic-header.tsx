@@ -85,11 +85,11 @@ export function DynamicHeader({
                   className="flex items-center text-ds-foreground hover:text-ds-foreground text-sm font-medium"
                 >
                   {item.label}
-                  {item.children && <ChevronDownMini className="ml-1 h-4 w-4" />}
+                  {item.children && <ChevronDownMini className="ms-1 h-4 w-4" />}
                 </Link>
                 
                 {item.children && activeDropdown === item.label && (
-                  <div className="absolute left-0 mt-2 w-48 bg-ds-background rounded-md shadow-lg py-1 z-50">
+                  <div className="absolute start-0 mt-2 w-48 bg-ds-background rounded-md shadow-lg py-1 z-50">
                     {item.children.map((child, childIndex) => (
                       <Link
                         key={childIndex}
@@ -148,7 +148,7 @@ export function DynamicHeader({
                   {item.label}
                 </Link>
                 {item.children && (
-                  <div className="pl-4 space-y-1">
+                  <div className="ps-4 space-y-1">
                     {item.children.map((child, childIndex) => (
                       <Link
                         key={childIndex}

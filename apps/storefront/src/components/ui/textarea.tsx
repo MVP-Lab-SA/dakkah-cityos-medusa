@@ -44,7 +44,7 @@ export const Textarea: React.FC<TextareaProps> = ({
       {label && (
         <label className="block text-sm font-medium text-ds-foreground mb-1.5">
           {label}
-          {required && <span className="text-ds-destructive ml-1">*</span>}
+          {required && <span className="text-ds-destructive ms-1">*</span>}
         </label>
       )}
       <textarea
@@ -69,7 +69,7 @@ export const Textarea: React.FC<TextareaProps> = ({
           </p>
         )}
         {maxLength && (
-          <p className="text-xs text-ds-muted-foreground ml-auto">
+          <p className="text-xs text-ds-muted-foreground ms-auto">
             {currentLength}/{maxLength}
           </p>
         )}

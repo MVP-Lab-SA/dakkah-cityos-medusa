@@ -65,7 +65,7 @@ export const Avatar: React.FC<AvatarProps> = ({
       </div>
       {status && (
         <span
-          className={`absolute bottom-0 right-0 block w-2.5 h-2.5 rounded-full ring-2 ring-ds-background ${statusColors[status]}`}
+          className={`absolute bottom-0 end-0 block w-2.5 h-2.5 rounded-full ring-2 ring-ds-background ${statusColors[status]}`}
         />
       )}
     </div>

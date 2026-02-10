@@ -68,7 +68,7 @@ export function POLineItems({
                 <span className="text-sm text-ds-muted-foreground">Qty: {item.quantity}</span>
               )}
 
-              <div className="text-right min-w-[100px]">
+              <div className="text-end min-w-[100px]">
                 <p className="font-semibold text-ds-foreground">
                   {formatPrice(item.total, currencyCode)}
                 </p>

@@ -91,7 +91,7 @@ export function StripeConnectSetup({ vendorId }: StripeConnectSetupProps) {
                 onClick={() => onboardMutation.mutate()}
                 disabled={onboardMutation.isPending || isRedirecting}
               >
-                <ArrowUpRightOnBox className="w-4 h-4 mr-2" />
+                <ArrowUpRightOnBox className="w-4 h-4 me-2" />
                 Manage Payment Settings
               </Button>
             </div>
@@ -108,7 +108,7 @@ export function StripeConnectSetup({ vendorId }: StripeConnectSetupProps) {
               {status?.requirements?.currently_due && status.requirements.currently_due.length > 0 && (
                 <div className="mt-3 text-sm text-ds-muted-foreground">
                   <p className="font-medium">Required information:</p>
-                  <ul className="list-disc ml-4 mt-1">
+                  <ul className="list-disc ms-4 mt-1">
                     {status.requirements.currently_due.slice(0, 3).map((req) => (
                       <li key={req}>{req.replace(/_/g, " ")}</li>
                     ))}

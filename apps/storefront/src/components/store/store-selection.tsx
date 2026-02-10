@@ -46,7 +46,7 @@ export const StoreSelection: React.FC<StoreSelectionProps> = ({ stores }) => {
             <button
               key={store.id}
               onClick={() => handleStoreSelect(store.handle)}
-              className="bg-ds-background rounded-lg shadow-md hover:shadow-xl transition-all p-8 text-left group"
+              className="bg-ds-background rounded-lg shadow-md hover:shadow-xl transition-all p-8 text-start group"
             >
               {store.logo?.url && (
                 <div className="mb-6 h-20 flex items-center justify-center">
@@ -76,7 +76,7 @@ export const StoreSelection: React.FC<StoreSelectionProps> = ({ stores }) => {
               <div className="text-sm font-semibold text-ds-foreground group-hover:translate-x-2 transition-transform inline-flex items-center">
                 Visit Store
                 <svg
-                  className="w-4 h-4 ml-2"
+                  className="w-4 h-4 ms-2"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"

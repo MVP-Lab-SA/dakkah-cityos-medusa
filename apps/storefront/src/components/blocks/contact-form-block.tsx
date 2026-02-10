@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { t } from '@/lib/i18n'
 
 interface FormField {
   name: string
@@ -17,15 +18,17 @@ interface ContactFormBlockProps {
   submitText?: string
   successMessage?: string
   recipientEmail?: string
+  locale?: string
 }
 
 export const ContactFormBlock: React.FC<ContactFormBlockProps> = ({
   heading,
   description,
   fields,
-  submitText = 'Submit',
-  successMessage = 'Thank you! Your message has been sent.',
+  submitText,
+  successMessage,
   recipientEmail,
+  locale = 'en',
 }) => {
   const [formData, setFormData] = useState<Record<string, string>>({})
   const [submitted, setSubmitted] = useState(false)
@@ -54,7 +57,7 @@ export const ContactFormBlock: React.FC<ContactFormBlockProps> = ({
               <circle cx="24" cy="24" r="22" stroke="currentColor" strokeWidth="2" />
               <path d="M14 24l7 7 13-13" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            <p className="text-lg font-semibold text-ds-foreground">{successMessage}</p>
+            <p className="text-lg font-semibold text-ds-foreground">{successMessage || t(locale, 'blocks.form_success')}</p>
           </div>
         </div>
       </section>
@@ -88,7 +91,7 @@ export const ContactFormBlock: React.FC<ContactFormBlockProps> = ({
           value={formData[field.name] || ''}
           onChange={(e) => handleChange(field.name, e.target.value)}
         >
-          <option value="">{field.placeholder || `Select ${field.label}`}</option>
+          <option value="">{field.placeholder || `${t(locale, 'blocks.select_option')} ${field.label}`}</option>
           {field.options.map((opt) => (
             <option key={opt} value={opt}>
               {opt}
@@ -136,7 +139,7 @@ export const ContactFormBlock: React.FC<ContactFormBlockProps> = ({
                 <label className="block text-sm font-medium text-ds-foreground mb-2">
                   {field.label}
                   {field.required && (
-                    <span className="text-ds-destructive ml-1">*</span>
+                    <span className="text-ds-destructive ms-1">*</span>
                   )}
                 </label>
                 {renderField(field)}
@@ -150,7 +153,7 @@ export const ContactFormBlock: React.FC<ContactFormBlockProps> = ({
               disabled={submitting}
               className="w-full md:w-auto px-8 py-3 bg-ds-primary text-ds-primary-foreground rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
             >
-              {submitting ? 'Sending...' : submitText}
+              {submitting ? '...' : (submitText || t(locale, 'blocks.form_submit'))}
             </button>
           </div>
         </form>

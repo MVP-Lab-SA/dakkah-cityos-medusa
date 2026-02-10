@@ -34,7 +34,7 @@ export function NetTermsSelect({ terms, selectedTermId, onSelect }: NetTermsSele
               onClick={() => term.available && onSelect?.(term.id)}
               disabled={isDisabled}
               className={cn(
-                "w-full flex items-center justify-between p-4 rounded-lg border-2 transition-all text-left",
+                "w-full flex items-center justify-between p-4 rounded-lg border-2 transition-all text-start",
                 isSelected && "border-ds-foreground bg-ds-muted",
                 !isSelected && term.available && "border-ds-border hover:border-ds-border",
                 isDisabled && "border-ds-border bg-ds-muted opacity-50 cursor-not-allowed"

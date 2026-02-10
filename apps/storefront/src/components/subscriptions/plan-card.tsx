@@ -47,7 +47,7 @@ export function PlanCard({ plan, isCurrentPlan }: PlanCardProps) {
       )}
 
       {isCurrentPlan && (
-        <div className="absolute -top-4 right-4">
+        <div className="absolute -top-4 end-4">
           <span className="inline-flex items-center px-3 py-1 bg-ds-success text-ds-primary-foreground text-xs font-semibold rounded-full">
             Current Plan
           </span>
@@ -145,7 +145,7 @@ export function PlanComparisonTable({
       <table className="w-full">
         <thead>
           <tr className="border-b border-ds-border">
-            <th className="text-left py-4 px-4 text-sm font-medium text-ds-muted-foreground">
+            <th className="text-start py-4 px-4 text-sm font-medium text-ds-muted-foreground">
               Features
             </th>
             {plans.map((plan) => (
