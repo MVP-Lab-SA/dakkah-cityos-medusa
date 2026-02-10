@@ -82,7 +82,7 @@ This layer provides integration services called by Temporal activities, includin
 - **Payload CMS (Entity & Content Management):** Tenant profiles, POI content, vendor public profiles, pages, navigation, service channel display content.
 - **Fleetbase (Geo & Logistics):** Geocoding, address validation, delivery zone management, service area coverage, fleet management, routing, real-time tracking.
 - **ERPNext (Finance, Accounting & ERP):** Sales invoices, payment entries, GL, inventory, procurement, customer/product sync, reporting. Multi-tenant support with each tenant mapping to an ERPNext company.
-- **Temporal Cloud (Workflow Orchestration):** 65 system workflows across 9 categories, 21 specialized task queues mapped to 10 systems, dynamic AI agent workflows, event outbox integration. Workflows route to domain-specific queues (commerce-queue, xsystem-platform-queue, xsystem-logistics-queue, etc.) based on the Workflow Discovery Guide.
+- **Temporal Cloud (Workflow Orchestration):** 80 system workflows across 35 categories, 21 specialized task queues mapped to 10 systems, dynamic AI agent workflows, event outbox integration. Workflows route to domain-specific queues (commerce-queue, xsystem-platform-queue, xsystem-logistics-queue, etc.) based on the Workflow Discovery Guide. Full architecture documented in `docs/CROSS_SYSTEM_ARCHITECTURE.md` (6,667 lines, 15 sections).
 - **Walt.id (Decentralized Digital Identity):** DID management, 6 credential types (KYC, Vendor, Membership, TenantOperator, POI, MarketplaceSeller), W3C Verifiable Credentials, wallet integration, trust registries.
 
 ## External Dependencies

@@ -1,7 +1,7 @@
 # Dakkah CityOS — Cross-System Commerce Architecture
 
-> **Version:** 1.0.0
-> **Date:** 2026-02-08
+> **Version:** 2.0.0
+> **Date:** 2026-02-10
 > **Status:** Reference Architecture
 > **Audience:** All system teams (Medusa, ERPNext, Fleetbase, Walt.id, Payment Gateways, PayloadCMS, Temporal)
 
@@ -29,6 +29,48 @@
 6. [Data Flow Diagrams](#6-data-flow-diagrams)
 7. [Security & Compliance](#7-security--compliance)
 8. [Appendix](#8-appendix)
+9. [Implementation Mapping](#9-implementation-mapping)
+   - 9.1 Repository Structure
+   - 9.2 Key File Responsibilities
+   - 9.3 Integration Adapter Interface
+   - 9.4 Event-to-Workflow Dispatch Map
+   - 9.5 Sync Tracking Data Model
+10. [Deployment Architecture](#10-deployment-architecture)
+    - 10.1 Infrastructure Topology
+    - 10.2 Worker Deployment Strategy
+    - 10.3 Environment Variables Reference
+    - 10.4 Network Security
+11. [Monitoring & Observability](#11-monitoring--observability)
+    - 11.1 Observability Stack
+    - 11.2 Key Metrics
+    - 11.3 Structured Logging Format
+    - 11.4 Dashboard Definitions
+    - 11.5 Distributed Tracing
+12. [Disaster Recovery & Business Continuity](#12-disaster-recovery--business-continuity)
+    - 12.1 Recovery Objectives
+    - 12.2 Failure Modes & Mitigation
+    - 12.3 Event Outbox as Durability Guarantee
+    - 12.4 Data Reconciliation Procedures
+    - 12.5 Backup Strategy
+13. [Performance & Scaling Constraints](#13-performance--scaling-constraints)
+    - 13.1 System Rate Limits
+    - 13.2 Workflow Concurrency Limits
+    - 13.3 Batch Processing Guidelines
+    - 13.4 Latency Budgets
+    - 13.5 Database Performance
+    - 13.6 Scaling Recommendations by Scope Tier
+14. [Testing Strategy](#14-testing-strategy)
+    - 14.1 Test Pyramid
+    - 14.2 Integration Test Categories
+    - 14.3 Contract Testing
+    - 14.4 Temporal Workflow Testing
+    - 14.5 Chaos Testing Scenarios
+    - 14.6 Pre-Production Checklist
+15. [Operational Runbooks](#15-operational-runbooks)
+    - 15.1 Incident Response
+    - 15.2 Common Operational Procedures
+    - 15.3 Troubleshooting Guide
+    - 15.4 Maintenance Windows
 
 ---
 
@@ -4285,6 +4327,1219 @@ interface FitnessClassPayload {
 
 ---
 
+### 4.4 Signal & Query Contracts
+
+This section documents all Temporal signals and queries used across the 80 workflows. Signals are async messages sent to running workflows to trigger state transitions; queries are synchronous read-only inspections of workflow state.
+
+#### 4.4.1 Signal Naming Convention
+
+All signals follow the `{domain}.{entity}.{event}` convention. Every signal contract specifies:
+
+| Field | Description |
+|-------|-------------|
+| **Signal name** | Dot-separated identifier following `{domain}.{entity}.{event}` |
+| **Payload interface** | TypeScript interface describing the data carried |
+| **Handling workflows** | Which of the 80 workflows listen for this signal |
+| **Behavior** | Expected state transition when the signal is received |
+
+---
+
+#### 4.4.2 Payment Signals
+
+| Signal Name | Handling Workflows | Behavior |
+|-------------|-------------------|----------|
+| `payment.intent.captured` | OrderPlacement, SubscriptionBilling, AuctionLifecycle, EventTicketPurchase | Mark payment as captured; advance order to fulfillment |
+| `payment.intent.failed` | OrderPlacement, SubscriptionBilling, RentalLifecycle | Trigger retry or compensation depending on retry policy |
+| `payment.intent.requires_action` | OrderPlacement, SubscriptionBilling | Pause workflow; send customer notification with action URL |
+| `payment.refund.completed` | RefundProcessing, ReturnProcessing, WarrantyClaimProcessing | Confirm refund in Medusa; update ERP ledger |
+| `payment.refund.failed` | RefundProcessing, ReturnProcessing | Escalate to manual review; create support ticket |
+| `payment.transfer.completed` | VendorSettlement, CommissionPayout, FreelanceEscrowRelease | Mark payout as settled; update vendor balance |
+| `payment.escrow.released` | AuctionLifecycle, FreelanceContractLifecycle, RentalLifecycle | Release held funds to seller/provider; close escrow record |
+
+```typescript
+interface PaymentCapturedSignal {
+  payment_intent_id: string
+  amount: number
+  currency_code: string
+  gateway: string
+  captured_at: string
+  metadata?: Record<string, unknown>
+}
+
+interface PaymentFailedSignal {
+  payment_intent_id: string
+  error_code: string
+  error_message: string
+  decline_reason?: string
+  gateway: string
+  failed_at: string
+  retryable: boolean
+}
+
+interface PaymentRequiresActionSignal {
+  payment_intent_id: string
+  action_type: 'redirect' | '3ds' | 'otp' | 'manual_review'
+  action_url?: string
+  expires_at: string
+  gateway: string
+}
+
+interface PaymentRefundCompletedSignal {
+  refund_id: string
+  payment_intent_id: string
+  amount: number
+  currency_code: string
+  reason: string
+  refunded_at: string
+}
+
+interface PaymentRefundFailedSignal {
+  refund_id: string
+  payment_intent_id: string
+  error_code: string
+  error_message: string
+  failed_at: string
+}
+
+interface PaymentTransferCompletedSignal {
+  transfer_id: string
+  source_account: string
+  destination_account: string
+  amount: number
+  currency_code: string
+  transferred_at: string
+}
+
+interface PaymentEscrowReleasedSignal {
+  escrow_id: string
+  amount: number
+  currency_code: string
+  released_to: string
+  released_at: string
+  release_reason: 'completed' | 'dispute_resolved' | 'timeout'
+}
+```
+
+---
+
+#### 4.4.3 Delivery Signals
+
+| Signal Name | Handling Workflows | Behavior |
+|-------------|-------------------|----------|
+| `delivery.order.picked_up` | OrderFulfillment, GroceryDelivery, RestaurantOrder | Update tracking status; notify customer |
+| `delivery.order.in_transit` | OrderFulfillment, GroceryDelivery, RestaurantOrder | Update ETA; broadcast real-time position |
+| `delivery.order.delivered` | OrderFulfillment, GroceryDelivery, RestaurantOrder | Complete delivery step; trigger settlement |
+| `delivery.order.failed` | OrderFulfillment, GroceryDelivery | Trigger re-dispatch or compensation; notify customer |
+| `delivery.driver.assigned` | OrderFulfillment, GroceryDelivery, RestaurantOrder | Store driver info; enable live tracking |
+| `delivery.proof.submitted` | OrderFulfillment, RentalLifecycle | Attach proof-of-delivery media; advance to completion |
+
+```typescript
+interface DeliveryPickedUpSignal {
+  delivery_order_id: string
+  driver_id: string
+  driver_name: string
+  pickup_location: { lat: number; lng: number }
+  picked_up_at: string
+  estimated_delivery_at: string
+}
+
+interface DeliveryInTransitSignal {
+  delivery_order_id: string
+  driver_id: string
+  current_position: { lat: number; lng: number }
+  speed_kmh?: number
+  estimated_delivery_at: string
+  updated_at: string
+}
+
+interface DeliveryDeliveredSignal {
+  delivery_order_id: string
+  driver_id: string
+  delivered_at: string
+  delivery_location: { lat: number; lng: number }
+  signature_url?: string
+  photo_url?: string
+  recipient_name?: string
+}
+
+interface DeliveryFailedSignal {
+  delivery_order_id: string
+  driver_id: string
+  failure_reason: 'address_not_found' | 'recipient_unavailable' | 'access_denied' | 'vehicle_breakdown' | 'weather' | 'other'
+  failed_at: string
+  notes?: string
+  retry_eligible: boolean
+}
+
+interface DeliveryDriverAssignedSignal {
+  delivery_order_id: string
+  driver_id: string
+  driver_name: string
+  driver_phone: string
+  vehicle_type: string
+  vehicle_plate: string
+  estimated_pickup_at: string
+}
+
+interface DeliveryProofSubmittedSignal {
+  delivery_order_id: string
+  proof_type: 'photo' | 'signature' | 'pin_code' | 'barcode_scan'
+  proof_url: string
+  submitted_at: string
+  verified: boolean
+}
+```
+
+---
+
+#### 4.4.4 Identity Signals
+
+| Signal Name | Handling Workflows | Behavior |
+|-------------|-------------------|----------|
+| `kyc.verification.approved` | VendorOnboarding, CustomerVerification, CompanyApproval | Activate account; issue credentials |
+| `kyc.verification.rejected` | VendorOnboarding, CustomerVerification, CompanyApproval | Notify applicant; offer re-submission or appeal |
+| `kyc.document.uploaded` | VendorOnboarding, CustomerVerification | Start verification activity; update progress |
+| `credential.issued` | VendorOnboarding, ProfessionalLicensing | Store credential reference; enable scoped permissions |
+| `credential.revoked` | ComplianceEnforcement, VendorOnboarding | Disable associated permissions; notify affected parties |
+
+```typescript
+interface KYCVerificationApprovedSignal {
+  verification_id: string
+  entity_type: 'vendor' | 'customer' | 'company' | 'driver'
+  entity_id: string
+  verification_level: 'basic' | 'enhanced' | 'full'
+  approved_at: string
+  verified_fields: string[]
+  expiry_date?: string
+}
+
+interface KYCVerificationRejectedSignal {
+  verification_id: string
+  entity_type: 'vendor' | 'customer' | 'company' | 'driver'
+  entity_id: string
+  rejection_reason: string
+  rejection_code: string
+  rejected_at: string
+  resubmission_allowed: boolean
+  required_documents?: string[]
+}
+
+interface KYCDocumentUploadedSignal {
+  document_id: string
+  verification_id: string
+  document_type: 'passport' | 'national_id' | 'drivers_license' | 'proof_of_address' | 'business_license' | 'tax_certificate'
+  file_url: string
+  uploaded_at: string
+}
+
+interface CredentialIssuedSignal {
+  credential_id: string
+  did: string
+  schema_id: string
+  credential_type: string
+  issued_at: string
+  valid_until?: string
+  claims: Record<string, unknown>
+}
+
+interface CredentialRevokedSignal {
+  credential_id: string
+  did: string
+  revocation_reason: string
+  revoked_at: string
+  revoked_by: string
+}
+```
+
+---
+
+#### 4.4.5 Booking Signals
+
+| Signal Name | Handling Workflows | Behavior |
+|-------------|-------------------|----------|
+| `booking.customer.checked_in` | BookingLifecycle, FitnessClassBooking | Mark booking as active; start service timer |
+| `booking.completed` | BookingLifecycle, FitnessClassBooking, HealthcareAppointment | Complete service; trigger review request and settlement |
+| `booking.no_show` | BookingLifecycle, FitnessClassBooking | Apply no-show fee; release slot for waitlist |
+| `booking.cancelled` | BookingLifecycle, FitnessClassBooking, HealthcareAppointment | Process cancellation fee or full refund; release slot |
+
+```typescript
+interface BookingCheckedInSignal {
+  booking_id: string
+  customer_id: string
+  checked_in_at: string
+  checked_in_by: 'customer' | 'provider' | 'system'
+  location?: { lat: number; lng: number }
+}
+
+interface BookingCompletedSignal {
+  booking_id: string
+  completed_at: string
+  duration_minutes: number
+  provider_id: string
+  service_notes?: string
+  rating_requested: boolean
+}
+
+interface BookingNoShowSignal {
+  booking_id: string
+  customer_id: string
+  scheduled_at: string
+  grace_period_minutes: number
+  no_show_fee?: number
+  marked_at: string
+}
+
+interface BookingCancelledSignal {
+  booking_id: string
+  cancelled_by: 'customer' | 'provider' | 'system'
+  cancellation_reason: string
+  cancelled_at: string
+  refund_amount?: number
+  refund_percentage?: number
+  within_free_cancellation: boolean
+}
+```
+
+---
+
+#### 4.4.6 Approval Signals
+
+| Signal Name | Handling Workflows | Behavior |
+|-------------|-------------------|----------|
+| `approval.request.approved` | B2BPurchaseApproval, VendorOnboarding, CompanyApproval | Advance to next step (order placement, account activation) |
+| `approval.request.rejected` | B2BPurchaseApproval, VendorOnboarding, CompanyApproval | Notify requester; optionally allow re-submission |
+| `approval.request.escalated` | B2BPurchaseApproval, CompanyApproval | Route to higher-level approver; extend approval deadline |
+
+```typescript
+interface ApprovalApprovedSignal {
+  approval_request_id: string
+  approved_by: string
+  approved_at: string
+  approval_level: number
+  comments?: string
+  conditions?: string[]
+}
+
+interface ApprovalRejectedSignal {
+  approval_request_id: string
+  rejected_by: string
+  rejected_at: string
+  rejection_reason: string
+  resubmission_allowed: boolean
+}
+
+interface ApprovalEscalatedSignal {
+  approval_request_id: string
+  escalated_by: string
+  escalated_to: string
+  escalated_at: string
+  escalation_reason: 'timeout' | 'amount_threshold' | 'manual' | 'policy'
+  new_deadline: string
+}
+```
+
+---
+
+#### 4.4.7 Auction Signals
+
+| Signal Name | Handling Workflows | Behavior |
+|-------------|-------------------|----------|
+| `bid.placed` | AuctionLifecycle | Validate bid; update current price; notify outbid parties |
+| `bid.retracted` | AuctionLifecycle | Remove bid; recalculate current winning bid |
+| `auction.cancelled` | AuctionLifecycle | Refund deposits; notify all bidders; close auction |
+| `buy_now.triggered` | AuctionLifecycle | End auction immediately; process instant purchase |
+
+```typescript
+interface BidPlacedSignal {
+  auction_id: string
+  lot_id: string
+  bidder_id: string
+  bid_amount: number
+  currency_code: string
+  bid_type: 'standard' | 'proxy' | 'sealed'
+  max_proxy_amount?: number
+  placed_at: string
+}
+
+interface BidRetractedSignal {
+  auction_id: string
+  lot_id: string
+  bid_id: string
+  bidder_id: string
+  retraction_reason: string
+  retracted_at: string
+}
+
+interface AuctionCancelledSignal {
+  auction_id: string
+  cancelled_by: string
+  cancellation_reason: string
+  cancelled_at: string
+  refund_deposits: boolean
+}
+
+interface BuyNowTriggeredSignal {
+  auction_id: string
+  lot_id: string
+  buyer_id: string
+  buy_now_price: number
+  currency_code: string
+  triggered_at: string
+}
+```
+
+---
+
+#### 4.4.8 Rental Signals
+
+| Signal Name | Handling Workflows | Behavior |
+|-------------|-------------------|----------|
+| `rental.returned` | RentalLifecycle | Inspect item; reconcile deposit; close rental |
+| `rental.extended` | RentalLifecycle | Charge extension fee; update return deadline |
+| `rental.damaged` | RentalLifecycle | Assess damage; charge repair costs from deposit |
+| `rental.early_termination` | RentalLifecycle | Calculate early termination fee; process partial refund |
+
+```typescript
+interface RentalReturnedSignal {
+  rental_agreement_id: string
+  returned_at: string
+  condition: 'excellent' | 'good' | 'fair' | 'damaged'
+  inspection_notes?: string
+  deposit_refund_amount: number
+}
+
+interface RentalExtendedSignal {
+  rental_agreement_id: string
+  original_end_date: string
+  new_end_date: string
+  extension_fee: number
+  currency_code: string
+  extended_at: string
+}
+
+interface RentalDamagedSignal {
+  rental_agreement_id: string
+  damage_report_id: string
+  damage_description: string
+  repair_cost_estimate: number
+  photo_urls: string[]
+  reported_at: string
+}
+
+interface RentalEarlyTerminationSignal {
+  rental_agreement_id: string
+  termination_date: string
+  original_end_date: string
+  termination_fee: number
+  refund_amount: number
+  reason: string
+}
+```
+
+---
+
+#### 4.4.9 Gig Signals
+
+| Signal Name | Handling Workflows | Behavior |
+|-------------|-------------------|----------|
+| `milestone.delivered` | FreelanceContractLifecycle | Notify client; start review timer |
+| `milestone.approved` | FreelanceContractLifecycle | Release milestone payment from escrow |
+| `milestone.revision_requested` | FreelanceContractLifecycle | Notify freelancer; reset delivery deadline |
+| `contract.disputed` | FreelanceContractLifecycle | Freeze escrow; initiate dispute resolution |
+| `contract.cancelled` | FreelanceContractLifecycle | Process partial payment for completed milestones; release remaining escrow |
+
+```typescript
+interface MilestoneDeliveredSignal {
+  contract_id: string
+  milestone_id: string
+  freelancer_id: string
+  deliverable_urls: string[]
+  notes?: string
+  delivered_at: string
+}
+
+interface MilestoneApprovedSignal {
+  contract_id: string
+  milestone_id: string
+  approved_by: string
+  approved_at: string
+  payment_amount: number
+  rating?: number
+  feedback?: string
+}
+
+interface MilestoneRevisionRequestedSignal {
+  contract_id: string
+  milestone_id: string
+  requested_by: string
+  revision_notes: string
+  new_deadline?: string
+  revision_number: number
+  requested_at: string
+}
+
+interface ContractDisputedSignal {
+  contract_id: string
+  disputed_by: 'client' | 'freelancer'
+  dispute_reason: string
+  dispute_category: 'quality' | 'deadline' | 'scope' | 'payment' | 'communication' | 'other'
+  evidence_urls?: string[]
+  disputed_at: string
+}
+
+interface ContractCancelledSignal {
+  contract_id: string
+  cancelled_by: 'client' | 'freelancer' | 'system'
+  cancellation_reason: string
+  completed_milestones: number
+  total_milestones: number
+  refund_amount: number
+  cancelled_at: string
+}
+```
+
+---
+
+#### 4.4.10 Subscription Signals
+
+| Signal Name | Handling Workflows | Behavior |
+|-------------|-------------------|----------|
+| `subscription.payment.received` | SubscriptionLifecycle, SubscriptionBilling | Extend current period; reset retry count |
+| `subscription.payment.failed` | SubscriptionLifecycle, SubscriptionBilling | Enter dunning flow; send payment failure notification |
+| `subscription.cancelled` | SubscriptionLifecycle | Schedule end-of-period deactivation; process prorated refund if applicable |
+| `subscription.paused` | SubscriptionLifecycle | Freeze billing; retain access until pause end date |
+| `subscription.resumed` | SubscriptionLifecycle | Re-activate billing; calculate prorated charge |
+
+```typescript
+interface SubscriptionPaymentReceivedSignal {
+  subscription_id: string
+  billing_cycle_id: string
+  amount: number
+  currency_code: string
+  payment_method: string
+  received_at: string
+  next_billing_date: string
+}
+
+interface SubscriptionPaymentFailedSignal {
+  subscription_id: string
+  billing_cycle_id: string
+  amount: number
+  currency_code: string
+  failure_reason: string
+  retry_count: number
+  max_retries: number
+  next_retry_at?: string
+  failed_at: string
+}
+
+interface SubscriptionCancelledSignal {
+  subscription_id: string
+  cancelled_by: 'customer' | 'admin' | 'system'
+  cancellation_reason: string
+  effective_date: string
+  immediate: boolean
+  prorated_refund?: number
+  cancelled_at: string
+}
+
+interface SubscriptionPausedSignal {
+  subscription_id: string
+  paused_by: 'customer' | 'admin'
+  pause_reason?: string
+  pause_start: string
+  pause_end?: string
+  max_pause_days: number
+  paused_at: string
+}
+
+interface SubscriptionResumedSignal {
+  subscription_id: string
+  resumed_at: string
+  next_billing_date: string
+  prorated_charge?: number
+  paused_days: number
+}
+```
+
+---
+
+#### 4.4.11 Signal Registry Summary
+
+| Domain | Signal Count | Primary Workflows |
+|--------|-------------|-------------------|
+| Payment | 7 | OrderPlacement, SubscriptionBilling, RefundProcessing, VendorSettlement |
+| Delivery | 6 | OrderFulfillment, GroceryDelivery, RestaurantOrder |
+| Identity | 5 | VendorOnboarding, CustomerVerification, CompanyApproval |
+| Booking | 4 | BookingLifecycle, FitnessClassBooking, HealthcareAppointment |
+| Approval | 3 | B2BPurchaseApproval, VendorOnboarding, CompanyApproval |
+| Auction | 4 | AuctionLifecycle |
+| Rental | 4 | RentalLifecycle |
+| Gig | 5 | FreelanceContractLifecycle |
+| Subscription | 5 | SubscriptionLifecycle, SubscriptionBilling |
+| **Total** | **43** | |
+
+---
+
+#### 4.4.12 Query Contracts
+
+Queries are synchronous, read-only operations that inspect the current state of a running workflow without affecting it. They are used by APIs, dashboards, and other workflows to retrieve real-time status.
+
+| Query Name | Target Workflows | Description |
+|------------|-----------------|-------------|
+| `getWorkflowStatus` | All 80 workflows | Returns current state, step, and progress percentage |
+| `getOrderProgress` | OrderPlacement, OrderFulfillment | Order-specific progress with fulfillment status |
+| `getDeliveryTracking` | OrderFulfillment, GroceryDelivery, RestaurantOrder | Real-time delivery position and ETA |
+| `getPaymentStatus` | OrderPlacement, SubscriptionBilling, RefundProcessing | Payment state across gateways |
+| `getSubscriptionState` | SubscriptionLifecycle, SubscriptionBilling | Current period, renewal date, billing status |
+| `getAuctionState` | AuctionLifecycle | Current bid, time remaining, bidder count |
+| `getBookingState` | BookingLifecycle, FitnessClassBooking | Booking status, check-in status, provider info |
+| `getComplianceStatus` | VendorOnboarding, CustomerVerification | Verification state, pending documents |
+
+```typescript
+interface WorkflowStatusQueryResult {
+  workflow_id: string
+  workflow_type: string
+  current_state: string
+  current_step: number
+  total_steps: number
+  progress_percentage: number
+  started_at: string
+  last_activity_at: string
+  tenant_id: string
+  error?: {
+    code: string
+    message: string
+    occurred_at: string
+  }
+}
+
+interface OrderProgressQueryResult {
+  order_id: string
+  workflow_id: string
+  status: 'pending' | 'payment_processing' | 'paid' | 'fulfillment_pending' | 'shipped' | 'in_transit' | 'delivered' | 'completed' | 'cancelled' | 'refunded'
+  payment_status: 'pending' | 'captured' | 'failed' | 'refunded' | 'partially_refunded'
+  fulfillment_status: 'not_started' | 'picking' | 'packing' | 'shipped' | 'in_transit' | 'delivered'
+  items_fulfilled: number
+  items_total: number
+  estimated_delivery?: string
+  tracking_numbers: string[]
+  current_step_description: string
+}
+
+interface DeliveryTrackingQueryResult {
+  delivery_order_id: string
+  order_id: string
+  status: 'pending' | 'driver_assigned' | 'picked_up' | 'in_transit' | 'delivered' | 'failed'
+  driver?: {
+    id: string
+    name: string
+    phone: string
+    vehicle_type: string
+    vehicle_plate: string
+  }
+  current_position?: { lat: number; lng: number }
+  pickup_location: { lat: number; lng: number }
+  delivery_location: { lat: number; lng: number }
+  estimated_arrival: string
+  distance_remaining_km?: number
+  proof_of_delivery?: {
+    type: string
+    url: string
+    submitted_at: string
+  }
+}
+
+interface PaymentStatusQueryResult {
+  payment_intent_id: string
+  order_id?: string
+  subscription_id?: string
+  status: 'pending' | 'requires_action' | 'processing' | 'captured' | 'failed' | 'cancelled' | 'refunded'
+  amount: number
+  currency_code: string
+  gateway: string
+  payment_method_type: string
+  attempts: number
+  last_error?: string
+  captured_at?: string
+  refund_amount?: number
+}
+
+interface SubscriptionStateQueryResult {
+  subscription_id: string
+  plan_id: string
+  plan_name: string
+  status: 'active' | 'paused' | 'past_due' | 'cancelled' | 'expired' | 'trialing'
+  current_period_start: string
+  current_period_end: string
+  next_billing_date?: string
+  billing_amount: number
+  currency_code: string
+  retry_count: number
+  pause_info?: {
+    paused_at: string
+    resume_at?: string
+  }
+  cancellation_info?: {
+    cancelled_at: string
+    effective_date: string
+    reason: string
+  }
+}
+
+interface AuctionStateQueryResult {
+  auction_id: string
+  status: 'upcoming' | 'active' | 'ending_soon' | 'ended' | 'cancelled'
+  auction_type: 'english' | 'dutch' | 'sealed' | 'reverse'
+  current_bid: number
+  starting_price: number
+  reserve_price?: number
+  buy_now_price?: number
+  currency_code: string
+  bidder_count: number
+  bid_count: number
+  time_remaining_seconds: number
+  leading_bidder_id?: string
+  ends_at: string
+}
+
+interface BookingStateQueryResult {
+  booking_id: string
+  status: 'pending' | 'confirmed' | 'checked_in' | 'in_progress' | 'completed' | 'no_show' | 'cancelled'
+  service_name: string
+  provider: {
+    id: string
+    name: string
+    phone?: string
+  }
+  scheduled_at: string
+  duration_minutes: number
+  check_in_status: 'pending' | 'checked_in' | 'no_show'
+  location?: string
+  cancellation_deadline?: string
+}
+
+interface ComplianceStatusQueryResult {
+  entity_type: 'vendor' | 'customer' | 'company' | 'driver'
+  entity_id: string
+  verification_status: 'not_started' | 'documents_pending' | 'under_review' | 'approved' | 'rejected' | 'expired'
+  verification_level: 'basic' | 'enhanced' | 'full'
+  documents: {
+    type: string
+    status: 'pending' | 'uploaded' | 'verified' | 'rejected' | 'expired'
+    uploaded_at?: string
+    verified_at?: string
+    expiry_date?: string
+    rejection_reason?: string
+  }[]
+  credentials_issued: {
+    credential_id: string
+    credential_type: string
+    issued_at: string
+    valid_until?: string
+    status: 'active' | 'revoked' | 'expired'
+  }[]
+  overall_progress_percentage: number
+  next_action?: string
+}
+```
+
+---
+
+### 4.5 Error Handling & Retry Policies
+
+This section expands on the design principles from Section 4.2 with comprehensive error handling, retry, circuit breaker, and compensation documentation for all 80 Temporal workflows.
+
+#### 4.5.1 Error Taxonomy
+
+Every error thrown within a Temporal activity or workflow is classified into one of the following types. This taxonomy drives automatic retry decisions, alerting, and compensation logic.
+
+| # | Error Class | HTTP Equiv. | Retryable | Default Retry Policy | Compensation Action | Alert Level |
+|---|-------------|-------------|-----------|----------------------|---------------------|-------------|
+| 1 | `NetworkError` | 503 | Yes | 5 retries, 1s→30s exponential | None (transient) | warn |
+| 2 | `TimeoutError` | 504 | Yes | 3 retries, 5s→60s exponential | None (transient) | warn |
+| 3 | `RateLimitError` | 429 | Yes | 5 retries, respect `Retry-After` header | None (throttle) | info |
+| 4 | `ServiceUnavailableError` | 503 | Yes | 5 retries, 10s→120s exponential | Fallback to secondary provider if available | warn |
+| 5 | `InvalidArgumentError` | 400 | No | No retry (non-retryable) | Return validation errors to caller | info |
+| 6 | `InsufficientFundsError` | 402 | Conditional | Retry after customer notification (timer: 24h) | Cancel order if not resolved in 72h | warn |
+| 7 | `AuthenticationError` | 401 | Conditional | Retry once after token refresh | Refresh credentials; escalate if persistent | critical |
+| 8 | `FraudDetectedError` | 403 | No | No retry | Block transaction; flag account; notify compliance | critical |
+| 9 | `DataConflictError` | 409 | Yes | 3 retries with optimistic locking | Reload and merge; escalate if unresolvable | warn |
+| 10 | `CredentialExpiredError` | 401 | Yes | 1 retry after credential renewal | Re-issue credential via Walt.id; re-verify | warn |
+| 11 | `InventoryUnavailableError` | 409 | Conditional | Retry after 5m (inventory may be replenished) | Suggest alternatives; offer backorder | info |
+| 12 | `DeliveryZoneUnavailableError` | 422 | No | No retry | Notify customer; suggest alternative delivery method | info |
+| 13 | `ProviderUnavailableError` | 503 | Yes | 3 retries, 30s→300s exponential | Auto-assign alternative provider | warn |
+| 14 | `QuotaExceededError` | 429 | Conditional | Retry after quota reset (timer-based) | Notify tenant admin; suggest plan upgrade | warn |
+| 15 | `PaymentDeclinedError` | 402 | No | No retry (hard decline) | Notify customer; request alternative payment method | info |
+| 16 | `DuplicateRequestError` | 409 | No | No retry (idempotency) | Return existing result | info |
+| 17 | `SchemaValidationError` | 422 | No | No retry | Log validation failures; return detailed field errors | info |
+| 18 | `TenantSuspendedError` | 403 | No | No retry | Block all operations; notify platform admin | critical |
+| 19 | `GDPRDeletionError` | 500 | Yes | 3 retries, 60s intervals | Queue for manual deletion; notify DPO | critical |
+| 20 | `CircuitBreakerOpenError` | 503 | Yes | Wait for circuit recovery (30s–300s) | Use fallback/cached response if available | warn |
+| 21 | `ExternalAPIError` | 502 | Yes | 3 retries, 5s→60s exponential | None (transient) | warn |
+| 22 | `ConfigurationError` | 500 | No | No retry | Alert platform team; block affected operations | critical |
+| 23 | `ConcurrencyLimitError` | 429 | Yes | Retry after slot available (queue-based) | None (backpressure) | info |
+| 24 | `DataIntegrityError` | 500 | No | No retry | Quarantine record; alert data team | critical |
+| 25 | `ComplianceViolationError` | 403 | No | No retry | Block operation; create compliance ticket | critical |
+
+```typescript
+interface TemporalActivityError {
+  error_class: string
+  message: string
+  http_equivalent: number
+  retryable: boolean
+  retry_policy?: RetryPolicyConfig
+  compensation_action?: string
+  alert_level: 'info' | 'warn' | 'critical'
+  context: {
+    workflow_id: string
+    activity_name: string
+    tenant_id: string
+    timestamp: string
+    attempt_number: number
+  }
+  cause?: {
+    system: 'medusa' | 'erpnext' | 'fleetbase' | 'waltid' | 'stripe' | 'payloadcms'
+    external_error_code?: string
+    external_message?: string
+  }
+}
+
+interface RetryPolicyConfig {
+  max_attempts: number
+  initial_interval_ms: number
+  max_interval_ms: number
+  backoff_coefficient: number
+  non_retryable_error_types?: string[]
+  retry_timeout_ms?: number
+}
+```
+
+---
+
+#### 4.5.2 Retry Policies by Domain
+
+Each external system has different reliability characteristics and SLAs, requiring tailored retry configurations.
+
+##### Payment Gateway (Stripe / Tap / HyperPay)
+
+| Operation | Max Attempts | Initial Interval | Max Interval | Backoff | Non-Retryable Errors |
+|-----------|-------------|-------------------|--------------|---------|---------------------|
+| Payment Capture | 5 | 1s | 30s | 2.0 | PaymentDeclinedError, FraudDetectedError |
+| Refund Processing | 3 | 5s | 60s | 2.0 | InvalidArgumentError |
+| Transfer / Payout | 3 | 10s | 120s | 2.0 | InsufficientFundsError |
+| Webhook Verification | 1 | — | — | — | All (single attempt) |
+| Account Creation | 3 | 5s | 60s | 2.0 | DuplicateRequestError |
+
+```typescript
+const paymentRetryPolicy: RetryPolicyConfig = {
+  max_attempts: 5,
+  initial_interval_ms: 1000,
+  max_interval_ms: 30000,
+  backoff_coefficient: 2.0,
+  non_retryable_error_types: [
+    'PaymentDeclinedError',
+    'FraudDetectedError',
+    'InvalidArgumentError',
+    'DuplicateRequestError',
+  ],
+}
+```
+
+##### Logistics (Fleetbase)
+
+| Operation | Max Attempts | Initial Interval | Max Interval | Backoff | Non-Retryable Errors |
+|-----------|-------------|-------------------|--------------|---------|---------------------|
+| Create Delivery Order | 3 | 10s | 120s | 2.0 | DeliveryZoneUnavailableError |
+| Assign Driver | 5 | 30s | 300s | 2.0 | — |
+| Update Tracking | 3 | 5s | 60s | 2.0 | — |
+| Cancel Delivery | 2 | 5s | 30s | 2.0 | — |
+| Get ETA | 3 | 5s | 30s | 1.5 | — |
+
+```typescript
+const logisticsRetryPolicy: RetryPolicyConfig = {
+  max_attempts: 3,
+  initial_interval_ms: 10000,
+  max_interval_ms: 120000,
+  backoff_coefficient: 2.0,
+  non_retryable_error_types: ['DeliveryZoneUnavailableError'],
+}
+```
+
+##### Identity (Walt.id)
+
+| Operation | Max Attempts | Initial Interval | Max Interval | Backoff | Non-Retryable Errors |
+|-----------|-------------|-------------------|--------------|---------|---------------------|
+| Issue Credential | 3 | 5s | 60s | 2.0 | SchemaValidationError |
+| Verify Identity | 2 | 10s | 60s | 2.0 | — |
+| Revoke Credential | 3 | 5s | 30s | 2.0 | — |
+| KYC Document Check | 1* | — | — | — | — |
+
+\* KYC checks use Temporal timers (await up to 7 days) rather than activity retries, as verification is an async human/ML process.
+
+```typescript
+const identityRetryPolicy: RetryPolicyConfig = {
+  max_attempts: 3,
+  initial_interval_ms: 5000,
+  max_interval_ms: 60000,
+  backoff_coefficient: 2.0,
+  non_retryable_error_types: ['SchemaValidationError'],
+  retry_timeout_ms: 604800000,
+}
+```
+
+##### Content (PayloadCMS)
+
+| Operation | Max Attempts | Initial Interval | Max Interval | Backoff | Non-Retryable Errors |
+|-----------|-------------|-------------------|--------------|---------|---------------------|
+| Fetch Content | 3 | 2s | 30s | 2.0 | — |
+| Sync Configuration | 5 | 5s | 120s | 2.0 | SchemaValidationError |
+| Send Notification | 3 | 5s | 60s | 2.0 | InvalidArgumentError |
+| Update Template | 2 | 5s | 30s | 2.0 | — |
+
+```typescript
+const contentRetryPolicy: RetryPolicyConfig = {
+  max_attempts: 3,
+  initial_interval_ms: 2000,
+  max_interval_ms: 30000,
+  backoff_coefficient: 2.0,
+  non_retryable_error_types: ['SchemaValidationError', 'InvalidArgumentError'],
+}
+```
+
+##### ERP (ERPNext)
+
+| Operation | Max Attempts | Initial Interval | Max Interval | Backoff | Non-Retryable Errors |
+|-----------|-------------|-------------------|--------------|---------|---------------------|
+| Sync Order | 5 | 5s | 120s | 2.0 | DataConflictError (after merge attempt) |
+| Update Inventory | 3 | 5s | 60s | 2.0 | — |
+| Create Invoice | 3 | 10s | 120s | 2.0 | DuplicateRequestError |
+| Post Journal Entry | 3 | 5s | 60s | 2.0 | DataIntegrityError |
+| Sync Stock Levels | 5 | 10s | 300s | 2.0 | — |
+
+```typescript
+const erpRetryPolicy: RetryPolicyConfig = {
+  max_attempts: 5,
+  initial_interval_ms: 5000,
+  max_interval_ms: 120000,
+  backoff_coefficient: 2.0,
+  non_retryable_error_types: ['DuplicateRequestError', 'DataIntegrityError'],
+}
+```
+
+---
+
+#### 4.5.3 Circuit Breaker Configuration
+
+Each external system integration has a circuit breaker to prevent cascading failures. The circuit breaker operates in three states: **Closed** (normal), **Open** (failing, requests blocked), and **Half-Open** (testing recovery).
+
+| System | Failure Threshold | Recovery Window | Half-Open Test Requests | Fallback Behavior |
+|--------|-------------------|-----------------|------------------------|-------------------|
+| Stripe / Tap / HyperPay | 5 failures in 60s | 30s | 2 | Queue payment for retry; return "processing" status |
+| Fleetbase | 5 failures in 120s | 60s | 3 | Use cached ETA; queue delivery creation |
+| ERPNext | 10 failures in 300s | 120s | 5 | Buffer events in EventOutbox; sync when recovered |
+| Walt.id | 3 failures in 60s | 60s | 1 | Use cached credential status; queue new requests |
+| PayloadCMS | 5 failures in 120s | 60s | 3 | Serve cached content/config; queue sync operations |
+
+```typescript
+interface CircuitBreakerConfig {
+  system: string
+  failure_threshold: number
+  failure_window_ms: number
+  recovery_window_ms: number
+  half_open_max_requests: number
+  fallback_strategy: 'queue' | 'cache' | 'degrade' | 'reject'
+  fallback_description: string
+  alert_on_open: boolean
+  metrics_enabled: boolean
+}
+
+const circuitBreakerConfigs: CircuitBreakerConfig[] = [
+  {
+    system: 'stripe',
+    failure_threshold: 5,
+    failure_window_ms: 60000,
+    recovery_window_ms: 30000,
+    half_open_max_requests: 2,
+    fallback_strategy: 'queue',
+    fallback_description: 'Queue payment for retry; return processing status to customer',
+    alert_on_open: true,
+    metrics_enabled: true,
+  },
+  {
+    system: 'fleetbase',
+    failure_threshold: 5,
+    failure_window_ms: 120000,
+    recovery_window_ms: 60000,
+    half_open_max_requests: 3,
+    fallback_strategy: 'cache',
+    fallback_description: 'Use cached ETA and tracking; queue new delivery orders',
+    alert_on_open: true,
+    metrics_enabled: true,
+  },
+  {
+    system: 'erpnext',
+    failure_threshold: 10,
+    failure_window_ms: 300000,
+    recovery_window_ms: 120000,
+    half_open_max_requests: 5,
+    fallback_strategy: 'queue',
+    fallback_description: 'Buffer events in EventOutbox; batch sync when recovered',
+    alert_on_open: true,
+    metrics_enabled: true,
+  },
+  {
+    system: 'waltid',
+    failure_threshold: 3,
+    failure_window_ms: 60000,
+    recovery_window_ms: 60000,
+    half_open_max_requests: 1,
+    fallback_strategy: 'cache',
+    fallback_description: 'Use cached credential status; queue new verification requests',
+    alert_on_open: true,
+    metrics_enabled: true,
+  },
+  {
+    system: 'payloadcms',
+    failure_threshold: 5,
+    failure_window_ms: 120000,
+    recovery_window_ms: 60000,
+    half_open_max_requests: 3,
+    fallback_strategy: 'cache',
+    fallback_description: 'Serve cached content and configuration; queue sync operations',
+    alert_on_open: true,
+    metrics_enabled: true,
+  },
+]
+```
+
+---
+
+#### 4.5.4 Compensation (Saga) Patterns
+
+When a multi-step workflow fails after partially completing, compensation actions are executed in reverse order to restore consistency across systems. Each workflow defines a compensation registry mapping completed steps to their undo operations.
+
+##### OrderPlacement Compensation Chain
+
+| Step | Forward Action | Compensation (Undo) | System | Timeout |
+|------|---------------|---------------------|--------|---------|
+| 1 | Reserve inventory | Restore inventory | Medusa / ERPNext | 30s |
+| 2 | Capture payment | Release / refund payment | Stripe | 60s |
+| 3 | Create delivery order | Cancel delivery order | Fleetbase | 30s |
+| 4 | Create ERP sales order | Void ERP sales order | ERPNext | 30s |
+| 5 | Send confirmation | Send cancellation notice | PayloadCMS | 10s |
+
+```
+Failure at Step 3 (delivery creation fails):
+  → Compensate Step 2: refund payment via Stripe
+  → Compensate Step 1: restore inventory in Medusa + ERPNext
+  → Notify customer via PayloadCMS
+```
+
+##### VendorOnboarding Compensation Chain
+
+| Step | Forward Action | Compensation (Undo) | System | Timeout |
+|------|---------------|---------------------|--------|---------|
+| 1 | Create vendor account | Deactivate vendor account | Medusa | 30s |
+| 2 | Submit KYC verification | Cancel KYC request | Walt.id | 30s |
+| 3 | Issue credentials | Revoke credentials | Walt.id | 30s |
+| 4 | Create ERP supplier | Remove ERP supplier | ERPNext | 30s |
+| 5 | Create connected account | Deactivate connected account | Stripe | 60s |
+| 6 | Send welcome email | Send cancellation notice | PayloadCMS | 10s |
+
+```
+Failure at Step 4 (ERP supplier creation fails):
+  → Compensate Step 3: revoke credentials via Walt.id
+  → Compensate Step 2: cancel KYC request via Walt.id
+  → Compensate Step 1: deactivate vendor account in Medusa
+  → Notify applicant via PayloadCMS
+```
+
+##### SubscriptionLifecycle Compensation Chain
+
+| Step | Forward Action | Compensation (Undo) | System | Timeout |
+|------|---------------|---------------------|--------|---------|
+| 1 | Activate subscription | Deactivate subscription | Medusa | 30s |
+| 2 | Schedule billing | Cancel scheduled billing | Stripe | 30s |
+| 3 | Grant benefits/access | Revoke benefits/access | Medusa | 30s |
+| 4 | Create ERP revenue entry | Void ERP revenue entry | ERPNext | 30s |
+| 5 | Send welcome / activation email | Send cancellation confirmation | PayloadCMS | 10s |
+
+```
+Failure at Step 3 (benefit granting fails):
+  → Compensate Step 2: cancel scheduled billing via Stripe
+  → Compensate Step 1: deactivate subscription in Medusa
+  → Issue prorated refund if payment was captured
+  → Notify customer via PayloadCMS
+```
+
+```typescript
+interface CompensationStep {
+  step_number: number
+  forward_action: string
+  compensation_action: string
+  system: 'medusa' | 'erpnext' | 'fleetbase' | 'waltid' | 'stripe' | 'payloadcms'
+  timeout_ms: number
+  idempotency_key_pattern: string
+  max_compensation_attempts: number
+}
+
+interface CompensationRegistry {
+  workflow_type: string
+  steps: CompensationStep[]
+  on_compensation_failure: 'manual_review' | 'dead_letter' | 'alert_and_retry'
+  notification_on_compensation: boolean
+}
+
+const orderPlacementCompensation: CompensationRegistry = {
+  workflow_type: 'OrderPlacement',
+  steps: [
+    {
+      step_number: 1,
+      forward_action: 'reserveInventory',
+      compensation_action: 'restoreInventory',
+      system: 'medusa',
+      timeout_ms: 30000,
+      idempotency_key_pattern: 'comp-inv-{order_id}-{attempt}',
+      max_compensation_attempts: 3,
+    },
+    {
+      step_number: 2,
+      forward_action: 'capturePayment',
+      compensation_action: 'refundPayment',
+      system: 'stripe',
+      timeout_ms: 60000,
+      idempotency_key_pattern: 'comp-pay-{order_id}-{attempt}',
+      max_compensation_attempts: 3,
+    },
+    {
+      step_number: 3,
+      forward_action: 'createDeliveryOrder',
+      compensation_action: 'cancelDeliveryOrder',
+      system: 'fleetbase',
+      timeout_ms: 30000,
+      idempotency_key_pattern: 'comp-del-{order_id}-{attempt}',
+      max_compensation_attempts: 3,
+    },
+    {
+      step_number: 4,
+      forward_action: 'createERPSalesOrder',
+      compensation_action: 'voidERPSalesOrder',
+      system: 'erpnext',
+      timeout_ms: 30000,
+      idempotency_key_pattern: 'comp-erp-{order_id}-{attempt}',
+      max_compensation_attempts: 3,
+    },
+    {
+      step_number: 5,
+      forward_action: 'sendConfirmation',
+      compensation_action: 'sendCancellationNotice',
+      system: 'payloadcms',
+      timeout_ms: 10000,
+      idempotency_key_pattern: 'comp-notify-{order_id}-{attempt}',
+      max_compensation_attempts: 2,
+    },
+  ],
+  on_compensation_failure: 'manual_review',
+  notification_on_compensation: true,
+}
+```
+
+---
+
+#### 4.5.5 Dead Letter Queue (DLQ)
+
+When all retry attempts are exhausted and compensation cannot resolve the issue, events are routed to the Dead Letter Queue for manual intervention.
+
+##### DLQ Structure
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `dlq_entry_id` | string | Unique DLQ entry identifier |
+| `original_workflow_id` | string | The Temporal workflow that failed |
+| `original_activity` | string | The activity that exhausted retries |
+| `error_class` | string | Classification from error taxonomy |
+| `error_message` | string | Last error message |
+| `payload` | JSON | Original activity input payload |
+| `attempt_count` | number | Total attempts made |
+| `first_failed_at` | string | Timestamp of first failure |
+| `last_failed_at` | string | Timestamp of final failure |
+| `tenant_id` | string | Tenant context |
+| `system` | string | Target system that failed |
+| `status` | string | `pending_review` / `in_review` / `replayed` / `discarded` |
+| `reviewed_by` | string | Admin who reviewed (if applicable) |
+| `resolution_notes` | string | Notes on resolution |
+
+```typescript
+interface DeadLetterEntry {
+  dlq_entry_id: string
+  original_workflow_id: string
+  original_run_id: string
+  original_activity: string
+  error_class: string
+  error_message: string
+  error_stack?: string
+  payload: Record<string, unknown>
+  attempt_count: number
+  first_failed_at: string
+  last_failed_at: string
+  tenant_id: string
+  system: 'medusa' | 'erpnext' | 'fleetbase' | 'waltid' | 'stripe' | 'payloadcms'
+  status: 'pending_review' | 'in_review' | 'replayed' | 'discarded'
+  reviewed_by?: string
+  reviewed_at?: string
+  resolution_notes?: string
+  replay_workflow_id?: string
+}
+
+interface DLQReplayRequest {
+  dlq_entry_id: string
+  replay_strategy: 'retry_activity' | 'restart_workflow' | 'skip_and_continue' | 'manual_fix'
+  modified_payload?: Record<string, unknown>
+  initiated_by: string
+  reason: string
+}
+```
+
+##### Manual Review Process
+
+1. **Alert** — When an event enters the DLQ, the platform admin dashboard shows a notification. Critical errors also trigger PagerDuty / Slack alerts.
+2. **Triage** — An admin reviews the entry, examining the error class, payload, and attempt history.
+3. **Resolution Options:**
+   - **Replay** — Fix the root cause (e.g., restore connectivity), then replay the failed activity with the original or modified payload.
+   - **Skip** — Mark the activity as skipped and advance the workflow to the next step (only for non-critical steps).
+   - **Manual Fix** — Directly intervene in the target system (e.g., manually create the ERP entry), then mark the DLQ entry as resolved.
+   - **Discard** — Determine the event is no longer relevant (e.g., order was already cancelled) and discard it.
+
+##### Replay Mechanism
+
+The replay mechanism re-executes a failed activity within a new Temporal workflow:
+
+1. Load the DLQ entry with its original payload
+2. Optionally modify the payload (e.g., fix a malformed field)
+3. Start a new child workflow that executes only the failed activity
+4. On success, update the DLQ entry status to `replayed` and link the new workflow ID
+5. On failure, increment the attempt count and keep in DLQ for further review
+
+```
+DLQ Entry                    Replay Workflow
+┌─────────────────┐         ┌──────────────────────┐
+│ Failed Activity  │────────>│ ReplayActivity        │
+│ + Original       │         │   (same activity with │
+│   Payload        │         │    original/modified   │
+│ + Error Context  │         │    payload)            │
+└─────────────────┘         └──────────┬───────────┘
+                                       │
+                            ┌──────────┴───────────┐
+                            │                      │
+                         Success                Failure
+                            │                      │
+                     Mark "replayed"         Keep in DLQ
+                     Link new workflow_id    Increment attempts
+```
+
+---
+
 ## 5. Integration Patterns
 
 ### 5.1 Event Flow Architecture
@@ -4561,6 +5816,852 @@ interface ActivityResult<T = unknown> {
 
 ---
 
+## 9. Implementation Mapping
+
+Map the architecture documented above to the actual codebase. This helps developers find where each architectural concept lives in code.
+
+### 9.1 Repository Structure
+
+```
+apps/backend/
+├── src/
+│   ├── api/admin/
+│   │   ├── temporal/
+│   │   │   ├── route.ts              # GET /admin/temporal — health check
+│   │   │   ├── trigger/route.ts      # POST /admin/temporal/trigger — start workflow
+│   │   │   ├── workflows/route.ts    # GET /admin/temporal/workflows — list active
+│   │   │   └── dynamic/
+│   │   │       ├── route.ts          # POST /admin/temporal/dynamic — start dynamic workflow
+│   │   │       └── [workflowId]/route.ts  # GET dynamic workflow status
+│   │   ├── webhooks/
+│   │   │   ├── route.ts             # Webhook router
+│   │   │   ├── stripe/route.ts      # Stripe webhook handler
+│   │   │   ├── erpnext/route.ts     # ERPNext webhook handler
+│   │   │   ├── fleetbase/route.ts   # Fleetbase webhook handler
+│   │   │   └── payload/route.ts     # PayloadCMS webhook handler
+│   │   └── integration/             # Integration management APIs
+│   ├── integrations/
+│   │   ├── orchestrator/
+│   │   │   ├── integration-orchestrator.ts  # Core sync orchestrator
+│   │   │   ├── integration-registry.ts      # Adapter registry & health checks
+│   │   │   ├── sync-tracker.ts              # Sync entry tracking
+│   │   │   └── index.ts
+│   │   ├── erpnext/                  # ERPNext adapter implementation
+│   │   │   ├── service.ts           # ERPNext API client
+│   │   │   └── index.ts
+│   │   ├── fleetbase/               # Fleetbase adapter implementation
+│   │   │   ├── service.ts           # Fleetbase API client
+│   │   │   └── index.ts
+│   │   ├── waltid/                  # Walt.id adapter implementation
+│   │   │   ├── service.ts           # Walt.id API client
+│   │   │   └── index.ts
+│   │   ├── stripe-gateway/          # Stripe adapter implementation
+│   │   │   ├── service.ts           # Stripe API client
+│   │   │   └── index.ts
+│   │   ├── payload-sync/            # Payload CMS sync
+│   │   │   ├── payload-to-medusa.ts # Inbound sync
+│   │   │   ├── medusa-to-payload.ts # Outbound sync
+│   │   │   └── index.ts
+│   │   └── node-hierarchy-sync/     # Node hierarchy sync
+│   │       ├── service.ts
+│   │       └── index.ts
+│   └── lib/
+│       ├── temporal-client.ts        # Temporal client singleton & helpers
+│       ├── event-dispatcher.ts       # EVENT_WORKFLOW_MAP & dispatch logic
+│       └── integrations/
+│           ├── temporal-spec.ts      # Temporal integration contract (1,661 lines)
+│           ├── erpnext-spec.ts       # ERPNext integration contract (1,593 lines)
+│           ├── fleetbase-spec.ts     # Fleetbase integration contract (952 lines)
+│           ├── payload-cms-spec.ts   # PayloadCMS integration contract (1,034 lines)
+│           └── waltid-spec.ts        # Walt.id integration contract (1,396 lines)
+```
+
+### 9.2 Key File Responsibilities
+
+| File | Architectural Role | Section Reference |
+|------|-------------------|-------------------|
+| `lib/temporal-client.ts` | Temporal Cloud connection singleton, lazy initialization, health check | §4.1 |
+| `lib/event-dispatcher.ts` | EVENT_WORKFLOW_MAP (65+ event→workflow mappings), outbox processing, cross-system dispatch | §4.3, §5.1 |
+| `integrations/orchestrator/integration-orchestrator.ts` | Core sync engine: `syncToSystem()`, `syncToAllSystems()`, `retryFailed()`, dashboard | §5.3 |
+| `integrations/orchestrator/integration-registry.ts` | Adapter interface (`IIntegrationAdapter`), health checks, adapter registration | §5.3, §7.3 |
+| `integrations/orchestrator/sync-tracker.ts` | Sync entry lifecycle, status tracking, stats aggregation | §5.3 |
+| `api/admin/webhooks/stripe/route.ts` | Stripe webhook signature verification, event routing | §4.3.2 |
+| `api/admin/webhooks/erpnext/route.ts` | ERPNext webhook handler, inventory/accounting events | §4.3.4, §4.3.6 |
+| `api/admin/webhooks/fleetbase/route.ts` | Fleetbase delivery status webhooks, signal dispatch | §4.3.6 |
+| `api/admin/webhooks/payload/route.ts` | PayloadCMS content sync webhooks, shared model propagation | §5.1 |
+| `lib/integrations/temporal-spec.ts` | Complete Temporal contract: task queues, workflow types, event mapping, scaling | §4.1, §4.2, §8.1 |
+| `lib/integrations/erpnext-spec.ts` | ERPNext API contract: doctypes, fields, sync rules | §2, §3.2 |
+| `lib/integrations/fleetbase-spec.ts` | Fleetbase API contract: endpoints, models, tracking | §2, §3.3 |
+| `lib/integrations/payload-cms-spec.ts` | PayloadCMS API contract: collections, sync direction | §2, §3.6 |
+| `lib/integrations/waltid-spec.ts` | Walt.id API contract: DIDs, credentials, verification | §2, §3.4 |
+
+### 9.3 Integration Adapter Interface
+
+Every external system implements the `IIntegrationAdapter` interface (from `integration-registry.ts`):
+
+```typescript
+interface IIntegrationAdapter {
+  name: string
+  healthCheck(): Promise<{ healthy: boolean; message?: string }>
+  isConfigured(): boolean
+  syncEntity(type: string, id: string, data: any): Promise<{ success: boolean; externalId?: string; error?: string }>
+  handleWebhook(event: string, payload: any): Promise<{ processed: boolean; error?: string }>
+}
+```
+
+**Registered Adapters:**
+
+| Adapter Name | Configuration Check | Health Endpoint |
+|-------------|-------------------|-----------------|
+| `payload` | `PAYLOAD_API_URL` + `PAYLOAD_API_KEY` | `GET {PAYLOAD_API_URL}/api/health` |
+| `erpnext` | `ERPNEXT_URL` + `ERPNEXT_API_KEY` | `GET {ERPNEXT_URL}/api/method/ping` |
+| `fleetbase` | `FLEETBASE_API_URL` + `FLEETBASE_API_KEY` | `GET {FLEETBASE_API_URL}/health` |
+| `waltid` | `WALTID_API_URL` + `WALTID_API_KEY` | `GET {WALTID_API_URL}/health` |
+| `stripe` | `STRIPE_SECRET_KEY` | Stripe SDK connection test |
+| `temporal` | `TEMPORAL_API_KEY` | Temporal client connection test |
+
+### 9.4 Event-to-Workflow Dispatch Map
+
+The `EVENT_WORKFLOW_MAP` in `lib/event-dispatcher.ts` maps commerce events to Temporal workflows:
+
+| Event Type | Workflow ID | Task Queue |
+|-----------|-------------|------------|
+| `order.placed` | `xsystem.unified-order-orchestrator` | `commerce-queue` |
+| `order.cancelled` | `xsystem.order-cancellation-saga` | `commerce-queue` |
+| `payment.initiated` | `xsystem.multi-gateway-payment` | `commerce-queue` |
+| `refund.requested` | `xsystem.refund-compensation-saga` | `commerce-queue` |
+| `return.initiated` | `xsystem.returns-processing` | `commerce-queue` |
+| `product.created` | `commerce.product-catalog-sync` | `commerce-queue` |
+| `product.updated` | `commerce.sync-product-to-cms` | `commerce-queue` |
+| `booking.created` | `xsystem.service-booking-orchestrator` | `commerce-booking-queue` |
+| `subscription.created` | `xsystem.subscription-lifecycle` | `commerce-booking-queue` |
+| `tenant.provisioned` | `xsystem.tenant-setup-saga` | `xsystem-platform-queue` |
+| `node.created` | `xsystem.node-provisioning` | `xsystem-platform-queue` |
+| `vendor.registered` | `xsystem.vendor-onboarding-saga` | `xsystem-platform-queue` |
+
+*(Full map contains 65+ entries — see `lib/event-dispatcher.ts` for complete reference)*
+
+### 9.5 Sync Tracking Data Model
+
+The `SyncTracker` (from `sync-tracker.ts`) tracks all cross-system synchronization operations:
+
+```typescript
+interface ISyncEntry {
+  id: string                    // UUID
+  system: SyncSystem            // "payload" | "erpnext" | "fleetbase" | "waltid" | "stripe" | "temporal"
+  entity_type: string           // e.g., "product", "order", "customer"
+  entity_id: string             // Medusa entity ID
+  direction: "inbound" | "outbound"
+  status: "pending" | "in_progress" | "success" | "failed" | "retrying"
+  error_message: string | null
+  retry_count: number
+  max_retries: number           // default: 3
+  payload_hash: string | null   // SHA-256 of sync payload for deduplication
+  correlation_id: string
+  tenant_id: string | null
+  node_id: string | null
+  created_at: Date
+  updated_at: Date
+  completed_at: Date | null
+}
+```
+
+---
+
+## 10. Deployment Architecture
+
+### 10.1 Infrastructure Topology
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          CLOUD INFRASTRUCTURE                                │
+│                                                                             │
+│  ┌──────────────────────────┐    ┌──────────────────────────────────┐      │
+│  │   APPLICATION TIER        │    │   TEMPORAL CLOUD (Managed)       │      │
+│  │                          │    │                                  │      │
+│  │  ┌──────────────────┐   │    │  Namespace: quickstart-dakkah-   │      │
+│  │  │ Medusa Backend   │   │    │   cityos.djvai                   │      │
+│  │  │ (Node.js)        │◄──┼───►│  Region: ap-northeast-1          │      │
+│  │  │ Port: 9000       │   │    │  Encryption: TLS + API Key       │      │
+│  │  └──────────────────┘   │    │                                  │      │
+│  │                          │    │  Task Queues: 21 queues          │      │
+│  │  ┌──────────────────┐   │    │  Workers: Deployed per-system    │      │
+│  │  │ Storefront       │   │    │  Retention: 30 days              │      │
+│  │  │ (TanStack Start) │   │    └──────────────────────────────────┘      │
+│  │  │ Port: 5000       │   │                                             │
+│  │  └──────────────────┘   │    ┌──────────────────────────────────┐      │
+│  │                          │    │   EXTERNAL SYSTEMS                │      │
+│  │  ┌──────────────────┐   │    │                                  │      │
+│  │  │ Temporal Workers │   │    │  ERPNext      ─── HTTPS/REST     │      │
+│  │  │ (Node.js)       │◄──┼───►│  Fleetbase    ─── HTTPS/REST     │      │
+│  │  │ Per-queue scaled │   │    │  Walt.id      ─── HTTPS/REST     │      │
+│  │  └──────────────────┘   │    │  Stripe       ─── HTTPS/REST     │      │
+│  │                          │    │  PayloadCMS   ─── HTTPS/REST     │      │
+│  └──────────────────────────┘    └──────────────────────────────────┘      │
+│                                                                             │
+│  ┌──────────────────────────┐    ┌──────────────────────────────────┐      │
+│  │   DATA TIER               │    │   STORAGE TIER                   │      │
+│  │                          │    │                                  │      │
+│  │  PostgreSQL (Neon)       │    │  MinIO AIStor (S3-compatible)   │      │
+│  │  ├── medusa_db           │    │  ├── Media assets               │      │
+│  │  ├── event_outbox        │    │  ├── Document uploads           │      │
+│  │  └── sync_tracking       │    │  └── Backup archives            │      │
+│  └──────────────────────────┘    └──────────────────────────────────┘      │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 10.2 Worker Deployment Strategy
+
+Each Temporal task queue has dedicated workers. Workers are deployed as independent processes/containers that can be scaled independently based on queue depth.
+
+| Task Queue Group | Worker Process | Scaling Strategy | Min Instances | Max Instances |
+|-----------------|---------------|-----------------|---------------|---------------|
+| `cityos-workflow-queue` | `cityos-system-worker` | Queue-depth autoscaling | 1 | 10 |
+| `cityos-dynamic-queue` | `cityos-dynamic-worker` | Active-workflow count | 0 | 5 |
+| `commerce-queue` | `commerce-worker` | Order volume | 1 | 10 |
+| `commerce-booking-queue` | `booking-worker` | Booking volume | 1 | 5 |
+| `xsystem-platform-queue` | `platform-worker` | Event rate | 1 | 5 |
+| `xsystem-logistics-queue` | `logistics-worker` | Delivery volume | 1 | 8 |
+| `xsystem-content-queue` | `content-worker` | Content events | 1 | 3 |
+| `payload-*` queues | `payload-worker` | Content volume | 1 | 3 |
+| `zes-*` queues | `zes-worker` | POI activity | 1 | 5 |
+| `core-*` queues | `core-worker` | Scheduled tasks | 1 | 3 |
+
+### 10.3 Environment Variables Reference
+
+| Variable | System | Required | Description |
+|----------|--------|----------|-------------|
+| `TEMPORAL_API_KEY` | Temporal | Yes | Temporal Cloud API key for authentication |
+| `TEMPORAL_ENDPOINT` | Temporal | No | Temporal Cloud gRPC endpoint (default: `ap-northeast-1.aws.api.temporal.io:7233`) |
+| `TEMPORAL_NAMESPACE` | Temporal | No | Temporal namespace (default: `quickstart-dakkah-cityos.djvai`) |
+| `PAYLOAD_API_URL` | PayloadCMS | Yes | PayloadCMS API base URL |
+| `PAYLOAD_API_KEY` | PayloadCMS | Yes | PayloadCMS API authentication key |
+| `ERPNEXT_URL` | ERPNext | Yes | ERPNext instance URL |
+| `ERPNEXT_API_KEY` | ERPNext | Yes | ERPNext API key |
+| `ERPNEXT_API_SECRET` | ERPNext | Yes | ERPNext API secret |
+| `FLEETBASE_API_URL` | Fleetbase | Yes | Fleetbase API base URL |
+| `FLEETBASE_API_KEY` | Fleetbase | Yes | Fleetbase API key |
+| `WALTID_API_URL` | Walt.id | Yes | Walt.id API base URL |
+| `WALTID_API_KEY` | Walt.id | Yes | Walt.id API key |
+| `STRIPE_SECRET_KEY` | Stripe | Yes | Stripe secret API key |
+| `STRIPE_WEBHOOK_SECRET` | Stripe | Yes | Stripe webhook signing secret |
+| `DATABASE_URL` | PostgreSQL | Yes | PostgreSQL connection string |
+
+### 10.4 Network Security
+
+All inter-system communication uses TLS encryption. No plaintext API calls are permitted.
+
+| Connection | Protocol | Auth Method | Port |
+|-----------|----------|-------------|------|
+| Medusa → Temporal Cloud | gRPC + TLS | API Key | 7233 |
+| Medusa → ERPNext | HTTPS | API Key + Secret | 443 |
+| Medusa → Fleetbase | HTTPS | API Key | 443 |
+| Medusa → Walt.id | HTTPS | API Key | 443 |
+| Medusa → Stripe | HTTPS | Secret Key | 443 |
+| Medusa → PayloadCMS | HTTPS | API Key + JWT | 443 |
+| Stripe → Medusa (webhook) | HTTPS | Signature verification | 443 |
+| ERPNext → Medusa (webhook) | HTTPS | Shared secret | 443 |
+| Fleetbase → Medusa (webhook) | HTTPS | API Key header | 443 |
+| PayloadCMS → Medusa (webhook) | HTTPS | Shared secret | 443 |
+
+---
+
+## 11. Monitoring & Observability
+
+### 11.1 Observability Stack
+
+```
+┌───────────────────────────────────────────────────────────────┐
+│                     OBSERVABILITY LAYER                        │
+│                                                               │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
+│  │   METRICS    │  │   LOGGING   │  │   TRACING            │  │
+│  │             │  │             │  │                     │  │
+│  │  Prometheus  │  │  Structured │  │  correlation_id     │  │
+│  │  + Grafana   │  │  JSON logs  │  │  causation_id       │  │
+│  │             │  │  → Loki     │  │  trace_id            │  │
+│  │  Workflow    │  │             │  │  → Jaeger/OTLP      │  │
+│  │  counters    │  │  Per-system │  │                     │  │
+│  │  latency     │  │  log streams│  │  Cross-system       │  │
+│  │  error rates │  │             │  │  request tracing     │  │
+│  └─────────────┘  └─────────────┘  └─────────────────────┘  │
+│                                                               │
+│  ┌─────────────────────────────────────────────────────────┐  │
+│  │                    ALERTING                              │  │
+│  │  PagerDuty / OpsGenie / Slack                           │  │
+│  │  Severity: P1 (Critical) → P4 (Info)                   │  │
+│  └─────────────────────────────────────────────────────────┘  │
+└───────────────────────────────────────────────────────────────┘
+```
+
+### 11.2 Key Metrics
+
+#### Temporal Workflow Metrics
+
+| Metric | Type | Labels | Alert Threshold |
+|--------|------|--------|----------------|
+| `temporal_workflow_started_total` | Counter | workflow_type, task_queue, tenant_id | N/A |
+| `temporal_workflow_completed_total` | Counter | workflow_type, task_queue, status | N/A |
+| `temporal_workflow_failed_total` | Counter | workflow_type, task_queue, error_type | > 5/min → P2 |
+| `temporal_workflow_duration_seconds` | Histogram | workflow_type, task_queue | p99 > 5min → P3 |
+| `temporal_activity_duration_seconds` | Histogram | activity_type, system | p99 > 30s → P3 |
+| `temporal_activity_retry_total` | Counter | activity_type, system | > 10/min → P2 |
+| `temporal_task_queue_depth` | Gauge | task_queue | > 1000 → P2 |
+| `temporal_schedule_missed_total` | Counter | schedule_id | > 0 → P3 |
+
+#### Cross-System Sync Metrics
+
+| Metric | Type | Labels | Alert Threshold |
+|--------|------|--------|----------------|
+| `sync_operation_total` | Counter | system, entity_type, direction, status | N/A |
+| `sync_duration_seconds` | Histogram | system, entity_type | p99 > 10s → P3 |
+| `sync_failure_total` | Counter | system, entity_type, error_type | > 10/min → P2 |
+| `sync_retry_total` | Counter | system, entity_type | > 20/hour → P3 |
+| `sync_lag_seconds` | Gauge | system, entity_type | > 300s → P2 |
+
+#### System Health Metrics
+
+| Metric | Type | Labels | Alert Threshold |
+|--------|------|--------|----------------|
+| `integration_health_status` | Gauge | system | 0 (unhealthy) for > 5min → P1 |
+| `webhook_received_total` | Counter | system, event_type | N/A |
+| `webhook_processing_duration_seconds` | Histogram | system, event_type | p99 > 5s → P3 |
+| `event_outbox_pending_count` | Gauge | tenant_id | > 100 → P2 |
+| `event_outbox_age_seconds` | Gauge | tenant_id | > 3600 → P1 |
+
+### 11.3 Structured Logging Format
+
+All cross-system operations use structured JSON logging with mandatory fields:
+
+```typescript
+interface StructuredLogEntry {
+  timestamp: string               // ISO 8601
+  level: "DEBUG" | "INFO" | "WARN" | "ERROR" | "FATAL"
+  service: string                 // "medusa" | "temporal-worker" | etc.
+  correlation_id: string          // Links related operations
+  causation_id?: string           // The event that caused this
+  tenant_id?: string
+  node_id?: string
+  workflow_id?: string
+  activity_type?: string
+  system?: string                 // External system involved
+  entity_type?: string
+  entity_id?: string
+  duration_ms?: number
+  error?: {
+    type: string
+    message: string
+    stack?: string
+    retryable: boolean
+  }
+  message: string
+}
+```
+
+### 11.4 Dashboard Definitions
+
+#### Primary Dashboard: Cross-System Health
+
+| Panel | Visualization | Query |
+|-------|--------------|-------|
+| System Health Matrix | Status grid | `integration_health_status` per system |
+| Workflow Throughput | Time series | `rate(temporal_workflow_completed_total[5m])` by type |
+| Workflow Error Rate | Time series | `rate(temporal_workflow_failed_total[5m])` by type |
+| Sync Lag Heatmap | Heatmap | `sync_lag_seconds` by system |
+| Event Outbox Backlog | Gauge | `event_outbox_pending_count` sum |
+| Active Workflows | Gauge | `temporal_workflow_active_count` by task_queue |
+
+#### Secondary Dashboard: Per-Tenant View
+
+| Panel | Visualization | Query |
+|-------|--------------|-------|
+| Tenant Order Volume | Time series | `temporal_workflow_started_total{workflow_type="OrderPlacement"}` by tenant_id |
+| Tenant Sync Status | Table | Latest sync entry per system per tenant |
+| Tenant Error Log | Log panel | Filtered by tenant_id, level >= WARN |
+| Tenant API Latency | Histogram | `sync_duration_seconds` by system, filtered by tenant_id |
+
+### 11.5 Distributed Tracing
+
+Every cross-system operation is traceable via `correlation_id`:
+
+```
+Customer Request → correlation_id: "corr_abc123"
+  ├── Medusa: order.placed (causation: user_action)
+  ├── Temporal: OrderPlacementWorkflow started
+  │   ├── Activity: capturePayment → Stripe
+  │   ├── Activity: reserveInventory → ERPNext
+  │   ├── Activity: createDeliveryOrder → Fleetbase
+  │   └── Activity: sendConfirmation → PayloadCMS
+  └── All systems log with correlation_id: "corr_abc123"
+```
+
+To trace a request across all systems:
+```sql
+-- Find all events for a correlation
+SELECT * FROM event_outbox 
+WHERE correlation_id = 'corr_abc123' 
+ORDER BY created_at;
+```
+
+---
+
+## 12. Disaster Recovery & Business Continuity
+
+### 12.1 Recovery Objectives
+
+| System | RTO (Recovery Time) | RPO (Recovery Point) | Criticality |
+|--------|-------------------|---------------------|-------------|
+| Medusa Commerce | 15 minutes | 0 (real-time replication) | Critical |
+| PostgreSQL (Neon) | 5 minutes | 0 (synchronous replication) | Critical |
+| Temporal Cloud | 0 (managed, multi-AZ) | 0 (durable execution) | Critical |
+| Stripe Payment Gateway | 0 (managed by Stripe) | 0 | Critical |
+| ERPNext | 30 minutes | 15 minutes | High |
+| Fleetbase | 30 minutes | 15 minutes | High |
+| PayloadCMS | 1 hour | 30 minutes | Medium |
+| Walt.id | 1 hour | 30 minutes | Medium |
+| MinIO Object Storage | 1 hour | 1 hour | Medium |
+
+### 12.2 Failure Modes & Mitigation
+
+| Failure Scenario | Impact | Detection | Automatic Mitigation | Manual Recovery |
+|-----------------|--------|-----------|---------------------|-----------------|
+| Temporal Cloud outage | Workflows pause, no new workflows | Health check fails | Events queue in outbox | Process outbox backlog on recovery |
+| Stripe unavailable | Payments fail | Payment activity timeout | Retry with backoff | Manual payment reconciliation |
+| ERPNext unavailable | Accounting delayed, inventory stale | Health check fails | Queue accounting entries | Bulk sync on recovery |
+| Fleetbase unavailable | Deliveries not dispatched | Health check fails | Queue delivery orders | Dispatch backlog on recovery |
+| PayloadCMS unavailable | Notifications delayed, content stale | Health check fails | Queue notifications | Bulk send on recovery |
+| Walt.id unavailable | KYC/verification delayed | Health check fails | Queue verification requests | Process backlog on recovery |
+| PostgreSQL unavailable | Full system outage | Connection failure | Neon automatic failover | Verify data consistency |
+| Network partition | Partial system isolation | Cross-system health checks | Circuit breaker activation | Reconcile after partition heals |
+
+### 12.3 Event Outbox as Durability Guarantee
+
+The EventOutbox in PostgreSQL serves as a durable buffer for all cross-system events. If Temporal Cloud or any external system is unavailable:
+
+1. Events are written to `event_outbox` table with status `pending`
+2. The outbox processor (`processOutbox()` in `event-dispatcher.ts`) attempts dispatch
+3. Failed events are marked `failed` with error message and incremented retry_count
+4. The scheduled `OutboxProcessor` workflow retries failed events periodically
+5. After `max_retries` exceeded, events move to dead-letter status for manual review
+
+```
+Normal Flow:
+  Event → Outbox (pending) → Temporal dispatch → Outbox (published)
+
+Failure Flow:
+  Event → Outbox (pending) → Temporal unavailable → Outbox (failed, retry_count=1)
+       → Retry after interval → Temporal available → Outbox (published)
+
+DLQ Flow:
+  Event → Outbox (pending) → 5 failures → Outbox (dead_letter)
+       → Admin review → Manual replay OR discard
+```
+
+### 12.4 Data Reconciliation Procedures
+
+After any system recovery, run reconciliation to ensure consistency:
+
+| Reconciliation Type | Trigger | Process | Frequency |
+|-------------------|---------|---------|-----------|
+| Inventory Sync | ERPNext recovery | WF-033 InventorySyncWorkflow (full mode) | On recovery + every 15 min |
+| Order Status Sync | Any system recovery | Compare Medusa orders with Stripe/ERPNext/Fleetbase | On recovery |
+| Customer Profile Sync | Walt.id recovery | Re-verify pending KYC, re-issue expired credentials | On recovery |
+| Content Sync | PayloadCMS recovery | Full CMS page/template sync | On recovery |
+| Financial Reconciliation | ERPNext recovery | WF-018 SettlementReconciliationWorkflow | On recovery + daily |
+
+### 12.5 Backup Strategy
+
+| Data Store | Backup Method | Frequency | Retention | Location |
+|-----------|--------------|-----------|-----------|----------|
+| PostgreSQL (Medusa) | Neon point-in-time recovery | Continuous | 30 days | Same region + cross-region |
+| PostgreSQL (EventOutbox) | Included in Medusa backup | Continuous | 30 days | Same region |
+| Temporal Workflow History | Managed by Temporal Cloud | Continuous | 30 days | Temporal Cloud |
+| MinIO Object Storage | Cross-region replication | Real-time | Indefinite | Secondary region |
+| Integration Specs | Git repository | On commit | Indefinite | GitHub |
+| Environment Config | Encrypted backup | Daily | 90 days | Secure vault |
+
+---
+
+## 13. Performance & Scaling Constraints
+
+### 13.1 System Rate Limits
+
+| System | Rate Limit | Burst | Throttling Strategy |
+|--------|-----------|-------|-------------------|
+| Stripe API | 100 req/s (read), 25 req/s (write) | 2x for 10s | Queue with backpressure |
+| ERPNext API | 50 req/s (varies by plan) | N/A | Rate-limited activity retry |
+| Fleetbase API | 100 req/s | 200/s burst | Standard retry |
+| Walt.id API | 30 req/s | N/A | Queue credential operations |
+| PayloadCMS API | Depends on deployment | N/A | Standard retry |
+| Temporal Cloud | 200 actions/s per namespace (default) | Configurable | Activity-level throttling |
+
+### 13.2 Workflow Concurrency Limits
+
+| Scope | Limit | Rationale |
+|-------|-------|-----------|
+| Active workflows per tenant | 10,000 | Prevent tenant monopolization |
+| Active workflows per task queue | 50,000 | Temporal namespace capacity |
+| Concurrent activities per worker | 50-500 (by tier) | See §10.2 scaling table |
+| Pending activities per task queue | 100,000 | Temporal queue limit |
+| Workflow history events | 50,000 events | Use continue-as-new before limit |
+| Workflow execution timeout | 24 hours (default) | Override per workflow type |
+| Schedule count per namespace | 1,000 | Temporal Cloud limit |
+
+### 13.3 Batch Processing Guidelines
+
+| Operation | Recommended Batch Size | Max Batch Size | Concurrency |
+|-----------|----------------------|----------------|-------------|
+| Product catalog sync | 50 items | 200 items | 5 parallel |
+| Inventory sync (delta) | 100 variants | 500 variants | 10 parallel |
+| Inventory sync (full) | 200 variants | 1000 variants | 20 parallel |
+| Customer data export | 100 records | 500 records | 3 parallel |
+| Order history migration | 50 orders | 200 orders | 5 parallel |
+| Notification bulk send | 100 recipients | 500 recipients | 10 parallel |
+| Financial reconciliation | 200 transactions | 1000 transactions | 5 parallel |
+| Credential batch issuance | 20 credentials | 50 credentials | 3 parallel |
+
+### 13.4 Latency Budgets
+
+| Operation | p50 Target | p95 Target | p99 Target | Timeout |
+|-----------|-----------|-----------|-----------|---------|
+| Stripe payment capture | 500ms | 1.5s | 3s | 2 min |
+| ERPNext journal entry | 200ms | 800ms | 2s | 30s |
+| Fleetbase delivery creation | 300ms | 1s | 3s | 5 min |
+| Walt.id credential issuance | 500ms | 2s | 5s | 30s |
+| PayloadCMS content sync | 200ms | 600ms | 1.5s | 30s |
+| Full order placement workflow | 2s | 8s | 15s | 2 min |
+| Vendor onboarding workflow | 5s | 30s | 2 min | 24 hours |
+| KYC verification workflow | N/A | N/A | N/A | 7 days |
+
+### 13.5 Database Performance
+
+| Table | Expected Volume (per tenant/year) | Index Strategy |
+|-------|----------------------------------|----------------|
+| `event_outbox` | 100K–10M events | `(status, created_at)`, `(correlation_id)`, `(tenant_id, event_type)` |
+| `sync_entries` (in-memory) | 10K–500K entries | In-memory Map (persisted on demand) |
+| Orders | 1K–1M orders | `(tenant_id, created_at)`, `(customer_id)`, `(status)` |
+| Products | 100–100K products | `(tenant_id)`, `(handle)`, `(category_id)` |
+| Customers | 100–500K customers | `(tenant_id)`, `(email)` |
+
+### 13.6 Scaling Recommendations by Scope Tier
+
+| Tier | Tenants | Products/Tenant | Orders/Day | Workers | DB Connections |
+|------|---------|----------------|------------|---------|----------------|
+| Nano | 1 | < 100 | < 10 | 1 | 5 |
+| Micro | 1-3 | < 500 | < 50 | 1 | 10 |
+| Small | 3-10 | < 2,000 | < 200 | 2-3 | 20 |
+| Medium | 10-50 | < 10,000 | < 1,000 | 3-5 | 50 |
+| Large | 50-200 | < 50,000 | < 5,000 | 5-10 | 100 |
+| Mega | 200-1000 | < 200,000 | < 20,000 | 10-20 | 200 |
+| Global | 1000+ | Unlimited | Unlimited | Auto-scale | Connection pooling |
+
+---
+
+## 14. Testing Strategy
+
+### 14.1 Test Pyramid
+
+```
+                    ┌─────────────────┐
+                    │   E2E Tests      │  ← 5% — Full cross-system flows
+                   ┌┤  (Playwright)    ├┐
+                   │└─────────────────┘│
+                  ┌┤  Integration Tests ├┐ ← 20% — System-pair interactions
+                  │├───────────────────┤│
+                  │├───────────────────┤│
+                 ┌┤  Contract Tests     ├┐ ← 25% — API contract verification
+                 │├───────────────────┤│
+                 │├───────────────────┤│
+                ┌┤  Unit Tests          ├┐ ← 50% — Individual functions/modules
+                │└─────────────────────┘│
+                └───────────────────────┘
+```
+
+### 14.2 Integration Test Categories
+
+| Test Category | Scope | Mocking Strategy | CI Frequency |
+|--------------|-------|-----------------|-------------|
+| Medusa ↔ Temporal | Workflow dispatch, signal handling | Temporal test server (in-process) | Every PR |
+| Medusa ↔ Stripe | Payment capture, refund, webhook verification | Stripe test mode | Every PR |
+| Medusa ↔ ERPNext | Accounting entries, inventory sync | ERPNext sandbox or mock | Daily |
+| Medusa ↔ Fleetbase | Delivery creation, tracking updates | Fleetbase sandbox or mock | Daily |
+| Medusa ↔ Walt.id | Credential issuance, verification | Walt.id test instance | Daily |
+| Medusa ↔ PayloadCMS | Content sync, webhook processing | PayloadCMS test instance | Daily |
+| Full saga tests | Multi-system workflow completion | Mix of real + mock | Weekly |
+
+### 14.3 Contract Testing
+
+Each integration spec file (`lib/integrations/*-spec.ts`) serves as the contract definition. Contract tests verify:
+
+1. **Request format**: API calls match the spec's expected payload structure
+2. **Response handling**: Adapters correctly parse successful and error responses
+3. **Webhook validation**: Incoming webhooks match expected signature and schema
+4. **Idempotency**: Duplicate requests produce identical results
+
+```typescript
+describe("ERPNext Contract Tests", () => {
+  it("should format sales invoice payload per erpnext-spec", () => {
+    const invoice = formatSalesInvoice(order)
+    expect(invoice).toMatchObject({
+      doctype: "Sales Invoice",
+      customer: expect.any(String),
+      items: expect.arrayContaining([
+        expect.objectContaining({
+          item_code: expect.any(String),
+          qty: expect.any(Number),
+          rate: expect.any(Number),
+        }),
+      ]),
+    })
+  })
+})
+```
+
+### 14.4 Temporal Workflow Testing
+
+```typescript
+import { TestWorkflowEnvironment } from "@temporalio/testing"
+
+describe("OrderPlacementWorkflow", () => {
+  let env: TestWorkflowEnvironment
+
+  beforeAll(async () => {
+    env = await TestWorkflowEnvironment.createLocal()
+  })
+
+  it("should complete happy path: capture → reserve → fulfill → notify", async () => {
+    const result = await env.client.workflow.execute("cityOSWorkflow", {
+      taskQueue: "test-queue",
+      workflowId: "test-order-001",
+      args: [{
+        workflowId: "xsystem.unified-order-orchestrator",
+        input: { order_id: "ord_test", tenant_id: "t_001" },
+        nodeContext: { tenantId: "t_001" },
+        correlationId: "corr_test",
+      }],
+    })
+    expect(result.status).toBe("completed")
+  })
+
+  it("should compensate on payment failure", async () => {
+    // Mock capturePayment to fail
+    const result = await env.client.workflow.execute("cityOSWorkflow", {
+      taskQueue: "test-queue",
+      workflowId: "test-order-002",
+      args: [{
+        workflowId: "xsystem.unified-order-orchestrator",
+        input: { order_id: "ord_fail", tenant_id: "t_001", __test_fail_payment: true },
+        nodeContext: { tenantId: "t_001" },
+        correlationId: "corr_test",
+      }],
+    })
+    expect(result.compensated).toBe(true)
+    expect(result.compensation_steps).toContain("releaseInventory")
+  })
+})
+```
+
+### 14.5 Chaos Testing Scenarios
+
+| Scenario | Method | Expected Behavior | Validation |
+|----------|--------|-------------------|------------|
+| Temporal Cloud unavailable | Block gRPC port | Events queue in outbox, no data loss | Outbox count increases, processed on recovery |
+| Stripe timeout (50% requests) | Network fault injection | Retry with backoff, eventual capture | Payment eventually succeeds within timeout |
+| ERPNext returns 500 | Mock error responses | Accounting entries queued for retry | Entries created after ERPNext recovers |
+| Fleetbase webhook delayed | Delay webhook delivery | Order status shows "awaiting delivery update" | Status updates when webhook arrives |
+| Database failover | Trigger Neon failover | Brief interruption (< 5s), automatic reconnection | No data loss, all operations resume |
+| Network partition (Medusa ↔ ERPNext) | Block network | Circuit breaker opens, fallback to queue | Sync resumes after partition heals |
+| High-volume order spike | Load test (10x normal) | Queue depth increases, workers scale, no drops | All orders processed within latency budget |
+| Concurrent workflow limit | Saturate task queue | Backpressure applied, new workflows queued | All workflows eventually complete |
+
+### 14.6 Pre-Production Checklist
+
+Before deploying to production, verify:
+
+- [ ] All integration adapters return `healthy: true` from health check
+- [ ] Temporal Cloud connection established and workflow dispatch succeeds
+- [ ] All webhook endpoints respond to test events with 200
+- [ ] Event outbox processor runs and clears pending events
+- [ ] Circuit breakers configured for all external systems
+- [ ] Monitoring dashboards show data from all systems
+- [ ] Alert rules configured and tested (PagerDuty/Slack integration)
+- [ ] Backup and restore procedure tested for PostgreSQL
+- [ ] Load test completed at 2x expected peak volume
+- [ ] Reconciliation workflows tested (inventory, financial, customer)
+
+---
+
+## 15. Operational Runbooks
+
+### 15.1 Incident Response
+
+#### Severity Classification
+
+| Severity | Description | Examples | Response Time | Escalation |
+|----------|-----------|---------|---------------|------------|
+| P1 — Critical | Complete system outage or data loss risk | Database down, Temporal unavailable, payment processing failed for all | 5 minutes | Immediate page to on-call |
+| P2 — High | Major feature degradation affecting many users | Sync lag > 5 min, high workflow failure rate, webhook processing stopped | 15 minutes | Page after 15 min |
+| P3 — Medium | Minor feature degradation or intermittent issues | Single system slow, occasional sync failures, single tenant affected | 1 hour | Slack notification |
+| P4 — Low | Cosmetic or non-urgent issues | Log noise, minor metric anomaly, documentation gap | Next business day | Ticket |
+
+#### Incident Response Steps
+
+1. **Detect**: Automated alert or user report
+2. **Acknowledge**: On-call acknowledges within response time
+3. **Assess**: Determine severity, affected systems, impacted tenants
+4. **Communicate**: Post in #incidents channel with summary
+5. **Mitigate**: Apply immediate fix or workaround
+6. **Resolve**: Implement permanent fix
+7. **Post-mortem**: Within 48 hours for P1/P2
+
+### 15.2 Common Operational Procedures
+
+#### Procedure: Clear Event Outbox Backlog
+
+**When**: Event outbox has > 100 pending events or events older than 1 hour.
+
+```bash
+# 1. Check outbox status
+curl -s http://localhost:9000/admin/integrations/dashboard | jq '.stats'
+
+# 2. Check if Temporal is healthy
+curl -s http://localhost:9000/admin/temporal | jq '.connected'
+
+# 3. If Temporal is healthy, trigger outbox processing
+curl -X POST http://localhost:9000/admin/integrations/process-outbox
+
+# 4. If Temporal is NOT healthy, wait for recovery
+# Events are safe in PostgreSQL — they won't be lost
+
+# 5. After recovery, process the backlog
+curl -X POST http://localhost:9000/admin/integrations/process-outbox
+
+# 6. Verify backlog is cleared
+curl -s http://localhost:9000/admin/integrations/dashboard | jq '.stats.pending'
+```
+
+#### Procedure: Retry Failed Sync Operations
+
+**When**: Sync tracker shows failed entries.
+
+```bash
+# 1. Check failed syncs
+curl -s http://localhost:9000/admin/integrations/dashboard | jq '.failedSyncs'
+
+# 2. Retry all failed syncs (with exponential backoff)
+curl -X POST http://localhost:9000/admin/integrations/retry-failed
+
+# 3. Check specific system health
+curl -s http://localhost:9000/admin/integrations/health | jq '.[] | select(.system == "erpnext")'
+
+# 4. If system is unhealthy, check environment variables
+# Verify ERPNEXT_URL, ERPNEXT_API_KEY, ERPNEXT_API_SECRET are set
+
+# 5. After fixing, retry again
+curl -X POST http://localhost:9000/admin/integrations/retry-failed
+```
+
+#### Procedure: Manual Workflow Trigger
+
+**When**: Need to manually start a workflow for testing or recovery.
+
+```bash
+# 1. Trigger a specific workflow
+curl -X POST http://localhost:9000/admin/temporal/trigger \
+  -H "Content-Type: application/json" \
+  -d '{
+    "workflowId": "xsystem.unified-order-orchestrator",
+    "input": {
+      "order_id": "ord_12345",
+      "tenant_id": "t_001"
+    },
+    "nodeContext": {
+      "tenantId": "t_001",
+      "nodeId": "node_city_001"
+    }
+  }'
+
+# 2. Check workflow status
+curl -s http://localhost:9000/admin/temporal/workflows?limit=5 | jq '.workflows'
+
+# 3. Trigger via event type (auto-resolves workflow ID)
+curl -X POST http://localhost:9000/admin/temporal/trigger \
+  -H "Content-Type: application/json" \
+  -d '{
+    "workflowId": "manual",
+    "eventType": "order.placed",
+    "input": { "order_id": "ord_12345" },
+    "nodeContext": { "tenantId": "t_001" }
+  }'
+```
+
+#### Procedure: System Health Check
+
+**When**: Periodic verification or after deployment.
+
+```bash
+# 1. Full health check
+curl -s http://localhost:9000/admin/integrations/health | jq '.'
+
+# 2. Temporal-specific health
+curl -s http://localhost:9000/admin/temporal | jq '.'
+
+# 3. Integration dashboard (sync stats + health)
+curl -s http://localhost:9000/admin/integrations/dashboard | jq '.'
+
+# 4. List active Temporal workflows
+curl -s http://localhost:9000/admin/temporal/workflows?limit=20 | jq '.workflows[] | {workflowId, status, type}'
+```
+
+#### Procedure: Inventory Reconciliation
+
+**When**: Suspected inventory drift between Medusa and ERPNext.
+
+```bash
+# 1. Trigger full inventory sync
+curl -X POST http://localhost:9000/admin/temporal/trigger \
+  -H "Content-Type: application/json" \
+  -d '{
+    "workflowId": "xsystem.inventory-full-sync",
+    "input": {
+      "sync_type": "full",
+      "tenant_id": "t_001"
+    },
+    "nodeContext": { "tenantId": "t_001" }
+  }'
+
+# 2. Monitor sync progress
+curl -s http://localhost:9000/admin/temporal/workflows?limit=5 | jq '.workflows[] | select(.type == "InventorySyncWorkflow")'
+```
+
+### 15.3 Troubleshooting Guide
+
+| Symptom | Likely Cause | Diagnostic Steps | Resolution |
+|---------|-------------|-----------------|------------|
+| Workflows not starting | Temporal Cloud connection failure | Check `GET /admin/temporal`, verify `TEMPORAL_API_KEY` | Verify API key, check Temporal Cloud status page |
+| Webhooks not processing | Webhook endpoint misconfigured | Check webhook logs, verify secret/signature config | Update webhook URL and secrets in external system |
+| Sync entries stuck in "in_progress" | Worker crashed mid-sync | Check sync tracker dashboard | Retry failed syncs, investigate worker logs |
+| Payment workflows failing | Stripe API issues or key rotation | Check Stripe dashboard, verify `STRIPE_SECRET_KEY` | Update Stripe keys, retry pending payments |
+| High workflow failure rate | External system degraded | Check all system health endpoints | Enable circuit breaker, queue operations for later |
+| Event outbox growing | Temporal dispatch failing | Check Temporal health, outbox error messages | Fix Temporal connection, process backlog |
+| Inventory mismatch | ERPNext sync lag or failure | Compare Medusa and ERPNext quantities | Run full inventory sync (WF-033) |
+| Duplicate operations | Missing idempotency key | Check if activities have idempotency keys | Add/fix idempotency key derivation |
+| Cross-tenant data leak | Workflow ID without tenant prefix | Audit workflow IDs | Fix workflow ID generation to include `tenant:{id}:` prefix |
+| Slow workflow execution | Activity timeout or retry storms | Check activity duration metrics, retry counts | Adjust timeouts, investigate root cause of retries |
+
+### 15.4 Maintenance Windows
+
+| Task | Frequency | Duration | Impact |
+|------|-----------|----------|--------|
+| Temporal worker rolling restart | Weekly | 5 minutes | Zero downtime (rolling) |
+| Database maintenance (Neon) | Monthly | 0 (online) | None (managed) |
+| Integration key rotation | Quarterly (90 days) | 15 minutes | Brief sync interruption |
+| Full system reconciliation | Monthly | 30 minutes | Background process, no impact |
+| Log rotation and cleanup | Daily | 0 (automated) | None |
+| Performance load test | Quarterly | 2 hours | Staging environment only |
+
+---
+
 *This document is the single source of truth for cross-system architecture. All teams should reference this when implementing integrations, building new features, or debugging cross-system issues.*
 
-*Last updated: 2026-02-08 | Next review: 2026-03-01*
+*Last updated: 2026-02-10 | Next review: 2026-03-01*
