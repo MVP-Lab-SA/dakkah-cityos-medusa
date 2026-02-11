@@ -1,18 +1,25 @@
-import { type ReactNode } from "react"
+import { type ReactNode, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { ManageLayout } from "@/components/manage"
 import { Container } from "./container"
 import { PageHeader } from "./page-header"
-import { DataTable } from "./data-table"
+import { DataTable, type DataTableColumn, type DataTableFilter } from "./data-table"
 import { StatsGrid } from "./stats-grid"
+import { Drawer } from "./drawer"
+import { Button } from "./button"
+import { SkeletonTable } from "./skeleton"
 import { useTenant } from "@/lib/context/tenant-context"
 import { sdk } from "@/lib/utils/sdk"
+import { Plus } from "@medusajs/icons"
 
 interface Column<T = Record<string, unknown>> {
   key: string
   header: string
   render?: (value: unknown, row: T) => ReactNode
   align?: "start" | "center" | "end"
+  sortable?: boolean
+  filterable?: boolean
+  width?: string
 }
 
 interface CrudPageProps {
@@ -20,6 +27,7 @@ interface CrudPageProps {
   moduleKey: string
   title: string
   subtitle?: string
+  breadcrumbs?: ReactNode
   icon?: React.ComponentType<{ className?: string }>
   columns: Column[]
   data: any[]
@@ -27,26 +35,35 @@ interface CrudPageProps {
   searchable?: boolean
   searchKey?: string
   searchPlaceholder?: string
+  filters?: DataTableFilter[]
+  pageSize?: number
   emptyTitle?: string
   emptyDescription?: string
+  emptyAction?: ReactNode
   countLabel?: string
   actions?: ReactNode
-  filters?: ReactNode
-  stats?: Array<{ label: string; value: string | number; trend?: { value: number; positive: boolean } }>
+  stats?: Array<{ label: string; value: string | number; trend?: { value: number; positive: boolean }; icon?: ReactNode; description?: string }>
+  drawerTitle?: string
+  drawerContent?: ReactNode
+  drawerFooter?: ReactNode
+  drawerOpen?: boolean
+  onDrawerClose?: () => void
+  onRowClick?: (row: any, index: number) => void
 }
 
 function LoadingSkeleton() {
   return (
-    <div className="space-y-4 animate-pulse">
-      <div className="h-8 bg-ds-muted/20 rounded-lg w-48" />
-      <div className="h-4 bg-ds-muted/20 rounded-lg w-32" />
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="h-24 bg-ds-muted/20 rounded-lg" />
-        <div className="h-24 bg-ds-muted/20 rounded-lg" />
-        <div className="h-24 bg-ds-muted/20 rounded-lg" />
-        <div className="h-24 bg-ds-muted/20 rounded-lg" />
+    <div className="space-y-6 animate-pulse">
+      <div className="space-y-2">
+        <div className="h-7 bg-gray-200/60 rounded w-48" />
+        <div className="h-4 bg-gray-200/60 rounded w-32" />
       </div>
-      <div className="h-64 bg-ds-muted/20 rounded-lg" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="h-24 bg-gray-200/60 rounded-lg" />
+        ))}
+      </div>
+      <SkeletonTable rows={5} cols={4} />
     </div>
   )
 }
@@ -56,6 +73,7 @@ export function CrudPage({
   moduleKey,
   title,
   subtitle,
+  breadcrumbs,
   icon: Icon,
   columns,
   data,
@@ -63,12 +81,20 @@ export function CrudPage({
   searchable = false,
   searchKey,
   searchPlaceholder,
+  filters,
+  pageSize,
   emptyTitle,
   emptyDescription,
+  emptyAction,
   countLabel,
   actions,
-  filters,
   stats,
+  drawerTitle,
+  drawerContent,
+  drawerFooter,
+  drawerOpen,
+  onDrawerClose,
+  onRowClick,
 }: CrudPageProps) {
   if (isLoading) {
     return (
@@ -83,52 +109,48 @@ export function CrudPage({
   return (
     <ManageLayout locale={locale}>
       <Container>
-        {Icon ? (
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <Icon className="w-6 h-6 text-ds-muted" />
-              <div>
-                <h2 className="text-2xl font-semibold text-ds-text">{title}</h2>
-                {subtitle && (
-                  <p className="mt-1 text-sm text-ds-muted">{subtitle}</p>
-                )}
-              </div>
+        <PageHeader
+          title={title}
+          subtitle={subtitle}
+          breadcrumbs={breadcrumbs}
+          actions={
+            <div className="flex items-center gap-2">
+              {Icon && <Icon className="w-5 h-5 text-gray-400" />}
+              {actions}
             </div>
-            {actions && (
-              <div className="flex items-center gap-2 sm:justify-end">
-                {actions}
-              </div>
-            )}
-          </div>
-        ) : (
-          <PageHeader
-            title={title}
-            subtitle={subtitle}
-            actions={actions}
-          />
-        )}
+          }
+        />
 
         {stats && stats.length > 0 && (
           <StatsGrid stats={stats} />
         )}
 
-        {filters && (
-          <div className="flex items-center gap-3 flex-wrap">
-            {filters}
-          </div>
-        )}
-
         <DataTable
-          columns={columns}
+          columns={columns as DataTableColumn<Record<string, unknown>>[]}
           data={data}
           searchable={searchable}
           searchPlaceholder={searchPlaceholder}
           searchKey={searchKey}
+          filters={filters}
+          pageSize={pageSize}
           emptyTitle={emptyTitle}
           emptyDescription={emptyDescription}
+          emptyAction={emptyAction}
           countLabel={countLabel}
+          onRowClick={onRowClick}
         />
       </Container>
+
+      {drawerTitle && onDrawerClose && (
+        <Drawer
+          open={!!drawerOpen}
+          onClose={onDrawerClose}
+          title={drawerTitle}
+          footer={drawerFooter}
+        >
+          {drawerContent}
+        </Drawer>
+      )}
     </ManageLayout>
   )
 }
@@ -139,19 +161,22 @@ interface ManageModulePageProps {
   columns: Column[]
   title: string
   subtitle?: string
+  breadcrumbs?: ReactNode
   icon?: React.ComponentType<{ className?: string }>
   searchable?: boolean
   searchKey?: string
   searchPlaceholder?: string
+  filters?: DataTableFilter[]
+  pageSize?: number
   emptyTitle?: string
   emptyDescription?: string
   countLabel?: string
   addLabel?: string
   actions?: ReactNode
-  filters?: ReactNode
-  stats?: Array<{ label: string; value: string | number; trend?: { value: number; positive: boolean } }>
+  stats?: Array<{ label: string; value: string | number; trend?: { value: number; positive: boolean }; icon?: ReactNode; description?: string }>
   transformData?: (response: any) => any[]
   queryParams?: Record<string, unknown>
+  onRowClick?: (row: any, index: number) => void
 }
 
 export function ManageModulePage({
@@ -160,19 +185,22 @@ export function ManageModulePage({
   columns,
   title,
   subtitle,
+  breadcrumbs,
   icon,
   searchable = false,
   searchKey,
   searchPlaceholder,
+  filters,
+  pageSize,
   emptyTitle,
   emptyDescription,
   countLabel,
   addLabel,
   actions,
-  filters,
   stats,
   transformData,
   queryParams,
+  onRowClick,
 }: ManageModulePageProps) {
   const { locale: ctxLocale } = useTenant()
   const locale = ctxLocale || "en"
@@ -194,12 +222,10 @@ export function ManageModulePage({
     : (response as any)?.[moduleKey] || (response as any)?.data || []
 
   const resolvedActions = addLabel ? (
-    <button
-      type="button"
-      className="px-4 py-2 bg-ds-primary text-white rounded-lg text-sm font-medium hover:bg-ds-primary/90 transition-colors flex items-center gap-2"
-    >
+    <Button variant="primary" size="base">
+      <Plus className="w-4 h-4" />
       {addLabel}
-    </button>
+    </Button>
   ) : actions
 
   return (
@@ -208,6 +234,7 @@ export function ManageModulePage({
       moduleKey={moduleKey}
       title={title}
       subtitle={subtitle}
+      breadcrumbs={breadcrumbs}
       icon={icon}
       columns={columns}
       data={data}
@@ -215,12 +242,14 @@ export function ManageModulePage({
       searchable={searchable}
       searchKey={searchKey}
       searchPlaceholder={searchPlaceholder}
+      filters={filters}
+      pageSize={pageSize}
       emptyTitle={emptyTitle}
       emptyDescription={emptyDescription}
       countLabel={countLabel}
       actions={resolvedActions}
-      filters={filters}
       stats={stats}
+      onRowClick={onRowClick}
     />
   )
 }

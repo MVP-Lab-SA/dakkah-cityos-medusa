@@ -4,15 +4,25 @@ const dotColorMap: Record<string, string> = {
   active: "bg-emerald-500",
   completed: "bg-emerald-500",
   delivered: "bg-emerald-500",
-  draft: "bg-amber-500",
-  pending: "bg-amber-500",
-  processing: "bg-amber-500",
-  cancelled: "bg-red-500",
-  suspended: "bg-red-500",
+  paid: "bg-emerald-500",
+  approved: "bg-emerald-500",
+  confirmed: "bg-emerald-500",
+  draft: "bg-gray-400",
+  inactive: "bg-gray-400",
   archived: "bg-gray-400",
   deactivated: "bg-gray-400",
+  pending: "bg-amber-500",
+  processing: "bg-amber-500",
+  in_progress: "bg-amber-500",
+  review: "bg-amber-500",
+  cancelled: "bg-red-500",
+  failed: "bg-red-500",
+  rejected: "bg-red-500",
+  suspended: "bg-red-500",
+  expired: "bg-red-500",
   invited: "bg-violet-500",
   shipped: "bg-violet-500",
+  scheduled: "bg-blue-500",
 }
 
 interface StatusBadgeProps {
@@ -23,7 +33,9 @@ interface StatusBadgeProps {
 }
 
 export function StatusBadge({ status, label, variants, className }: StatusBadgeProps) {
-  const dotColor = variants?.[status] || dotColorMap[status] || "bg-gray-400"
+  const normalizedStatus = status.toLowerCase().replace(/[\s-]/g, "_")
+  const dotColor = variants?.[status] || dotColorMap[normalizedStatus] || "bg-gray-400"
+  const displayLabel = label || status.replace(/[_-]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
 
   return (
     <span
@@ -32,9 +44,9 @@ export function StatusBadge({ status, label, variants, className }: StatusBadgeP
         className
       )}
     >
-      <span className={clsx("w-1 h-1 rounded-full", dotColor)} />
+      <span className={clsx("w-1.5 h-1.5 rounded-full flex-shrink-0", dotColor)} />
       <span className="text-xs font-normal text-gray-700">
-        {label || status}
+        {displayLabel}
       </span>
     </span>
   )

@@ -1,16 +1,18 @@
 import { type ReactNode } from "react"
+import { clsx } from "clsx"
 
 interface SectionCardProps {
   title?: string
   subtitle?: string
   headerAction?: ReactNode
   children: ReactNode
+  noPadding?: boolean
   className?: string
 }
 
-export function SectionCard({ title, subtitle, headerAction, children, className = "" }: SectionCardProps) {
+export function SectionCard({ title, subtitle, headerAction, children, noPadding, className }: SectionCardProps) {
   return (
-    <div className={`bg-white border border-gray-200 rounded-lg overflow-hidden divide-y divide-gray-200 ${className}`}>
+    <div className={clsx("bg-white border border-gray-200 rounded-lg overflow-hidden divide-y divide-gray-200", className)}>
       {(title || headerAction) && (
         <div className="flex items-center justify-between px-6 py-4">
           <div>
@@ -22,7 +24,7 @@ export function SectionCard({ title, subtitle, headerAction, children, className
           )}
         </div>
       )}
-      <div className="px-6 py-4">{children}</div>
+      <div className={noPadding ? "" : "px-6 py-4"}>{children}</div>
     </div>
   )
 }
