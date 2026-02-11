@@ -43,6 +43,7 @@ import { Route as TenantLocaleQuotesIndexRouteImport } from './routes/$tenant/$l
 import { Route as TenantLocalePrintOnDemandIndexRouteImport } from './routes/$tenant/$locale/print-on-demand/index'
 import { Route as TenantLocalePlacesIndexRouteImport } from './routes/$tenant/$locale/places/index'
 import { Route as TenantLocaleMembershipsIndexRouteImport } from './routes/$tenant/$locale/memberships/index'
+import { Route as TenantLocaleManageIndexRouteImport } from './routes/$tenant/$locale/manage/index'
 import { Route as TenantLocaleHelpIndexRouteImport } from './routes/$tenant/$locale/help/index'
 import { Route as TenantLocaleEventsIndexRouteImport } from './routes/$tenant/$locale/events/index'
 import { Route as TenantLocaleDropshippingIndexRouteImport } from './routes/$tenant/$locale/dropshipping/index'
@@ -67,6 +68,11 @@ import { Route as TenantLocaleQuotesIdRouteImport } from './routes/$tenant/$loca
 import { Route as TenantLocaleProductsHandleRouteImport } from './routes/$tenant/$locale/products/$handle'
 import { Route as TenantLocalePlacesIdRouteImport } from './routes/$tenant/$locale/places/$id'
 import { Route as TenantLocaleMembershipsIdRouteImport } from './routes/$tenant/$locale/memberships/$id'
+import { Route as TenantLocaleManageTeamRouteImport } from './routes/$tenant/$locale/manage/team'
+import { Route as TenantLocaleManageSettingsRouteImport } from './routes/$tenant/$locale/manage/settings'
+import { Route as TenantLocaleManageProductsRouteImport } from './routes/$tenant/$locale/manage/products'
+import { Route as TenantLocaleManageOrdersRouteImport } from './routes/$tenant/$locale/manage/orders'
+import { Route as TenantLocaleManageAnalyticsRouteImport } from './routes/$tenant/$locale/manage/analytics'
 import { Route as TenantLocaleHelpSlugRouteImport } from './routes/$tenant/$locale/help/$slug'
 import { Route as TenantLocaleEventsIdRouteImport } from './routes/$tenant/$locale/events/$id'
 import { Route as TenantLocaleDigitalIdRouteImport } from './routes/$tenant/$locale/digital/$id'
@@ -269,6 +275,11 @@ const TenantLocaleMembershipsIndexRoute =
     path: '/memberships/',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
+const TenantLocaleManageIndexRoute = TenantLocaleManageIndexRouteImport.update({
+  id: '/manage/',
+  path: '/manage/',
+  getParentRoute: () => TenantLocaleRoute,
+} as any)
 const TenantLocaleHelpIndexRoute = TenantLocaleHelpIndexRouteImport.update({
   id: '/help/',
   path: '/help/',
@@ -404,6 +415,35 @@ const TenantLocaleMembershipsIdRoute =
   TenantLocaleMembershipsIdRouteImport.update({
     id: '/memberships/$id',
     path: '/memberships/$id',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
+const TenantLocaleManageTeamRoute = TenantLocaleManageTeamRouteImport.update({
+  id: '/manage/team',
+  path: '/manage/team',
+  getParentRoute: () => TenantLocaleRoute,
+} as any)
+const TenantLocaleManageSettingsRoute =
+  TenantLocaleManageSettingsRouteImport.update({
+    id: '/manage/settings',
+    path: '/manage/settings',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
+const TenantLocaleManageProductsRoute =
+  TenantLocaleManageProductsRouteImport.update({
+    id: '/manage/products',
+    path: '/manage/products',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
+const TenantLocaleManageOrdersRoute =
+  TenantLocaleManageOrdersRouteImport.update({
+    id: '/manage/orders',
+    path: '/manage/orders',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
+const TenantLocaleManageAnalyticsRoute =
+  TenantLocaleManageAnalyticsRouteImport.update({
+    id: '/manage/analytics',
+    path: '/manage/analytics',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
 const TenantLocaleHelpSlugRoute = TenantLocaleHelpSlugRouteImport.update({
@@ -721,6 +761,11 @@ export interface FileRoutesByFullPath {
   '/$tenant/$locale/digital/$id': typeof TenantLocaleDigitalIdRoute
   '/$tenant/$locale/events/$id': typeof TenantLocaleEventsIdRoute
   '/$tenant/$locale/help/$slug': typeof TenantLocaleHelpSlugRoute
+  '/$tenant/$locale/manage/analytics': typeof TenantLocaleManageAnalyticsRoute
+  '/$tenant/$locale/manage/orders': typeof TenantLocaleManageOrdersRoute
+  '/$tenant/$locale/manage/products': typeof TenantLocaleManageProductsRoute
+  '/$tenant/$locale/manage/settings': typeof TenantLocaleManageSettingsRoute
+  '/$tenant/$locale/manage/team': typeof TenantLocaleManageTeamRoute
   '/$tenant/$locale/memberships/$id': typeof TenantLocaleMembershipsIdRoute
   '/$tenant/$locale/places/$id': typeof TenantLocalePlacesIdRoute
   '/$tenant/$locale/products/$handle': typeof TenantLocaleProductsHandleRoute
@@ -745,6 +790,7 @@ export interface FileRoutesByFullPath {
   '/$tenant/$locale/dropshipping': typeof TenantLocaleDropshippingIndexRoute
   '/$tenant/$locale/events': typeof TenantLocaleEventsIndexRoute
   '/$tenant/$locale/help': typeof TenantLocaleHelpIndexRoute
+  '/$tenant/$locale/manage': typeof TenantLocaleManageIndexRoute
   '/$tenant/$locale/memberships': typeof TenantLocaleMembershipsIndexRoute
   '/$tenant/$locale/places': typeof TenantLocalePlacesIndexRoute
   '/$tenant/$locale/print-on-demand': typeof TenantLocalePrintOnDemandIndexRoute
@@ -820,6 +866,11 @@ export interface FileRoutesByTo {
   '/$tenant/$locale/digital/$id': typeof TenantLocaleDigitalIdRoute
   '/$tenant/$locale/events/$id': typeof TenantLocaleEventsIdRoute
   '/$tenant/$locale/help/$slug': typeof TenantLocaleHelpSlugRoute
+  '/$tenant/$locale/manage/analytics': typeof TenantLocaleManageAnalyticsRoute
+  '/$tenant/$locale/manage/orders': typeof TenantLocaleManageOrdersRoute
+  '/$tenant/$locale/manage/products': typeof TenantLocaleManageProductsRoute
+  '/$tenant/$locale/manage/settings': typeof TenantLocaleManageSettingsRoute
+  '/$tenant/$locale/manage/team': typeof TenantLocaleManageTeamRoute
   '/$tenant/$locale/memberships/$id': typeof TenantLocaleMembershipsIdRoute
   '/$tenant/$locale/places/$id': typeof TenantLocalePlacesIdRoute
   '/$tenant/$locale/products/$handle': typeof TenantLocaleProductsHandleRoute
@@ -843,6 +894,7 @@ export interface FileRoutesByTo {
   '/$tenant/$locale/dropshipping': typeof TenantLocaleDropshippingIndexRoute
   '/$tenant/$locale/events': typeof TenantLocaleEventsIndexRoute
   '/$tenant/$locale/help': typeof TenantLocaleHelpIndexRoute
+  '/$tenant/$locale/manage': typeof TenantLocaleManageIndexRoute
   '/$tenant/$locale/memberships': typeof TenantLocaleMembershipsIndexRoute
   '/$tenant/$locale/places': typeof TenantLocalePlacesIndexRoute
   '/$tenant/$locale/print-on-demand': typeof TenantLocalePrintOnDemandIndexRoute
@@ -920,6 +972,11 @@ export interface FileRoutesById {
   '/$tenant/$locale/digital/$id': typeof TenantLocaleDigitalIdRoute
   '/$tenant/$locale/events/$id': typeof TenantLocaleEventsIdRoute
   '/$tenant/$locale/help/$slug': typeof TenantLocaleHelpSlugRoute
+  '/$tenant/$locale/manage/analytics': typeof TenantLocaleManageAnalyticsRoute
+  '/$tenant/$locale/manage/orders': typeof TenantLocaleManageOrdersRoute
+  '/$tenant/$locale/manage/products': typeof TenantLocaleManageProductsRoute
+  '/$tenant/$locale/manage/settings': typeof TenantLocaleManageSettingsRoute
+  '/$tenant/$locale/manage/team': typeof TenantLocaleManageTeamRoute
   '/$tenant/$locale/memberships/$id': typeof TenantLocaleMembershipsIdRoute
   '/$tenant/$locale/places/$id': typeof TenantLocalePlacesIdRoute
   '/$tenant/$locale/products/$handle': typeof TenantLocaleProductsHandleRoute
@@ -944,6 +1001,7 @@ export interface FileRoutesById {
   '/$tenant/$locale/dropshipping/': typeof TenantLocaleDropshippingIndexRoute
   '/$tenant/$locale/events/': typeof TenantLocaleEventsIndexRoute
   '/$tenant/$locale/help/': typeof TenantLocaleHelpIndexRoute
+  '/$tenant/$locale/manage/': typeof TenantLocaleManageIndexRoute
   '/$tenant/$locale/memberships/': typeof TenantLocaleMembershipsIndexRoute
   '/$tenant/$locale/places/': typeof TenantLocalePlacesIndexRoute
   '/$tenant/$locale/print-on-demand/': typeof TenantLocalePrintOnDemandIndexRoute
@@ -1022,6 +1080,11 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/digital/$id'
     | '/$tenant/$locale/events/$id'
     | '/$tenant/$locale/help/$slug'
+    | '/$tenant/$locale/manage/analytics'
+    | '/$tenant/$locale/manage/orders'
+    | '/$tenant/$locale/manage/products'
+    | '/$tenant/$locale/manage/settings'
+    | '/$tenant/$locale/manage/team'
     | '/$tenant/$locale/memberships/$id'
     | '/$tenant/$locale/places/$id'
     | '/$tenant/$locale/products/$handle'
@@ -1046,6 +1109,7 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/dropshipping'
     | '/$tenant/$locale/events'
     | '/$tenant/$locale/help'
+    | '/$tenant/$locale/manage'
     | '/$tenant/$locale/memberships'
     | '/$tenant/$locale/places'
     | '/$tenant/$locale/print-on-demand'
@@ -1121,6 +1185,11 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/digital/$id'
     | '/$tenant/$locale/events/$id'
     | '/$tenant/$locale/help/$slug'
+    | '/$tenant/$locale/manage/analytics'
+    | '/$tenant/$locale/manage/orders'
+    | '/$tenant/$locale/manage/products'
+    | '/$tenant/$locale/manage/settings'
+    | '/$tenant/$locale/manage/team'
     | '/$tenant/$locale/memberships/$id'
     | '/$tenant/$locale/places/$id'
     | '/$tenant/$locale/products/$handle'
@@ -1144,6 +1213,7 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/dropshipping'
     | '/$tenant/$locale/events'
     | '/$tenant/$locale/help'
+    | '/$tenant/$locale/manage'
     | '/$tenant/$locale/memberships'
     | '/$tenant/$locale/places'
     | '/$tenant/$locale/print-on-demand'
@@ -1220,6 +1290,11 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/digital/$id'
     | '/$tenant/$locale/events/$id'
     | '/$tenant/$locale/help/$slug'
+    | '/$tenant/$locale/manage/analytics'
+    | '/$tenant/$locale/manage/orders'
+    | '/$tenant/$locale/manage/products'
+    | '/$tenant/$locale/manage/settings'
+    | '/$tenant/$locale/manage/team'
     | '/$tenant/$locale/memberships/$id'
     | '/$tenant/$locale/places/$id'
     | '/$tenant/$locale/products/$handle'
@@ -1244,6 +1319,7 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/dropshipping/'
     | '/$tenant/$locale/events/'
     | '/$tenant/$locale/help/'
+    | '/$tenant/$locale/manage/'
     | '/$tenant/$locale/memberships/'
     | '/$tenant/$locale/places/'
     | '/$tenant/$locale/print-on-demand/'
@@ -1507,6 +1583,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleMembershipsIndexRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
+    '/$tenant/$locale/manage/': {
+      id: '/$tenant/$locale/manage/'
+      path: '/manage'
+      fullPath: '/$tenant/$locale/manage'
+      preLoaderRoute: typeof TenantLocaleManageIndexRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
     '/$tenant/$locale/help/': {
       id: '/$tenant/$locale/help/'
       path: '/help'
@@ -1673,6 +1756,41 @@ declare module '@tanstack/react-router' {
       path: '/memberships/$id'
       fullPath: '/$tenant/$locale/memberships/$id'
       preLoaderRoute: typeof TenantLocaleMembershipsIdRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/manage/team': {
+      id: '/$tenant/$locale/manage/team'
+      path: '/manage/team'
+      fullPath: '/$tenant/$locale/manage/team'
+      preLoaderRoute: typeof TenantLocaleManageTeamRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/manage/settings': {
+      id: '/$tenant/$locale/manage/settings'
+      path: '/manage/settings'
+      fullPath: '/$tenant/$locale/manage/settings'
+      preLoaderRoute: typeof TenantLocaleManageSettingsRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/manage/products': {
+      id: '/$tenant/$locale/manage/products'
+      path: '/manage/products'
+      fullPath: '/$tenant/$locale/manage/products'
+      preLoaderRoute: typeof TenantLocaleManageProductsRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/manage/orders': {
+      id: '/$tenant/$locale/manage/orders'
+      path: '/manage/orders'
+      fullPath: '/$tenant/$locale/manage/orders'
+      preLoaderRoute: typeof TenantLocaleManageOrdersRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/manage/analytics': {
+      id: '/$tenant/$locale/manage/analytics'
+      path: '/manage/analytics'
+      fullPath: '/$tenant/$locale/manage/analytics'
+      preLoaderRoute: typeof TenantLocaleManageAnalyticsRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$tenant/$locale/help/$slug': {
@@ -2094,6 +2212,11 @@ interface TenantLocaleRouteChildren {
   TenantLocaleDigitalIdRoute: typeof TenantLocaleDigitalIdRoute
   TenantLocaleEventsIdRoute: typeof TenantLocaleEventsIdRoute
   TenantLocaleHelpSlugRoute: typeof TenantLocaleHelpSlugRoute
+  TenantLocaleManageAnalyticsRoute: typeof TenantLocaleManageAnalyticsRoute
+  TenantLocaleManageOrdersRoute: typeof TenantLocaleManageOrdersRoute
+  TenantLocaleManageProductsRoute: typeof TenantLocaleManageProductsRoute
+  TenantLocaleManageSettingsRoute: typeof TenantLocaleManageSettingsRoute
+  TenantLocaleManageTeamRoute: typeof TenantLocaleManageTeamRoute
   TenantLocaleMembershipsIdRoute: typeof TenantLocaleMembershipsIdRoute
   TenantLocalePlacesIdRoute: typeof TenantLocalePlacesIdRoute
   TenantLocaleProductsHandleRoute: typeof TenantLocaleProductsHandleRoute
@@ -2118,6 +2241,7 @@ interface TenantLocaleRouteChildren {
   TenantLocaleDropshippingIndexRoute: typeof TenantLocaleDropshippingIndexRoute
   TenantLocaleEventsIndexRoute: typeof TenantLocaleEventsIndexRoute
   TenantLocaleHelpIndexRoute: typeof TenantLocaleHelpIndexRoute
+  TenantLocaleManageIndexRoute: typeof TenantLocaleManageIndexRoute
   TenantLocaleMembershipsIndexRoute: typeof TenantLocaleMembershipsIndexRoute
   TenantLocalePlacesIndexRoute: typeof TenantLocalePlacesIndexRoute
   TenantLocalePrintOnDemandIndexRoute: typeof TenantLocalePrintOnDemandIndexRoute
@@ -2189,6 +2313,11 @@ const TenantLocaleRouteChildren: TenantLocaleRouteChildren = {
   TenantLocaleDigitalIdRoute: TenantLocaleDigitalIdRoute,
   TenantLocaleEventsIdRoute: TenantLocaleEventsIdRoute,
   TenantLocaleHelpSlugRoute: TenantLocaleHelpSlugRoute,
+  TenantLocaleManageAnalyticsRoute: TenantLocaleManageAnalyticsRoute,
+  TenantLocaleManageOrdersRoute: TenantLocaleManageOrdersRoute,
+  TenantLocaleManageProductsRoute: TenantLocaleManageProductsRoute,
+  TenantLocaleManageSettingsRoute: TenantLocaleManageSettingsRoute,
+  TenantLocaleManageTeamRoute: TenantLocaleManageTeamRoute,
   TenantLocaleMembershipsIdRoute: TenantLocaleMembershipsIdRoute,
   TenantLocalePlacesIdRoute: TenantLocalePlacesIdRoute,
   TenantLocaleProductsHandleRoute: TenantLocaleProductsHandleRoute,
@@ -2214,6 +2343,7 @@ const TenantLocaleRouteChildren: TenantLocaleRouteChildren = {
   TenantLocaleDropshippingIndexRoute: TenantLocaleDropshippingIndexRoute,
   TenantLocaleEventsIndexRoute: TenantLocaleEventsIndexRoute,
   TenantLocaleHelpIndexRoute: TenantLocaleHelpIndexRoute,
+  TenantLocaleManageIndexRoute: TenantLocaleManageIndexRoute,
   TenantLocaleMembershipsIndexRoute: TenantLocaleMembershipsIndexRoute,
   TenantLocalePlacesIndexRoute: TenantLocalePlacesIndexRoute,
   TenantLocalePrintOnDemandIndexRoute: TenantLocalePrintOnDemandIndexRoute,

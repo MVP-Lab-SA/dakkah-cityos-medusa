@@ -49,7 +49,7 @@ export default defineConfig(({ mode }) => {
           target: "http://localhost:9000",
           changeOrigin: true,
         },
-        "/dashboard": {
+        "/commerce": {
           target: "http://localhost:9000",
           changeOrigin: true,
           ws: true,
