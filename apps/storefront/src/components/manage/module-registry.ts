@@ -1,5 +1,5 @@
 export type ModuleScope = "platform" | "tenant" | "shared"
-export type NavSection = "overview" | "commerce" | "marketplace" | "verticals" | "marketing" | "organization" | "platform" | "system"
+export type NavSection = "overview" | "commerce" | "marketplace" | "verticals" | "marketing" | "organization" | "system"
 
 export interface ModuleDefinition {
   key: string
@@ -17,7 +17,6 @@ export const NAV_SECTION_LABELS: Record<NavSection, string> = {
   verticals: "Verticals",
   marketing: "Marketing",
   organization: "Organization",
-  platform: "Platform",
   system: "System",
 }
 
@@ -28,7 +27,6 @@ export const NAV_SECTION_ORDER: NavSection[] = [
   "verticals",
   "marketing",
   "organization",
-  "platform",
   "system",
 ]
 
@@ -43,9 +41,9 @@ export const MODULE_REGISTRY: ModuleDefinition[] = [
   { key: "subscriptions", icon: "ArrowPath", section: "commerce", scope: "tenant", minWeight: 40, path: "/subscriptions" },
   { key: "reviews", icon: "Star", section: "commerce", scope: "tenant", minWeight: 40, path: "/reviews" },
 
-  { key: "vendors", icon: "BuildingStorefront", section: "marketplace", scope: "shared", minWeight: 70, path: "/vendors" },
-  { key: "commissions", icon: "ArrowUpDown", section: "marketplace", scope: "shared", minWeight: 70, path: "/commissions" },
-  { key: "payouts", icon: "Cash", section: "marketplace", scope: "shared", minWeight: 70, path: "/payouts" },
+  { key: "vendors", icon: "BuildingStorefront", section: "marketplace", scope: "shared", minWeight: 40, path: "/vendors" },
+  { key: "commissions", icon: "ArrowUpDown", section: "marketplace", scope: "shared", minWeight: 40, path: "/commissions" },
+  { key: "payouts", icon: "Cash", section: "marketplace", scope: "shared", minWeight: 40, path: "/payouts" },
   { key: "affiliates", icon: "Sparkles", section: "marketplace", scope: "tenant", minWeight: 40, path: "/affiliates" },
 
   { key: "auctions", icon: "Bolt", section: "verticals", scope: "tenant", minWeight: 40, path: "/auctions" },
@@ -78,20 +76,10 @@ export const MODULE_REGISTRY: ModuleDefinition[] = [
   { key: "companies", icon: "Buildings", section: "organization", scope: "tenant", minWeight: 40, path: "/companies" },
   { key: "stores", icon: "BuildingStorefront", section: "organization", scope: "tenant", minWeight: 40, path: "/stores" },
   { key: "legal", icon: "Book", section: "organization", scope: "tenant", minWeight: 40, path: "/legal" },
-  { key: "warranty", icon: "ShieldCheck", section: "organization", scope: "tenant", minWeight: 40, path: "/warranty" },
   { key: "utilities", icon: "Beaker", section: "organization", scope: "tenant", minWeight: 40, path: "/utilities" },
-
-  { key: "governance", icon: "ShieldCheck", section: "platform", scope: "platform", minWeight: 90, path: "/governance" },
-  { key: "nodes", icon: "ServerStack", section: "platform", scope: "platform", minWeight: 90, path: "/nodes" },
-  { key: "region-zones", icon: "ServerStack", section: "platform", scope: "platform", minWeight: 90, path: "/region-zones" },
-  { key: "personas", icon: "Users", section: "platform", scope: "platform", minWeight: 90, path: "/personas" },
-  { key: "tenants", icon: "Buildings", section: "platform", scope: "platform", minWeight: 90, path: "/tenants" },
-  { key: "channels", icon: "Channels", section: "platform", scope: "platform", minWeight: 90, path: "/channels" },
 
   { key: "analytics", icon: "ChartBar", section: "system", scope: "tenant", minWeight: 40, path: "/analytics" },
   { key: "settings", icon: "CogSixTooth", section: "system", scope: "tenant", minWeight: 40, path: "/settings" },
-  { key: "i18n", icon: "Swatch", section: "system", scope: "platform", minWeight: 90, path: "/i18n" },
-  { key: "audit", icon: "ShieldCheck", section: "system", scope: "platform", minWeight: 90, path: "/audit" },
 ]
 
 export function getModulesBySection(maxWeight: number = 100): Record<NavSection, ModuleDefinition[]> {
@@ -100,7 +88,7 @@ export function getModulesBySection(maxWeight: number = 100): Record<NavSection,
     grouped[section] = []
   }
   for (const mod of MODULE_REGISTRY) {
-    if (mod.minWeight <= maxWeight) {
+    if (mod.scope !== "platform" && mod.minWeight <= maxWeight) {
       grouped[mod.section].push(mod)
     }
   }

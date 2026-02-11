@@ -107,8 +107,19 @@ Dakkah (slug: `dakkah`, id: `01KGZ2JRYX607FWMMYQNQRKVWS`, status: active)
 ### Account (auth required): `/$t/$l/account` (profile, settings, addresses, orders, bookings, subscriptions, purchase-orders, disputes, downloads, installments, loyalty, referrals, store-credits, wallet, wishlist, verification, consents)
 ### B2B: `/$t/$l/b2b/register`, `/$t/$l/b2b/dashboard`, `/$t/$l/business/approvals`, `/$t/$l/business/catalog`, `/$t/$l/business/orders`, `/$t/$l/business/team`
 ### Vendor Dashboard: `/$t/$l/vendor` (products, orders, commissions, payouts)
-### Tenant Manage (RBAC >= 40): `/$t/$l/manage` (products, orders, team, analytics, settings)
-### System: `/commerce/admin` (Medusa admin), `/health`
+### Tenant Manage (RBAC >= 40): `/$t/$l/manage` — tenant-scoped operations
+- Commerce: products, orders, customers, quotes, invoices, subscriptions, reviews
+- Marketplace (shared): vendors, commissions, payouts, affiliates
+- Verticals (27): auctions, bookings, event-ticketing, rentals, restaurants, grocery, travel, automotive, real-estate, healthcare, education, fitness, pet-services, digital-products, memberships, financial-products, freelance, parking
+- Marketing: advertising, promotions, social-commerce, classifieds, crowdfunding, charity
+- Organization: team, companies, stores, legal, utilities
+- System: analytics, settings
+### Super Admin (`/commerce/admin`) — platform-wide concerns (Medusa admin + extensions)
+- Built-in Medusa: Products, Orders, Customers, Pricing, Promotions, Inventory, Regions, Sales Channels, Settings
+- Platform Infrastructure: Tenants, Nodes, Governance, Personas, Region Zones, Channels
+- Platform Commerce: Vendors (global), Commissions, Payouts (global), Volume Pricing, Warranty Templates
+- System: Audit Logs, i18n, Bookings, Subscriptions, Companies
+### System: `/health`
 
 ## External Dependencies
 - **Database:** PostgreSQL
