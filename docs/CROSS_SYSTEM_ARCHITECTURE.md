@@ -6664,4 +6664,1615 @@ curl -s http://localhost:9000/admin/temporal/workflows?limit=5 | jq '.workflows[
 
 *This document is the single source of truth for cross-system architecture. All teams should reference this when implementing integrations, building new features, or debugging cross-system issues.*
 
-*Last updated: 2026-02-10 | Next review: 2026-03-01*
+---
+
+## 16. Integration Service Implementation Details
+
+This section documents every integration service with its **actual code implementation** details, including class structures, method signatures, API mappings, and error handling patterns as implemented in the codebase.
+
+### 16.1 ERPNext Integration Service
+
+**File:** `apps/backend/src/integrations/erpnext/service.ts` (300 lines)
+
+#### Configuration Interface
+
+```typescript
+export interface ERPNextConfig {
+  apiKey: string;
+  apiSecret: string;
+  siteUrl: string;
+}
+```
+
+#### Client Setup
+
+The `ERPNextService` class initializes an Axios HTTP client with token-based authentication against the ERPNext (Frappe) REST API:
+
+```typescript
+this.client = axios.create({
+  baseURL: `${config.siteUrl}/api`,
+  headers: {
+    Authorization: `token ${config.apiKey}:${config.apiSecret}`,
+    "Content-Type": "application/json",
+  },
+});
+```
+
+- **Auth scheme:** Frappe token format `token {apiKey}:{apiSecret}`
+- **Base URL:** `{siteUrl}/api` — all calls go through the Frappe REST Resource API
+
+#### Method Catalog
+
+| Method | ERPNext Endpoint | Medusa Link Field | Return |
+|--------|-----------------|-------------------|--------|
+| `createInvoice(data)` | `POST /resource/Sales Invoice` | `custom_medusa_order_id` | `{ name, status }` |
+| `syncCustomer(data)` | `POST/PUT /resource/Customer` | `custom_medusa_customer_id` | `{ name }` |
+| `syncProduct(data)` | `POST/PUT /resource/Item` | `custom_medusa_product_id` | `{ name }` |
+| `syncVendorAsSupplier(data)` | `POST /resource/Supplier` | `custom_medusa_vendor_id` | `{ name }` |
+| `recordPayment(data)` | `POST /resource/Payment Entry` | `custom_medusa_order_id` | `{ name }` |
+| `getAccountsReceivable(filters)` | `GET /method/frappe.desk.query_report.run` | — | `Array<{ customer, outstanding_amount, invoices }>` |
+| `findCustomer(email)` | `GET /resource/Customer?filters=[["email_id","=",email]]` | — | `{ name } \| null` |
+| `findItem(itemCode)` | `GET /resource/Item?filters=[["item_code","=",itemCode]]` | — | `{ name } \| null` |
+
+#### Invoice Creation Data Model
+
+```typescript
+export interface CreateInvoiceData {
+  customer_name: string;
+  customer_email: string;
+  posting_date: Date;
+  due_date: Date;
+  items: Array<{
+    item_code: string;
+    item_name: string;
+    quantity: number;
+    rate: number;
+    amount: number;
+  }>;
+  taxes?: Array<{
+    charge_type: string;
+    account_head: string;
+    rate: number;
+  }>;
+  total: number;
+  grand_total: number;
+  currency: string;
+  medusa_order_id?: string;
+}
+```
+
+**Invoice field mapping:**
+
+| Medusa Field | ERPNext Sales Invoice Field |
+|-------------|---------------------------|
+| `customer_name` | `customer` |
+| `items[].quantity` | `items[].qty` |
+| `items[].rate` | `items[].rate` |
+| `medusa_order_id` | `custom_medusa_order_id` |
+| `posting_date` | `posting_date` (formatted YYYY-MM-DD) |
+
+#### Upsert Pattern (Customer & Product Sync)
+
+Both `syncCustomer()` and `syncProduct()` follow the same upsert pattern:
+
+```
+1. Search for existing record (findCustomer by email / findItem by itemCode)
+2. If found → PUT /resource/{doctype}/{name} (update)
+3. If not found → POST /resource/{doctype} (create)
+4. Return { name } (ERPNext document name)
+```
+
+This ensures idempotent sync — re-running sync on the same entity updates rather than duplicates.
+
+#### Error Handling
+
+All methods catch Axios errors and wrap them in `MedusaError`:
+
+```typescript
+throw new MedusaError(
+  MedusaError.Types.INVALID_DATA,
+  `Failed to create invoice: ${error.response?.data?.message || error.message}`
+);
+```
+
+- Error type: Always `INVALID_DATA` for ERPNext integration failures
+- Error message includes ERPNext's `response.data.message` when available
+- Private methods (`findCustomer`, `findItem`) silently return `null` on error (fail-open for lookups)
+
+---
+
+### 16.2 Fleetbase Integration Service
+
+**File:** `apps/backend/src/integrations/fleetbase/service.ts` (300 lines)
+
+#### Configuration Interface
+
+```typescript
+export interface FleetbaseConfig {
+  apiKey: string;
+  apiUrl: string;
+  organizationId: string;
+}
+```
+
+#### Client Setup
+
+```typescript
+this.client = axios.create({
+  baseURL: config.apiUrl,
+  headers: {
+    Authorization: `Bearer ${config.apiKey}`,
+    "Content-Type": "application/json",
+    "Organization-ID": config.organizationId,
+  },
+});
+```
+
+- **Auth scheme:** Bearer token + custom `Organization-ID` header for multi-tenant isolation
+- **Base URL:** Configurable via `FLEETBASE_API_URL`
+
+#### Shipment Data Model
+
+```typescript
+export interface CreateShipmentData {
+  order_id: string;
+  pickup: {
+    name: string; address: string; city: string;
+    postal_code: string; country: string; phone?: string;
+  };
+  dropoff: {
+    name: string; address: string; city: string;
+    postal_code: string; country: string; phone?: string; email?: string;
+  };
+  items: Array<{
+    name: string; quantity: number; weight?: number;
+    dimensions?: { length: number; width: number; height: number; unit: string };
+  }>;
+  scheduled_at?: Date;
+  instructions?: string;
+}
+
+export interface Shipment {
+  id: string;
+  tracking_number: string;
+  status: string;
+  driver_id?: string;
+  driver_name?: string;
+  estimated_delivery?: Date;
+  actual_delivery?: Date;
+  tracking_url: string;
+}
+```
+
+#### Method Catalog
+
+| Method | Fleetbase Endpoint | Purpose |
+|--------|-------------------|---------|
+| `createShipment(data)` | `POST /orders` | Create delivery order with pickup/dropoff/payload |
+| `getShipment(id)` | `GET /orders/{id}` | Retrieve shipment details including driver assignment |
+| `getTracking(trackingNumber)` | `GET /track/{trackingNumber}` | Real-time tracking with driver GPS + activity timeline |
+| `cancelShipment(id, reason?)` | `POST /orders/{id}/cancel` | Cancel active shipment |
+| `assignDriver(shipmentId, driverId)` | `POST /orders/{id}/assign` | Assign specific driver to order |
+| `getAvailableDrivers()` | `GET /drivers?status=active&available=true` | List available fleet drivers |
+| `estimateDelivery(data)` | `POST /orders/estimate` | Calculate distance, duration, cost estimate |
+| `verifyWebhook(payload, signature, secret)` | — | HMAC-SHA256 webhook signature verification |
+
+#### Shipment Creation API Mapping
+
+```typescript
+// Medusa order data → Fleetbase order API
+{
+  type: "delivery",
+  meta: { order_id: data.order_id },
+  pickup: { ...data.pickup, scheduled_at: data.scheduled_at || new Date() },
+  dropoff: data.dropoff,
+  payload: { items: data.items },
+  notes: data.instructions,
+}
+```
+
+#### Tracking Response Structure
+
+The `getTracking()` method returns real-time data:
+
+```typescript
+{
+  status: string,                          // Current delivery status
+  location?: { lat: number; lng: number }, // Driver GPS (from driver_location.coordinates)
+  updates: Array<{                         // Activity timeline
+    status: string,
+    timestamp: Date,
+    location?: string,
+    note?: string,
+  }>
+}
+```
+
+- **GPS coordinates:** Fleetbase returns `[lng, lat]` (GeoJSON order); service maps to `{ lat, lng }`
+- **Activity timeline:** Mapped from `data.activity[]` array with chronological status changes
+
+#### Webhook Verification
+
+```typescript
+verifyWebhook(payload: string, signature: string, secret: string): boolean {
+  const expectedSignature = crypto
+    .createHmac("sha256", secret)
+    .update(payload)
+    .digest("hex");
+  return signature === expectedSignature;
+}
+```
+
+---
+
+### 16.3 Walt.id Identity Service
+
+**File:** `apps/backend/src/integrations/waltid/service.ts` (312 lines)
+
+#### Configuration Interface
+
+```typescript
+export interface WaltIdConfig {
+  apiUrl: string;
+  apiKey: string;
+  walletUrl?: string;    // Optional wallet service URL
+  issuerDid?: string;    // Platform root DID for credential issuance
+}
+```
+
+#### Client Setup
+
+```typescript
+this.client = axios.create({
+  baseURL: config.apiUrl,
+  headers: {
+    Authorization: `Bearer ${config.apiKey}`,
+    "Content-Type": "application/json",
+  },
+});
+```
+
+- **Auth scheme:** Bearer token
+- Constructor warns if `apiUrl` or `apiKey` missing but doesn't throw (allows graceful degradation)
+
+#### Method Catalog
+
+| Method | Walt.id Endpoint | Purpose |
+|--------|-----------------|---------|
+| `createDID(method)` | `POST /v1/did/create` | Create DID with specified method (default: "key") |
+| `resolveDID(did)` | `POST /v1/did/resolve` | Resolve DID to its DID Document |
+| `issueCredential(data)` | `POST /v1/credentials/issue` | Issue W3C Verifiable Credential |
+| `verifyCredential(credential)` | `POST /v1/credentials/verify` | Verify credential (signature, expiry, revocation) |
+| `listCredentials(holderDid)` | `GET /v1/credentials?holderDid=...` | List all credentials for a holder |
+| `revokeCredential(credentialId)` | `POST /v1/credentials/revoke` | Revoke an issued credential |
+| `issueKYCCredential(data)` | → `issueCredential()` | Issue KYCVerificationCredential |
+| `issueVendorCredential(data)` | → `issueCredential()` | Issue VendorVerificationCredential |
+| `issueMembershipCredential(data)` | → `issueCredential()` | Issue CityOSMembershipCredential |
+| `verifyIdentity(did)` | → `resolveDID()` + `listCredentials()` | Full identity verification |
+
+#### Credential Issuance Payload (W3C Standard)
+
+```typescript
+{
+  issuerDid: data.issuerDid,
+  subjectDid: data.subjectDid,
+  credentialData: {
+    "@context": ["https://www.w3.org/2018/credentials/v1"],
+    type: ["VerifiableCredential", data.credentialType],
+    issuer: data.issuerDid,
+    credentialSubject: {
+      id: data.subjectDid,
+      ...data.claims,
+    },
+    expirationDate: data.expirationDate,  // Optional
+  },
+}
+```
+
+#### Specialized Credential Methods
+
+All specialized credential methods delegate to `issueCredential()` with pre-configured claims:
+
+**KYC Credential:**
+```typescript
+{
+  credentialType: "KYCVerificationCredential",
+  claims: {
+    customerName, customerEmail, verificationLevel,
+    tenantId, nodeId, verifiedAt: new Date().toISOString()
+  }
+}
+```
+
+**Vendor Credential:**
+```typescript
+{
+  credentialType: "VendorVerificationCredential",
+  claims: {
+    vendorName, businessLicense, tenantId,
+    verifiedAt: new Date().toISOString()
+  }
+}
+```
+
+**Membership Credential:**
+```typescript
+{
+  credentialType: "CityOSMembershipCredential",
+  claims: {
+    memberName, membershipType, tenantId, nodeId,
+    validUntil, issuedAt: new Date().toISOString()
+  },
+  expirationDate: data.validUntil  // Credential expires with membership
+}
+```
+
+#### Identity Verification Flow
+
+The `verifyIdentity(did)` method performs a composite verification:
+
+```
+1. Resolve DID → Get DID Document
+2. List credentials for DID holder
+3. Collect errors from both operations
+4. Return: verified = (no errors AND document has keys)
+```
+
+Returns comprehensive result: `{ verified, did, document, credentials, errors }`.
+
+---
+
+### 16.4 Stripe Gateway Service
+
+**File:** `apps/backend/src/integrations/stripe-gateway/service.ts` (436 lines)
+
+#### Configuration Interface
+
+```typescript
+export interface StripeGatewayConfig {
+  secretKey: string;
+  webhookSecret: string;
+  connectEnabled?: boolean;
+}
+```
+
+#### Lazy SDK Loading
+
+The service uses **lazy initialization** to avoid import errors when Stripe SDK is not needed:
+
+```typescript
+private stripeInstance: any | null = null;
+
+private async getStripe(): Promise<any> {
+  if (!this.stripeInstance) {
+    const Stripe = (await import("stripe")).default;
+    this.stripeInstance = new Stripe(this.config.secretKey);
+  }
+  return this.stripeInstance;
+}
+```
+
+- Stripe SDK is only loaded on first API call
+- Singleton pattern — reuses same instance across all calls
+- Constructor warns (but doesn't throw) if `secretKey` or `webhookSecret` missing
+
+#### Method Catalog
+
+| Method | Stripe API | Purpose |
+|--------|-----------|---------|
+| `createPaymentIntent(data)` | `paymentIntents.create()` | Create payment with tenant/node metadata |
+| `confirmPaymentIntent(id)` | `paymentIntents.confirm()` | Confirm a payment intent |
+| `createRefund(data)` | `refunds.create()` | Full or partial refund |
+| `createCustomer(data)` | `customers.create()` | Create Stripe customer |
+| `createConnectAccount(data)` | `accounts.create()` + `accountLinks.create()` | Vendor Express account + onboarding URL |
+| `createTransfer(data)` | `transfers.create()` | Transfer funds to connected account |
+| `createPayout(data)` | `payouts.create()` (with `stripeAccount`) | Payout to vendor's bank account |
+| `getPaymentMethods(customerId)` | `paymentMethods.list()` | List saved payment methods |
+| `getAccountBalance(accountId?)` | `balance.retrieve()` | Get available/pending balances |
+| `createSubscription(data)` | `subscriptions.create()` | Create recurring subscription |
+| `cancelSubscription(id)` | `subscriptions.cancel()` | Cancel subscription |
+| `constructWebhookEvent(body, sig)` | `webhooks.constructEvent()` | Verify and parse webhook |
+
+#### Marketplace Payment Flow
+
+The service supports Stripe Connect for marketplace split payments:
+
+```
+1. createConnectAccount() → Creates Express account for vendor
+   - Returns accountId + onboardingUrl (for Stripe-hosted onboarding)
+   - Account type: "express" (Stripe manages payouts dashboard)
+   - Onboarding redirect URLs: /vendor/stripe-connect/{refresh|complete}
+
+2. createPaymentIntent() → Creates payment with tenant context
+   - Metadata includes tenantId + nodeId for reconciliation
+   - Optional customerId for saved payment methods
+
+3. createTransfer() → Splits payment to vendor
+   - Transfers to destination connected account
+   - Optional transfer_group for grouping related transfers
+
+4. createPayout() → Vendor receives funds
+   - Creates payout on connected account (via stripeAccount option)
+```
+
+#### Webhook Event Construction
+
+```typescript
+async constructWebhookEvent(body: string, signature: string): Promise<any> {
+  const stripe = await this.getStripe();
+  return stripe.webhooks.constructEvent(body, signature, this.config.webhookSecret);
+}
+```
+
+---
+
+### 16.5 Payload CMS Sync Services
+
+> **Note:** The Payload CMS sync service files (`payload-to-medusa.ts`, `medusa-to-payload.ts`) are referenced in activity contracts and integration specs but are defined as Temporal activity contracts rather than standalone service files. The sync logic is defined in the activity interfaces in `temporal-activities.ts` and executed by Temporal workers (not yet implemented).
+
+#### Payload Sync Activity Contracts
+
+**Medusa → Payload Direction:**
+
+```typescript
+// SyncProductToPayload activity
+interface SyncProductToPayloadInput {
+  productId: string;
+  productData: Record<string, any>;  // handle, title, images, status, metadata
+  context: ActivityContext;
+}
+// Output: { success: boolean, payloadDocId?: string, error?: string }
+
+// SyncGovernanceToPayload activity  
+interface SyncGovernanceToPayloadInput {
+  tenantId: string;
+  policies: Record<string, any>;
+  context: ActivityContext;
+}
+// Output: { success: boolean, error?: string }
+```
+
+**Payload → Medusa Direction:**
+
+The Payload CMS spec defines `afterChange` hooks on collections that trigger webhooks back to Medusa:
+- Tenant collection → sync branding, SEO, localized names
+- POI collection → sync localized names, descriptions, media URLs, operating hours
+- Vendor Profile collection → sync display fields (description, logo_url, banner_url)
+- Pages collection → update Medusa CMS registry page cache
+
+#### FindOrCreate Pattern
+
+Both directions use a findOrCreate pattern:
+1. Query target system for existing record by `medusa_*_id` or `medusaId` field
+2. If found → update existing record
+3. If not found → create new record with link field set
+4. Return the created/updated record ID
+
+---
+
+### 16.6 Node Hierarchy Sync Service
+
+> **Note:** The `NodeHierarchySyncService` is implemented through the `IntegrationOrchestrator.syncNodeHierarchy()` method rather than as a separate service file. The orchestrator queries nodes for a tenant and fans out sync to all configured systems.
+
+#### Implementation (in integration-orchestrator.ts)
+
+```typescript
+async syncNodeHierarchy(tenantId: string): Promise<{
+  synced: number; failed: number; errors: string[];
+}> {
+  // 1. Query all nodes for tenant via Medusa query graph
+  const { data: nodes } = await query.graph({
+    entity: "node",
+    fields: ["id", "name", "type", "parent_id", "metadata"],
+    filters: { tenant_id: tenantId },
+  });
+
+  // 2. For each node, fan-out sync to all configured systems
+  for (const node of nodes) {
+    await this.syncToAllSystems("node", node.id, node, {
+      tenant_id: tenantId,
+      node_id: node.id,
+    });
+  }
+}
+```
+
+#### Node Type Mapping to External Systems
+
+| Node Type | ERPNext Doctype | Fleetbase Entity | Payload Collection | Walt.id |
+|-----------|----------------|------------------|--------------------|---------|
+| CITY | Company | Place | nodes | Org Credential |
+| DISTRICT | Department | Zone | nodes | Org Credential |
+| ZONE | Cost Center | Zone | nodes | Org Credential |
+| FACILITY | Warehouse | Fleet | nodes | Org Credential |
+| ASSET | Asset | Vehicle | nodes | — |
+
+The actual type mapping is handled by each system's adapter in the `syncEntity("node", nodeId, nodeData)` call. Each adapter interprets the node type and creates the appropriate entity in its target system.
+
+#### Sync Results
+
+```typescript
+// Returns per-operation stats
+{ synced: number, failed: number, errors: string[] }
+```
+
+---
+
+## 17. Integration Orchestration Layer
+
+The integration orchestration layer coordinates all cross-system synchronization through three interconnected components: the **Orchestrator** (coordination), the **Registry** (adapter management), and the **Tracker** (state tracking).
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                  IntegrationOrchestrator                       │
+│                                                                │
+│  syncToSystem()     syncToAllSystems()    syncNodeHierarchy() │
+│  handleInboundWebhook()   retryFailedSyncs()                 │
+│  getSyncDashboard()       getIntegrationHealth()              │
+│                                                                │
+│  ┌─────────────────────┐  ┌─────────────────────────┐        │
+│  │  IntegrationRegistry │  │      SyncTracker         │        │
+│  │                      │  │                          │        │
+│  │  payload adapter     │  │  Map<id, ISyncEntry>     │        │
+│  │  erpnext adapter     │  │  createSyncEntry()       │        │
+│  │  fleetbase adapter   │  │  markSuccess/Failed()    │        │
+│  │  waltid adapter      │  │  getSyncStats()          │        │
+│  │  stripe adapter      │  │  getFailedSyncs()        │        │
+│  └─────────────────────┘  └─────────────────────────┘        │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### 17.1 Integration Orchestrator
+
+**File:** `apps/backend/src/integrations/orchestrator/integration-orchestrator.ts` (282 lines)
+
+#### Class Structure
+
+```typescript
+export class IntegrationOrchestrator {
+  private container: MedusaContainer;
+  private tracker: SyncTracker;
+  private registry: IntegrationRegistry;
+
+  constructor(container: MedusaContainer, tracker: SyncTracker, registry: IntegrationRegistry);
+}
+```
+
+#### Sync Options
+
+```typescript
+export interface SyncOptions {
+  correlation_id?: string;   // Links related sync operations
+  tenant_id?: string;        // Multi-tenant isolation
+  node_id?: string;          // Node-level scoping
+  max_retries?: number;      // Override default retry count (default: 3)
+  direction?: "inbound" | "outbound";  // Data flow direction
+}
+```
+
+#### Core Methods
+
+**`syncToSystem(system, entityType, entityId, data, options)`**
+
+Syncs a single entity to a specific external system:
+
+```
+1. Hash payload with SHA-256 (for deduplication tracking)
+2. Create sync entry in tracker (status: "pending")
+3. Update status to "in_progress"
+4. Look up adapter from registry
+5. Check if adapter is configured (env vars present)
+6. Call adapter.syncEntity(entityType, entityId, data)
+7. Mark success or failure in tracker
+8. Return ISyncEntry with final status
+```
+
+**`syncToAllSystems(entityType, entityId, data, options)`**
+
+Fan-out sync to every configured adapter:
+
+```
+1. Get all registered adapters from registry
+2. Skip any adapter where isConfigured() === false
+3. For each configured adapter:
+   a. Call syncToSystem() (which creates its own tracker entry)
+   b. Collect results
+4. Return ISyncEntry[] for all attempts
+```
+
+**`syncNodeHierarchy(tenantId)`**
+
+Specialized method for hierarchical node sync:
+
+```
+1. Resolve "query" from MedusaContainer
+2. Query all nodes for tenant via Medusa's query.graph()
+3. For each node: syncToAllSystems("node", node.id, nodeData)
+4. Track synced/failed counts and errors
+```
+
+**`handleInboundWebhook(system, event, payload)`**
+
+Processes incoming webhooks from external systems:
+
+```
+1. Create sync entry with direction: "inbound"
+2. Look up adapter for the source system
+3. Call adapter.handleWebhook(event, payload)
+4. Track result
+```
+
+**`retryFailedSyncs()`**
+
+Retries all failed sync entries that haven't exceeded max_retries:
+
+```
+1. Query tracker for failed entries (retry_count < max_retries)
+2. Update status to "retrying" (increments retry_count)
+3. Re-call adapter.syncEntity() with original entity type/id
+4. Mark success or failure
+5. Return { retried, succeeded, failed, errors }
+```
+
+**`getSyncDashboard()`**
+
+Returns a comprehensive view of integration health:
+
+```typescript
+export interface SyncDashboard {
+  stats: SyncStats;                    // Aggregate counts by status and system
+  recentSyncs: ISyncEntry[];           // Last 20 sync operations
+  failedSyncs: ISyncEntry[];           // All failed, retryable entries
+  health: IntegrationHealthStatus[];   // Per-system health check results
+}
+```
+
+#### Factory Function
+
+```typescript
+export function createIntegrationOrchestrator(container: MedusaContainer): IntegrationOrchestrator {
+  const tracker = new SyncTracker(container);
+  const registry = new IntegrationRegistry();
+  const defaultAdapters = createDefaultAdapters();
+  for (const adapter of defaultAdapters) {
+    registry.registerAdapter(adapter);
+  }
+  return new IntegrationOrchestrator(container, tracker, registry);
+}
+```
+
+---
+
+### 17.2 Integration Registry & Adapter Pattern
+
+**File:** `apps/backend/src/integrations/orchestrator/integration-registry.ts` (251 lines)
+
+#### Adapter Interface
+
+```typescript
+export interface IIntegrationAdapter {
+  name: string;
+  healthCheck(): Promise<{ healthy: boolean; message?: string }>;
+  isConfigured(): boolean;
+  syncEntity(type: string, id: string, data: any): Promise<{
+    success: boolean; externalId?: string; error?: string;
+  }>;
+  handleWebhook(event: string, payload: any): Promise<{
+    processed: boolean; error?: string;
+  }>;
+}
+```
+
+#### Registry Methods
+
+```typescript
+export class IntegrationRegistry {
+  private adapters: Map<string, IIntegrationAdapter> = new Map();
+
+  registerAdapter(adapter: IIntegrationAdapter): void;
+  getAdapter(name: string): IIntegrationAdapter | undefined;
+  getAllAdapters(): IIntegrationAdapter[];
+  getHealthStatus(): Promise<IntegrationHealthStatus[]>;
+}
+```
+
+#### Default Adapters (5 Registered)
+
+| Adapter | `isConfigured()` Check | Health Check Endpoint |
+|---------|----------------------|----------------------|
+| `payload` | `PAYLOAD_API_URL` && `PAYLOAD_API_KEY` | `GET {PAYLOAD_API_URL}/api/health` |
+| `erpnext` | `ERPNEXT_API_KEY` && `ERPNEXT_API_SECRET` && `ERPNEXT_SITE_URL` | `GET {ERPNEXT_SITE_URL}/api/method/frappe.auth.get_logged_user` |
+| `fleetbase` | `FLEETBASE_API_KEY` && `FLEETBASE_API_URL` | `GET {FLEETBASE_API_URL}/health` |
+| `waltid` | `WALTID_API_URL` && `WALTID_API_KEY` | `GET {WALTID_API_URL}/health` |
+| `stripe` | `STRIPE_SECRET_KEY` | `GET https://api.stripe.com/v1/balance` |
+
+> **Note:** A 6th adapter "temporal" is referenced in the `SyncSystem` type but is not registered in `createDefaultAdapters()`. Temporal integration is handled directly through the event dispatcher rather than the adapter pattern.
+
+#### Adapter Sync Behavior
+
+Each adapter's `syncEntity()` implementation follows a generic pattern:
+
+```typescript
+// Example: ERPNext adapter
+async syncEntity(type, id, data) {
+  if (!this.isConfigured()) return { success: false, error: "ERPNext not configured" };
+  const res = await axios.post(
+    `${process.env.ERPNEXT_SITE_URL}/api/resource/${type}`,
+    { ...data, custom_medusa_id: id },
+    { headers: { Authorization: `token ${ERPNEXT_API_KEY}:${ERPNEXT_API_SECRET}` }, timeout: 10000 }
+  );
+  return { success: true, externalId: res.data?.data?.name };
+}
+```
+
+The generic adapters are **thin sync wrappers** — they POST entity data to the target system's REST API. For more complex operations (upsert, multi-step flows), the specialized service classes (ERPNextService, FleetbaseService, etc.) should be used directly.
+
+#### Health Status Response
+
+```typescript
+export interface IntegrationHealthStatus {
+  system: string;
+  configured: boolean;
+  healthy: boolean;
+  message?: string;
+  checkedAt: Date;
+}
+```
+
+---
+
+### 17.3 Sync Tracker
+
+**File:** `apps/backend/src/integrations/orchestrator/sync-tracker.ts` (176 lines)
+
+#### Sync Entry Interface
+
+```typescript
+export interface ISyncEntry {
+  id: string;                          // UUID
+  system: SyncSystem;                  // "payload" | "erpnext" | "fleetbase" | "waltid" | "stripe" | "temporal"
+  entity_type: string;                 // e.g., "Customer", "Sales Invoice", "node"
+  entity_id: string;                   // Medusa entity ID
+  direction: SyncDirection;            // "inbound" | "outbound"
+  status: SyncStatus;                  // "pending" | "in_progress" | "success" | "failed" | "retrying"
+  error_message: string | null;        // Error details on failure
+  retry_count: number;                 // Number of retry attempts
+  max_retries: number;                 // Maximum retries (default: 3)
+  payload_hash: string | null;         // SHA-256 hash of sync payload
+  correlation_id: string;              // UUID linking related operations
+  tenant_id: string | null;            // Multi-tenant isolation
+  node_id: string | null;              // Node-level scoping
+  created_at: Date;                    // Entry creation timestamp
+  updated_at: Date;                    // Last status change timestamp
+  completed_at: Date | null;           // When sync finished (success or final failure)
+}
+```
+
+#### State Machine
+
+```
+pending → in_progress → success
+                      → failed → retrying → success
+                                           → failed (if retry_count >= max_retries)
+```
+
+#### Query Methods
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `createSyncEntry(params)` | `ISyncEntry` | Create new entry with status "pending" |
+| `updateSyncStatus(id, status, error?)` | `ISyncEntry \| null` | Update status, increment retry_count if "retrying" |
+| `markSuccess(id)` | `ISyncEntry \| null` | Set status="success", clear error, set completed_at |
+| `markFailed(id, errorMessage)` | `ISyncEntry \| null` | Set status="failed", record error, set completed_at |
+| `getRecentSyncs(limit=50)` | `ISyncEntry[]` | Most recent syncs sorted by updated_at DESC |
+| `getPendingSyncs()` | `ISyncEntry[]` | Entries with status "pending" or "in_progress" |
+| `getFailedSyncs()` | `ISyncEntry[]` | Failed entries where retry_count < max_retries |
+| `getSyncStats()` | `SyncStats` | Aggregate statistics |
+
+#### Stats Aggregation
+
+```typescript
+export interface SyncStats {
+  total: number;
+  pending: number;
+  in_progress: number;
+  success: number;
+  failed: number;
+  retrying: number;
+  by_system: Record<string, { total: number; success: number; failed: number }>;
+}
+```
+
+> **⚠ IMPORTANT:** The SyncTracker uses an **in-memory `Map<string, ISyncEntry>`**. All sync entries are lost on process restart. For production use, this should be persisted to the PostgreSQL database via a Medusa data model or the EventOutbox table.
+
+---
+
+## 18. Event Dispatch System
+
+The event dispatch system bridges Medusa's event-driven architecture with Temporal's workflow orchestration. It maps 72 Medusa business events to specific Temporal workflows across 6 specialized task queues.
+
+```
+┌─────────────────┐     ┌──────────────────────┐     ┌─────────────────────┐
+│  Medusa Events   │ ──→ │ Temporal Event Bridge │ ──→ │  Event Dispatcher    │
+│  (60+ events)    │     │  (subscriber)         │     │  (mapping + dispatch)│
+└─────────────────┘     └──────────────────────┘     └─────────┬───────────┘
+                                                               │
+                                            ┌──────────────────┼──────────────┐
+                                            ▼                  ▼              ▼
+                                     ┌─────────────┐  ┌──────────────┐  ┌──────────┐
+                                     │ Temporal     │  │ EventOutbox  │  │ Direct   │
+                                     │ Cloud        │  │ (fallback)   │  │ Logging  │
+                                     └─────────────┘  └──────────────┘  └──────────┘
+```
+
+### 18.1 Event-to-Workflow Mapping (Complete)
+
+**File:** `apps/backend/src/lib/event-dispatcher.ts`
+
+The `EVENT_WORKFLOW_MAP` is a compile-time constant mapping every dispatchable event to its target workflow and task queue. Below is the **complete mapping from the source code** organized by task queue:
+
+#### commerce-queue (15 events)
+
+| Event | Workflow ID | Description |
+|-------|------------|-------------|
+| `order.placed` | `xsystem.unified-order-orchestrator` | Full order processing saga |
+| `order.cancelled` | `xsystem.order-cancellation-saga` | Order cancellation with compensation |
+| `payment.initiated` | `xsystem.multi-gateway-payment` | Multi-gateway payment processing |
+| `refund.requested` | `xsystem.refund-compensation-saga` | Refund with compensation across systems |
+| `return.initiated` | `xsystem.returns-processing` | Return/RMA processing |
+| `store.created` | `commerce.store-setup` | New store provisioning |
+| `store.updated` | `commerce.store-config-sync` | Store configuration sync |
+| `product.created` | `commerce.product-catalog-sync` | New product sync to all systems |
+| `product.updated` | `commerce.sync-product-to-cms` | Product update sync to CMS |
+| `product.deleted` | `commerce.product-catalog-remove` | Product removal from all systems |
+| `vendor_product.created` | `commerce.vendor-product-catalog-sync` | Vendor product creation sync |
+| `vendor_product.updated` | `commerce.vendor-product-update-sync` | Vendor product update sync |
+| `vendor_product.deactivated` | `commerce.vendor-product-deactivation` | Vendor product deactivation |
+| `auction.started` | `xsystem.auction-lifecycle` | Auction lifecycle management |
+| `restaurant-order.placed` | `xsystem.restaurant-order-orchestrator` | Restaurant-specific order flow |
+
+#### commerce-booking-queue (13 events)
+
+| Event | Workflow ID | Description |
+|-------|------------|-------------|
+| `booking.created` | `xsystem.service-booking-orchestrator` | Service booking creation |
+| `booking.confirmed` | `xsystem.booking-confirmation-sync` | Booking confirmation sync |
+| `booking.no_show` | `xsystem.booking-no-show-processing` | No-show handling |
+| `subscription.created` | `xsystem.subscription-lifecycle` | New subscription setup |
+| `subscription.cancelled` | `xsystem.subscription-cancellation-sync` | Subscription cancellation |
+| `subscription.payment_failed` | `xsystem.subscription-payment-failure` | Failed subscription payment |
+| `subscription.renewal_upcoming` | `xsystem.subscription-renewal-notification` | Renewal reminder |
+| `subscription.trial_ending` | `xsystem.trial-ending-notification` | Trial ending notification |
+| `subscription.trial_converted` | `xsystem.trial-conversion-sync` | Trial to paid conversion |
+| `subscription.trial_expired` | `xsystem.trial-expiration-sync` | Trial expiration handling |
+| `subscription.plan_changed` | `xsystem.subscription-plan-change-sync` | Plan change processing |
+| `subscription.paused` | `xsystem.subscription-pause-sync` | Subscription pause |
+| `subscription.resumed` | `xsystem.subscription-resume-sync` | Subscription resume |
+
+#### xsystem-platform-queue (28 events)
+
+| Event | Workflow ID | Description |
+|-------|------------|-------------|
+| `tenant.provisioned` | `xsystem.tenant-setup-saga` | Full tenant provisioning saga |
+| `tenant.updated` | `xsystem.tenant-config-sync` | Tenant configuration sync |
+| `node.created` | `xsystem.node-provisioning` | Node provisioning across systems |
+| `node.updated` | `xsystem.node-update-propagation` | Node update propagation |
+| `node.deleted` | `xsystem.node-decommission` | Node decommissioning |
+| `customer.created` | `xsystem.customer-onboarding` | Customer onboarding flow |
+| `customer.updated` | `xsystem.customer-profile-sync` | Customer profile sync |
+| `vendor.registered` | `xsystem.vendor-onboarding-verification` | Vendor registration verification |
+| `vendor.created` | `commerce.vendor-onboarding` | Vendor onboarding |
+| `vendor.approved` | `xsystem.vendor-ecosystem-setup` | Vendor ecosystem setup |
+| `vendor.suspended` | `xsystem.vendor-suspension-cascade` | Vendor suspension cascade |
+| `vendor.deactivated` | `xsystem.vendor-deactivation-cascade` | Vendor deactivation cascade |
+| `vendor.inactivity_warning` | `xsystem.vendor-inactivity-notification` | Inactivity warning |
+| `vendor.application_submitted` | `xsystem.vendor-application-processing` | Application processing |
+| `vendor.stripe_connected` | `xsystem.vendor-stripe-setup-sync` | Stripe Connect setup sync |
+| `dispute.opened` | `xsystem.vendor-dispute-resolution` | Dispute resolution |
+| `kyc.requested` | `xsystem.kyc-verification` | KYC verification request |
+| `kyc.completed` | `xsystem.kyc-credential-issuance` | KYC credential issuance |
+| `membership.created` | `xsystem.membership-credential-issuance` | Membership credential |
+| `governance.policy.changed` | `xsystem.governance-policy-propagation` | Policy propagation |
+| `payout.initiated` | `xsystem.payout-processing` | Payout processing |
+| `payout.completed` | `xsystem.payout-reconciliation` | Payout reconciliation |
+| `payout.failed` | `xsystem.payout-failure-handling` | Payout failure handling |
+| `invoice.created` | `xsystem.invoice-processing` | Invoice processing |
+| `invoice.overdue` | `xsystem.invoice-overdue-processing` | Overdue invoice handling |
+| `payment.completed` | `xsystem.payment-reconciliation` | Payment reconciliation |
+| `inventory.updated` | `xsystem.inventory-reconciliation` | Inventory reconciliation |
+
+#### xsystem-logistics-queue (4 events)
+
+| Event | Workflow ID | Description |
+|-------|------------|-------------|
+| `fulfillment.created` | `xsystem.fulfillment-dispatch` | Fulfillment order dispatch |
+| `fulfillment.shipped` | `xsystem.shipment-tracking-start` | Shipment tracking initiation |
+| `fulfillment.delivered` | `xsystem.delivery-confirmation` | Delivery confirmation |
+| `vendor_order.shipped` | `xsystem.vendor-order-shipment-tracking` | Vendor order shipment tracking |
+
+#### core-maintenance-queue (3 events)
+
+| Event | Workflow ID | Description |
+|-------|------------|-------------|
+| `sync.products.scheduled` | `xsystem.scheduled-product-sync` | Scheduled full product sync |
+| `sync.retry.scheduled` | `xsystem.retry-failed-syncs` | Retry all failed syncs |
+| `sync.hierarchy.scheduled` | `xsystem.scheduled-hierarchy-reconciliation` | Node hierarchy reconciliation |
+
+#### cityos-dynamic-queue (1 event)
+
+| Event | Workflow ID | Description |
+|-------|------------|-------------|
+| `workflow.dynamic.start` | `dynamic-agent-orchestrator` | AI agent dynamic workflow |
+
+#### Summary
+
+| Task Queue | Event Count | Primary Responsibility |
+|-----------|-------------|----------------------|
+| `commerce-queue` | 15 | Orders, payments, products, stores |
+| `commerce-booking-queue` | 13 | Bookings, subscriptions, trials |
+| `xsystem-platform-queue` | 28 | Tenants, nodes, vendors, KYC, payouts |
+| `xsystem-logistics-queue` | 4 | Fulfillment, shipping, delivery |
+| `core-maintenance-queue` | 3 | Scheduled sync and reconciliation |
+| `cityos-dynamic-queue` | 1 | AI-driven dynamic workflows |
+| **Total** | **64** | |
+
+---
+
+### 18.2 Temporal Event Bridge Subscriber
+
+**File:** `apps/backend/src/subscribers/temporal-event-bridge.ts` (108 lines)
+
+#### Subscriber Configuration
+
+The subscriber registers for **60 Medusa events** via the `SubscriberConfig.event` array. This is the entry point for all event-driven Temporal workflow dispatching.
+
+```typescript
+export default async function temporalEventBridge({ event, container }: SubscriberArgs<any>) {
+  const eventName = event.name;
+
+  // Guard 1: Skip if Temporal not configured
+  if (!process.env.TEMPORAL_API_KEY) return;
+
+  // Guard 2: Skip if no workflow mapped for this event
+  if (!getWorkflowForEvent(eventName)?.workflowId) return;
+
+  // Build node context from event data
+  const nodeContext = {
+    tenantId: event.data?.tenant_id,
+    nodeId: event.data?.node_id,
+    source: "medusa-subscriber",
+    timestamp: new Date().toISOString(),
+  };
+
+  // Dispatch to Temporal
+  const result = await dispatchEventToTemporal(eventName, event.data, nodeContext);
+  if (result.dispatched) {
+    console.log(`[TemporalBridge] Dispatched ${eventName} → runId: ${result.runId}`);
+  }
+}
+```
+
+#### Subscribed Events (60 events)
+
+The subscriber listens to all business events that have corresponding Temporal workflow mappings. The full list includes: `order.placed`, `order.cancelled`, `payment.initiated`, `refund.requested`, `vendor.registered`, `vendor.created`, `dispute.opened`, `return.initiated`, `kyc.requested`, `subscription.created`, `booking.created`, `auction.started`, `restaurant-order.placed`, `product.updated`, `product.created`, `product.deleted`, `workflow.dynamic.start`, `governance.policy.changed`, `node.created`, `node.updated`, `node.deleted`, `tenant.provisioned`, `tenant.updated`, `store.created`, `store.updated`, `customer.created`, `customer.updated`, `vendor.approved`, `vendor.suspended`, `inventory.updated`, `fulfillment.created`, `fulfillment.shipped`, `fulfillment.delivered`, `invoice.created`, `payment.completed`, `kyc.completed`, `membership.created`, `payout.initiated`, `payout.completed`, `payout.failed`, `booking.no_show`, `subscription.cancelled`, `subscription.payment_failed`, `vendor.deactivated`, `vendor.inactivity_warning`, `invoice.overdue`, `subscription.renewal_upcoming`, `subscription.trial_ending`, `subscription.trial_converted`, `subscription.trial_expired`, `booking.confirmed`, `subscription.plan_changed`, `subscription.paused`, `subscription.resumed`, `vendor.application_submitted`, `vendor_order.shipped`, `vendor_product.created`, `vendor_product.deactivated`, `vendor_product.updated`, `vendor.stripe_connected`.
+
+> **Note:** Scheduled sync events (`sync.products.scheduled`, `sync.retry.scheduled`, `sync.hierarchy.scheduled`) are NOT in this subscriber. They are triggered by cron jobs in the integration-sync-scheduler, not by Medusa events.
+
+---
+
+### 18.3 Cross-System Event Dispatch Functions
+
+**File:** `apps/backend/src/lib/event-dispatcher.ts`
+
+#### `dispatchEventToTemporal(eventType, payload, nodeContext?)`
+
+Direct dispatch to Temporal Cloud:
+
+```typescript
+export async function dispatchEventToTemporal(
+  eventType: string, payload: any, nodeContext?: any
+): Promise<{ dispatched: boolean; runId?: string; error?: string }> {
+  const mapping = getWorkflowForEvent(eventType);
+  if (!mapping) return { dispatched: false, error: `No workflow mapped for event: ${eventType}` };
+
+  const result = await startWorkflow(mapping.workflowId, payload, nodeContext || {}, mapping.taskQueue);
+  return { dispatched: true, runId: result.runId };
+}
+```
+
+#### `processOutboxEvents(container)`
+
+Processes pending events from the EventOutbox table:
+
+```typescript
+export async function processOutboxEvents(container: any): Promise<{
+  processed: number; failed: number; errors: string[];
+}> {
+  const eventOutboxService = container.resolve("eventOutbox");
+  const pendingEvents = await eventOutboxService.listPendingEvents(undefined, 50);
+
+  for (const event of pendingEvents) {
+    const mapping = getWorkflowForEvent(event.event_type);
+    if (!mapping) continue;
+
+    const envelope = eventOutboxService.buildEnvelope(event);
+    await startWorkflow(mapping.workflowId, envelope.payload, {
+      tenantId: event.tenant_id,
+      nodeId: event.node_id,
+      correlationId: event.correlation_id,
+      channel: event.channel,
+    }, mapping.taskQueue);
+    await eventOutboxService.markPublished(event.id);
+  }
+}
+```
+
+#### `dispatchCrossSystemEvent(eventType, payload, container, nodeContext?)`
+
+Primary dispatch function with fallback strategy:
+
+```
+1. Try dispatchEventToTemporal() first
+2. If no Temporal workflow mapped or dispatch fails:
+   a. Create event in EventOutbox (status: "pending")
+   b. Return { temporal: false, integrations: ["outbox"] }
+3. If Temporal dispatch succeeds:
+   a. Return { temporal: true, integrations: ["temporal"] }
+```
+
+This ensures **no events are lost** — even if Temporal is unavailable, events are persisted in the outbox for later processing.
+
+#### Utility Functions
+
+| Function | Purpose |
+|----------|---------|
+| `getWorkflowForEvent(eventType)` | Look up workflow mapping for an event type |
+| `getAllMappedEvents()` | Return all registered event types (for introspection) |
+
+---
+
+## 19. Temporal Activity Contracts
+
+**File:** `apps/backend/src/lib/temporal-activities.ts` (373 lines)
+
+Activity contracts define the **input/output interfaces** for all operations that Temporal workers execute. These are type-safe contracts that ensure consistent data flow between workflow orchestration and integration services.
+
+### 19.1 Activity Context
+
+Every activity receives an `ActivityContext` for multi-tenant isolation and audit trailing:
+
+```typescript
+export interface ActivityContext {
+  tenantId?: string;      // Tenant ID for data isolation
+  nodeId?: string;        // Node ID for hierarchical scoping
+  correlationId: string;  // UUID linking all operations in a workflow
+  channel?: string;       // Sales channel context
+  locale?: string;        // Locale for localized operations
+}
+```
+
+### 19.2 Payload CMS Activities
+
+| Activity | Input | Output | Queue | Timeout | Retries |
+|----------|-------|--------|-------|---------|---------|
+| `payload.syncProduct` | `productId`, `productData`, `context` | `payloadDocId` | cityos-workflow-queue | 30s | 3 |
+| `payload.syncGovernance` | `tenantId`, `policies`, `context` | `success` | cityos-workflow-queue | 30s | 3 |
+| `payload.deleteProduct` | `productId`, `context` | `success` | cityos-workflow-queue | 15s | 3 |
+
+### 19.3 ERPNext Activities
+
+| Activity | Input | Output | Queue | Timeout | Retries |
+|----------|-------|--------|-------|---------|---------|
+| `erpnext.createInvoice` | `orderId`, items, totals, currency, `context` | `invoiceName` | cityos-workflow-queue | 30s | 3 |
+| `erpnext.syncCustomer` | customer details, `context` | `erpCustomerName` | cityos-workflow-queue | 20s | 3 |
+| `erpnext.syncProduct` | item details, `context` | `erpItemName` | cityos-workflow-queue | 20s | 3 |
+| `erpnext.syncVendorAsSupplier` | vendor details, `context` | `supplierName` | cityos-workflow-queue | 20s | 3 |
+| `erpnext.recordPayment` | payment details, `context` | `paymentEntryName` | cityos-workflow-queue | 20s | 3 |
+
+#### ERPNext Invoice Activity Input Detail
+
+```typescript
+export interface CreateERPNextInvoiceInput {
+  orderId: string;
+  customerName: string;
+  customerEmail: string;
+  items: Array<{
+    item_code: string;
+    item_name: string;
+    quantity: number;
+    rate: number;
+    amount: number;
+  }>;
+  total: number;
+  grandTotal: number;
+  currency: string;
+  context: ActivityContext;
+}
+```
+
+### 19.4 Fleetbase Activities
+
+| Activity | Input | Output | Queue | Timeout | Retries |
+|----------|-------|--------|-------|---------|---------|
+| `fleetbase.createShipment` | pickup, dropoff, items, `context` | `trackingNumber`, `shipmentId` | cityos-workflow-queue | 30s | 3 |
+| `fleetbase.syncPOI` | poi data (name, address, coordinates), `context` | `fleetbasePlaceId` | cityos-workflow-queue | 20s | 3 |
+
+#### Shipment Activity Input Detail
+
+```typescript
+export interface CreateFleetbaseShipmentInput {
+  orderId: string;
+  pickup: { name: string; address: string; city: string; postalCode: string; country: string };
+  dropoff: { name: string; address: string; city: string; postalCode: string; country: string; phone?: string };
+  items: Array<{ name: string; quantity: number }>;
+  context: ActivityContext;
+}
+```
+
+### 19.5 Walt.id Activities
+
+| Activity | Input | Output | Queue | Timeout | Retries |
+|----------|-------|--------|-------|---------|---------|
+| `waltid.createDID` | `method`, `context` | `did` | cityos-workflow-queue | 15s | 3 |
+| `waltid.issueVendorCredential` | `subjectDid`, vendor details, `context` | `credentialId` | cityos-workflow-queue | 20s | 3 |
+| `waltid.issueKYCCredential` | `subjectDid`, customer details, `context` | `credentialId` | cityos-workflow-queue | 20s | 3 |
+| `waltid.issueMembershipCredential` | `subjectDid`, membership details, `context` | `credentialId` | cityos-workflow-queue | 20s | 3 |
+
+### 19.6 Node Hierarchy Activities
+
+| Activity | Input | Output | Queue | Timeout | Retries |
+|----------|-------|--------|-------|---------|---------|
+| `hierarchy.syncNode` | `nodeId`, `tenantId`, `context` | `syncedSystems[]`, `errors[]` | cityos-workflow-queue | 60s | 2 |
+| `hierarchy.deleteNode` | `nodeId`, `tenantId`, `context` | `deletedFrom[]`, `errors[]` | cityos-workflow-queue | 30s | 2 |
+
+### 19.7 Scheduled Sync Activities
+
+| Activity | Input | Output | Queue | Timeout | Retries |
+|----------|-------|--------|-------|---------|---------|
+| `scheduled.syncProducts` | `timestamp`, `context` | `synced`, `failed`, `errors[]` | cityos-workflow-queue | 300s | 1 |
+| `scheduled.retryFailed` | `timestamp`, `context` | `retried`, `succeeded`, `failed`, `errors[]` | cityos-workflow-queue | 300s | 1 |
+| `scheduled.reconcileHierarchy` | `tenantId?`, `timestamp`, `context` | `tenantsProcessed`, `nodesReconciled`, `errors[]` | cityos-workflow-queue | 600s | 1 |
+
+### 19.8 Activity Registry
+
+The `ACTIVITY_DEFINITIONS` constant provides a compile-time registry of all 18 activities with their operational parameters:
+
+```typescript
+export const ACTIVITY_DEFINITIONS = {
+  "payload.syncProduct":          { queue: "cityos-workflow-queue", timeout: "30s",  retries: 3 },
+  "payload.deleteProduct":        { queue: "cityos-workflow-queue", timeout: "15s",  retries: 3 },
+  "payload.syncGovernance":       { queue: "cityos-workflow-queue", timeout: "30s",  retries: 3 },
+  "erpnext.createInvoice":        { queue: "cityos-workflow-queue", timeout: "30s",  retries: 3 },
+  "erpnext.syncCustomer":         { queue: "cityos-workflow-queue", timeout: "20s",  retries: 3 },
+  "erpnext.syncProduct":          { queue: "cityos-workflow-queue", timeout: "20s",  retries: 3 },
+  "erpnext.syncVendorAsSupplier": { queue: "cityos-workflow-queue", timeout: "20s",  retries: 3 },
+  "erpnext.recordPayment":        { queue: "cityos-workflow-queue", timeout: "20s",  retries: 3 },
+  "fleetbase.createShipment":     { queue: "cityos-workflow-queue", timeout: "30s",  retries: 3 },
+  "fleetbase.syncPOI":            { queue: "cityos-workflow-queue", timeout: "20s",  retries: 3 },
+  "waltid.createDID":             { queue: "cityos-workflow-queue", timeout: "15s",  retries: 3 },
+  "waltid.issueVendorCredential": { queue: "cityos-workflow-queue", timeout: "20s",  retries: 3 },
+  "waltid.issueKYCCredential":    { queue: "cityos-workflow-queue", timeout: "20s",  retries: 3 },
+  "waltid.issueMembershipCredential": { queue: "cityos-workflow-queue", timeout: "20s", retries: 3 },
+  "hierarchy.syncNode":           { queue: "cityos-workflow-queue", timeout: "60s",  retries: 2 },
+  "hierarchy.deleteNode":         { queue: "cityos-workflow-queue", timeout: "30s",  retries: 2 },
+  "scheduled.syncProducts":       { queue: "cityos-workflow-queue", timeout: "300s", retries: 1 },
+  "scheduled.retryFailed":        { queue: "cityos-workflow-queue", timeout: "300s", retries: 1 },
+  "scheduled.reconcileHierarchy": { queue: "cityos-workflow-queue", timeout: "600s", retries: 1 },
+} as const;
+```
+
+---
+
+## 20. Temporal Client Configuration
+
+**File:** `apps/backend/src/lib/temporal-client.ts` (77 lines)
+
+### 20.1 Connection Architecture
+
+```
+┌─────────────────────────┐         TLS + API Key         ┌──────────────────────────────┐
+│  Medusa Backend          │ ──────────────────────────── → │  Temporal Cloud               │
+│  (temporal-client.ts)    │                                │  Region: ap-northeast-1       │
+│                          │                                │  Namespace: quickstart-        │
+│  Lazy singleton client   │                                │    dakkah-cityos.djvai         │
+└─────────────────────────┘                                └──────────────────────────────┘
+```
+
+### 20.2 Client Initialization (Lazy Singleton)
+
+```typescript
+let client: any = null;
+let temporalUnavailable = false;
+
+async function loadTemporalSDK() {
+  try {
+    return await import("@temporalio/client");
+  } catch {
+    return null;  // SDK not installed — graceful degradation
+  }
+}
+
+export async function getTemporalClient(): Promise<any> {
+  if (client) return client;                    // Reuse existing connection
+  if (temporalUnavailable) throw new Error(...); // Don't retry if SDK missing
+
+  if (!process.env.TEMPORAL_API_KEY) throw new Error("TEMPORAL_API_KEY not set");
+
+  const sdk = await loadTemporalSDK();
+  if (!sdk) { temporalUnavailable = true; throw new Error("SDK not installed"); }
+
+  const connection = await Connection.connect({
+    address: process.env.TEMPORAL_ENDPOINT || "ap-northeast-1.aws.api.temporal.io:7233",
+    tls: true,
+    apiKey: process.env.TEMPORAL_API_KEY,
+  });
+
+  client = new Client({
+    connection,
+    namespace: process.env.TEMPORAL_NAMESPACE || "quickstart-dakkah-cityos.djvai",
+  });
+
+  return client;
+}
+```
+
+#### Key Design Decisions
+
+1. **Lazy loading:** SDK is imported only when first needed, avoiding startup failures when Temporal isn't used
+2. **Singleton:** Single connection reused across all workflow dispatches
+3. **Graceful degradation:** If SDK import fails, `temporalUnavailable` flag prevents repeated attempts
+4. **TLS required:** All connections use TLS (Temporal Cloud requirement)
+
+### 20.3 Workflow Dispatch
+
+```typescript
+export async function startWorkflow(
+  workflowId: string, input: any, nodeContext: any, taskQueue?: string
+): Promise<{ runId: string }> {
+  const c = await getTemporalClient();
+  const handle = await c.workflow.start("cityOSWorkflow", {
+    taskQueue: taskQueue || "cityos-workflow-queue",
+    workflowId: `${workflowId}-${Date.now()}`,
+    args: [{
+      workflowId,
+      input,
+      nodeContext,
+      correlationId: crypto.randomUUID(),
+    }],
+  });
+  return { runId: handle.workflowId };
+}
+```
+
+#### Workflow Dispatch Details
+
+| Parameter | Value | Notes |
+|-----------|-------|-------|
+| Workflow function | `"cityOSWorkflow"` | All events dispatched to same workflow function |
+| Task queue | From EVENT_WORKFLOW_MAP or `"cityos-workflow-queue"` | 6 specialized queues |
+| Workflow ID | `{workflowId}-{Date.now()}` | Unique, timestamped, prevents collisions |
+| Arguments | Single object with workflowId, input, nodeContext, correlationId | Wrapper pattern for routing |
+
+> **Architecture note:** All dispatches call the same `"cityOSWorkflow"` function. The actual workflow ID (e.g., `xsystem.unified-order-orchestrator`) is passed as data inside `args[0].workflowId`. This means the Temporal worker must implement a **single router workflow** that inspects the workflowId and delegates to the appropriate logic.
+
+### 20.4 Health Check
+
+```typescript
+export async function checkTemporalHealth(): Promise<{
+  connected: boolean; error?: string;
+}> {
+  try {
+    await getTemporalClient();   // Attempts connection if not already connected
+    return { connected: true };
+  } catch (err: any) {
+    return { connected: false, error: err.message };
+  }
+}
+```
+
+### 20.5 Environment Configuration
+
+| Variable | Default | Required | Description |
+|----------|---------|----------|-------------|
+| `TEMPORAL_API_KEY` | — | **Yes** | API key for Temporal Cloud authentication |
+| `TEMPORAL_ENDPOINT` | `ap-northeast-1.aws.api.temporal.io:7233` | No | Temporal gRPC endpoint |
+| `TEMPORAL_NAMESPACE` | `quickstart-dakkah-cityos.djvai` | No | Temporal namespace |
+
+---
+
+## 21. Integration Specification Contracts
+
+The integration specification files define **comprehensive API contracts** for each external system. These are not runtime code — they are TypeScript constant objects that document every interface, capability, webhook, and sync rule that each system must implement.
+
+**Total specification volume: 7,008 lines across 5 files.**
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                    Integration Specifications                     │
+│                                                                   │
+│  temporal-spec.ts ──── 1,661 lines ──── 80 workflows, 21 queues │
+│  erpnext-spec.ts ───── 1,593 lines ──── 55 doctypes              │
+│  waltid-spec.ts ────── 1,396 lines ──── DIDs + 6 credentials     │
+│  payload-cms-spec.ts ─ 1,034 lines ──── 40 collections           │
+│  fleetbase-spec.ts ─── 952 lines ────── geo, fleet, logistics    │
+│                                                                   │
+│  Location: apps/backend/src/lib/integrations/                     │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+### 21.1 Temporal Spec (1,661 lines)
+
+**File:** `apps/backend/src/lib/integrations/temporal-spec.ts`
+
+Defines the complete Temporal workflow orchestration contract:
+
+- **80 workflow definitions** organized across 35 categories
+- **21 specialized task queues** for workload isolation
+- **Dynamic AI agent workflow system** for runtime-configurable workflows
+- **Signal contracts:** External signals that workflows can receive (e.g., payment confirmation, driver assignment)
+- **Query contracts:** Workflow state queries for monitoring (e.g., order status, sync progress)
+- **Error handling policies:** Per-workflow retry intervals, max retries, non-retryable error types
+
+#### Workflow Categories
+
+| Category | Workflow Count | Task Queue |
+|----------|---------------|------------|
+| Order Processing | 5 | commerce-queue |
+| Product Management | 6 | commerce-queue |
+| Vendor Lifecycle | 8 | xsystem-platform-queue |
+| Tenant Management | 3 | xsystem-platform-queue |
+| Node Operations | 3 | xsystem-platform-queue |
+| Customer Operations | 2 | xsystem-platform-queue |
+| Payment & Payout | 6 | xsystem-platform-queue |
+| KYC & Credentials | 3 | xsystem-platform-queue |
+| Booking & Subscription | 12 | commerce-booking-queue |
+| Fulfillment & Logistics | 4 | xsystem-logistics-queue |
+| Governance | 1 | xsystem-platform-queue |
+| Dynamic AI | 1 | cityos-dynamic-queue |
+| Scheduled Maintenance | 3 | core-maintenance-queue |
+
+### 21.2 ERPNext Spec (1,593 lines)
+
+**File:** `apps/backend/src/lib/integrations/erpnext-spec.ts`
+
+Defines the complete ERPNext doctype mapping and sync contract:
+
+#### Doctype Categories (55 total)
+
+| Category | Doctypes | Medusa Link Field |
+|----------|----------|-------------------|
+| **Accounting** | Sales Invoice, Payment Entry, Journal Entry, GL Entry, Sales Order | `custom_medusa_order_id` |
+| **Inventory** | Item, Stock Entry, Warehouse, Bin, Stock Reconciliation | `custom_medusa_product_id` |
+| **Customer** | Customer, Address, Contact, Customer Group | `custom_medusa_customer_id` |
+| **Procurement** | Purchase Order, Supplier, Supplier Quotation | `custom_medusa_vendor_id` |
+| **HR** | Employee, Payroll Entry, Attendance | `custom_medusa_user_id` |
+| **Tax** | Tax Rule, Tax Category, Tax Withholding | — |
+| **Multi-company** | Company (per tenant), Cost Center, Department | `custom_medusa_tenant_id` |
+| **Vertical** | Rental Account, Real Estate Property, Healthcare Service, etc. (16 models) | Various |
+
+#### Key Sync Rules
+
+- Medusa is source of truth for **commerce data** (orders, products, customers, vendors)
+- ERPNext is source of truth for **financial records** (GL entries, tax calculations, compliance reports)
+- Multi-tenant isolation: Each Medusa tenant maps to an ERPNext Company
+- All synced records carry `custom_medusa_*_id` link fields for bidirectional reference
+
+### 21.3 Fleetbase Spec (952 lines)
+
+**File:** `apps/backend/src/lib/integrations/fleetbase-spec.ts`
+
+Defines 6 capability groups:
+
+| Capability Group | Methods | Key Types |
+|-----------------|---------|-----------|
+| **Geocoding** | `geocodeAddress`, `reverseGeocode`, `validateAddress`, `autocomplete` | `GeocodeResult`, `AddressValidationResult` |
+| **Places** | `createPlace`, `updatePlace`, `deletePlace`, `getPlace`, `listPlaces` | `FleetbasePlace`, `PlaceFilters` |
+| **Zones** | `createZone`, `updateZone`, `deleteZone`, `checkPointInZone`, `getZonesForPoint` | `FleetbaseZone`, `GeoPolygon` |
+| **Routing** | `calculateRoute`, `calculateETA`, `optimizeRoute` | `RouteResult`, `ETAResult`, `OptimizedRouteResult` |
+| **Fleet** | `createDriver`, `assignDriver`, `trackDriver`, `listDrivers` | `FleetbaseDriver`, `DriverAssignment`, `DriverLocation` |
+| **Service Areas** | `createServiceArea`, `checkCoverage`, `getServiceArea` | `ServiceArea`, `CoverageCheckResult` |
+
+#### Webhook Events (Fleetbase → Medusa)
+
+The spec defines 8 webhook events for real-time logistics updates:
+- `order.driver_assigned` — Driver assignment notification
+- `order.picked_up` — Pickup confirmation with proof
+- `order.delivered` — Delivery confirmation with proof
+- `order.delivery_failed` — Delivery failure with reason
+- `order.status_changed` — General status update
+- `driver.location_updated` — Real-time GPS update
+- `zone.updated` — Delivery zone boundary change
+- `poi.updated` — Place/POI data change
+
+### 21.4 Payload CMS Spec (1,034 lines)
+
+**File:** `apps/backend/src/lib/integrations/payload-cms-spec.ts`
+
+Defines 40 Payload CMS collections across 10 categories:
+
+| Category | Collections | Purpose |
+|----------|------------|---------|
+| **Tenant Content** | Tenants, StorefrontConfig | Branding, SEO, localized names |
+| **POI Content** | POIs | Rich content for physical locations |
+| **Vendor Content** | VendorProfiles | Public vendor profiles, team bios, certifications |
+| **Pages** | Pages | CMS-managed pages with template system |
+| **Navigation** | Navigations | Header/footer/sidebar/mobile menus |
+| **Product Content** | ProductContent, Categories | Enhanced product descriptions, SEO |
+| **Marketing** | EmailTemplate, SMSTemplate, PushTemplate, Forms, Surveys, Polls | Multi-channel marketing |
+| **City Content** | CityGuide, EventCalendar, NeighborhoodProfile | Location-specific content |
+| **Service Channels** | ServiceChannelDisplay | Channel-specific presentation config |
+| **Media** | Media | Centralized media asset management |
+
+#### Localization
+
+All content fields support 3 locales:
+- `en` — English (required)
+- `fr` — French (optional)
+- `ar` — Arabic (optional, RTL support)
+
+#### Sync Keys
+
+Every Payload collection carries a `medusa_*_id` field for bidirectional sync:
+- `medusa_tenant_id` — Links to Medusa tenant record
+- `medusa_poi_id` — Links to Medusa TenantPOI record
+- `medusa_vendor_id` — Links to Medusa vendor record
+- `medusa_product_id` — Links to Medusa product record
+
+### 21.5 Walt.id Spec (1,396 lines)
+
+**File:** `apps/backend/src/lib/integrations/waltid-spec.ts`
+
+Defines the complete SSI/DID integration contract:
+
+#### DID Management
+
+| Method | DID Methods Supported | Notes |
+|--------|----------------------|-------|
+| `createDID` | `did:key`, `did:web`, `did:ion`, `did:ebsi`, `did:cheqd` | `did:key` recommended for most entities |
+| `resolveDID` | All methods | Cross-method resolution |
+| `updateDIDDocument` | Mutable methods only (`did:web`, `did:ion`, `did:cheqd`) | @planned |
+| `rotateKey` | All methods | @planned |
+| `deleteDID` | All methods | @planned |
+
+#### Credential Types (6)
+
+| Credential Type | Subject Interface | Default Expiration |
+|----------------|-------------------|--------------------|
+| `KYCVerificationCredential` | `KYCVerificationCredentialSubject` | 1 year |
+| `VendorVerificationCredential` | `VendorVerificationCredentialSubject` | 2 years |
+| `CityOSMembershipCredential` | `CityOSMembershipCredentialSubject` | Set by `validUntil` |
+| `TenantOperatorCredential` | `TenantOperatorCredentialSubject` | 1 year (@planned) |
+| `POIVerificationCredential` | `POIVerificationCredentialSubject` | 3 years (@planned) |
+| `MarketplaceSellerCredential` | `MarketplaceSellerCredentialSubject` | 1 year (@planned) |
+
+#### Additional Capabilities
+
+- **Wallet Integration:** Create wallet, store/retrieve credentials, generate QR codes for credential offers and presentation requests
+- **Trust Registry:** Register trusted issuers, query issuer trust level, manage credential schemas
+- **Presentation Exchange:** Selective disclosure, presentation definitions with constraint fields
+- **Verification Policies:** `SignaturePolicy`, `ExpirationDatePolicy`, `NotBeforeDatePolicy`, `RevocationPolicy`, `CredentialStatusPolicy`, `SchemaValidationPolicy`, `TrustedIssuerPolicy`
+
+---
+
+## 22. Implementation Status vs Architecture
+
+This section provides a comprehensive gap analysis between the documented architecture and the actual codebase implementation as of the last update.
+
+### 22.1 What's Implemented
+
+| Component | Status | Location | Lines |
+|-----------|--------|----------|-------|
+| Temporal Client | ✅ Connected to Temporal Cloud (ap-northeast-1) | `src/lib/temporal-client.ts` | 77 |
+| Event Dispatcher | ✅ 64 event-to-workflow mappings across 6 queues | `src/lib/event-dispatcher.ts` | 174 |
+| Temporal Event Bridge | ✅ 60 Medusa events subscribed | `src/subscribers/temporal-event-bridge.ts` | 108 |
+| Integration Orchestrator | ✅ Sync engine with fan-out, retry, dashboard | `src/integrations/orchestrator/integration-orchestrator.ts` | 282 |
+| Integration Registry | ✅ 5 adapter registrations with health checks | `src/integrations/orchestrator/integration-registry.ts` | 251 |
+| Sync Tracker | ✅ In-memory state tracking | `src/integrations/orchestrator/sync-tracker.ts` | 176 |
+| ERPNext Service | ✅ Invoice, customer, product, vendor, payment sync | `src/integrations/erpnext/service.ts` | 300 |
+| Fleetbase Service | ✅ Shipment, tracking, driver, estimation, webhooks | `src/integrations/fleetbase/service.ts` | 300 |
+| Walt.id Service | ✅ DID, credentials (KYC/Vendor/Membership), verification | `src/integrations/waltid/service.ts` | 312 |
+| Stripe Gateway | ✅ Connect accounts, payments, refunds, subscriptions | `src/integrations/stripe-gateway/service.ts` | 436 |
+| Activity Contracts | ✅ 18 activity type definitions with I/O interfaces | `src/lib/temporal-activities.ts` | 373 |
+| Integration Specs | ✅ 7,008 lines of API contracts across 5 systems | `src/lib/integrations/*.ts` | 7,008 |
+| Event Outbox | ✅ Outbox pattern for reliable event processing | Event outbox service + data model | — |
+| Cross-System Dispatch | ✅ Temporal-first with outbox fallback | `src/lib/event-dispatcher.ts` | — |
+
+**Total implemented integration code: ~9,797 lines**
+
+### 22.2 What's Not Yet Implemented
+
+| Component | Gap | Impact | Priority |
+|-----------|-----|--------|----------|
+| **Temporal Workers** | No worker process running activities | Workflows dispatched but never executed; all 64 event mappings produce workflow runs that sit unprocessed | **Critical** |
+| **Payload Sync Services** | Activity contracts defined but no standalone service files | Product/tenant content sync between Medusa and Payload CMS doesn't execute | High |
+| **Node Hierarchy Sync Service** | Sync via orchestrator but no dedicated service with type mapping | Node type → ERPNext/Fleetbase/Walt.id mapping not applied | High |
+| **Webhook Handlers** | Adapter `handleWebhook()` implementations just log events | External system events (Fleetbase delivery updates, Stripe payments) not processed into Medusa | High |
+| **Sync Persistence** | SyncTracker uses in-memory `Map<string, ISyncEntry>` | All sync history and state lost on process restart; no audit trail | High |
+| **Circuit Breaker** | Documented in architecture but not coded | No automatic failure protection; cascading failures possible | Medium |
+| **Retry Scheduling** | `retryFailedSyncs()` exists but no cron trigger | Failed syncs accumulate but are never automatically retried | Medium |
+| **Integration Cron Jobs** | `sync.*.scheduled` events mapped but no scheduler emitting them | Scheduled reconciliation, product sync, and retry never trigger | Medium |
+| **Outbox Processing** | `processOutboxEvents()` exists but no periodic trigger | Outbox events persist but are never flushed to Temporal | Medium |
+| **Rate Limiting** | Documented per-system limits but not enforced | No protection against API rate limit exhaustion on external systems | Low |
+| **Idempotency** | Activity contracts define idempotency keys but not enforced | Duplicate workflow dispatches may cause duplicate operations | Low |
+| **Monitoring/Metrics** | Structured logging throughout but no collector | No dashboards, alerts, or SLO tracking | Low |
+
+### 22.3 Environment Variables Required
+
+| Variable | System | Required | Default | Current Status |
+|----------|--------|----------|---------|----------------|
+| `TEMPORAL_API_KEY` | Temporal Cloud | **Yes** | — | ✅ Set (secret) |
+| `TEMPORAL_ENDPOINT` | Temporal Cloud | No | `ap-northeast-1.aws.api.temporal.io:7233` | Uses default |
+| `TEMPORAL_NAMESPACE` | Temporal Cloud | No | `quickstart-dakkah-cityos.djvai` | Uses default |
+| `PAYLOAD_API_URL` | Payload CMS | Yes (for Payload sync) | — | ❌ Not set |
+| `PAYLOAD_API_KEY` | Payload CMS | Yes (for Payload sync) | — | ❌ Not set |
+| `ERPNEXT_API_KEY` | ERPNext | Yes (for ERP sync) | — | ❌ Not set |
+| `ERPNEXT_API_SECRET` | ERPNext | Yes (for ERP sync) | — | ❌ Not set |
+| `ERPNEXT_SITE_URL` | ERPNext | Yes (for ERP sync) | — | ❌ Not set |
+| `FLEETBASE_API_KEY` | Fleetbase | Yes (for logistics) | — | ❌ Not set |
+| `FLEETBASE_API_URL` | Fleetbase | Yes (for logistics) | — | ❌ Not set |
+| `FLEETBASE_ORG_ID` | Fleetbase | Yes (for logistics) | — | ❌ Not set |
+| `WALTID_API_URL` | Walt.id | Yes (for identity) | — | ❌ Not set |
+| `WALTID_API_KEY` | Walt.id | Yes (for identity) | — | ❌ Not set |
+| `WALTID_ISSUER_DID` | Walt.id | Yes (for credential issuance) | — | ❌ Not set |
+| `STRIPE_SECRET_KEY` | Stripe | Yes (for payments) | — | ❌ Not set |
+| `STRIPE_WEBHOOK_SECRET` | Stripe | Yes (for webhooks) | — | ❌ Not set |
+
+### 22.4 Implementation Roadmap
+
+Based on the gap analysis, the recommended implementation order is:
+
+```
+Phase 1 (Critical Path):
+├── Temporal Workers — Implement worker process with activity implementations
+├── Payload Sync Services — Standalone service files for bidirectional sync
+└── Node Hierarchy Sync — Dedicated service with full type mapping
+
+Phase 2 (Integration Completeness):
+├── Webhook Handlers — Process inbound events from all external systems
+├── Sync Persistence — Migrate SyncTracker to PostgreSQL
+├── Outbox Processing — Cron-triggered outbox flushing
+└── Integration Cron Jobs — Scheduler for periodic reconciliation
+
+Phase 3 (Production Readiness):
+├── Circuit Breaker — Per-system failure protection
+├── Rate Limiting — Per-system rate limit enforcement
+├── Idempotency — Deduplication at activity level
+├── Retry Scheduling — Automatic retry of failed syncs
+└── Monitoring/Metrics — Dashboards and alerting
+```
+
+### 22.5 Cross-Reference: Architecture Diagram to Code
+
+```
+Architecture Section          →  Implementation File(s)
+─────────────────────────────────────────────────────────────
+§2  System Roles              →  integration-registry.ts (adapter definitions)
+§3  Model Distribution        →  integrations/*-spec.ts (doctype/collection definitions)
+§4  Temporal Workflows        →  temporal-spec.ts (workflow catalog)
+                              →  event-dispatcher.ts (EVENT_WORKFLOW_MAP)
+                              →  temporal-client.ts (dispatch engine)
+§5  Integration Patterns      →  integration-orchestrator.ts (sync patterns)
+                              →  sync-tracker.ts (state tracking)
+                              →  event-dispatcher.ts (outbox pattern)
+§6  Data Flows                →  temporal-activities.ts (activity I/O contracts)
+§7  Security                  →  waltid/service.ts (DID/VC implementation)
+                              →  stripe-gateway/service.ts (webhook verification)
+                              →  fleetbase/service.ts (HMAC webhook verification)
+§8  Appendix                  →  temporal-activities.ts (ACTIVITY_DEFINITIONS)
+                              →  event-dispatcher.ts (complete event map)
+§9  Implementation Mapping    →  All integration service files
+§16 Service Implementations   →  erpnext/service.ts, fleetbase/service.ts,
+                                 waltid/service.ts, stripe-gateway/service.ts
+§17 Orchestration Layer       →  orchestrator/*.ts (3 files)
+§18 Event Dispatch            →  event-dispatcher.ts, temporal-event-bridge.ts
+§19 Activity Contracts        →  temporal-activities.ts
+§20 Temporal Client           →  temporal-client.ts
+§21 Spec Contracts            →  integrations/*-spec.ts (5 files)
+§22 Status vs Architecture    →  This section (gap analysis)
+```
+
+---
+
+*This document is the single source of truth for cross-system architecture. All teams should reference this when implementing integrations, building new features, or debugging cross-system issues.*
+
+*Last updated: 2026-02-11 | Next review: 2026-03-01*
