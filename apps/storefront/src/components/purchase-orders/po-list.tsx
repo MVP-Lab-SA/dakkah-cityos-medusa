@@ -96,7 +96,7 @@ export function POList({
               <div>
                 <p className="text-xs text-ds-muted-foreground">Total</p>
                 <p className="font-semibold text-ds-foreground">
-                  {formatPrice(po.total, po.currency_code)}
+                  {formatPrice(po.total ?? 0, po.currency_code)}
                 </p>
               </div>
             </div>

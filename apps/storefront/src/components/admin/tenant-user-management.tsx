@@ -82,9 +82,9 @@ export function TenantUserManagement() {
               </p>
               <div className="flex items-center gap-2 mt-1">
                 <RoleBadge role={user.role} />
-                {user.assigned_node_ids.length > 0 && (
+                {(user.assigned_node_ids?.length ?? 0) > 0 && (
                   <span className="text-xs text-muted-foreground">
-                    {user.assigned_node_ids.length} node(s)
+                    {user.assigned_node_ids!.length} node(s)
                   </span>
                 )}
                 {user.last_login_at && (
@@ -95,8 +95,8 @@ export function TenantUserManagement() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span className={`px-2 py-0.5 rounded text-xs ${user.is_active ? "bg-ds-success text-ds-success" : "bg-ds-destructive text-ds-destructive"}`}>
-                {user.is_active ? "Active" : "Inactive"}
+              <span className={`px-2 py-0.5 rounded text-xs ${user.is_active === true ? "bg-ds-success text-ds-success" : "bg-ds-destructive text-ds-destructive"}`}>
+                {user.is_active === true ? "Active" : "Inactive"}
               </span>
               <Button
                 variant="outline"

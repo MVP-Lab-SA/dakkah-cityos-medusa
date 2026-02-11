@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { useState } from "react"
 import { useBlogPosts } from "@/lib/hooks/use-content"
-import { BlogPostCard } from "@/components/content/blog-post-card"
+import { ArticleCard } from "@/components/blog/article-card"
+import { ArticleSidebar } from "@/components/blog/article-sidebar"
+import { CategoryFilter } from "@/components/blog/category-filter"
 import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/blog/")({
@@ -18,7 +20,6 @@ const mockCategories = [
 
 function BlogListingPage() {
   const { tenant, locale } = Route.useParams()
-  const prefix = `/${tenant}/${locale}`
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>()
 
   const { data: posts, isLoading } = useBlogPosts({
@@ -33,8 +34,11 @@ function BlogListingPage() {
       <div className="bg-ds-background border-b border-ds-border">
         <div className="content-container py-8">
           <h1 className="text-3xl font-bold text-ds-foreground">
-            {t(locale, "content.blog")}
+            {t(locale, "blog.title")}
           </h1>
+          <p className="text-ds-muted-foreground mt-1">
+            {t(locale, "blog.description")}
+          </p>
         </div>
       </div>
 
@@ -61,77 +65,36 @@ function BlogListingPage() {
               <>
                 {featuredPost && (
                   <div className="mb-8">
-                    <BlogPostCard post={featuredPost} variant="featured" />
+                    <ArticleCard post={featuredPost} variant="featured" locale={locale} />
                   </div>
                 )}
 
-                <div className="flex flex-wrap gap-2 mb-6">
-                  <button
-                    onClick={() => setSelectedCategory(undefined)}
-                    className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
-                      !selectedCategory
-                        ? "bg-ds-primary text-ds-primary-foreground"
-                        : "bg-ds-background text-ds-muted-foreground border border-ds-border hover:bg-ds-muted"
-                    }`}
-                  >
-                    {t(locale, "blocks.all_categories")}
-                  </button>
-                  {mockCategories.map((cat) => (
-                    <button
-                      key={cat.slug}
-                      onClick={() => setSelectedCategory(cat.slug)}
-                      className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
-                        selectedCategory === cat.slug
-                          ? "bg-ds-primary text-ds-primary-foreground"
-                          : "bg-ds-background text-ds-muted-foreground border border-ds-border hover:bg-ds-muted"
-                      }`}
-                    >
-                      {cat.name}
-                    </button>
-                  ))}
+                <div className="mb-6">
+                  <CategoryFilter
+                    categories={mockCategories}
+                    selectedCategory={selectedCategory}
+                    onSelect={setSelectedCategory}
+                    locale={locale}
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {remainingPosts.map((post) => (
-                    <BlogPostCard key={post.id} post={post} />
+                    <ArticleCard key={post.id} post={post} locale={locale} />
                   ))}
                 </div>
               </>
             )}
           </main>
 
-          <aside className="lg:w-72 flex-shrink-0 space-y-6">
-            <div className="bg-ds-background rounded-lg border border-ds-border p-4">
-              <h3 className="text-sm font-semibold text-ds-foreground mb-3">
-                {t(locale, "nav.categories")}
-              </h3>
-              <div className="space-y-2">
-                {mockCategories.map((cat) => (
-                  <button
-                    key={cat.slug}
-                    onClick={() => setSelectedCategory(cat.slug)}
-                    className="flex items-center justify-between w-full text-start text-sm text-ds-muted-foreground hover:text-ds-foreground transition-colors py-1"
-                  >
-                    <span>{cat.name}</span>
-                    <span className="text-xs bg-ds-muted px-2 py-0.5 rounded-full">{cat.count}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {posts && posts.length > 0 && (
-              <div className="bg-ds-background rounded-lg border border-ds-border p-4">
-                <h3 className="text-sm font-semibold text-ds-foreground mb-3">
-                  {t(locale, "content.related_articles")}
-                </h3>
-                <div className="space-y-4">
-                  {posts.slice(0, 4).map((post) => (
-                    <BlogPostCard key={post.id} post={post} variant="compact" />
-                  ))}
-                </div>
-              </div>
-            )}
-          </aside>
+          <ArticleSidebar
+            categories={mockCategories}
+            popularPosts={posts?.slice(0, 4)}
+            selectedCategory={selectedCategory}
+            onCategorySelect={setSelectedCategory}
+            showNewsletter
+            locale={locale}
+          />
         </div>
       </div>
     </div>

@@ -1,6 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { GiftCardDisplay, GiftCardPurchaseForm } from "@/components/payments/gift-card-display"
+import { GiftCardDesignPicker } from "@/components/gift-cards/gift-card-design-picker"
+import { GiftCardAmountSelector } from "@/components/gift-cards/gift-card-amount-selector"
+import { GiftCardMessageForm } from "@/components/gift-cards/gift-card-message-form"
+import { GiftCardBalance } from "@/components/gift-cards/gift-card-balance"
+import { GiftCardRedeem } from "@/components/gift-cards/gift-card-redeem"
 import { useGiftCards, usePurchaseGiftCard } from "@/lib/hooks/use-payments"
+import { useGiftCardDesigns, useRedeemGiftCard } from "@/lib/hooks/use-gift-cards"
 import { t } from "@/lib/i18n"
 import { useState, useEffect } from "react"
 
@@ -29,34 +35,108 @@ function GiftCardsPage() {
   return <GiftCardsPageClient locale={locale} />
 }
 
+type TabId = "purchase" | "my-cards" | "redeem"
+
 function GiftCardsPageClient({ locale }: { locale: string }) {
   const { data: giftCards, isLoading } = useGiftCards()
+  const { data: designs = [] } = useGiftCardDesigns()
   const purchaseMutation = usePurchaseGiftCard()
+  const redeemMutation = useRedeemGiftCard()
+
+  const [activeTab, setActiveTab] = useState<TabId>("purchase")
+  const [selectedDesignId, setSelectedDesignId] = useState<string>("")
+  const [selectedAmount, setSelectedAmount] = useState<number>(50)
+  const [formData, setFormData] = useState({
+    recipientEmail: "",
+    recipientName: "",
+    senderName: "",
+    message: "",
+    deliveryDate: "",
+  })
+
+  const handleFieldChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const handlePurchase = () => {
+    purchaseMutation.mutate({
+      amount: selectedAmount,
+      recipientEmail: formData.recipientEmail,
+      senderName: formData.senderName || undefined,
+      message: formData.message || undefined,
+    })
+  }
+
+  const tabs: { id: TabId; label: string }[] = [
+    { id: "purchase", label: t(locale, "giftCards.buy_gift_card") },
+    { id: "my-cards", label: t(locale, "giftCards.my_cards") },
+    { id: "redeem", label: t(locale, "giftCards.redeem_title") },
+  ]
 
   return (
     <div className="min-h-screen bg-ds-muted">
       <div className="bg-ds-background border-b border-ds-border">
         <div className="content-container py-8">
-          <h1 className="text-2xl font-bold text-ds-foreground">{t(locale, "payment.gift_cards")}</h1>
-          <p className="mt-1 text-ds-muted-foreground">{t(locale, "payment.gift_cards_description")}</p>
+          <h1 className="text-2xl font-bold text-ds-foreground">{t(locale, "giftCards.title")}</h1>
+          <p className="mt-1 text-ds-muted-foreground">{t(locale, "giftCards.description")}</p>
         </div>
       </div>
 
-      <div className="content-container py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div>
-            <GiftCardPurchaseForm
-              amounts={defaultAmounts}
-              currency="USD"
-              locale={locale}
-              onPurchase={(data) => purchaseMutation.mutate(data)}
+      <div className="content-container py-6">
+        <div className="flex gap-1 mb-6 bg-ds-background border border-ds-border rounded-lg p-1">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-all ${
+                activeTab === tab.id
+                  ? "bg-ds-primary text-ds-primary-foreground"
+                  : "text-ds-muted-foreground hover:text-ds-foreground"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {activeTab === "purchase" && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="space-y-6">
+              {designs.length > 0 && (
+                <GiftCardDesignPicker
+                  designs={designs}
+                  selectedDesignId={selectedDesignId}
+                  onSelect={setSelectedDesignId}
+                  locale={locale}
+                />
+              )}
+
+              <GiftCardAmountSelector
+                presetAmounts={defaultAmounts}
+                selectedAmount={selectedAmount}
+                currencyCode="USD"
+                onAmountChange={setSelectedAmount}
+                locale={locale}
+              />
+            </div>
+
+            <GiftCardMessageForm
+              recipientEmail={formData.recipientEmail}
+              recipientName={formData.recipientName}
+              senderName={formData.senderName}
+              message={formData.message}
+              deliveryDate={formData.deliveryDate}
+              onFieldChange={handleFieldChange}
+              onSubmit={handlePurchase}
               loading={purchaseMutation.isPending}
+              locale={locale}
             />
           </div>
+        )}
 
+        {activeTab === "my-cards" && (
           <div>
-            <h2 className="text-lg font-semibold text-ds-foreground mb-4">{t(locale, "payment.my_gift_cards")}</h2>
-
             {isLoading ? (
               <div className="space-y-4">
                 {[1, 2].map((i) => (
@@ -68,29 +148,43 @@ function GiftCardsPageClient({ locale }: { locale: string }) {
                 <div className="w-12 h-12 rounded-full bg-ds-muted flex items-center justify-center mx-auto mb-4">
                   <span className="text-2xl">🎁</span>
                 </div>
-                <p className="text-ds-muted-foreground">{t(locale, "payment.no_gift_cards")}</p>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">
+                  {t(locale, "giftCards.no_cards_title")}
+                </h3>
+                <p className="text-ds-muted-foreground">
+                  {t(locale, "giftCards.no_cards_description")}
+                </p>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {giftCards.map((card) => (
-                  <GiftCardDisplay
+                  <GiftCardBalance
                     key={card.id}
-                    code={card.code}
                     balance={card.balance}
                     originalAmount={card.originalAmount}
-                    currency={card.currency}
+                    currencyCode={card.currency}
+                    code={card.code}
                     expiresAt={card.expiresAt}
                     status={card.status}
-                    recipientEmail={card.recipientEmail}
-                    senderName={card.senderName}
-                    message={card.message}
                     locale={locale}
                   />
                 ))}
               </div>
             )}
           </div>
-        </div>
+        )}
+
+        {activeTab === "redeem" && (
+          <div className="max-w-md mx-auto">
+            <GiftCardRedeem
+              onRedeem={(code) => redeemMutation.mutate(code)}
+              loading={redeemMutation.isPending}
+              error={redeemMutation.error?.message}
+              success={redeemMutation.isSuccess}
+              locale={locale}
+            />
+          </div>
+        )}
       </div>
     </div>
   )

@@ -70,8 +70,8 @@ function PersonaCard({ persona, highlighted }: { persona: Persona; highlighted?:
       <div className="flex items-center justify-between mb-2">
         <h4 className="font-medium">{persona.name}</h4>
         <div className="flex gap-2">
-          <span className={`text-xs px-2 py-0.5 rounded ${precedenceColors[persona.precedence] || "bg-ds-muted"}`}>
-            {persona.precedence} ({persona.precedence_weight})
+          <span className={`text-xs px-2 py-0.5 rounded ${precedenceColors[persona.precedence ?? ""] || "bg-ds-muted"}`}>
+            {persona.precedence ?? "default"} ({persona.precedence_weight ?? 0})
           </span>
           {!persona.is_active && <span className="text-xs px-2 py-0.5 bg-ds-destructive text-ds-destructive rounded">Inactive</span>}
         </div>

@@ -175,6 +175,18 @@ export function usePOIs(filters?: POIFilters) {
   })
 }
 
+export function usePOI(id: string) {
+  return useQuery({
+    queryKey: [...contentKeys.all, "poi", id],
+    queryFn: async () => {
+      const response = await fetchApi<{ poi: POI }>(`/store/content/pois/${id}`)
+      return response.poi
+    },
+    enabled: !!id,
+    staleTime: 5 * 60 * 1000,
+  })
+}
+
 export function useAnnouncements() {
   return useQuery({
     queryKey: contentKeys.announcements(),

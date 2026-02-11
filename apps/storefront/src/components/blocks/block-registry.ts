@@ -25,6 +25,8 @@ import { PromotionBannerBlock } from "./promotion-banner-block"
 import { ComparisonTableBlock } from "./comparison-table-block"
 import { ContactFormBlock } from "./contact-form-block"
 import { BannerCarouselBlock } from "./banner-carousel-block"
+import { MapBlock } from "./map-block"
+import { ReviewListBlock } from "./review-list-block"
 
 export const BLOCK_REGISTRY: Record<string, React.ComponentType<any>> = {
   hero: HeroBlock,
@@ -52,6 +54,8 @@ export const BLOCK_REGISTRY: Record<string, React.ComponentType<any>> = {
   comparisonTable: ComparisonTableBlock,
   contactForm: ContactFormBlock,
   bannerCarousel: BannerCarouselBlock,
+  map: MapBlock,
+  reviewList: ReviewListBlock,
 }
 
 export function getBlockComponent(blockType: string): React.ComponentType<any> | null {

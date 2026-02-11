@@ -68,7 +68,7 @@ export function PODetail({ purchaseOrder: po }: PODetailProps) {
         {po.approved_by && (
           <div>
             <p className="text-xs text-ds-muted-foreground uppercase tracking-wider">Approved By</p>
-            <p className="text-sm text-ds-foreground mt-1">{po.approved_by_name}</p>
+            <p className="text-sm text-ds-foreground mt-1">{po.approved_by_name ?? "N/A"}</p>
           </div>
         )}
         {po.submitted_at && (
@@ -92,17 +92,17 @@ export function PODetail({ purchaseOrder: po }: PODetailProps) {
           {po.items.map((item) => (
             <div key={item.id} className="flex items-center justify-between py-3 border-b border-ds-border last:border-0">
               <div>
-                <p className="font-medium text-ds-foreground">{item.product_title}</p>
-                {item.variant_title && (
-                  <p className="text-sm text-ds-muted-foreground">{item.variant_title}</p>
+                <p className="font-medium text-ds-foreground">{item.title}</p>
+                {item.description && (
+                  <p className="text-sm text-ds-muted-foreground">{item.description}</p>
                 )}
               </div>
               <div className="text-end">
                 <p className="text-sm text-ds-muted-foreground">
-                  {formatPrice(item.unit_price, po.currency_code)} x {item.quantity}
+                  {formatPrice(item.unit_price ?? 0, po.currency_code)} x {item.quantity}
                 </p>
                 <p className="font-medium text-ds-foreground">
-                  {formatPrice(item.total, po.currency_code)}
+                  {formatPrice(item.total ?? 0, po.currency_code)}
                 </p>
               </div>
             </div>
@@ -115,20 +115,20 @@ export function PODetail({ purchaseOrder: po }: PODetailProps) {
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span className="text-ds-muted-foreground">Subtotal</span>
-            <span className="text-ds-foreground">{formatPrice(po.subtotal, po.currency_code)}</span>
+            <span className="text-ds-foreground">{formatPrice(po.subtotal ?? 0, po.currency_code)}</span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-ds-muted-foreground">Shipping</span>
-            <span className="text-ds-foreground">{formatPrice(po.shipping_total, po.currency_code)}</span>
+            <span className="text-ds-foreground">{formatPrice(po.shipping_total ?? 0, po.currency_code)}</span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-ds-muted-foreground">Tax</span>
-            <span className="text-ds-foreground">{formatPrice(po.tax_total, po.currency_code)}</span>
+            <span className="text-ds-foreground">{formatPrice(po.tax_total ?? 0, po.currency_code)}</span>
           </div>
           <div className="flex justify-between pt-2 border-t border-ds-border">
             <span className="font-semibold text-ds-foreground">Total</span>
             <span className="font-semibold text-ds-foreground">
-              {formatPrice(po.total, po.currency_code)}
+              {formatPrice(po.total ?? 0, po.currency_code)}
             </span>
           </div>
         </div>

@@ -184,6 +184,21 @@ export type {
 } from "./identity/IdentityTypes"
 
 export type {
+  AgeGateProps as AgeGateComponentProps,
+  AgeVerificationFormProps,
+  AgeVerificationStatusProps,
+  DOBVerifierProps,
+} from "./identity/AgeVerificationTypes"
+
+export type {
+  ConsentCategoryInfo,
+  CookieConsentBannerProps,
+  ConsentPreferencesProps as ConsentPreferencesComponentProps,
+  PrivacySettingsProps,
+  ConsentToggleProps,
+} from "./identity/ConsentTypes"
+
+export type {
   ShoppablePostProps,
   TaggedProduct,
   SocialSharePanelProps,
@@ -241,6 +256,60 @@ export type {
   StoreLocation,
   ExpressDeliveryBadgeProps,
 } from "./delivery/DeliveryTypes"
+
+export type {
+  ExpressDeliveryBadgeProps as ExpressDeliveryBadgeComponentProps,
+  ExpressDeliveryBannerProps,
+  DeliverySpeedSelectorProps,
+  DeliverySpeedOption,
+  ExpressDeliveryOptionsProps,
+  PriorityFulfillmentProps,
+} from "./delivery/ExpressDeliveryTypes"
+
+export type {
+  StorePickupSelectorProps as StorePickupSelectorComponentProps,
+  StoreLocationInfo,
+  PickupSchedulerProps,
+  PickupSlot,
+  StoreAvailabilityCardProps,
+  StoreCardProps,
+} from "./delivery/BOPISTypes"
+
+export type {
+  DeliverySlotPickerProps as DeliverySlotPickerComponentProps,
+  DeliveryDate,
+  DeliveryTimeSlot,
+  TimeWindowSelectorProps,
+  TimeWindow,
+  DeliveryCalendarProps,
+  DeliveryScheduleSummaryProps,
+} from "./delivery/DeliverySlotTypes"
+
+export type {
+  OrderTrackingMapProps,
+  TrackingTimelineProps as TrackingTimelineComponentProps,
+  TrackingEventInfo,
+  DeliveryETAProps,
+  DriverInfoCardProps,
+  DriverInfoProps,
+  ETADisplayProps,
+} from "./delivery/TrackingTypes"
+
+export type {
+  ReturnRequestFormProps as ReturnRequestFormComponentProps,
+  ReturnableItemInfo,
+  ReturnRequestData as ReturnRequestDataType,
+  ReturnLabelProps,
+  ReturnAddress,
+  ExchangeSelectorProps as ExchangeSelectorComponentProps,
+  ExchangeOptionInfo,
+  ReturnStatusTrackerProps,
+  ReturnTrackingEvent,
+  ReturnsCenterProps,
+  ReturnSummary,
+  ReturnStatusProps,
+  ReturnReasonSelectorProps,
+} from "./delivery/ReturnsTypes"
 
 export type {
   WalletBalanceProps,
@@ -307,3 +376,145 @@ export type {
   BundleSavingsProps,
   CouponInputProps,
 } from "./campaign/CampaignTypes"
+
+export type {
+  SupplierCardProps,
+  DropshipOrderCardProps,
+  SupplierProductCardProps,
+} from "./commerce/DropshippingTypes"
+
+export type {
+  WhiteLabelProductCardProps,
+  BrandCustomizerProps,
+  LabelDesignPickerProps,
+} from "./commerce/WhiteLabelTypes"
+
+export type {
+  DesignUploaderProps,
+  MockupPreviewProps,
+  PrintAreaSelectorProps,
+  PODProductCardProps,
+} from "./commerce/PrintOnDemandTypes"
+
+export type {
+  ConditionGraderProps,
+  TradeInCalculatorProps,
+  TradeInItemCardProps,
+} from "./commerce/RecommerceTypes"
+
+export type {
+  TBYBProgramCardProps,
+  TrialOrderCardProps,
+  TrialItemSelectorProps,
+} from "./commerce/TBYBTypes"
+
+export type {
+  ConsignmentItemCardProps,
+  ConsignorDashboardProps,
+  ConsignmentSubmitFormProps,
+} from "./commerce/ConsignmentTypes"
+
+export type {
+  BNPLProviderInfo,
+  BNPLSelectorProps as BNPLSelectorComponentProps,
+  BNPLBadgeProps,
+  InstallmentPreviewProps,
+  BNPLProviderCardProps,
+  BNPLEligibilityProps,
+} from "./payment/BNPLTypes"
+
+export type {
+  InstallmentPlanInfo,
+  InstallmentScheduleEntry,
+  InstallmentPlanCardProps,
+  InstallmentScheduleProps,
+  InstallmentCalculatorProps,
+} from "./payment/InstallmentTypes"
+
+export type {
+  StoreCreditTransaction,
+  StoreCreditBalanceProps,
+  StoreCreditHistoryProps,
+  StoreCreditApplyProps,
+} from "./payment/StoreCreditTypes"
+
+export type {
+  EscrowEvent,
+  EscrowStatusCardProps,
+  EscrowTimelineProps,
+  EscrowReleaseFormProps,
+} from "./payment/EscrowTypes"
+
+export type {
+  DisputeInfo,
+  DisputeEvent,
+  DisputeCardProps,
+  DisputeFormComponentProps,
+  RefundTrackerProps,
+  EvidenceUploaderProps,
+  DisputeTimelineProps,
+} from "./payment/DisputeTypes"
+
+export type {
+  GiftCardDesign,
+  GiftCardDesignPickerProps,
+  GiftCardAmountSelectorProps,
+  GiftCardMessageFormProps,
+  GiftCardTransaction,
+  GiftCardBalanceProps,
+  GiftCardRedeemProps,
+} from "./commerce/GiftCardTypes"
+
+export type {
+  LoyaltyTier,
+  LoyaltyActivity,
+  LoyaltyReward,
+  EarnRule,
+  LoyaltyDashboardProps,
+  PointsBalanceProps,
+  TierProgressProps,
+  RewardCardProps,
+  PointsHistoryProps,
+  RedeemRewardFormProps,
+  EarnRulesListProps,
+} from "./commerce/LoyaltyTypes"
+
+export type {
+  ReferralTier,
+  ReferralHistory,
+  ReferralDashboardProps,
+  ReferralCodeCardProps,
+  ReferralStatsProps,
+  ReferralRewardProps,
+  InviteFriendFormProps,
+} from "./commerce/ReferralTypes"
+
+export type {
+  ArticleCardProps,
+  ArticleDetailProps,
+  ArticleSidebarProps,
+  CategoryFilterProps,
+  AuthorCardProps,
+  ArticleShareProps,
+  RelatedArticlesProps,
+  ArticleCommentsProps,
+} from "./content/BlogTypes"
+
+export type {
+  FAQAccordionProps,
+  FAQSearchProps,
+  FAQCategoryCardProps,
+  SupportTicketFormProps,
+  HelpCenterLayoutProps,
+  ContactCardProps,
+} from "./content/FAQTypes"
+
+export type {
+  POICardProps,
+  POIDetailProps,
+  POIMapViewProps,
+  POIFilterBarProps,
+  POIGalleryProps,
+  POIReviewItem,
+  POIReviewsProps,
+} from "./content/POITypes"

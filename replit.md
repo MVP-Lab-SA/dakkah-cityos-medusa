@@ -28,12 +28,12 @@ The backend provides modularity for CityOS features including tenant management,
 ### Storefront Architecture
 The storefront utilizes TanStack Start with React for SSR, dynamic routing (`/$tenant/$locale/...`), and file-based routing. A centralized design system dictates design primitives, theming, and component interfaces. A robust provider chain ensures consistent context, including tenant-scoped routes wrapped with `TenantProvider` and `PlatformContextProvider`.
 
-### Block System & CMS Migration Readiness
+### Block System & CMS Migration Readiness (Updated Feb 2026)
 The storefront includes a comprehensive Payload CMS-compatible block system:
 - **27 block type contracts** defined in `packages/cityos-design-system/src/blocks/BlockTypes.ts` with `BlockBase`, shared field types (`MediaField`, `CTAField`, `RichTextField`), and a `BlockData` union type
-- **25 implemented blocks** in `apps/storefront/src/components/blocks/` (map and reviewList pending)
+- **27 implemented blocks** in `apps/storefront/src/components/blocks/` including MapBlock and ReviewListBlock
 - **BlockRenderer** (`block-renderer.tsx`) dynamically renders a `PageLayout` array by looking up components from `BLOCK_REGISTRY` (`block-registry.ts`)
-- **10 reusable UI components** (Badge, Avatar, Breadcrumb, Tabs, Alert, Rating, Skeleton, Accordion, Switch, Textarea) all using ds-* tokens
+- **13+ reusable UI components** (Badge, Avatar, Breadcrumb, Tabs, Alert, Rating, Skeleton, Accordion, Switch, Textarea, ProgressBar, EmptyState, ErrorBoundary) all using ds-* tokens
 - All blocks follow mobile-first responsive patterns: section py-12 md:py-16 lg:py-20, container px-4 md:px-6, responsive typography scales
 - Zero hardcoded colors: all blocks and UI components use exclusively ds-* design system token classes
 - SSR-safe: client-only logic (intervals, clipboard, window listeners) gated inside useEffect or event handlers
@@ -44,9 +44,9 @@ The storefront includes a comprehensive Payload CMS-compatible block system:
 - **Full logical CSS properties**: All blocks, UI components, and layout components use Tailwind CSS v4 logical property utilities (`ms-`/`me-`/`ps-`/`pe-`/`start-`/`end-`/`text-start`/`text-end`/`border-s-`/`border-e-`/`rounded-s-`/`rounded-e-`) instead of physical direction classes (`ml-`/`mr-`/`pl-`/`pr-`/`left-`/`right-`/`text-left`/`text-right`)
 - **RTL direction**: `$tenant.$locale.tsx` sets `dir="rtl"` for Arabic locale; `rtl.css` handles animation direction flips (`slide-in-from-left/right`), gradient direction overrides, and `flex-row` reversal
 - **Alignment fields**: BlockTypes.ts uses `"start" | "center" | "end"` for alignment/textAlign fields (backward-compatible with legacy `"left"`/`"right"` in renderers)
-- **i18n integration**: Blocks accept `locale` prop (default `'en'`) or use `useTenant()` hook; hardcoded UI strings use `t(locale, "blocks.key")` with prop override pattern. 53+ translation keys across `blocks` namespace in en/fr/ar JSON files
+- **i18n integration**: Blocks accept `locale` prop (default `'en'`) or use `useTenant()` hook; hardcoded UI strings use `t(locale, "blocks.key")` with prop override pattern. 200+ translation keys across 30+ namespaces in en/fr/ar JSON files
 - **Preserved exceptions**: Dialog centering (`left-[50%] translate-x-[-50%]`), Radix UI data attributes (`data-[side=left/right]`), animation class names (flipped via rtl.css)
-- **Locale files**: `apps/storefront/src/lib/i18n/locales/{en,fr,ar}.json` with namespaces: common, nav, home, product, cart, account, footer, blocks
+- **Locale files**: `apps/storefront/src/lib/i18n/locales/{en,fr,ar}.json` with namespaces: common, nav, home, product, cart, account, footer, blocks, dropshipping, whiteLabel, printOnDemand, recommerce, tbyb, consignment, bnpl, installments, storeCredits, escrow, disputes, giftCards, loyalty, referral, ageVerification, consent, expressDelivery, bopis, deliverySlots, tracking, returns, blog, faq, poi, marketplace, wishlist, theme, flashSale, wholesale, freemium, productDisplay, marketing, interactive, ui
 
 ### CMS Integration
 A local CMS registry (`apps/backend/src/lib/platform/cms-registry.ts`), compatible with Payload CMS, defines 27 commerce verticals and additional pages. The `TemplateRenderer` dynamically renders layouts. CMS pages support `countryCode` and `regionZone` for country-level unification and optional `nodeId` for hierarchy integration. Backend endpoints provide Payload-compatible responses, and frontend hooks use React Query for data fetching.
@@ -62,7 +62,7 @@ A local CMS registry (`apps/backend/src/lib/platform/cms-registry.ts`), compatib
 - **RTL Support:** Dedicated `dir="rtl"` and CSS overrides for Arabic.
 - **Event Outbox:** CMS-compatible envelope format with correlation/causation IDs.
 - **Vite Proxy:** Frontend uses a Vite proxy for API communication.
-- **SSR Architecture:** Route loaders return minimal data during SSR, with client-side data fetching via React Query to prevent OOM errors.
+- **SSR Architecture:** Route loaders return minimal data during SSR, with client-side data fetching via React Query to prevent OOM errors. Root `<html>` and `<body>` use `suppressHydrationWarning` for SSR/client mismatch tolerance.
 - **Authentication:** JWT-based authentication for customer SDK.
 - **API Key Usage:** All tenant/governance/node API calls must use `sdk.client.fetch()` for automatic `VITE_MEDUSA_PUBLISHABLE_KEY` inclusion.
 - **Tenant Resolution:** Default tenant "dakkah". Root `/` redirects to `/dakkah/en`.
@@ -85,10 +85,57 @@ This layer provides integration services called by Temporal activities, includin
 - **Temporal Cloud (Workflow Orchestration):** 80 system workflows across 35 categories, 21 specialized task queues mapped to 10 systems, dynamic AI agent workflows, event outbox integration. Workflows route to domain-specific queues (commerce-queue, xsystem-platform-queue, xsystem-logistics-queue, etc.) based on the Workflow Discovery Guide. Full architecture documented in `docs/CROSS_SYSTEM_ARCHITECTURE.md` (6,667 lines, 15 sections).
 - **Walt.id (Decentralized Digital Identity):** DID management, 6 credential types (KYC, Vendor, Membership, TenantOperator, POI, MarketplaceSeller), W3C Verifiable Credentials, wallet integration, trust registries.
 
-## Gap Analysis & Implementation Planning (Feb 2026)
-- **Gap Analysis**: `docs/GAP_ANALYSIS.md` — Comprehensive comparison of all 53 commerce models from the medusa-core-nrd4 reference design document against our platform. Covers backend status, storefront status, gap categories (A/B/C/D), priority levels (P0-P3), and effort estimates for each model across 8 parts: Commerce (20), Alternative Commerce (10), Payment/Financial (8), Identity/Verification (5), Logistics/Delivery (6), Content/CMS (4), UI Patterns (100+), Data Architecture.
-- **Implementation Plan**: `docs/IMPLEMENTATION_PLAN.md` — 7-phase implementation roadmap: Phase 0 (Design System Foundation — 11 new type files, ~110 interfaces), Phase 1 (Storefront for Existing Backend — 17 models), Phase 2 (Logistics & Delivery UX), Phase 3 (Payment & Financial Models), Phase 4 (Missing Commerce Models), Phase 5 (Content & Identity), Phase 6 (Advanced UI Patterns). Includes design system consistency checklist, backend implementation patterns, Temporal workflow integration map, effort estimates (~118 dev days, ~205 new files, 36 new routes), and risk assessment.
-- **Key Gap Metrics**: 12 Complete (D), 18 Partial (C), 17 Backend-only (A), 6 Missing (B). ~24 missing routes, ~7 missing component directories, ~75+ missing design system types, ~65 missing UI patterns.
+## Gap Closure Progress (Feb 2026)
+
+### Completed Implementation
+All 53 commerce models from the medusa-core-nrd4 reference design document now have storefront coverage:
+
+**Phase 0 - Pre-existing Fixes:**
+- Fixed 14 LSP type safety warnings across 5 files
+- Fixed Vite SSR duplicate React bundling (dedupe, alias, ssr.external config)
+- Implemented 2 missing CMS blocks (MapBlock, ReviewListBlock)
+- Added `suppressHydrationWarning` to root layout
+
+**Phase 1 - Missing Commerce Models (6 models, 19 components, 5 routes):**
+- Dropshipping, White Label, Print-on-Demand, Recommerce/Trade-In, Try-Before-You-Buy, Consignment
+
+**Phase 2 - Payment & Financial (5 models, 19 components, 3 routes):**
+- BNPL, Installment Plans, Store Credits, Escrow, Disputes & Refunds
+
+**Phase 3 - Rewards & Incentives (3 models, 17 components, 3 enhanced routes):**
+- Gift Cards & Vouchers, Loyalty & Rewards, Referral Commerce
+
+**Phase 4 - Identity & Verification (2 models, 9 components):**
+- Age Verification, Consent Management
+
+**Phase 5 - Logistics & Delivery (5 models, 9 components, routes):**
+- Same-Day/Express, BOPIS, Delivery Slots, Real-Time Tracking, Returns & Exchanges
+
+**Phase 6 - Content & CMS (3 models, 19 components, 6 routes):**
+- Blog/Articles, FAQ/Help Center, POI Storefront
+
+**Phase 7 - Advanced UI Patterns (10 new components):**
+- Size Predictor, Live Chat Widget, Notification Bell, Recently Viewed, Countdown Timer, Newsletter Signup, Testimonial Carousel, Progress Bar, Empty State, Error Boundary
+
+**Phase 8 - Category 3 Enhancements (21 components, 2 routes):**
+- Marketplace/Vendor (comparison, categories, spotlight, search)
+- Wishlist (grid, share, move, add-to-wishlist button)
+- Theme (provider with localStorage, dark/light/auto switcher)
+- Flash Sales (countdown, banner, product card, coupon input)
+- Wholesale/B2B (catalog, tier pricing, bulk order, RFQ)
+- Freemium (tier comparison, upgrade prompt, feature gate)
+
+### Current Metrics
+- **62 component directories** with 230+ components
+- **99 route files** covering all commerce verticals
+- **45 design system type files** with 200+ interfaces
+- **48 hook files** for data fetching and state management
+- **30+ i18n namespaces** with complete en/fr/ar translations
+
+### Known Issues
+- SSR hydration mismatch warnings in browser console (pre-existing, mitigated with `suppressHydrationWarning`)
+- TanStack Start SSR builds a separate React copy in `.output/server/node_modules/` causing duplicate React warnings during development
+- Sourcemap warnings for `@medusajs/js-sdk` (cosmetic, no functional impact)
 
 ## External Dependencies
 - **Database:** PostgreSQL

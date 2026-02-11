@@ -1,12 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { AccountLayout } from "@/components/account"
-import { LoyaltyDashboard } from "@/components/commerce/loyalty-dashboard"
+import { LoyaltyDashboard as LoyaltyDashboardLegacy } from "@/components/commerce/loyalty-dashboard"
+import { LoyaltyDashboard } from "@/components/loyalty/loyalty-dashboard"
+import { PointsHistory } from "@/components/loyalty/points-history"
 import { useLoyaltyPoints } from "@/lib/hooks/use-commerce-extras"
 import { t, formatNumber, formatDate, type SupportedLocale } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/account/loyalty")({
   component: LoyaltyPage,
 })
+
+const defaultEarnRules = [
+  { id: "purchase", action: "purchase", description: "Earn 1 point per $1 spent", pointsReward: 1, icon: "🛒" },
+  { id: "review", action: "review", description: "Write a product review", pointsReward: 50, icon: "⭐" },
+  { id: "referral", action: "referral", description: "Refer a friend who makes a purchase", pointsReward: 200, icon: "👥" },
+  { id: "birthday", action: "birthday", description: "Birthday bonus points", pointsReward: 100, icon: "🎂" },
+  { id: "signup", action: "signup", description: "Create an account", pointsReward: 50, icon: "🎉" },
+]
 
 function LoyaltyPage() {
   const { locale } = Route.useParams() as { tenant: string; locale: string }
@@ -34,81 +44,20 @@ function LoyaltyPage() {
           </p>
         </div>
       ) : (
-        <div className="space-y-8">
-          <LoyaltyDashboard
-            balance={loyalty.balance}
-            currentTier={loyalty.currentTier}
-            nextTier={loyalty.nextTier}
-            tierProgress={loyalty.tierProgress}
-            pointsToNextTier={loyalty.pointsToNextTier}
-            expiringPoints={loyalty.expiringPoints}
-            expiringDate={loyalty.expiringDate}
-            recentActivity={loyalty.recentActivity}
-            rewards={loyalty.rewards}
-            locale={locale}
-          />
-
-          {loyalty.recentActivity.length > 0 && (
-            <div className="bg-ds-background rounded-lg border border-ds-border overflow-hidden">
-              <div className="px-6 py-4 border-b border-ds-border">
-                <h3 className="font-semibold text-ds-foreground">
-                  {t(locale, "loyalty.points_history")}
-                </h3>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="bg-ds-muted">
-                      <th className="text-start px-6 py-3 font-medium text-ds-muted-foreground">
-                        {t(locale, "loyalty.date")}
-                      </th>
-                      <th className="text-start px-6 py-3 font-medium text-ds-muted-foreground">
-                        {t(locale, "loyalty.description")}
-                      </th>
-                      <th className="text-start px-6 py-3 font-medium text-ds-muted-foreground">
-                        {t(locale, "loyalty.type")}
-                      </th>
-                      <th className="text-end px-6 py-3 font-medium text-ds-muted-foreground">
-                        {t(locale, "loyalty.points")}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {loyalty.recentActivity.map((activity) => (
-                      <tr key={activity.id} className="border-b border-ds-border last:border-b-0">
-                        <td className="px-6 py-3 text-ds-muted-foreground">
-                          {formatDate(activity.date, locale as SupportedLocale)}
-                        </td>
-                        <td className="px-6 py-3 text-ds-foreground">{activity.description}</td>
-                        <td className="px-6 py-3">
-                          <span className={`inline-flex px-2 py-0.5 text-xs font-medium rounded-full ${
-                            activity.type === "earned"
-                              ? "bg-ds-success/10 text-ds-success"
-                              : activity.type === "redeemed"
-                              ? "bg-ds-primary/10 text-ds-primary"
-                              : "bg-ds-destructive/10 text-ds-destructive"
-                          }`}>
-                            {t(locale, `loyalty.type_${activity.type}`)}
-                          </span>
-                        </td>
-                        <td className="px-6 py-3 text-end font-medium">
-                          <span className={
-                            activity.type === "earned"
-                              ? "text-ds-success"
-                              : "text-ds-destructive"
-                          }>
-                            {activity.type === "earned" ? "+" : "-"}
-                            {formatNumber(activity.points, locale as SupportedLocale)}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-        </div>
+        <LoyaltyDashboard
+          balance={loyalty.balance}
+          lifetimeEarned={loyalty.lifetimeEarned}
+          currentTier={loyalty.currentTier}
+          nextTier={loyalty.nextTier}
+          tierProgress={loyalty.tierProgress}
+          pointsToNextTier={loyalty.pointsToNextTier}
+          expiringPoints={loyalty.expiringPoints}
+          expiringDate={loyalty.expiringDate}
+          recentActivity={loyalty.recentActivity}
+          rewards={loyalty.rewards}
+          earnRules={defaultEarnRules}
+          locale={locale}
+        />
       )}
     </AccountLayout>
   )

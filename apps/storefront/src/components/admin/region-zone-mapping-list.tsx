@@ -40,7 +40,7 @@ export function RegionZoneMappingList() {
                 </span>
               </div>
               <div className="text-sm text-muted-foreground flex items-center gap-4">
-                <span>Countries: {mapping.country_codes.join(", ").toUpperCase()}</span>
+                <span>Countries: {(mapping.country_codes ?? []).join(", ").toUpperCase()}</span>
                 <span>Cross-border: {mapping.cross_border_allowed ? "Allowed" : "Restricted"}</span>
               </div>
             </div>

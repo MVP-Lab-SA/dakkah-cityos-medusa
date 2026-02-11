@@ -63,7 +63,7 @@ export default defineConfig(({ mode }) => {
 
     ssr: {
       noExternal: ["@medusajs/js-sdk", "@medusajs/types", "@dakkah-cityos/design-runtime", "@dakkah-cityos/design-tokens", "@dakkah-cityos/design-system"],
-      external: ["react", "react-dom"],
+      external: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime"],
       optimizeDeps: {
         noDiscovery: true,
         include: [],
@@ -90,6 +90,8 @@ export default defineConfig(({ mode }) => {
       alias: {
         react: path.resolve(path.dirname(new URL(import.meta.url).pathname), "node_modules/react"),
         "react-dom": path.resolve(path.dirname(new URL(import.meta.url).pathname), "node_modules/react-dom"),
+        "react/jsx-runtime": path.resolve(path.dirname(new URL(import.meta.url).pathname), "node_modules/react/jsx-runtime"),
+        "react/jsx-dev-runtime": path.resolve(path.dirname(new URL(import.meta.url).pathname), "node_modules/react/jsx-dev-runtime"),
       },
     },
   };

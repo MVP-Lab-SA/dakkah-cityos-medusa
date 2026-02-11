@@ -1,0 +1,67 @@
+Gap Analysis: Dakkah CityOS vs medusa-core-nrd4
+Category 1: Backend Modules Exist — But Missing Storefront Routes/Components
+These are models where we already have backend logic but no corresponding customer-facing pages or UI:
+
+Backend Module	Missing Storefront	Priority
+auction	Auction listing, bidding, bid history routes	High
+booking	Service booking calendar, provider selection	High
+digital-product	Download library, license keys, delivery	High
+event-ticketing	Event browsing, ticket selection, seat maps	High
+crowdfunding	Campaign pages, pre-order flows, progress bars	Medium
+membership	Membership tiers, signup, member dashboard	High
+rental	Rental catalog, date selection, return flows	Medium
+social-commerce	Social feeds, shared collections, live commerce	Medium
+affiliate / advertising	Affiliate dashboard, referral links, campaign pages	Low
+promotion-ext / volume-pricing	Flash sale pages, bundle builder, bulk pricing UI	Medium
+payout / commission	Vendor payout dashboard, commission reports	Medium
+All vertical modules (automotive, grocery, healthcare, etc.)	Vertical-specific storefronts	Low
+Category 2: Completely Missing — Neither Backend Nor Storefront
+These models from the design document don't exist at all in our platform:
+
+Commerce Models (High Impact):
+
+Dropshipping — supplier routing, blind shipping, auto-forwarding
+White Label / Private Label — brand customization, label management
+Print-on-Demand — design upload, mockup preview, production routing
+Recommerce / Trade-In — item condition grading, trade-in value calculator
+Try-Before-You-Buy (TBYB) — trial periods, auto-charge after trial
+Consignment — consignor portal, sales tracking, settlement
+Gift Cards & Vouchers — gift card purchase, redemption, balance check
+Referral Commerce — referral codes, reward tracking, viral loops
+Loyalty & Rewards — points earning/redemption, tier progression
+Payment & Financial (High Impact):
+
+Digital Wallet — balance top-up, P2P transfers, transaction history
+Buy Now Pay Later (BNPL) — eligibility check, installment selection
+Installment Plans — payment schedule, auto-debit setup
+Store Credits — credit issuance, balance management
+Escrow Payments — hold/release flows, dispute resolution
+Disputes & Refunds — dispute filing, evidence upload, resolution
+Identity & Verification:
+
+Age Verification — document upload, verification status
+Consent Management — cookie consent, data processing preferences
+Logistics & Delivery (High Impact):
+
+Same-Day / Express Delivery — priority fulfillment, time guarantees
+Store Pickup (BOPIS) — store selection, pickup scheduling
+Delivery Slots & Scheduling — time window selection, scheduling UI
+Real-Time Tracking — live map, driver location, ETA updates
+Returns & Exchanges — return request, label generation, exchange flow
+Content & CMS:
+
+Blog & Articles — article listing, reading view, comments
+FAQ & Help Center — searchable FAQ, support tickets
+POI storefront routes — POI browsing, map view, detail pages
+Category 3: Both Have — But They're More Comprehensive
+Area	What We Have	What They Add
+Marketplace/Vendors	Basic vendor module + components	Full vendor storefront, vendor comparison, marketplace categories
+B2B	B2B routes + quotes + purchase orders	Campaigns, bulk ordering, company hierarchy UX
+Payments	Stripe integration, invoice module	Multi-payment method selector, BNPL, wallet, installments
+Navigation	Navbar, footer, locale switcher	Mega menus, sidebars, breadcrumbs, mobile navigation drawer
+Promotions	promotion-ext module	Flash sales countdown, campaign pages, coupon UI
+Wishlist	No dedicated component	Full wishlist management, sharing, notifications
+Theme	Design tokens, runtime	Theme switcher UI, dark mode toggle, preset themes
+Content	CMS blocks, block renderer	Blog, FAQ, POI, announcements, explore pages
+Delivery	Basic shipping	Delivery slots, driver tracking, BOPIS
+Product Discovery	Product listing, search	Compare products, explore/browse, categories page
