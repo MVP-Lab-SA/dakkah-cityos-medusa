@@ -23,33 +23,16 @@ The project uses a Turborepo monorepo with:
 - `packages/cityos-design-system/`: Component type system.
 
 ### Backend Features
-The backend provides modularity for CityOS features including tenant management, a 5-level node hierarchy (CITY→DISTRICT→ZONE→FACILITY→ASSET), policy inheritance-based governance, a persona system, a CMS-compatible event outbox, and i18n. It supports multi-vendor marketplaces, subscriptions, B2B, bookings, promotions, and specialized services. API routes handle tenant, node, persona, and governance resolution. Vendors are implemented as full tenants with `scope_tier` and `tenant_type` differentiation, linked via `TenantRelationship`. Key models include `TenantPOI`, `ServiceChannel`, and `MarketplaceListing`.
+The backend provides modularity for CityOS features including tenant management, a 5-level node hierarchy (CITY→DISTRICT→ZONE→FACILITY→ASSET), policy inheritance-based governance, a persona system, a CMS-compatible event outbox, and i18n. It supports multi-vendor marketplaces, subscriptions, B2B, bookings, promotions, and specialized services. API routes handle tenant, node, persona, and governance resolution.
 
 ### Storefront Architecture
-The storefront utilizes TanStack Start with React for SSR, dynamic routing (`/$tenant/$locale/...`), and file-based routing. A centralized design system dictates design primitives, theming, and component interfaces. A robust provider chain ensures consistent context, including tenant-scoped routes wrapped with `TenantProvider` and `PlatformContextProvider`.
+The storefront utilizes TanStack Start with React for SSR, dynamic routing (`/$tenant/$locale/...`), and file-based routing. A centralized design system dictates design primitives, theming, and component interfaces. A robust provider chain ensures consistent context, including tenant-scoped routes wrapped with `TenantProvider` and `PlatformContextProvider`. It includes a comprehensive Payload CMS-compatible block system with 27 block type contracts and implementations, a `BlockRenderer`, and 13+ reusable UI components. All UI uses design tokens and follows mobile-first responsive patterns.
 
-### Block System & CMS Migration Readiness (Updated Feb 2026)
-The storefront includes a comprehensive Payload CMS-compatible block system:
-- **27 block type contracts** defined in `packages/cityos-design-system/src/blocks/BlockTypes.ts` with `BlockBase`, shared field types (`MediaField`, `CTAField`, `RichTextField`), and a `BlockData` union type
-- **27 implemented blocks** in `apps/storefront/src/components/blocks/` including MapBlock and ReviewListBlock
-- **BlockRenderer** (`block-renderer.tsx`) dynamically renders a `PageLayout` array by looking up components from `BLOCK_REGISTRY` (`block-registry.ts`)
-- **13+ reusable UI components** (Badge, Avatar, Breadcrumb, Tabs, Alert, Rating, Skeleton, Accordion, Switch, Textarea, ProgressBar, EmptyState, ErrorBoundary) all using ds-* tokens
-- All blocks follow mobile-first responsive patterns: section py-12 md:py-16 lg:py-20, container px-4 md:px-6, responsive typography scales
-- Zero hardcoded colors: all blocks and UI components use exclusively ds-* design system token classes
-- SSR-safe: client-only logic (intervals, clipboard, window listeners) gated inside useEffect or event handlers
-- Design tokens expanded with motion/transition tokens (duration, easing), elevation tokens (6 levels), container tokens, and responsive spacing utilities in `packages/cityos-design-tokens/src/`
-- Commerce types (`ProductCard`, `PriceDisplay`, `Rating`, `CartItem`, `VendorCard`) and feedback types (`Modal`, `Alert`, `Toast`, `Notification`) defined in design-system package
-
-### RTL/LTR & i18n Architecture (Updated Feb 2026)
-- **Full logical CSS properties**: All blocks, UI components, and layout components use Tailwind CSS v4 logical property utilities (`ms-`/`me-`/`ps-`/`pe-`/`start-`/`end-`/`text-start`/`text-end`/`border-s-`/`border-e-`/`rounded-s-`/`rounded-e-`) instead of physical direction classes (`ml-`/`mr-`/`pl-`/`pr-`/`left-`/`right-`/`text-left`/`text-right`)
-- **RTL direction**: `$tenant.$locale.tsx` sets `dir="rtl"` for Arabic locale; `rtl.css` handles animation direction flips (`slide-in-from-left/right`), gradient direction overrides, and `flex-row` reversal
-- **Alignment fields**: BlockTypes.ts uses `"start" | "center" | "end"` for alignment/textAlign fields (backward-compatible with legacy `"left"`/`"right"` in renderers)
-- **i18n integration**: Blocks accept `locale` prop (default `'en'`) or use `useTenant()` hook; hardcoded UI strings use `t(locale, "blocks.key")` with prop override pattern. 200+ translation keys across 30+ namespaces in en/fr/ar JSON files
-- **Preserved exceptions**: Dialog centering (`left-[50%] translate-x-[-50%]`), Radix UI data attributes (`data-[side=left/right]`), animation class names (flipped via rtl.css)
-- **Locale files**: `apps/storefront/src/lib/i18n/locales/{en,fr,ar}.json` with namespaces: common, nav, home, product, cart, account, footer, blocks, dropshipping, whiteLabel, printOnDemand, recommerce, tbyb, consignment, bnpl, installments, storeCredits, escrow, disputes, giftCards, loyalty, referral, ageVerification, consent, expressDelivery, bopis, deliverySlots, tracking, returns, blog, faq, poi, marketplace, wishlist, theme, flashSale, wholesale, freemium, productDisplay, marketing, interactive, ui
+### Internationalization and Localization
+The system supports full logical CSS properties for RTL/LTR, with `dir="rtl"` for Arabic locales and `rtl.css` for animation direction flips. Alignment fields use `"start" | "center" | "end"`. i18n integration uses a `locale` prop and `t(locale, "blocks.key")` for translations across 30+ namespaces in en/fr/ar JSON files.
 
 ### CMS Integration
-A local CMS registry (`apps/backend/src/lib/platform/cms-registry.ts`), compatible with Payload CMS, defines 27 commerce verticals and additional pages. The `TemplateRenderer` dynamically renders layouts. CMS pages support `countryCode` and `regionZone` for country-level unification and optional `nodeId` for hierarchy integration. Backend endpoints provide Payload-compatible responses, and frontend hooks use React Query for data fetching.
+A local CMS registry (`apps/backend/src/lib/platform/cms-registry.ts`), compatible with Payload CMS, defines 27 commerce verticals and additional pages. CMS pages support `countryCode` and `regionZone` for country-level unification and optional `nodeId` for hierarchy integration. Backend endpoints provide Payload-compatible responses, and frontend hooks use React Query for data fetching.
 
 ### Key Design Decisions
 - **Multi-tenant Isolation:** `tenantId` is used across all entities with node-scoped access.
@@ -62,88 +45,70 @@ A local CMS registry (`apps/backend/src/lib/platform/cms-registry.ts`), compatib
 - **RTL Support:** Dedicated `dir="rtl"` and CSS overrides for Arabic.
 - **Event Outbox:** CMS-compatible envelope format with correlation/causation IDs.
 - **Vite Proxy:** Frontend uses a Vite proxy for API communication.
-- **SSR Architecture:** Route loaders return minimal data during SSR, with client-side data fetching via React Query to prevent OOM errors. Root `<html>` and `<body>` use `suppressHydrationWarning` for SSR/client mismatch tolerance.
+- **SSR Architecture:** Route loaders return minimal data during SSR, with client-side data fetching via React Query.
 - **Authentication:** JWT-based authentication for customer SDK.
 - **API Key Usage:** All tenant/governance/node API calls must use `sdk.client.fetch()` for automatic `VITE_MEDUSA_PUBLISHABLE_KEY` inclusion.
 - **Tenant Resolution:** Default tenant "dakkah". Root `/` redirects to `/dakkah/en`.
 - **Route Consolidation:** CMS-eligible routes are consolidated into catch-all routes.
-
-### Platform Context API
-The backend exposes a unified Platform Context API at `/platform/*` (no authentication required) for context resolution, including `tenant`, `nodeHierarchy`, `governanceChain`, `capabilities`, and `systems`.
+- **Platform Context API:** Exposed at `/platform/*` (no authentication required) for `tenant`, `nodeHierarchy`, `governanceChain`, `capabilities`, and `systems`.
 
 ### Temporal-First Integration Architecture
-All cross-system integration calls flow through Temporal Cloud workflows. Direct API calls to ERPNext, Payload, Fleetbase, or Walt.id are avoided; all calls occur within Temporal workflow activities for durable execution, retries, saga/compensation patterns, and observability. The architecture includes an event dispatcher mapping events to Temporal workflows and dynamic AI agent workflows.
+All cross-system integration calls flow through Temporal Cloud workflows for durable execution, retries, saga/compensation patterns, and observability, avoiding direct API calls to external systems. This includes an event dispatcher and dynamic AI agent workflows.
 
 ### Cross-System Integration Layer
-This layer provides integration services called by Temporal activities, including wrappers for ERPNext, Payload CMS, Fleetbase, and Walt.id. It also manages sync tracking, an external system registry, retry states, and webhook receivers.
+This layer provides integration services called by Temporal activities, including wrappers for ERPNext, Payload CMS, Fleetbase, and Walt.id, managing sync tracking, an external system registry, retry states, and webhook receivers.
 
 ### System Responsibility Split
 - **Medusa (Commerce Engine):** Products, orders, payments, commissions, marketplace listings, vendor registration, KYC, payouts, tenant/marketplace/service channel management.
 - **Payload CMS (Entity & Content Management):** Tenant profiles, POI content, vendor public profiles, pages, navigation, service channel display content.
 - **Fleetbase (Geo & Logistics):** Geocoding, address validation, delivery zone management, service area coverage, fleet management, routing, real-time tracking.
-- **ERPNext (Finance, Accounting & ERP):** Sales invoices, payment entries, GL, inventory, procurement, customer/product sync, reporting. Multi-tenant support with each tenant mapping to an ERPNext company.
-- **Temporal Cloud (Workflow Orchestration):** 80 system workflows across 35 categories, 21 specialized task queues mapped to 10 systems, dynamic AI agent workflows, event outbox integration. Workflows route to domain-specific queues (commerce-queue, xsystem-platform-queue, xsystem-logistics-queue, etc.) based on the Workflow Discovery Guide. Full architecture documented in `docs/CROSS_SYSTEM_ARCHITECTURE.md` (6,667 lines, 15 sections).
-- **Walt.id (Decentralized Digital Identity):** DID management, 6 credential types (KYC, Vendor, Membership, TenantOperator, POI, MarketplaceSeller), W3C Verifiable Credentials, wallet integration, trust registries.
+- **ERPNext (Finance, Accounting & ERP):** Sales invoices, payment entries, GL, inventory, procurement, customer/product sync, reporting. Multi-tenant support.
+- **Temporal Cloud (Workflow Orchestration):** 80 system workflows across 35 categories, 21 specialized task queues, dynamic AI agent workflows, event outbox integration.
+- **Walt.id (Decentralized Digital Identity):** DID management, 6 credential types, W3C Verifiable Credentials, wallet integration, trust registries.
 
-## Gap Closure Progress (Feb 2026)
+## Test Accounts & Credentials
 
-### Completed Implementation
-All 53 commerce models from the medusa-core-nrd4 reference design document now have storefront coverage:
+### Admin Panel (`/commerce/admin`)
+| Role | Email | Password |
+|------|-------|----------|
+| Super Admin | admin@dakkah.com | admin123456 |
 
-**Phase 0 - Pre-existing Fixes:**
-- Fixed 14 LSP type safety warnings across 5 files
-- Fixed Vite SSR duplicate React bundling (dedupe, alias, ssr.external config)
-- Implemented 2 missing CMS blocks (MapBlock, ReviewListBlock)
-- Added `suppressHydrationWarning` to root layout
+### Storefront Customer Accounts (`/dakkah/en/login`)
+| Role | Email | Password | RBAC Role | Weight |
+|------|-------|----------|-----------|--------|
+| Tenant Owner | owner@dakkah.com | owner123456 | super-admin | 100 |
+| Store Manager | manager@dakkah.com | manager123456 | zone-manager | 70 |
+| Customer | mohammed@example.com | (seeded) | none | 0 |
+| Customer | fatima@example.com | (seeded) | none | 0 |
+| Customer | ahmed@example.com | (seeded) | none | 0 |
 
-**Phase 1 - Missing Commerce Models (6 models, 19 components, 5 routes):**
-- Dropshipping, White Label, Print-on-Demand, Recommerce/Trade-In, Try-Before-You-Buy, Consignment
+### RBAC Role Weights (manage access requires >= 40)
+super-admin: 100, city-manager: 90, district-manager: 80, zone-manager: 70, facility-manager: 60, asset-manager: 50, vendor-admin: 40, content-editor: 30, analyst: 20, viewer: 10
 
-**Phase 2 - Payment & Financial (5 models, 19 components, 3 routes):**
-- BNPL, Installment Plans, Store Credits, Escrow, Disputes & Refunds
+### Auth Notes
+- Admin users (`user` table) and customers (`customer` table) are separate auth systems
+- Customer RBAC role stored in `customer.metadata.role`
+- Management panel at `/$tenant/$locale/manage` requires weight >= 40
+- UserMenu shows "Store Dashboard" link for users with management access
 
-**Phase 3 - Rewards & Incentives (3 models, 17 components, 3 enhanced routes):**
-- Gift Cards & Vouchers, Loyalty & Rewards, Referral Commerce
+### Tenant
+Dakkah (slug: `dakkah`, id: `01KGZ2JRYX607FWMMYQNQRKVWS`, status: active)
 
-**Phase 4 - Identity & Verification (2 models, 9 components):**
-- Age Verification, Consent Management
+## Route Map
 
-**Phase 5 - Logistics & Delivery (5 models, 9 components, routes):**
-- Same-Day/Express, BOPIS, Delivery Slots, Real-Time Tracking, Returns & Exchanges
-
-**Phase 6 - Content & CMS (3 models, 19 components, 6 routes):**
-- Blog/Articles, FAQ/Help Center, POI Storefront
-
-**Phase 7 - Advanced UI Patterns (10 new components):**
-- Size Predictor, Live Chat Widget, Notification Bell, Recently Viewed, Countdown Timer, Newsletter Signup, Testimonial Carousel, Progress Bar, Empty State, Error Boundary
-
-**Phase 8 - Category 3 Enhancements (21 components, 2 routes):**
-- Marketplace/Vendor (comparison, categories, spotlight, search)
-- Wishlist (grid, share, move, add-to-wishlist button)
-- Theme (provider with localStorage, dark/light/auto switcher)
-- Flash Sales (countdown, banner, product card, coupon input)
-- Wholesale/B2B (catalog, tier pricing, bulk order, RFQ)
-- Freemium (tier comparison, upgrade prompt, feature gate)
-
-**Phase 9 - Tenant Management Panel (11 components, 6 routes):**
-- Management dashboard at `/$tenant/$locale/manage` with RBAC-gated access (weight >= 40)
-- Role guard resolves RBAC role from Platform Context API (`/platform/{tenantSlug}/context`) with fallback to `customer.metadata.role`
-- 6 management sections: Dashboard, Products, Orders, Team, Settings, Analytics
-- 11 components: RoleGuard, ManageLayout, ManageSidebar, ManageHeader, StatsCard, ManageProductList, ManageOrderList, ManageTeamList, ManageSettingsForm, ManageAnalytics, ManageActivityFeed
-- i18n: `manage` namespace with 90+ keys in en/fr/ar
-- Medusa admin path changed to `/commerce/admin` for system consistency
-
-### Current Metrics
-- **63 component directories** with 240+ components
-- **105 route files** covering all commerce verticals + management
-- **45 design system type files** with 200+ interfaces
-- **48 hook files** for data fetching and state management
-- **31+ i18n namespaces** with complete en/fr/ar translations
-
-### Known Issues
-- SSR hydration mismatch warnings in browser console (pre-existing, mitigated with `suppressHydrationWarning`)
-- TanStack Start SSR builds a separate React copy in `.output/server/node_modules/` causing duplicate React warnings during development
-- Sourcemap warnings for `@medusajs/js-sdk` (cosmetic, no functional impact)
+### Public: `/`, `/$t/$l`, `/$t/$l/login`, `/$t/$l/register`, `/$t/$l/reset-password`, `/$t/$l/products/$handle`, `/$t/$l/$slug` (CMS catch-all)
+### Shop: `/$t/$l/cart`, `/$t/$l/checkout`, `/$t/$l/order/$id/confirmed`, `/$t/$l/compare`, `/$t/$l/wishlist`, `/$t/$l/flash-sales`, `/$t/$l/gift-cards`, `/$t/$l/bundles`
+### Bookings: `/$t/$l/bookings`, `/$t/$l/bookings/$serviceHandle`, `/$t/$l/bookings/confirmation`
+### Verticals: `/$t/$l/auctions`, `/$t/$l/digital`, `/$t/$l/events`, `/$t/$l/memberships`, `/$t/$l/rentals`, `/$t/$l/subscriptions`, `/$t/$l/campaigns`, `/$t/$l/quotes` (each with `/$id` detail)
+### Alt Commerce: `/$t/$l/dropshipping`, `/$t/$l/white-label`, `/$t/$l/print-on-demand`, `/$t/$l/trade-in`, `/$t/$l/try-before-you-buy`, `/$t/$l/consignment`, `/$t/$l/store-pickup`, `/$t/$l/returns`, `/$t/$l/track`
+### Marketplace: `/$t/$l/vendors`, `/$t/$l/vendors/$handle`, `/$t/$l/vendor/register`
+### Content: `/$t/$l/blog`, `/$t/$l/blog/$slug`, `/$t/$l/help`, `/$t/$l/help/$slug`, `/$t/$l/places`, `/$t/$l/places/$id`
+### Identity: `/$t/$l/verify/age`
+### Account (auth required): `/$t/$l/account` (profile, settings, addresses, orders, bookings, subscriptions, purchase-orders, disputes, downloads, installments, loyalty, referrals, store-credits, wallet, wishlist, verification, consents)
+### B2B: `/$t/$l/b2b/register`, `/$t/$l/b2b/dashboard`, `/$t/$l/business/approvals`, `/$t/$l/business/catalog`, `/$t/$l/business/orders`, `/$t/$l/business/team`
+### Vendor Dashboard: `/$t/$l/vendor` (products, orders, commissions, payouts)
+### Tenant Manage (RBAC >= 40): `/$t/$l/manage` (products, orders, team, analytics, settings)
+### System: `/commerce/admin` (Medusa admin), `/health`
 
 ## External Dependencies
 - **Database:** PostgreSQL

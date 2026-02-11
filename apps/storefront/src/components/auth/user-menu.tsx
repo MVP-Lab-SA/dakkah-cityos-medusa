@@ -2,6 +2,7 @@ import { useState } from "react"
 import { useAuth } from "@/lib/context/auth-context"
 import { Link } from "@tanstack/react-router"
 import { useTenantPrefix } from "@/lib/context/tenant-context"
+import { useManageRole } from "@/components/manage/role-guard"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,8 +23,17 @@ import {
   CogSixTooth,
 } from "@medusajs/icons"
 
+function formatRoleName(role: string | null): string {
+  if (!role) return ""
+  return role
+    .split("-")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ")
+}
+
 export function UserMenu() {
   const { customer, isAuthenticated, isB2B, logout, isLoading } = useAuth()
+  const { role, hasAccess } = useManageRole()
   const [authModalOpen, setAuthModalOpen] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const prefix = useTenantPrefix()
@@ -83,6 +93,9 @@ export function UserMenu() {
               {customer?.first_name} {customer?.last_name}
             </p>
             <p className="text-xs text-ds-muted-foreground truncate">{customer?.email}</p>
+            {hasAccess && role && (
+              <p className="text-xs text-ds-primary font-medium">{formatRoleName(role)}</p>
+            )}
             {isB2B && customer?.company && (
               <p className="text-xs text-ds-info font-medium">{customer.company.name}</p>
             )}
@@ -126,6 +139,19 @@ export function UserMenu() {
               <Link to={`${prefix}/business` as any} className="cursor-pointer">
                 <BuildingStorefront className="me-2 h-4 w-4" />
                 Company Dashboard
+              </Link>
+            </DropdownMenuItem>
+          </>
+        )}
+
+        {hasAccess && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel className="text-xs text-ds-muted-foreground">Management</DropdownMenuLabel>
+            <DropdownMenuItem asChild>
+              <Link to={`${prefix}/manage` as any} className="cursor-pointer">
+                <BuildingStorefront className="me-2 h-4 w-4" />
+                Store Dashboard
               </Link>
             </DropdownMenuItem>
           </>
