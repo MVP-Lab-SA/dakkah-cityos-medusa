@@ -49,14 +49,14 @@ export default defineConfig(({ mode }) => {
           target: "http://localhost:9000",
           changeOrigin: true,
         },
-        "/auth": {
-          target: "http://localhost:9000",
-          changeOrigin: true,
-        },
-        "/app": {
+        "/dashboard": {
           target: "http://localhost:9000",
           changeOrigin: true,
           ws: true,
+        },
+        "/auth": {
+          target: "http://localhost:9000",
+          changeOrigin: true,
         },
       },
     },

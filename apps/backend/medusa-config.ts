@@ -7,6 +7,7 @@ const iconsPath = path.resolve(__dirname, "node_modules/@medusajs/icons/dist/esm
 
 module.exports = defineConfig({
   admin: {
+    path: "/dashboard",
     vite: () => {
       let hmrServer;
       if (process.env.HMR_BIND_HOST) {
