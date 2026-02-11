@@ -6,6 +6,7 @@ import { RBAC_ROLE_WEIGHTS, type RbacRole } from "@/lib/types/tenant-admin"
 import { Link } from "@tanstack/react-router"
 import { sdk } from "@/lib/utils/sdk"
 import { useQuery } from "@tanstack/react-query"
+import { LoginForm } from "@/components/auth/login-form"
 
 const MIN_MANAGE_WEIGHT = 40
 
@@ -55,21 +56,32 @@ function LoadingState({ locale }: { locale: string }) {
 
 function LoginRequired({ locale, tenantSlug }: { locale: string; tenantSlug: string }) {
   return (
-    <div className="min-h-screen bg-ds-background flex items-center justify-center">
-      <div className="bg-ds-card border border-ds-border rounded-lg p-8 max-w-md w-full mx-4 text-center space-y-4">
-        <div className="w-16 h-16 bg-ds-warning/10 rounded-full flex items-center justify-center mx-auto">
-          <svg className="w-8 h-8 text-ds-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m0 0v2m0-2h2m-2 0H10m5-7V7a5 5 0 00-10 0v4a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2z" />
-          </svg>
+    <div className="min-h-screen bg-[#f8f9fa] flex items-center justify-center px-4">
+      <div className="w-full max-w-md">
+        <div className="bg-white border border-ds-border rounded-lg p-8 space-y-6">
+          {/* Header */}
+          <div className="space-y-2 text-center">
+            <h1 className="text-2xl font-bold text-ds-text">
+              {t(locale, "manage.log_in")}
+            </h1>
+            <p className="text-sm text-ds-muted">
+              {t(locale, "manage.log_in_subtitle")}
+            </p>
+          </div>
+
+          {/* Login Form */}
+          <LoginForm />
+
+          {/* Back to Store Link */}
+          <div className="text-center pt-4 border-t border-ds-border">
+            <Link
+              to={`/${tenantSlug}/${locale}` as any}
+              className="text-sm text-ds-muted-foreground hover:text-ds-foreground transition-colors"
+            >
+              {t(locale, "manage.back_to_store")}
+            </Link>
+          </div>
         </div>
-        <h2 className="text-xl font-bold text-ds-text">{t(locale, "manage.access_denied")}</h2>
-        <p className="text-ds-muted text-sm">{t(locale, "manage.login_required")}</p>
-        <Link
-          to={`/${tenantSlug}/${locale}` as any}
-          className="inline-block px-6 py-2 bg-ds-primary text-ds-primary-foreground rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
-        >
-          {t(locale, "manage.back_to_store")}
-        </Link>
       </div>
     </div>
   )

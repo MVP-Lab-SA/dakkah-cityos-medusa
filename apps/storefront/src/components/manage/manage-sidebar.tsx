@@ -36,6 +36,7 @@ import {
   RocketLaunch,
   Bookmarks,
   ChevronDownMini,
+  MagnifyingGlass,
 } from "@medusajs/icons"
 import {
   type ModuleDefinition,
@@ -126,12 +127,12 @@ function SidebarSection({
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex items-center justify-between px-2 py-1 text-xs font-normal text-ds-muted hover:text-ds-text transition-colors"
+        className="flex items-center justify-between px-2 py-1.5 text-[11px] font-medium uppercase tracking-wider text-gray-400 hover:text-gray-500 transition-colors"
       >
         <span>{t(locale, `manage.${section}`)}</span>
         <ChevronDownMini
           className={clsx(
-            "w-3 h-3 transition-transform duration-150",
+            "w-3 h-3 text-gray-300 transition-transform duration-150",
             open ? "rotate-0" : "-rotate-90"
           )}
         />
@@ -174,17 +175,22 @@ function SidebarItem({
       to={`${baseHref}${mod.path}` as any}
       onClick={onNavigate}
       className={clsx(
-        "flex items-center gap-2 px-2 py-1.5 rounded text-sm font-normal transition-colors relative group",
+        "flex items-center gap-2.5 px-2 py-1.5 rounded-md text-[13px] transition-all duration-150 relative group",
         active
-          ? "text-ds-primary font-medium"
-          : "text-ds-muted hover:text-ds-text hover:bg-ds-background"
+          ? "text-gray-900 font-medium bg-gray-50"
+          : "text-gray-500 font-normal hover:text-gray-700 hover:bg-gray-50"
       )}
     >
       {active && (
-        <div className="absolute inset-y-0 start-0 w-1 bg-ds-primary rounded-e" />
+        <div className="absolute inset-y-1 start-0 w-0.5 bg-violet-600 rounded-e" />
       )}
-      <IconComponent className="w-4 h-4 flex-shrink-0 ms-1" />
-      {t(locale, `manage.${mod.key.replace(/-/g, "_")}`)}
+      <IconComponent
+        className={clsx(
+          "w-4 h-4 flex-shrink-0",
+          active ? "text-violet-600" : "text-gray-400"
+        )}
+      />
+      <span className="truncate">{t(locale, `manage.${mod.key.replace(/-/g, "_")}`)}</span>
     </Link>
   )
 }
@@ -208,7 +214,19 @@ export function ManageSidebar({ locale: localeProp, onNavigate }: ManageSidebarP
   }
 
   return (
-    <nav className="flex flex-col gap-3 h-full overflow-y-auto">
+    <nav className="flex flex-col gap-4 h-full overflow-y-auto">
+      <div className="px-1">
+        <button
+          type="button"
+          className="flex items-center gap-2 w-full px-2 py-1.5 text-[13px] text-gray-400 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-md transition-colors"
+        >
+          <MagnifyingGlass className="w-3.5 h-3.5 text-gray-400" />
+          <span className="flex-1 text-start">Search...</span>
+          <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-medium text-gray-400 bg-white border border-gray-200 rounded">
+            ⌘K
+          </kbd>
+        </button>
+      </div>
       {NAV_SECTION_ORDER.map((section) => {
         const modules = sectionModules[section]
         if (!modules || modules.length === 0) return null

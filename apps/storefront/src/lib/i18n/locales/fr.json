@@ -1873,6 +1873,8 @@
     "subscribers": "Abonnés",
     "charity": "Charité",
     "name": "Nom",
-    "cause": "Cause"
+    "cause": "Cause",
+    "log_in": "Se connecter",
+    "log_in_subtitle": "Connectez-vous pour accéder au tableau de gestion"
   }
 }

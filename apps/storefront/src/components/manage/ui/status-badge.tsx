@@ -1,18 +1,18 @@
 import { clsx } from "clsx"
 
 const dotColorMap: Record<string, string> = {
-  active: "bg-ds-success",
-  completed: "bg-ds-success",
-  delivered: "bg-ds-success",
-  draft: "bg-ds-warning",
-  pending: "bg-ds-warning",
-  processing: "bg-ds-warning",
-  cancelled: "bg-ds-destructive",
-  suspended: "bg-ds-destructive",
-  archived: "bg-ds-muted",
-  deactivated: "bg-ds-muted",
-  invited: "bg-ds-primary",
-  shipped: "bg-ds-primary",
+  active: "bg-emerald-500",
+  completed: "bg-emerald-500",
+  delivered: "bg-emerald-500",
+  draft: "bg-amber-500",
+  pending: "bg-amber-500",
+  processing: "bg-amber-500",
+  cancelled: "bg-red-500",
+  suspended: "bg-red-500",
+  archived: "bg-gray-400",
+  deactivated: "bg-gray-400",
+  invited: "bg-violet-500",
+  shipped: "bg-violet-500",
 }
 
 interface StatusBadgeProps {
@@ -23,7 +23,7 @@ interface StatusBadgeProps {
 }
 
 export function StatusBadge({ status, label, variants, className }: StatusBadgeProps) {
-  const dotColor = variants?.[status] || dotColorMap[status] || "bg-ds-muted"
+  const dotColor = variants?.[status] || dotColorMap[status] || "bg-gray-400"
 
   return (
     <span
@@ -33,7 +33,7 @@ export function StatusBadge({ status, label, variants, className }: StatusBadgeP
       )}
     >
       <span className={clsx("w-1 h-1 rounded-full", dotColor)} />
-      <span className="text-xs font-normal text-ds-text">
+      <span className="text-xs font-normal text-gray-700">
         {label || status}
       </span>
     </span>

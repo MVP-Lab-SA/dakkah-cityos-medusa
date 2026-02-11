@@ -69,10 +69,10 @@ function ManageProductsPage() {
       align: "end" as const,
       render: () => (
         <div className="flex items-center justify-end gap-2">
-          <button type="button" className="px-3 py-1.5 text-sm text-ds-muted hover:text-ds-text hover:bg-ds-background rounded-lg transition-colors">
+          <button type="button" className="px-3 py-1.5 text-sm text-gray-400 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
             {t(locale, "manage.edit")}
           </button>
-          <button type="button" className="px-3 py-1.5 text-sm text-ds-muted hover:text-ds-destructive hover:bg-ds-background rounded-lg transition-colors">
+          <button type="button" className="px-3 py-1.5 text-sm text-gray-400 hover:text-red-600 hover:bg-gray-50 rounded-lg transition-colors">
             {t(locale, "manage.delete")}
           </button>
         </div>
@@ -85,9 +85,9 @@ function ManageProductsPage() {
       <ManageLayout locale={locale}>
         <Container>
           <div className="space-y-4 animate-pulse">
-            <div className="h-8 bg-ds-muted/20 rounded-lg w-48" />
-            <div className="h-4 bg-ds-muted/20 rounded-lg w-32" />
-            <div className="h-64 bg-ds-muted/20 rounded-lg" />
+            <div className="h-8 bg-gray-100 rounded-lg w-48" />
+            <div className="h-4 bg-gray-100 rounded-lg w-32" />
+            <div className="h-64 bg-gray-100 rounded-lg" />
           </div>
         </Container>
       </ManageLayout>
@@ -103,7 +103,7 @@ function ManageProductsPage() {
           actions={
             <button
               type="button"
-              className="px-4 py-2 bg-ds-primary text-white rounded-lg text-sm font-medium hover:bg-ds-primary/90 transition-colors flex items-center gap-2"
+              className="px-4 py-2 bg-violet-600 text-white rounded-lg text-sm font-medium hover:bg-violet-700 transition-colors flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
               {t(locale, "manage.add_product")}

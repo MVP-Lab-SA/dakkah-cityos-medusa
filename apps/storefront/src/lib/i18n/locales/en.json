@@ -1873,6 +1873,8 @@
     "full": "Full",
     "occupied": "Occupied",
     "in_progress": "In Progress",
-    "disabled": "Disabled"
+    "disabled": "Disabled",
+    "log_in": "Log in",
+    "log_in_subtitle": "Sign in to access the management dashboard"
   }
 }

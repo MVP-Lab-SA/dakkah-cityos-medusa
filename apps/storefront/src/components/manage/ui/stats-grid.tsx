@@ -15,14 +15,14 @@ interface StatsGridProps {
 
 function StatCard({ label, value, trend }: StatCardProps) {
   return (
-    <div className="bg-ds-card border border-ds-border rounded-lg p-5">
-      <p className="text-xs font-medium text-ds-muted uppercase tracking-wider">{label}</p>
+    <div className="bg-white border border-gray-200 rounded-lg p-5">
+      <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">{label}</p>
       <div className="mt-3 flex items-baseline gap-2">
-        <p className="text-2xl font-bold text-ds-text">{value}</p>
+        <p className="text-2xl font-semibold text-gray-900">{value}</p>
         {trend && (
           <span
             className={`text-xs font-medium ${
-              trend.positive ? "text-ds-success" : "text-ds-destructive"
+              trend.positive ? "text-emerald-600" : "text-red-600"
             }`}
           >
             {trend.positive ? "+" : ""}{trend.value}%

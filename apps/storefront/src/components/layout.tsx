@@ -5,7 +5,7 @@ import { CartProvider } from "@/lib/context/cart"
 import { ToastProvider } from "@/lib/context/toast-context"
 import { useStoreTheme } from "@/lib/hooks/use-store-theme"
 import { ThemeProvider } from "@dakkah-cityos/design-runtime"
-import { Outlet } from "@tanstack/react-router"
+import { Outlet, useLocation } from "@tanstack/react-router"
 
 const Layout = () => {
   if (typeof window === "undefined") {
@@ -23,7 +23,23 @@ const Layout = () => {
 
 function ClientLayout() {
   useStoreTheme()
+  const location = useLocation()
+  const isManagePage = /\/[^/]+\/[^/]+\/manage(\/|$)/.test(location.pathname)
   
+  if (isManagePage) {
+    return (
+      <ThemeProvider>
+        <ToastProvider>
+          <CartProvider>
+            <ErrorBoundary>
+              <Outlet />
+            </ErrorBoundary>
+          </CartProvider>
+        </ToastProvider>
+      </ThemeProvider>
+    )
+  }
+
   return (
     <ThemeProvider>
       <ToastProvider>

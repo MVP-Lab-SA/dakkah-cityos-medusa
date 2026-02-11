@@ -18,10 +18,10 @@ export function ManageLayout({ children, locale: localeProp }: ManageLayoutProps
 
   if (typeof window === "undefined") {
     return (
-      <div className="min-h-screen bg-ds-background flex items-center justify-center">
+      <div className="min-h-screen bg-[#f8f9fa] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <div className="w-8 h-8 border-2 border-ds-primary border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-sm text-ds-muted">{t(locale, "common.loading")}</p>
+          <div className="w-8 h-8 border-2 border-violet-600 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-sm text-gray-500">{t(locale, "common.loading")}</p>
         </div>
       </div>
     )
@@ -50,37 +50,39 @@ function ManageLayoutClient({ children, locale, tenantSlug }: { children: ReactN
   }, [sidebarOpen])
 
   return (
-    <div className="min-h-screen bg-ds-background flex">
+    <div className="min-h-screen bg-[#f8f9fa] flex">
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-ds-background/80 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/40 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       <aside
-        className={`fixed inset-y-0 start-0 z-50 w-[220px] bg-ds-card border-e border-ds-border flex flex-col transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:z-auto ${
+        className={`fixed inset-y-0 start-0 z-50 w-[220px] bg-white border-e border-ui-border-base flex flex-col transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:z-auto ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="px-4 py-5 border-b border-ds-border">
+        <div className="px-4 py-4 border-b border-gray-100">
           <Link
             to={`/${tenantSlug}/${locale}/manage` as any}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2.5"
           >
-            <BuildingStorefront className="w-4 h-4 text-ds-text" />
-            <span className="font-normal text-sm text-ds-text">{t(locale, "manage.store_management")}</span>
+            <div className="w-6 h-6 rounded-md bg-violet-600 flex items-center justify-center">
+              <BuildingStorefront className="w-3.5 h-3.5 text-white" />
+            </div>
+            <span className="font-semibold text-[13px] text-gray-900">Dakkah</span>
           </Link>
         </div>
-        <div className="flex-1 overflow-y-auto px-2 py-4 transition-opacity duration-200">
+        <div className="flex-1 overflow-y-auto px-2 py-3 transition-opacity duration-200">
           <ManageSidebar locale={locale} onNavigate={() => setSidebarOpen(false)} />
         </div>
-        <div className="px-4 py-4 border-t border-ds-border">
+        <div className="px-3 py-3 border-t border-gray-100">
           <Link
             to={`/${tenantSlug}/${locale}` as any}
-            className="flex items-center gap-2 px-2 py-2 text-sm text-ds-muted hover:text-ds-text hover:bg-ds-background rounded transition-colors"
+            className="flex items-center gap-2 px-2 py-1.5 text-[13px] text-gray-400 hover:text-gray-600 rounded-md transition-colors"
           >
-            <ArrowLeftMini className="w-4 h-4 flex-shrink-0" />
+            <ArrowLeftMini className="w-3.5 h-3.5 flex-shrink-0" />
             {t(locale, "manage.back_to_store")}
           </Link>
         </div>
@@ -88,7 +90,7 @@ function ManageLayoutClient({ children, locale, tenantSlug }: { children: ReactN
 
       <div className="flex-1 flex flex-col min-w-0">
         <ManageHeader locale={locale} onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
-        <main className="flex-1 p-6 lg:p-8 overflow-y-auto">
+        <main className="flex-1 px-4 py-4 lg:px-8 lg:py-6 overflow-y-auto">
           {children}
         </main>
       </div>
