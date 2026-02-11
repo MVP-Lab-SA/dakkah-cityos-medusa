@@ -27,6 +27,9 @@ import { ContactFormBlock } from "./contact-form-block"
 import { BannerCarouselBlock } from "./banner-carousel-block"
 import { MapBlock } from "./map-block"
 import { ReviewListBlock } from "./review-list-block"
+import { ManageStatsBlock } from "./manage-stats-block"
+import { ManageRecentOrdersBlock } from "./manage-recent-orders-block"
+import { ManageActivityBlock } from "./manage-activity-block"
 
 export const BLOCK_REGISTRY: Record<string, React.ComponentType<any>> = {
   hero: HeroBlock,
@@ -56,6 +59,9 @@ export const BLOCK_REGISTRY: Record<string, React.ComponentType<any>> = {
   bannerCarousel: BannerCarouselBlock,
   map: MapBlock,
   reviewList: ReviewListBlock,
+  manageStats: ManageStatsBlock,
+  manageRecentOrders: ManageRecentOrdersBlock,
+  manageActivity: ManageActivityBlock,
 }
 
 export function getBlockComponent(blockType: string): React.ComponentType<any> | null {

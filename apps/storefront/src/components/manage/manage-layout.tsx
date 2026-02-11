@@ -5,6 +5,7 @@ import { Link } from "@tanstack/react-router"
 import { RoleGuard } from "./role-guard"
 import { ManageSidebar } from "./manage-sidebar"
 import { ManageHeader } from "./manage-header"
+import { ArrowLeftMini, BuildingStorefront } from "@medusajs/icons"
 
 interface ManageLayoutProps {
   children: ReactNode
@@ -58,7 +59,7 @@ function ManageLayoutClient({ children, locale, tenantSlug }: { children: ReactN
       )}
 
       <aside
-        className={`fixed inset-y-0 start-0 z-50 w-64 bg-ds-card border-e border-ds-border flex flex-col transition-transform lg:translate-x-0 lg:static lg:z-auto ${
+        className={`fixed inset-y-0 start-0 z-50 w-[260px] bg-ds-card border-e border-ds-border rounded-e-xl shadow-sm flex flex-col transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:z-auto ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -68,24 +69,20 @@ function ManageLayoutClient({ children, locale, tenantSlug }: { children: ReactN
             className="flex items-center gap-2"
           >
             <div className="w-8 h-8 bg-ds-primary rounded-lg flex items-center justify-center">
-              <svg className="w-5 h-5 text-ds-primary-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
+              <BuildingStorefront className="w-5 h-5 text-ds-primary-foreground" />
             </div>
             <span className="font-semibold text-ds-text">{t(locale, "manage.store_management")}</span>
           </Link>
         </div>
-        <div className="flex-1 overflow-y-auto p-3">
+        <div className="flex-1 overflow-y-auto p-3 transition-opacity duration-200">
           <ManageSidebar locale={locale} onNavigate={() => setSidebarOpen(false)} />
         </div>
         <div className="p-3 border-t border-ds-border">
           <Link
             to={`/${tenantSlug}/${locale}` as any}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-ds-muted hover:text-ds-text hover:bg-ds-accent rounded-lg transition-colors"
+            className="flex items-center gap-2 px-3 py-2 text-sm text-ds-muted hover:text-ds-foreground hover:bg-ds-accent rounded-lg transition-colors"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
+            <ArrowLeftMini className="w-4 h-4" />
             {t(locale, "manage.back_to_store")}
           </Link>
         </div>

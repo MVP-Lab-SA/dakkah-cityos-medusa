@@ -1671,6 +1671,7 @@
     "units_sold": "الوحدات المباعة",
     "average_order_value": "متوسط قيمة الطلب",
     "no_activity": "لا يوجد نشاط حديث",
-    "back_to_store": "العودة إلى المتجر"
+    "back_to_store": "العودة إلى المتجر",
+    "view_store": "عرض المتجر"
   }
 }

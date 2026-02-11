@@ -1,12 +1,40 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { Link } from "@tanstack/react-router"
-import { ManageLayout, StatsCard, ManageActivityFeed } from "@/components/manage"
+import { ManageLayout, ManageActivityFeed } from "@/components/manage"
+import { Container, PageHeader, SectionCard, StatsGrid } from "@/components/manage/ui"
 import { t } from "@/lib/i18n"
 import { useTenant } from "@/lib/context/tenant-context"
+import { useManageStats } from "@/lib/hooks/use-manage-data"
+import {
+  DocumentText,
+  CurrencyDollar,
+  ShoppingBag,
+  Users,
+  Plus,
+  ChevronRight,
+} from "@medusajs/icons"
 
 export const Route = createFileRoute("/$tenant/$locale/manage/")({
   component: ManageDashboard,
 })
+
+function StatsLoadingSkeleton() {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div key={i} className="bg-ds-card border border-ds-border rounded-xl p-5 animate-pulse">
+          <div className="flex items-center justify-between">
+            <div className="w-10 h-10 rounded-lg bg-ds-muted/20" />
+          </div>
+          <div className="mt-4 space-y-2">
+            <div className="h-7 w-16 bg-ds-muted/20 rounded" />
+            <div className="h-4 w-24 bg-ds-muted/20 rounded" />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
 
 function ManageDashboard() {
   const { locale: routeLocale } = Route.useParams()
@@ -14,98 +42,87 @@ function ManageDashboard() {
   const locale = routeLocale || ctxLocale || "en"
   const baseHref = `/${tenantSlug}/${locale}/manage`
 
+  const { data: stats, isLoading: statsLoading } = useManageStats()
+
+  const quickActions = [
+    {
+      to: `${baseHref}/products`,
+      icon: <Plus className="w-4 h-4 text-ds-primary" />,
+      label: t(locale, "manage.add_product"),
+    },
+    {
+      to: `${baseHref}/orders`,
+      icon: <DocumentText className="w-4 h-4 text-ds-primary" />,
+      label: t(locale, "manage.view_orders"),
+    },
+    {
+      to: `${baseHref}/team`,
+      icon: <Users className="w-4 h-4 text-ds-primary" />,
+      label: t(locale, "manage.manage_team"),
+    },
+  ]
+
   return (
     <ManageLayout locale={locale}>
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-xl font-bold text-ds-text">{t(locale, "manage.dashboard")}</h2>
-          <p className="text-sm text-ds-muted mt-1">{t(locale, "manage.store_management")}</p>
-        </div>
+      <Container>
+        <PageHeader
+          title={t(locale, "manage.dashboard")}
+          subtitle={t(locale, "manage.store_management")}
+        />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatsCard
-            icon={
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-            }
-            label={t(locale, "manage.orders_today")}
-            value="0"
-            trend={{ value: 0, positive: true }}
-            locale={locale}
+        {statsLoading ? (
+          <StatsLoadingSkeleton />
+        ) : (
+          <StatsGrid
+            stats={[
+              {
+                icon: <DocumentText className="w-5 h-5" />,
+                label: t(locale, "manage.orders_today"),
+                value: stats?.totalOrders ?? 0,
+                trend: { value: 0, positive: true },
+              },
+              {
+                icon: <CurrencyDollar className="w-5 h-5" />,
+                label: t(locale, "manage.revenue"),
+                value: `$${(stats?.totalRevenue ?? 0).toFixed(2)}`,
+              },
+              {
+                icon: <ShoppingBag className="w-5 h-5" />,
+                label: t(locale, "manage.active_products"),
+                value: stats?.totalProducts ?? 0,
+              },
+              {
+                icon: <Users className="w-5 h-5" />,
+                label: t(locale, "manage.team_members"),
+                value: stats?.teamMembers ?? 0,
+              },
+            ]}
           />
-          <StatsCard
-            icon={
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            }
-            label={t(locale, "manage.revenue")}
-            value="$0.00"
-            trend={{ value: 0, positive: true }}
-            locale={locale}
-          />
-          <StatsCard
-            icon={
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-              </svg>
-            }
-            label={t(locale, "manage.active_products")}
-            value="0"
-            locale={locale}
-          />
-          <StatsCard
-            icon={
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-            }
-            label={t(locale, "manage.team_members")}
-            value="0"
-            locale={locale}
-          />
-        </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
-            <ManageActivityFeed locale={locale} activities={[]} />
+            <SectionCard title={t(locale, "manage.recent_activity")}>
+              <ManageActivityFeed locale={locale} activities={[]} />
+            </SectionCard>
           </div>
-
-          <div className="bg-ds-card border border-ds-border rounded-lg p-6">
-            <h3 className="text-sm font-semibold text-ds-text mb-4">{t(locale, "manage.quick_actions")}</h3>
+          <SectionCard title={t(locale, "manage.quick_actions")}>
             <div className="space-y-2">
-              <Link
-                to={`${baseHref}/products` as any}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-ds-text hover:bg-ds-accent transition-colors"
-              >
-                <svg className="w-4 h-4 text-ds-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                {t(locale, "manage.add_product")}
-              </Link>
-              <Link
-                to={`${baseHref}/orders` as any}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-ds-text hover:bg-ds-accent transition-colors"
-              >
-                <svg className="w-4 h-4 text-ds-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
-                </svg>
-                {t(locale, "manage.view_orders")}
-              </Link>
-              <Link
-                to={`${baseHref}/team` as any}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-ds-text hover:bg-ds-accent transition-colors"
-              >
-                <svg className="w-4 h-4 text-ds-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1z" />
-                </svg>
-                {t(locale, "manage.manage_team")}
-              </Link>
+              {quickActions.map((action) => (
+                <Link
+                  key={action.to}
+                  to={action.to as any}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-ds-text hover:bg-ds-accent transition-colors"
+                >
+                  {action.icon}
+                  <span className="flex-1">{action.label}</span>
+                  <ChevronRight className="w-4 h-4 text-ds-muted" />
+                </Link>
+              ))}
             </div>
-          </div>
+          </SectionCard>
         </div>
-      </div>
+      </Container>
     </ManageLayout>
   )
 }

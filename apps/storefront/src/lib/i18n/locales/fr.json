@@ -1671,6 +1671,7 @@
     "units_sold": "Unités vendues",
     "average_order_value": "Valeur moyenne de commande",
     "no_activity": "Aucune activité récente",
-    "back_to_store": "Retour au magasin"
+    "back_to_store": "Retour au magasin",
+    "view_store": "Voir le magasin"
   }
 }

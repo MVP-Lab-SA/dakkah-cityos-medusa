@@ -1671,6 +1671,7 @@
     "units_sold": "Units Sold",
     "average_order_value": "Average Order Value",
     "no_activity": "No recent activity",
-    "back_to_store": "Back to Store"
+    "back_to_store": "Back to Store",
+    "view_store": "View Store"
   }
 }
