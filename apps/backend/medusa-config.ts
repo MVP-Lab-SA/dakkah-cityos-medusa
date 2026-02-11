@@ -17,9 +17,9 @@ module.exports = defineConfig({
         hmrServer.listen(hmrPort, process.env.HMR_BIND_HOST);
       }
 
-      let allowedHosts;
+      let allowedHosts: string[] | true = true;
       if (process.env.__MEDUSA_ADDITIONAL_ALLOWED_HOSTS) {
-        allowedHosts = [process.env.__MEDUSA_ADDITIONAL_ALLOWED_HOSTS];
+        allowedHosts = process.env.__MEDUSA_ADDITIONAL_ALLOWED_HOSTS.split(",").map(h => h.trim());
       }
 
       return {

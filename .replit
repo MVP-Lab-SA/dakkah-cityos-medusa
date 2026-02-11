@@ -18,6 +18,7 @@ VITE_MEDUSA_BACKEND_URL = "http://localhost:9000"
 VITE_MEDUSA_PUBLISHABLE_KEY = "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445"
 TEMPORAL_ENDPOINT = "ap-northeast-1.aws.api.temporal.io:7233"
 TEMPORAL_NAMESPACE = "quickstart-dakkah-cityos.djvai"
+__MEDUSA_ADDITIONAL_ALLOWED_HOSTS = ".replit.dev,.replit.app"
 
 [[ports]]
 localPort = 5000

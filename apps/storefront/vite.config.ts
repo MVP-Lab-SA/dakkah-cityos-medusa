@@ -30,6 +30,21 @@ export default defineConfig(({ mode }) => {
         customViteReactPlugin: true,
       }),
       react(),
+
+      {
+        name: "commerce-admin-redirect",
+        configureServer(server) {
+          server.middlewares.use((req, res, next) => {
+            const urlPath = (req.url || "").split("?")[0];
+            if (urlPath === "/commerce/admin" || urlPath === "/commerce/admin/") {
+              res.writeHead(302, { Location: "/commerce/admin/login" });
+              res.end();
+              return;
+            }
+            next();
+          });
+        },
+      },
     ],
 
     server: {
