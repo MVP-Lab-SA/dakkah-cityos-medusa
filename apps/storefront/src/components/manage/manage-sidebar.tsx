@@ -128,7 +128,7 @@ function SidebarSection({
         onClick={() => setOpen(!open)}
         className="flex items-center justify-between px-2 py-1 text-xs font-normal text-ds-muted hover:text-ds-text transition-colors"
       >
-        <span>{NAV_SECTION_LABELS[section]}</span>
+        <span>{t(locale, `manage.${section}`)}</span>
         <ChevronDownMini
           className={clsx(
             "w-3 h-3 transition-transform duration-150",
@@ -184,7 +184,7 @@ function SidebarItem({
         <div className="absolute inset-y-0 start-0 w-1 bg-ds-primary rounded-e" />
       )}
       <IconComponent className="w-4 h-4 flex-shrink-0 ms-1" />
-      {t(locale, `manage.${mod.key}`)}
+      {t(locale, `manage.${mod.key.replace(/-/g, "_")}`)}
     </Link>
   )
 }

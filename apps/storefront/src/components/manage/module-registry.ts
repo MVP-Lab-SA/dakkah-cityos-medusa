@@ -66,7 +66,6 @@ export const MODULE_REGISTRY: ModuleDefinition[] = [
   { key: "financial-products", icon: "Cash", section: "verticals", scope: "tenant", minWeight: 40, path: "/financial-products" },
   { key: "freelance", icon: "RocketLaunch", section: "verticals", scope: "tenant", minWeight: 40, path: "/freelance" },
   { key: "parking", icon: "SquaresPlus", section: "verticals", scope: "tenant", minWeight: 40, path: "/parking" },
-  { key: "utilities", icon: "Beaker", section: "verticals", scope: "tenant", minWeight: 40, path: "/utilities" },
 
   { key: "advertising", icon: "Target", section: "marketing", scope: "tenant", minWeight: 40, path: "/advertising" },
   { key: "promotions", icon: "Bolt", section: "marketing", scope: "tenant", minWeight: 40, path: "/promotions" },
@@ -80,6 +79,7 @@ export const MODULE_REGISTRY: ModuleDefinition[] = [
   { key: "stores", icon: "BuildingStorefront", section: "organization", scope: "tenant", minWeight: 40, path: "/stores" },
   { key: "legal", icon: "Book", section: "organization", scope: "tenant", minWeight: 40, path: "/legal" },
   { key: "warranty", icon: "ShieldCheck", section: "organization", scope: "tenant", minWeight: 40, path: "/warranty" },
+  { key: "utilities", icon: "Beaker", section: "organization", scope: "tenant", minWeight: 40, path: "/utilities" },
 
   { key: "governance", icon: "ShieldCheck", section: "platform", scope: "platform", minWeight: 90, path: "/governance" },
   { key: "nodes", icon: "ServerStack", section: "platform", scope: "platform", minWeight: 90, path: "/nodes" },
@@ -90,7 +90,7 @@ export const MODULE_REGISTRY: ModuleDefinition[] = [
 
   { key: "analytics", icon: "ChartBar", section: "system", scope: "tenant", minWeight: 40, path: "/analytics" },
   { key: "settings", icon: "CogSixTooth", section: "system", scope: "tenant", minWeight: 40, path: "/settings" },
-  { key: "i18n", icon: "Swatch", section: "system", scope: "shared", minWeight: 70, path: "/i18n" },
+  { key: "i18n", icon: "Swatch", section: "system", scope: "platform", minWeight: 90, path: "/i18n" },
   { key: "audit", icon: "ShieldCheck", section: "system", scope: "platform", minWeight: 90, path: "/audit" },
 ]
 
