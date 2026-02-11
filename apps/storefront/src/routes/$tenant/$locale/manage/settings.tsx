@@ -40,7 +40,7 @@ function ManageSettingsPage() {
           actions={
             <button
               type="button"
-              className="px-6 py-2 bg-ds-primary text-ds-primary-foreground rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+              className="px-4 py-2 bg-ds-primary text-white rounded-lg text-sm font-medium hover:bg-ds-primary/90 transition-colors"
             >
               {t(locale, "manage.save_settings")}
             </button>
@@ -49,7 +49,7 @@ function ManageSettingsPage() {
 
         <SectionCard
           title={t(locale, "manage.store_info")}
-          headerAction={<BuildingStorefront className="w-4 h-4 text-ds-muted-foreground" />}
+          headerAction={<BuildingStorefront className="w-3.5 h-3.5 text-ds-muted" />}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -84,7 +84,7 @@ function ManageSettingsPage() {
 
         <SectionCard
           title={t(locale, "manage.localization")}
-          headerAction={<GlobeEurope className="w-4 h-4 text-ds-muted-foreground" />}
+          headerAction={<GlobeEurope className="w-3.5 h-3.5 text-ds-muted" />}
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
@@ -127,7 +127,7 @@ function ManageSettingsPage() {
 
         <SectionCard
           title={t(locale, "manage.commerce_settings")}
-          headerAction={<CurrencyDollar className="w-4 h-4 text-ds-muted-foreground" />}
+          headerAction={<CurrencyDollar className="w-3.5 h-3.5 text-ds-muted" />}
         >
           <div className="space-y-4">
             <label className="flex items-center gap-3 cursor-pointer">
@@ -135,7 +135,7 @@ function ManageSettingsPage() {
                 type="checkbox"
                 checked={form.guestCheckout}
                 onChange={(e) => setForm({ ...form, guestCheckout: e.target.checked })}
-                className="rounded border-ds-border text-ds-primary focus:ring-ds-primary"
+                className="w-4 h-4 rounded border-ds-border text-ds-primary accent-ds-primary focus:ring-ds-primary"
               />
               <span className="text-sm text-ds-text">{t(locale, "manage.guest_checkout")}</span>
             </label>
@@ -144,7 +144,7 @@ function ManageSettingsPage() {
                 type="checkbox"
                 checked={form.trackInventory}
                 onChange={(e) => setForm({ ...form, trackInventory: e.target.checked })}
-                className="rounded border-ds-border text-ds-primary focus:ring-ds-primary"
+                className="w-4 h-4 rounded border-ds-border text-ds-primary accent-ds-primary focus:ring-ds-primary"
               />
               <span className="text-sm text-ds-text">{t(locale, "manage.track_inventory")}</span>
             </label>
@@ -153,7 +153,7 @@ function ManageSettingsPage() {
                 type="checkbox"
                 checked={form.allowBackorders}
                 onChange={(e) => setForm({ ...form, allowBackorders: e.target.checked })}
-                className="rounded border-ds-border text-ds-primary focus:ring-ds-primary"
+                className="w-4 h-4 rounded border-ds-border text-ds-primary accent-ds-primary focus:ring-ds-primary"
               />
               <span className="text-sm text-ds-text">{t(locale, "manage.allow_backorders")}</span>
             </label>
@@ -162,7 +162,7 @@ function ManageSettingsPage() {
 
         <SectionCard
           title={t(locale, "manage.notifications")}
-          headerAction={<BellAlert className="w-4 h-4 text-ds-muted-foreground" />}
+          headerAction={<BellAlert className="w-3.5 h-3.5 text-ds-muted" />}
         >
           <div className="space-y-4">
             <label className="flex items-center gap-3 cursor-pointer">
@@ -170,7 +170,7 @@ function ManageSettingsPage() {
                 type="checkbox"
                 checked={form.notifyNewOrder}
                 onChange={(e) => setForm({ ...form, notifyNewOrder: e.target.checked })}
-                className="rounded border-ds-border text-ds-primary focus:ring-ds-primary"
+                className="w-4 h-4 rounded border-ds-border text-ds-primary accent-ds-primary focus:ring-ds-primary"
               />
               <span className="text-sm text-ds-text">{t(locale, "manage.notify_new_order")}</span>
             </label>
@@ -179,7 +179,7 @@ function ManageSettingsPage() {
                 type="checkbox"
                 checked={form.notifyLowStock}
                 onChange={(e) => setForm({ ...form, notifyLowStock: e.target.checked })}
-                className="rounded border-ds-border text-ds-primary focus:ring-ds-primary"
+                className="w-4 h-4 rounded border-ds-border text-ds-primary accent-ds-primary focus:ring-ds-primary"
               />
               <span className="text-sm text-ds-text">{t(locale, "manage.notify_low_stock")}</span>
             </label>

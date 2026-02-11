@@ -4,7 +4,7 @@ import { Container, PageHeader, DataTable, StatusBadge } from "@/components/mana
 import { t } from "@/lib/i18n"
 import { useTenant } from "@/lib/context/tenant-context"
 import { useManageProducts } from "@/lib/hooks/use-manage-data"
-import { Plus, PencilSquare, Trash } from "@medusajs/icons"
+import { Plus } from "@medusajs/icons"
 
 export const Route = createFileRoute("/$tenant/$locale/manage/products")({
   component: ManageProductsPage,
@@ -37,10 +37,10 @@ function ManageProductsPage() {
             <img
               src={row.thumbnail as string}
               alt={row.title as string}
-              className="w-10 h-10 rounded-lg object-cover border border-ds-border"
+              className="w-10 h-10 rounded-md object-cover border border-ds-border"
             />
           ) : (
-            <div className="w-10 h-10 rounded-lg bg-ds-accent flex items-center justify-center text-ds-muted-foreground text-xs">
+            <div className="w-10 h-10 rounded-md bg-ds-accent flex items-center justify-center text-ds-muted-foreground text-xs">
               —
             </div>
           )}
@@ -68,12 +68,12 @@ function ManageProductsPage() {
       header: t(locale, "manage.actions"),
       align: "end" as const,
       render: () => (
-        <div className="flex items-center justify-end gap-1">
-          <button type="button" className="p-1.5 rounded-lg hover:bg-ds-accent transition-colors text-ds-muted-foreground hover:text-ds-text">
-            <PencilSquare className="w-4 h-4" />
+        <div className="flex items-center justify-end gap-2">
+          <button type="button" className="px-3 py-1.5 text-sm text-ds-muted hover:text-ds-text hover:bg-ds-background rounded-lg transition-colors">
+            {t(locale, "manage.edit")}
           </button>
-          <button type="button" className="p-1.5 rounded-lg hover:bg-ds-destructive/10 transition-colors text-ds-muted-foreground hover:text-ds-destructive">
-            <Trash className="w-4 h-4" />
+          <button type="button" className="px-3 py-1.5 text-sm text-ds-muted hover:text-ds-destructive hover:bg-ds-background rounded-lg transition-colors">
+            {t(locale, "manage.delete")}
           </button>
         </div>
       ),
@@ -85,9 +85,9 @@ function ManageProductsPage() {
       <ManageLayout locale={locale}>
         <Container>
           <div className="space-y-4 animate-pulse">
-            <div className="h-8 bg-ds-accent rounded-lg w-48" />
-            <div className="h-4 bg-ds-accent rounded w-32" />
-            <div className="h-64 bg-ds-accent rounded-xl" />
+            <div className="h-8 bg-ds-muted/20 rounded-lg w-48" />
+            <div className="h-4 bg-ds-muted/20 rounded-lg w-32" />
+            <div className="h-64 bg-ds-muted/20 rounded-lg" />
           </div>
         </Container>
       </ManageLayout>
@@ -103,7 +103,7 @@ function ManageProductsPage() {
           actions={
             <button
               type="button"
-              className="px-4 py-2 bg-ds-primary text-ds-primary-foreground rounded-lg text-sm font-medium hover:opacity-90 transition-opacity flex items-center gap-2"
+              className="px-4 py-2 bg-ds-primary text-white rounded-lg text-sm font-medium hover:bg-ds-primary/90 transition-colors flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
               {t(locale, "manage.add_product")}

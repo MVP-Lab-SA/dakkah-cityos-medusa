@@ -5,14 +5,7 @@ import { Container, PageHeader, SectionCard, StatsGrid } from "@/components/mana
 import { t } from "@/lib/i18n"
 import { useTenant } from "@/lib/context/tenant-context"
 import { useManageStats } from "@/lib/hooks/use-manage-data"
-import {
-  DocumentText,
-  CurrencyDollar,
-  ShoppingBag,
-  Users,
-  Plus,
-  ChevronRight,
-} from "@medusajs/icons"
+import { Plus, ChevronRight } from "@medusajs/icons"
 
 export const Route = createFileRoute("/$tenant/$locale/manage/")({
   component: ManageDashboard,
@@ -22,13 +15,10 @@ function StatsLoadingSkeleton() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="bg-ds-card border border-ds-border rounded-xl p-5 animate-pulse">
-          <div className="flex items-center justify-between">
-            <div className="w-10 h-10 rounded-lg bg-ds-muted/20" />
-          </div>
-          <div className="mt-4 space-y-2">
-            <div className="h-7 w-16 bg-ds-muted/20 rounded" />
-            <div className="h-4 w-24 bg-ds-muted/20 rounded" />
+        <div key={i} className="bg-ds-card border border-ds-border rounded-lg p-5 animate-pulse">
+          <div className="space-y-2">
+            <div className="h-4 w-24 bg-ds-muted/20 rounded-lg" />
+            <div className="h-7 w-16 bg-ds-muted/20 rounded-lg" />
           </div>
         </div>
       ))}
@@ -47,17 +37,14 @@ function ManageDashboard() {
   const quickActions = [
     {
       to: `${baseHref}/products`,
-      icon: <Plus className="w-4 h-4 text-ds-primary" />,
       label: t(locale, "manage.add_product"),
     },
     {
       to: `${baseHref}/orders`,
-      icon: <DocumentText className="w-4 h-4 text-ds-primary" />,
       label: t(locale, "manage.view_orders"),
     },
     {
       to: `${baseHref}/team`,
-      icon: <Users className="w-4 h-4 text-ds-primary" />,
       label: t(locale, "manage.manage_team"),
     },
   ]
@@ -76,23 +63,19 @@ function ManageDashboard() {
           <StatsGrid
             stats={[
               {
-                icon: <DocumentText className="w-5 h-5" />,
                 label: t(locale, "manage.orders_today"),
                 value: stats?.totalOrders ?? 0,
                 trend: { value: 0, positive: true },
               },
               {
-                icon: <CurrencyDollar className="w-5 h-5" />,
                 label: t(locale, "manage.revenue"),
                 value: `$${(stats?.totalRevenue ?? 0).toFixed(2)}`,
               },
               {
-                icon: <ShoppingBag className="w-5 h-5" />,
                 label: t(locale, "manage.active_products"),
                 value: stats?.totalProducts ?? 0,
               },
               {
-                icon: <Users className="w-5 h-5" />,
                 label: t(locale, "manage.team_members"),
                 value: stats?.teamMembers ?? 0,
               },
@@ -107,16 +90,15 @@ function ManageDashboard() {
             </SectionCard>
           </div>
           <SectionCard title={t(locale, "manage.quick_actions")}>
-            <div className="space-y-2">
+            <div className="space-y-1">
               {quickActions.map((action) => (
                 <Link
                   key={action.to}
                   to={action.to as any}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-ds-text hover:bg-ds-accent transition-colors"
+                  className="flex items-center gap-3 px-3 py-1.5 text-sm text-ds-muted hover:text-ds-text hover:bg-ds-background rounded-lg transition-colors"
                 >
-                  {action.icon}
                   <span className="flex-1">{action.label}</span>
-                  <ChevronRight className="w-4 h-4 text-ds-muted" />
+                  <ChevronRight className="w-4 h-4" />
                 </Link>
               ))}
             </div>

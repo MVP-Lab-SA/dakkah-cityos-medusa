@@ -4,7 +4,6 @@ import { ManageLayout } from "@/components/manage"
 import { Container, PageHeader, SectionCard, DataTable, StatusBadge } from "@/components/manage/ui"
 import { t } from "@/lib/i18n"
 import { useTenant } from "@/lib/context/tenant-context"
-import { Plus } from "@medusajs/icons"
 
 export const Route = createFileRoute("/$tenant/$locale/manage/team")({
   component: ManageTeamPage,
@@ -59,41 +58,40 @@ function ManageTeamPage() {
         <PageHeader
           title={t(locale, "manage.team")}
           subtitle={t(locale, "manage.manage_team")}
-          actions={
-            <button
-              type="button"
-              className="px-4 py-2 bg-ds-primary text-ds-primary-foreground rounded-lg text-sm font-medium hover:opacity-90 transition-opacity flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" />
-              {t(locale, "manage.invite_member")}
-            </button>
-          }
         />
 
         <SectionCard title={t(locale, "manage.invite_member")}>
           <div className="flex flex-col sm:flex-row gap-3">
-            <input
-              type="email"
-              value={inviteEmail}
-              onChange={(e) => setInviteEmail(e.target.value)}
-              placeholder={t(locale, "manage.invite_email_placeholder")}
-              className="flex-1 px-3 py-2 bg-ds-background border border-ds-border rounded-lg text-sm text-ds-text placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-primary"
-            />
-            <select
-              value={inviteRole}
-              onChange={(e) => setInviteRole(e.target.value)}
-              className="px-3 py-2 bg-ds-background border border-ds-border rounded-lg text-sm text-ds-text focus:outline-none focus:ring-2 focus:ring-ds-primary"
-            >
-              <option value="member">Member</option>
-              <option value="admin">Admin</option>
-              <option value="editor">Editor</option>
-            </select>
-            <button
-              type="button"
-              className="px-4 py-2 bg-ds-primary text-ds-primary-foreground rounded-lg text-sm font-medium hover:opacity-90 transition-opacity whitespace-nowrap"
-            >
-              {t(locale, "manage.send_invite")}
-            </button>
+            <div className="flex-1">
+              <label className="block text-xs font-medium text-ds-muted-foreground mb-1">{t(locale, "manage.email")}</label>
+              <input
+                type="email"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+                placeholder={t(locale, "manage.invite_email_placeholder")}
+                className="w-full px-3 py-2 bg-ds-background border border-ds-border rounded-lg text-sm text-ds-text placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-primary"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-ds-muted-foreground mb-1">{t(locale, "manage.role")}</label>
+              <select
+                value={inviteRole}
+                onChange={(e) => setInviteRole(e.target.value)}
+                className="w-full px-3 py-2 bg-ds-background border border-ds-border rounded-lg text-sm text-ds-text focus:outline-none focus:ring-2 focus:ring-ds-primary"
+              >
+                <option value="member">Member</option>
+                <option value="admin">Admin</option>
+                <option value="editor">Editor</option>
+              </select>
+            </div>
+            <div className="flex items-end">
+              <button
+                type="button"
+                className="px-4 py-2 bg-ds-primary text-white rounded-lg text-sm font-medium hover:bg-ds-primary/90 transition-colors whitespace-nowrap"
+              >
+                {t(locale, "manage.send_invite")}
+              </button>
+            </div>
           </div>
         </SectionCard>
 

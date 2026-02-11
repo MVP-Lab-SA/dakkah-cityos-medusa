@@ -11,9 +11,9 @@ export function PageHeader({ title, subtitle, actions, className = "" }: PageHea
   return (
     <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 ${className}`}>
       <div>
-        <h2 className="text-xl font-bold text-ds-text">{title}</h2>
+        <h2 className="text-2xl font-semibold text-ds-text">{title}</h2>
         {subtitle && (
-          <p className="mt-1 text-sm text-ds-muted-foreground">{subtitle}</p>
+          <p className="mt-1 text-sm text-ds-muted">{subtitle}</p>
         )}
       </div>
       {actions && (

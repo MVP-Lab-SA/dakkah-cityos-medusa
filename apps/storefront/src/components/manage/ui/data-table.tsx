@@ -64,15 +64,15 @@ export function DataTable<T extends Record<string, unknown>>({
         </div>
       )}
 
-      <div className="bg-ds-card border border-ds-border rounded-xl overflow-hidden">
+      <div className="bg-ds-card border border-ds-border rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-ds-border bg-ds-background">
+              <tr className="border-b border-ds-border bg-ds-background/50">
                 {columns.map((col) => (
                   <th
                     key={col.key}
-                    className={`px-4 py-3 text-xs font-medium text-ds-muted-foreground uppercase ${alignClass(col.align)}`}
+                    className={`px-4 py-3 text-xs font-medium text-ds-muted uppercase tracking-wider ${alignClass(col.align)}`}
                   >
                     {col.header}
                   </th>
@@ -84,19 +84,16 @@ export function DataTable<T extends Record<string, unknown>>({
                 <tr>
                   <td colSpan={columns.length} className="px-4 py-12 text-center">
                     <div className="flex flex-col items-center justify-center">
-                      <div className="w-16 h-16 bg-ds-accent rounded-full flex items-center justify-center text-ds-muted-foreground mb-3">
-                        <MagnifyingGlass className="w-8 h-8" />
-                      </div>
                       <p className="text-sm font-medium text-ds-text">{emptyTitle}</p>
                       {emptyDescription && (
-                        <p className="mt-1 text-xs text-ds-muted-foreground max-w-xs">{emptyDescription}</p>
+                        <p className="mt-1 text-xs text-ds-muted max-w-xs">{emptyDescription}</p>
                       )}
                     </div>
                   </td>
                 </tr>
               ) : (
                 filtered.map((row, rowIdx) => (
-                  <tr key={rowIdx} className="hover:bg-ds-accent/50 transition-colors">
+                  <tr key={rowIdx} className="hover:bg-ds-background/30 transition-colors">
                     {columns.map((col) => (
                       <td
                         key={col.key}
@@ -113,7 +110,7 @@ export function DataTable<T extends Record<string, unknown>>({
             </tbody>
           </table>
         </div>
-        <div className="px-4 py-3 border-t border-ds-border text-xs text-ds-muted-foreground">
+        <div className="px-4 py-2.5 border-t border-ds-border text-xs text-ds-muted">
           {filtered.length} {countLabel}
         </div>
       </div>

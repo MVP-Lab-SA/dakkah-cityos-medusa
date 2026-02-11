@@ -5,7 +5,6 @@ import { Container, PageHeader, DataTable, StatusBadge } from "@/components/mana
 import { t } from "@/lib/i18n"
 import { useTenant } from "@/lib/context/tenant-context"
 import { useManageOrders } from "@/lib/hooks/use-manage-data"
-import { PencilSquare, EllipsisHorizontal } from "@medusajs/icons"
 
 export const Route = createFileRoute("/$tenant/$locale/manage/orders")({
   component: ManageOrdersPage,
@@ -64,12 +63,9 @@ function ManageOrdersPage() {
       header: t(locale, "manage.actions"),
       align: "end" as const,
       render: () => (
-        <div className="flex items-center justify-end gap-1">
-          <button type="button" className="p-1.5 rounded-lg hover:bg-ds-accent transition-colors text-ds-muted-foreground hover:text-ds-text">
-            <PencilSquare className="w-4 h-4" />
-          </button>
-          <button type="button" className="p-1.5 rounded-lg hover:bg-ds-accent transition-colors text-ds-muted-foreground hover:text-ds-text">
-            <EllipsisHorizontal className="w-4 h-4" />
+        <div className="flex items-center justify-end">
+          <button type="button" className="px-3 py-1.5 text-sm text-ds-muted hover:text-ds-text hover:bg-ds-background rounded-lg transition-colors">
+            {t(locale, "manage.view")}
           </button>
         </div>
       ),
@@ -81,9 +77,9 @@ function ManageOrdersPage() {
       <ManageLayout locale={locale}>
         <Container>
           <div className="space-y-4 animate-pulse">
-            <div className="h-8 bg-ds-accent rounded-lg w-48" />
-            <div className="h-4 bg-ds-accent rounded w-32" />
-            <div className="h-64 bg-ds-accent rounded-xl" />
+            <div className="h-8 bg-ds-muted/20 rounded-lg w-48" />
+            <div className="h-4 bg-ds-muted/20 rounded-lg w-32" />
+            <div className="h-64 bg-ds-muted/20 rounded-lg" />
           </div>
         </Container>
       </ManageLayout>
@@ -104,10 +100,10 @@ function ManageOrdersPage() {
               key={s}
               type="button"
               onClick={() => setStatusFilter(s)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+              className={`px-3 py-1.5 rounded-lg text-sm whitespace-nowrap transition-colors ${
                 statusFilter === s
-                  ? "bg-ds-primary text-ds-primary-foreground"
-                  : "bg-ds-accent text-ds-muted-foreground hover:text-ds-text"
+                  ? "bg-ds-card border border-ds-border text-ds-text font-medium"
+                  : "text-ds-muted hover:text-ds-text"
               }`}
             >
               {s === "all" ? t(locale, "manage.all_statuses") : t(locale, `manage.${s}`)}

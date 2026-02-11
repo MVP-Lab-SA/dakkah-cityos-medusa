@@ -50,10 +50,10 @@ export function ManageSidebar({ locale: localeProp, onNavigate }: ManageSidebarP
   }
 
   return (
-    <nav className="flex flex-col gap-4">
+    <nav className="flex flex-col gap-6 h-full">
       {navSections.map((section) => (
-        <div key={section.label}>
-          <p className="px-3 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-ds-muted">
+        <div key={section.label} className="flex flex-col gap-1.5">
+          <p className="px-2 text-xs font-normal text-ds-muted">
             {section.label}
           </p>
           <div className="space-y-0.5">
@@ -65,13 +65,16 @@ export function ManageSidebar({ locale: localeProp, onNavigate }: ManageSidebarP
                   to={`${baseHref}${item.path}` as any}
                   onClick={onNavigate}
                   className={clsx(
-                    "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                    "flex items-center gap-2 px-2 py-2 rounded text-sm font-normal transition-colors relative group",
                     active
-                      ? "bg-ds-primary/10 text-ds-primary"
-                      : "text-ds-muted hover:bg-ds-accent hover:text-ds-foreground"
+                      ? "text-ds-primary font-medium"
+                      : "text-ds-muted hover:text-ds-text hover:bg-ds-background"
                   )}
                 >
-                  <item.Icon className="w-5 h-5" />
+                  {active && (
+                    <div className="absolute inset-y-0 start-0 w-1 bg-ds-primary rounded-e" />
+                  )}
+                  <item.Icon className="w-4 h-4 flex-shrink-0" />
                   {t(locale, `manage.${item.key}`)}
                 </Link>
               )
@@ -79,9 +82,6 @@ export function ManageSidebar({ locale: localeProp, onNavigate }: ManageSidebarP
           </div>
         </div>
       ))}
-      <div className="mt-auto pt-4">
-        <p className="px-3 text-[10px] text-ds-muted/60">v1.0.0</p>
-      </div>
     </nav>
   )
 }
