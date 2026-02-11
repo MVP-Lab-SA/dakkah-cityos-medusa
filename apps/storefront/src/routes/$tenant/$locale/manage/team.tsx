@@ -1,23 +1,99 @@
 import { createFileRoute } from "@tanstack/react-router"
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { ManageLayout } from "@/components/manage"
-import { Container, PageHeader, SectionCard, DataTable, StatusBadge, Input, Select, Label, Button } from "@/components/manage/ui"
+import { Container, PageHeader, DataTable, StatusBadge, SkeletonTable, Button, DropdownMenu, FormDrawer, ConfirmDialog, useToast } from "@/components/manage/ui"
 import { t } from "@/lib/i18n"
 import { useTenant } from "@/lib/context/tenant-context"
+import { useQuery } from "@tanstack/react-query"
+import { sdk } from "@/lib/utils/sdk"
+import { useManageCrud } from "@/lib/hooks/use-manage-crud"
+import { crudConfigs } from "@/components/manage/crud-configs"
+import { Plus } from "@medusajs/icons"
 
 export const Route = createFileRoute("/$tenant/$locale/manage/team")({
   component: ManageTeamPage,
 })
+
+const config = crudConfigs["team"]
 
 function ManageTeamPage() {
   const { locale: routeLocale } = Route.useParams()
   const { locale: ctxLocale } = useTenant()
   const locale = routeLocale || ctxLocale || "en"
 
-  const [inviteEmail, setInviteEmail] = useState("")
-  const [inviteRole, setInviteRole] = useState("member")
+  const { addToast } = useToast()
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [editingItem, setEditingItem] = useState<any>(null)
+  const [formValues, setFormValues] = useState<Record<string, any>>(config.defaultValues)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
 
-  const members: Record<string, unknown>[] = []
+  const { createMutation, updateMutation, deleteMutation } = useManageCrud({
+    moduleKey: config.moduleKey,
+    apiEndpoint: config.apiEndpoint,
+  })
+
+  const handleCreate = useCallback(() => {
+    setEditingItem(null)
+    setFormValues({ ...config.defaultValues })
+    setDrawerOpen(true)
+  }, [])
+
+  const handleEdit = useCallback((row: any) => {
+    setEditingItem(row)
+    const values: Record<string, any> = {}
+    config.fields.forEach((f) => { values[f.key] = row[f.key] ?? config.defaultValues[f.key] ?? "" })
+    setFormValues(values)
+    setDrawerOpen(true)
+  }, [])
+
+  const handleFormChange = useCallback((key: string, value: any) => {
+    setFormValues((prev) => ({ ...prev, [key]: value }))
+  }, [])
+
+  const handleSubmit = useCallback(async () => {
+    try {
+      if (editingItem) {
+        await updateMutation.mutateAsync({ id: editingItem.id, ...formValues })
+        addToast("success", `${config.singularLabel} updated successfully`)
+      } else {
+        await createMutation.mutateAsync(formValues)
+        addToast("success", `${config.singularLabel} created successfully`)
+      }
+      setDrawerOpen(false)
+      setEditingItem(null)
+    } catch (e) {
+      addToast("error", `Failed to save ${config.singularLabel.toLowerCase()}`)
+    }
+  }, [editingItem, formValues, updateMutation, createMutation, addToast])
+
+  const handleDelete = useCallback(async () => {
+    if (!deleteId) return
+    try {
+      await deleteMutation.mutateAsync(deleteId)
+      addToast("success", `${config.singularLabel} deleted successfully`)
+      setDeleteId(null)
+    } catch (e) {
+      addToast("error", `Failed to delete ${config.singularLabel.toLowerCase()}`)
+    }
+  }, [deleteId, deleteMutation, addToast])
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["manage", "team"],
+    queryFn: async () => {
+      const response = await sdk.client.fetch("/admin/team", { method: "GET" })
+      return response
+    },
+    enabled: typeof window !== "undefined",
+  })
+
+  const members = ((data as any)?.members || (data as any)?.team || []).map((item: any) => ({
+    id: item.id,
+    name: item.name || `${item.first_name || ""} ${item.last_name || ""}`.trim() || "—",
+    email: item.email || "—",
+    role: item.role || "member",
+    status: item.status || "active",
+    lastActive: item.lastActive || item.last_active || "—",
+  }))
 
   const columns = [
     {
@@ -50,46 +126,43 @@ function ManageTeamPage() {
       key: "lastActive",
       header: t(locale, "manage.last_active"),
     },
+    {
+      key: "actions",
+      header: "Actions",
+      align: "end" as const,
+      render: (_: unknown, row: any) => (
+        <DropdownMenu items={[
+          { label: "Edit", onClick: () => handleEdit(row) },
+          { type: "separator" as const },
+          { label: "Delete", onClick: () => setDeleteId(row.id), variant: "danger" as const },
+        ]} />
+      ),
+    },
   ]
+
+  if (isLoading) {
+    return (
+      <ManageLayout locale={locale}>
+        <Container>
+          <SkeletonTable rows={8} cols={6} />
+        </Container>
+      </ManageLayout>
+    )
+  }
 
   return (
     <ManageLayout locale={locale}>
       <Container>
         <PageHeader
-          title={t(locale, "manage.team")}
-          subtitle={t(locale, "manage.manage_team")}
+          title={config.label}
+          subtitle="Manage team members"
+          actions={
+            <Button variant="primary" size="base" onClick={handleCreate}>
+              <Plus className="w-4 h-4" />
+              Add {config.singularLabel}
+            </Button>
+          }
         />
-
-        <SectionCard title={t(locale, "manage.invite_member")}>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="flex-1">
-              <Label>{t(locale, "manage.email")}</Label>
-              <Input
-                type="email"
-                value={inviteEmail}
-                onChange={(e) => setInviteEmail(e.target.value)}
-                placeholder={t(locale, "manage.invite_email_placeholder")}
-              />
-            </div>
-            <div>
-              <Label>{t(locale, "manage.role")}</Label>
-              <Select
-                value={inviteRole}
-                onChange={(e) => setInviteRole(e.target.value)}
-                options={[
-                  { value: "member", label: "Member" },
-                  { value: "admin", label: "Admin" },
-                  { value: "editor", label: "Editor" },
-                ]}
-              />
-            </div>
-            <div className="flex items-end">
-              <Button variant="primary" size="base">
-                {t(locale, "manage.send_invite")}
-              </Button>
-            </div>
-          </div>
-        </SectionCard>
 
         <DataTable
           columns={columns}
@@ -98,6 +171,25 @@ function ManageTeamPage() {
           countLabel={t(locale, "manage.team_members").toLowerCase()}
         />
       </Container>
+      <FormDrawer
+        open={drawerOpen}
+        onClose={() => { setDrawerOpen(false); setEditingItem(null) }}
+        title={editingItem ? `Edit ${config.singularLabel}` : `Create ${config.singularLabel}`}
+        fields={config.fields}
+        values={formValues}
+        onChange={handleFormChange}
+        onSubmit={handleSubmit}
+        loading={createMutation.isPending || updateMutation.isPending}
+        submitLabel={editingItem ? "Save changes" : "Create"}
+      />
+      <ConfirmDialog
+        open={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        title={`Delete ${config.singularLabel}`}
+        description={`Are you sure you want to delete this ${config.singularLabel.toLowerCase()}? This action cannot be undone.`}
+        loading={deleteMutation.isPending}
+      />
     </ManageLayout>
   )
 }

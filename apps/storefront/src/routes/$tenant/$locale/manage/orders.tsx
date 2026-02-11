@@ -1,10 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router"
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { ManageLayout } from "@/components/manage"
-import { Container, PageHeader, DataTable, StatusBadge, SkeletonTable, Tabs, DropdownMenu } from "@/components/manage/ui"
+import { Container, PageHeader, DataTable, StatusBadge, SkeletonTable, Tabs, DropdownMenu, FormDrawer, useToast } from "@/components/manage/ui"
 import { t } from "@/lib/i18n"
 import { useTenant } from "@/lib/context/tenant-context"
-import { useManageOrders } from "@/lib/hooks/use-manage-data"
+import { useQuery } from "@tanstack/react-query"
+import { sdk } from "@/lib/utils/sdk"
+import { useManageCrud } from "@/lib/hooks/use-manage-crud"
+import { crudConfigs } from "@/components/manage/crud-configs"
+
+const config = crudConfigs["orders"]
 
 export const Route = createFileRoute("/$tenant/$locale/manage/orders")({
   component: ManageOrdersPage,
@@ -16,8 +21,51 @@ function ManageOrdersPage() {
   const { locale: routeLocale } = Route.useParams()
   const { locale: ctxLocale } = useTenant()
   const locale = routeLocale || ctxLocale || "en"
-  const { data, isLoading } = useManageOrders()
+  const { addToast } = useToast()
+
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [editingItem, setEditingItem] = useState<any>(null)
+  const [formValues, setFormValues] = useState<Record<string, any>>(config.defaultValues)
   const [statusFilter, setStatusFilter] = useState<string>("all")
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["manage", config.moduleKey],
+    queryFn: async () => {
+      const response = await sdk.client.fetch(config.apiEndpoint, { method: "GET" })
+      return response
+    },
+    enabled: typeof window !== "undefined",
+  })
+
+  const { updateMutation } = useManageCrud({
+    moduleKey: config.moduleKey,
+    apiEndpoint: config.apiEndpoint,
+  })
+
+  const handleEdit = useCallback((row: any) => {
+    setEditingItem(row)
+    const values: Record<string, any> = {}
+    config.fields.forEach((f) => { values[f.key] = row[f.key] ?? config.defaultValues[f.key] ?? "" })
+    setFormValues(values)
+    setDrawerOpen(true)
+  }, [])
+
+  const handleFormChange = useCallback((key: string, value: any) => {
+    setFormValues((prev) => ({ ...prev, [key]: value }))
+  }, [])
+
+  const handleSubmit = useCallback(async () => {
+    try {
+      if (editingItem) {
+        await updateMutation.mutateAsync({ id: editingItem.id, ...formValues })
+        addToast("success", `${config.singularLabel} updated successfully`)
+      }
+      setDrawerOpen(false)
+      setEditingItem(null)
+    } catch (e) {
+      addToast("error", `Failed to save ${config.singularLabel.toLowerCase()}`)
+    }
+  }, [editingItem, formValues, updateMutation, addToast])
 
   const allOrders = ((data as any)?.orders || []).map((o: any) => ({
     id: o.id,
@@ -27,6 +75,8 @@ function ManageOrdersPage() {
       : o.email || "—",
     total: o.total ? `$${(o.total / 100).toFixed(2)}` : "$0.00",
     status: o.fulfillment_status || o.status || "pending",
+    fulfillment_status: o.fulfillment_status || "not_fulfilled",
+    notes: o.notes || "",
     date: o.created_at ? new Date(o.created_at).toLocaleDateString() : "—",
   }))
 
@@ -62,10 +112,10 @@ function ManageOrdersPage() {
       key: "actions",
       header: t(locale, "manage.actions"),
       align: "end" as const,
-      render: () => (
+      render: (_: unknown, row: any) => (
         <DropdownMenu
           items={[
-            { label: t(locale, "manage.view"), onClick: () => {} },
+            { label: t(locale, "manage.edit"), onClick: () => handleEdit(row) },
           ]}
         />
       ),
@@ -107,6 +157,18 @@ function ManageOrdersPage() {
           countLabel={t(locale, "manage.orders").toLowerCase()}
         />
       </Container>
+
+      <FormDrawer
+        open={drawerOpen}
+        onClose={() => { setDrawerOpen(false); setEditingItem(null) }}
+        title={`Edit ${config.singularLabel}`}
+        fields={config.fields}
+        values={formValues}
+        onChange={handleFormChange}
+        onSubmit={handleSubmit}
+        loading={updateMutation.isPending}
+        submitLabel="Update"
+      />
     </ManageLayout>
   )
 }

@@ -1,10 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router"
+import { useState, useCallback } from "react"
 import { ManageLayout } from "@/components/manage"
-import { Container, PageHeader, DataTable, StatusBadge, SkeletonTable, Button, DropdownMenu } from "@/components/manage/ui"
+import { Container, PageHeader, DataTable, StatusBadge, SkeletonTable, Button, DropdownMenu, FormDrawer, ConfirmDialog, useToast } from "@/components/manage/ui"
 import { t } from "@/lib/i18n"
 import { useTenant } from "@/lib/context/tenant-context"
-import { useManageProducts } from "@/lib/hooks/use-manage-data"
+import { useQuery } from "@tanstack/react-query"
+import { sdk } from "@/lib/utils/sdk"
+import { useManageCrud } from "@/lib/hooks/use-manage-crud"
+import { crudConfigs } from "@/components/manage/crud-configs"
 import { Plus } from "@medusajs/icons"
+
+const config = crudConfigs["products"]
 
 export const Route = createFileRoute("/$tenant/$locale/manage/products")({
   component: ManageProductsPage,
@@ -14,13 +20,80 @@ function ManageProductsPage() {
   const { locale: routeLocale } = Route.useParams()
   const { locale: ctxLocale } = useTenant()
   const locale = routeLocale || ctxLocale || "en"
-  const { data, isLoading } = useManageProducts()
+  const { addToast } = useToast()
+
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [editingItem, setEditingItem] = useState<any>(null)
+  const [formValues, setFormValues] = useState<Record<string, any>>(config.defaultValues)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["manage", config.moduleKey],
+    queryFn: async () => {
+      const response = await sdk.client.fetch(config.apiEndpoint, { method: "GET" })
+      return response
+    },
+    enabled: typeof window !== "undefined",
+  })
+
+  const { createMutation, updateMutation, deleteMutation } = useManageCrud({
+    moduleKey: config.moduleKey,
+    apiEndpoint: config.apiEndpoint,
+  })
+
+  const handleCreate = useCallback(() => {
+    setEditingItem(null)
+    setFormValues({ ...config.defaultValues })
+    setDrawerOpen(true)
+  }, [])
+
+  const handleEdit = useCallback((row: any) => {
+    setEditingItem(row)
+    const values: Record<string, any> = {}
+    config.fields.forEach((f) => { values[f.key] = row[f.key] ?? config.defaultValues[f.key] ?? "" })
+    setFormValues(values)
+    setDrawerOpen(true)
+  }, [])
+
+  const handleFormChange = useCallback((key: string, value: any) => {
+    setFormValues((prev) => ({ ...prev, [key]: value }))
+  }, [])
+
+  const handleSubmit = useCallback(async () => {
+    try {
+      if (editingItem) {
+        await updateMutation.mutateAsync({ id: editingItem.id, ...formValues })
+        addToast("success", `${config.singularLabel} updated successfully`)
+      } else {
+        await createMutation.mutateAsync(formValues)
+        addToast("success", `${config.singularLabel} created successfully`)
+      }
+      setDrawerOpen(false)
+      setEditingItem(null)
+    } catch (e) {
+      addToast("error", `Failed to save ${config.singularLabel.toLowerCase()}`)
+    }
+  }, [editingItem, formValues, updateMutation, createMutation, addToast])
+
+  const handleDelete = useCallback(async () => {
+    if (!deleteId) return
+    try {
+      await deleteMutation.mutateAsync(deleteId)
+      addToast("success", `${config.singularLabel} deleted successfully`)
+      setDeleteId(null)
+    } catch (e) {
+      addToast("error", `Failed to delete ${config.singularLabel.toLowerCase()}`)
+    }
+  }, [deleteId, deleteMutation, addToast])
 
   const products = ((data as any)?.products || []).map((p: any) => ({
     id: p.id,
     title: p.title || "",
-    thumbnail: p.thumbnail || "",
+    subtitle: p.subtitle || "",
+    description: p.description || "",
     status: p.status || "draft",
+    handle: p.handle || "",
+    thumbnail: p.thumbnail || "",
     price: p.variants?.[0]?.prices?.[0]?.amount
       ? `$${(p.variants[0].prices[0].amount / 100).toFixed(2)}`
       : "$0.00",
@@ -67,12 +140,12 @@ function ManageProductsPage() {
       key: "actions",
       header: t(locale, "manage.actions"),
       align: "end" as const,
-      render: () => (
+      render: (_: unknown, row: any) => (
         <DropdownMenu
           items={[
-            { label: t(locale, "manage.edit"), onClick: () => {} },
+            { label: t(locale, "manage.edit"), onClick: () => handleEdit(row) },
             { type: "separator" as const },
-            { label: t(locale, "manage.delete"), onClick: () => {}, variant: "danger" as const },
+            { label: t(locale, "manage.delete"), onClick: () => setDeleteId(row.id), variant: "danger" as const },
           ]}
         />
       ),
@@ -96,7 +169,7 @@ function ManageProductsPage() {
           title={t(locale, "manage.products")}
           subtitle={t(locale, "manage.active_products")}
           actions={
-            <Button variant="primary" size="base">
+            <Button variant="primary" size="base" onClick={handleCreate}>
               <Plus className="w-4 h-4" />
               {t(locale, "manage.add_product")}
             </Button>
@@ -112,6 +185,27 @@ function ManageProductsPage() {
           countLabel={t(locale, "manage.products").toLowerCase()}
         />
       </Container>
+
+      <FormDrawer
+        open={drawerOpen}
+        onClose={() => { setDrawerOpen(false); setEditingItem(null) }}
+        title={editingItem ? `Edit ${config.singularLabel}` : `Add ${config.singularLabel}`}
+        fields={config.fields}
+        values={formValues}
+        onChange={handleFormChange}
+        onSubmit={handleSubmit}
+        loading={createMutation.isPending || updateMutation.isPending}
+        submitLabel={editingItem ? "Update" : "Create"}
+      />
+
+      <ConfirmDialog
+        open={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        title={`Delete ${config.singularLabel}`}
+        description={`Are you sure you want to delete this ${config.singularLabel.toLowerCase()}? This action cannot be undone.`}
+        loading={deleteMutation.isPending}
+      />
     </ManageLayout>
   )
 }

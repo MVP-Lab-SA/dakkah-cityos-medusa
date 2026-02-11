@@ -1,16 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router"
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { ManageLayout } from "@/components/manage"
-import { Container, PageHeader, DataTable, StatusBadge, SkeletonTable, Tabs, DropdownMenu } from "@/components/manage/ui"
+import { Container, PageHeader, DataTable, StatusBadge, SkeletonTable, Tabs, Button, DropdownMenu, FormDrawer, ConfirmDialog, useToast } from "@/components/manage/ui"
 import { t } from "@/lib/i18n"
 import { useTenant } from "@/lib/context/tenant-context"
 import { useQuery } from "@tanstack/react-query"
 import { sdk } from "@/lib/utils/sdk"
+import { useManageCrud } from "@/lib/hooks/use-manage-crud"
+import { crudConfigs } from "@/components/manage/crud-configs"
+import { Plus } from "@medusajs/icons"
 
 export const Route = createFileRoute("/$tenant/$locale/manage/companies")({
   component: ManageCompaniesPage,
 })
 
+const config = crudConfigs["companies"]
 const STATUS_FILTERS = ["all", "active", "pending", "suspended"] as const
 
 function ManageCompaniesPage() {
@@ -19,6 +23,62 @@ function ManageCompaniesPage() {
   const locale = routeLocale || ctxLocale || "en"
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [search, setSearch] = useState("")
+
+  const { addToast } = useToast()
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [editingItem, setEditingItem] = useState<any>(null)
+  const [formValues, setFormValues] = useState<Record<string, any>>(config.defaultValues)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
+
+  const { createMutation, updateMutation, deleteMutation } = useManageCrud({
+    moduleKey: config.moduleKey,
+    apiEndpoint: config.apiEndpoint,
+  })
+
+  const handleCreate = useCallback(() => {
+    setEditingItem(null)
+    setFormValues({ ...config.defaultValues })
+    setDrawerOpen(true)
+  }, [])
+
+  const handleEdit = useCallback((row: any) => {
+    setEditingItem(row)
+    const values: Record<string, any> = {}
+    config.fields.forEach((f) => { values[f.key] = row[f.key] ?? config.defaultValues[f.key] ?? "" })
+    setFormValues(values)
+    setDrawerOpen(true)
+  }, [])
+
+  const handleFormChange = useCallback((key: string, value: any) => {
+    setFormValues((prev) => ({ ...prev, [key]: value }))
+  }, [])
+
+  const handleSubmit = useCallback(async () => {
+    try {
+      if (editingItem) {
+        await updateMutation.mutateAsync({ id: editingItem.id, ...formValues })
+        addToast("success", `${config.singularLabel} updated successfully`)
+      } else {
+        await createMutation.mutateAsync(formValues)
+        addToast("success", `${config.singularLabel} created successfully`)
+      }
+      setDrawerOpen(false)
+      setEditingItem(null)
+    } catch (e) {
+      addToast("error", `Failed to save ${config.singularLabel.toLowerCase()}`)
+    }
+  }, [editingItem, formValues, updateMutation, createMutation, addToast])
+
+  const handleDelete = useCallback(async () => {
+    if (!deleteId) return
+    try {
+      await deleteMutation.mutateAsync(deleteId)
+      addToast("success", `${config.singularLabel} deleted successfully`)
+      setDeleteId(null)
+    } catch (e) {
+      addToast("error", `Failed to delete ${config.singularLabel.toLowerCase()}`)
+    }
+  }, [deleteId, deleteMutation, addToast])
 
   const { data, isLoading } = useQuery({
     queryKey: ["manage", "companies"],
@@ -74,15 +134,14 @@ function ManageCompaniesPage() {
     },
     {
       key: "actions",
-      header: t(locale, "manage.actions"),
+      header: "Actions",
       align: "end" as const,
-      render: (_val: unknown, row: any) => (
-        <DropdownMenu
-          items={[
-            { label: t(locale, "manage.view"), onClick: () => {} },
-            ...(row.status === "pending" ? [{ label: t(locale, "manage.approve"), onClick: () => {} }] : []),
-          ]}
-        />
+      render: (_: unknown, row: any) => (
+        <DropdownMenu items={[
+          { label: "Edit", onClick: () => handleEdit(row) },
+          { type: "separator" as const },
+          { label: "Delete", onClick: () => setDeleteId(row.id), variant: "danger" as const },
+        ]} />
       ),
     },
   ]
@@ -100,7 +159,16 @@ function ManageCompaniesPage() {
   return (
     <ManageLayout locale={locale}>
       <Container>
-        <PageHeader title={t(locale, "manage.companies")} subtitle="Manage company accounts" />
+        <PageHeader
+          title={config.label}
+          subtitle="Manage company accounts"
+          actions={
+            <Button variant="primary" size="base" onClick={handleCreate}>
+              <Plus className="w-4 h-4" />
+              Add {config.singularLabel}
+            </Button>
+          }
+        />
 
         <div className="mb-4">
           <input
@@ -124,6 +192,25 @@ function ManageCompaniesPage() {
 
         <DataTable columns={columns} data={companies} emptyTitle="No companies found" countLabel="companies" />
       </Container>
+      <FormDrawer
+        open={drawerOpen}
+        onClose={() => { setDrawerOpen(false); setEditingItem(null) }}
+        title={editingItem ? `Edit ${config.singularLabel}` : `Create ${config.singularLabel}`}
+        fields={config.fields}
+        values={formValues}
+        onChange={handleFormChange}
+        onSubmit={handleSubmit}
+        loading={createMutation.isPending || updateMutation.isPending}
+        submitLabel={editingItem ? "Save changes" : "Create"}
+      />
+      <ConfirmDialog
+        open={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        title={`Delete ${config.singularLabel}`}
+        description={`Are you sure you want to delete this ${config.singularLabel.toLowerCase()}? This action cannot be undone.`}
+        loading={deleteMutation.isPending}
+      />
     </ManageLayout>
   )
 }

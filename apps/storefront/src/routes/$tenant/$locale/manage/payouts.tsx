@@ -1,11 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router"
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { ManageLayout } from "@/components/manage"
-import { Container, PageHeader, DataTable, StatusBadge, SkeletonTable, Tabs, DropdownMenu } from "@/components/manage/ui"
+import { Container, PageHeader, DataTable, StatusBadge, SkeletonTable, Tabs, DropdownMenu, FormDrawer, useToast } from "@/components/manage/ui"
 import { t } from "@/lib/i18n"
 import { useTenant } from "@/lib/context/tenant-context"
 import { useQuery } from "@tanstack/react-query"
 import { sdk } from "@/lib/utils/sdk"
+import { useManageCrud } from "@/lib/hooks/use-manage-crud"
+import { crudConfigs } from "@/components/manage/crud-configs"
+
+const config = crudConfigs["payouts"]
 
 export const Route = createFileRoute("/$tenant/$locale/manage/payouts")({
   component: ManagePayoutsPage,
@@ -17,21 +21,58 @@ function ManagePayoutsPage() {
   const { locale: routeLocale } = Route.useParams()
   const { locale: ctxLocale } = useTenant()
   const locale = routeLocale || ctxLocale || "en"
+  const { addToast } = useToast()
+
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [editingItem, setEditingItem] = useState<any>(null)
+  const [formValues, setFormValues] = useState<Record<string, any>>(config.defaultValues)
+  const [statusFilter, setStatusFilter] = useState<string>("all")
+
   const { data, isLoading } = useQuery({
-    queryKey: ["manage", "payouts"],
+    queryKey: ["manage", config.moduleKey],
     queryFn: async () => {
-      const response = await sdk.client.fetch("/admin/payouts", { method: "GET" })
+      const response = await sdk.client.fetch(config.apiEndpoint, { method: "GET" })
       return response
     },
     enabled: typeof window !== "undefined",
   })
-  const [statusFilter, setStatusFilter] = useState<string>("all")
+
+  const { updateMutation } = useManageCrud({
+    moduleKey: config.moduleKey,
+    apiEndpoint: config.apiEndpoint,
+  })
+
+  const handleEdit = useCallback((row: any) => {
+    setEditingItem(row)
+    const values: Record<string, any> = {}
+    config.fields.forEach((f) => { values[f.key] = row[f.key] ?? config.defaultValues[f.key] ?? "" })
+    setFormValues(values)
+    setDrawerOpen(true)
+  }, [])
+
+  const handleFormChange = useCallback((key: string, value: any) => {
+    setFormValues((prev) => ({ ...prev, [key]: value }))
+  }, [])
+
+  const handleSubmit = useCallback(async () => {
+    try {
+      if (editingItem) {
+        await updateMutation.mutateAsync({ id: editingItem.id, ...formValues })
+        addToast("success", `${config.singularLabel} updated successfully`)
+      }
+      setDrawerOpen(false)
+      setEditingItem(null)
+    } catch (e) {
+      addToast("error", `Failed to save ${config.singularLabel.toLowerCase()}`)
+    }
+  }, [editingItem, formValues, updateMutation, addToast])
 
   const allPayouts = ((data as any)?.payouts || []).map((p: any) => ({
     id: p.id,
     vendor: p.vendor?.company_name || p.vendor_name || "—",
     amount: p.amount ? `$${(p.amount / 100).toFixed(2)}` : "$0.00",
     status: p.status || "pending",
+    notes: p.notes || "",
     method: p.method || p.payout_method || "—",
     date: p.created_at ? new Date(p.created_at).toLocaleDateString() : "—",
   }))
@@ -68,11 +109,10 @@ function ManagePayoutsPage() {
       key: "actions",
       header: t(locale, "manage.actions"),
       align: "end" as const,
-      render: (_val: unknown, row: any) => (
+      render: (_: unknown, row: any) => (
         <DropdownMenu
           items={[
-            ...(row.status === "pending" ? [{ label: t(locale, "manage.process"), onClick: () => {} }] : []),
-            ...((row.status === "pending" || row.status === "processing") ? [{ label: t(locale, "manage.hold"), onClick: () => {} }] : []),
+            { label: t(locale, "manage.edit"), onClick: () => handleEdit(row) },
           ]}
         />
       ),
@@ -114,6 +154,18 @@ function ManagePayoutsPage() {
           countLabel={t(locale, "manage.payouts").toLowerCase()}
         />
       </Container>
+
+      <FormDrawer
+        open={drawerOpen}
+        onClose={() => { setDrawerOpen(false); setEditingItem(null) }}
+        title={`Edit ${config.singularLabel}`}
+        fields={config.fields}
+        values={formValues}
+        onChange={handleFormChange}
+        onSubmit={handleSubmit}
+        loading={updateMutation.isPending}
+        submitLabel="Update"
+      />
     </ManageLayout>
   )
 }
