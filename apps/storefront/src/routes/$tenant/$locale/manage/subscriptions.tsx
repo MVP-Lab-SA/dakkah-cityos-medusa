@@ -1,0 +1,148 @@
+import { createFileRoute } from "@tanstack/react-router"
+import { useState } from "react"
+import { ManageLayout } from "@/components/manage"
+import { Container, PageHeader, DataTable, StatusBadge } from "@/components/manage/ui"
+import { t } from "@/lib/i18n"
+import { useTenant } from "@/lib/context/tenant-context"
+import { useQuery } from "@tanstack/react-query"
+import { sdk } from "@/lib/utils/sdk"
+
+export const Route = createFileRoute("/$tenant/$locale/manage/subscriptions")({
+  component: ManageSubscriptionsPage,
+})
+
+const STATUS_FILTERS = ["all", "active", "paused", "cancelled", "expired"] as const
+
+function ManageSubscriptionsPage() {
+  const { locale: routeLocale } = Route.useParams()
+  const { locale: ctxLocale } = useTenant()
+  const locale = routeLocale || ctxLocale || "en"
+  const [statusFilter, setStatusFilter] = useState<string>("all")
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["manage", "subscriptions"],
+    queryFn: async () => {
+      const response = await sdk.client.fetch("/admin/subscriptions", { method: "GET" })
+      return response
+    },
+    enabled: typeof window !== "undefined",
+  })
+
+  const allSubscriptions = ((data as any)?.subscriptions || []).map((sub: any) => ({
+    id: sub.id?.slice(0, 8) || "—",
+    customer: sub.customer?.first_name
+      ? `${sub.customer.first_name} ${sub.customer.last_name || ""}`.trim()
+      : sub.customer_email || "—",
+    plan: sub.plan?.name || sub.plan_name || "—",
+    status: sub.status || "active",
+    next_billing_date: sub.next_billing_date
+      ? new Date(sub.next_billing_date).toLocaleDateString()
+      : "—",
+    amount: sub.amount ? `$${(sub.amount / 100).toFixed(2)}` : "$0.00",
+  }))
+
+  const subscriptions = statusFilter === "all"
+    ? allSubscriptions
+    : allSubscriptions.filter((sub: any) => sub.status === statusFilter)
+
+  const columns = [
+    {
+      key: "id",
+      header: t(locale, "manage.subscription_id"),
+      render: (val: unknown) => <span className="font-medium font-mono">{val as string}</span>,
+    },
+    {
+      key: "customer",
+      header: t(locale, "manage.customer"),
+    },
+    {
+      key: "plan",
+      header: t(locale, "manage.plan"),
+    },
+    {
+      key: "status",
+      header: t(locale, "manage.status"),
+      render: (val: unknown) => (
+        <StatusBadge
+          status={val as string}
+          variants={{
+            active: "bg-ds-success",
+            paused: "bg-ds-warning",
+            cancelled: "bg-ds-destructive",
+            expired: "bg-ds-muted",
+          }}
+        />
+      ),
+    },
+    {
+      key: "next_billing_date",
+      header: t(locale, "manage.next_billing_date"),
+    },
+    {
+      key: "amount",
+      header: t(locale, "manage.amount"),
+      align: "end" as const,
+    },
+    {
+      key: "actions",
+      header: t(locale, "manage.actions"),
+      align: "end" as const,
+      render: () => (
+        <div className="flex items-center justify-end">
+          <button type="button" className="px-3 py-1.5 text-sm text-ds-muted hover:text-ds-text hover:bg-ds-background rounded-lg transition-colors">
+            {t(locale, "manage.view")}
+          </button>
+        </div>
+      ),
+    },
+  ]
+
+  if (isLoading) {
+    return (
+      <ManageLayout locale={locale}>
+        <Container>
+          <div className="space-y-4 animate-pulse">
+            <div className="h-8 bg-ds-muted/20 rounded-lg w-48" />
+            <div className="h-4 bg-ds-muted/20 rounded-lg w-32" />
+            <div className="h-64 bg-ds-muted/20 rounded-lg" />
+          </div>
+        </Container>
+      </ManageLayout>
+    )
+  }
+
+  return (
+    <ManageLayout locale={locale}>
+      <Container>
+        <PageHeader
+          title={t(locale, "manage.subscriptions")}
+          subtitle={t(locale, "manage.manage_subscriptions")}
+        />
+
+        <div className="flex items-center gap-2 overflow-x-auto pb-1">
+          {STATUS_FILTERS.map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => setStatusFilter(s)}
+              className={`px-3 py-1.5 rounded-lg text-sm whitespace-nowrap transition-colors ${
+                statusFilter === s
+                  ? "bg-ds-card border border-ds-border text-ds-text font-medium"
+                  : "text-ds-muted hover:text-ds-text"
+              }`}
+            >
+              {s === "all" ? t(locale, "manage.all_statuses") : t(locale, `manage.${s}`)}
+            </button>
+          ))}
+        </div>
+
+        <DataTable
+          columns={columns}
+          data={subscriptions}
+          emptyTitle={t(locale, "manage.no_subscriptions")}
+          countLabel={t(locale, "manage.subscriptions").toLowerCase()}
+        />
+      </Container>
+    </ManageLayout>
+  )
+}
