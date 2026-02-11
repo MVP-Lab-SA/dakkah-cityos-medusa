@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { ManageLayout } from "@/components/manage"
-import { Container, PageHeader, DataTable } from "@/components/manage/ui"
+import { Container, PageHeader, DataTable, SkeletonTable } from "@/components/manage/ui"
 import { t } from "@/lib/i18n"
 import { useTenant } from "@/lib/context/tenant-context"
 import { useQuery } from "@tanstack/react-query"
@@ -62,11 +62,7 @@ function ManageCustomersPage() {
     return (
       <ManageLayout locale={locale}>
         <Container>
-          <div className="space-y-4 animate-pulse">
-            <div className="h-8 bg-ds-muted/20 rounded-lg w-48" />
-            <div className="h-4 bg-ds-muted/20 rounded-lg w-32" />
-            <div className="h-64 bg-ds-muted/20 rounded-lg" />
-          </div>
+          <SkeletonTable rows={8} cols={5} />
         </Container>
       </ManageLayout>
     )

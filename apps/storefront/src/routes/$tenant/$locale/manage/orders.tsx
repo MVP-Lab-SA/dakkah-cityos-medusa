@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { useState } from "react"
 import { ManageLayout } from "@/components/manage"
-import { Container, PageHeader, DataTable, StatusBadge } from "@/components/manage/ui"
+import { Container, PageHeader, DataTable, StatusBadge, SkeletonTable, Tabs, DropdownMenu } from "@/components/manage/ui"
 import { t } from "@/lib/i18n"
 import { useTenant } from "@/lib/context/tenant-context"
 import { useManageOrders } from "@/lib/hooks/use-manage-data"
@@ -63,11 +63,11 @@ function ManageOrdersPage() {
       header: t(locale, "manage.actions"),
       align: "end" as const,
       render: () => (
-        <div className="flex items-center justify-end">
-          <button type="button" className="px-3 py-1.5 text-sm text-ds-muted hover:text-ds-text hover:bg-ds-background rounded-lg transition-colors">
-            {t(locale, "manage.view")}
-          </button>
-        </div>
+        <DropdownMenu
+          items={[
+            { label: t(locale, "manage.view"), onClick: () => {} },
+          ]}
+        />
       ),
     },
   ]
@@ -76,11 +76,7 @@ function ManageOrdersPage() {
     return (
       <ManageLayout locale={locale}>
         <Container>
-          <div className="space-y-4 animate-pulse">
-            <div className="h-8 bg-ds-muted/20 rounded-lg w-48" />
-            <div className="h-4 bg-ds-muted/20 rounded-lg w-32" />
-            <div className="h-64 bg-ds-muted/20 rounded-lg" />
-          </div>
+          <SkeletonTable rows={8} cols={6} />
         </Container>
       </ManageLayout>
     )
@@ -94,22 +90,15 @@ function ManageOrdersPage() {
           subtitle={t(locale, "manage.orders_today")}
         />
 
-        <div className="flex items-center gap-2 overflow-x-auto pb-1">
-          {STATUS_FILTERS.map((s) => (
-            <button
-              key={s}
-              type="button"
-              onClick={() => setStatusFilter(s)}
-              className={`px-3 py-1.5 rounded-lg text-sm whitespace-nowrap transition-colors ${
-                statusFilter === s
-                  ? "bg-ds-card border border-ds-border text-ds-text font-medium"
-                  : "text-ds-muted hover:text-ds-text"
-              }`}
-            >
-              {s === "all" ? t(locale, "manage.all_statuses") : t(locale, `manage.${s}`)}
-            </button>
-          ))}
-        </div>
+        <Tabs
+          tabs={STATUS_FILTERS.map((s) => ({
+            id: s,
+            label: s === "all" ? t(locale, "manage.all_statuses") : s.replace(/_/g, " "),
+          }))}
+          activeTab={statusFilter}
+          onTabChange={setStatusFilter}
+          className="mb-4"
+        />
 
         <DataTable
           columns={columns}

@@ -2,7 +2,7 @@ import { Link, useLocation } from "@tanstack/react-router"
 import { useTenant } from "@/lib/context/tenant-context"
 import { t } from "@/lib/i18n"
 import { clsx } from "clsx"
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import {
   SquaresPlus,
   ShoppingBag,
@@ -85,6 +85,36 @@ interface ManageSidebarProps {
   onNavigate?: () => void
 }
 
+function CollapsibleContent({ open, children }: { open: boolean; children: React.ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [height, setHeight] = useState<number | undefined>(open ? undefined : 0)
+
+  useEffect(() => {
+    if (!ref.current) return
+    if (open) {
+      const h = ref.current.scrollHeight
+      setHeight(h)
+      const timer = setTimeout(() => setHeight(undefined), 150)
+      return () => clearTimeout(timer)
+    } else {
+      setHeight(ref.current.scrollHeight)
+      requestAnimationFrame(() => {
+        setHeight(0)
+      })
+    }
+  }, [open])
+
+  return (
+    <div
+      ref={ref}
+      style={{ height: height !== undefined ? height : "auto" }}
+      className="overflow-hidden transition-[height] duration-150 ease-in-out"
+    >
+      {children}
+    </div>
+  )
+}
+
 function SidebarSection({
   section,
   modules,
@@ -123,7 +153,7 @@ function SidebarSection({
   }
 
   return (
-    <div className="flex flex-col gap-0.5">
+    <div className="flex flex-col">
       <button
         type="button"
         onClick={() => setOpen(!open)}
@@ -137,7 +167,7 @@ function SidebarSection({
           )}
         />
       </button>
-      {open && (
+      <CollapsibleContent open={open}>
         <div className="flex flex-col gap-0.5">
           {modules.map((mod) => (
             <SidebarItem
@@ -150,7 +180,7 @@ function SidebarSection({
             />
           ))}
         </div>
-      )}
+      </CollapsibleContent>
     </div>
   )
 }

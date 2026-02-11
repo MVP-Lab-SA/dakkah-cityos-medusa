@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { useState } from "react"
 import { ManageLayout } from "@/components/manage"
-import { Container, PageHeader, SectionCard, DataTable, StatusBadge } from "@/components/manage/ui"
+import { Container, PageHeader, SectionCard, DataTable, StatusBadge, Input, Select, Label, Button } from "@/components/manage/ui"
 import { t } from "@/lib/i18n"
 import { useTenant } from "@/lib/context/tenant-context"
 
@@ -25,7 +25,7 @@ function ManageTeamPage() {
       header: t(locale, "manage.member_name"),
       render: (_: unknown, row: Record<string, unknown>) => (
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-ds-primary/10 flex items-center justify-center text-ds-primary text-xs font-medium">
+          <div className="w-8 h-8 rounded-full bg-violet-50 flex items-center justify-center text-violet-600 text-xs font-medium">
             {((row.name as string) || "?").charAt(0).toUpperCase()}
           </div>
           <span className="font-medium">{row.name as string}</span>
@@ -63,34 +63,30 @@ function ManageTeamPage() {
         <SectionCard title={t(locale, "manage.invite_member")}>
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1">
-              <label className="block text-xs font-medium text-ds-muted-foreground mb-1">{t(locale, "manage.email")}</label>
-              <input
+              <Label>{t(locale, "manage.email")}</Label>
+              <Input
                 type="email"
                 value={inviteEmail}
                 onChange={(e) => setInviteEmail(e.target.value)}
                 placeholder={t(locale, "manage.invite_email_placeholder")}
-                className="w-full px-3 py-2 bg-ds-background border border-ds-border rounded-lg text-sm text-ds-text placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-primary"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-ds-muted-foreground mb-1">{t(locale, "manage.role")}</label>
-              <select
+              <Label>{t(locale, "manage.role")}</Label>
+              <Select
                 value={inviteRole}
                 onChange={(e) => setInviteRole(e.target.value)}
-                className="w-full px-3 py-2 bg-ds-background border border-ds-border rounded-lg text-sm text-ds-text focus:outline-none focus:ring-2 focus:ring-ds-primary"
-              >
-                <option value="member">Member</option>
-                <option value="admin">Admin</option>
-                <option value="editor">Editor</option>
-              </select>
+                options={[
+                  { value: "member", label: "Member" },
+                  { value: "admin", label: "Admin" },
+                  { value: "editor", label: "Editor" },
+                ]}
+              />
             </div>
             <div className="flex items-end">
-              <button
-                type="button"
-                className="px-4 py-2 bg-ds-primary text-white rounded-lg text-sm font-medium hover:bg-ds-primary/90 transition-colors whitespace-nowrap"
-              >
+              <Button variant="primary" size="base">
                 {t(locale, "manage.send_invite")}
-              </button>
+              </Button>
             </div>
           </div>
         </SectionCard>

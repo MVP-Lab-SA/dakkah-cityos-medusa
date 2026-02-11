@@ -23,8 +23,10 @@ export function ManageHeader({ locale: localeProp, onMenuToggle }: ManageHeaderP
     .split("/")
     .filter(Boolean)
 
+  const initial = customer?.first_name?.[0]?.toUpperCase() || "U"
+
   return (
-    <header className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
+    <header className="bg-white border-b border-gray-200 h-12 px-6 flex items-center justify-between flex-shrink-0">
       <div className="flex items-center gap-3 min-w-0">
         <button
           type="button"
@@ -45,13 +47,13 @@ export function ManageHeader({ locale: localeProp, onMenuToggle }: ManageHeaderP
             <span key={seg} className="flex items-center gap-1 min-w-0">
               <span className="text-gray-300 flex-shrink-0">/</span>
               {i === segments.length - 1 ? (
-                <span className="text-gray-600 capitalize truncate">{seg}</span>
+                <span className="text-gray-600 capitalize truncate">{seg.replace(/-/g, " ")}</span>
               ) : (
                 <Link
                   to={`/${tenantSlug}/${locale}/manage/${segments.slice(0, i + 1).join("/")}` as any}
                   className="hover:text-gray-600 transition-colors capitalize truncate"
                 >
-                  {seg}
+                  {seg.replace(/-/g, " ")}
                 </Link>
               )}
             </span>
@@ -59,8 +61,8 @@ export function ManageHeader({ locale: localeProp, onMenuToggle }: ManageHeaderP
         </nav>
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
-        <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 text-xs cursor-pointer hover:bg-gray-200 transition-colors">
-          {customer?.first_name?.[0]?.toUpperCase() || "U"}
+        <div className="w-7 h-7 rounded-full bg-violet-100 flex items-center justify-center text-violet-700 text-xs font-medium cursor-pointer hover:bg-violet-200 transition-colors">
+          {initial}
         </div>
       </div>
     </header>

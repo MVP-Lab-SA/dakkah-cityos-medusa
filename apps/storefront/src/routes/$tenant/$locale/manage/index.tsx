@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { Link } from "@tanstack/react-router"
 import { ManageLayout, ManageActivityFeed } from "@/components/manage"
-import { Container, PageHeader, SectionCard, StatsGrid } from "@/components/manage/ui"
+import { Container, PageHeader, SectionCard, StatsGrid, SkeletonCard } from "@/components/manage/ui"
 import { t } from "@/lib/i18n"
 import { useTenant } from "@/lib/context/tenant-context"
 import { useManageStats } from "@/lib/hooks/use-manage-data"
@@ -15,12 +15,7 @@ function StatsLoadingSkeleton() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
       {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="bg-white border border-gray-200 rounded-lg p-5 animate-pulse">
-          <div className="space-y-2">
-            <div className="h-4 w-24 bg-gray-100 rounded-lg" />
-            <div className="h-7 w-16 bg-gray-100 rounded-lg" />
-          </div>
-        </div>
+        <SkeletonCard key={i} />
       ))}
     </div>
   )
@@ -52,14 +47,10 @@ function ManageDashboard() {
   return (
     <ManageLayout locale={locale}>
       <Container>
-        <div className="mb-8">
-          <h1 className="text-xl font-semibold text-gray-900">
-            {t(locale, "manage.dashboard")}
-          </h1>
-          <p className="text-sm text-gray-500 mt-1">
-            {t(locale, "manage.store_management")}
-          </p>
-        </div>
+        <PageHeader
+          title={t(locale, "manage.dashboard")}
+          subtitle={t(locale, "manage.store_management")}
+        />
 
         {statsLoading ? (
           <StatsLoadingSkeleton />
@@ -91,17 +82,11 @@ function ManageDashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h2 className="text-sm font-semibold text-gray-900 mb-4">
-                {t(locale, "manage.recent_activity")}
-              </h2>
+            <SectionCard title={t(locale, "manage.recent_activity")}>
               <ManageActivityFeed locale={locale} activities={[]} />
-            </div>
+            </SectionCard>
           </div>
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h2 className="text-sm font-semibold text-gray-900 mb-4">
-              {t(locale, "manage.quick_actions")}
-            </h2>
+          <SectionCard title={t(locale, "manage.quick_actions")}>
             <div className="space-y-1">
               {quickActions.map((action) => (
                 <Link
@@ -114,7 +99,7 @@ function ManageDashboard() {
                 </Link>
               ))}
             </div>
-          </div>
+          </SectionCard>
         </div>
       </Container>
     </ManageLayout>

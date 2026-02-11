@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { useState } from "react"
 import { ManageLayout } from "@/components/manage"
-import { Container, PageHeader, DataTable } from "@/components/manage/ui"
+import { Container, PageHeader, DataTable, SkeletonTable } from "@/components/manage/ui"
 import { t } from "@/lib/i18n"
 import { useTenant } from "@/lib/context/tenant-context"
 import { useQuery } from "@tanstack/react-query"
@@ -73,11 +73,7 @@ function ManageAuditPage() {
     return (
       <ManageLayout locale={locale}>
         <Container>
-          <div className="space-y-4 animate-pulse">
-            <div className="h-8 bg-ds-muted/20 rounded-lg w-48" />
-            <div className="h-4 bg-ds-muted/20 rounded-lg w-32" />
-            <div className="h-64 bg-ds-muted/20 rounded-lg" />
-          </div>
+          <SkeletonTable rows={8} cols={6} />
         </Container>
       </ManageLayout>
     )
@@ -94,7 +90,7 @@ function ManageAuditPage() {
             placeholder="Search by action..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full max-w-sm px-3 py-2 text-sm bg-ds-background border border-ds-border rounded-lg text-ds-text placeholder:text-ds-muted focus:outline-none focus:ring-1 focus:ring-ds-border"
+            className="w-full max-w-sm px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-200"
           />
         </div>
 

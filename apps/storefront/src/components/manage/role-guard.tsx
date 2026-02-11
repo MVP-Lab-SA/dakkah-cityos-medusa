@@ -7,6 +7,7 @@ import { Link } from "@tanstack/react-router"
 import { sdk } from "@/lib/utils/sdk"
 import { useQuery } from "@tanstack/react-query"
 import { LoginForm } from "@/components/auth/login-form"
+import { BuildingStorefront } from "@medusajs/icons"
 
 const MIN_MANAGE_WEIGHT = 40
 
@@ -45,10 +46,10 @@ function useTenantUserRole(tenantSlug: string, customerId: string | undefined) {
 
 function LoadingState({ locale }: { locale: string }) {
   return (
-    <div className="min-h-screen bg-ds-background flex items-center justify-center">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="text-center space-y-4">
-        <div className="w-8 h-8 border-2 border-ds-primary border-t-transparent rounded-full animate-spin mx-auto" />
-        <p className="text-sm text-ds-muted">{t(locale, "common.loading")}</p>
+        <div className="w-8 h-8 border-2 border-violet-600 border-t-transparent rounded-full animate-spin mx-auto" />
+        <p className="text-sm text-gray-500">{t(locale, "common.loading")}</p>
       </div>
     </div>
   )
@@ -56,27 +57,29 @@ function LoadingState({ locale }: { locale: string }) {
 
 function LoginRequired({ locale, tenantSlug }: { locale: string; tenantSlug: string }) {
   return (
-    <div className="min-h-screen bg-[#f8f9fa] flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        <div className="bg-white border border-ds-border rounded-lg p-8 space-y-6">
-          {/* Header */}
-          <div className="space-y-2 text-center">
-            <h1 className="text-2xl font-bold text-ds-text">
-              {t(locale, "manage.log_in")}
-            </h1>
-            <p className="text-sm text-ds-muted">
-              {t(locale, "manage.log_in_subtitle")}
-            </p>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+      <div className="w-full max-w-[380px]">
+        <div className="bg-white rounded-xl shadow-sm p-8 space-y-6">
+          <div className="flex flex-col items-center space-y-4">
+            <div className="w-10 h-10 rounded-lg bg-violet-600 flex items-center justify-center">
+              <BuildingStorefront className="w-5 h-5 text-white" />
+            </div>
+            <div className="space-y-1.5 text-center">
+              <h1 className="text-xl font-semibold text-gray-900">
+                Dakkah CityOS
+              </h1>
+              <p className="text-[13px] text-gray-500">
+                {t(locale, "manage.log_in_subtitle")}
+              </p>
+            </div>
           </div>
 
-          {/* Login Form */}
           <LoginForm />
 
-          {/* Back to Store Link */}
-          <div className="text-center pt-4 border-t border-ds-border">
+          <div className="pt-4 border-t border-gray-100 text-center">
             <Link
               to={`/${tenantSlug}/${locale}` as any}
-              className="text-sm text-ds-muted-foreground hover:text-ds-foreground transition-colors"
+              className="text-[13px] text-gray-400 hover:text-gray-600 transition-colors"
             >
               {t(locale, "manage.back_to_store")}
             </Link>
@@ -89,19 +92,19 @@ function LoginRequired({ locale, tenantSlug }: { locale: string; tenantSlug: str
 
 function AccessDenied({ locale, tenantSlug }: { locale: string; tenantSlug: string }) {
   return (
-    <div className="min-h-screen bg-ds-background flex items-center justify-center">
-      <div className="bg-ds-card border border-ds-border rounded-lg p-8 max-w-md w-full mx-4 text-center space-y-4">
-        <div className="w-16 h-16 bg-ds-destructive/10 rounded-full flex items-center justify-center mx-auto">
-          <svg className="w-8 h-8 text-ds-destructive" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+      <div className="bg-white rounded-xl shadow-sm p-8 max-w-md w-full text-center space-y-4">
+        <div className="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mx-auto">
+          <svg className="w-7 h-7 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636" />
           </svg>
         </div>
-        <h2 className="text-xl font-bold text-ds-text">{t(locale, "manage.access_denied")}</h2>
-        <p className="text-ds-muted text-sm">{t(locale, "manage.unauthorized_message")}</p>
-        <p className="text-ds-muted text-xs">{t(locale, "manage.role_required")}</p>
+        <h2 className="text-lg font-semibold text-gray-900">{t(locale, "manage.access_denied")}</h2>
+        <p className="text-gray-500 text-[13px]">{t(locale, "manage.unauthorized_message")}</p>
+        <p className="text-gray-400 text-xs">{t(locale, "manage.role_required")}</p>
         <Link
           to={`/${tenantSlug}/${locale}` as any}
-          className="inline-block px-6 py-2 bg-ds-primary text-ds-primary-foreground rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+          className="inline-block px-6 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-lg text-[13px] font-medium transition-colors"
         >
           {t(locale, "manage.back_to_store")}
         </Link>

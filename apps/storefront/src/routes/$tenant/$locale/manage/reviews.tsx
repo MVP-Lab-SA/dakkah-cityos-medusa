@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { useState } from "react"
 import { ManageLayout } from "@/components/manage"
-import { Container, PageHeader, DataTable, StatusBadge } from "@/components/manage/ui"
+import { Container, PageHeader, DataTable, StatusBadge, SkeletonTable, Tabs, DropdownMenu } from "@/components/manage/ui"
 import { t } from "@/lib/i18n"
 import { useTenant } from "@/lib/context/tenant-context"
 import { useQuery } from "@tanstack/react-query"
@@ -16,7 +16,7 @@ const STATUS_FILTERS = ["all", "pending", "approved", "rejected"] as const
 function renderStars(rating: number) {
   const stars = Math.min(Math.max(Math.round(rating), 0), 5)
   return (
-    <span className="text-ds-warning" title={`${rating}/5`}>
+    <span className="text-amber-500" title={`${rating}/5`}>
       {"★".repeat(stars)}
       {"☆".repeat(5 - stars)}
     </span>
@@ -75,9 +75,9 @@ function ManageReviewsPage() {
         <StatusBadge
           status={val as string}
           variants={{
-            pending: "bg-ds-warning",
-            approved: "bg-ds-success",
-            rejected: "bg-ds-destructive",
+            pending: "bg-amber-500",
+            approved: "bg-green-600",
+            rejected: "bg-red-600",
           }}
         />
       ),
@@ -91,18 +91,12 @@ function ManageReviewsPage() {
       header: t(locale, "manage.actions"),
       align: "end" as const,
       render: (_: unknown, row: Record<string, unknown>) => (
-        <div className="flex items-center justify-end gap-2">
-          {row.status !== "approved" && (
-            <button type="button" className="px-3 py-1.5 text-sm text-ds-success hover:bg-ds-background rounded-lg transition-colors">
-              {t(locale, "manage.approve")}
-            </button>
-          )}
-          {row.status !== "rejected" && (
-            <button type="button" className="px-3 py-1.5 text-sm text-ds-destructive hover:bg-ds-background rounded-lg transition-colors">
-              {t(locale, "manage.reject")}
-            </button>
-          )}
-        </div>
+        <DropdownMenu
+          items={[
+            ...(row.status !== "approved" ? [{ label: t(locale, "manage.approve"), onClick: () => {} }] : []),
+            ...(row.status !== "rejected" ? [{ type: "separator" as const }, { label: t(locale, "manage.reject"), onClick: () => {}, variant: "danger" as const }] : []),
+          ]}
+        />
       ),
     },
   ]
@@ -111,11 +105,7 @@ function ManageReviewsPage() {
     return (
       <ManageLayout locale={locale}>
         <Container>
-          <div className="space-y-4 animate-pulse">
-            <div className="h-8 bg-ds-muted/20 rounded-lg w-48" />
-            <div className="h-4 bg-ds-muted/20 rounded-lg w-32" />
-            <div className="h-64 bg-ds-muted/20 rounded-lg" />
-          </div>
+          <SkeletonTable rows={8} cols={6} />
         </Container>
       </ManageLayout>
     )
@@ -129,22 +119,15 @@ function ManageReviewsPage() {
           subtitle={t(locale, "manage.manage_reviews")}
         />
 
-        <div className="flex items-center gap-2 overflow-x-auto pb-1">
-          {STATUS_FILTERS.map((s) => (
-            <button
-              key={s}
-              type="button"
-              onClick={() => setStatusFilter(s)}
-              className={`px-3 py-1.5 rounded-lg text-sm whitespace-nowrap transition-colors ${
-                statusFilter === s
-                  ? "bg-ds-card border border-ds-border text-ds-text font-medium"
-                  : "text-ds-muted hover:text-ds-text"
-              }`}
-            >
-              {s === "all" ? t(locale, "manage.all_statuses") : t(locale, `manage.${s}`)}
-            </button>
-          ))}
-        </div>
+        <Tabs
+          tabs={STATUS_FILTERS.map((s) => ({
+            id: s,
+            label: s === "all" ? t(locale, "manage.all_statuses") : s.replace(/_/g, " "),
+          }))}
+          activeTab={statusFilter}
+          onTabChange={setStatusFilter}
+          className="mb-4"
+        />
 
         <DataTable
           columns={columns}

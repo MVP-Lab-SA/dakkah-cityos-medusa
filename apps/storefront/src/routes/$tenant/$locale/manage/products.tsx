@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { ManageLayout } from "@/components/manage"
-import { Container, PageHeader, DataTable, StatusBadge } from "@/components/manage/ui"
+import { Container, PageHeader, DataTable, StatusBadge, SkeletonTable, Button, DropdownMenu } from "@/components/manage/ui"
 import { t } from "@/lib/i18n"
 import { useTenant } from "@/lib/context/tenant-context"
 import { useManageProducts } from "@/lib/hooks/use-manage-data"
@@ -37,10 +37,10 @@ function ManageProductsPage() {
             <img
               src={row.thumbnail as string}
               alt={row.title as string}
-              className="w-10 h-10 rounded-md object-cover border border-ds-border"
+              className="w-10 h-10 rounded-md object-cover border border-gray-200"
             />
           ) : (
-            <div className="w-10 h-10 rounded-md bg-ds-accent flex items-center justify-center text-ds-muted-foreground text-xs">
+            <div className="w-10 h-10 rounded-md bg-gray-100 flex items-center justify-center text-gray-500 text-xs">
               —
             </div>
           )}
@@ -68,14 +68,13 @@ function ManageProductsPage() {
       header: t(locale, "manage.actions"),
       align: "end" as const,
       render: () => (
-        <div className="flex items-center justify-end gap-2">
-          <button type="button" className="px-3 py-1.5 text-sm text-gray-400 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
-            {t(locale, "manage.edit")}
-          </button>
-          <button type="button" className="px-3 py-1.5 text-sm text-gray-400 hover:text-red-600 hover:bg-gray-50 rounded-lg transition-colors">
-            {t(locale, "manage.delete")}
-          </button>
-        </div>
+        <DropdownMenu
+          items={[
+            { label: t(locale, "manage.edit"), onClick: () => {} },
+            { type: "separator" as const },
+            { label: t(locale, "manage.delete"), onClick: () => {}, variant: "danger" as const },
+          ]}
+        />
       ),
     },
   ]
@@ -84,11 +83,7 @@ function ManageProductsPage() {
     return (
       <ManageLayout locale={locale}>
         <Container>
-          <div className="space-y-4 animate-pulse">
-            <div className="h-8 bg-gray-100 rounded-lg w-48" />
-            <div className="h-4 bg-gray-100 rounded-lg w-32" />
-            <div className="h-64 bg-gray-100 rounded-lg" />
-          </div>
+          <SkeletonTable rows={8} cols={7} />
         </Container>
       </ManageLayout>
     )
@@ -101,13 +96,10 @@ function ManageProductsPage() {
           title={t(locale, "manage.products")}
           subtitle={t(locale, "manage.active_products")}
           actions={
-            <button
-              type="button"
-              className="px-4 py-2 bg-violet-600 text-white rounded-lg text-sm font-medium hover:bg-violet-700 transition-colors flex items-center gap-2"
-            >
+            <Button variant="primary" size="base">
               <Plus className="w-4 h-4" />
               {t(locale, "manage.add_product")}
-            </button>
+            </Button>
           }
         />
         <DataTable
