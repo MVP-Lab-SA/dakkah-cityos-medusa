@@ -125,12 +125,20 @@ All 53 commerce models from the medusa-core-nrd4 reference design document now h
 - Wholesale/B2B (catalog, tier pricing, bulk order, RFQ)
 - Freemium (tier comparison, upgrade prompt, feature gate)
 
+**Phase 9 - Tenant Management Panel (11 components, 6 routes):**
+- Management dashboard at `/$tenant/$locale/manage` with RBAC-gated access (weight >= 40)
+- Role guard resolves RBAC role from Platform Context API (`/platform/{tenantSlug}/context`) with fallback to `customer.metadata.role`
+- 6 management sections: Dashboard, Products, Orders, Team, Settings, Analytics
+- 11 components: RoleGuard, ManageLayout, ManageSidebar, ManageHeader, StatsCard, ManageProductList, ManageOrderList, ManageTeamList, ManageSettingsForm, ManageAnalytics, ManageActivityFeed
+- i18n: `manage` namespace with 90+ keys in en/fr/ar
+- Medusa admin path changed to `/commerce/admin` for system consistency
+
 ### Current Metrics
-- **62 component directories** with 230+ components
-- **99 route files** covering all commerce verticals
+- **63 component directories** with 240+ components
+- **105 route files** covering all commerce verticals + management
 - **45 design system type files** with 200+ interfaces
 - **48 hook files** for data fetching and state management
-- **30+ i18n namespaces** with complete en/fr/ar translations
+- **31+ i18n namespaces** with complete en/fr/ar translations
 
 ### Known Issues
 - SSR hydration mismatch warnings in browser console (pre-existing, mitigated with `suppressHydrationWarning`)
