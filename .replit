@@ -18,38 +18,8 @@ TEMPORAL_NAMESPACE = "quickstart-dakkah-cityos.djvai"
 __MEDUSA_ADDITIONAL_ALLOWED_HOSTS = ".replit.dev,.replit.app"
 
 [userenv.development]
-MEDUSA_BACKEND_PORT = "9000"
-STOREFRONT_PORT = "5000"
-MEDUSA_ADMIN_PATH = "/commerce/admin"
-BACKEND_URL = "https://f76865b8-a3a7-41f9-85b2-b0ade8a4fd85-00-3o74vg6b4mqvs.sisko.replit.dev:9000"
-STORE_URL = "https://9e78ac41-ae95-440f-9196-e9263c6eadda-00-130jbk279zua2.janeway.replit.dev:5000"
-NODE_ENV = "development"
-LOG_LEVEL = "info"
-PAYLOAD_CMS_URL = "https://9e78ac41-ae95-440f-9196-e9263c6eadda-00-130jbk279zua2.janeway.replit.dev:3001"
-ERPNEXT_URL = "https://ff049349-609e-450d-ab42-e289d89960bb-00-ujg6lz7mnzcy.pike.replit.dev:8080"
-FLEETBASE_URL = "https://efdaeea4-1883-4ef0-9888-41da8659025c-00-19fmj1r05ozg4.pike.replit.dev:4000"
-WALTID_URL = "https://9e78ac41-ae95-440f-9196-e9263c6eadda-00-130jbk279zua2.janeway.replit.dev:7000"
-MEDUSA_BACKEND_URL_LOCAL = "http://localhost:9000"
-STOREFRONT_URL_LOCAL = "http://localhost:5000"
-PAYLOAD_CMS_URL_LOCAL = "http://localhost:3001"
-ERPNEXT_URL_LOCAL = "http://localhost:8080"
-FLEETBASE_URL_LOCAL = "http://localhost:4000"
-WALTID_URL_LOCAL = "http://localhost:7000"
-MEDUSA_BACKEND_URL_DEV = "https://f76865b8-a3a7-41f9-85b2-b0ade8a4fd85-00-3o74vg6b4mqvs.sisko.replit.dev:9000"
-STOREFRONT_URL_DEV = "https://9e78ac41-ae95-440f-9196-e9263c6eadda-00-130jbk279zua2.janeway.replit.dev:5000"
-PAYLOAD_CMS_URL_DEV = "https://9e78ac41-ae95-440f-9196-e9263c6eadda-00-130jbk279zua2.janeway.replit.dev:3001"
-ERPNEXT_URL_DEV = "https://ff049349-609e-450d-ab42-e289d89960bb-00-ujg6lz7mnzcy.pike.replit.dev:8080"
-FLEETBASE_URL_DEV = "https://efdaeea4-1883-4ef0-9888-41da8659025c-00-19fmj1r05ozg4.pike.replit.dev:4000"
-WALTID_URL_DEV = "https://9e78ac41-ae95-440f-9196-e9263c6eadda-00-130jbk279zua2.janeway.replit.dev:7000"
 
 [userenv.production]
-PAYLOAD_CMS_URL = "https://cms.dakkah.com"
-ERPNEXT_URL = "https://erp.dakkah.com"
-FLEETBASE_URL = "https://fleet.dakkah.com"
-WALTID_URL = "https://identity.dakkah.com"
-BACKEND_URL = "https://api.dakkah.com"
-STORE_URL = "https://dakkah.com"
-NODE_ENV = "production"
 
 [[ports]]
 localPort = 5000
