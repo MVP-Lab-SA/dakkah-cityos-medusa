@@ -71,7 +71,7 @@ export default async function seedComplete({ container }: ExecArgs) {
         },
       })
 
-      console.log("  Created admin user: admin@dakkah.com (password: admin123456)")
+      console.log("  Created admin user: admin@dakkah.com")
     } else {
       console.log("  Admin user already exists")
     }
@@ -343,7 +343,7 @@ export default async function seedComplete({ container }: ExecArgs) {
 
     if (existingApiKeys && existingApiKeys.length > 0) {
       publishableApiKey = existingApiKeys[0]
-      console.log(`  Publishable API key already exists: ${publishableApiKey.id}`)
+      console.log(`  Publishable API key already exists`)
     }
   } catch (checkError: any) {
     console.log(`  Could not check existing API keys: ${checkError.message}`)
@@ -356,7 +356,7 @@ export default async function seedComplete({ container }: ExecArgs) {
       },
     })
     publishableApiKey = apiKeyResult[0]
-    console.log(`  API Key created: ${publishableApiKey.token}`)
+    console.log(`  API Key created successfully`)
   }
 
   try {

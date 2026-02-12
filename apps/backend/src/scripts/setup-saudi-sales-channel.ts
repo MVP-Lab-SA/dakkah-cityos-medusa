@@ -70,7 +70,7 @@ export default async function({ container }: ExecArgs) {
   console.log("\n✅ Setup complete!")
   console.log("\n📋 NEXT STEPS:")
   console.log("1. Go to Admin > Settings > Developer > Publishable API Keys")
-  console.log(`2. Copy the Saudi Arabia Storefront key: ${apiKeys[0].id}`)
+  console.log("2. Copy the Saudi Arabia Storefront key from the admin panel")
   console.log("3. Go to Admin > Products")
   console.log("4. Edit each Saudi product and add 'Saudi Arabia Store' sales channel")
   console.log("5. Create a new storefront with this publishable key")

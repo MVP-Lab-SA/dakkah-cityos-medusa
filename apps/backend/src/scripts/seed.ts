@@ -66,7 +66,7 @@ export default async function seedCoreData({ container }: ExecArgs) {
         },
       })
 
-      logger.info("  Created admin user: admin@dakkah.com (password: admin123456)")
+      logger.info("  Created admin user: admin@dakkah.com")
     } else {
       logger.info("  Admin user already exists")
     }
@@ -355,7 +355,7 @@ export default async function seedCoreData({ container }: ExecArgs) {
 
     if (existingApiKeys && existingApiKeys.length > 0) {
       publishableApiKey = existingApiKeys[0]
-      logger.info(`  Publishable API key already exists: ${publishableApiKey.id}`)
+      logger.info(`  Publishable API key already exists`)
     }
   } catch (checkError: any) {
     logger.warn(`  Could not check existing API keys: ${checkError.message}`)
@@ -370,7 +370,7 @@ export default async function seedCoreData({ container }: ExecArgs) {
       },
     })
     publishableApiKey = publishableApiKeyResult[0]
-    logger.info(`  API Key created: ${publishableApiKey.token}`)
+    logger.info(`  API Key created successfully`)
   }
 
   try {
@@ -388,7 +388,7 @@ export default async function seedCoreData({ container }: ExecArgs) {
   logger.info("========================================")
   logger.info("Core Seed Complete!")
   logger.info("========================================")
-  logger.info(`Publishable API Key: ${publishableApiKey.token || publishableApiKey.id}`)
+  logger.info(`Publishable API Key: [REDACTED - retrieve from admin panel]`)
   logger.info("Admin Email: admin@dakkah.com")
   logger.info("========================================")
 }
