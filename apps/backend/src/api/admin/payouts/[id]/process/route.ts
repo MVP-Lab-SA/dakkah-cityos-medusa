@@ -33,7 +33,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     }
     
     // Dispatch to Temporal for processing (Temporal-first architecture)
-    const { dispatchEventToTemporal } = await import("../../../../../lib/event-dispatcher.js")
+    const { dispatchEventToTemporal } = await import("../../../../../lib/event-dispatcher")
     await dispatchEventToTemporal("payout.initiated", {
       id: payout.id,
       vendor_id: payout.vendor_id,

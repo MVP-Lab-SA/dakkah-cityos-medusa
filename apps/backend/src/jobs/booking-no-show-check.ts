@@ -14,7 +14,7 @@ export default async function bookingNoShowCheckJob(container: MedusaContainer) 
     
     const { data: missedBookings } = await query.graph({
       entity: "booking",
-      fields: ["*", "customer.*"],
+      fields: ["*"],
       filters: {
         status: "confirmed",
         start_time: { $lt: thirtyMinutesAgo.toISOString() }

@@ -12,19 +12,19 @@ const ENV_CHECKS = {
   },
   erpnext: {
     name: "ERPNext",
-    vars: ["ERPNEXT_URL", "ERPNEXT_API_KEY", "ERPNEXT_WEBHOOK_SECRET"],
+    vars: ["ERPNEXT_URL_DEV", "ERPNEXT_API_KEY", "ERPNEXT_WEBHOOK_SECRET"],
   },
   fleetbase: {
     name: "Fleetbase",
-    vars: ["FLEETBASE_URL", "FLEETBASE_API_KEY", "FLEETBASE_WEBHOOK_SECRET"],
+    vars: ["FLEETBASE_URL_DEV", "FLEETBASE_API_KEY", "FLEETBASE_WEBHOOK_SECRET"],
   },
   "payload-cms": {
     name: "Payload CMS",
-    vars: ["PAYLOAD_CMS_URL", "PAYLOAD_API_KEY", "PAYLOAD_CMS_WEBHOOK_SECRET"],
+    vars: ["PAYLOAD_CMS_URL_DEV", "PAYLOAD_API_KEY", "PAYLOAD_CMS_WEBHOOK_SECRET"],
   },
   waltid: {
     name: "Walt.id",
-    vars: ["WALTID_URL", "WALTID_API_KEY"],
+    vars: ["WALTID_URL_DEV", "WALTID_API_KEY"],
   },
 }
 
@@ -73,16 +73,16 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
   let circuitBreakerStates: Record<string, any> = {}
   try {
-    const { getCircuitBreakerStates } = await import("../../lib/platform/outbox-processor.js")
-    circuitBreakerStates = getCircuitBreakerStates()
+    const outboxMod = require("../../lib/platform/outbox-processor")
+    circuitBreakerStates = outboxMod.getCircuitBreakerStates()
   } catch {
     circuitBreakerStates = { error: "Outbox processor not available" }
   }
 
   let temporalStatus: any = { connected: false, error: "Not checked" }
   try {
-    const { checkTemporalHealth } = await import("../../lib/temporal-client.js")
-    temporalStatus = await checkTemporalHealth()
+    const temporalMod = require("../../lib/temporal-client")
+    temporalStatus = await temporalMod.checkTemporalHealth()
   } catch (err: any) {
     temporalStatus = { connected: false, error: err.message }
   }

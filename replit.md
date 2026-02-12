@@ -23,16 +23,16 @@ The project uses a Turborepo monorepo with:
 - `packages/cityos-design-system/`: Component type system.
 
 ### Backend Features
-The backend provides modularity for CityOS features including tenant management, a 5-level node hierarchy (CITY→DISTRICT→ZONE→FACILITY→ASSET), policy inheritance-based governance, a persona system, a CMS-compatible event outbox, and i18n. It supports multi-vendor marketplaces, subscriptions, B2B, bookings, promotions, and specialized services. API routes handle tenant, node, persona, and governance resolution. Backend has 59 modules total including: wishlist, notification-preferences, loyalty (programs/accounts/point-transactions), dispute (disputes/messages), tax-config (rules/exemptions), cms-content (pages/navigation with Payload CMS compatibility), cart-extension (gift wrapping, delivery instructions, special handling), shipping-extension (zones, carriers, rate tables), analytics (metrics tracking, conversion funnels, cohort analysis), inventory-extension (warehouse management, stock transfers, reorder alerts).
+The backend provides modularity for CityOS features including tenant management, a 5-level node hierarchy (CITY→DISTRICT→ZONE→FACILITY→ASSET), policy inheritance-based governance, a persona system, a CMS-compatible event outbox, and i18n. It supports multi-vendor marketplaces, subscriptions, B2B, bookings, promotions, and specialized services.
 
 ### Storefront Architecture
-The storefront utilizes TanStack Start with React for SSR, dynamic routing (`/$tenant/$locale/...`), and file-based routing. A centralized design system dictates design primitives, theming, and component interfaces. A robust provider chain ensures consistent context, including tenant-scoped routes wrapped with `TenantProvider` and `PlatformContextProvider`. It includes a comprehensive Payload CMS-compatible block system with 76 block type contracts (in BlockTypes.ts) and 76 block component implementations registered in `block-registry.ts`, rendered via `BlockRenderer`. Block categories: Core (30), Commerce (8), Marketplace (5), Booking/Service (6), Subscription/Membership (4), Verticals (15), B2B (4), Content/Marketing (4). All UI uses design tokens and follows mobile-first responsive patterns.
+The storefront utilizes TanStack Start with React for SSR, dynamic routing, and file-based routing. A centralized design system dictates design primitives, theming, and component interfaces. A robust provider chain ensures consistent context, including tenant-scoped routes. It includes a comprehensive Payload CMS-compatible block system with 76 block type contracts and implementations. All UI uses design tokens and follows mobile-first responsive patterns.
 
 ### Internationalization and Localization
-The system supports full logical CSS properties for RTL/LTR, with `dir="rtl"` for Arabic locales and `rtl.css` for animation direction flips. Alignment fields use `"start" | "center" | "end"`. i18n integration uses a `locale` prop and `t(locale, "blocks.key")` for translations across 30+ namespaces in en/fr/ar JSON files.
+The system supports full logical CSS properties for RTL/LTR, with `dir="rtl"` for Arabic locales. i18n integration uses a `locale` prop for translations across 30+ namespaces in en/fr/ar JSON files.
 
 ### CMS Integration
-A local CMS registry (`apps/backend/src/lib/platform/cms-registry.ts`), compatible with Payload CMS, defines 27 commerce verticals and additional pages. CMS pages support `countryCode` and `regionZone` for country-level unification and optional `nodeId` for hierarchy integration. Backend endpoints provide Payload-compatible responses, and frontend hooks use React Query for data fetching.
+A local CMS registry (`apps/backend/src/lib/platform/cms-registry.ts`), compatible with Payload CMS, defines 27 commerce verticals and additional pages. CMS pages support `countryCode` and `regionZone` for country-level unification. Backend endpoints provide Payload-compatible responses, and frontend hooks use React Query for data fetching.
 
 ### Key Design Decisions
 - **Multi-tenant Isolation:** `tenantId` is used across all entities with node-scoped access.
@@ -53,32 +53,21 @@ A local CMS registry (`apps/backend/src/lib/platform/cms-registry.ts`), compatib
 - **Platform Context API:** Exposed at `/platform/*` (no authentication required) for `tenant`, `nodeHierarchy`, `governanceChain`, `capabilities`, and `systems`.
 
 ### Temporal-First Integration Architecture
-All cross-system integration calls flow through Temporal Cloud workflows for durable execution, retries, saga/compensation patterns, and observability, avoiding direct API calls to external systems. This includes an event dispatcher and dynamic AI agent workflows. Temporal worker process at `apps/backend/src/workers/temporal-worker.ts` with graceful degradation when TEMPORAL_API_KEY not configured.
+All cross-system integration calls flow through Temporal Cloud workflows for durable execution, retries, saga/compensation patterns, and observability, avoiding direct API calls to external systems. This includes an event dispatcher and dynamic AI agent workflows.
 
 ### Integration Layer
-- **Durable Sync Tracking:** PostgreSQL-backed sync state (`apps/backend/src/lib/platform/sync-tracker.ts`) replacing in-memory tracking
+- **Durable Sync Tracking:** PostgreSQL-backed sync state (`apps/backend/src/lib/platform/sync-tracker.ts`)
 - **Webhook Endpoints:** `/webhooks/stripe`, `/webhooks/erpnext`, `/webhooks/fleetbase`, `/webhooks/payload-cms` with signature verification
-- **Outbox Processor:** Circuit breakers (5 failure threshold, 60s reset) and rate limiters per external system (`apps/backend/src/lib/platform/outbox-processor.ts`)
+- **Outbox Processor:** Circuit breakers and rate limiters per external system (`apps/backend/src/lib/platform/outbox-processor.ts`)
 - **Health Check:** `/health` endpoint reports database, external systems, circuit breaker states, Temporal status
 
 ### Storefront Feature Components
-- **Wishlist:** Button toggle, full page with sort/share/clear (`apps/storefront/src/components/wishlist/`)
-- **Comparison:** Side-by-side product compare up to 4 items (`apps/storefront/src/components/compare/`)
-- **Search:** Advanced modal with debounce, filters, categories, price range (`apps/storefront/src/components/search/`)
-- **Notifications:** Bell with badge, panel with tabs and mark-as-read (`apps/storefront/src/components/notifications/`)
-- **Disputes:** Filing form with reason, description, evidence upload (`apps/storefront/src/components/disputes/`)
-- **Tracking:** Order timeline with 5 steps (`apps/storefront/src/components/tracking/`)
-- **Loyalty:** Checkout widget with points-to-currency conversion (`apps/storefront/src/components/loyalty/`)
-- **Checkout:** Multi-vendor cart splitting, gift wrap ($3.99), delivery instructions, store pickup, BNPL options (`apps/storefront/src/components/checkout/`)
-- **Account Dashboard:** Downloads, installments, store credits, wallet, loyalty dashboard, consents management, Walt.id verification (`apps/storefront/src/components/account/`)
+Key components include Wishlist, Comparison, Search, Notifications, Disputes, Tracking, Loyalty, a comprehensive Checkout process, and an Account Dashboard with various sub-features.
 
 ### Manage Page Infrastructure
-- **42 CRUD Configs:** All manage verticals with vertical-specific form fields (`apps/storefront/src/components/manage/crud-configs.ts`)
-- **Shared Components:** DataTable, Charts (Line/Bar/Pie), Calendar, Map, RichTextEditor, FileUpload, FormWizard (`apps/storefront/src/components/admin/shared/`)
-- **Enhanced Features:** AnalyticsOverview, BulkActionsBar, AdvancedFilters, StatusWorkflow, ManagePageWrapper (`apps/storefront/src/components/manage/`)
-
-### Cross-System Integration Layer
-This layer provides integration services called by Temporal activities, including wrappers for ERPNext, Payload CMS, Fleetbase, and Walt.id, managing sync tracking, an external system registry, retry states, and webhook receivers.
+- **42 CRUD Configs:** For all manage verticals with vertical-specific form fields.
+- **Shared Components:** DataTable, Charts, Calendar, Map, RichTextEditor, FileUpload, FormWizard.
+- **Enhanced Features:** AnalyticsOverview, BulkActionsBar, AdvancedFilters, StatusWorkflow, ManagePageWrapper.
 
 ### System Responsibility Split
 - **Medusa (Commerce Engine):** Products, orders, payments, commissions, marketplace listings, vendor registration, KYC, payouts, tenant/marketplace/service channel management.
@@ -87,61 +76,6 @@ This layer provides integration services called by Temporal activities, includin
 - **ERPNext (Finance, Accounting & ERP):** Sales invoices, payment entries, GL, inventory, procurement, customer/product sync, reporting. Multi-tenant support.
 - **Temporal Cloud (Workflow Orchestration):** 80 system workflows across 35 categories, 21 specialized task queues, dynamic AI agent workflows, event outbox integration.
 - **Walt.id (Decentralized Digital Identity):** DID management, 6 credential types, W3C Verifiable Credentials, wallet integration, trust registries.
-
-## Test Accounts & Credentials
-
-### Admin Panel (`/commerce/admin`)
-| Role | Email | Password |
-|------|-------|----------|
-| Super Admin | admin@dakkah.com | admin123456 |
-
-### Storefront Customer Accounts (`/dakkah/en/login`)
-| Role | Email | Password | RBAC Role | Weight |
-|------|-------|----------|-----------|--------|
-| Tenant Owner | owner@dakkah.com | owner123456 | super-admin | 100 |
-| Store Manager | manager@dakkah.com | manager123456 | zone-manager | 70 |
-| Customer | mohammed@example.com | (seeded) | none | 0 |
-| Customer | fatima@example.com | (seeded) | none | 0 |
-| Customer | ahmed@example.com | (seeded) | none | 0 |
-
-### RBAC Role Weights (manage access requires >= 40)
-super-admin: 100, city-manager: 90, district-manager: 80, zone-manager: 70, facility-manager: 60, asset-manager: 50, vendor-admin: 40, content-editor: 30, analyst: 20, viewer: 10
-
-### Auth Notes
-- Admin users (`user` table) and customers (`customer` table) are separate auth systems
-- Customer RBAC role stored in `customer.metadata.role`
-- Management panel at `/$tenant/$locale/manage` requires weight >= 40
-- UserMenu shows "Store Dashboard" link for users with management access
-
-### Tenant
-Dakkah (slug: `dakkah`, id: `01KGZ2JRYX607FWMMYQNQRKVWS`, status: active)
-
-## Route Map
-
-### Public: `/`, `/$t/$l`, `/$t/$l/login`, `/$t/$l/register`, `/$t/$l/reset-password`, `/$t/$l/products/$handle`, `/$t/$l/$slug` (CMS catch-all)
-### Shop: `/$t/$l/cart`, `/$t/$l/checkout`, `/$t/$l/order/$id/confirmed`, `/$t/$l/compare`, `/$t/$l/wishlist`, `/$t/$l/flash-sales`, `/$t/$l/gift-cards`, `/$t/$l/bundles`
-### Bookings: `/$t/$l/bookings`, `/$t/$l/bookings/$serviceHandle`, `/$t/$l/bookings/confirmation`
-### Verticals: `/$t/$l/auctions`, `/$t/$l/digital`, `/$t/$l/events`, `/$t/$l/memberships`, `/$t/$l/rentals`, `/$t/$l/subscriptions`, `/$t/$l/campaigns`, `/$t/$l/quotes` (each with `/$id` detail)
-### Alt Commerce: `/$t/$l/dropshipping`, `/$t/$l/white-label`, `/$t/$l/print-on-demand`, `/$t/$l/trade-in`, `/$t/$l/try-before-you-buy`, `/$t/$l/consignment`, `/$t/$l/store-pickup`, `/$t/$l/returns`, `/$t/$l/track`
-### Marketplace: `/$t/$l/vendors`, `/$t/$l/vendors/$handle`, `/$t/$l/vendor/register`
-### Content: `/$t/$l/blog`, `/$t/$l/blog/$slug`, `/$t/$l/help`, `/$t/$l/help/$slug`, `/$t/$l/places`, `/$t/$l/places/$id`
-### Identity: `/$t/$l/verify/age`
-### Account (auth required): `/$t/$l/account` (profile, settings, addresses, orders, bookings, subscriptions, purchase-orders, disputes, downloads, installments, loyalty, referrals, store-credits, wallet, wishlist, verification, consents)
-### B2B: `/$t/$l/b2b/register`, `/$t/$l/b2b/dashboard`, `/$t/$l/business/approvals`, `/$t/$l/business/catalog`, `/$t/$l/business/orders`, `/$t/$l/business/team`
-### Vendor Dashboard: `/$t/$l/vendor` (products, orders, commissions, payouts)
-### Tenant Manage (RBAC >= 40): `/$t/$l/manage` — tenant-scoped operations
-- Commerce: products, orders, customers, quotes, invoices, subscriptions, reviews
-- Marketplace (shared): vendors, commissions, payouts, affiliates
-- Verticals (27): auctions, bookings, event-ticketing, rentals, restaurants, grocery, travel, automotive, real-estate, healthcare, education, fitness, pet-services, digital-products, memberships, financial-products, freelance, parking
-- Marketing: advertising, promotions, social-commerce, classifieds, crowdfunding, charity
-- Organization: team, companies, stores, legal, utilities
-- System: analytics, settings
-### Super Admin (`/commerce/admin`) — platform-wide concerns (Medusa admin + extensions)
-- Built-in Medusa: Products, Orders, Customers, Pricing, Promotions, Inventory, Regions, Sales Channels, Settings
-- Platform Infrastructure: Tenants, Nodes, Governance, Personas, Region Zones, Channels
-- Platform Commerce: Vendors (global), Commissions, Payouts (global), Volume Pricing, Warranty Templates
-- System: Audit Logs, i18n, Bookings, Subscriptions, Companies
-### System: `/health`
 
 ## External Dependencies
 - **Database:** PostgreSQL

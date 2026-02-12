@@ -9,7 +9,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       return res.status(400).json({ error: "tenant_id is required" })
     }
 
-    const { startWorkflow } = await import("../../../../../lib/temporal-client.js")
+    const { startWorkflow } = await import("../../../../../lib/temporal-client")
 
     if (!process.env.TEMPORAL_API_KEY) {
       return res.status(503).json({ error: "Temporal not configured. Hierarchy sync requires Temporal." })
