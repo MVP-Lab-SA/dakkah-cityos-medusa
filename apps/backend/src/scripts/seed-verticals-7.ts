@@ -22,7 +22,7 @@ export default async function seedVerticals7({ container }: ExecArgs) {
   const REG_1 = "reg_01KGX7RFT438XP6T1KZ88WX0M0"
   const REG_2 = "reg_01KGXWH7P5HS70N8M5VX573VQ0"
   const REG_3 = "reg_01KGXWH7P6FFCG3S67T8N7VD05"
-  const SEEDED_GOV_AUTHORITY_ID = "01KGZ2PRR8CR5N7EY2VFSHQC4Z"
+  const SEEDED_GOV_AUTHORITY_ID = process.env.SEEDED_GOV_AUTHORITY_ID || ""
 
   let nodeIds: { city?: string; district?: string; zone?: string; facility?: string; asset?: string } = {}
   try {
