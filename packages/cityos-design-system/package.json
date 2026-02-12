@@ -3,5 +3,28 @@
   "version": "0.0.1",
   "private": true,
   "main": "src/index.ts",
-  "types": "src/index.ts"
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./blocks": "./src/blocks/BlockTypes.ts",
+    "./components": "./src/components/ComponentTypes.ts",
+    "./commerce": "./src/commerce/CommerceTypes.ts",
+    "./content": "./src/content/ContentTypes.ts",
+    "./forms": "./src/forms/FormTypes.ts",
+    "./layout": "./src/layout/LayoutTypes.ts",
+    "./navigation": "./src/navigation/NavigationTypes.ts",
+    "./data": "./src/data/DataDisplayTypes.ts",
+    "./feedback": "./src/feedback/FeedbackTypes.ts",
+    "./identity": "./src/identity/IdentityTypes.ts",
+    "./social": "./src/social/SocialTypes.ts",
+    "./auction": "./src/auction/AuctionTypes.ts",
+    "./rental": "./src/rental/RentalTypes.ts",
+    "./events": "./src/events/EventTypes.ts",
+    "./delivery": "./src/delivery/DeliveryTypes.ts",
+    "./payment": "./src/payment/PaymentTypes.ts",
+    "./membership": "./src/membership/MembershipTypes.ts",
+    "./digital": "./src/digital/DigitalTypes.ts",
+    "./campaign": "./src/campaign/CampaignTypes.ts",
+    "./utilities": "./src/utilities/UtilityTypes.ts"
+  }
 }

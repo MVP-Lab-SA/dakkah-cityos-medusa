@@ -341,6 +341,174 @@ export const VERTICAL_TEMPLATES: VerticalDefinition[] = VERTICALS
 
 const REGISTRY_TIMESTAMP = "2026-02-09T00:00:00.000Z"
 
+function getVerticalListLayout(slug: string): any[] {
+  const verticalLayouts: Record<string, any[]> = {
+    restaurants: [
+      { blockType: "hero", heading: "Restaurants & Dining", minHeight: "sm" },
+      { blockType: "menuDisplay", heading: "Popular Menus" },
+      { blockType: "serviceCardGrid", heading: "Browse Restaurants", columns: 3 },
+      { blockType: "reviewList", heading: "Recent Reviews" },
+      { blockType: "map", heading: "Nearby Restaurants" },
+    ],
+    healthcare: [
+      { blockType: "hero", heading: "Healthcare Practitioners & Clinics", minHeight: "sm" },
+      { blockType: "healthcareProvider", heading: "Find a Provider" },
+      { blockType: "bookingCalendar", heading: "Book an Appointment" },
+      { blockType: "faq", heading: "Healthcare FAQ" },
+    ],
+    education: [
+      { blockType: "hero", heading: "Online Courses & Training", minHeight: "sm" },
+      { blockType: "courseCurriculum", heading: "Featured Courses" },
+      { blockType: "subscriptionPlans", heading: "Learning Plans" },
+      { blockType: "testimonial", heading: "Student Reviews" },
+    ],
+    "real-estate": [
+      { blockType: "hero", heading: "Property Listings", minHeight: "sm" },
+      { blockType: "propertyListing", heading: "Featured Properties" },
+      { blockType: "map", heading: "Properties Near You" },
+      { blockType: "contactForm", heading: "Inquire About a Property" },
+    ],
+    automotive: [
+      { blockType: "hero", heading: "Vehicle Marketplace", minHeight: "sm" },
+      { blockType: "vehicleListing", heading: "Featured Vehicles" },
+      { blockType: "comparisonTable", heading: "Compare Vehicles" },
+    ],
+    grocery: [
+      { blockType: "hero", heading: "Grocery & Food Products", minHeight: "sm" },
+      { blockType: "categoryGrid", heading: "Shop by Category", columns: 4, variant: "card" },
+      { blockType: "productGrid", heading: "Popular Items", source: "popular", limit: 8, columns: 4 },
+      { blockType: "promotionBanner", heading: "Today's Deals" },
+    ],
+    events: [
+      { blockType: "hero", heading: "Event Ticketing", minHeight: "sm" },
+      { blockType: "eventSchedule", heading: "Upcoming Events" },
+      { blockType: "eventList", heading: "Browse Events" },
+      { blockType: "newsletter", heading: "Event Updates" },
+    ],
+    fitness: [
+      { blockType: "hero", heading: "Fitness Classes & Gyms", minHeight: "sm" },
+      { blockType: "fitnessClassSchedule", heading: "Class Schedule" },
+      { blockType: "membershipTiers", heading: "Membership Plans" },
+      { blockType: "testimonial", heading: "Member Stories" },
+    ],
+    travel: [
+      { blockType: "hero", heading: "Travel & Accommodation", minHeight: "sm" },
+      { blockType: "productGrid", heading: "Featured Destinations", source: "featured", limit: 6, columns: 3 },
+      { blockType: "bookingCalendar", heading: "Check Availability" },
+      { blockType: "reviewList", heading: "Traveler Reviews" },
+    ],
+    charity: [
+      { blockType: "hero", heading: "Charity Campaigns & Donations", minHeight: "sm" },
+      { blockType: "donationCampaign", heading: "Active Campaigns" },
+      { blockType: "crowdfundingProgress", heading: "Campaign Progress" },
+      { blockType: "testimonial", heading: "Impact Stories" },
+    ],
+    classifieds: [
+      { blockType: "hero", heading: "Classified Ads", minHeight: "sm" },
+      { blockType: "classifiedAdCard", heading: "Latest Listings" },
+      { blockType: "categoryGrid", heading: "Browse Categories", columns: 4, variant: "card" },
+    ],
+    crowdfunding: [
+      { blockType: "hero", heading: "Crowdfunding Campaigns", minHeight: "sm" },
+      { blockType: "crowdfundingProgress", heading: "Trending Campaigns" },
+      { blockType: "productGrid", heading: "New Projects", source: "latest", limit: 6, columns: 3 },
+      { blockType: "faq", heading: "Crowdfunding FAQ" },
+    ],
+    "digital-products": [
+      { blockType: "hero", heading: "Digital Goods & Downloads", minHeight: "sm" },
+      { blockType: "productGrid", heading: "Top Downloads", source: "popular", limit: 8, columns: 4 },
+      { blockType: "categoryGrid", heading: "Browse Categories", columns: 4, variant: "card" },
+    ],
+    "financial-products": [
+      { blockType: "hero", heading: "Financial Services", minHeight: "sm" },
+      { blockType: "serviceList", heading: "Available Services" },
+      { blockType: "comparisonTable", heading: "Compare Plans" },
+      { blockType: "faq", heading: "Financial FAQ" },
+    ],
+    government: [
+      { blockType: "hero", heading: "Government Services", minHeight: "sm" },
+      { blockType: "serviceList", heading: "Available Services" },
+      { blockType: "timeline", heading: "Processing Timeline" },
+      { blockType: "contactForm", heading: "Contact Us" },
+    ],
+    memberships: [
+      { blockType: "hero", heading: "Membership Plans", minHeight: "sm" },
+      { blockType: "membershipTiers", heading: "Choose Your Plan" },
+      { blockType: "featureGrid", heading: "Member Benefits" },
+      { blockType: "testimonial", heading: "Member Testimonials" },
+    ],
+    parking: [
+      { blockType: "hero", heading: "Parking Zones & Bookings", minHeight: "sm" },
+      { blockType: "parkingSpotFinder", heading: "Find Parking" },
+      { blockType: "map", heading: "Parking Locations" },
+      { blockType: "pricing", heading: "Parking Rates" },
+    ],
+    "pet-services": [
+      { blockType: "hero", heading: "Pet Care Services", minHeight: "sm" },
+      { blockType: "petProfileCard", heading: "Featured Services" },
+      { blockType: "serviceCardGrid", heading: "Browse Services", columns: 3 },
+      { blockType: "reviewList", heading: "Pet Owner Reviews" },
+    ],
+    "social-commerce": [
+      { blockType: "hero", heading: "Social Commerce Streams", minHeight: "sm" },
+      { blockType: "socialProof", variant: "feed" },
+      { blockType: "productGrid", heading: "Trending Products", source: "popular", limit: 8, columns: 4 },
+    ],
+    utilities: [
+      { blockType: "hero", heading: "Utility Services", minHeight: "sm" },
+      { blockType: "serviceList", heading: "Available Utilities" },
+      { blockType: "comparisonTable", heading: "Compare Providers" },
+      { blockType: "contactForm", heading: "Get Support" },
+    ],
+    warranties: [
+      { blockType: "hero", heading: "Warranty Plans", minHeight: "sm" },
+      { blockType: "serviceList", heading: "Warranty Options" },
+      { blockType: "comparisonTable", heading: "Compare Coverage" },
+      { blockType: "faq", heading: "Warranty FAQ" },
+    ],
+    legal: [
+      { blockType: "hero", heading: "Legal Services", minHeight: "sm" },
+      { blockType: "serviceList", heading: "Practice Areas" },
+      { blockType: "bookingCalendar", heading: "Schedule Consultation" },
+      { blockType: "faq", heading: "Legal FAQ" },
+    ],
+    freelance: [
+      { blockType: "hero", heading: "Freelance Marketplace", minHeight: "sm" },
+      { blockType: "freelancerProfile", heading: "Top Freelancers" },
+      { blockType: "categoryGrid", heading: "Browse Skills", columns: 4, variant: "card" },
+      { blockType: "reviewList", heading: "Client Reviews" },
+    ],
+    rentals: [
+      { blockType: "hero", heading: "Equipment & Property Rentals", minHeight: "sm" },
+      { blockType: "rentalCalendar", heading: "Check Availability" },
+      { blockType: "productGrid", heading: "Featured Rentals", source: "featured", limit: 6, columns: 3 },
+      { blockType: "pricing", heading: "Rental Rates" },
+    ],
+    auctions: [
+      { blockType: "hero", heading: "Auction Listings", minHeight: "sm" },
+      { blockType: "auctionBidding", heading: "Live Auctions" },
+      { blockType: "productGrid", heading: "Upcoming Auctions", source: "latest", limit: 8, columns: 4 },
+    ],
+    affiliates: [
+      { blockType: "hero", heading: "Affiliate Programs", minHeight: "sm" },
+      { blockType: "referralProgram", heading: "Join a Program" },
+      { blockType: "stats", heading: "Program Stats" },
+      { blockType: "faq", heading: "Affiliate FAQ" },
+    ],
+    advertising: [
+      { blockType: "hero", heading: "Advertising Services", minHeight: "sm" },
+      { blockType: "serviceList", heading: "Ad Solutions" },
+      { blockType: "pricing", heading: "Advertising Packages" },
+      { blockType: "contactForm", heading: "Get Started" },
+    ],
+  }
+  return verticalLayouts[slug] || [
+    { blockType: "hero", heading: "Browse Listings", minHeight: "sm" },
+    { blockType: "productGrid", heading: "Featured", source: "featured", limit: 8, columns: 4 },
+    { blockType: "reviewList", heading: "Reviews" },
+  ]
+}
+
 function buildListPage(v: VerticalDefinition): PayloadPage {
   return {
     id: `local-cms-${v.slug}-list`,
@@ -366,7 +534,7 @@ function buildListPage(v: VerticalDefinition): PayloadPage {
       filterFields: v.filterFields,
       sortFields: v.sortFields,
     },
-    layout: [],
+    layout: getVerticalListLayout(v.slug),
     governanceTags: [],
   }
 }
@@ -396,7 +564,11 @@ function buildDetailPage(v: VerticalDefinition): PayloadPage {
       filterFields: v.filterFields,
       sortFields: v.sortFields,
     },
-    layout: [],
+    layout: [
+      { blockType: "hero", heading: `${v.title} Detail`, minHeight: "sm" },
+      { blockType: "reviewList", heading: "Reviews" },
+      { blockType: "recentlyViewed", heading: "Recently Viewed", layout: "carousel" },
+    ],
     governanceTags: [],
   }
 }
@@ -419,7 +591,16 @@ const ADDITIONAL_PAGES: PayloadPage[] = [
       title: "CityOS Marketplace",
       description: "Welcome to the CityOS Marketplace. Discover products, services, and experiences in your city.",
     },
-    layout: [],
+    layout: [
+      { blockType: "hero", heading: "Welcome to Dakkah CityOS", subheading: "Your city, your marketplace", alignment: "center", minHeight: "lg" },
+      { blockType: "categoryGrid", heading: "Explore Categories", columns: 4, variant: "image-overlay" },
+      { blockType: "productGrid", heading: "Featured Products", source: "featured", limit: 8, columns: 4 },
+      { blockType: "vendorShowcase", heading: "Top Vendors", source: "top-rated", limit: 6, layout: "carousel" },
+      { blockType: "promotionBanner", heading: "Special Offers" },
+      { blockType: "socialProof", variant: "banner", showPurchases: true, autoRotate: true },
+      { blockType: "trustBadges" },
+      { blockType: "newsletter", heading: "Stay Updated" },
+    ],
     governanceTags: [],
   },
   {
@@ -439,7 +620,15 @@ const ADDITIONAL_PAGES: PayloadPage[] = [
       title: "Store | CityOS Marketplace",
       description: "Browse all products and services available on the CityOS Marketplace.",
     },
-    layout: [],
+    layout: [
+      { blockType: "bannerCarousel" },
+      { blockType: "categoryGrid", heading: "Shop by Category", columns: 6, variant: "card" },
+      { blockType: "productGrid", heading: "New Arrivals", source: "latest", limit: 8, columns: 4 },
+      { blockType: "flashSaleCountdown", heading: "Flash Sale", endDate: "2026-12-31T23:59:59" },
+      { blockType: "collectionList", heading: "Collections", layout: "carousel", columns: 4 },
+      { blockType: "recentlyViewed", heading: "Recently Viewed", layout: "carousel" },
+      { blockType: "newsletter" },
+    ],
     governanceTags: [],
   },
   {
@@ -459,7 +648,12 @@ const ADDITIONAL_PAGES: PayloadPage[] = [
       title: "Search | CityOS Marketplace",
       description: "Search across all verticals, products, and services on the CityOS Marketplace.",
     },
-    layout: [],
+    layout: [
+      { blockType: "hero", heading: "Search", subheading: "Find products, services, and vendors", minHeight: "sm" },
+      { blockType: "categoryGrid", heading: "Popular Categories", columns: 6, variant: "card" },
+      { blockType: "productGrid", heading: "Trending Now", source: "popular", limit: 8, columns: 4 },
+      { blockType: "vendorShowcase", heading: "Featured Vendors", source: "featured", limit: 4, layout: "grid" },
+    ],
     governanceTags: [],
   },
   {
@@ -479,7 +673,12 @@ const ADDITIONAL_PAGES: PayloadPage[] = [
       title: "Vendors | CityOS Marketplace",
       description: "Discover vendors and sellers on the CityOS Marketplace.",
     },
-    layout: [],
+    layout: [
+      { blockType: "hero", heading: "Our Vendors", subheading: "Discover trusted sellers and service providers", minHeight: "sm" },
+      { blockType: "vendorShowcase", heading: "Featured Vendors", source: "featured", layout: "grid", showRating: true, showProducts: true },
+      { blockType: "vendorRegisterForm", heading: "Become a Vendor" },
+      { blockType: "faq", heading: "Vendor FAQ" },
+    ],
     governanceTags: [],
   },
   {
@@ -499,7 +698,12 @@ const ADDITIONAL_PAGES: PayloadPage[] = [
       title: "Categories | CityOS Marketplace",
       description: "Browse all categories available on the CityOS Marketplace.",
     },
-    layout: [],
+    layout: [
+      { blockType: "hero", heading: "Browse Categories", subheading: "Explore all verticals and services", minHeight: "sm" },
+      { blockType: "categoryGrid", heading: "All Categories", columns: 4, variant: "image-overlay" },
+      { blockType: "productGrid", heading: "Popular Across Categories", source: "popular", limit: 8, columns: 4 },
+      { blockType: "vendorShowcase", heading: "Top Vendors", source: "top-rated", limit: 4, layout: "grid" },
+    ],
     governanceTags: [],
   },
 ]

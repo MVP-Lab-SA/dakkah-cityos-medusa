@@ -11,6 +11,8 @@
     "./spacing": "./src/spacing/SpacingTokens.ts",
     "./shadows": "./src/shadows/ShadowTokens.ts",
     "./borders": "./src/borders/BorderTokens.ts",
-    "./breakpoints": "./src/breakpoints/BreakpointTokens.ts"
+    "./breakpoints": "./src/breakpoints/BreakpointTokens.ts",
+    "./motion": "./src/motion/MotionTokens.ts",
+    "./elevation": "./src/elevation/ElevationTokens.ts"
   }
 }

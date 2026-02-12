@@ -423,6 +423,453 @@ export interface BannerSlide {
   alignment?: "start" | "center" | "end"
 }
 
+export interface SubscriptionPlanItem {
+  id: string
+  name: string
+  description?: string
+  price: number
+  currency: string
+  interval: "monthly" | "quarterly" | "yearly"
+  features: string[]
+  highlighted?: boolean
+  cta?: CTAField
+}
+
+export interface MembershipTierItem {
+  id: string
+  name: string
+  description?: string
+  price?: number
+  currency?: string
+  benefits: string[]
+  icon?: MediaField
+  color?: string
+  highlighted?: boolean
+}
+
+export interface MenuItem {
+  id: string
+  name: string
+  description?: string
+  price: number
+  currency?: string
+  image?: MediaField
+  dietary?: ("vegetarian" | "vegan" | "gluten_free" | "halal" | "kosher")[]
+  popular?: boolean
+  available?: boolean
+}
+
+export interface MenuCategory {
+  id: string
+  name: string
+  description?: string
+  items: MenuItem[]
+  image?: MediaField
+}
+
+export interface ProductDetailBlockData extends BlockBase {
+  blockType: "productDetail"
+  productId?: string
+  showReviews?: boolean
+  showRelated?: boolean
+  variant?: "default" | "compact" | "gallery"
+}
+
+export interface CartSummaryBlockData extends BlockBase {
+  blockType: "cartSummary"
+  variant?: "mini" | "full" | "sidebar"
+  showCoupon?: boolean
+  showEstimatedShipping?: boolean
+}
+
+export interface CheckoutStepsBlockData extends BlockBase {
+  blockType: "checkoutSteps"
+  steps?: string[]
+  variant?: "horizontal" | "vertical"
+  showOrderSummary?: boolean
+}
+
+export interface OrderConfirmationBlockData extends BlockBase {
+  blockType: "orderConfirmation"
+  showTracking?: boolean
+  showRecommendations?: boolean
+  thankYouMessage?: string
+}
+
+export interface WishlistGridBlockData extends BlockBase {
+  blockType: "wishlistGrid"
+  heading?: string
+  columns?: 2 | 3 | 4
+  showMoveToCart?: boolean
+  emptyMessage?: string
+}
+
+export interface RecentlyViewedBlockData extends BlockBase {
+  blockType: "recentlyViewed"
+  heading?: string
+  limit?: number
+  layout?: "grid" | "carousel"
+}
+
+export interface FlashSaleCountdownBlockData extends BlockBase {
+  blockType: "flashSaleCountdown"
+  heading?: string
+  endDate: string
+  products?: string[]
+  backgroundStyle?: "default" | "urgent" | "festive"
+}
+
+export interface GiftCardDisplayBlockData extends BlockBase {
+  blockType: "giftCardDisplay"
+  heading?: string
+  denominations?: number[]
+  allowCustomAmount?: boolean
+  variant?: "card" | "inline"
+}
+
+export interface VendorProfileBlockData extends BlockBase {
+  blockType: "vendorProfile"
+  vendorId?: string
+  showRating?: boolean
+  showProducts?: boolean
+  showStats?: boolean
+  layout?: "full" | "compact" | "hero"
+}
+
+export interface VendorProductsBlockData extends BlockBase {
+  blockType: "vendorProducts"
+  vendorId?: string
+  limit?: number
+  showFilters?: boolean
+  columns?: 2 | 3 | 4
+  sortBy?: "newest" | "popular" | "price_asc" | "price_desc"
+}
+
+export interface VendorRegisterFormBlockData extends BlockBase {
+  blockType: "vendorRegisterForm"
+  heading?: string
+  steps?: string[]
+  requiredFields?: string[]
+  termsUrl?: string
+}
+
+export interface CommissionDashboardBlockData extends BlockBase {
+  blockType: "commissionDashboard"
+  vendorId?: string
+  period?: "daily" | "weekly" | "monthly" | "yearly"
+  showChart?: boolean
+}
+
+export interface PayoutHistoryBlockData extends BlockBase {
+  blockType: "payoutHistory"
+  vendorId?: string
+  limit?: number
+  showFilters?: boolean
+  columns?: ("date" | "amount" | "status" | "method")[]
+}
+
+export interface BookingCalendarBlockData extends BlockBase {
+  blockType: "bookingCalendar"
+  serviceId?: string
+  variant?: "monthly" | "weekly" | "daily"
+  showPricing?: boolean
+  allowMultiDay?: boolean
+}
+
+export interface ServiceCardGridBlockData extends BlockBase {
+  blockType: "serviceCardGrid"
+  heading?: string
+  services?: ServiceItem[]
+  columns?: 2 | 3 | 4
+  showBookingCta?: boolean
+  categoryFilter?: string
+}
+
+export interface AppointmentSlotsBlockData extends BlockBase {
+  blockType: "appointmentSlots"
+  providerId?: string
+  date?: string
+  duration?: number
+  variant?: "list" | "grid" | "timeline"
+}
+
+export interface BookingConfirmationBlockData extends BlockBase {
+  blockType: "bookingConfirmation"
+  showCalendarAdd?: boolean
+  showCancellationPolicy?: boolean
+  confirmationMessage?: string
+}
+
+export interface ProviderScheduleBlockData extends BlockBase {
+  blockType: "providerSchedule"
+  providerId?: string
+  view?: "week" | "day" | "month"
+  showAvailability?: boolean
+}
+
+export interface ResourceAvailabilityBlockData extends BlockBase {
+  blockType: "resourceAvailability"
+  resourceType?: string
+  resourceId?: string
+  dateRange?: { start: string; end: string }
+  variant?: "calendar" | "list" | "timeline"
+}
+
+export interface SubscriptionPlansBlockData extends BlockBase {
+  blockType: "subscriptionPlans"
+  heading?: string
+  plans?: SubscriptionPlanItem[]
+  billingToggle?: boolean
+  highlightedPlan?: string
+  variant?: "cards" | "table" | "minimal"
+}
+
+export interface MembershipTiersBlockData extends BlockBase {
+  blockType: "membershipTiers"
+  heading?: string
+  tiers?: MembershipTierItem[]
+  showComparison?: boolean
+  variant?: "cards" | "horizontal" | "vertical"
+}
+
+export interface LoyaltyDashboardBlockData extends BlockBase {
+  blockType: "loyaltyDashboard"
+  showTierProgress?: boolean
+  showHistory?: boolean
+  showRewards?: boolean
+  variant?: "full" | "compact" | "widget"
+}
+
+export interface SubscriptionManageBlockData extends BlockBase {
+  blockType: "subscriptionManage"
+  subscriptionId?: string
+  showUsage?: boolean
+  allowPause?: boolean
+  allowUpgrade?: boolean
+}
+
+export interface AuctionBiddingBlockData extends BlockBase {
+  blockType: "auctionBidding"
+  auctionId?: string
+  showHistory?: boolean
+  showCountdown?: boolean
+  variant?: "full" | "compact" | "live"
+}
+
+export interface RentalCalendarBlockData extends BlockBase {
+  blockType: "rentalCalendar"
+  itemId?: string
+  pricingUnit?: "hourly" | "daily" | "weekly" | "monthly"
+  showDeposit?: boolean
+  minDuration?: number
+}
+
+export interface PropertyListingBlockData extends BlockBase {
+  blockType: "propertyListing"
+  heading?: string
+  propertyType?: "residential" | "commercial" | "land"
+  layout?: "grid" | "list" | "map"
+  filters?: string[]
+  showMap?: boolean
+}
+
+export interface VehicleListingBlockData extends BlockBase {
+  blockType: "vehicleListing"
+  heading?: string
+  vehicleType?: "car" | "truck" | "motorcycle" | "commercial"
+  layout?: "grid" | "list" | "detailed"
+  showComparison?: boolean
+}
+
+export interface MenuDisplayBlockData extends BlockBase {
+  blockType: "menuDisplay"
+  heading?: string
+  categories?: MenuCategory[]
+  variant?: "grid" | "list" | "visual"
+  showPrices?: boolean
+  showDietaryIcons?: boolean
+  currency?: string
+}
+
+export interface CourseCurriculumBlockData extends BlockBase {
+  blockType: "courseCurriculum"
+  courseId?: string
+  showProgress?: boolean
+  expandAll?: boolean
+  variant?: "tree" | "list" | "cards"
+}
+
+export interface EventScheduleBlockData extends BlockBase {
+  blockType: "eventSchedule"
+  eventId?: string
+  view?: "timeline" | "grid" | "agenda"
+  showSpeakers?: boolean
+  allowBookmark?: boolean
+  days?: string[]
+}
+
+export interface HealthcareProviderBlockData extends BlockBase {
+  blockType: "healthcareProvider"
+  heading?: string
+  specialties?: string[]
+  showAvailability?: boolean
+  showRating?: boolean
+  layout?: "grid" | "list" | "cards"
+}
+
+export interface FitnessClassScheduleBlockData extends BlockBase {
+  blockType: "fitnessClassSchedule"
+  heading?: string
+  view?: "weekly" | "daily" | "list"
+  showInstructor?: boolean
+  showCapacity?: boolean
+  filterByType?: string[]
+}
+
+export interface PetProfileCardBlockData extends BlockBase {
+  blockType: "petProfileCard"
+  heading?: string
+  showServices?: boolean
+  showVetInfo?: boolean
+  variant?: "card" | "detailed" | "compact"
+}
+
+export interface ClassifiedAdCardBlockData extends BlockBase {
+  blockType: "classifiedAdCard"
+  heading?: string
+  category?: string
+  layout?: "grid" | "list" | "map"
+  showContactInfo?: boolean
+  showPrice?: boolean
+}
+
+export interface CrowdfundingProgressBlockData extends BlockBase {
+  blockType: "crowdfundingProgress"
+  campaignId?: string
+  showBackers?: boolean
+  showUpdates?: boolean
+  variant?: "full" | "widget" | "minimal"
+}
+
+export interface DonationCampaignBlockData extends BlockBase {
+  blockType: "donationCampaign"
+  campaignId?: string
+  showImpact?: boolean
+  presetAmounts?: number[]
+  allowRecurring?: boolean
+  variant?: "full" | "compact" | "widget"
+}
+
+export interface FreelancerProfileBlockData extends BlockBase {
+  blockType: "freelancerProfile"
+  heading?: string
+  showPortfolio?: boolean
+  showReviews?: boolean
+  showAvailability?: boolean
+  layout?: "full" | "card" | "sidebar"
+}
+
+export interface ParkingSpotFinderBlockData extends BlockBase {
+  blockType: "parkingSpotFinder"
+  locationId?: string
+  showMap?: boolean
+  showPricing?: boolean
+  filterByType?: ("covered" | "open" | "valet" | "ev_charging")[]
+  variant?: "map" | "list" | "hybrid"
+}
+
+export interface PurchaseOrderFormBlockData extends BlockBase {
+  blockType: "purchaseOrderForm"
+  heading?: string
+  requiresApproval?: boolean
+  showBudget?: boolean
+  defaultShipping?: string
+}
+
+export interface BulkPricingTableBlockData extends BlockBase {
+  blockType: "bulkPricingTable"
+  heading?: string
+  productId?: string
+  showSavings?: boolean
+  highlightBestValue?: boolean
+  variant?: "table" | "cards" | "steps"
+}
+
+export interface CompanyDashboardBlockData extends BlockBase {
+  blockType: "companyDashboard"
+  showSpend?: boolean
+  showOrders?: boolean
+  showTeam?: boolean
+  showBudget?: boolean
+  period?: "monthly" | "quarterly" | "yearly"
+}
+
+export interface ApprovalWorkflowBlockData extends BlockBase {
+  blockType: "approvalWorkflow"
+  showPending?: boolean
+  showHistory?: boolean
+  variant?: "list" | "kanban" | "timeline"
+}
+
+export interface BlogPostBlockData extends BlockBase {
+  blockType: "blogPost"
+  heading?: string
+  content?: string
+  author?: { name: string; avatar?: MediaField; bio?: string }
+  publishedAt?: string
+  category?: string
+  tags?: string[]
+  featuredImage?: MediaField
+  readingTime?: number
+}
+
+export interface SocialProofBlockData extends BlockBase {
+  blockType: "socialProof"
+  heading?: string
+  variant?: "popup" | "banner" | "ticker" | "inline"
+  showPurchases?: boolean
+  showReviews?: boolean
+  maxItems?: number
+  autoRotate?: boolean
+}
+
+export interface ReferralProgramBlockData extends BlockBase {
+  blockType: "referralProgram"
+  heading?: string
+  description?: string
+  rewardType?: "discount" | "credit" | "points" | "free_product"
+  rewardValue?: number
+  showLeaderboard?: boolean
+  variant?: "full" | "card" | "widget"
+}
+
+export interface ManageStatsBlockData extends BlockBase {
+  blockType: "manageStats"
+  period?: "daily" | "weekly" | "monthly" | "yearly"
+  modules?: string[]
+}
+
+export interface ManageRecentOrdersBlockData extends BlockBase {
+  blockType: "manageRecentOrders"
+  limit?: number
+  showStatus?: boolean
+}
+
+export interface ManageActivityBlockData extends BlockBase {
+  blockType: "manageActivity"
+  limit?: number
+  showTimestamps?: boolean
+  filterByType?: string[]
+}
+
+export interface LoyaltyPointsDisplayBlockData extends BlockBase {
+  blockType: "loyaltyPointsDisplay"
+  variant?: "header" | "card" | "inline" | "widget"
+  showHistory?: boolean
+  showRedemption?: boolean
+  showTier?: boolean
+}
+
 export type BlockData =
   | HeroBlockData
   | RichTextBlockData
@@ -451,6 +898,55 @@ export type BlockData =
   | ContactFormBlockData
   | DividerBlockData
   | BannerCarouselBlockData
+  | ProductDetailBlockData
+  | CartSummaryBlockData
+  | CheckoutStepsBlockData
+  | OrderConfirmationBlockData
+  | WishlistGridBlockData
+  | RecentlyViewedBlockData
+  | FlashSaleCountdownBlockData
+  | GiftCardDisplayBlockData
+  | VendorProfileBlockData
+  | VendorProductsBlockData
+  | VendorRegisterFormBlockData
+  | CommissionDashboardBlockData
+  | PayoutHistoryBlockData
+  | BookingCalendarBlockData
+  | ServiceCardGridBlockData
+  | AppointmentSlotsBlockData
+  | BookingConfirmationBlockData
+  | ProviderScheduleBlockData
+  | ResourceAvailabilityBlockData
+  | SubscriptionPlansBlockData
+  | MembershipTiersBlockData
+  | LoyaltyDashboardBlockData
+  | SubscriptionManageBlockData
+  | AuctionBiddingBlockData
+  | RentalCalendarBlockData
+  | PropertyListingBlockData
+  | VehicleListingBlockData
+  | MenuDisplayBlockData
+  | CourseCurriculumBlockData
+  | EventScheduleBlockData
+  | HealthcareProviderBlockData
+  | FitnessClassScheduleBlockData
+  | PetProfileCardBlockData
+  | ClassifiedAdCardBlockData
+  | CrowdfundingProgressBlockData
+  | DonationCampaignBlockData
+  | FreelancerProfileBlockData
+  | ParkingSpotFinderBlockData
+  | PurchaseOrderFormBlockData
+  | BulkPricingTableBlockData
+  | CompanyDashboardBlockData
+  | ApprovalWorkflowBlockData
+  | BlogPostBlockData
+  | SocialProofBlockData
+  | ReferralProgramBlockData
+  | LoyaltyPointsDisplayBlockData
+  | ManageStatsBlockData
+  | ManageRecentOrdersBlockData
+  | ManageActivityBlockData
 
 export type BlockType = BlockData["blockType"]
 

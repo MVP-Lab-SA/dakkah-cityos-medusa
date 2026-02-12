@@ -31,6 +31,59 @@ import { ManageStatsBlock } from "./manage-stats-block"
 import { ManageRecentOrdersBlock } from "./manage-recent-orders-block"
 import { ManageActivityBlock } from "./manage-activity-block"
 
+import { ProductDetailBlock } from "./product-detail-block"
+import { CartSummaryBlock } from "./cart-summary-block"
+import { CheckoutStepsBlock } from "./checkout-steps-block"
+import { OrderConfirmationBlock } from "./order-confirmation-block"
+import { WishlistGridBlock } from "./wishlist-grid-block"
+import { RecentlyViewedBlock } from "./recently-viewed-block"
+import { FlashSaleCountdownBlock } from "./flash-sale-countdown-block"
+import { GiftCardDisplayBlock } from "./gift-card-display-block"
+
+import { VendorProfileBlock } from "./vendor-profile-block"
+import { VendorProductsBlock } from "./vendor-products-block"
+import { VendorRegisterFormBlock } from "./vendor-register-form-block"
+import { CommissionDashboardBlock } from "./commission-dashboard-block"
+import { PayoutHistoryBlock } from "./payout-history-block"
+
+import { BookingCalendarBlock } from "./booking-calendar-block"
+import { ServiceCardGridBlock } from "./service-card-grid-block"
+import { AppointmentSlotsBlock } from "./appointment-slots-block"
+import { BookingConfirmationBlock } from "./booking-confirmation-block"
+import { ProviderScheduleBlock } from "./provider-schedule-block"
+import { ResourceAvailabilityBlock } from "./resource-availability-block"
+
+import { SubscriptionPlansBlock } from "./subscription-plans-block"
+import { MembershipTiersBlock } from "./membership-tiers-block"
+import { LoyaltyDashboardBlock } from "./loyalty-dashboard-block"
+import { SubscriptionManageBlock } from "./subscription-manage-block"
+
+import { AuctionBiddingBlock } from "./auction-bidding-block"
+import { RentalCalendarBlock } from "./rental-calendar-block"
+import { PropertyListingBlock } from "./property-listing-block"
+import { VehicleListingBlock } from "./vehicle-listing-block"
+import { MenuDisplayBlock } from "./menu-display-block"
+import { CourseCurriculumBlock } from "./course-curriculum-block"
+import { EventScheduleBlock } from "./event-schedule-block"
+import { HealthcareProviderBlock } from "./healthcare-provider-block"
+import { FitnessClassScheduleBlock } from "./fitness-class-schedule-block"
+import { PetProfileCardBlock } from "./pet-profile-card-block"
+import { ClassifiedAdCardBlock } from "./classified-ad-card-block"
+import { CrowdfundingProgressBlock } from "./crowdfunding-progress-block"
+import { DonationCampaignBlock } from "./donation-campaign-block"
+import { FreelancerProfileBlock } from "./freelancer-profile-block"
+import { ParkingSpotFinderBlock } from "./parking-spot-finder-block"
+
+import { PurchaseOrderFormBlock } from "./purchase-order-form-block"
+import { BulkPricingTableBlock } from "./bulk-pricing-table-block"
+import { CompanyDashboardBlock } from "./company-dashboard-block"
+import { ApprovalWorkflowBlock } from "./approval-workflow-block"
+
+import { BlogPostBlock } from "./blog-post-block"
+import { SocialProofBlock } from "./social-proof-block"
+import { ReferralProgramBlock } from "./referral-program-block"
+import { LoyaltyPointsDisplayBlock } from "./loyalty-points-display-block"
+
 export const BLOCK_REGISTRY: Record<string, React.ComponentType<any>> = {
   hero: HeroBlock,
   featureGrid: FeaturesBlock,
@@ -62,6 +115,59 @@ export const BLOCK_REGISTRY: Record<string, React.ComponentType<any>> = {
   manageStats: ManageStatsBlock,
   manageRecentOrders: ManageRecentOrdersBlock,
   manageActivity: ManageActivityBlock,
+
+  productDetail: ProductDetailBlock,
+  cartSummary: CartSummaryBlock,
+  checkoutSteps: CheckoutStepsBlock,
+  orderConfirmation: OrderConfirmationBlock,
+  wishlistGrid: WishlistGridBlock,
+  recentlyViewed: RecentlyViewedBlock,
+  flashSaleCountdown: FlashSaleCountdownBlock,
+  giftCardDisplay: GiftCardDisplayBlock,
+
+  vendorProfile: VendorProfileBlock,
+  vendorProducts: VendorProductsBlock,
+  vendorRegisterForm: VendorRegisterFormBlock,
+  commissionDashboard: CommissionDashboardBlock,
+  payoutHistory: PayoutHistoryBlock,
+
+  bookingCalendar: BookingCalendarBlock,
+  serviceCardGrid: ServiceCardGridBlock,
+  appointmentSlots: AppointmentSlotsBlock,
+  bookingConfirmation: BookingConfirmationBlock,
+  providerSchedule: ProviderScheduleBlock,
+  resourceAvailability: ResourceAvailabilityBlock,
+
+  subscriptionPlans: SubscriptionPlansBlock,
+  membershipTiers: MembershipTiersBlock,
+  loyaltyDashboard: LoyaltyDashboardBlock,
+  subscriptionManage: SubscriptionManageBlock,
+
+  auctionBidding: AuctionBiddingBlock,
+  rentalCalendar: RentalCalendarBlock,
+  propertyListing: PropertyListingBlock,
+  vehicleListing: VehicleListingBlock,
+  menuDisplay: MenuDisplayBlock,
+  courseCurriculum: CourseCurriculumBlock,
+  eventSchedule: EventScheduleBlock,
+  healthcareProvider: HealthcareProviderBlock,
+  fitnessClassSchedule: FitnessClassScheduleBlock,
+  petProfileCard: PetProfileCardBlock,
+  classifiedAdCard: ClassifiedAdCardBlock,
+  crowdfundingProgress: CrowdfundingProgressBlock,
+  donationCampaign: DonationCampaignBlock,
+  freelancerProfile: FreelancerProfileBlock,
+  parkingSpotFinder: ParkingSpotFinderBlock,
+
+  purchaseOrderForm: PurchaseOrderFormBlock,
+  bulkPricingTable: BulkPricingTableBlock,
+  companyDashboard: CompanyDashboardBlock,
+  approvalWorkflow: ApprovalWorkflowBlock,
+
+  blogPost: BlogPostBlock,
+  socialProof: SocialProofBlock,
+  referralProgram: ReferralProgramBlock,
+  loyaltyPointsDisplay: LoyaltyPointsDisplayBlock,
 }
 
 export function getBlockComponent(blockType: string): React.ComponentType<any> | null {
