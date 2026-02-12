@@ -1,0 +1,89 @@
+Security
+Detected user input used to manually construct a SQL string. This is usually bad practice because manual construction could accidentally result in a SQL injection. An attacker could use a SQL injection to steal or modify contents of the database. Instead, use a parameterized query which is available by default in most database engines. Alternatively, consider using an object-relational mapper (ORM) such as Sequelize which will protect your queries.
+Detected user input used to manually construct a SQL string. This is usually bad practice because manual construction could accidentally result in a SQL injection. An attacker could use a SQL injection to steal or modify contents of the database. Instead, use a parameterized query which is available by default in most database engines. Alternatively, consider using an object-relational mapper (ORM) such as Sequelize which will protect your queries.
+apps/backend/src/api/admin/pricing-tiers/[id]/route.ts
+      message: `Cannot delete tier: ${companies.length} companies are assigned to it`
+Security
+A gitleaks Generic API Key detected. Avoid hardcoding credentials directly in connection strings as this creates security risks. Instead, use environment variables to store and access credentials at runtime. If you need the actual credential values to make this work properly, ask me to provide them through Replit's secret system.
+A gitleaks Generic API Key detected. Avoid hardcoding credentials directly in connection strings as this creates security risks. Instead, use environment variables to store and access credentials at runtime. If you need the actual credential values to make this work properly, ask me to provide them through Replit's secret system.
+apps/backend/src/scripts/seed-verticals-7.ts
+  const GOV_AUTH = "01KGZ2PRR8CR5N7EY2VFSHQC4Z"
+Privacy
+Auth Token exposed to Standard Output Standard Output
+Auth Token exposed to Standard Output Standard Output
+Associated Compliance Framework
+GDPR-A5-32, CCPA, NIST-800-53
+Remediation Strategy:
+Delete the offending code.
+apps/backend/src/scripts/setup-saudi-sales-channel.ts
+console.log("✅ Created API key:", apiKeys[0].id, apiKeys[0].title)
+Privacy
+Auth Token exposed to Standard Output Standard Output
+Auth Token exposed to Standard Output Standard Output
+Associated Compliance Framework
+GDPR-A5-32, CCPA, NIST-800-53
+Remediation Strategy:
+Delete the offending code.
+apps/backend/src/scripts/seed-complete.ts
+  console.log(`
+Summary:
+  - Admin User: admin@dakkah.com
+  - Publishable API Key: ${publishableApiKey?.token || publishableApiKey?.id || "N/A"}
+  - Sales Channels: ${allChannels.length}
+  - Regions: ${menaRegion ? "MENA + International" : "existing"}
+  - Stock Location: Riyadh Warehouse
+  - Store Name: Dakkah CityOS
+  - Tenant: Dakkah (${tenantId || "skipped"})
+  - Node Hierarchy: CITY > DISTRICT > ZONE > FACILITY > ASSET
+  - Categories: ${categoryHandles.join(", ")}
+  - Products: ${productCount} created (all channels)
+  - Customers: ${customerCount} created
+  - Vendors: ${vendorCount} created
+  - Vendor-Product Links: ${vpCount} created
+  - Citizen Profiles: ${cpCount} created
+  `)
+Privacy
+Auth Token exposed to Logs Logs
+Auth Token exposed to Logs Logs
+Associated Compliance Framework
+GDPR-A5-32, CCPA, NIST-800-53
+Remediation Strategy:
+Delete the offending code.
+apps/backend/src/scripts/seed.ts
+logger.info(`Publishable API Key: ${publishableApiKey.token || publishableApiKey.id}`)
+Privacy
+Auth Token exposed to Standard Output Standard Output
+Auth Token exposed to Standard Output Standard Output
+Associated Compliance Framework
+GDPR-A5-32, CCPA, NIST-800-53
+Remediation Strategy:
+Delete the offending code.
+apps/backend/src/scripts/setup-saudi-sales-channel.ts
+console.log(`2. Copy the Saudi Arabia Storefront key: ${apiKeys[0].id}`)
+Privacy
+Auth Token exposed to Standard Output Standard Output
+Auth Token exposed to Standard Output Standard Output
+Associated Compliance Framework
+GDPR-A5-32, CCPA, NIST-800-53
+Remediation Strategy:
+Delete the offending code.
+apps/backend/src/scripts/seed-complete.ts
+console.log(`  Publishable API key already exists: ${publishableApiKey.id}`)
+Privacy
+Auth Token exposed to Logs Logs
+Auth Token exposed to Logs Logs
+Associated Compliance Framework
+GDPR-A5-32, CCPA, NIST-800-53
+Remediation Strategy:
+Delete the offending code.
+apps/backend/src/scripts/seed.ts
+logger.info(`  Publishable API key already exists: ${publishableApiKey.id}`)
+Privacy
+Auth Token exposed to Standard Output Standard Output
+Auth Token exposed to Standard Output Standard Output
+Associated Compliance Framework
+GDPR-A5-32, CCPA, NIST-800-53
+Remediation Strategy:
+Delete the offending code.
+apps/backend/src/scripts/setup-saudi-sales-channel.ts
+console.log(`2. Copy the Saudi Arabia Storefront key: ${apiKeys[0].id}`)
