@@ -33,7 +33,6 @@ export default async function({ container }: ExecArgs) {
     },
   })
   
-  console.log("✅ Created API key:", apiKeys[0].id, apiKeys[0].title)
   
   // Step 3: Link API Key to Sales Channel
   await linkSalesChannelsToApiKeyWorkflow(container).run({
