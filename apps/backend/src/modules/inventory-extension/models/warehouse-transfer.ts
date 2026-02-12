@@ -7,7 +7,7 @@ const WarehouseTransfer = model.define("warehouse_transfer", {
   source_location_id: model.text(),
   destination_location_id: model.text(),
   transfer_number: model.text(),
-  status: model.enum(["draft", "pending", "in_transit", "received", "cancelled"]).default("draft"),
+  status: model.text().default("draft"),
   items: model.json().default([]),
   notes: model.text().nullable(),
   initiated_by: model.text().nullable(),

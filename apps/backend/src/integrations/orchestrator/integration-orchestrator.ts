@@ -2,6 +2,7 @@ import { MedusaContainer } from "@medusajs/framework/types"
 import crypto from "crypto"
 import { SyncTracker, SyncSystem, ISyncEntry } from "./sync-tracker"
 import { IntegrationRegistry, createDefaultAdapters, IntegrationHealthStatus } from "./integration-registry"
+import { DurableSyncTracker, durableSyncTracker } from "../../lib/platform/sync-tracker"
 
 export interface SyncOptions {
   correlation_id?: string
@@ -22,11 +23,13 @@ export class IntegrationOrchestrator {
   private container: MedusaContainer
   private tracker: SyncTracker
   private registry: IntegrationRegistry
+  private durableTracker: DurableSyncTracker
 
-  constructor(container: MedusaContainer, tracker: SyncTracker, registry: IntegrationRegistry) {
+  constructor(container: MedusaContainer, tracker: SyncTracker, registry: IntegrationRegistry, durableTracker?: DurableSyncTracker) {
     this.container = container
     this.tracker = tracker
     this.registry = registry
+    this.durableTracker = durableTracker || durableSyncTracker
   }
 
   async syncToSystem(
@@ -52,6 +55,16 @@ export class IntegrationOrchestrator {
 
     this.tracker.updateSyncStatus(entry.id, "in_progress")
 
+    this.durableTracker.recordSync({
+      system,
+      entity_type: entityType,
+      entity_id: entityId,
+      direction: options.direction ?? "outbound",
+      payload_hash: payloadHash,
+      correlation_id: options.correlation_id || entry.correlation_id,
+      tenant_id: options.tenant_id || "default",
+    }).catch((err) => console.log(`[IntegrationOrchestrator] Durable tracking record error: ${err.message}`))
+
     const adapter = this.registry.getAdapter(system)
     if (!adapter) {
       this.tracker.markFailed(entry.id, `No adapter registered for system: ${system}`)
@@ -68,12 +81,15 @@ export class IntegrationOrchestrator {
       const result = await adapter.syncEntity(entityType, entityId, data)
       if (result.success) {
         this.tracker.markSuccess(entry.id)
+        this.durableTracker.updateStatus(entry.id, "completed").catch((err) => console.log(`[IntegrationOrchestrator] Durable status update error: ${err.message}`))
       } else {
         this.tracker.markFailed(entry.id, result.error || "Unknown sync error")
+        this.durableTracker.updateStatus(entry.id, "failed", result.error || "Unknown sync error").catch((err) => console.log(`[IntegrationOrchestrator] Durable status update error: ${err.message}`))
       }
     } catch (error: any) {
       console.log(`[IntegrationOrchestrator] Sync error for ${system}/${entityType}/${entityId}: ${error.message}`)
       this.tracker.markFailed(entry.id, error.message)
+      this.durableTracker.updateStatus(entry.id, "failed", error.message).catch((err) => console.log(`[IntegrationOrchestrator] Durable status update error: ${err.message}`))
     }
 
     return this.entries_get(entry.id) || entry
@@ -173,6 +189,15 @@ export class IntegrationOrchestrator {
     })
 
     this.tracker.updateSyncStatus(entry.id, "in_progress")
+
+    this.durableTracker.recordSync({
+      system,
+      entity_type: event,
+      entity_id: payload?.id || "unknown",
+      direction: "inbound",
+      correlation_id: payload?.correlation_id || entry.correlation_id,
+      tenant_id: payload?.tenant_id || "default",
+    }).catch((err) => console.log(`[IntegrationOrchestrator] Durable tracking record error: ${err.message}`))
 
     const adapter = this.registry.getAdapter(system)
     if (!adapter) {
@@ -277,6 +302,6 @@ export function createIntegrationOrchestrator(container: MedusaContainer): Integ
     registry.registerAdapter(adapter)
   }
 
-  console.log("[IntegrationOrchestrator] Orchestrator initialized with default adapters")
-  return new IntegrationOrchestrator(container, tracker, registry)
+  console.log("[IntegrationOrchestrator] Orchestrator initialized with default adapters and durable sync tracking")
+  return new IntegrationOrchestrator(container, tracker, registry, durableSyncTracker)
 }

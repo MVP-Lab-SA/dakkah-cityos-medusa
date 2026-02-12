@@ -13,6 +13,7 @@ import { useCMSNavigation } from "@/lib/hooks/use-cms"
 import { useAuth } from "@/lib/context/auth-context"
 import { getTenantLocalePrefix } from "@/lib/utils/region"
 import LocaleSwitcher from "@/components/layout/locale-switcher"
+import { SearchModal } from "@/components/search"
 import * as NavigationMenu from "@radix-ui/react-navigation-menu"
 import { Link, useLocation } from "@tanstack/react-router"
 import { useState } from "react"
@@ -35,6 +36,7 @@ export const Navbar = () => {
   const location = useLocation()
   const baseHref = getTenantLocalePrefix(location.pathname)
   const [openMobileSections, setOpenMobileSections] = useState<Record<string, boolean>>({})
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
 
   const { data: topLevelCategories } = useCategories({
     fields: "id,name,handle,parent_category_id",
@@ -312,6 +314,26 @@ export const Navbar = () => {
           </div>
 
           <div className="flex items-center gap-x-4 h-full justify-end">
+            <button
+              onClick={() => setIsSearchOpen(true)}
+              className="text-ds-muted-foreground hover:text-ds-foreground transition-colors"
+              aria-label="Search"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                />
+              </svg>
+            </button>
             {(() => {
               const segments = location.pathname.split("/").filter(Boolean)
               const tenant = segments[0] || ""
@@ -321,6 +343,7 @@ export const Navbar = () => {
             <UserMenu />
             <CartDropdown />
           </div>
+          <SearchModal open={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
         </nav>
       </header>
     </div>

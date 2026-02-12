@@ -6,7 +6,7 @@ const StockAlert = model.define("stock_alert", {
   tenant_id: model.text(),
   variant_id: model.text(),
   product_id: model.text(),
-  alert_type: model.enum(["low_stock", "out_of_stock", "overstock", "reorder_point"]),
+  alert_type: model.text(),
   threshold: model.number(),
   current_quantity: model.number().default(0),
   is_resolved: model.boolean().default(false),

@@ -69,7 +69,7 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
   const navigate = useNavigate()
   const tenantPrefix = useTenantPrefix()
   const { data: suggestions = [] } = useSearchSuggestions(debouncedQuery)
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>()
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   useEffect(() => {
     if (open) {

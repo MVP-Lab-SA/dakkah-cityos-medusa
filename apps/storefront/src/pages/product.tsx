@@ -1,7 +1,14 @@
 import ProductActions from "@/components/product-actions"
+import ProductCard from "@/components/product-card"
 import { ImageGallery } from "@/components/ui/image-gallery"
+import { ReviewList } from "@/components/reviews/review-list"
+import { ReviewForm } from "@/components/reviews/review-form"
+import { AddToWishlistButton } from "@/components/wishlist/add-to-wishlist-button"
+import { CompareButton } from "@/components/compare/compare-button"
+import BNPLEligibilityBadge from "@/components/checkout/bnpl-eligibility-badge"
 import { retrieveProduct } from "@/lib/data/products"
 import { getRegion } from "@/lib/data/regions"
+import { useProductReviews } from "@/lib/hooks/use-reviews"
 import { useQuery } from "@tanstack/react-query"
 import { useLoaderData, useParams } from "@tanstack/react-router"
 
@@ -37,6 +44,17 @@ const ProductDetails = () => {
     staleTime: 30000,
   })
 
+  const { data: reviewsData, isLoading: reviewsLoading } = useProductReviews(product?.id || "", { limit: 10 })
+
+  const relatedProducts = loaderData?.relatedProducts || []
+
+  const cheapestPrice = product?.variants
+    ?.map((v: any) => v.calculated_price?.calculated_amount)
+    .filter(Boolean)
+    .sort((a: number, b: number) => a - b)[0]
+
+  const priceCurrency = product?.variants?.[0]?.calculated_price?.currency_code?.toUpperCase() || "USD"
+
   if (!product || isLoading) {
     return (
       <div className="content-container py-6">
@@ -62,12 +80,47 @@ const ProductDetails = () => {
         </div>
         <div>
           <h1 className="text-2xl font-medium mb-2">{product.title}</h1>
+          {cheapestPrice != null && (
+            <div className="mb-4">
+              <BNPLEligibilityBadge price={cheapestPrice / 100} currency={priceCurrency} />
+            </div>
+          )}
           {product.description && (
             <p className="text-secondary-text mb-6">{product.description}</p>
           )}
           {region && <ProductActions product={product} region={region} />}
+          <div className="flex items-center gap-3 mt-4">
+            <AddToWishlistButton productId={product.id} />
+            <CompareButton productId={product.id} productTitle={product.title || ""} />
+          </div>
         </div>
       </div>
+
+      {/* Reviews Section */}
+      <div className="mt-16 border-t pt-10">
+        <h2 className="text-xl font-medium mb-6">Customer Reviews</h2>
+        <ReviewList
+          reviews={reviewsData?.reviews || []}
+          summary={reviewsData?.summary}
+          isLoading={reviewsLoading}
+        />
+        <div className="mt-8">
+          <h3 className="text-lg font-medium mb-4">Write a Review</h3>
+          <ReviewForm productId={product.id} />
+        </div>
+      </div>
+
+      {/* Related Products */}
+      {relatedProducts.length > 0 && (
+        <div className="mt-16 border-t pt-10">
+          <h2 className="text-xl font-medium mb-6">Related Products</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {relatedProducts.map((rp: any) => (
+              <ProductCard key={rp.id} product={rp} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

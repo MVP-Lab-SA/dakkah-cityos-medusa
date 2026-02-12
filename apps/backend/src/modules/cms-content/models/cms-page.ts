@@ -7,7 +7,7 @@ const CmsPage = model.define("cms_page", {
   title: model.text(),
   slug: model.text(),
   locale: model.text().default("en"),
-  status: model.enum(["draft", "published", "archived"]).default("draft"),
+  status: model.text().default("draft"),
   template: model.text().nullable(),
   layout: model.json().default([]),
   seo_title: model.text().nullable(),

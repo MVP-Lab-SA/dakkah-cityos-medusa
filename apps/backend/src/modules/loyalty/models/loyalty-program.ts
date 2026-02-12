@@ -8,7 +8,7 @@ const LoyaltyProgram = model.define("loyalty_program", {
   description: model.text().nullable(),
   points_per_currency: model.number().default(1),
   currency_code: model.text(),
-  status: model.enum(["active", "inactive", "paused"]).default("active"),
+  status: model.text().default("active"),
   tiers: model.json().nullable(),
   earn_rules: model.json().nullable(),
   metadata: model.json().nullable(),

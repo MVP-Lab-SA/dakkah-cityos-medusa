@@ -536,5 +536,95 @@ module.exports = defineConfig({
         }
       }
     },
+    {
+      resolve: "./src/modules/analytics",
+      key: "analytics",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/cart-extension",
+      key: "cartExtension",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/cms-content",
+      key: "cmsContent",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/dispute",
+      key: "dispute",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/inventory-extension",
+      key: "inventoryExtension",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/loyalty",
+      key: "loyalty",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/notification-preferences",
+      key: "notificationPreferences",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/shipping-extension",
+      key: "shippingExtension",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/tax-config",
+      key: "taxConfig",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
+    {
+      resolve: "./src/modules/wishlist",
+      key: "wishlist",
+      options: {
+        definition: {
+          isQueryable: true
+        }
+      }
+    },
   ],
 });

@@ -5,9 +5,9 @@ const CmsNavigation = model.define("cms_navigation", {
   id: model.id().primaryKey(),
   tenant_id: model.text(),
   locale: model.text().default("en"),
-  location: model.enum(["header", "footer", "sidebar", "mobile"]),
+  location: model.text(),
   items: model.json().default([]),
-  status: model.enum(["active", "inactive"]).default("active"),
+  status: model.text().default("active"),
   metadata: model.json().nullable(),
 })
 

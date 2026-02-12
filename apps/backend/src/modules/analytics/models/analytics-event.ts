@@ -12,7 +12,6 @@ const AnalyticsEvent = model.define("analytics_event", {
   properties: model.json().nullable(),
   revenue: model.bigNumber().nullable(),
   currency: model.text().nullable(),
-  created_at: model.dateTime(),
 })
 
 export default AnalyticsEvent

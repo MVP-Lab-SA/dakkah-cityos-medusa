@@ -10,7 +10,7 @@ const LoyaltyAccount = model.define("loyalty_account", {
   lifetime_points: model.bigNumber().default(0),
   tier: model.text().nullable(),
   tier_expires_at: model.dateTime().nullable(),
-  status: model.enum(["active", "suspended", "closed"]).default("active"),
+  status: model.text().default("active"),
   metadata: model.json().nullable(),
 })
 

@@ -8,10 +8,13 @@ import {
   useLocation,
   useNavigate,
 } from "@tanstack/react-router"
-import { lazy, Suspense, useEffect, useMemo } from "react"
+import { lazy, Suspense, useEffect, useMemo, useState } from "react"
 
 const BNPLOptions = lazy(() => import("@/components/checkout/bnpl-options"))
 const StoreCreditApply = lazy(() => import("@/components/checkout/store-credit-apply"))
+const CouponInput = lazy(() => import("@/components/promotions/coupon-input").then(m => ({ default: m.CouponInput })))
+const GiftWrapOptions = lazy(() => import("@/components/checkout/gift-wrap-options").then(m => ({ default: m.GiftWrapOptions })))
+const DeliveryInstructions = lazy(() => import("@/components/checkout/delivery-instructions").then(m => ({ default: m.DeliveryInstructions })))
 
 const DeliveryStep = lazy(() => import("@/components/checkout-delivery-step"))
 const AddressStep = lazy(() => import("@/components/checkout-address-step"))
@@ -26,6 +29,16 @@ const Checkout = () => {
   const { data: cart, isLoading: cartLoading } = useCart();
   const location = useLocation();
   const navigate = useNavigate();
+  const [availableCredits, setAvailableCredits] = useState<number>(0);
+
+  useEffect(() => {
+    const cartAny = cart as any;
+    if (cartAny?.customer?.metadata?.store_credit) {
+      setAvailableCredits(Number(cartAny.customer.metadata.store_credit) || 0);
+    } else if (cartAny?.customer?.id) {
+      setAvailableCredits(0);
+    }
+  }, [(cart as any)?.customer]);
 
   const steps: CheckoutStep[] = useMemo(() => {
     return [
@@ -152,11 +165,22 @@ const Checkout = () => {
 
                 {/* Delivery Step */}
                 {step === CheckoutStepKey.DELIVERY && (
-                  <DeliveryStep
-                    cart={cart}
-                    onNext={handleNext}
-                    onBack={handleBack}
-                  />
+                  <>
+                    <DeliveryStep
+                      cart={cart}
+                      onNext={handleNext}
+                      onBack={handleBack}
+                    />
+                    <DeliveryInstructions />
+                    <GiftWrapOptions
+                      items={(cart.items || []).map((item: any) => ({
+                        id: item.id,
+                        title: item.title || item.product_title || "Item",
+                        thumbnail: item.thumbnail,
+                      }))}
+                      currency={cart.region?.currency_code?.toUpperCase() || "USD"}
+                    />
+                  </>
                 )}
 
                 {/* Payment Step */}
@@ -187,15 +211,18 @@ const Checkout = () => {
         <Suspense fallback={<Loading />}>
           {cartLoading && <Loading />}
           {cart && (
-            <>
+            <div className="space-y-4">
+              <CouponInput
+                locale={cart.region?.countries?.[0]?.iso_2 || "en"}
+              />
               <StoreCreditApply
-                availableCredits={0}
+                availableCredits={availableCredits}
                 currency={cart.region?.currency_code?.toUpperCase() || "USD"}
                 cartTotal={cart.total || 0}
                 locale={cart.region?.countries?.[0]?.iso_2 || "en"}
               />
               <CheckoutSummary cart={cart} />
-            </>
+            </div>
           )}
           {!cart && !cartLoading && <CartEmpty />}
         </Suspense>
