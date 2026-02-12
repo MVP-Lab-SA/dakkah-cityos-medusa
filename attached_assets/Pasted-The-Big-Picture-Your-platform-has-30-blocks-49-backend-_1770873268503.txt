@@ -1,0 +1,233 @@
+The Big Picture
+Your platform has 30 blocks, 49 backend modules, 142 storefront routes, and 60+ admin API routes already built. But many are scaffolded rather than fully functional. Here's what needs to happen to reach full feature parity:
+
+Phase 1: Foundation (Core Data & CMS Infrastructure)
+Goal: Fix broken foundations so everything built on top works correctly.
+
+1.1 Complete Stub Models (4 modules)
+
+Payout — currently 2 lines. Needs: amount, currency, vendor_id, status (pending/processing/completed/failed), payment_method, stripe_transfer_id, period_start, period_end, fee_amount, net_amount, metadata
+Store — currently 1 line. Needs: name, tenant_id, handle, default_currency, default_locale, swap_link_template, payment_link_template, metadata
+Quote — currently 2 lines. Needs: customer_id, vendor_id, status (draft/sent/accepted/rejected/expired), items[], total, valid_until, notes, converted_order_id
+Volume Pricing — currently 2 lines. Needs: product_id, variant_id, min_qty, max_qty, price, currency, customer_group_id
+1.2 Build Missing Backend Modules (10 modules)
+
+Module	Purpose	Key Models
+Wishlist	Customer wishlists	Wishlist, WishlistItem
+Cart Extension	Custom cart fields	CartMetadata (gift wrap, delivery instructions)
+Shipping Extension	Multi-carrier support	ShippingRate, CarrierConfig
+Notification Prefs	Customer channels	NotificationPreference (email/sms/push per event type)
+CMS Content	Local content CRUD	CMSPage, CMSBlock, CMSNavigation (Payload-compatible schemas)
+Loyalty & Rewards	Points/tiers	LoyaltyProgram, LoyaltyTier, PointTransaction, Reward
+Analytics	Reporting engine	AnalyticsEvent, Report, Dashboard
+Dispute Resolution	Order disputes	Dispute, DisputeMessage, DisputeEvidence, Resolution
+Inventory Extension	Advanced stock	ReservationHold, StockAlert, WarehouseTransfer
+Tax Configuration	Tax rules	TaxRule, TaxZone, TaxExemption
+1.3 Fix POI System
+
+Create /store/content/pois API endpoints (list, get by ID, search)
+Align frontend lat/lng with backend latitude/longitude
+Add admin CRUD for POI management
+Add POI seed data for Dakkah tenant
+1.4 Payload CMS Compatibility Layer
+
+Define Payload CMS collection schemas for: Pages, Navigation, Media, Tenants, Blocks
+Each collection has tenant, locale, _status fields matching current PayloadPage type
+Layout field uses BlockData[] from design-system contracts
+Enhance /platform/cms/resolve to support both local registry and future Payload API
+Add /platform/cms/pages CRUD endpoints matching Payload REST API format
+Phase 2: Block System Expansion (Payload CMS Blocks)
+Goal: Add all missing vertical-specific blocks so every page can be composed from CMS blocks.
+
+Every block follows this pattern:
+
+BlockBase → { id, blockType, blockName }
+Contract in: packages/cityos-design-system/src/blocks/BlockTypes.ts
+Component in: apps/storefront/src/components/blocks/
+Registered in: apps/storefront/src/components/blocks/block-registry.ts
+2.1 Commerce Blocks (8 new blocks)
+
+Block	blockType	Purpose
+Product Detail	productDetail	Full PDP with variants, gallery, add-to-cart
+Cart Summary	cartSummary	Mini cart / cart page block
+Checkout Steps	checkoutSteps	Multi-step checkout flow
+Order Confirmation	orderConfirmation	Post-purchase summary
+Wishlist Grid	wishlistGrid	Customer wishlist display
+Recently Viewed	recentlyViewed	Recently browsed products
+Flash Sale Countdown	flashSaleCountdown	Timer + featured products
+Gift Card Display	giftCardDisplay	Gift card purchase/balance
+2.2 Marketplace Blocks (5 new blocks)
+
+Block	blockType	Purpose
+Vendor Profile	vendorProfile	Full vendor page header
+Vendor Products	vendorProducts	Vendor's product grid with filters
+Vendor Registration Form	vendorRegisterForm	Multi-step vendor signup
+Commission Dashboard	commissionDashboard	Vendor earnings view
+Payout History	payoutHistory	Vendor payout timeline
+2.3 Booking & Service Blocks (6 new blocks)
+
+Block	blockType	Purpose
+Booking Calendar	bookingCalendar	Availability calendar picker
+Service Card Grid	serviceCardGrid	Service listing with booking CTA
+Appointment Slots	appointmentSlots	Time slot selector
+Booking Confirmation	bookingConfirmation	Booking receipt block
+Provider Schedule	providerSchedule	Provider availability display
+Resource Availability	resourceAvailability	Room/equipment availability
+2.4 Subscription & Membership Blocks (4 new blocks)
+
+Block	blockType	Purpose
+Subscription Plans	subscriptionPlans	Plan comparison with signup
+Membership Tiers	membershipTiers	Tier benefits comparison
+Loyalty Dashboard	loyaltyDashboard	Points, tier progress, rewards
+Subscription Management	subscriptionManage	Pause/cancel/upgrade UI
+2.5 Vertical-Specific Blocks (15 new blocks)
+
+Block	blockType	Vertical
+Auction Bidding	auctionBidding	Auctions — live bid UI with countdown
+Rental Calendar	rentalCalendar	Rentals — date range picker with pricing
+Property Listing	propertyListing	Real Estate — property card with specs
+Vehicle Listing	vehicleListing	Automotive — vehicle specs + comparison
+Menu Display	menuDisplay	Restaurants — categorized menu with cart
+Course Curriculum	courseCurriculum	Education — lesson tree with progress
+Event Schedule	eventSchedule	Events — multi-day schedule grid
+Healthcare Provider	healthcareProvider	Healthcare — doctor card with booking
+Fitness Class Schedule	fitnessClassSchedule	Fitness — weekly class grid
+Pet Profile Card	petProfileCard	Pet Services — pet info + service booking
+Classified Ad Card	classifiedAdCard	Classifieds — ad listing with contact
+Crowdfunding Progress	crowdfundingProgress	Crowdfunding — goal tracker + backer list
+Donation Campaign	donationCampaign	Charity — donation form + impact stats
+Freelancer Profile	freelancerProfile	Freelance — portfolio + hire CTA
+Parking Spot Finder	parkingSpotFinder	Parking — map-based spot selection
+2.6 B2B Blocks (4 new blocks)
+
+Block	blockType	Purpose
+Purchase Order Form	purchaseOrderForm	B2B PO creation with approval
+Bulk Pricing Table	bulkPricingTable	Volume discount tiers
+Company Dashboard	companyDashboard	Company spend/orders overview
+Approval Workflow	approvalWorkflow	PO approval chain status
+2.7 Content & Marketing Blocks (4 new blocks)
+
+Block	blockType	Purpose
+Blog Post	blogPost	Rich blog article with media
+Social Proof	socialProof	Live purchase notifications
+Referral Program	referralProgram	Referral invite + rewards
+Loyalty Points Display	loyaltyPointsDisplay	Points balance + earn/spend
+Total: 46 new blocks (30 existing + 46 new = 76 blocks)
+
+Phase 3: Admin & Store Manager Panel Completion
+Goal: Full CRUD UI for every module in both panels.
+
+3.1 Admin Panel — Missing UI Pages (~35 pages)
+
+Platform Infrastructure (already have API routes, need UI):
+
+Advertising, Affiliates, Auctions, Automotive, Charities, Classifieds, Crowdfunding, Digital Products, Education, Event Ticketing, Financial Products, Fitness, Freelance, Government, Grocery, Healthcare, Legal, Memberships, Parking, Pet Services, Real Estate, Rentals, Restaurants, Social Commerce, Travel, Utilities
+Commerce (already have API routes, need UI):
+
+Commission Rules detail view, Invoices, Quotes, Purchase Orders, Promotion Extensions, Pricing Tiers, Service Providers
+System:
+
+Integration dashboard (health, sync stats, retry controls)
+Temporal workflow monitor (active workflows, history, manual triggers)
+3.2 Store Manager Panel — Deepen Business Logic (~43 pages)
+
+All 43 manage routes exist but need:
+
+Vertical-specific form fields (not just generic CRUD)
+Status workflow buttons (approve, reject, escalate, fulfill)
+Inline analytics widgets per module
+Bulk actions (bulk approve, bulk export)
+Proper filter/search by status, date range, vendor
+Detail views with activity timelines
+3.3 Shared Components Needed
+
+Advanced DataTable with column customization, export, bulk select
+Chart components (line, bar, pie) for analytics sections
+Calendar/scheduler component for bookings
+Map component for POI/delivery zone management
+Rich text editor for content blocks
+File upload with image preview
+Multi-step form wizard
+Phase 4: Integration Layer Hardening
+Goal: Make cross-system integrations actually work end-to-end.
+
+4.1 Temporal Workers
+
+Build worker process that runs activities from temporal-activities.ts
+Register activities for all 6 integration services
+Deploy worker on startup with configurable concurrency
+Implement the "cityOSWorkflow" router that dispatches to correct activity sequences
+4.2 Durable Sync Tracking
+
+Migrate SyncTracker from in-memory Map to PostgreSQL table
+Add sync_entries table: id, system, entity_type, entity_id, direction, status, error_message, retry_count, payload_hash, correlation_id, tenant_id, timestamps
+Add cron job for automatic retry of failed syncs
+4.3 Webhook Processing
+
+Stripe webhook: signature verification, event routing to correct handlers (payment_intent.succeeded, charge.refunded, etc.)
+ERPNext webhook: inventory updates, invoice status changes
+Fleetbase webhook: delivery status updates, driver assignments
+Payload CMS webhook: content changes trigger Medusa sync
+4.4 Outbox Processing
+
+Add cron trigger for processEventOutbox() (every 30 seconds)
+Add circuit breaker per external system
+Add rate limiting per system (respect API limits)
+Add idempotency checks using payload_hash
+4.5 Environment Variable Management
+
+Document all 15 required env vars with setup instructions
+Add health check endpoint that reports which systems are configured
+Graceful degradation: features work without external systems, just without sync
+Phase 5: Storefront Feature Completion
+Goal: Complete all customer-facing features.
+
+5.1 Missing Storefront Features
+
+Wishlist: add/remove products, share wishlist, move to cart
+Product comparison: side-by-side spec comparison
+Advanced search: full-text search with filters, autocomplete
+Loyalty points display in header, earn/spend during checkout
+Notification center: in-app notifications with preferences
+Dispute filing from order history
+Track shipments with real-time map (Fleetbase integration)
+5.2 Checkout Enhancements
+
+Multi-vendor cart splitting with per-vendor subtotals
+Gift wrapping options per item
+Delivery instructions per shipment
+Store pickup option
+BNPL/installment payment option display
+Guest checkout improvements
+5.3 Account Dashboard Completion
+
+Downloads page (digital products)
+Installments tracking
+Store credits & wallet
+Loyalty & referral dashboard
+Consent management
+Verification status (Walt.id credential display)
+5.4 Design System Package Completion
+
+Add block contracts for all 46 new blocks in BlockTypes.ts
+Add vertical-specific component type contracts (AuctionTypes, RentalTypes, etc.)
+Complete design token coverage for all verticals
+RTL testing and fixes for all new blocks
+Ensure all blocks support locale prop and t() translations
+Priority & Dependency Order
+Phase 1 (Foundation)     ← Must come first, everything depends on it
+  ↓
+Phase 2 (Blocks)         ← Can start in parallel with Phase 3
+Phase 3 (Admin/Manage)   ← Can start in parallel with Phase 2
+  ↓
+Phase 4 (Integrations)   ← Depends on Phase 1 models being complete
+  ↓
+Phase 5 (Storefront)     ← Depends on Phases 2 + 4 for blocks and integrations
+Summary
+Category	Existing	To Build	Total
+CMS Blocks	30	46	76
+Backend Modules	49	10	59
+Admin UI Pages	21	35	56
+Store Manager Pages	43 (scaffolded)	43 (deepened)	43
+Integration Workers	0	6	6
+Storefront Features	~80% scaffolded	~20% missing	100%
