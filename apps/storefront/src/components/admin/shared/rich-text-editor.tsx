@@ -1,4 +1,5 @@
 import React from 'react'
+import DOMPurify from 'dompurify'
 
 type ToolName = 'bold' | 'italic' | 'underline' | 'h1' | 'h2' | 'h3' | 'link' | 'ordered-list' | 'unordered-list' | 'quote' | 'code' | 'image'
 
@@ -32,7 +33,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   React.useEffect(() => {
     if (editorRef.current && value && editorRef.current.innerHTML !== value) {
-      editorRef.current.innerHTML = value
+      editorRef.current.innerHTML = DOMPurify.sanitize(value)
       setIsEmpty(false)
     }
   }, [])
