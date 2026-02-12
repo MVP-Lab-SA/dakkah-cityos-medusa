@@ -102,7 +102,8 @@ export async function DELETE(
 
   if (companies.length > 0) {
     return res.status(400).json({
-      message: `Cannot delete tier: ${companies.length} companies are assigned to it`
+      message: "Cannot delete tier: companies are still assigned to it",
+      company_count: companies.length
     })
   }
 

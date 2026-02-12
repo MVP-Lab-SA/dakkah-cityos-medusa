@@ -1381,7 +1381,7 @@ export default async function seedComplete({ container }: ExecArgs) {
   console.log(`
 Summary:
   - Admin User: admin@dakkah.com
-  - Publishable API Key: ${publishableApiKey?.token || publishableApiKey?.id || "N/A"}
+  - Publishable API Key: [REDACTED - retrieve from admin panel]
   - Sales Channels: ${allChannels.length}
   - Regions: ${menaRegion ? "MENA + International" : "existing"}
   - Stock Location: Riyadh Warehouse

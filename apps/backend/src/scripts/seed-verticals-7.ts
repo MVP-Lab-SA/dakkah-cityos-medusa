@@ -22,7 +22,7 @@ export default async function seedVerticals7({ container }: ExecArgs) {
   const REG_1 = "reg_01KGX7RFT438XP6T1KZ88WX0M0"
   const REG_2 = "reg_01KGXWH7P5HS70N8M5VX573VQ0"
   const REG_3 = "reg_01KGXWH7P6FFCG3S67T8N7VD05"
-  const GOV_AUTH = "01KGZ2PRR8CR5N7EY2VFSHQC4Z"
+  const SEEDED_GOV_AUTHORITY_ID = "01KGZ2PRR8CR5N7EY2VFSHQC4Z"
 
   let nodeIds: { city?: string; district?: string; zone?: string; facility?: string; asset?: string } = {}
   try {
@@ -117,12 +117,15 @@ export default async function seedVerticals7({ container }: ExecArgs) {
     await dataSource.raw(`
       INSERT INTO persona_assignment (id, tenant_id, persona_id, user_id, scope, scope_reference, priority, status, starts_at, ends_at, metadata, created_at, updated_at)
       VALUES
-        ('seed7_pa_mohammed', $1, 'seed7_persona_consumer', $2, 'user-default', null, 0, 'active', null, null, '{"customer_id":"${CUSTOMER_MOHAMMED}","name":"Mohammed"}', $6, $6),
-        ('seed7_pa_fatima', $1, 'seed7_persona_merchant', $3, 'user-default', null, 0, 'active', null, null, '{"customer_id":"${CUSTOMER_FATIMA}","name":"Fatima"}', $6, $6),
-        ('seed7_pa_ahmed', $1, 'seed7_persona_service', $4, 'user-default', null, 0, 'active', null, null, '{"customer_id":"${CUSTOMER_AHMED}","name":"Ahmed"}', $6, $6),
+        ('seed7_pa_mohammed', $1, 'seed7_persona_consumer', $2, 'user-default', null, 0, 'active', null, null, $7::jsonb, $6, $6),
+        ('seed7_pa_fatima', $1, 'seed7_persona_merchant', $3, 'user-default', null, 0, 'active', null, null, $8::jsonb, $6, $6),
+        ('seed7_pa_ahmed', $1, 'seed7_persona_service', $4, 'user-default', null, 0, 'active', null, null, $9::jsonb, $6, $6),
         ('seed7_pa_admin', $1, 'seed7_persona_admin', $5, 'user-default', null, 10, 'active', null, null, '{"role":"super_admin"}', $6, $6)
       ON CONFLICT (id) DO NOTHING
-    `, [TENANT_ID, CUSTOMER_MOHAMMED, CUSTOMER_FATIMA, CUSTOMER_AHMED, USER_1, now])
+    `, [TENANT_ID, CUSTOMER_MOHAMMED, CUSTOMER_FATIMA, CUSTOMER_AHMED, USER_1, now,
+        JSON.stringify({customer_id: CUSTOMER_MOHAMMED, name: "Mohammed"}),
+        JSON.stringify({customer_id: CUSTOMER_FATIMA, name: "Fatima"}),
+        JSON.stringify({customer_id: CUSTOMER_AHMED, name: "Ahmed"})])
     console.log("  ✓ persona_assignment: 4 rows inserted")
   } catch (e: any) {
     console.log(`  ✗ persona_assignment error: ${e.message}`)
@@ -415,7 +418,7 @@ export default async function seedVerticals7({ container }: ExecArgs) {
          $2, 'super-admin', 'mohammed@cityos.sa', null,
          '{"action":"invited zone operator"}',
          null,
-         '{"user_id":"${CUSTOMER_AHMED}","role":"zone-operator"}',
+         $8::jsonb,
          '203.0.113.42', 'Mozilla/5.0 CityOS-Admin/2.1', 'internal',
          '{"invitation_method":"email"}', $4, $4),
 
@@ -439,11 +442,13 @@ export default async function seedVerticals7({ container }: ExecArgs) {
          $2, 'super-admin', 'mohammed@cityos.sa', $5,
          '{"action":"linked governance authority to tenant"}',
          null,
-         '{"authority_id":"${GOV_AUTH}","tenant_id":"${TENANT_ID}"}',
+         $9::jsonb,
          '203.0.113.42', 'Mozilla/5.0 CityOS-Admin/2.1', 'restricted',
          '{"compliance_note":"SDAIA data residency requirement"}', $4, $4)
       ON CONFLICT (id) DO NOTHING
-    `, [TENANT_ID, USER_1, USER_2, now, nodeIds.city || null, billingId, GOV_AUTH])
+    `, [TENANT_ID, USER_1, USER_2, now, nodeIds.city || null, billingId, SEEDED_GOV_AUTHORITY_ID,
+        JSON.stringify({user_id: CUSTOMER_AHMED, role: "zone-operator"}),
+        JSON.stringify({authority_id: SEEDED_GOV_AUTHORITY_ID, tenant_id: TENANT_ID})])
     console.log("  ✓ audit_log: 5 rows inserted")
   } catch (e: any) {
     console.log(`  ✗ audit_log error: ${e.message}`)
@@ -458,14 +463,14 @@ export default async function seedVerticals7({ container }: ExecArgs) {
       INSERT INTO event_outbox (id, tenant_id, event_type, aggregate_type, aggregate_id, payload, metadata, source, correlation_id, causation_id, actor_id, actor_role, node_id, channel, status, published_at, error, retry_count, created_at, updated_at)
       VALUES
         ('seed7_evt_01', $1, 'store.created', 'cityos_store', 'seed7_store_main',
-         '{"store_id":"seed7_store_main","name":"سوق الرياض الإلكتروني","store_type":"marketplace","tenant_id":"${TENANT_ID}"}',
+         $5::jsonb,
          '{"version":"1.0","schema":"cityos.store.v1"}',
          'commerce', 'corr_store_001', null,
          $2, 'super-admin', $4, 'web',
          'published', $3, null, 0, $3, $3),
 
         ('seed7_evt_02', $1, 'tenant.settings.updated', 'tenant_settings', 'seed7_tenant_settings',
-         '{"tenant_id":"${TENANT_ID}","changes":{"timezone":"Asia/Riyadh","locale":"ar","currencies":["sar","usd"]}}',
+         $6::jsonb,
          '{"version":"1.0","schema":"cityos.tenant.v1"}',
          'commerce', 'corr_settings_001', null,
          $2, 'super-admin', null, 'admin',
@@ -478,7 +483,9 @@ export default async function seedVerticals7({ container }: ExecArgs) {
          null, 'system', null, 'internal',
          'pending', null, null, 0, $3, $3)
       ON CONFLICT (id) DO NOTHING
-    `, [TENANT_ID, USER_1, now, nodeIds.city || null])
+    `, [TENANT_ID, USER_1, now, nodeIds.city || null,
+        JSON.stringify({store_id: "seed7_store_main", name: "سوق الرياض الإلكتروني", store_type: "marketplace", tenant_id: TENANT_ID}),
+        JSON.stringify({tenant_id: TENANT_ID, changes: {timezone: "Asia/Riyadh", locale: "ar", currencies: ["sar", "usd"]}})])
     console.log("  ✓ event_outbox: 3 rows inserted")
   } catch (e: any) {
     console.log(`  ✗ event_outbox error: ${e.message}`)
