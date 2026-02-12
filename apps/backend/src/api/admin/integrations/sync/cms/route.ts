@@ -1,0 +1,107 @@
+// @ts-nocheck
+import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+
+const VALID_COLLECTIONS = [
+  "countries",
+  "governance-authorities",
+  "scopes",
+  "categories",
+  "subcategories",
+  "tenants",
+  "stores",
+  "portals",
+]
+
+export async function POST(req: MedusaRequest, res: MedusaResponse) {
+  try {
+    const { collection, force } = (req.body || {}) as { collection?: string; force?: boolean }
+
+    if (collection && !VALID_COLLECTIONS.includes(collection)) {
+      return res.status(400).json({
+        error: `Invalid collection. Must be one of: ${VALID_COLLECTIONS.join(", ")}`,
+      })
+    }
+
+    const payloadUrl = process.env.PAYLOAD_CMS_URL_DEV || process.env.PAYLOAD_CMS_URL
+    const payloadApiKey = process.env.PAYLOAD_API_KEY
+    const erpnextUrl = process.env.ERPNEXT_URL_DEV
+    const erpnextApiKey = process.env.ERPNEXT_API_KEY
+    const erpnextApiSecret = process.env.ERPNEXT_API_SECRET
+
+    if (!payloadUrl || !payloadApiKey) {
+      return res.status(400).json({ error: "Payload CMS not configured (missing PAYLOAD_CMS_URL_DEV/PAYLOAD_CMS_URL or PAYLOAD_API_KEY)" })
+    }
+
+    if (!erpnextUrl || !erpnextApiKey || !erpnextApiSecret) {
+      return res.status(400).json({ error: "ERPNext not configured (missing ERPNEXT_URL_DEV, ERPNEXT_API_KEY, or ERPNEXT_API_SECRET)" })
+    }
+
+    const startTime = Date.now()
+
+    const { createHierarchySyncEngine } = require("../../../../../integrations/cms-hierarchy-sync/engine")
+    const engine = createHierarchySyncEngine({
+      payloadUrl,
+      payloadApiKey,
+      erpnextUrl,
+      erpnextApiKey,
+      erpnextApiSecret,
+    })
+
+    let results
+    if (collection) {
+      console.log(`[CMSSyncAPI] Manual sync triggered for collection: ${collection} (force: ${!!force})`)
+      const result = await engine.syncCollection(collection)
+      results = [result]
+    } else {
+      console.log(`[CMSSyncAPI] Manual sync triggered for all collections (force: ${!!force})`)
+      results = await engine.syncAll()
+    }
+
+    const duration = Date.now() - startTime
+
+    const summary = {
+      total_synced: results.reduce((sum, r) => sum + r.total, 0),
+      total_created: results.reduce((sum, r) => sum + r.created, 0),
+      total_updated: results.reduce((sum, r) => sum + r.updated, 0),
+      total_failed: results.reduce((sum, r) => sum + r.failed, 0),
+    }
+
+    return res.json({
+      success: true,
+      collection: collection || "all",
+      duration_ms: duration,
+      summary,
+      results,
+    })
+  } catch (error: any) {
+    console.error(`[CMSSyncAPI] Error during CMS hierarchy sync: ${error.message}`)
+    return res.status(500).json({ error: error.message })
+  }
+}
+
+export async function GET(req: MedusaRequest, res: MedusaResponse) {
+  try {
+    const payloadUrl = process.env.PAYLOAD_CMS_URL_DEV || process.env.PAYLOAD_CMS_URL
+    const payloadApiKey = process.env.PAYLOAD_API_KEY
+    const erpnextUrl = process.env.ERPNEXT_URL_DEV
+    const erpnextApiKey = process.env.ERPNEXT_API_KEY
+    const erpnextApiSecret = process.env.ERPNEXT_API_SECRET
+
+    return res.json({
+      collections: VALID_COLLECTIONS,
+      payload_cms: {
+        configured: !!(payloadUrl && payloadApiKey),
+        url: payloadUrl ? payloadUrl.replace(/\/\/(.+?)@/, "//<redacted>@") : null,
+      },
+      erpnext: {
+        configured: !!(erpnextUrl && erpnextApiKey && erpnextApiSecret),
+        url: erpnextUrl || null,
+      },
+      schedule: "*/15 * * * *",
+      job_name: "payload-cms-poll",
+    })
+  } catch (error: any) {
+    console.error(`[CMSSyncAPI] Error fetching sync status: ${error.message}`)
+    return res.status(500).json({ error: error.message })
+  }
+}

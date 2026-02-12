@@ -57,11 +57,14 @@ All cross-system integration calls flow through Temporal Cloud workflows for dur
 
 ### Integration Layer
 - **Durable Sync Tracking:** PostgreSQL-backed sync state (`apps/backend/src/lib/platform/sync-tracker.ts`)
-- **Webhook Endpoints:** `/webhooks/stripe`, `/webhooks/erpnext`, `/webhooks/fleetbase`, `/webhooks/payload-cms` with signature verification
+- **Webhook Endpoints:** `/webhooks/stripe`, `/webhooks/erpnext`, `/webhooks/fleetbase`, `/webhooks/payload-cms` with signature verification. Payload CMS webhook supports 13 collections.
 - **Outbox Processor:** Circuit breakers and rate limiters per external system (`apps/backend/src/lib/platform/outbox-processor.ts`)
 - **Health Check:** `/health` endpoint reports database, external systems, circuit breaker states, Temporal status
 - **Auto-Sync Scheduler:** Starts on backend boot via `sync-scheduler-init` job. Schedules: product sync (hourly), retry failed (30min), hierarchy reconciliation (6hr), cleanup (daily). Dispatches to Temporal.
-- **Payload CMS Polling:** `payload-cms-poll` job runs every 15 minutes to check for updated tenants, nodes, and product content in Payload CMS.
+- **CMS Hierarchy Sync Engine:** (`apps/backend/src/integrations/cms-hierarchy-sync/engine.ts`) Syncs 8 collections from Payload CMS → ERPNext in dependency order: Countries → Governance Authorities → Scopes → Categories → Subcategories → Tenants → Stores → Portals. Full create-or-update with `custom_cms_ref_id` matching and DurableSyncTracker integration.
+- **Payload CMS Polling:** `payload-cms-poll` job runs every 15 minutes using CMSHierarchySyncEngine for ordered hierarchy sync.
+- **Payload CMS Webhooks:** Real-time sync for all 13 collections (tenants, stores, scopes, categories, subcategories, portals, governance-authorities, policies, personas, persona-assignments, countries, compliance-records, nodes).
+- **Manual CMS Sync:** POST `/admin/integrations/sync/cms` triggers on-demand sync for all or specific collections. GET returns config status.
 - **Environment Variable Convention:** External service URLs use `_DEV` suffix: `PAYLOAD_CMS_URL_DEV`, `ERPNEXT_URL_DEV`, `FLEETBASE_URL_DEV`, `WALTID_URL_DEV`
 
 ### Storefront Feature Components

@@ -2,6 +2,43 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import crypto from "crypto"
 
+const SUPPORTED_COLLECTIONS = [
+  "tenants",
+  "stores",
+  "scopes",
+  "categories",
+  "subcategories",
+  "portals",
+  "governance-authorities",
+  "policies",
+  "personas",
+  "persona-assignments",
+  "countries",
+  "compliance-records",
+  "nodes",
+] as const
+
+const HIERARCHY_COLLECTIONS = [
+  "countries",
+  "governance-authorities",
+  "scopes",
+  "categories",
+  "subcategories",
+  "tenants",
+  "stores",
+  "portals",
+] as const
+
+const CONTENT_COLLECTIONS = [
+  "policies",
+  "personas",
+  "persona-assignments",
+  "compliance-records",
+  "nodes",
+] as const
+
+type SupportedCollection = (typeof SUPPORTED_COLLECTIONS)[number]
+
 function verifyPayloadSignature(payload: string, signature: string, secret: string): boolean {
   const computed = crypto.createHmac("sha256", secret).update(payload).digest("hex")
   try {
@@ -11,54 +48,65 @@ function verifyPayloadSignature(payload: string, signature: string, secret: stri
   }
 }
 
-async function handleContentPublished(data: any, correlationId: string, req: MedusaRequest) {
-  const contentId = data.id || data.doc?.id
-  console.log(`[Webhook:PayloadCMS] content_published: ${contentId}, type=${data.collection || "unknown"}, correlation: ${correlationId}`)
+function isHierarchyCollection(collection: string): boolean {
+  return (HIERARCHY_COLLECTIONS as readonly string[]).includes(collection)
+}
 
-  if (contentId) {
-    try {
-      const { PayloadToMedusaSync } = await import("../../../integrations/payload-sync/payload-to-medusa")
-      const payloadUrl = process.env.PAYLOAD_CMS_URL_DEV || process.env.PAYLOAD_CMS_URL || ""
-      const payloadApiKey = process.env.PAYLOAD_API_KEY || ""
-      if (payloadUrl && payloadApiKey) {
-        const sync = new PayloadToMedusaSync(req.scope, { payloadUrl, payloadApiKey })
-        await sync.syncProductContent(contentId)
-        console.log(`[Webhook:PayloadCMS] Content synced to Medusa: ${contentId}`)
-      }
-    } catch (err: any) {
-      console.log(`[Webhook:PayloadCMS] Sync error: ${err.message}`)
-    }
+function isContentCollection(collection: string): boolean {
+  return (CONTENT_COLLECTIONS as readonly string[]).includes(collection)
+}
+
+async function handleHierarchySync(collection: string, data: any, correlationId: string, req: MedusaRequest) {
+  const docId = data.id || data.doc?.id
+  console.log(`[Webhook:PayloadCMS] Hierarchy sync for ${collection}, doc=${docId}, correlation: ${correlationId}`)
+
+  try {
+    const { createHierarchySyncEngine } = require("../../../integrations/cms-hierarchy-sync/engine")
+    const engine = createHierarchySyncEngine()
+    const result = await engine.syncCollection(collection)
+    console.log(`[Webhook:PayloadCMS] Hierarchy sync completed for ${collection}: ${result.created} created, ${result.updated} updated, ${result.failed} failed, correlation: ${correlationId}`)
+  } catch (err: any) {
+    console.error(`[Webhook:PayloadCMS] Hierarchy sync error for ${collection}: ${err.message}, correlation: ${correlationId}`)
   }
 }
 
-async function handleContentUpdated(data: any, correlationId: string, req: MedusaRequest) {
-  const contentId = data.id || data.doc?.id
-  console.log(`[Webhook:PayloadCMS] content_updated: ${contentId}, type=${data.collection || "unknown"}, correlation: ${correlationId}`)
+async function handleContentSync(collection: string, data: any, correlationId: string, req: MedusaRequest) {
+  const docId = data.id || data.doc?.id
+  console.log(`[Webhook:PayloadCMS] Content sync for ${collection}, doc=${docId}, correlation: ${correlationId}`)
 
-  if (contentId) {
-    try {
-      const { PayloadToMedusaSync } = await import("../../../integrations/payload-sync/payload-to-medusa")
-      const payloadUrl = process.env.PAYLOAD_CMS_URL_DEV || process.env.PAYLOAD_CMS_URL || ""
-      const payloadApiKey = process.env.PAYLOAD_API_KEY || ""
-      if (payloadUrl && payloadApiKey) {
-        const sync = new PayloadToMedusaSync(req.scope, { payloadUrl, payloadApiKey })
-        await sync.syncProductContent(contentId)
-        console.log(`[Webhook:PayloadCMS] Content update synced to Medusa: ${contentId}`)
-      }
-    } catch (err: any) {
-      console.log(`[Webhook:PayloadCMS] Sync error: ${err.message}`)
+  try {
+    const { PayloadToMedusaSync } = require("../../../integrations/payload-sync/payload-to-medusa")
+    const payloadUrl = process.env.PAYLOAD_CMS_URL_DEV || process.env.PAYLOAD_CMS_URL || ""
+    const payloadApiKey = process.env.PAYLOAD_API_KEY || ""
+    if (payloadUrl && payloadApiKey && docId) {
+      const sync = new PayloadToMedusaSync(req.scope, { payloadUrl, payloadApiKey })
+      await sync.syncProductContent(docId)
+      console.log(`[Webhook:PayloadCMS] Content synced for ${collection}/${docId}, correlation: ${correlationId}`)
+    } else {
+      console.log(`[Webhook:PayloadCMS] Skipping content sync — missing env vars or doc ID, correlation: ${correlationId}`)
     }
+  } catch (err: any) {
+    console.error(`[Webhook:PayloadCMS] Content sync error for ${collection}: ${err.message}, correlation: ${correlationId}`)
   }
 }
 
-async function handleContentDeleted(data: any, correlationId: string) {
-  const contentId = data.id || data.doc?.id
-  console.log(`[Webhook:PayloadCMS] content_deleted: ${contentId}, type=${data.collection || "unknown"}, correlation: ${correlationId}`)
-}
+async function handleDelete(collection: string, data: any, correlationId: string) {
+  const docId = data.id || data.doc?.id
+  console.log(`[Webhook:PayloadCMS] Delete event for ${collection}, doc=${docId}, data=${JSON.stringify(data)}, correlation: ${correlationId}`)
 
-async function handleNavigationUpdated(data: any, correlationId: string) {
-  const navId = data.id || data.doc?.id
-  console.log(`[Webhook:PayloadCMS] navigation_updated: ${navId}, correlation: ${correlationId}`)
+  try {
+    const { durableSyncTracker } = require("../../../lib/platform/sync-tracker")
+    await durableSyncTracker.recordSync({
+      system: "payload-cms",
+      entity_type: collection,
+      entity_id: docId || "unknown",
+      direction: "inbound",
+      tenant_id: data.tenantId || data.tenant || "system",
+    })
+    console.log(`[Webhook:PayloadCMS] Deletion recorded for ${collection}/${docId}, correlation: ${correlationId}`)
+  } catch (err: any) {
+    console.log(`[Webhook:PayloadCMS] Sync tracker not available for deletion recording: ${err.message}`)
+  }
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -82,29 +130,29 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
     const body = req.body as Record<string, any>
     const event = body.event || "unknown"
-    const data = body.data || body
+    const collection = body.collection || "unknown"
+    const data = body.data || body.doc || body
 
-    console.log(`[Webhook:PayloadCMS] Received event: ${event} (correlation: ${correlationId})`)
+    console.log(`[Webhook:PayloadCMS] Received event: ${event}, collection: ${collection} (correlation: ${correlationId})`)
 
-    switch (event) {
-      case "content_published":
-        await handleContentPublished(data, correlationId, req)
-        break
-      case "content_updated":
-        await handleContentUpdated(data, correlationId, req)
-        break
-      case "content_deleted":
-        await handleContentDeleted(data, correlationId)
-        break
-      case "navigation_updated":
-        await handleNavigationUpdated(data, correlationId)
-        break
-      default:
-        console.log(`[Webhook:PayloadCMS] Unhandled event: ${event} (correlation: ${correlationId})`)
-        break
+    if (!(SUPPORTED_COLLECTIONS as readonly string[]).includes(collection)) {
+      console.log(`[Webhook:PayloadCMS] Unsupported collection: ${collection}, correlation: ${correlationId}`)
+      return res.status(200).json({ received: true, event, collection, correlation_id: correlationId, status: "unsupported_collection" })
     }
 
-    return res.status(200).json({ received: true, event, correlation_id: correlationId })
+    if (event.endsWith(".create") || event.endsWith(".update")) {
+      if (isHierarchyCollection(collection)) {
+        await handleHierarchySync(collection, data, correlationId, req)
+      } else if (isContentCollection(collection)) {
+        await handleContentSync(collection, data, correlationId, req)
+      }
+    } else if (event.endsWith(".delete")) {
+      await handleDelete(collection, data, correlationId)
+    } else {
+      console.log(`[Webhook:PayloadCMS] Unhandled event type: ${event} for collection: ${collection}, correlation: ${correlationId}`)
+    }
+
+    return res.status(200).json({ received: true, event, collection, correlation_id: correlationId })
   } catch (error: any) {
     console.error(`[Webhook:PayloadCMS] Error (correlation: ${correlationId}): ${error.message}`)
     return res.status(500).json({ error: "Internal server error" })
