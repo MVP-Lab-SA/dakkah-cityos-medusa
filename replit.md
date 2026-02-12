@@ -23,7 +23,7 @@ The project uses a Turborepo monorepo with:
 - `packages/cityos-design-system/`: Component type system.
 
 ### Backend Features
-The backend provides modularity for CityOS features including tenant management, a 5-level node hierarchy (CITY→DISTRICT→ZONE→FACILITY→ASSET), policy inheritance-based governance, a persona system, a CMS-compatible event outbox, and i18n. It supports multi-vendor marketplaces, subscriptions, B2B, bookings, promotions, and specialized services. API routes handle tenant, node, persona, and governance resolution. Backend has 55 modules total including: wishlist, notification-preferences, loyalty (programs/accounts/point-transactions), dispute (disputes/messages), tax-config (rules/exemptions), cms-content (pages/navigation with Payload CMS compatibility).
+The backend provides modularity for CityOS features including tenant management, a 5-level node hierarchy (CITY→DISTRICT→ZONE→FACILITY→ASSET), policy inheritance-based governance, a persona system, a CMS-compatible event outbox, and i18n. It supports multi-vendor marketplaces, subscriptions, B2B, bookings, promotions, and specialized services. API routes handle tenant, node, persona, and governance resolution. Backend has 59 modules total including: wishlist, notification-preferences, loyalty (programs/accounts/point-transactions), dispute (disputes/messages), tax-config (rules/exemptions), cms-content (pages/navigation with Payload CMS compatibility), cart-extension (gift wrapping, delivery instructions, special handling), shipping-extension (zones, carriers, rate tables), analytics (metrics tracking, conversion funnels, cohort analysis), inventory-extension (warehouse management, stock transfers, reorder alerts).
 
 ### Storefront Architecture
 The storefront utilizes TanStack Start with React for SSR, dynamic routing (`/$tenant/$locale/...`), and file-based routing. A centralized design system dictates design primitives, theming, and component interfaces. A robust provider chain ensures consistent context, including tenant-scoped routes wrapped with `TenantProvider` and `PlatformContextProvider`. It includes a comprehensive Payload CMS-compatible block system with 76 block type contracts (in BlockTypes.ts) and 76 block component implementations registered in `block-registry.ts`, rendered via `BlockRenderer`. Block categories: Core (30), Commerce (8), Marketplace (5), Booking/Service (6), Subscription/Membership (4), Verticals (15), B2B (4), Content/Marketing (4). All UI uses design tokens and follows mobile-first responsive patterns.
@@ -53,7 +53,29 @@ A local CMS registry (`apps/backend/src/lib/platform/cms-registry.ts`), compatib
 - **Platform Context API:** Exposed at `/platform/*` (no authentication required) for `tenant`, `nodeHierarchy`, `governanceChain`, `capabilities`, and `systems`.
 
 ### Temporal-First Integration Architecture
-All cross-system integration calls flow through Temporal Cloud workflows for durable execution, retries, saga/compensation patterns, and observability, avoiding direct API calls to external systems. This includes an event dispatcher and dynamic AI agent workflows.
+All cross-system integration calls flow through Temporal Cloud workflows for durable execution, retries, saga/compensation patterns, and observability, avoiding direct API calls to external systems. This includes an event dispatcher and dynamic AI agent workflows. Temporal worker process at `apps/backend/src/workers/temporal-worker.ts` with graceful degradation when TEMPORAL_API_KEY not configured.
+
+### Integration Layer
+- **Durable Sync Tracking:** PostgreSQL-backed sync state (`apps/backend/src/lib/platform/sync-tracker.ts`) replacing in-memory tracking
+- **Webhook Endpoints:** `/webhooks/stripe`, `/webhooks/erpnext`, `/webhooks/fleetbase`, `/webhooks/payload-cms` with signature verification
+- **Outbox Processor:** Circuit breakers (5 failure threshold, 60s reset) and rate limiters per external system (`apps/backend/src/lib/platform/outbox-processor.ts`)
+- **Health Check:** `/health` endpoint reports database, external systems, circuit breaker states, Temporal status
+
+### Storefront Feature Components
+- **Wishlist:** Button toggle, full page with sort/share/clear (`apps/storefront/src/components/wishlist/`)
+- **Comparison:** Side-by-side product compare up to 4 items (`apps/storefront/src/components/compare/`)
+- **Search:** Advanced modal with debounce, filters, categories, price range (`apps/storefront/src/components/search/`)
+- **Notifications:** Bell with badge, panel with tabs and mark-as-read (`apps/storefront/src/components/notifications/`)
+- **Disputes:** Filing form with reason, description, evidence upload (`apps/storefront/src/components/disputes/`)
+- **Tracking:** Order timeline with 5 steps (`apps/storefront/src/components/tracking/`)
+- **Loyalty:** Checkout widget with points-to-currency conversion (`apps/storefront/src/components/loyalty/`)
+- **Checkout:** Multi-vendor cart splitting, gift wrap ($3.99), delivery instructions, store pickup, BNPL options (`apps/storefront/src/components/checkout/`)
+- **Account Dashboard:** Downloads, installments, store credits, wallet, loyalty dashboard, consents management, Walt.id verification (`apps/storefront/src/components/account/`)
+
+### Manage Page Infrastructure
+- **42 CRUD Configs:** All manage verticals with vertical-specific form fields (`apps/storefront/src/components/manage/crud-configs.ts`)
+- **Shared Components:** DataTable, Charts (Line/Bar/Pie), Calendar, Map, RichTextEditor, FileUpload, FormWizard (`apps/storefront/src/components/admin/shared/`)
+- **Enhanced Features:** AnalyticsOverview, BulkActionsBar, AdvancedFilters, StatusWorkflow, ManagePageWrapper (`apps/storefront/src/components/manage/`)
 
 ### Cross-System Integration Layer
 This layer provides integration services called by Temporal activities, including wrappers for ERPNext, Payload CMS, Fleetbase, and Walt.id, managing sync tracking, an external system registry, retry states, and webhook receivers.
