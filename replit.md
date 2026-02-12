@@ -60,6 +60,9 @@ All cross-system integration calls flow through Temporal Cloud workflows for dur
 - **Webhook Endpoints:** `/webhooks/stripe`, `/webhooks/erpnext`, `/webhooks/fleetbase`, `/webhooks/payload-cms` with signature verification
 - **Outbox Processor:** Circuit breakers and rate limiters per external system (`apps/backend/src/lib/platform/outbox-processor.ts`)
 - **Health Check:** `/health` endpoint reports database, external systems, circuit breaker states, Temporal status
+- **Auto-Sync Scheduler:** Starts on backend boot via `sync-scheduler-init` job. Schedules: product sync (hourly), retry failed (30min), hierarchy reconciliation (6hr), cleanup (daily). Dispatches to Temporal.
+- **Payload CMS Polling:** `payload-cms-poll` job runs every 15 minutes to check for updated tenants, nodes, and product content in Payload CMS.
+- **Environment Variable Convention:** External service URLs use `_DEV` suffix: `PAYLOAD_CMS_URL_DEV`, `ERPNEXT_URL_DEV`, `FLEETBASE_URL_DEV`, `WALTID_URL_DEV`
 
 ### Storefront Feature Components
 Key components include Wishlist, Comparison, Search, Notifications, Disputes, Tracking, Loyalty, a comprehensive Checkout process, and an Account Dashboard with various sub-features.

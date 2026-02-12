@@ -18,7 +18,7 @@ async function handleContentPublished(data: any, correlationId: string, req: Med
   if (contentId) {
     try {
       const { PayloadToMedusaSync } = await import("../../../integrations/payload-sync/payload-to-medusa")
-      const payloadUrl = process.env.PAYLOAD_CMS_URL || process.env.PAYLOAD_API_URL || ""
+      const payloadUrl = process.env.PAYLOAD_CMS_URL_DEV || process.env.PAYLOAD_CMS_URL || ""
       const payloadApiKey = process.env.PAYLOAD_API_KEY || ""
       if (payloadUrl && payloadApiKey) {
         const sync = new PayloadToMedusaSync(req.scope, { payloadUrl, payloadApiKey })
@@ -38,7 +38,7 @@ async function handleContentUpdated(data: any, correlationId: string, req: Medus
   if (contentId) {
     try {
       const { PayloadToMedusaSync } = await import("../../../integrations/payload-sync/payload-to-medusa")
-      const payloadUrl = process.env.PAYLOAD_CMS_URL || process.env.PAYLOAD_API_URL || ""
+      const payloadUrl = process.env.PAYLOAD_CMS_URL_DEV || process.env.PAYLOAD_CMS_URL || ""
       const payloadApiKey = process.env.PAYLOAD_API_KEY || ""
       if (payloadUrl && payloadApiKey) {
         const sync = new PayloadToMedusaSync(req.scope, { payloadUrl, payloadApiKey })

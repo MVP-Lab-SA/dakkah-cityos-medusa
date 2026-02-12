@@ -47,7 +47,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       })
     }
 
-    const payloadUrl = process.env.PAYLOAD_CMS_URL || process.env.PAYLOAD_API_URL || "http://localhost:3001"
+    const payloadUrl = process.env.PAYLOAD_CMS_URL_DEV || process.env.PAYLOAD_CMS_URL || ""
 
     const where: Record<string, any> = {
       path: { equals: path },

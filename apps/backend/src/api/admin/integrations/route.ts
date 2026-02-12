@@ -1,10 +1,10 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 
 const INTEGRATION_SYSTEMS = [
-  { name: "payload", envVar: "PAYLOAD_API_URL" },
-  { name: "erpnext", envVar: "ERPNEXT_SITE_URL" },
-  { name: "fleetbase", envVar: "FLEETBASE_API_URL" },
-  { name: "waltid", envVar: "WALTID_API_URL" },
+  { name: "payload", envVar: "PAYLOAD_CMS_URL_DEV" },
+  { name: "erpnext", envVar: "ERPNEXT_URL_DEV" },
+  { name: "fleetbase", envVar: "FLEETBASE_URL_DEV" },
+  { name: "waltid", envVar: "WALTID_URL_DEV" },
   { name: "stripe", envVar: "STRIPE_SECRET_KEY" },
   { name: "temporal", envVar: "TEMPORAL_API_KEY" },
 ]

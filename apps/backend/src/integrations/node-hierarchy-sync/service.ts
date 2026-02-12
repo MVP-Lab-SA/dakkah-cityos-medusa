@@ -86,7 +86,7 @@ export class NodeHierarchySyncService {
   }
 
   async syncNodeToPayload(node: any, tenantId: string): Promise<void> {
-    const payloadUrl = process.env.PAYLOAD_API_URL;
+    const payloadUrl = process.env.PAYLOAD_CMS_URL_DEV;
     const payloadKey = process.env.PAYLOAD_API_KEY;
 
     if (!payloadUrl || !payloadKey) {
@@ -140,7 +140,7 @@ export class NodeHierarchySyncService {
   }
 
   async syncNodeToERPNext(node: any, tenantId: string): Promise<void> {
-    const siteUrl = process.env.ERPNEXT_SITE_URL;
+    const siteUrl = process.env.ERPNEXT_URL_DEV;
     const apiKey = process.env.ERPNEXT_API_KEY;
     const apiSecret = process.env.ERPNEXT_API_SECRET;
 
@@ -214,7 +214,7 @@ export class NodeHierarchySyncService {
   }
 
   async syncNodeToFleetbase(node: any, tenantId: string): Promise<void> {
-    const apiUrl = process.env.FLEETBASE_API_URL;
+    const apiUrl = process.env.FLEETBASE_URL_DEV;
     const apiKey = process.env.FLEETBASE_API_KEY;
     const orgId = process.env.FLEETBASE_ORG_ID;
 
@@ -297,7 +297,7 @@ export class NodeHierarchySyncService {
   }
 
   async syncNodeToWaltId(node: any, tenantId: string): Promise<void> {
-    const apiUrl = process.env.WALTID_API_URL;
+    const apiUrl = process.env.WALTID_URL_DEV;
     const apiKey = process.env.WALTID_API_KEY;
 
     if (!apiUrl || !apiKey) {
@@ -459,7 +459,7 @@ export class NodeHierarchySyncService {
   async deleteNodeFromSystems(nodeId: string, tenantId: string): Promise<void> {
     console.log(`[NodeHierarchySync] Deleting node ${nodeId} from all systems`);
 
-    const payloadUrl = process.env.PAYLOAD_API_URL;
+    const payloadUrl = process.env.PAYLOAD_CMS_URL_DEV;
     const payloadKey = process.env.PAYLOAD_API_KEY;
     if (payloadUrl && payloadKey) {
       try {
@@ -482,7 +482,7 @@ export class NodeHierarchySyncService {
       }
     }
 
-    const erpSiteUrl = process.env.ERPNEXT_SITE_URL;
+    const erpSiteUrl = process.env.ERPNEXT_URL_DEV;
     const erpApiKey = process.env.ERPNEXT_API_KEY;
     const erpApiSecret = process.env.ERPNEXT_API_SECRET;
     if (erpSiteUrl && erpApiKey && erpApiSecret) {
@@ -513,7 +513,7 @@ export class NodeHierarchySyncService {
       }
     }
 
-    const fbApiUrl = process.env.FLEETBASE_API_URL;
+    const fbApiUrl = process.env.FLEETBASE_URL_DEV;
     const fbApiKey = process.env.FLEETBASE_API_KEY;
     const fbOrgId = process.env.FLEETBASE_ORG_ID;
     if (fbApiUrl && fbApiKey && fbOrgId) {

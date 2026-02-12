@@ -31,7 +31,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         if (contentId) {
           try {
             const { PayloadToMedusaSync } = await import("../../../../integrations/payload-sync/payload-to-medusa")
-            const payloadUrl = process.env.PAYLOAD_API_URL || ""
+            const payloadUrl = process.env.PAYLOAD_CMS_URL_DEV || ""
             const payloadApiKey = process.env.PAYLOAD_API_KEY || ""
             if (payloadUrl && payloadApiKey) {
               const sync = new PayloadToMedusaSync(req.scope, { payloadUrl, payloadApiKey })
@@ -39,7 +39,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
               processed = true
               console.log(`[Webhook:Payload] Product content synced: ${contentId}`)
             } else {
-              console.log("[Webhook:Payload] Missing PAYLOAD_API_URL or PAYLOAD_API_KEY, skipping sync")
+              console.log("[Webhook:Payload] Missing PAYLOAD_CMS_URL_DEV or PAYLOAD_API_KEY, skipping sync")
             }
           } catch (err) {
             console.log(`[Webhook:Payload] Error syncing product content: ${err instanceof Error ? err.message : err}`)
@@ -53,7 +53,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         if (pageId) {
           try {
             const { PayloadToMedusaSync } = await import("../../../../integrations/payload-sync/payload-to-medusa")
-            const payloadUrl = process.env.PAYLOAD_API_URL || ""
+            const payloadUrl = process.env.PAYLOAD_CMS_URL_DEV || ""
             const payloadApiKey = process.env.PAYLOAD_API_KEY || ""
             if (payloadUrl && payloadApiKey) {
               const sync = new PayloadToMedusaSync(req.scope, { payloadUrl, payloadApiKey })
@@ -99,7 +99,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         if (mediaId) {
           try {
             const { PayloadToMedusaSync } = await import("../../../../integrations/payload-sync/payload-to-medusa")
-            const payloadUrl = process.env.PAYLOAD_API_URL || ""
+            const payloadUrl = process.env.PAYLOAD_CMS_URL_DEV || ""
             const payloadApiKey = process.env.PAYLOAD_API_KEY || ""
             if (payloadUrl && payloadApiKey) {
               const sync = new PayloadToMedusaSync(req.scope, { payloadUrl, payloadApiKey })

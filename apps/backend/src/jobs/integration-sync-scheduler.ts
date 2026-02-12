@@ -64,7 +64,7 @@ export class IntegrationSyncScheduler {
     const cleanupTask = cron.schedule("0 0 * * *", async () => {
       try {
         console.log("[SyncScheduler] Cleaning up old sync logs")
-        const { createIntegrationOrchestrator } = await import("../integrations/orchestrator/index.js")
+        const { createIntegrationOrchestrator } = require("../integrations/orchestrator")
         const orchestrator = createIntegrationOrchestrator(this.container)
         const dashboard = await orchestrator.getSyncDashboard()
         const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
