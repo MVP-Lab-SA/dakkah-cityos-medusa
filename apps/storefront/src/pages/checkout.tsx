@@ -10,6 +10,9 @@ import {
 } from "@tanstack/react-router"
 import { lazy, Suspense, useEffect, useMemo } from "react"
 
+const BNPLOptions = lazy(() => import("@/components/checkout/bnpl-options"))
+const StoreCreditApply = lazy(() => import("@/components/checkout/store-credit-apply"))
+
 const DeliveryStep = lazy(() => import("@/components/checkout-delivery-step"))
 const AddressStep = lazy(() => import("@/components/checkout-address-step"))
 const PaymentStep = lazy(() => import("@/components/checkout-payment-step"))
@@ -158,11 +161,17 @@ const Checkout = () => {
 
                 {/* Payment Step */}
                 {step === CheckoutStepKey.PAYMENT && (
-                  <PaymentStep
-                    cart={cart}
-                    onNext={handleNext}
-                    onBack={handleBack}
-                  />
+                  <>
+                    <BNPLOptions
+                      cartTotal={cart.total || 0}
+                      currency={cart.region?.currency_code?.toUpperCase() || "USD"}
+                    />
+                    <PaymentStep
+                      cart={cart}
+                      onNext={handleNext}
+                      onBack={handleBack}
+                    />
+                  </>
                 )}
 
                 {/* Review Step */}
@@ -177,7 +186,17 @@ const Checkout = () => {
         {/* Right Column - Order Summary */}
         <Suspense fallback={<Loading />}>
           {cartLoading && <Loading />}
-          {cart && <CheckoutSummary cart={cart} />}
+          {cart && (
+            <>
+              <StoreCreditApply
+                availableCredits={0}
+                currency={cart.region?.currency_code?.toUpperCase() || "USD"}
+                cartTotal={cart.total || 0}
+                locale={cart.region?.countries?.[0]?.iso_2 || "en"}
+              />
+              <CheckoutSummary cart={cart} />
+            </>
+          )}
           {!cart && !cartLoading && <CartEmpty />}
         </Suspense>
       </div>

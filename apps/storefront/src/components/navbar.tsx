@@ -12,6 +12,7 @@ import { useCategories } from "@/lib/hooks/use-categories"
 import { useCMSNavigation } from "@/lib/hooks/use-cms"
 import { useAuth } from "@/lib/context/auth-context"
 import { getTenantLocalePrefix } from "@/lib/utils/region"
+import LocaleSwitcher from "@/components/layout/locale-switcher"
 import * as NavigationMenu from "@radix-ui/react-navigation-menu"
 import { Link, useLocation } from "@tanstack/react-router"
 import { useState } from "react"
@@ -311,6 +312,12 @@ export const Navbar = () => {
           </div>
 
           <div className="flex items-center gap-x-4 h-full justify-end">
+            {(() => {
+              const segments = location.pathname.split("/").filter(Boolean)
+              const tenant = segments[0] || ""
+              const locale = segments[1] || "en"
+              return <LocaleSwitcher currentLocale={locale} tenant={tenant} />
+            })()}
             <UserMenu />
             <CartDropdown />
           </div>

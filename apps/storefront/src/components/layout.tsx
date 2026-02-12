@@ -1,6 +1,7 @@
 import ErrorBoundary from "@/components/error-boundary"
 import Footer from "@/components/footer"
 import { Navbar } from "@/components/navbar"
+import CookieConsentBanner from "@/components/consent/cookie-consent-banner"
 import { CartProvider } from "@/lib/context/cart"
 import { ToastProvider } from "@/lib/context/toast-context"
 import { useStoreTheme } from "@/lib/hooks/use-store-theme"
@@ -40,6 +41,9 @@ function ClientLayout() {
     )
   }
 
+  const localeMatch = location.pathname.match(/^\/[^/]+\/([^/]+)/)
+  const currentLocale = localeMatch ? localeMatch[1] : "en"
+
   return (
     <ThemeProvider>
       <ToastProvider>
@@ -55,6 +59,7 @@ function ClientLayout() {
 
             <Footer />
           </div>
+          <CookieConsentBanner locale={currentLocale} />
         </CartProvider>
       </ToastProvider>
     </ThemeProvider>

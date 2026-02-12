@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { useSubscriptionPlans } from "@/lib/hooks/use-subscriptions"
 import { PlanCard } from "@/components/subscriptions"
+import { UpgradePrompt } from "@/components/freemium/upgrade-prompt"
 import { Spinner } from "@medusajs/icons"
 
 export const Route = createFileRoute("/$tenant/$locale/subscriptions/")({
@@ -82,6 +83,25 @@ function SubscriptionPlansPage() {
               answer="No, there are no setup fees for our Starter and Professional plans. The Enterprise plan may include custom setup based on your requirements."
             />
           </div>
+        </div>
+      </section>
+
+      <section className="py-12">
+        <div className="content-container max-w-3xl">
+          <UpgradePrompt
+            locale={locale}
+            featureName="Premium Features"
+            variant="banner"
+            benefits={[
+              "Unlimited product listings",
+              "Advanced analytics & reporting",
+              "Priority customer support",
+              "Custom branding options",
+            ]}
+            onUpgrade={() => {
+              window.scrollTo({ top: 0, behavior: "smooth" })
+            }}
+          />
         </div>
       </section>
 
