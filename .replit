@@ -17,10 +17,27 @@ TEMPORAL_ENDPOINT = "ap-northeast-1.aws.api.temporal.io:7233"
 TEMPORAL_NAMESPACE = "quickstart-dakkah-cityos.djvai"
 __MEDUSA_ADDITIONAL_ALLOWED_HOSTS = ".replit.dev,.replit.app"
 VITE_MEDUSA_PUBLISHABLE_KEY = "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445"
+MEDUSA_ADMIN_PATH = "/commerce/admin"
+MEDUSA_BACKEND_PORT = "9000"
+STOREFRONT_PORT = "5000"
+FLEETBASE_ORG_ID = "29ae887c-0e4c-4f15-834e-31a2f1ea9621"
+ERPNEXT_URL_LOCAL = "http://localhost:8080"
+FLEETBASE_URL_LOCAL = "http://localhost:8000"
+PAYLOAD_CMS_URL_LOCAL = "http://localhost:3001"
+WALTID_URL_LOCAL = "http://localhost:7000"
+MEDUSA_BACKEND_URL_LOCAL = "http://localhost:9000"
+STOREFRONT_URL_LOCAL = "http://localhost:5000"
 
 [userenv.development]
 
 [userenv.production]
+ERPNEXT_URL_DEV = "https://ff049349-609e-450d-ab42-e289d89960bb-00-ujg6lz7mnzcy.pike.replit.dev:8080"
+FLEETBASE_URL_DEV = "https://efdaeea4-1883-4ef0-9888-41da8659025c-00-19fmj1r05ozg4.pike.replit.dev:8000"
+PAYLOAD_CMS_URL_DEV = "https://9e78ac41-ae95-440f-9196-e9263c6eadda-00-130jbk279zua2.janeway.replit.dev:3001"
+WALTID_URL_DEV = "https://9e78ac41-ae95-440f-9196-e9263c6eadda-00-130jbk279zua2.janeway.replit.dev:7000"
+STOREFRONT_URL_DEV = "https://9e78ac41-ae95-440f-9196-e9263c6eadda-00-130jbk279zua2.janeway.replit.dev:5000"
+MEDUSA_BACKEND_URL_DEV = "https://f76865b8-a3a7-41f9-85b2-b0ade8a4fd85-00-3o74vg6b4mqvs.sisko.replit.dev:9000"
+SENDGRID_FROM = "dk_dev_22d60466c799dbf8d9af7d6af51244359d77d26c9cb7fe287515c8b6667977d2"
 
 [[ports]]
 localPort = 5000
