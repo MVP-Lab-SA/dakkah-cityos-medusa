@@ -1,5 +1,5 @@
 import { Module } from "@medusajs/framework/utils"
-import AnalyticsModuleService from "./service.js"
+import AnalyticsModuleService from "./service"
 
 export const ANALYTICS_MODULE = "analytics"
 

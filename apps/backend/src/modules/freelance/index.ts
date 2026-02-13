@@ -1,4 +1,4 @@
-import FreelanceModuleService from "./service.js"
+import FreelanceModuleService from "./service"
 import { Module } from "@medusajs/framework/utils"
 
 export const FREELANCE_MODULE = "freelance"

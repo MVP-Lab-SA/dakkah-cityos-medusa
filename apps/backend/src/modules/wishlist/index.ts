@@ -1,5 +1,5 @@
 import { Module } from "@medusajs/framework/utils"
-import WishlistModuleService from "./service.js"
+import WishlistModuleService from "./service"
 
 export const WISHLIST_MODULE = "wishlist"
 

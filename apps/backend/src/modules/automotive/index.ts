@@ -1,4 +1,4 @@
-import AutomotiveModuleService from "./service.js"
+import AutomotiveModuleService from "./service"
 import { Module } from "@medusajs/framework/utils"
 
 export const AUTOMOTIVE_MODULE = "automotive"

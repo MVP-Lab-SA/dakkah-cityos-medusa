@@ -1,2 +1,2 @@
-export { default as Persona } from "./persona.js"
-export { PersonaAssignment } from "./persona-assignment.js"
+export { default as Persona } from "./persona"
+export { PersonaAssignment } from "./persona-assignment"

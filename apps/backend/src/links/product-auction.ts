@@ -1,6 +1,6 @@
 import { defineLink } from "@medusajs/framework/utils"
 import ProductModule from "@medusajs/medusa/product"
-import AuctionModule from "../modules/auction.js"
+import AuctionModule from "../modules/auction"
 
 export default defineLink(
   ProductModule.linkable.product,

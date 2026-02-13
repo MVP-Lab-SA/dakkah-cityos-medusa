@@ -4,7 +4,7 @@ import { CurrencyDollar } from "@medusajs/icons"
 import { useState } from "react"
 import { usePayouts, useProcessPayout, Payout } from "../../hooks/use-vendors.js"
 import { DataTable } from "../../components/tables/data-table.js"
-import { StatusBadge } from "../../components/common.js"
+import { StatusBadge } from "../../components/common"
 import { StatsGrid } from "../../components/charts/stats-grid.js"
 import { ConfirmModal } from "../../components/modals/confirm-modal.js"
 

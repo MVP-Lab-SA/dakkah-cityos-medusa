@@ -1,7 +1,7 @@
-export { default as Company } from "./company.js";
-export { default as CompanyUser } from "./company-user.js";
-export { PurchaseOrder } from "./purchase-order.js";
-export { PurchaseOrderItem } from "./purchase-order-item.js";
-export { PaymentTerms } from "./payment-terms.js";
-export { TaxExemption } from "./tax-exemption.js";
-export { ApprovalWorkflow, ApprovalRequest, ApprovalAction } from "./approval-workflow.js";
+export { default as Company } from "./company";
+export { default as CompanyUser } from "./company-user";
+export { PurchaseOrder } from "./purchase-order";
+export { PurchaseOrderItem } from "./purchase-order-item";
+export { PaymentTerms } from "./payment-terms";
+export { TaxExemption } from "./tax-exemption";
+export { ApprovalWorkflow, ApprovalRequest, ApprovalAction } from "./approval-workflow";

@@ -1,4 +1,4 @@
-import FinancialProductModuleService from "./service.js"
+import FinancialProductModuleService from "./service"
 import { Module } from "@medusajs/framework/utils"
 
 export const FINANCIAL_PRODUCT_MODULE = "financialProduct"

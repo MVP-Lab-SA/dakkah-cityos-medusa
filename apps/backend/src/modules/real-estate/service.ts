@@ -1,10 +1,10 @@
 import { MedusaService } from "@medusajs/framework/utils"
-import PropertyListing from "./models/property-listing.js"
-import ViewingAppointment from "./models/viewing-appointment.js"
-import LeaseAgreement from "./models/lease-agreement.js"
-import PropertyDocument from "./models/property-document.js"
-import PropertyValuation from "./models/property-valuation.js"
-import AgentProfile from "./models/agent-profile.js"
+import PropertyListing from "./models/property-listing"
+import ViewingAppointment from "./models/viewing-appointment"
+import LeaseAgreement from "./models/lease-agreement"
+import PropertyDocument from "./models/property-document"
+import PropertyValuation from "./models/property-valuation"
+import AgentProfile from "./models/agent-profile"
 
 class RealEstateModuleService extends MedusaService({
   PropertyListing,

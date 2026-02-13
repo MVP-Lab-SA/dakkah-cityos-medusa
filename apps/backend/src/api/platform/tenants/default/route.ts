@@ -4,7 +4,7 @@ import {
   buildNodeHierarchy,
   buildGovernanceChain,
   formatTenantResponse,
-} from "../../../../lib/platform.js"
+} from "../../../../lib/platform/index.js"
 
 export const AUTHENTICATE = false
 

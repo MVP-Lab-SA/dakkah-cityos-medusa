@@ -1,8 +1,8 @@
 // @ts-nocheck
 import { MedusaService } from "@medusajs/framework/utils"
-import ReservationHold from "./models/reservation-hold.js"
-import StockAlert from "./models/stock-alert.js"
-import WarehouseTransfer from "./models/warehouse-transfer.js"
+import ReservationHold from "./models/reservation-hold"
+import StockAlert from "./models/stock-alert"
+import WarehouseTransfer from "./models/warehouse-transfer"
 
 class InventoryExtensionModuleService extends MedusaService({
   ReservationHold,

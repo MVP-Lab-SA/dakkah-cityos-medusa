@@ -1,11 +1,11 @@
 import { MedusaService } from "@medusajs/framework/utils"
-import Tenant from "./models/tenant.js"
-import { TenantBilling, TenantUsageRecord, TenantInvoice } from "./models/tenant-billing.js"
-import { TenantSettings } from "./models/tenant-settings.js"
-import { TenantUser } from "./models/tenant-user.js"
-import TenantRelationship from "./models/tenant-relationship.js"
-import TenantPOI from "./models/tenant-poi.js"
-import ServiceChannel from "./models/service-channel.js"
+import Tenant from "./models/tenant"
+import { TenantBilling, TenantUsageRecord, TenantInvoice } from "./models/tenant-billing"
+import { TenantSettings } from "./models/tenant-settings"
+import { TenantUser } from "./models/tenant-user"
+import TenantRelationship from "./models/tenant-relationship"
+import TenantPOI from "./models/tenant-poi"
+import ServiceChannel from "./models/service-channel"
 
 const ROLE_LEVEL_MAP: Record<string, number> = {
   "super-admin": 100,

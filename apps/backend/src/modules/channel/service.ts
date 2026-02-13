@@ -1,5 +1,5 @@
 import { MedusaService } from "@medusajs/framework/utils"
-import SalesChannelMapping from "./models/sales-channel-mapping.js"
+import SalesChannelMapping from "./models/sales-channel-mapping"
 
 class ChannelModuleService extends MedusaService({
   SalesChannelMapping,

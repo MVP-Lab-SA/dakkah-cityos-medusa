@@ -1,4 +1,4 @@
-import ParkingModuleService from "./service.js"
+import ParkingModuleService from "./service"
 import { Module } from "@medusajs/framework/utils"
 
 export const PARKING_MODULE = "parking"

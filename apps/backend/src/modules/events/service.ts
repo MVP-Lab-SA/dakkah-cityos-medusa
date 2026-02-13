@@ -1,5 +1,5 @@
 import { MedusaService } from "@medusajs/framework/utils"
-import EventOutbox from "./models/event-outbox.js"
+import EventOutbox from "./models/event-outbox"
 
 class EventModuleService extends MedusaService({
   EventOutbox,

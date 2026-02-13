@@ -1,5 +1,5 @@
 import { MedusaService } from "@medusajs/framework/utils"
-import RegionZoneMapping from "./models/region-zone-mapping.js"
+import RegionZoneMapping from "./models/region-zone-mapping"
 
 class RegionZoneModuleService extends MedusaService({
   RegionZoneMapping,

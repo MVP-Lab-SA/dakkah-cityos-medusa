@@ -1,5 +1,5 @@
 import { Module } from "@medusajs/framework/utils"
-import RegionZoneModuleService from "./service.js"
+import RegionZoneModuleService from "./service"
 
 export const REGION_ZONE_MODULE = "regionZone"
 

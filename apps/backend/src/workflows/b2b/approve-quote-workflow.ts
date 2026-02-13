@@ -5,8 +5,8 @@ import {
   createStep,
   StepResponse,
 } from "@medusajs/framework/workflows-sdk";
-import { logger } from "../../lib/logger.js";
-import { config } from "../../lib/config.js";
+import { logger } from "../../lib/logger";
+import { config } from "../../lib/config";
 
 interface ApproveQuoteInput {
   quote_id: string;

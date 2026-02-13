@@ -1,1 +1,1 @@
-export { default as AuditLog } from "./audit-log.js"
+export { default as AuditLog } from "./audit-log"

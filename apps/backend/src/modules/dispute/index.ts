@@ -1,5 +1,5 @@
 import { Module } from "@medusajs/framework/utils"
-import DisputeModuleService from "./service.js"
+import DisputeModuleService from "./service"
 
 export const DISPUTE_MODULE = "dispute"
 

@@ -1,3 +1,4 @@
+// ESM version of lodash.set safe
 var FUNC_ERROR_TEXT = 'Expected a function';
 var INFINITY = 1 / 0;
 var MAX_SAFE_INTEGER = 9007199254740991;
@@ -165,6 +166,9 @@ function set(object, path, value) {
   return object == null ? object : baseSet(object, path, value);
 }
 
-module.exports = set;
-module.exports.default = set;
-module.exports.__esModule = true;
+
+
+
+
+export default set;
+export { set };

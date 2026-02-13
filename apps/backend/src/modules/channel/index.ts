@@ -1,5 +1,5 @@
 import { Module } from "@medusajs/framework/utils"
-import ChannelModuleService from "./service.js"
+import ChannelModuleService from "./service"
 
 export const CHANNEL_MODULE = "channel"
 

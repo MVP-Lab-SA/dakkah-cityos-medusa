@@ -1,6 +1,6 @@
 import { defineLink } from "@medusajs/framework/utils"
-import CompanyModule from "../modules/company.js"
-import InvoiceModule from "../modules/invoice.js"
+import CompanyModule from "../modules/company"
+import InvoiceModule from "../modules/invoice"
 
 export default defineLink(
   CompanyModule.linkable.company,

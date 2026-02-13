@@ -1,5 +1,5 @@
 import { Module } from "@medusajs/framework/utils"
-import CartExtensionModuleService from "./service.js"
+import CartExtensionModuleService from "./service"
 
 export const CART_EXTENSION_MODULE = "cartExtension"
 

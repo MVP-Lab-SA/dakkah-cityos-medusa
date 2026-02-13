@@ -1,5 +1,5 @@
 import { MedusaService } from "@medusajs/framework/utils"
-import Translation from "./models/translation.js"
+import Translation from "./models/translation"
 
 class I18nModuleService extends MedusaService({
   Translation,

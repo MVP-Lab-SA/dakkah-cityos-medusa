@@ -7,7 +7,7 @@ import {
   useSubscriptions, usePauseSubscription, useResumeSubscription, useCancelSubscription, Subscription
 } from "../../hooks/use-subscriptions.js"
 import { DataTable } from "../../components/tables/data-table.js"
-import { StatusBadge } from "../../components/common.js"
+import { StatusBadge } from "../../components/common"
 import { StatsGrid } from "../../components/charts/stats-grid.js"
 import { ConfirmModal } from "../../components/modals/confirm-modal.js"
 import { FormDrawer } from "../../components/forms/form-drawer.js"

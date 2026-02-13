@@ -1,4 +1,4 @@
-import FitnessModuleService from "./service.js"
+import FitnessModuleService from "./service"
 import { Module } from "@medusajs/framework/utils"
 
 export const FITNESS_MODULE = "fitness"

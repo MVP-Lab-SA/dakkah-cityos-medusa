@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { MedusaService } from "@medusajs/framework/utils"
-import NotificationPreference from "./models/notification-preference.js"
+import NotificationPreference from "./models/notification-preference"
 
 class NotificationPreferencesModuleService extends MedusaService({
   NotificationPreference,

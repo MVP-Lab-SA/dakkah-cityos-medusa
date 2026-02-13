@@ -1,5 +1,5 @@
 import { MedusaService } from "@medusajs/framework/utils"
-import Store from "./models/store.js"
+import Store from "./models/store"
 
 /**
  * Store Module Service

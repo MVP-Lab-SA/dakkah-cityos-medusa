@@ -1,10 +1,10 @@
 import { MedusaService } from "@medusajs/framework/utils"
-import GigListing from "./models/gig-listing.js"
-import Proposal from "./models/proposal.js"
-import FreelanceContract from "./models/freelance-contract.js"
-import Milestone from "./models/milestone.js"
-import TimeLog from "./models/time-log.js"
-import FreelanceDispute from "./models/freelance-dispute.js"
+import GigListing from "./models/gig-listing"
+import Proposal from "./models/proposal"
+import FreelanceContract from "./models/freelance-contract"
+import Milestone from "./models/milestone"
+import TimeLog from "./models/time-log"
+import FreelanceDispute from "./models/freelance-dispute"
 
 class FreelanceModuleService extends MedusaService({
   GigListing,

@@ -1,4 +1,4 @@
-import GovernmentModuleService from "./service.js"
+import GovernmentModuleService from "./service"
 import { Module } from "@medusajs/framework/utils"
 
 export const GOVERNMENT_MODULE = "government"

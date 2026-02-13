@@ -8,7 +8,7 @@ import {
   buildGovernanceChain,
   formatTenantResponse,
   getSystemsSummary,
-} from "../../../lib/platform.js"
+} from "../../../lib/platform/index.js"
 
 export const AUTHENTICATE = false
 

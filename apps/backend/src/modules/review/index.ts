@@ -1,5 +1,5 @@
 import { Module } from "@medusajs/framework/utils"
-import ReviewModuleService from "./service.js"
+import ReviewModuleService from "./service"
 
 export const REVIEW_MODULE = "review"
 

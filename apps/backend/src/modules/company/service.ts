@@ -1,11 +1,11 @@
 import { MedusaService } from "@medusajs/framework/utils";
-import Company from "./models/company.js";
-import CompanyUser from "./models/company-user.js";
-import { PurchaseOrder } from "./models/purchase-order.js";
-import { PurchaseOrderItem } from "./models/purchase-order-item.js";
-import { PaymentTerms } from "./models/payment-terms.js";
-import { TaxExemption } from "./models/tax-exemption.js";
-import { ApprovalWorkflow, ApprovalRequest, ApprovalAction } from "./models/approval-workflow.js";
+import Company from "./models/company";
+import CompanyUser from "./models/company-user";
+import { PurchaseOrder } from "./models/purchase-order";
+import { PurchaseOrderItem } from "./models/purchase-order-item";
+import { PaymentTerms } from "./models/payment-terms";
+import { TaxExemption } from "./models/tax-exemption";
+import { ApprovalWorkflow, ApprovalRequest, ApprovalAction } from "./models/approval-workflow";
 
 /**
  * Company Service

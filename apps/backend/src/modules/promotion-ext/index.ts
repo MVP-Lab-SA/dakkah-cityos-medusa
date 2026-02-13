@@ -1,4 +1,4 @@
-import PromotionExtModuleService from "./service.js"
+import PromotionExtModuleService from "./service"
 import { Module } from "@medusajs/framework/utils"
 
 export const PROMOTION_EXT_MODULE = "promotionExt"

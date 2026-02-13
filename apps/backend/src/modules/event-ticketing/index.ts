@@ -1,4 +1,4 @@
-import EventTicketingModuleService from "./service.js"
+import EventTicketingModuleService from "./service"
 import { Module } from "@medusajs/framework/utils"
 
 export const EVENT_TICKETING_MODULE = "eventTicketing"

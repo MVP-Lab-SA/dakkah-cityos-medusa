@@ -1,6 +1,6 @@
 import { MedusaService } from "@medusajs/framework/utils"
-import CommissionRule from "./models/commission-rule.js"
-import CommissionTransaction from "./models/commission-transaction.js"
+import CommissionRule from "./models/commission-rule"
+import CommissionTransaction from "./models/commission-transaction"
 
 class CommissionModuleService extends MedusaService({
   CommissionRule,

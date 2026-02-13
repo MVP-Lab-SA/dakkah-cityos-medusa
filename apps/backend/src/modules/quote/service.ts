@@ -1,6 +1,6 @@
 import { MedusaService } from "@medusajs/framework/utils";
-import Quote from "./models/quote.js";
-import QuoteItem from "./models/quote-item.js";
+import Quote from "./models/quote";
+import QuoteItem from "./models/quote-item";
 
 /**
  * Quote Service

@@ -1,4 +1,4 @@
-import PetServiceModuleService from "./service.js"
+import PetServiceModuleService from "./service"
 import { Module } from "@medusajs/framework/utils"
 
 export const PET_SERVICE_MODULE = "petService"

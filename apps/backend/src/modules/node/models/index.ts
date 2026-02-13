@@ -1,1 +1,1 @@
-export { default as Node } from "./node.js"
+export { default as Node } from "./node"

@@ -16,7 +16,7 @@ const Tenant = model.define("tenant", {
   governance_authority_id: model.text().nullable(),
   
   default_locale: model.text().default("en"),
-  supported_locales: model.json().default(["en"]),
+  supported_locales: model.json().default({ locales: ["en"] }),
   timezone: model.text().default("UTC"),
   default_currency: model.text().default("usd"),
   date_format: model.text().default("dd/MM/yyyy"),

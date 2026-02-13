@@ -1,6 +1,6 @@
 import { defineLink } from "@medusajs/framework/utils"
-import NodeModule from "../modules/node.js"
-import GovernanceModule from "../modules/governance.js"
+import NodeModule from "../modules/node"
+import GovernanceModule from "../modules/governance"
 
 export default defineLink(
   NodeModule.linkable.node,

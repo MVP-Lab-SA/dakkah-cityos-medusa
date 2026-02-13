@@ -1,5 +1,5 @@
 import { Module } from "@medusajs/framework/utils"
-import TenantModuleService from "./service.js"
+import TenantModuleService from "./service"
 
 export const TENANT_MODULE = "tenantModuleService"
 
@@ -7,4 +7,4 @@ export default Module(TENANT_MODULE, {
   service: TenantModuleService,
 })
 
-export * from "./models.js"
+export * from "./models"

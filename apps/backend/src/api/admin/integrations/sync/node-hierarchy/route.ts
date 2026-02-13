@@ -1,5 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { NodeHierarchySyncService } from "../../../../../integrations/node-hierarchy-sync.js"
+import { NodeHierarchySyncService } from "../../../../../integrations/node-hierarchy-sync/index.js"
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
   try {

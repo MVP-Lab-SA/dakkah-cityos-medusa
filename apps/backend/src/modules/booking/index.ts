@@ -1,5 +1,5 @@
 import { Module } from "@medusajs/framework/utils"
-import BookingModuleService from "./service.js"
+import BookingModuleService from "./service"
 
 export const BOOKING_MODULE = "booking"
 

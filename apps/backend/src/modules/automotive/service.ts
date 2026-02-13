@@ -1,9 +1,9 @@
 import { MedusaService } from "@medusajs/framework/utils"
-import VehicleListing from "./models/vehicle-listing.js"
-import TestDrive from "./models/test-drive.js"
-import VehicleService from "./models/vehicle-service.js"
-import PartCatalog from "./models/part-catalog.js"
-import TradeIn from "./models/trade-in.js"
+import VehicleListing from "./models/vehicle-listing"
+import TestDrive from "./models/test-drive"
+import VehicleService from "./models/vehicle-service"
+import PartCatalog from "./models/part-catalog"
+import TradeIn from "./models/trade-in"
 
 class AutomotiveModuleService extends MedusaService({
   VehicleListing,

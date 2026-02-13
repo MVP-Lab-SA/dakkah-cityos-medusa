@@ -1,1 +1,1 @@
-export { default as SalesChannelMapping } from "./sales-channel-mapping.js"
+export { default as SalesChannelMapping } from "./sales-channel-mapping"

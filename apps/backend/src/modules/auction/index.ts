@@ -1,4 +1,4 @@
-import AuctionModuleService from "./service.js"
+import AuctionModuleService from "./service"
 import { Module } from "@medusajs/framework/utils"
 
 export const AUCTION_MODULE = "auction"

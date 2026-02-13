@@ -1,4 +1,4 @@
-import CommissionModuleService from "./service.js"
+import CommissionModuleService from "./service"
 import { Module } from "@medusajs/framework/utils"
 
 export const COMMISSION_MODULE = "commission"

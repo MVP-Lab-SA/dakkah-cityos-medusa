@@ -1,4 +1,4 @@
-import SocialCommerceModuleService from "./service.js"
+import SocialCommerceModuleService from "./service"
 import { Module } from "@medusajs/framework/utils"
 
 export const SOCIAL_COMMERCE_MODULE = "socialCommerce"

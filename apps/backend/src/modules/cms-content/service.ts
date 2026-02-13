@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { MedusaService } from "@medusajs/framework/utils"
-import CmsPage from "./models/cms-page.js"
-import CmsNavigation from "./models/cms-navigation.js"
+import CmsPage from "./models/cms-page"
+import CmsNavigation from "./models/cms-navigation"
 
 class CMSContentModuleService extends MedusaService({
   CmsPage,

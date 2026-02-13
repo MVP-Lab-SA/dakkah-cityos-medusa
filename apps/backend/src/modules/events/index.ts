@@ -1,5 +1,5 @@
 import { Module } from "@medusajs/framework/utils"
-import EventModuleService from "./service.js"
+import EventModuleService from "./service"
 
 export const EVENT_MODULE = "eventOutbox"
 

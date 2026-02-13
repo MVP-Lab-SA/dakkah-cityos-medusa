@@ -1,5 +1,5 @@
 import { Module } from "@medusajs/framework/utils"
-import ShippingExtensionModuleService from "./service.js"
+import ShippingExtensionModuleService from "./service"
 
 export const SHIPPING_EXTENSION_MODULE = "shippingExtension"
 
