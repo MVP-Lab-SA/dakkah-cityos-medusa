@@ -106,6 +106,22 @@ Key components include Wishlist, Comparison, Search, Notifications, Disputes, Tr
 - Phase 8: Upgraded 49 stub store API routes with proper service integration, error handling, pagination, and filters
 - Phase 9: Enhanced 3 smallest services (region-zone 39→162L, cart-extension 65→315L, channel 70→270L) with business logic
 - Phase 10: Expanded PLATFORM_MODULE_ASSESSMENT.md to v3.0 (3400+ lines) with complete API route maps, per-module details, workflow/job registries
+- Phase 11: Comprehensive test coverage — 60 test files, 1220 tests (979 backend Jest + 241 storefront Vitest), ALL passing
+
+### Test Coverage Architecture
+- **Backend (Jest):** 53 test suites in `apps/backend/tests/unit/`
+  - `platform/` — 5 files: outbox-processor, sync-tracker, helpers, cms-registry, registry
+  - `services/` — 20 files: all 58 modules covered (subscription, booking, vendor, tenant, loyalty, dispute, cart-extension, payout, invoice, tax-config, volume-pricing, region-zone, channel, inventory-ext, promotion-ext, review, node, company, i18n, simple-modules batch)
+  - `subscribers/` — 7 files: all 33 subscribers covered
+  - `workflows/` — 6 files: all 30 workflows covered
+  - `jobs/` — 1 file: all 16 jobs covered
+  - `admin-routes/` — 6 files: disputes, cms, loyalty, inventory/shipping, wishlists, core admin routes
+  - `store-routes/` — 4 files: commerce, services, marketplace, specialized verticals
+  - Pre-existing: governance-service, api-governance, event-dispatcher, payload-sync
+- **Storefront (Vitest):** 7 test suites in `apps/storefront/src/lib/__tests__/` and context/hooks dirs
+  - governance-context, sdk, formatting, data-utils, design-tokens, contracts, admin-hooks
+- Run backend: `cd apps/backend && TEST_TYPE=unit npx jest`
+- Run storefront: `cd apps/storefront && npx vitest run`
 
 ## Platform Metrics
 | Metric | Count |
@@ -123,7 +139,10 @@ Key components include Wishlist, Comparison, Search, Notifications, Disputes, Tr
 | Jobs | 16 |
 | Storefront Routes | 142 |
 | Storefront Components | 537 |
-| Total Source Files | 2009 |
+| Backend Test Files | 53 |
+| Storefront Test Files | 7 |
+| Total Tests | 1,220 |
+| Total Source Files | 2,074 |
 
 ## Documentation
 - `docs/PLATFORM_MODULE_ASSESSMENT.md` — Deep-dive assessment of all 58 modules (v3.0 — complete API route maps, per-module details, workflow/job registries), 3400+ lines

@@ -57,6 +57,26 @@ describe('Governance Context Logic', () => {
       const policies = { content_moderation: { prohibited_categories: 'gambling' } }
       expect(isVerticalAllowed(policies, 'Gambling')).toBe(true)
     })
+
+    it('returns true with undefined policies', () => {
+      expect(isVerticalAllowed(undefined, 'Store')).toBe(true)
+    })
+
+    it('handles empty prohibited_categories array', () => {
+      const policies = { content_moderation: { prohibited_categories: [] } }
+      expect(isVerticalAllowed(policies, 'Store')).toBe(true)
+    })
+
+    it('handles empty string vertical', () => {
+      const policies = { content_moderation: { prohibited_categories: [''] } }
+      expect(isVerticalAllowed(policies, '')).toBe(false)
+    })
+
+    it('is case-sensitive on the prohibited list side', () => {
+      const policies = { content_moderation: { prohibited_categories: ['Gambling'] } }
+      expect(isVerticalAllowed(policies, 'GAMBLING')).toBe(true)
+      expect(isVerticalAllowed(policies, 'gambling')).toBe(true)
+    })
   })
 
   describe('isFeatureAllowed', () => {
@@ -87,6 +107,32 @@ describe('Governance Context Logic', () => {
       const policies = { commerce: { max_transaction_amount: 5000 } }
       expect(isFeatureAllowed(policies, 'max_transaction_amount')).toBe(true)
     })
+
+    it('returns true with undefined policies', () => {
+      expect(isFeatureAllowed(undefined, 'require_kyc')).toBe(true)
+    })
+
+    it('returns true when feature value is zero', () => {
+      const policies = { commerce: { max_items: 0 } }
+      expect(isFeatureAllowed(policies, 'max_items')).toBe(true)
+    })
+
+    it('returns true when feature value is null', () => {
+      const policies = { commerce: { feature_x: null } }
+      expect(isFeatureAllowed(policies, 'feature_x')).toBe(true)
+    })
+
+    it('returns true when feature value is empty string', () => {
+      const policies = { commerce: { label: '' } }
+      expect(isFeatureAllowed(policies, 'label')).toBe(true)
+    })
+
+    it('handles multiple features in commerce', () => {
+      const policies = { commerce: { require_kyc: false, allow_crypto: true, max_items: 100 } }
+      expect(isFeatureAllowed(policies, 'require_kyc')).toBe(false)
+      expect(isFeatureAllowed(policies, 'allow_crypto')).toBe(true)
+      expect(isFeatureAllowed(policies, 'max_items')).toBe(true)
+    })
   })
 
   describe('getCommercePolicy', () => {
@@ -100,6 +146,19 @@ describe('Governance Context Logic', () => {
 
     it('returns commerce policy when present', () => {
       const commerce = { require_kyc: true, max_transaction_amount: 5000 }
+      expect(getCommercePolicy({ commerce })).toEqual(commerce)
+    })
+
+    it('returns undefined with undefined policies', () => {
+      expect(getCommercePolicy(undefined)).toBeUndefined()
+    })
+
+    it('returns empty object when commerce is empty', () => {
+      expect(getCommercePolicy({ commerce: {} })).toEqual({})
+    })
+
+    it('returns commerce with nested objects', () => {
+      const commerce = { limits: { daily: 1000, monthly: 10000 } }
       expect(getCommercePolicy({ commerce })).toEqual(commerce)
     })
   })

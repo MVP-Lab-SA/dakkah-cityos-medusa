@@ -9,44 +9,7 @@ jest.mock("../../../src/integrations/node-hierarchy-sync", () => ({
   })),
 }))
 
-const mockSyncProduct = jest.fn().mockResolvedValue(undefined)
-const mockSyncGovernancePolicies = jest.fn().mockResolvedValue(undefined)
-const MockMedusaToPayloadSync = jest.fn().mockImplementation(() => ({
-  syncProduct: mockSyncProduct,
-  syncGovernancePolicies: mockSyncGovernancePolicies,
-}))
-
-jest.mock("../../../src/integrations/payload-sync/medusa-to-payload.js", () => ({
-  MedusaToPayloadSync: MockMedusaToPayloadSync,
-}), { virtual: true })
-
-const mockErpSyncProduct = jest.fn().mockResolvedValue({ name: "erp-product-1" })
-const mockErpSyncCustomer = jest.fn().mockResolvedValue({ name: "erp-customer-1" })
-const mockErpCreateInvoice = jest.fn().mockResolvedValue({ name: "erp-invoice-1" })
-const MockERPNextService = jest.fn().mockImplementation(() => ({
-  syncProduct: mockErpSyncProduct,
-  syncCustomer: mockErpSyncCustomer,
-  createInvoice: mockErpCreateInvoice,
-}))
-
-jest.mock("../../../src/integrations/erpnext/service.js", () => ({
-  ERPNextService: MockERPNextService,
-}), { virtual: true })
-
-jest.mock("../../../src/integrations/fleetbase/service.js", () => ({
-  FleetbaseService: jest.fn().mockImplementation(() => ({
-    createShipment: jest.fn().mockResolvedValue({ tracking_number: "TRACK-1" }),
-  })),
-}), { virtual: true })
-
-jest.mock("../../../src/integrations/waltid/service.js", () => ({
-  WaltIdService: jest.fn().mockImplementation(() => ({
-    issueVendorCredential: jest.fn().mockResolvedValue({ credentialId: "cred-1" }),
-  })),
-}), { virtual: true })
-
 import { startWorkflow } from "../../../src/lib/temporal-client"
-import { NodeHierarchySyncService } from "../../../src/integrations/node-hierarchy-sync"
 import {
   getWorkflowForEvent,
   getAllMappedEvents,
@@ -63,16 +26,6 @@ describe("event-dispatcher", () => {
   beforeEach(() => {
     jest.clearAllMocks()
     process.env = { ...originalEnv }
-    delete process.env.PAYLOAD_API_URL
-    delete process.env.PAYLOAD_API_KEY
-    delete process.env.ERPNEXT_SITE_URL
-    delete process.env.ERPNEXT_API_KEY
-    delete process.env.ERPNEXT_API_SECRET
-    delete process.env.FLEETBASE_API_URL
-    delete process.env.FLEETBASE_API_KEY
-    delete process.env.FLEETBASE_ORG_ID
-    delete process.env.WALTID_API_URL
-    delete process.env.WALTID_API_KEY
   })
 
   afterAll(() => {
@@ -278,189 +231,101 @@ describe("event-dispatcher", () => {
   })
 
   describe("dispatchCrossSystemEvent", () => {
-    const mockContainer = { resolve: jest.fn() }
+    const mockContainer = {
+      resolve: jest.fn().mockReturnValue({
+        createEvent: jest.fn().mockResolvedValue(undefined),
+      }),
+    }
 
-    describe("governance case", () => {
-      it("calls syncGovernancePolicies when env vars and tenant_id present", async () => {
-        mockStartWorkflow.mockResolvedValue({ runId: "r1" })
-        process.env.PAYLOAD_API_URL = "https://payload.test"
-        process.env.PAYLOAD_API_KEY = "pk_test"
+    it("dispatches to Temporal and returns temporal=true, integrations=[temporal]", async () => {
+      mockStartWorkflow.mockResolvedValue({ runId: "r1" })
 
-        const result = await dispatchCrossSystemEvent(
-          "governance.policy.changed",
-          { tenant_id: "tenant-1" },
-          mockContainer
-        )
+      const result = await dispatchCrossSystemEvent(
+        "governance.policy.changed",
+        { tenant_id: "tenant-1" },
+        mockContainer
+      )
 
-        expect(result.integrations).toContain("payload")
-        expect(mockSyncGovernancePolicies).toHaveBeenCalledWith("tenant-1")
-      })
-
-      it("uses nodeContext.tenantId when payload has no tenant_id", async () => {
-        mockStartWorkflow.mockResolvedValue({ runId: "r1" })
-        process.env.PAYLOAD_API_URL = "https://payload.test"
-        process.env.PAYLOAD_API_KEY = "pk_test"
-
-        const result = await dispatchCrossSystemEvent(
-          "governance.policy.changed",
-          {},
-          mockContainer,
-          { tenantId: "ctx-tenant" }
-        )
-
-        expect(result.integrations).toContain("payload")
-        expect(mockSyncGovernancePolicies).toHaveBeenCalledWith("ctx-tenant")
-      })
-
-      it("skips Payload sync without env vars", async () => {
-        mockStartWorkflow.mockResolvedValue({ runId: "r1" })
-
-        const result = await dispatchCrossSystemEvent(
-          "governance.policy.changed",
-          { tenant_id: "t1" },
-          mockContainer
-        )
-
-        expect(result.integrations).not.toContain("payload")
-      })
-
-      it("skips sync without tenant_id", async () => {
-        mockStartWorkflow.mockResolvedValue({ runId: "r1" })
-        process.env.PAYLOAD_API_URL = "https://payload.test"
-        process.env.PAYLOAD_API_KEY = "pk_test"
-
-        const result = await dispatchCrossSystemEvent(
-          "governance.policy.changed",
-          {},
-          mockContainer
-        )
-
-        expect(mockSyncGovernancePolicies).not.toHaveBeenCalled()
-        expect(result.integrations).not.toContain("payload")
-      })
-
-      it("continues gracefully on sync error", async () => {
-        mockStartWorkflow.mockResolvedValue({ runId: "r1" })
-        process.env.PAYLOAD_API_URL = "https://payload.test"
-        process.env.PAYLOAD_API_KEY = "pk_test"
-        mockSyncGovernancePolicies.mockRejectedValueOnce(new Error("sync boom"))
-
-        const result = await dispatchCrossSystemEvent(
-          "governance.policy.changed",
-          { tenant_id: "t1" },
-          mockContainer
-        )
-
-        expect(result.integrations).not.toContain("payload")
-        expect(result.temporal).toBe(true)
-      })
+      expect(result.temporal).toBe(true)
+      expect(result.integrations).toEqual(["temporal"])
     })
 
-    describe("product case", () => {
-      it("syncs to Payload and ERPNext when env vars present", async () => {
-        mockStartWorkflow.mockResolvedValue({ runId: "r1" })
-        process.env.PAYLOAD_API_URL = "https://payload.test"
-        process.env.PAYLOAD_API_KEY = "pk_test"
-        process.env.ERPNEXT_SITE_URL = "https://erp.test"
-        process.env.ERPNEXT_API_KEY = "ek"
-        process.env.ERPNEXT_API_SECRET = "es"
+    it("dispatches various event types to Temporal", async () => {
+      mockStartWorkflow.mockResolvedValue({ runId: "r1" })
 
-        const result = await dispatchCrossSystemEvent(
-          "product.updated",
-          { id: "prod-1", handle: "my-product", title: "My Product" },
-          mockContainer
-        )
+      const result = await dispatchCrossSystemEvent(
+        "product.updated",
+        { id: "prod-1" },
+        mockContainer
+      )
 
-        expect(result.integrations).toContain("payload")
-        expect(result.integrations).toContain("erpnext")
-        expect(mockSyncProduct).toHaveBeenCalledWith("prod-1")
-      })
+      expect(result.temporal).toBe(true)
+      expect(result.integrations).toEqual(["temporal"])
     })
 
-    describe("customer case", () => {
-      it("syncs to ERPNext when env vars present", async () => {
-        mockStartWorkflow.mockResolvedValue({ runId: "r1" })
-        process.env.ERPNEXT_SITE_URL = "https://erp.test"
-        process.env.ERPNEXT_API_KEY = "ek"
-        process.env.ERPNEXT_API_SECRET = "es"
+    it("uses nodeContext when provided", async () => {
+      mockStartWorkflow.mockResolvedValue({ runId: "r1" })
+      const ctx = { tenantId: "ctx-tenant" }
 
-        const result = await dispatchCrossSystemEvent(
-          "customer.created",
-          { id: "cust-1", email: "test@example.com", first_name: "John", last_name: "Doe" },
-          mockContainer
-        )
+      const result = await dispatchCrossSystemEvent(
+        "governance.policy.changed",
+        {},
+        mockContainer,
+        ctx
+      )
 
-        expect(result.integrations).toContain("erpnext")
-        expect(mockErpSyncCustomer).toHaveBeenCalledWith(
-          expect.objectContaining({
-            customer_name: "John Doe",
-            customer_email: "test@example.com",
-          })
-        )
-      })
+      expect(result.temporal).toBe(true)
+      expect(result.integrations).toEqual(["temporal"])
+      expect(mockStartWorkflow).toHaveBeenCalledWith(
+        "xsystem.governance-policy-propagation",
+        {},
+        ctx,
+        "xsystem-platform-queue"
+      )
     })
 
-    describe("node case", () => {
-      it("calls NodeHierarchySyncService.syncSingleNode for node.created", async () => {
-        mockStartWorkflow.mockResolvedValue({ runId: "r1" })
+    it("falls back to outbox when no Temporal workflow mapping exists", async () => {
+      mockStartWorkflow.mockResolvedValue(undefined) // No workflow mapped returns dispatched=false
 
-        const result = await dispatchCrossSystemEvent(
-          "node.created",
-          { id: "node-1" },
-          mockContainer
-        )
+      const result = await dispatchCrossSystemEvent(
+        "unknown.event",
+        { id: "unknown" },
+        mockContainer
+      )
 
-        expect(result.integrations).toContain("payload")
-        expect(result.integrations).toContain("erpnext")
-        expect(result.integrations).toContain("fleetbase")
-        expect(result.integrations).toContain("waltid")
-        expect(NodeHierarchySyncService).toHaveBeenCalledWith(mockContainer)
-      })
-
-      it("calls deleteNodeFromSystems for node.deleted", async () => {
-        mockStartWorkflow.mockResolvedValue({ runId: "r1" })
-        const mockDelete = jest.fn().mockResolvedValue(undefined)
-        ;(NodeHierarchySyncService as jest.Mock).mockImplementation(() => ({
-          syncSingleNode: jest.fn(),
-          deleteNodeFromSystems: mockDelete,
-        }))
-
-        const result = await dispatchCrossSystemEvent(
-          "node.deleted",
-          { id: "node-2", tenant_id: "t1" },
-          mockContainer
-        )
-
-        expect(mockDelete).toHaveBeenCalledWith("node-2", "t1")
-        expect(result.integrations).toContain("payload")
-      })
+      expect(result.temporal).toBe(false)
+      expect(result.integrations).toEqual(["outbox"])
+      const svc = mockContainer.resolve.mock.results[0].value
+      expect(svc.createEvent).toHaveBeenCalled()
     })
 
-    describe("unknown event prefix", () => {
-      it("dispatches to temporal but has no integrations", async () => {
-        mockStartWorkflow.mockResolvedValue({ runId: "r1" })
-
-        const result = await dispatchCrossSystemEvent(
-          "subscription.created",
-          { id: "sub-1" },
-          mockContainer
-        )
-
-        expect(result.temporal).toBe(true)
-        expect(result.integrations).toHaveLength(0)
+    it("handles outbox creation failure gracefully", async () => {
+      mockStartWorkflow.mockReturnValue({ dispatched: false, error: "No workflow mapped" })
+      mockContainer.resolve.mockReturnValue({
+        createEvent: jest.fn().mockRejectedValue(new Error("outbox fail")),
       })
 
-      it("returns empty integrations for completely unknown prefix", async () => {
-        mockStartWorkflow.mockResolvedValue({ runId: "r1" })
+      const result = await dispatchCrossSystemEvent(
+        "xyz.unknown",
+        {},
+        mockContainer
+      )
 
-        const result = await dispatchCrossSystemEvent(
-          "xyz.something",
-          {},
-          mockContainer
-        )
+      expect(result.temporal).toBe(false)
+      expect(result.integrations).toEqual([])
+    })
 
-        expect(result.integrations).toHaveLength(0)
-      })
+    it("returns temporal=true with empty integrations for unmapped event with Temporal workflow", async () => {
+      mockStartWorkflow.mockResolvedValue({ runId: "r1" })
+
+      const result = await dispatchCrossSystemEvent(
+        "subscription.created",
+        { id: "sub-1" },
+        mockContainer
+      )
+
+      expect(result.temporal).toBe(true)
+      expect(result.integrations).toEqual(["temporal"])
     })
   })
 })
