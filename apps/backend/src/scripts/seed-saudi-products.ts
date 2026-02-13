@@ -156,7 +156,7 @@ export default async function ({ container }: ExecArgs) {
       handle: "cambodian-oud-oil",
       status: ProductStatus.PUBLISHED,
       images: [
-        { url: "https://images.unsplash.com/photo-1594035910387-fea081acb591?w=800&q=80" }
+        { url: "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?w=800&q=80" }
       ],
       category_ids: getCategoryId("oud-oil") ? [getCategoryId("oud-oil")!] : getCategoryId("fragrances-oud") ? [getCategoryId("fragrances-oud")!] : [],
       variants: [
@@ -187,7 +187,7 @@ export default async function ({ container }: ExecArgs) {
       handle: "ajwa-dates-madinah",
       status: ProductStatus.PUBLISHED,
       images: [
-        { url: "https://images.unsplash.com/photo-1563699743-35a41d15c232?w=800&q=80" }
+        { url: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=800&q=80" }
       ],
       category_ids: getCategoryId("premium-dates") ? [getCategoryId("premium-dates")!] : getCategoryId("dates-sweets") ? [getCategoryId("dates-sweets")!] : [],
       variants: [

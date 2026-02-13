@@ -21,9 +21,9 @@ const productImageData: Record<string, { thumbnail: string; images: { url: strin
     ],
   },
   "ajwa-dates-premium": {
-    thumbnail: "https://images.unsplash.com/photo-1563699743-35a41d15c232?w=800&q=80",
+    thumbnail: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=800&q=80",
     images: [
-      { url: "https://images.unsplash.com/photo-1563699743-35a41d15c232?w=1200&q=80" },
+      { url: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=1200&q=80" },
       { url: "https://images.unsplash.com/photo-1597714026720-8f74c62310ba?w=1200&q=80" },
       { url: "https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?w=1200&q=80" },
     ],
@@ -46,9 +46,9 @@ const productImageData: Record<string, { thumbnail: string; images: { url: strin
     ],
   },
   "premium-oud-oil": {
-    thumbnail: "https://images.unsplash.com/photo-1594035910387-fea081acb591?w=800&q=80",
+    thumbnail: "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?w=800&q=80",
     images: [
-      { url: "https://images.unsplash.com/photo-1594035910387-fea081acb591?w=1200&q=80" },
+      { url: "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?w=1200&q=80" },
       { url: "https://images.unsplash.com/photo-1615634260167-c8cdede054de?w=1200&q=80" },
       { url: "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?w=1200&q=80" },
     ],
