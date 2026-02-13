@@ -17,6 +17,7 @@
    - [TIER 3 — Incomplete (7 modules)](#tier-3--incomplete-7-modules)
 7. [Admin Panel Summary](#7-admin-panel-summary)
 8. [Gap Analysis & Recommendations](#8-gap-analysis--recommendations)
+9. [Complete Model & Entity Registry](#9-complete-model--entity-registry)
 
 ---
 
@@ -29,7 +30,7 @@ The Dakkah CityOS Commerce Platform is a **multi-tenant, multi-vertical commerce
 | Metric | Value |
 |--------|-------|
 | Custom Modules | 58 |
-| Total Custom Models | ~200+ |
+| Total Custom Models | 205 (188 with DB tables, 17 code-only) |
 | Cross-Module Links | 15 |
 | External Integrations | 5 (Payload CMS, ERPNext, Fleetbase, Walt.id, Stripe) |
 | Temporal Workflows | 30+ system workflows + dynamic agent workflows |
@@ -51,7 +52,7 @@ The Dakkah CityOS Commerce Platform is a **multi-tenant, multi-vertical commerce
 ### Key Gaps
 
 - **33 modules** lack dedicated admin UI pages
-- **5 modules** have models defined but database tables do not exist (cms-content, shipping-extension, inventory-extension, tax-config partial, analytics partial)
+- **17 models** have code definitions but no database tables: cms_navigation, cms_page, dashboard, report, cart_metadata, carrier_config, shipping_rate, reservation_hold, stock_alert, warehouse_transfer, tax_rule, notification_preference, loyalty_account, point_transaction, service_channel, tenant_poi, tenant_relationship
 - **~20 modules** rely on auto-generated CRUD with no custom service logic
 - All 5 external integrations require environment variables that are not yet configured
 - Temporal Cloud connection requires `TEMPORAL_API_KEY`, `TEMPORAL_ENDPOINT`, `TEMPORAL_NAMESPACE`
@@ -2029,6 +2030,559 @@ Without Temporal Cloud:
 3. **Phase 3 — Integration:** Configure Payload CMS, ERPNext, Fleetbase, Walt.id. Verify webhook endpoints and sync flows.
 4. **Phase 4 — Polish:** Add custom service logic for ~20 CRUD-only modules. Build remaining admin UIs for government, healthcare, education verticals.
 5. **Phase 5 — Production:** End-to-end testing of all Temporal workflows. Performance testing for multi-tenant isolation. Security audit of RBAC and data classification.
+
+---
+
+## 9. Complete Model & Entity Registry
+
+This section documents the comprehensive results of a deep audit across all 58 custom modules, cross-referencing model definitions in code against actual database tables, API route implementations, and storefront references.
+
+---
+
+### 9.1 Models Defined in Code but Missing Database Tables (17 entities)
+
+These models exist as exported classes/entities in module code but have **no corresponding database table** created via migrations.
+
+| # | Model Name | Module | Notes |
+|---|-----------|--------|-------|
+| 1 | `cms_navigation` | CMS Content | Navigation tree model — no migration exists |
+| 2 | `cms_page` | CMS Content | Page content model — no migration exists |
+| 3 | `dashboard` | Analytics | Dashboard configuration model — no migration exists |
+| 4 | `report` | Analytics | Report definition model — no migration exists |
+| 5 | `cart_metadata` | Cart Extension | Extended cart metadata — no migration exists |
+| 6 | `carrier_config` | Shipping Extension | Carrier configuration — no migration exists |
+| 7 | `shipping_rate` | Shipping Extension | Shipping rate rules — no migration exists |
+| 8 | `reservation_hold` | Inventory Extension | Inventory reservation holds — no migration exists |
+| 9 | `stock_alert` | Inventory Extension | Stock alert thresholds — no migration exists |
+| 10 | `warehouse_transfer` | Inventory Extension | Inter-warehouse transfers — no migration exists |
+| 11 | `tax_rule` | Tax Config | Tax rule definitions — no migration exists (TaxExemption has table) |
+| 12 | `notification_preference` | Notification Preferences | User notification settings — no migration exists |
+| 13 | `loyalty_account` | Loyalty | Customer loyalty account — no migration exists (LoyaltyProgram has table) |
+| 14 | `point_transaction` | Loyalty | Points transaction log — no migration exists (loyalty_points_ledger exists as separate entity) |
+| 15 | `service_channel` | Channel | Defined as MarketplaceListing/ServiceChannel export — no table |
+| 16 | `tenant_poi` | Tenant | Defined as TenantPOI export — no table |
+| 17 | `tenant_relationship` | Tenant | Defined as TenantRelationship export — no table |
+
+**Impact:** These 17 models will throw runtime errors if any service or API route attempts to query them. Migrations must be created before these features can be activated.
+
+---
+
+### 9.2 Database Tables with Models Not Tracked in Main Documentation (13 entities)
+
+These tables exist in the database with full schemas but were not previously documented in the per-module assessment sections.
+
+#### 1. `approval_action` (14 columns)
+Part of the booking module approval workflow.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | text PK | Primary key |
+| approval_request_id | text | FK to approval_request |
+| actor_id | text | User who took action |
+| action | text | Action type (approve/reject/escalate) |
+| comment | text | Action comment |
+| previous_status | text | Status before action |
+| new_status | text | Status after action |
+| metadata | jsonb | Additional metadata |
+| tenant_id | text | Tenant scope |
+| created_at | timestamptz | Created timestamp |
+| updated_at | timestamptz | Updated timestamp |
+| deleted_at | timestamptz | Soft delete |
+| raw_comment | jsonb | Raw comment data |
+| raw_metadata | jsonb | Raw metadata |
+
+#### 2. `approval_request` (20 columns)
+Part of the booking module approval workflow.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | text PK | Primary key |
+| workflow_id | text | FK to approval_workflow |
+| entity_type | text | Type of entity being approved |
+| entity_id | text | ID of entity being approved |
+| requester_id | text | User requesting approval |
+| current_step | integer | Current workflow step |
+| status | text | pending/approved/rejected/escalated |
+| priority | text | Request priority |
+| due_date | timestamptz | Due date for approval |
+| approved_at | timestamptz | When approved |
+| rejected_at | timestamptz | When rejected |
+| escalated_at | timestamptz | When escalated |
+| notes | text | Request notes |
+| context | jsonb | Request context data |
+| metadata | jsonb | Additional metadata |
+| tenant_id | text | Tenant scope |
+| created_at | timestamptz | Created timestamp |
+| updated_at | timestamptz | Updated timestamp |
+| deleted_at | timestamptz | Soft delete |
+| raw_context | jsonb | Raw context data |
+
+#### 3. `availability_exception` (16 columns)
+Part of the booking module — overrides regular availability schedules.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | text PK | Primary key |
+| availability_id | text | FK to availability |
+| title | text | Exception title |
+| exception_type | text | Type (holiday/blackout/special) |
+| start_date | timestamptz | Exception start |
+| end_date | timestamptz | Exception end |
+| all_day | boolean | Full day exception |
+| start_time | text | Start time override |
+| end_time | text | End time override |
+| recurrence | jsonb | Recurrence rules |
+| reason | text | Reason for exception |
+| metadata | jsonb | Additional metadata |
+| tenant_id | text | Tenant scope |
+| created_at | timestamptz | Created timestamp |
+| updated_at | timestamptz | Updated timestamp |
+| deleted_at | timestamptz | Soft delete |
+
+#### 4. `booking_item` (22 columns)
+Part of the booking module — individual items within a booking.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | text PK | Primary key |
+| booking_id | text | FK to booking |
+| service_product_id | text | FK to service_product |
+| provider_id | text | Service provider |
+| title | text | Item title |
+| description | text | Item description |
+| quantity | integer | Quantity |
+| unit_price | numeric | Unit price |
+| total_price | numeric | Total price |
+| duration_minutes | integer | Duration |
+| start_time | timestamptz | Item start time |
+| end_time | timestamptz | Item end time |
+| status | text | Item status |
+| notes | text | Item notes |
+| resource_id | text | Assigned resource |
+| metadata | jsonb | Additional metadata |
+| tenant_id | text | Tenant scope |
+| created_at | timestamptz | Created timestamp |
+| updated_at | timestamptz | Updated timestamp |
+| deleted_at | timestamptz | Soft delete |
+| raw_unit_price | jsonb | Raw unit price |
+| raw_total_price | jsonb | Raw total price |
+
+#### 5. `booking_reminder` (20 columns)
+Part of the booking module — automated reminder scheduling.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | text PK | Primary key |
+| booking_id | text | FK to booking |
+| reminder_type | text | Type (email/sms/push) |
+| channel | text | Delivery channel |
+| scheduled_at | timestamptz | When to send |
+| sent_at | timestamptz | When actually sent |
+| status | text | pending/sent/failed/cancelled |
+| recipient_id | text | Recipient user ID |
+| recipient_email | text | Recipient email |
+| recipient_phone | text | Recipient phone |
+| subject | text | Reminder subject |
+| message | text | Reminder message |
+| template_id | text | Template reference |
+| retry_count | integer | Number of retries |
+| error_message | text | Last error |
+| metadata | jsonb | Additional metadata |
+| tenant_id | text | Tenant scope |
+| created_at | timestamptz | Created timestamp |
+| updated_at | timestamptz | Updated timestamp |
+| deleted_at | timestamptz | Soft delete |
+
+#### 6. `credit_line` (10 columns)
+Financial entity for company credit management.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | text PK | Primary key |
+| company_id | text | FK to company |
+| credit_limit | numeric | Maximum credit |
+| balance | numeric | Current balance |
+| currency_code | text | Currency |
+| status | text | active/suspended/closed |
+| metadata | jsonb | Additional metadata |
+| tenant_id | text | Tenant scope |
+| created_at | timestamptz | Created timestamp |
+| updated_at | timestamptz | Updated timestamp |
+
+#### 7. `loyalty_points_ledger` (15 columns)
+Loyalty points transaction ledger — tracks all point movements.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | text PK | Primary key |
+| tenant_id | text | Tenant scope |
+| customer_id | text | Customer reference |
+| program_id | text | FK to loyalty_program |
+| transaction_type | text | earn/redeem/expire/adjust |
+| points | integer | Points amount |
+| balance_after | integer | Balance after transaction |
+| reference_type | text | Source type (order/review/referral) |
+| reference_id | text | Source entity ID |
+| description | text | Transaction description |
+| expires_at | timestamptz | Point expiry date |
+| metadata | jsonb | Additional metadata |
+| created_at | timestamptz | Created timestamp |
+| updated_at | timestamptz | Updated timestamp |
+| deleted_at | timestamptz | Soft delete |
+
+#### 8. `vendor_analytics_snapshot` (35 columns)
+Periodic vendor performance snapshots for analytics dashboards.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | text PK | Primary key |
+| vendor_id | text | FK to vendor |
+| tenant_id | text | Tenant scope |
+| period_type | text | daily/weekly/monthly |
+| period_start | timestamptz | Period start date |
+| period_end | timestamptz | Period end date |
+| total_orders | integer | Total orders in period |
+| completed_orders | integer | Completed orders |
+| cancelled_orders | integer | Cancelled orders |
+| returned_orders | integer | Returned orders |
+| gross_revenue | numeric | Gross revenue |
+| net_revenue | numeric | Net revenue |
+| total_commission | numeric | Total commission charged |
+| total_refunds | numeric | Total refunds issued |
+| total_products | integer | Total product count |
+| active_products | integer | Active product count |
+| out_of_stock_products | integer | Out-of-stock products |
+| average_order_value | numeric | AOV |
+| fulfillment_time | numeric | Avg fulfillment time (hours) |
+| delivery_rate | numeric | Successful delivery rate |
+| unique_customers | integer | Unique customer count |
+| repeat_customers | integer | Repeat customer count |
+| average_rating | numeric | Average review rating |
+| total_reviews | integer | Total review count |
+| metadata | jsonb | Additional metadata |
+| created_at | timestamptz | Created timestamp |
+| updated_at | timestamptz | Updated timestamp |
+| deleted_at | timestamptz | Soft delete |
+| raw_gross_revenue | jsonb | Raw gross revenue |
+| raw_net_revenue | jsonb | Raw net revenue |
+| raw_total_commission | jsonb | Raw commission |
+| raw_total_refunds | jsonb | Raw refunds |
+| raw_average_order_value | jsonb | Raw AOV |
+| raw_fulfillment_time | jsonb | Raw fulfillment time |
+| raw_delivery_rate | jsonb | Raw delivery rate |
+
+#### 9. `vendor_order_item` (32 columns)
+Individual line items within a vendor-specific order split.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | text PK | Primary key |
+| vendor_order_id | text | FK to vendor_order |
+| line_item_id | text | Original order line item |
+| product_id | text | Product reference |
+| variant_id | text | Product variant reference |
+| title | text | Product title |
+| sku | text | SKU |
+| thumbnail | text | Thumbnail URL |
+| quantity | integer | Ordered quantity |
+| fulfilled_quantity | integer | Fulfilled quantity |
+| returned_quantity | integer | Returned quantity |
+| unit_price | numeric | Unit price |
+| subtotal | numeric | Subtotal |
+| discount_amount | numeric | Discount amount |
+| tax_amount | numeric | Tax amount |
+| total_amount | numeric | Total amount |
+| vendor_cost | numeric | Vendor cost |
+| commission_amount | numeric | Commission charged |
+| net_amount | numeric | Net amount to vendor |
+| status | text | Item status |
+| metadata | jsonb | Additional metadata |
+| tenant_id | text | Tenant scope |
+| created_at | timestamptz | Created timestamp |
+| updated_at | timestamptz | Updated timestamp |
+| deleted_at | timestamptz | Soft delete |
+| raw_unit_price | jsonb | Raw unit price |
+| raw_subtotal | jsonb | Raw subtotal |
+| raw_discount_amount | jsonb | Raw discount |
+| raw_tax_amount | jsonb | Raw tax |
+| raw_total_amount | jsonb | Raw total |
+| raw_vendor_cost | jsonb | Raw vendor cost |
+| raw_commission_amount | jsonb | Raw commission |
+
+#### 10. `vendor_performance_metric` (18 columns)
+Real-time vendor performance tracking metrics.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | text PK | Primary key |
+| vendor_id | text | FK to vendor |
+| tenant_id | text | Tenant scope |
+| metric_type | text | Metric type (fulfillment_rate/response_time/etc) |
+| value | numeric | Metric value |
+| threshold_warning | numeric | Warning threshold |
+| threshold_critical | numeric | Critical threshold |
+| status | text | healthy/warning/critical |
+| measured_at | timestamptz | Measurement timestamp |
+| period_days | integer | Measurement period |
+| sample_count | integer | Number of samples |
+| metadata | jsonb | Additional metadata |
+| created_at | timestamptz | Created timestamp |
+| updated_at | timestamptz | Updated timestamp |
+| deleted_at | timestamptz | Soft delete |
+| raw_value | jsonb | Raw value |
+| raw_threshold_warning | jsonb | Raw warning threshold |
+| raw_threshold_critical | jsonb | Raw critical threshold |
+
+#### 11. `workflow_execution` (11 columns)
+Temporal workflow execution tracking.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | text PK | Primary key |
+| workflow_id | text | Temporal workflow ID |
+| transaction_id | text | Associated transaction |
+| execution | jsonb | Execution details |
+| context | jsonb | Workflow context |
+| state | text | Execution state |
+| created_at | timestamptz | Created timestamp |
+| updated_at | timestamptz | Updated timestamp |
+| deleted_at | timestamptz | Soft delete |
+| retention_time | timestamptz | Data retention deadline |
+| run_id | text | Temporal run ID |
+
+#### 12. `tenant_invoice` (28 columns)
+Tenant platform invoices for billing (documented in Tenant module but not in per-table detail).
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | text PK | Primary key |
+| tenant_id | text | Tenant reference |
+| billing_id | text | FK to tenant_billing |
+| invoice_number | text | Invoice number |
+| period_start | timestamptz | Billing period start |
+| period_end | timestamptz | Billing period end |
+| currency_code | text | Currency |
+| base_amount | numeric | Base subscription amount |
+| usage_amount | numeric | Usage charges |
+| discount_amount | numeric | Discounts applied |
+| tax_amount | numeric | Tax amount |
+| total_amount | numeric | Total invoice amount |
+| status | text | draft/sent/paid/overdue/void |
+| paid_at | timestamptz | Payment date |
+| payment_method | text | Payment method used |
+| stripe_invoice_id | text | Stripe invoice reference |
+| invoice_pdf_url | text | PDF download URL |
+| due_date | timestamptz | Payment due date |
+| line_items | jsonb | Itemized line items |
+| metadata | jsonb | Additional metadata |
+| created_at | timestamptz | Created timestamp |
+| updated_at | timestamptz | Updated timestamp |
+| deleted_at | timestamptz | Soft delete |
+| raw_base_amount | jsonb | Raw base amount |
+| raw_usage_amount | jsonb | Raw usage amount |
+| raw_discount_amount | jsonb | Raw discount |
+| raw_tax_amount | jsonb | Raw tax |
+| raw_total_amount | jsonb | Raw total |
+
+#### 13. `user_preference` (7 columns)
+User-specific preference storage.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | text PK | Primary key |
+| user_id | text | User reference |
+| key | text | Preference key |
+| value | jsonb | Preference value |
+| created_at | timestamptz | Created timestamp |
+| updated_at | timestamptz | Updated timestamp |
+| deleted_at | timestamptz | Soft delete |
+
+---
+
+### 9.3 Storefront API Endpoints Without Backend Routes (9 missing routes)
+
+These endpoints are referenced in the storefront application but have **no corresponding backend API route implementation** in `apps/backend/src/api/store/`.
+
+| # | Endpoint | Purpose | Storefront Reference |
+|---|----------|---------|---------------------|
+| 1 | `/store/bundles` | Product bundle browsing | Bundle components in storefront |
+| 2 | `/store/consignments` | Consignment tracking | Consignment components |
+| 3 | `/store/credit` | Store credit management | Store credit components |
+| 4 | `/store/flash-sales` | Flash sale listings | Flash sale promotion pages |
+| 5 | `/store/gift-cards` | Gift card purchasing | Gift card components |
+| 6 | `/store/loyalty` | Loyalty program interaction | Loyalty components |
+| 7 | `/store/newsletter` | Newsletter subscription | Newsletter signup forms |
+| 8 | `/store/trade-in` | Trade-in submissions | Trade-in components |
+| 9 | `/store/wallet` | Digital wallet operations | Wallet/payments components |
+
+**Impact:** These storefront pages will show errors or empty states when accessed. Backend route handlers and corresponding service logic must be implemented.
+
+---
+
+### 9.4 Complete Model Count by Module
+
+Comprehensive registry of all 58 modules with model details. Models marked with `*` are code-only (no database table).
+
+| # | Module | Models | Model Names | DB Tables | API Routes | Admin UI | Seeded Data |
+|---|--------|--------|-------------|-----------|------------|----------|-------------|
+| 1 | tenant | 8 | Tenant, TenantUser, TenantSettings, TenantBilling, TenantInvoice, TenantUsageRecord, TenantPOI\*, TenantRelationship\* | 6/8 | Yes | Yes | Yes |
+| 2 | node | 1 | Node | 1/1 | Yes | Yes | Yes |
+| 3 | governance | 1 | GovernanceAuthority | 1/1 | Yes | Yes | Yes |
+| 4 | persona | 2 | Persona, PersonaAssignment | 2/2 | Yes | Yes | Yes |
+| 5 | store (cityos) | 1 | CityosStore | 1/1 | Yes | No | Yes |
+| 6 | vendor | 8 | Vendor, VendorUser, VendorProduct, VendorOrder, VendorOrderItem, VendorAnalyticsSnapshot, VendorPerformanceMetric, CustomerSegment | 8/8 | Yes | Yes | Yes |
+| 7 | commission | 2 | CommissionRule, CommissionTransaction | 2/2 | Yes | Yes | Yes |
+| 8 | payout | 2 | Payout, PayoutTransactionLink | 2/2 | Yes | Yes | Yes |
+| 9 | subscription | 7 | Subscription, SubscriptionPlan, SubscriptionItem, SubscriptionEvent, SubscriptionDiscount, SubscriptionPause, BillingCycle | 7/7 | Yes | Yes | Yes |
+| 10 | company | 3 | Company, CompanyUser, PaymentTerms | 3/3 | Yes | Yes | Yes |
+| 11 | quote | 2 | Quote, QuoteItem | 2/2 | Yes | Yes | Yes |
+| 12 | volume-pricing | 2 | VolumePricing, VolumePricingTier | 2/2 | Yes | Yes | Yes |
+| 13 | booking | 9 | Booking, ServiceProduct, Availability, ApprovalWorkflow, ApprovalRequest, ApprovalAction, AvailabilityException, BookingItem, BookingReminder | 9/9 | Yes | Yes | Yes |
+| 14 | review | 1 | Review | 1/1 | Yes | Yes | Yes |
+| 15 | invoice | 2 | Invoice, InvoiceItem | 2/2 | Yes | Yes | Yes |
+| 16 | event-outbox | 1 | EventOutbox | 1/1 | No | No | No |
+| 17 | audit | 1 | AuditLog | 1/1 | Yes | Yes | No |
+| 18 | i18n | 1 | Translation | 1/1 | Yes | Yes | Yes |
+| 19 | channel | 2 | SalesChannelMapping, ServiceChannel\* | 1/2 | Yes | Yes | Yes |
+| 20 | region-zone | 1 | RegionZoneMapping | 1/1 | Yes | Yes | Yes |
+| 21 | promotion-ext | 1 | GiftCardExt | 1/1 | Yes | No | Yes |
+| 22 | digital-product | 2 | DigitalAsset, DownloadLicense | 2/2 | Yes | No | Yes |
+| 23 | auction | 5 | AuctionListing, AuctionEscrow, AuctionResult, Bid, AutoBidRule | 5/5 | Yes | No | Yes |
+| 24 | rental | 4 | RentalProduct, RentalAgreement, RentalPeriod, RentalReturn | 4/4 | Yes | No | Yes |
+| 25 | restaurant | 8 | Restaurant, Menu, MenuItem, ModifierGroup, Modifier, KitchenOrder, TableReservation, DeliverySlot | 8/8 | Yes | No | Yes |
+| 26 | event-ticketing | 5 | Event, Ticket, TicketType, SeatMap, Venue | 5/5 | Yes | No | Yes |
+| 27 | classified | 5 | ClassifiedListing, ListingCategory, ListingImage, ListingOffer, ListingFlag | 5/5 | Yes | No | Yes |
+| 28 | affiliate | 4 | Affiliate, AffiliateCommission, Referral, ReferralLink | 4/4 | Yes | No | Yes |
+| 29 | warranty | 2 | WarrantyPlan, WarrantyClaim | 2/2 | Yes | Yes | Yes |
+| 30 | freelance | 5 | GigListing, FreelanceContract, FreelanceDispute, Proposal, TimeLog | 5/5 | Yes | No | Yes |
+| 31 | travel | 3 | TravelProperty, TravelReservation, GuestProfile | 3/3 | Yes | No | Yes |
+| 32 | real-estate | 5 | PropertyListing, PropertyDocument, PropertyValuation, ViewingAppointment, LeaseAgreement | 5/5 | Yes | No | Yes |
+| 33 | membership | 2 | Membership, MembershipTier | 2/2 | Yes | No | Yes |
+| 34 | crowdfunding | 5 | CrowdfundCampaign, Backer, Pledge, CampaignUpdate, Milestone | 5/5 | Yes | No | Yes |
+| 35 | social-commerce | 6 | LiveStream, LiveProduct, SocialPost, SocialShare, InfluencerCampaign, GroupBuy | 6/6 | Yes | No | Yes |
+| 36 | grocery | 3 | FreshProduct, BatchTracking, SubstitutionRule | 3/3 | Yes | No | Yes |
+| 37 | automotive | 9 | VehicleListing, TestDrive, TradeIn, PartCatalog, SparePart, RepairOrder, ServiceCenter, VehicleService, DamageClaim | 9/9 | Yes | No | Yes |
+| 38 | healthcare | 6 | Practitioner, HealthcareAppointment, MedicalRecord, Prescription, LabOrder, PharmacyProduct | 6/6 | Yes | No | Yes |
+| 39 | education | 5 | Course, Enrollment, Lesson, Quiz, Certificate | 5/5 | Yes | No | Yes |
+| 40 | charity | 4 | CharityOrg, DonationCampaign, Donation, ImpactReport | 4/4 | Yes | No | Yes |
+| 41 | financial-product | 6 | LoanProduct, LoanApplication, InvestmentPlan, InsuranceProduct, InsurancePolicy, InsuranceClaim | 6/6 | Yes | No | Yes |
+| 42 | advertising | 6 | AdAccount, AdCampaign, AdCreative, AdPlacement, ClickTracking, ImpressionLog | 6/6 | Yes | No | Yes |
+| 43 | parking | 2 | ParkingZone, ParkingSession | 2/2 | Yes | No | Yes |
+| 44 | utilities | 4 | UtilityAccount, UtilityBill, MeterReading, UsageRecord | 4/4 | Yes | No | Yes |
+| 45 | government | 8 | ServiceRequest, CitizenProfile, MunicipalLicense, Permit, Fine, ShuttleRoute, RideRequest, AgentProfile | 8/8 | Yes | No | Yes |
+| 46 | pet-service | 5 | PetProfile, PetProduct, GroomingBooking, VetAppointment, WellnessPlan | 5/5 | Yes | No | Yes |
+| 47 | fitness | 5 | GymMembership, ClassSchedule, ClassBooking, TrainerProfile, CheckIn | 5/5 | Yes | No | Yes |
+| 48 | legal | 4 | AttorneyProfile, LegalCase, LegalConsultation, RetainerAgreement | 4/4 | Yes | No | Yes |
+| 49 | analytics | 2\* | Dashboard\*, Report\* | 0/2 | No | No | No |
+| 50 | cart-extension | 1\* | CartMetadata\* | 0/1 | No | No | No |
+| 51 | cms-content | 2\* | CmsPage\*, CmsNavigation\* | 0/2 | No | No | No |
+| 52 | dispute | 1 | Dispute | 1/1 | No | No | No |
+| 53 | inventory-extension | 3\* | ReservationHold\*, StockAlert\*, WarehouseTransfer\* | 0/3 | No | No | No |
+| 54 | loyalty | 3 | LoyaltyProgram, LoyaltyAccount\*, PointTransaction\* | 1/3 | Yes | No | Yes |
+| 55 | notification-preferences | 1\* | NotificationPreference\* | 0/1 | No | No | No |
+| 56 | shipping-extension | 2\* | CarrierConfig\*, ShippingRate\* | 0/2 | No | No | No |
+| 57 | tax-config | 1 | TaxExemption, TaxRule\* | 1/2 | Yes | No | Yes |
+| 58 | wishlist | 2 | Wishlist, WishlistItem | 2/2 | Yes | No | Yes |
+
+> **Note:** `*` indicates a model defined in code but with no corresponding database table.
+
+---
+
+### 9.5 CRUD Config Entities vs Backend Models
+
+The admin panel uses 42 CRUD configuration entries to auto-generate management interfaces. Below maps each CRUD config to its actual backend model.
+
+| # | CRUD Config | Backend Model(s) | Status |
+|---|-------------|-------------------|--------|
+| 1 | travel | TravelProperty | Matches |
+| 2 | automotive | VehicleListing | Matches |
+| 3 | healthcare | Practitioner | Matches |
+| 4 | education | Course | Matches |
+| 5 | fitness | GymMembership | Matches |
+| 6 | memberships | Membership, MembershipTier | Matches |
+| 7 | parking | ParkingZone | Matches |
+| 8 | freelance | GigListing | Matches |
+| 9 | advertising | AdCampaign | Matches |
+| 10 | affiliates | Affiliate | Matches |
+| 11 | promotions | Core Medusa Promotion | Uses core model |
+| 12 | crowdfunding | CrowdfundCampaign | Matches |
+| 13 | charity | CharityOrg, DonationCampaign | Matches |
+| 14 | classifieds | ClassifiedListing | Matches |
+| 15 | quotes | Quote | Matches |
+| 16 | invoices | Invoice | Matches |
+| 17 | subscriptions | Subscription | Matches |
+| 18 | reviews | Review | Matches |
+| 19 | team | Core Medusa User | Uses core model |
+| 20 | companies | Company | Matches |
+| 21 | stores | Core Medusa Store | Uses core model |
+| 22 | legal | AttorneyProfile, LegalCase | Matches |
+| 23 | utilities | UtilityAccount | Matches |
+| 24 | settings | Core Medusa Store config | Uses core model |
+| 25 | digital-products | DigitalAsset | Matches |
+| 26 | event-ticketing | Event | Matches |
+| 27 | financial-products | LoanProduct | Matches |
+| 28 | pet-services | PetProfile | Matches |
+| 29 | real-estate | PropertyListing | Matches |
+| 30 | social-commerce | LiveStream, SocialPost | Matches |
+| 31 | government | ServiceRequest | Matches |
+| 32 | grocery | FreshProduct | Matches |
+| 33 | restaurants | Restaurant | Matches |
+| 34 | rentals | RentalProduct | Matches |
+| 35 | auctions | AuctionListing | Matches |
+| 36 | bookings | Booking | Matches |
+| 37 | products | Core Medusa Product | Uses core model |
+| 38 | orders | Core Medusa Order | Uses core model |
+| 39 | customers | Core Medusa Customer | Uses core model |
+| 40 | vendors | Vendor | Matches |
+| 41 | commissions | CommissionRule | Matches |
+| 42 | payouts | Payout | Matches |
+
+**Result:** All 42 CRUD configs map correctly to their backend models. 6 configs use core Medusa models directly; the remaining 36 use custom module models with full schema alignment.
+
+---
+
+### 9.6 Cross-Module Links (Complete Registry)
+
+All 15 cross-module links defined in `apps/backend/src/links/` using Medusa's `defineLink()` utility.
+
+| # | Link File | Source Module | Source Model | Target Module | Target Model | Relationship |
+|---|-----------|---------------|-------------|---------------|-------------|-------------|
+| 1 | `booking-customer.ts` | Customer (core) | `customer` | Booking | `booking` | One-to-Many |
+| 2 | `company-invoice.ts` | Company | `company` | Invoice | `invoice` | One-to-Many |
+| 3 | `customer-company.ts` | Customer (core) | `customer` | Company | `company` | Many-to-One |
+| 4 | `customer-membership.ts` | Customer (core) | `customer` | Membership | `membership` | One-to-Many |
+| 5 | `customer-subscription.ts` | Customer (core) | `customer` | Subscription | `subscription` | One-to-Many |
+| 6 | `node-governance.ts` | Node | `node` | Governance | `governanceAuthority` | Many-to-One |
+| 7 | `order-vendor.ts` | Order (core) | `order` | Vendor | `vendor` | Many-to-One |
+| 8 | `product-auction.ts` | Product (core) | `product` | Auction | `auctionListing` | One-to-One |
+| 9 | `product-rental.ts` | Product (core) | `product` | Rental | `rentalProduct` | One-to-One |
+| 10 | `product-review.ts` | Product (core) | `product` | Review | `review` | One-to-Many |
+| 11 | `tenant-node.ts` | Tenant | `tenant` | Node | `node` | One-to-Many |
+| 12 | `tenant-store.ts` | Tenant | `tenant` | Store | `cityosStore` | One-to-Many |
+| 13 | `vendor-commission.ts` | Vendor | `vendor` | Commission | `commissionRule` | One-to-Many |
+| 14 | `vendor-payout.ts` | Vendor | `vendor` | Payout | `payout` | One-to-Many |
+| 15 | `vendor-store.ts` | Vendor | `vendor` | Store | `cityosStore` | Many-to-One |
+
+---
+
+### 9.7 Summary Statistics
+
+| Metric | Count |
+|--------|-------|
+| Total Custom Models (defined in code) | 205 |
+| Models with DB Tables | 188 |
+| Models Missing DB Tables | 17 |
+| Extra DB Tables (not in module docs) | 13 |
+| Total DB Tables (custom) | 201 |
+| Missing Store API Routes | 9 |
+| CRUD Configs | 42 |
+| CMS Verticals | 27 |
+| Cross-Module Links | 15 |
+| Tier 1 Modules (fully implemented) | 18 |
+| Tier 2 Modules (backend complete, no admin UI) | 33 |
+| Tier 3 Modules (incomplete) | 7 |
+| External Integrations | 5 |
+| Temporal System Workflows | 30+ |
 
 ---
 
