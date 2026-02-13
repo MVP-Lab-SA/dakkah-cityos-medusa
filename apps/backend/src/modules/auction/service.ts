@@ -11,6 +11,104 @@ class AuctionModuleService extends MedusaService({
   AutoBidRule,
   AuctionResult,
   AuctionEscrow,
-}) {}
+}) {
+  /** Place a bid on an auction, validating amount exceeds current highest */
+  async placeBid(auctionId: string, bidderId: string, amount: number): Promise<any> {
+    if (amount <= 0) {
+      throw new Error("Bid amount must be greater than zero")
+    }
+
+    const auction = await this.retrieveAuctionListing(auctionId)
+
+    if (auction.status !== "active") {
+      throw new Error("Auction is not active")
+    }
+
+    if (new Date(auction.ends_at) < new Date()) {
+      throw new Error("Auction has ended")
+    }
+
+    const highestBid = await this.getHighestBid(auctionId)
+    const minimumBid = highestBid
+      ? Number(highestBid.amount) + Number(auction.bid_increment || 1)
+      : Number(auction.starting_price || 0)
+
+    if (amount < minimumBid) {
+      throw new Error(`Bid must be at least ${minimumBid}`)
+    }
+
+    const bid = await (this as any).createBids({
+      auction_listing_id: auctionId,
+      bidder_id: bidderId,
+      amount,
+      status: "active",
+      placed_at: new Date(),
+    })
+
+    await (this as any).updateAuctionListings({
+      id: auctionId,
+      current_price: amount,
+    })
+
+    return bid
+  }
+
+  /** Close an auction and determine the winner */
+  async closeAuction(auctionId: string): Promise<any> {
+    const auction = await this.retrieveAuctionListing(auctionId)
+
+    if (auction.status !== "active") {
+      throw new Error("Auction is not active")
+    }
+
+    const highestBid = await this.getHighestBid(auctionId)
+
+    const hasMetReserve = highestBid
+      ? Number(highestBid.amount) >= Number(auction.reserve_price || 0)
+      : false
+
+    await (this as any).updateAuctionListings({
+      id: auctionId,
+      status: hasMetReserve && highestBid ? "sold" : "ended",
+    })
+
+    if (hasMetReserve && highestBid) {
+      const result = await (this as any).createAuctionResults({
+        auction_listing_id: auctionId,
+        winning_bid_id: highestBid.id,
+        winner_id: highestBid.bidder_id,
+        final_price: highestBid.amount,
+        status: "pending_payment",
+      })
+      return result
+    }
+
+    return { auctionId, status: "ended", winner: null }
+  }
+
+  /** Get the highest bid for an auction */
+  async getHighestBid(auctionId: string): Promise<any | null> {
+    const bids = await this.listBids({ auction_listing_id: auctionId, status: "active" }) as any
+    const bidList = Array.isArray(bids) ? bids : [bids].filter(Boolean)
+
+    if (bidList.length === 0) return null
+
+    return bidList.reduce((max: any, bid: any) =>
+      Number(bid.amount) > Number(max.amount) ? bid : max
+    , bidList[0])
+  }
+
+  /** Check if an auction is currently active and accepting bids */
+  async isAuctionActive(auctionId: string): Promise<boolean> {
+    const auction = await this.retrieveAuctionListing(auctionId)
+    if (auction.status !== "active") return false
+
+    const now = new Date()
+    const startDate = new Date(auction.starts_at)
+    const endDate = new Date(auction.ends_at)
+
+    return now >= startDate && now <= endDate
+  }
+}
 
 export default AuctionModuleService

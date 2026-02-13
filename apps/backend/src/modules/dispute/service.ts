@@ -193,6 +193,34 @@ class DisputeModuleService extends MedusaService({
 
     return Array.isArray(messages) ? messages : [messages].filter(Boolean)
   }
+  /** Get full dispute timeline including status changes and messages */
+  async getDisputeTimeline(disputeId: string): Promise<{
+    dispute: any
+    messages: any[]
+    events: Array<{ type: string; timestamp: Date; detail: string }>
+  }> {
+    const dispute = await this.retrieveDispute(disputeId)
+    const messages = await this.getMessages(disputeId, true)
+
+    const events: Array<{ type: string; timestamp: Date; detail: string }> = []
+
+    events.push({ type: "opened", timestamp: new Date(dispute.created_at), detail: `Dispute opened with priority ${dispute.priority}` })
+
+    if (dispute.escalated_at) {
+      events.push({ type: "escalated", timestamp: new Date(dispute.escalated_at), detail: "Dispute escalated to urgent priority" })
+    }
+    if (dispute.resolved_at) {
+      events.push({ type: "resolved", timestamp: new Date(dispute.resolved_at), detail: `Resolved: ${dispute.resolution || "N/A"}` })
+    }
+
+    for (const msg of messages) {
+      events.push({ type: "message", timestamp: new Date(msg.created_at), detail: `${msg.sender_type}: ${msg.content?.substring(0, 100)}` })
+    }
+
+    events.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime())
+
+    return { dispute, messages, events }
+  }
 }
 
 export default DisputeModuleService

@@ -202,6 +202,19 @@ class LoyaltyModuleService extends MedusaService({
     return expired
   }
 
+  /** Calculate points earned for an order based on amount and program rules */
+  async calculatePoints(programId: string, amount: number): Promise<number> {
+    if (amount <= 0) {
+      throw new Error("Amount must be greater than zero")
+    }
+
+    const program = await this.retrieveLoyaltyProgram(programId)
+    const pointsPerUnit = Number((program as any).points_per_currency_unit || 1)
+    const multiplier = Number((program as any).multiplier || 1)
+
+    return Math.floor(amount * pointsPerUnit * multiplier)
+  }
+
   async getOrCreateAccount(programId: string, customerId: string, tenantId: string) {
     const existing = await this.listLoyaltyAccounts({
       program_id: programId,

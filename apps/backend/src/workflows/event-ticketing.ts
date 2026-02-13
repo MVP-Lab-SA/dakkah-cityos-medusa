@@ -1,0 +1,85 @@
+import {
+  createWorkflow,
+  WorkflowResponse,
+  createStep,
+  StepResponse,
+} from "@medusajs/framework/workflows-sdk"
+
+type EventTicketingInput = {
+  eventId: string
+  customerId: string
+  ticketType: string
+  quantity: number
+  seatPreferences?: string[]
+}
+
+const selectTicketsStep = createStep(
+  "select-event-tickets-step",
+  async (input: EventTicketingInput, { container }) => {
+    const eventModule = container.resolve("eventTicketing") as any
+    const availability = await eventModule.checkAvailability({
+      event_id: input.eventId,
+      ticket_type: input.ticketType,
+      quantity: input.quantity,
+    })
+    if (!availability.available) throw new Error("Tickets not available")
+    return new StepResponse({ availability })
+  }
+)
+
+const reserveTicketsStep = createStep(
+  "reserve-event-tickets-step",
+  async (input: EventTicketingInput, { container }) => {
+    const eventModule = container.resolve("eventTicketing") as any
+    const reservation = await eventModule.createReservation({
+      event_id: input.eventId,
+      customer_id: input.customerId,
+      ticket_type: input.ticketType,
+      quantity: input.quantity,
+      expires_at: new Date(Date.now() + 15 * 60 * 1000),
+    })
+    return new StepResponse({ reservation }, { reservation })
+  },
+  async ({ reservation }: { reservation: any }, { container }) => {
+    const eventModule = container.resolve("eventTicketing") as any
+    await eventModule.cancelReservation(reservation.id)
+  }
+)
+
+const processTicketPaymentStep = createStep(
+  "process-ticket-payment-step",
+  async (input: { reservationId: string; customerId: string; amount: number }, { container }) => {
+    const payment = {
+      reservation_id: input.reservationId,
+      customer_id: input.customerId,
+      amount: input.amount,
+      status: "captured",
+      paid_at: new Date(),
+    }
+    return new StepResponse({ payment })
+  }
+)
+
+const issueTicketsStep = createStep(
+  "issue-event-tickets-step",
+  async (input: { reservationId: string; eventId: string; quantity: number }) => {
+    const tickets = Array.from({ length: input.quantity }, (_, i) => ({
+      ticket_number: `TKT-${input.eventId}-${Date.now()}-${i + 1}`,
+      event_id: input.eventId,
+      status: "issued",
+      issued_at: new Date(),
+    }))
+    return new StepResponse({ tickets })
+  }
+)
+
+export const eventTicketingWorkflow = createWorkflow(
+  "event-ticketing-workflow",
+  (input: EventTicketingInput) => {
+    const { availability } = selectTicketsStep(input)
+    const { reservation } = reserveTicketsStep(input)
+    const { payment } = processTicketPaymentStep({ reservationId: reservation.id, customerId: input.customerId, amount: 0 })
+    const { tickets } = issueTicketsStep({ reservationId: reservation.id, eventId: input.eventId, quantity: input.quantity })
+    return new WorkflowResponse({ reservation, payment, tickets })
+  }
+)

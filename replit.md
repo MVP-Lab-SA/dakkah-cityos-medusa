@@ -95,6 +95,13 @@ Key components include Wishlist, Comparison, Search, Notifications, Disputes, Tr
 - **Digital Identity:** Walt.id
 - **Payment Gateway:** Stripe
 
+## Recent Changes (2026-02-13)
+- Phase 2: Created 17 missing database migrations — all 205 models now have DB tables
+- Phase 3: Implemented 9 store API routes (bundles, consignments, credit, flash-sales, gift-cards, loyalty, newsletter, trade-in, wallet)
+- Phase 4: Added 12 cross-module links bringing total to 27 link definitions
+- Phase 5: Built 33 admin UI pages for all commerce verticals (54 total admin pages)
+- Phase 6: Enhanced 28 service files with 3-5 business logic methods each, created 20 Temporal workflow stubs
+
 ## Documentation
-- `docs/PLATFORM_MODULE_ASSESSMENT.md` — Deep-dive assessment of all 58 modules (2,590 lines), including complete model registry, gap analysis, and per-module details
-- `docs/IMPLEMENTATION_PLAN.md` — 6-phase implementation plan for all remaining gaps (733 lines), covering infrastructure, migrations, API routes, admin UI, service logic, and Temporal workflows
+- `docs/PLATFORM_MODULE_ASSESSMENT.md` — Deep-dive assessment of all 58 modules (v2.0 — all gaps resolved), complete model registry, per-module details
+- `docs/IMPLEMENTATION_PLAN.md` — 6-phase implementation plan (v2.0 — updated with completion status), covering all deliverables
