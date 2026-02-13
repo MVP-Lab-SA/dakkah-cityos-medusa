@@ -1,62 +1,49 @@
 import { defineRouteConfig } from "@medusajs/admin-sdk"
-import { Container, Heading, Text } from "@medusajs/ui"
-import { AcademicCap, CurrencyDollar, UserGroup } from "@medusajs/icons"
+import { Container, Heading, Text, Button, Input, Label, toast } from "@medusajs/ui"
+import { AcademicCap, Plus } from "@medusajs/icons"
+import { useState } from "react"
+import { useEducation, useCreateCourse, Course } from "../../hooks/use-education.js"
 import { DataTable } from "../../components/tables/data-table.js"
 import { StatusBadge } from "../../components/common"
 import { StatsGrid } from "../../components/charts/stats-grid.js"
-
-type Course = {
-  id: string
-  title: string
-  instructor: string
-  students_enrolled: number
-  price: number
-  status: string
-  category: string
-  completion_rate: number
-  duration_hours: number
-}
-
-const mockCourses: Course[] = [
-  { id: "crs_01", title: "Introduction to Web Development", instructor: "Sarah Johnson", students_enrolled: 1250, price: 49.99, status: "active", category: "Technology", completion_rate: 78, duration_hours: 40 },
-  { id: "crs_02", title: "Advanced Python Programming", instructor: "Michael Chen", students_enrolled: 890, price: 79.99, status: "active", category: "Technology", completion_rate: 65, duration_hours: 60 },
-  { id: "crs_03", title: "Digital Marketing Mastery", instructor: "Emily Davis", students_enrolled: 2100, price: 59.99, status: "active", category: "Marketing", completion_rate: 82, duration_hours: 30 },
-  { id: "crs_04", title: "Financial Accounting Basics", instructor: "Robert Williams", students_enrolled: 670, price: 39.99, status: "active", category: "Business", completion_rate: 71, duration_hours: 25 },
-  { id: "crs_05", title: "UX/UI Design Fundamentals", instructor: "Lisa Park", students_enrolled: 1450, price: 69.99, status: "active", category: "Design", completion_rate: 74, duration_hours: 35 },
-  { id: "crs_06", title: "Data Science with R", instructor: "James Anderson", students_enrolled: 520, price: 89.99, status: "draft", category: "Technology", completion_rate: 0, duration_hours: 50 },
-  { id: "crs_07", title: "Public Speaking Masterclass", instructor: "Angela Martinez", students_enrolled: 3200, price: 29.99, status: "active", category: "Personal Development", completion_rate: 88, duration_hours: 15 },
-  { id: "crs_08", title: "Photography for Beginners", instructor: "David Kim", students_enrolled: 980, price: 44.99, status: "archived", category: "Creative", completion_rate: 91, duration_hours: 20 },
-]
+import { FormDrawer } from "../../components/forms/form-drawer.js"
 
 const EducationPage = () => {
-  const courses = mockCourses
-  const activeCourses = courses.filter(c => c.status === "active")
-  const totalStudents = courses.reduce((s, c) => s + c.students_enrolled, 0)
-  const avgCompletion = Math.round(activeCourses.reduce((s, c) => s + c.completion_rate, 0) / activeCourses.length)
-  const totalRevenue = courses.reduce((s, c) => s + (c.price * c.students_enrolled), 0)
+  const [showCreate, setShowCreate] = useState(false)
+  const [formData, setFormData] = useState({ title: "", format: "self_paced" as const, level: "all_levels" as const, price: "", currency_code: "usd", tenant_id: "", duration_hours: "", category: "" })
+
+  const { data, isLoading } = useEducation()
+  const createCourse = useCreateCourse()
+
+  const courses = data?.items || []
+  const activeCourses = courses.filter((c: any) => c.status === "published").length
+  const draftCourses = courses.filter((c: any) => c.status === "draft").length
 
   const stats = [
     { label: "Total Courses", value: courses.length, icon: <AcademicCap className="w-5 h-5" /> },
-    { label: "Active Students", value: totalStudents.toLocaleString(), icon: <UserGroup className="w-5 h-5" />, color: "blue" as const },
-    { label: "Completion Rate", value: `${avgCompletion}%`, color: "green" as const },
-    { label: "Revenue", value: `$${Math.round(totalRevenue).toLocaleString()}`, icon: <CurrencyDollar className="w-5 h-5" />, color: "green" as const },
+    { label: "Published", value: activeCourses, color: "green" as const },
+    { label: "Draft", value: draftCourses, color: "orange" as const },
+    { label: "Archived", value: courses.filter((c: any) => c.status === "archived").length, color: "blue" as const },
   ]
+
+  const handleCreate = async () => {
+    try {
+      await createCourse.mutateAsync({ ...formData, price: formData.price ? Number(formData.price) : undefined, duration_hours: formData.duration_hours ? Number(formData.duration_hours) : undefined })
+      toast.success("Course created")
+      setShowCreate(false)
+      setFormData({ title: "", format: "self_paced", level: "all_levels", price: "", currency_code: "usd", tenant_id: "", duration_hours: "", category: "" })
+    } catch (error) {
+      toast.error("Failed to create course")
+    }
+  }
 
   const columns = [
     { key: "title", header: "Course", sortable: true, cell: (c: Course) => (
-      <div><Text className="font-medium">{c.title}</Text><Text className="text-ui-fg-muted text-sm">{c.duration_hours}h · {c.category}</Text></div>
+      <div><Text className="font-medium">{c.title}</Text><Text className="text-ui-fg-muted text-sm">{c.duration_hours ? `${c.duration_hours}h` : ""}{c.category ? ` · ${c.category}` : ""}</Text></div>
     )},
-    { key: "instructor", header: "Instructor", cell: (c: Course) => c.instructor },
-    { key: "students_enrolled", header: "Students", sortable: true, cell: (c: Course) => c.students_enrolled.toLocaleString() },
-    { key: "price", header: "Price", sortable: true, cell: (c: Course) => <Text className="font-medium">${c.price.toFixed(2)}</Text> },
-    { key: "completion_rate", header: "Completion", sortable: true, cell: (c: Course) => (
-      <div className="flex items-center gap-2">
-        <div className="w-16 h-2 bg-ui-bg-subtle rounded-full overflow-hidden">
-          <div className="h-full bg-ui-tag-green-icon rounded-full" style={{ width: `${c.completion_rate}%` }} />
-        </div>
-        <Text className="text-sm">{c.completion_rate}%</Text>
-      </div>
-    )},
+    { key: "format", header: "Format", cell: (c: Course) => c.format },
+    { key: "level", header: "Level", cell: (c: Course) => c.level || "-" },
+    { key: "price", header: "Price", sortable: true, cell: (c: Course) => <Text className="font-medium">{c.is_free ? "Free" : c.price ? `$${c.price.toFixed(2)}` : "-"}</Text> },
     { key: "status", header: "Status", cell: (c: Course) => <StatusBadge status={c.status} /> },
   ]
 
@@ -65,14 +52,38 @@ const EducationPage = () => {
       <div className="p-6 border-b border-ui-border-base">
         <div className="flex items-center justify-between">
           <div><Heading level="h1">Education / Courses</Heading><Text className="text-ui-fg-muted">Manage courses, instructors, and student enrollments</Text></div>
+          <Button variant="secondary" onClick={() => setShowCreate(true)}><Plus className="w-4 h-4 mr-1" />Create Course</Button>
         </div>
       </div>
 
       <div className="p-6"><StatsGrid stats={stats} columns={4} /></div>
 
       <div className="px-6 pb-6">
-        <DataTable data={courses} columns={columns} searchable searchPlaceholder="Search courses..." searchKeys={["title", "instructor", "category"]} loading={false} emptyMessage="No courses found" />
+        <DataTable data={courses} columns={columns} searchable searchPlaceholder="Search courses..." searchKeys={["title", "category"]} loading={isLoading} emptyMessage="No courses found" />
       </div>
+
+      <FormDrawer open={showCreate} onOpenChange={setShowCreate} title="Create Course" onSubmit={handleCreate} submitLabel="Create" loading={createCourse.isPending}>
+        <div className="space-y-4">
+          <div><Label htmlFor="title">Title</Label><Input id="title" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} placeholder="Course title" /></div>
+          <div><Label htmlFor="category">Category</Label><Input id="category" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} placeholder="e.g. Technology" /></div>
+          <div><Label htmlFor="tenant_id">Tenant ID</Label><Input id="tenant_id" value={formData.tenant_id} onChange={(e) => setFormData({ ...formData, tenant_id: e.target.value })} placeholder="Tenant ID" /></div>
+          <div>
+            <Label htmlFor="format">Format</Label>
+            <select id="format" value={formData.format} onChange={(e) => setFormData({ ...formData, format: e.target.value as any })} className="w-full border border-ui-border-base rounded-md px-3 py-2 bg-ui-bg-base">
+              <option value="self_paced">Self Paced</option><option value="live">Live</option><option value="hybrid">Hybrid</option><option value="in_person">In Person</option>
+            </select>
+          </div>
+          <div>
+            <Label htmlFor="level">Level</Label>
+            <select id="level" value={formData.level} onChange={(e) => setFormData({ ...formData, level: e.target.value as any })} className="w-full border border-ui-border-base rounded-md px-3 py-2 bg-ui-bg-base">
+              <option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option><option value="all_levels">All Levels</option>
+            </select>
+          </div>
+          <div><Label htmlFor="price">Price</Label><Input id="price" type="number" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} placeholder="Price (optional)" /></div>
+          <div><Label htmlFor="currency_code">Currency Code</Label><Input id="currency_code" value={formData.currency_code} onChange={(e) => setFormData({ ...formData, currency_code: e.target.value })} placeholder="usd" /></div>
+          <div><Label htmlFor="duration_hours">Duration (hours)</Label><Input id="duration_hours" type="number" value={formData.duration_hours} onChange={(e) => setFormData({ ...formData, duration_hours: e.target.value })} placeholder="Duration in hours" /></div>
+        </div>
+      </FormDrawer>
     </Container>
   )
 }

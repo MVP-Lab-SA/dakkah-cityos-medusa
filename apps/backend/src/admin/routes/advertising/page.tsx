@@ -1,61 +1,50 @@
 import { defineRouteConfig } from "@medusajs/admin-sdk"
-import { Container, Heading, Text, Badge } from "@medusajs/ui"
-import { RocketLaunch } from "@medusajs/icons"
+import { Container, Heading, Text, Badge, Button, Input, Label, toast } from "@medusajs/ui"
+import { RocketLaunch, Plus } from "@medusajs/icons"
+import { useState } from "react"
+import { useAdvertising, useCreateAdCampaign, AdCampaign } from "../../hooks/use-advertising.js"
 import { DataTable } from "../../components/tables/data-table.js"
 import { StatusBadge } from "../../components/common"
 import { StatsGrid } from "../../components/charts/stats-grid.js"
-
-type AdCampaign = {
-  id: string
-  name: string
-  advertiser: string
-  type: string
-  budget: number
-  spent: number
-  impressions: number
-  clicks: number
-  ctr: number
-  start_date: string
-  end_date: string
-  status: string
-}
-
-const mockCampaigns: AdCampaign[] = [
-  { id: "ad_01", name: "Summer Sale Banner Ads", advertiser: "FashionHub", type: "Display", budget: 5000, spent: 3200, impressions: 245000, clicks: 4900, ctr: 2.0, start_date: "2026-02-01", end_date: "2026-02-28", status: "active" },
-  { id: "ad_02", name: "New Product Launch - Search", advertiser: "TechGadgets", type: "Search", budget: 10000, spent: 7800, impressions: 180000, clicks: 8100, ctr: 4.5, start_date: "2026-01-15", end_date: "2026-03-15", status: "active" },
-  { id: "ad_03", name: "Brand Awareness Video", advertiser: "HealthPlus", type: "Video", budget: 15000, spent: 15000, impressions: 520000, clicks: 15600, ctr: 3.0, start_date: "2026-01-01", end_date: "2026-02-01", status: "completed" },
-  { id: "ad_04", name: "Holiday Season Retargeting", advertiser: "GiftWorld", type: "Retargeting", budget: 8000, spent: 2100, impressions: 89000, clicks: 2670, ctr: 3.0, start_date: "2026-02-10", end_date: "2026-03-10", status: "active" },
-  { id: "ad_05", name: "Sponsored Product Listings", advertiser: "HomeDecor Co", type: "Sponsored", budget: 3000, spent: 1450, impressions: 67000, clicks: 2010, ctr: 3.0, start_date: "2026-02-05", end_date: "2026-02-25", status: "active" },
-  { id: "ad_06", name: "Email Newsletter Sponsorship", advertiser: "BookClub Pro", type: "Email", budget: 2000, spent: 0, impressions: 0, clicks: 0, ctr: 0, start_date: "2026-03-01", end_date: "2026-03-31", status: "scheduled" },
-  { id: "ad_07", name: "Social Media Carousel", advertiser: "FitGear", type: "Social", budget: 6000, spent: 4800, impressions: 310000, clicks: 9300, ctr: 3.0, start_date: "2026-01-20", end_date: "2026-02-20", status: "active" },
-  { id: "ad_08", name: "Influencer Partnership", advertiser: "BeautyBrand", type: "Influencer", budget: 20000, spent: 20000, impressions: 890000, clicks: 35600, ctr: 4.0, start_date: "2025-12-01", end_date: "2026-01-31", status: "completed" },
-]
+import { FormDrawer } from "../../components/forms/form-drawer.js"
 
 const AdvertisingPage = () => {
-  const campaigns = mockCampaigns
-  const activeAds = campaigns.filter(c => c.status === "active").length
-  const impressionsToday = 42850
-  const avgCtr = (campaigns.filter(c => c.ctr > 0).reduce((s, c) => s + c.ctr, 0) / campaigns.filter(c => c.ctr > 0).length).toFixed(1)
+  const [showCreate, setShowCreate] = useState(false)
+  const [formData, setFormData] = useState({ name: "", advertiser_id: "", campaign_type: "banner" as const, budget: "", currency_code: "usd", tenant_id: "" })
+
+  const { data, isLoading } = useAdvertising()
+  const createCampaign = useCreateAdCampaign()
+
+  const campaigns = data?.items || []
+  const activeAds = campaigns.filter((c: any) => c.status === "active").length
 
   const stats = [
     { label: "Total Campaigns", value: campaigns.length, icon: <RocketLaunch className="w-5 h-5" /> },
     { label: "Active Ads", value: activeAds, color: "green" as const },
-    { label: "Impressions Today", value: impressionsToday.toLocaleString(), color: "blue" as const },
-    { label: "Avg CTR", value: `${avgCtr}%`, color: "green" as const },
+    { label: "Completed", value: campaigns.filter((c: any) => c.status === "completed").length, color: "blue" as const },
+    { label: "Draft", value: campaigns.filter((c: any) => c.status === "draft").length, color: "orange" as const },
   ]
+
+  const handleCreate = async () => {
+    try {
+      await createCampaign.mutateAsync({ ...formData, budget: Number(formData.budget) })
+      toast.success("Campaign created")
+      setShowCreate(false)
+      setFormData({ name: "", advertiser_id: "", campaign_type: "banner", budget: "", currency_code: "usd", tenant_id: "" })
+    } catch (error) {
+      toast.error("Failed to create campaign")
+    }
+  }
 
   const columns = [
     { key: "name", header: "Campaign", sortable: true, cell: (c: AdCampaign) => (
-      <div><Text className="font-medium">{c.name}</Text><Text className="text-ui-fg-muted text-sm">{c.advertiser}</Text></div>
+      <div><Text className="font-medium">{c.name}</Text><Text className="text-ui-fg-muted text-sm">{c.advertiser_id}</Text></div>
     )},
-    { key: "type", header: "Type", cell: (c: AdCampaign) => <Badge color="grey">{c.type}</Badge> },
+    { key: "campaign_type", header: "Type", cell: (c: AdCampaign) => <Badge color="grey">{c.campaign_type}</Badge> },
     { key: "budget", header: "Budget", sortable: true, cell: (c: AdCampaign) => (
-      <div><Text className="font-medium">${c.budget.toLocaleString()}</Text><Text className="text-ui-fg-muted text-sm">Spent: ${c.spent.toLocaleString()}</Text></div>
+      <div><Text className="font-medium">${(c.budget || 0).toLocaleString()}</Text><Text className="text-ui-fg-muted text-sm">Spent: ${(c.spent || 0).toLocaleString()}</Text></div>
     )},
-    { key: "impressions", header: "Impressions", sortable: true, cell: (c: AdCampaign) => c.impressions.toLocaleString() },
-    { key: "clicks", header: "Clicks", sortable: true, cell: (c: AdCampaign) => (
-      <div><Text className="font-medium">{c.clicks.toLocaleString()}</Text><Text className="text-ui-fg-muted text-sm">{c.ctr}% CTR</Text></div>
-    )},
+    { key: "currency_code", header: "Currency", cell: (c: AdCampaign) => (c.currency_code || "").toUpperCase() },
     { key: "status", header: "Status", cell: (c: AdCampaign) => <StatusBadge status={c.status} /> },
   ]
 
@@ -64,14 +53,31 @@ const AdvertisingPage = () => {
       <div className="p-6 border-b border-ui-border-base">
         <div className="flex items-center justify-between">
           <div><Heading level="h1">Advertising</Heading><Text className="text-ui-fg-muted">Manage ad campaigns, impressions, and performance</Text></div>
+          <Button variant="secondary" onClick={() => setShowCreate(true)}><Plus className="w-4 h-4 mr-1" />Create Campaign</Button>
         </div>
       </div>
 
       <div className="p-6"><StatsGrid stats={stats} columns={4} /></div>
 
       <div className="px-6 pb-6">
-        <DataTable data={campaigns} columns={columns} searchable searchPlaceholder="Search campaigns..." searchKeys={["name", "advertiser", "type"]} loading={false} emptyMessage="No campaigns found" />
+        <DataTable data={campaigns} columns={columns} searchable searchPlaceholder="Search campaigns..." searchKeys={["name", "campaign_type"]} loading={isLoading} emptyMessage="No campaigns found" />
       </div>
+
+      <FormDrawer open={showCreate} onOpenChange={setShowCreate} title="Create Campaign" onSubmit={handleCreate} submitLabel="Create" loading={createCampaign.isPending}>
+        <div className="space-y-4">
+          <div><Label htmlFor="name">Name</Label><Input id="name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} placeholder="Campaign name" /></div>
+          <div><Label htmlFor="advertiser_id">Advertiser ID</Label><Input id="advertiser_id" value={formData.advertiser_id} onChange={(e) => setFormData({ ...formData, advertiser_id: e.target.value })} placeholder="Advertiser ID" /></div>
+          <div><Label htmlFor="tenant_id">Tenant ID</Label><Input id="tenant_id" value={formData.tenant_id} onChange={(e) => setFormData({ ...formData, tenant_id: e.target.value })} placeholder="Tenant ID" /></div>
+          <div>
+            <Label htmlFor="campaign_type">Campaign Type</Label>
+            <select id="campaign_type" value={formData.campaign_type} onChange={(e) => setFormData({ ...formData, campaign_type: e.target.value as any })} className="w-full border border-ui-border-base rounded-md px-3 py-2 bg-ui-bg-base">
+              <option value="sponsored_listing">Sponsored Listing</option><option value="banner">Banner</option><option value="search">Search</option><option value="social">Social</option><option value="email">Email</option>
+            </select>
+          </div>
+          <div><Label htmlFor="budget">Budget</Label><Input id="budget" type="number" value={formData.budget} onChange={(e) => setFormData({ ...formData, budget: e.target.value })} placeholder="Budget amount" /></div>
+          <div><Label htmlFor="currency_code">Currency Code</Label><Input id="currency_code" value={formData.currency_code} onChange={(e) => setFormData({ ...formData, currency_code: e.target.value })} placeholder="usd" /></div>
+        </div>
+      </FormDrawer>
     </Container>
   )
 }

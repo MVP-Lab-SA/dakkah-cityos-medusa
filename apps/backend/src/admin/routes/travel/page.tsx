@@ -1,70 +1,87 @@
 import { defineRouteConfig } from "@medusajs/admin-sdk"
-import { Container, Heading, Text } from "@medusajs/ui"
-import { Map, CurrencyDollar, Calendar } from "@medusajs/icons"
+import { Container, Heading, Text, Button, Input, Label, toast } from "@medusajs/ui"
+import { Map, CurrencyDollar, Plus } from "@medusajs/icons"
+import { useState } from "react"
 import { DataTable } from "../../components/tables/data-table.js"
 import { StatusBadge } from "../../components/common"
 import { StatsGrid } from "../../components/charts/stats-grid.js"
-
-type TravelPackage = {
-  id: string
-  destination: string
-  duration: string
-  price: number
-  bookings: number
-  status: string
-  category: string
-  rating: number
-  departure_date: string
-}
-
-const mockPackages: TravelPackage[] = [
-  { id: "trv_01", destination: "Bali, Indonesia", duration: "7 nights", price: 1299, bookings: 45, status: "active", category: "Beach & Resort", rating: 4.8, departure_date: "2026-03-15" },
-  { id: "trv_02", destination: "Paris, France", duration: "5 nights", price: 1899, bookings: 32, status: "active", category: "City & Culture", rating: 4.9, departure_date: "2026-04-01" },
-  { id: "trv_03", destination: "Tokyo, Japan", duration: "10 nights", price: 2450, bookings: 28, status: "active", category: "Adventure", rating: 4.7, departure_date: "2026-03-20" },
-  { id: "trv_04", destination: "Machu Picchu, Peru", duration: "8 nights", price: 1750, bookings: 18, status: "active", category: "Adventure", rating: 4.6, departure_date: "2026-05-10" },
-  { id: "trv_05", destination: "Santorini, Greece", duration: "6 nights", price: 1650, bookings: 52, status: "active", category: "Beach & Resort", rating: 4.9, departure_date: "2026-06-01" },
-  { id: "trv_06", destination: "Safari, Kenya", duration: "9 nights", price: 3200, bookings: 12, status: "active", category: "Wildlife", rating: 4.8, departure_date: "2026-04-15" },
-  { id: "trv_07", destination: "New York, USA", duration: "4 nights", price: 1100, bookings: 67, status: "sold_out", category: "City & Culture", rating: 4.5, departure_date: "2026-03-01" },
-  { id: "trv_08", destination: "Maldives", duration: "5 nights", price: 2800, bookings: 22, status: "draft", category: "Luxury", rating: 0, departure_date: "2026-07-01" },
-]
+import { FormDrawer } from "../../components/forms/form-drawer.js"
+import { useTravel, useCreateTravel } from "../../hooks/use-travel.js"
+import type { TravelProperty } from "../../hooks/use-travel.js"
 
 const TravelPage = () => {
-  const packages = mockPackages
-  const totalBookings = packages.reduce((s, p) => s + p.bookings, 0)
-  const totalRevenue = packages.reduce((s, p) => s + (p.price * p.bookings), 0)
-  const uniqueDestinations = new Set(packages.map(p => p.destination)).size
+  const { data, isLoading } = useTravel()
+  const createTravel = useCreateTravel()
+  const [showCreate, setShowCreate] = useState(false)
+  const [formData, setFormData] = useState<Record<string, string>>({})
+
+  const properties = data?.items || []
+  const activeCount = properties.filter((p: any) => p.is_active !== false).length
+  const uniqueCities = new Set(properties.map((p: any) => p.city)).size
 
   const stats = [
-    { label: "Total Packages", value: packages.length, icon: <Map className="w-5 h-5" /> },
-    { label: "Bookings This Month", value: totalBookings, icon: <Calendar className="w-5 h-5" />, color: "blue" as const },
-    { label: "Revenue", value: `$${totalRevenue.toLocaleString()}`, icon: <CurrencyDollar className="w-5 h-5" />, color: "green" as const },
-    { label: "Destinations", value: uniqueDestinations, color: "purple" as const },
+    { label: "Total Properties", value: properties.length, icon: <Map className="w-5 h-5" /> },
+    { label: "Active", value: activeCount, color: "green" as const },
+    { label: "Cities", value: uniqueCities, color: "blue" as const },
+    { label: "Total Listed", value: data?.count || 0, icon: <CurrencyDollar className="w-5 h-5" />, color: "purple" as const },
   ]
 
   const columns = [
-    { key: "destination", header: "Destination", sortable: true, cell: (p: TravelPackage) => (
-      <div><Text className="font-medium">{p.destination}</Text><Text className="text-ui-fg-muted text-sm">{p.category}</Text></div>
+    { key: "name", header: "Property", sortable: true, cell: (p: TravelProperty) => (
+      <div><Text className="font-medium">{p.name}</Text><Text className="text-ui-fg-muted text-sm">{p.property_type}</Text></div>
     )},
-    { key: "duration", header: "Duration", cell: (p: TravelPackage) => p.duration },
-    { key: "price", header: "Price", sortable: true, cell: (p: TravelPackage) => <Text className="font-medium">${p.price.toLocaleString()}</Text> },
-    { key: "departure_date", header: "Departure", sortable: true, cell: (p: TravelPackage) => p.departure_date },
-    { key: "bookings", header: "Bookings", sortable: true, cell: (p: TravelPackage) => p.bookings },
-    { key: "status", header: "Status", cell: (p: TravelPackage) => <StatusBadge status={p.status} /> },
+    { key: "city", header: "Location", cell: (p: TravelProperty) => (
+      <div><Text className="text-sm">{p.city}</Text><Text className="text-ui-fg-muted text-sm">{p.country_code}</Text></div>
+    )},
+    { key: "star_rating", header: "Stars", sortable: true, cell: (p: TravelProperty) => p.star_rating ? `${p.star_rating} ★` : "—" },
+    { key: "check_in_time", header: "Check-in", cell: (p: TravelProperty) => p.check_in_time || "—" },
+    { key: "check_out_time", header: "Check-out", cell: (p: TravelProperty) => p.check_out_time || "—" },
+    { key: "is_active", header: "Status", cell: (p: TravelProperty) => <StatusBadge status={p.is_active !== false ? "active" : "inactive"} /> },
   ]
+
+  const handleCreate = () => {
+    createTravel.mutate({
+      tenant_id: formData.tenant_id,
+      name: formData.name,
+      property_type: formData.property_type as any || "hotel",
+      address_line1: formData.address_line1,
+      city: formData.city,
+      country_code: formData.country_code || "us",
+      description: formData.description,
+      star_rating: formData.star_rating ? Number(formData.star_rating) : undefined,
+    }, {
+      onSuccess: () => { toast.success("Property created"); setShowCreate(false); setFormData({}) },
+      onError: () => toast.error("Failed to create property"),
+    })
+  }
 
   return (
     <Container className="p-0">
       <div className="p-6 border-b border-ui-border-base">
         <div className="flex items-center justify-between">
-          <div><Heading level="h1">Travel Packages</Heading><Text className="text-ui-fg-muted">Manage travel packages, bookings, and destinations</Text></div>
+          <div><Heading level="h1">Travel Properties</Heading><Text className="text-ui-fg-muted">Manage travel properties, bookings, and destinations</Text></div>
+          <Button variant="secondary" onClick={() => setShowCreate(true)}><Plus className="w-4 h-4 mr-1" />Add Property</Button>
         </div>
       </div>
 
       <div className="p-6"><StatsGrid stats={stats} columns={4} /></div>
 
       <div className="px-6 pb-6">
-        <DataTable data={packages} columns={columns} searchable searchPlaceholder="Search packages..." searchKeys={["destination", "category"]} loading={false} emptyMessage="No packages found" />
+        <DataTable data={properties} columns={columns} searchable searchPlaceholder="Search properties..." searchKeys={["name", "city", "property_type"]} loading={isLoading} emptyMessage="No properties found" />
       </div>
+
+      <FormDrawer open={showCreate} onOpenChange={setShowCreate} title="Create Travel Property" description="Add a new travel property" onSubmit={handleCreate} loading={createTravel.isPending}>
+        <div className="flex flex-col gap-4">
+          <div><Label>Tenant ID</Label><Input value={formData.tenant_id || ""} onChange={(e) => setFormData({ ...formData, tenant_id: e.target.value })} /></div>
+          <div><Label>Name</Label><Input value={formData.name || ""} onChange={(e) => setFormData({ ...formData, name: e.target.value })} /></div>
+          <div><Label>Property Type</Label><Input value={formData.property_type || ""} onChange={(e) => setFormData({ ...formData, property_type: e.target.value })} placeholder="hotel, resort, hostel, apartment, villa" /></div>
+          <div><Label>Description</Label><Input value={formData.description || ""} onChange={(e) => setFormData({ ...formData, description: e.target.value })} /></div>
+          <div><Label>Address</Label><Input value={formData.address_line1 || ""} onChange={(e) => setFormData({ ...formData, address_line1: e.target.value })} /></div>
+          <div><Label>City</Label><Input value={formData.city || ""} onChange={(e) => setFormData({ ...formData, city: e.target.value })} /></div>
+          <div><Label>Country Code</Label><Input value={formData.country_code || ""} onChange={(e) => setFormData({ ...formData, country_code: e.target.value })} placeholder="us" /></div>
+          <div><Label>Star Rating</Label><Input type="number" value={formData.star_rating || ""} onChange={(e) => setFormData({ ...formData, star_rating: e.target.value })} /></div>
+        </div>
+      </FormDrawer>
     </Container>
   )
 }

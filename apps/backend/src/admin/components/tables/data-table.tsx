@@ -1,4 +1,4 @@
-import { Table, Input, Button } from "@medusajs/ui"
+import { Table, Input } from "@medusajs/ui"
 import { MagnifyingGlass, ArrowUpMini, ArrowDownMini } from "@medusajs/icons"
 import { useState, useMemo } from "react"
 

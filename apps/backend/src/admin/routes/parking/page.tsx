@@ -1,71 +1,73 @@
 import { defineRouteConfig } from "@medusajs/admin-sdk"
-import { Container, Heading, Text, Badge } from "@medusajs/ui"
-import { Map, CurrencyDollar } from "@medusajs/icons"
+import { Container, Heading, Text, Badge, Button, Input, Label, toast } from "@medusajs/ui"
+import { Map, CurrencyDollar, Plus } from "@medusajs/icons"
+import { useState } from "react"
+import { useParkingZones, useCreateParkingZone } from "../../hooks/use-parking.js"
 import { DataTable } from "../../components/tables/data-table.js"
 import { StatusBadge } from "../../components/common"
 import { StatsGrid } from "../../components/charts/stats-grid.js"
-
-type ParkingSpot = {
-  id: string
-  zone: string
-  spot_number: string
-  type: string
-  rate_hourly: number
-  rate_daily: number
-  floor: string
-  vehicle: string | null
-  license_plate: string | null
-  status: string
-}
-
-const mockSpots: ParkingSpot[] = [
-  { id: "prk_01", zone: "Zone A - Premium", spot_number: "A-101", type: "Covered", rate_hourly: 8, rate_daily: 45, floor: "Level 1", vehicle: "Tesla Model 3", license_plate: "ABC 1234", status: "occupied" },
-  { id: "prk_02", zone: "Zone A - Premium", spot_number: "A-102", type: "Covered", rate_hourly: 8, rate_daily: 45, floor: "Level 1", vehicle: null, license_plate: null, status: "available" },
-  { id: "prk_03", zone: "Zone B - Standard", spot_number: "B-205", type: "Open", rate_hourly: 4, rate_daily: 25, floor: "Level 2", vehicle: "Honda Civic", license_plate: "XYZ 5678", status: "occupied" },
-  { id: "prk_04", zone: "Zone B - Standard", spot_number: "B-210", type: "Open", rate_hourly: 4, rate_daily: 25, floor: "Level 2", vehicle: null, license_plate: null, status: "available" },
-  { id: "prk_05", zone: "Zone C - Economy", spot_number: "C-312", type: "Open", rate_hourly: 2, rate_daily: 15, floor: "Level 3", vehicle: "Ford F-150", license_plate: "DEF 9012", status: "occupied" },
-  { id: "prk_06", zone: "Zone D - EV Charging", spot_number: "D-401", type: "EV Charger", rate_hourly: 10, rate_daily: 55, floor: "Level 4", vehicle: "BMW iX", license_plate: "EV 3456", status: "occupied" },
-  { id: "prk_07", zone: "Zone D - EV Charging", spot_number: "D-402", type: "EV Charger", rate_hourly: 10, rate_daily: 55, floor: "Level 4", vehicle: null, license_plate: null, status: "available" },
-  { id: "prk_08", zone: "Zone A - Premium", spot_number: "A-108", type: "Handicap", rate_hourly: 5, rate_daily: 30, floor: "Level 1", vehicle: null, license_plate: null, status: "reserved" },
-  { id: "prk_09", zone: "Zone B - Standard", spot_number: "B-220", type: "Open", rate_hourly: 4, rate_daily: 25, floor: "Level 2", vehicle: null, license_plate: null, status: "maintenance" },
-  { id: "prk_10", zone: "Zone C - Economy", spot_number: "C-350", type: "Open", rate_hourly: 2, rate_daily: 15, floor: "Level 3", vehicle: "Toyota Camry", license_plate: "GHI 7890", status: "occupied" },
-]
+import { FormDrawer } from "../../components/forms/form-drawer.js"
 
 const ParkingPage = () => {
-  const spots = mockSpots
-  const occupied = spots.filter(s => s.status === "occupied").length
-  const available = spots.filter(s => s.status === "available").length
-  const revenueToday = 1245
+  const [showCreate, setShowCreate] = useState(false)
+  const [formData, setFormData] = useState({ name: "", zone_type: "lot" as const, total_spots: 0, available_spots: 0, hourly_rate: 0, daily_rate: 0, currency_code: "usd" })
+
+  const { data, isLoading } = useParkingZones()
+  const createZone = useCreateParkingZone()
+
+  const zones = data?.items || []
+  const totalSpots = zones.reduce((s: number, z: any) => s + (z.total_spots || 0), 0)
+  const availableSpots = zones.reduce((s: number, z: any) => s + (z.available_spots || 0), 0)
+  const occupiedSpots = totalSpots - availableSpots
 
   const stats = [
-    { label: "Total Spots", value: spots.length, icon: <Map className="w-5 h-5" /> },
-    { label: "Occupied", value: occupied, color: "blue" as const },
-    { label: "Available", value: available, color: "green" as const },
-    { label: "Revenue Today", value: `$${revenueToday.toLocaleString()}`, icon: <CurrencyDollar className="w-5 h-5" />, color: "green" as const },
+    { label: "Total Zones", value: zones.length, icon: <Map className="w-5 h-5" /> },
+    { label: "Total Spots", value: totalSpots, color: "blue" as const },
+    { label: "Available", value: availableSpots, color: "green" as const },
+    { label: "Occupied", value: occupiedSpots, icon: <CurrencyDollar className="w-5 h-5" />, color: "orange" as const },
   ]
+
+  const handleCreate = async () => {
+    try {
+      await createZone.mutateAsync({
+        name: formData.name,
+        zone_type: formData.zone_type,
+        total_spots: formData.total_spots,
+        available_spots: formData.available_spots,
+        hourly_rate: formData.hourly_rate,
+        daily_rate: formData.daily_rate,
+        currency_code: formData.currency_code,
+        tenant_id: "default",
+      } as any)
+      toast.success("Parking zone created")
+      setShowCreate(false)
+      setFormData({ name: "", zone_type: "lot", total_spots: 0, available_spots: 0, hourly_rate: 0, daily_rate: 0, currency_code: "usd" })
+    } catch (error) {
+      toast.error("Failed to create parking zone")
+    }
+  }
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case "EV Charger": return "green"
-      case "Covered": return "blue"
-      case "Handicap": return "purple"
+      case "garage": return "blue"
+      case "valet": return "purple"
+      case "airport": return "green"
+      case "reserved": return "orange"
       default: return "grey"
     }
   }
 
   const columns = [
-    { key: "zone", header: "Zone", sortable: true, cell: (s: ParkingSpot) => (
-      <div><Text className="font-medium">{s.zone}</Text><Text className="text-ui-fg-muted text-sm">{s.floor}</Text></div>
+    { key: "name", header: "Zone", sortable: true, cell: (z: any) => (
+      <div><Text className="font-medium">{z.name}</Text><Text className="text-ui-fg-muted text-sm">{z.description || ""}</Text></div>
     )},
-    { key: "spot_number", header: "Spot #", sortable: true, cell: (s: ParkingSpot) => <Text className="font-medium">{s.spot_number}</Text> },
-    { key: "type", header: "Type", cell: (s: ParkingSpot) => <Badge color={getTypeColor(s.type) as any}>{s.type}</Badge> },
-    { key: "rate", header: "Rate", cell: (s: ParkingSpot) => (
-      <div><Text className="font-medium text-sm">${s.rate_hourly}/hr</Text><Text className="text-ui-fg-muted text-sm">${s.rate_daily}/day</Text></div>
+    { key: "zone_type", header: "Type", cell: (z: any) => <Badge color={getTypeColor(z.zone_type) as any}>{z.zone_type}</Badge> },
+    { key: "total_spots", header: "Total Spots", sortable: true, cell: (z: any) => <Text className="font-medium">{z.total_spots}</Text> },
+    { key: "available_spots", header: "Available", sortable: true, cell: (z: any) => <Text className="font-medium">{z.available_spots}</Text> },
+    { key: "rate", header: "Rate", cell: (z: any) => (
+      <div><Text className="font-medium text-sm">{z.hourly_rate ? `$${z.hourly_rate}/hr` : "—"}</Text><Text className="text-ui-fg-muted text-sm">{z.daily_rate ? `$${z.daily_rate}/day` : ""}</Text></div>
     )},
-    { key: "vehicle", header: "Vehicle", cell: (s: ParkingSpot) => s.vehicle ? (
-      <div><Text className="font-medium">{s.vehicle}</Text><Text className="text-ui-fg-muted text-sm">{s.license_plate}</Text></div>
-    ) : <Text className="text-ui-fg-muted">—</Text> },
-    { key: "status", header: "Status", cell: (s: ParkingSpot) => <StatusBadge status={s.status} /> },
+    { key: "is_active", header: "Status", cell: (z: any) => <StatusBadge status={z.is_active !== false ? "active" : "inactive"} /> },
   ]
 
   return (
@@ -73,14 +75,31 @@ const ParkingPage = () => {
       <div className="p-6 border-b border-ui-border-base">
         <div className="flex items-center justify-between">
           <div><Heading level="h1">Parking Management</Heading><Text className="text-ui-fg-muted">Manage parking spots, zones, and occupancy</Text></div>
+          <Button variant="primary" size="small" onClick={() => setShowCreate(true)}><Plus className="w-4 h-4 mr-1" />Add Zone</Button>
         </div>
       </div>
 
       <div className="p-6"><StatsGrid stats={stats} columns={4} /></div>
 
       <div className="px-6 pb-6">
-        <DataTable data={spots} columns={columns} searchable searchPlaceholder="Search spots..." searchKeys={["zone", "spot_number", "vehicle"]} loading={false} emptyMessage="No parking spots found" />
+        <DataTable data={zones} columns={columns} searchable searchPlaceholder="Search zones..." searchKeys={["name", "zone_type"]} loading={isLoading} emptyMessage="No parking zones found" />
       </div>
+
+      <FormDrawer open={showCreate} onOpenChange={setShowCreate} title="Create Parking Zone" onSubmit={handleCreate} submitLabel="Create" loading={createZone.isPending}>
+        <div className="space-y-4">
+          <div><Label htmlFor="name">Name</Label><Input id="name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} placeholder="Zone name" /></div>
+          <div>
+            <Label htmlFor="zone_type">Zone Type</Label>
+            <select id="zone_type" value={formData.zone_type} onChange={(e) => setFormData({ ...formData, zone_type: e.target.value as any })} className="w-full border border-ui-border-base rounded-md px-3 py-2 bg-ui-bg-base">
+              <option value="street">Street</option><option value="garage">Garage</option><option value="lot">Lot</option><option value="valet">Valet</option><option value="airport">Airport</option><option value="reserved">Reserved</option>
+            </select>
+          </div>
+          <div><Label htmlFor="total_spots">Total Spots</Label><Input id="total_spots" type="number" value={formData.total_spots} onChange={(e) => setFormData({ ...formData, total_spots: Number(e.target.value) })} /></div>
+          <div><Label htmlFor="available_spots">Available Spots</Label><Input id="available_spots" type="number" value={formData.available_spots} onChange={(e) => setFormData({ ...formData, available_spots: Number(e.target.value) })} /></div>
+          <div><Label htmlFor="hourly_rate">Hourly Rate</Label><Input id="hourly_rate" type="number" value={formData.hourly_rate} onChange={(e) => setFormData({ ...formData, hourly_rate: Number(e.target.value) })} /></div>
+          <div><Label htmlFor="daily_rate">Daily Rate</Label><Input id="daily_rate" type="number" value={formData.daily_rate} onChange={(e) => setFormData({ ...formData, daily_rate: Number(e.target.value) })} /></div>
+        </div>
+      </FormDrawer>
     </Container>
   )
 }

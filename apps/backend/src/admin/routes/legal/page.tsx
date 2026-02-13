@@ -1,65 +1,58 @@
 import { defineRouteConfig } from "@medusajs/admin-sdk"
-import { Container, Heading, Text, Badge } from "@medusajs/ui"
-import { DocumentText } from "@medusajs/icons"
+import { Container, Heading, Text, Badge, Button, Input, Label, toast } from "@medusajs/ui"
+import { DocumentText, Plus } from "@medusajs/icons"
+import { useState } from "react"
+import { useLegalAttorneys, useCreateLegalAttorney } from "../../hooks/use-legal.js"
 import { DataTable } from "../../components/tables/data-table.js"
 import { StatusBadge } from "../../components/common"
 import { StatsGrid } from "../../components/charts/stats-grid.js"
-
-type LegalCase = {
-  id: string
-  title: string
-  client: string
-  client_email: string
-  type: string
-  assigned_attorney: string
-  filed_date: string
-  priority: string
-  status: string
-}
-
-const mockCases: LegalCase[] = [
-  { id: "leg_01", title: "Trademark Infringement - Brand Protection", client: "Acme Corp", client_email: "legal@acme.com", type: "Intellectual Property", assigned_attorney: "Sarah Mitchell", filed_date: "2026-01-15", priority: "high", status: "active" },
-  { id: "leg_02", title: "Vendor Contract Dispute Resolution", client: "TechVentures LLC", client_email: "ops@techventures.io", type: "Contract Dispute", assigned_attorney: "James Rodriguez", filed_date: "2026-02-01", priority: "medium", status: "active" },
-  { id: "leg_03", title: "GDPR Compliance Review", client: "DataFlow Inc", client_email: "compliance@dataflow.eu", type: "Regulatory", assigned_attorney: "Emma Lawson", filed_date: "2026-01-20", priority: "high", status: "pending_review" },
-  { id: "leg_04", title: "Employment Agreement Drafting", client: "GrowthStartup", client_email: "hr@growthstartup.co", type: "Employment", assigned_attorney: "Michael Chen", filed_date: "2026-02-05", priority: "low", status: "resolved" },
-  { id: "leg_05", title: "Product Liability Claim Investigation", client: "SafeGoods Ltd", client_email: "safety@safegoods.com", type: "Product Liability", assigned_attorney: "Sarah Mitchell", filed_date: "2025-12-10", priority: "high", status: "active" },
-  { id: "leg_06", title: "Merger & Acquisition Due Diligence", client: "CapitalGroup", client_email: "deals@capitalgroup.com", type: "Corporate", assigned_attorney: "James Rodriguez", filed_date: "2026-02-08", priority: "high", status: "pending_review" },
-  { id: "leg_07", title: "Consumer Refund Policy Review", client: "RetailMax", client_email: "legal@retailmax.com", type: "Consumer Protection", assigned_attorney: "Emma Lawson", filed_date: "2026-01-28", priority: "medium", status: "resolved" },
-  { id: "leg_08", title: "Data Breach Notification Process", client: "CloudSecure", client_email: "incident@cloudsecure.io", type: "Privacy", assigned_attorney: "Michael Chen", filed_date: "2026-02-12", priority: "high", status: "active" },
-]
+import { FormDrawer } from "../../components/forms/form-drawer.js"
 
 const LegalPage = () => {
-  const cases = mockCases
-  const activeCases = cases.filter(c => c.status === "active").length
-  const resolvedCases = cases.filter(c => c.status === "resolved").length
-  const pendingReview = cases.filter(c => c.status === "pending_review").length
+  const [showCreate, setShowCreate] = useState(false)
+  const [formData, setFormData] = useState({ name: "", bar_number: "", bio: "", experience_years: 0, hourly_rate: 0, currency_code: "usd" })
+
+  const { data, isLoading } = useLegalAttorneys()
+  const createAttorney = useCreateLegalAttorney()
+
+  const attorneys = data?.items || []
+  const acceptingCases = attorneys.filter((a: any) => a.is_accepting_cases).length
+  const totalAttorneys = attorneys.length
 
   const stats = [
-    { label: "Total Cases", value: cases.length, icon: <DocumentText className="w-5 h-5" /> },
-    { label: "Active", value: activeCases, color: "blue" as const },
-    { label: "Resolved", value: resolvedCases, color: "green" as const },
-    { label: "Pending Review", value: pendingReview, color: "orange" as const },
+    { label: "Total Attorneys", value: totalAttorneys, icon: <DocumentText className="w-5 h-5" /> },
+    { label: "Accepting Cases", value: acceptingCases, color: "blue" as const },
+    { label: "Specializations", value: [...new Set(attorneys.flatMap((a: any) => a.specializations || []))].length, color: "green" as const },
+    { label: "Total Profiles", value: totalAttorneys, color: "orange" as const },
   ]
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "high": return "red"
-      case "medium": return "orange"
-      case "low": return "green"
-      default: return "grey"
+  const handleCreate = async () => {
+    try {
+      await createAttorney.mutateAsync({
+        name: formData.name,
+        bar_number: formData.bar_number,
+        bio: formData.bio,
+        experience_years: formData.experience_years,
+        hourly_rate: formData.hourly_rate,
+        currency_code: formData.currency_code,
+        tenant_id: "default",
+      } as any)
+      toast.success("Attorney profile created")
+      setShowCreate(false)
+      setFormData({ name: "", bar_number: "", bio: "", experience_years: 0, hourly_rate: 0, currency_code: "usd" })
+    } catch (error) {
+      toast.error("Failed to create attorney profile")
     }
   }
 
   const columns = [
-    { key: "title", header: "Case", sortable: true, cell: (c: LegalCase) => (
-      <div><Text className="font-medium">{c.title}</Text><Text className="text-ui-fg-muted text-sm">{c.type} · Filed {c.filed_date}</Text></div>
+    { key: "name", header: "Attorney", sortable: true, cell: (a: any) => (
+      <div><Text className="font-medium">{a.name}</Text><Text className="text-ui-fg-muted text-sm">{a.bar_number ? `Bar #${a.bar_number}` : ""}</Text></div>
     )},
-    { key: "client", header: "Client", cell: (c: LegalCase) => (
-      <div><Text className="font-medium">{c.client}</Text><Text className="text-ui-fg-muted text-sm">{c.client_email}</Text></div>
-    )},
-    { key: "assigned_attorney", header: "Attorney", cell: (c: LegalCase) => c.assigned_attorney },
-    { key: "priority", header: "Priority", cell: (c: LegalCase) => <Badge color={getPriorityColor(c.priority) as any}>{c.priority.charAt(0).toUpperCase() + c.priority.slice(1)}</Badge> },
-    { key: "status", header: "Status", cell: (c: LegalCase) => <StatusBadge status={c.status} /> },
+    { key: "experience_years", header: "Experience", sortable: true, cell: (a: any) => a.experience_years ? `${a.experience_years} years` : "—" },
+    { key: "hourly_rate", header: "Rate", sortable: true, cell: (a: any) => a.hourly_rate ? <Text className="font-medium">${a.hourly_rate}/hr</Text> : <Text className="text-ui-fg-muted">—</Text> },
+    { key: "rating", header: "Rating", sortable: true, cell: (a: any) => a.rating ? <Text className="font-medium">⭐ {a.rating}</Text> : "—" },
+    { key: "is_accepting_cases", header: "Status", cell: (a: any) => <StatusBadge status={a.is_accepting_cases ? "active" : "inactive"} /> },
   ]
 
   return (
@@ -67,14 +60,25 @@ const LegalPage = () => {
       <div className="p-6 border-b border-ui-border-base">
         <div className="flex items-center justify-between">
           <div><Heading level="h1">Legal Services</Heading><Text className="text-ui-fg-muted">Manage legal cases, compliance, and contracts</Text></div>
+          <Button variant="primary" size="small" onClick={() => setShowCreate(true)}><Plus className="w-4 h-4 mr-1" />Add Attorney</Button>
         </div>
       </div>
 
       <div className="p-6"><StatsGrid stats={stats} columns={4} /></div>
 
       <div className="px-6 pb-6">
-        <DataTable data={cases} columns={columns} searchable searchPlaceholder="Search cases..." searchKeys={["title", "client", "assigned_attorney", "type"]} loading={false} emptyMessage="No legal cases found" />
+        <DataTable data={attorneys} columns={columns} searchable searchPlaceholder="Search attorneys..." searchKeys={["name", "bar_number"]} loading={isLoading} emptyMessage="No attorneys found" />
       </div>
+
+      <FormDrawer open={showCreate} onOpenChange={setShowCreate} title="Create Attorney Profile" onSubmit={handleCreate} submitLabel="Create" loading={createAttorney.isPending}>
+        <div className="space-y-4">
+          <div><Label htmlFor="name">Name</Label><Input id="name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} placeholder="Attorney name" /></div>
+          <div><Label htmlFor="bar_number">Bar Number</Label><Input id="bar_number" value={formData.bar_number} onChange={(e) => setFormData({ ...formData, bar_number: e.target.value })} placeholder="Bar number" /></div>
+          <div><Label htmlFor="bio">Bio</Label><Input id="bio" value={formData.bio} onChange={(e) => setFormData({ ...formData, bio: e.target.value })} placeholder="Short bio" /></div>
+          <div><Label htmlFor="experience_years">Experience (years)</Label><Input id="experience_years" type="number" value={formData.experience_years} onChange={(e) => setFormData({ ...formData, experience_years: Number(e.target.value) })} /></div>
+          <div><Label htmlFor="hourly_rate">Hourly Rate</Label><Input id="hourly_rate" type="number" value={formData.hourly_rate} onChange={(e) => setFormData({ ...formData, hourly_rate: Number(e.target.value) })} /></div>
+        </div>
+      </FormDrawer>
     </Container>
   )
 }

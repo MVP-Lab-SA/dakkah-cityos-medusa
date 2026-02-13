@@ -1,89 +1,93 @@
 import { defineRouteConfig } from "@medusajs/admin-sdk"
-import { Container, Heading, Text, Badge } from "@medusajs/ui"
-import { Star, User } from "@medusajs/icons"
+import { Container, Heading, Text, Badge, Button, Input, Label, toast } from "@medusajs/ui"
+import { Star, Plus } from "@medusajs/icons"
+import { useState } from "react"
+import { useFitness, useCreateGymMembership, GymMembership } from "../../hooks/use-fitness.js"
 import { DataTable } from "../../components/tables/data-table.js"
 import { StatusBadge } from "../../components/common"
 import { StatsGrid } from "../../components/charts/stats-grid.js"
-
-type FitnessClass = {
-  id: string
-  name: string
-  trainer: string
-  trainer_email: string
-  schedule: string
-  time: string
-  capacity: number
-  enrolled: number
-  duration: string
-  level: string
-  status: string
-}
-
-const mockClasses: FitnessClass[] = [
-  { id: "fit_01", name: "Morning HIIT Blast", trainer: "Coach Mike", trainer_email: "mike@fitgym.com", schedule: "Mon/Wed/Fri", time: "6:00 AM", capacity: 30, enrolled: 28, duration: "45 min", level: "Advanced", status: "active" },
-  { id: "fit_02", name: "Yoga Flow & Restore", trainer: "Priya Sharma", trainer_email: "priya@fitgym.com", schedule: "Tue/Thu", time: "7:30 AM", capacity: 20, enrolled: 18, duration: "60 min", level: "All Levels", status: "active" },
-  { id: "fit_03", name: "Spin Class Endurance", trainer: "Jake Torres", trainer_email: "jake@fitgym.com", schedule: "Mon/Wed/Fri", time: "5:30 PM", capacity: 25, enrolled: 25, duration: "50 min", level: "Intermediate", status: "full" },
-  { id: "fit_04", name: "Boxing Fundamentals", trainer: "Rina Patel", trainer_email: "rina@fitgym.com", schedule: "Tue/Thu/Sat", time: "12:00 PM", capacity: 15, enrolled: 12, duration: "60 min", level: "Beginner", status: "active" },
-  { id: "fit_05", name: "Pilates Core Strength", trainer: "Emma Davis", trainer_email: "emma@fitgym.com", schedule: "Mon/Wed", time: "9:00 AM", capacity: 18, enrolled: 14, duration: "55 min", level: "Intermediate", status: "active" },
-  { id: "fit_06", name: "CrossFit WOD", trainer: "Coach Mike", trainer_email: "mike@fitgym.com", schedule: "Mon-Fri", time: "4:00 PM", capacity: 20, enrolled: 19, duration: "60 min", level: "Advanced", status: "active" },
-  { id: "fit_07", name: "Aqua Aerobics", trainer: "Lisa Chen", trainer_email: "lisa@fitgym.com", schedule: "Wed/Fri", time: "10:00 AM", capacity: 22, enrolled: 8, duration: "45 min", level: "All Levels", status: "active" },
-  { id: "fit_08", name: "Zumba Dance Party", trainer: "Carlos Reyes", trainer_email: "carlos@fitgym.com", schedule: "Sat", time: "11:00 AM", capacity: 35, enrolled: 0, duration: "60 min", level: "All Levels", status: "cancelled" },
-]
+import { FormDrawer } from "../../components/forms/form-drawer.js"
 
 const FitnessPage = () => {
-  const classes = mockClasses
-  const activeMembers = 248
-  const uniqueTrainers = [...new Set(classes.map(c => c.trainer))].length
-  const sessionsToday = 6
+  const [showCreate, setShowCreate] = useState(false)
+  const [formData, setFormData] = useState({ customer_id: "", membership_type: "basic" as const, monthly_fee: "", currency_code: "usd", start_date: "", tenant_id: "" })
+
+  const { data, isLoading } = useFitness()
+  const createMembership = useCreateGymMembership()
+
+  const memberships = data?.items || []
+  const activeCount = memberships.filter((m: any) => m.status === "active").length
+  const frozenCount = memberships.filter((m: any) => m.status === "frozen").length
 
   const stats = [
-    { label: "Total Classes", value: classes.length, icon: <Star className="w-5 h-5" /> },
-    { label: "Active Members", value: activeMembers, color: "green" as const },
-    { label: "Trainers", value: uniqueTrainers, icon: <User className="w-5 h-5" />, color: "blue" as const },
-    { label: "Sessions Today", value: sessionsToday, color: "blue" as const },
+    { label: "Total Memberships", value: memberships.length, icon: <Star className="w-5 h-5" /> },
+    { label: "Active", value: activeCount, color: "green" as const },
+    { label: "Frozen", value: frozenCount, color: "blue" as const },
+    { label: "Expired", value: memberships.filter((m: any) => m.status === "expired").length, color: "orange" as const },
   ]
 
-  const getLevelColor = (level: string) => {
-    switch (level) {
-      case "Advanced": return "red"
-      case "Intermediate": return "orange"
-      case "Beginner": return "green"
-      default: return "blue"
+  const handleCreate = async () => {
+    try {
+      await createMembership.mutateAsync({ ...formData, monthly_fee: Number(formData.monthly_fee) })
+      toast.success("Membership created")
+      setShowCreate(false)
+      setFormData({ customer_id: "", membership_type: "basic", monthly_fee: "", currency_code: "usd", start_date: "", tenant_id: "" })
+    } catch (error) {
+      toast.error("Failed to create membership")
+    }
+  }
+
+  const getMembershipColor = (type: string) => {
+    switch (type) {
+      case "vip": return "purple"
+      case "premium": return "orange"
+      case "corporate": return "blue"
+      case "family": return "green"
+      default: return "grey"
     }
   }
 
   const columns = [
-    { key: "name", header: "Class", sortable: true, cell: (c: FitnessClass) => (
-      <div><Text className="font-medium">{c.name}</Text><Text className="text-ui-fg-muted text-sm">{c.duration} · {c.schedule}</Text></div>
+    { key: "customer_id", header: "Member", sortable: true, cell: (m: GymMembership) => (
+      <div><Text className="font-medium">{m.customer_id}</Text><Text className="text-ui-fg-muted text-sm">{m.facility_id || ""}</Text></div>
     )},
-    { key: "trainer", header: "Trainer", cell: (c: FitnessClass) => (
-      <div><Text className="font-medium">{c.trainer}</Text><Text className="text-ui-fg-muted text-sm">{c.time}</Text></div>
-    )},
-    { key: "capacity", header: "Capacity", sortable: true, cell: (c: FitnessClass) => (
-      <div>
-        <Text className="font-medium text-sm">{c.enrolled}/{c.capacity}</Text>
-        <div className="w-20 h-1.5 bg-ui-bg-subtle rounded-full overflow-hidden mt-1">
-          <div className={`h-full rounded-full ${c.enrolled >= c.capacity ? "bg-ui-tag-red-icon" : "bg-ui-tag-green-icon"}`} style={{ width: `${Math.round((c.enrolled / c.capacity) * 100)}%` }} />
-        </div>
-      </div>
-    )},
-    { key: "level", header: "Level", cell: (c: FitnessClass) => <Badge color={getLevelColor(c.level) as any}>{c.level}</Badge> },
-    { key: "status", header: "Status", cell: (c: FitnessClass) => <StatusBadge status={c.status} /> },
+    { key: "membership_type", header: "Type", cell: (m: GymMembership) => <Badge color={getMembershipColor(m.membership_type) as any}>{m.membership_type}</Badge> },
+    { key: "monthly_fee", header: "Monthly Fee", sortable: true, cell: (m: GymMembership) => <Text className="font-medium">${(m.monthly_fee || 0).toLocaleString()}</Text> },
+    { key: "start_date", header: "Start Date", sortable: true, cell: (m: GymMembership) => m.start_date?.split("T")[0] || "-" },
+    { key: "auto_renew", header: "Auto Renew", cell: (m: GymMembership) => m.auto_renew ? "Yes" : "No" },
+    { key: "status", header: "Status", cell: (m: GymMembership) => <StatusBadge status={m.status} /> },
   ]
 
   return (
     <Container className="p-0">
       <div className="p-6 border-b border-ui-border-base">
         <div className="flex items-center justify-between">
-          <div><Heading level="h1">Fitness Services</Heading><Text className="text-ui-fg-muted">Manage fitness classes, trainers, and memberships</Text></div>
+          <div><Heading level="h1">Fitness Services</Heading><Text className="text-ui-fg-muted">Manage fitness memberships, trainers, and classes</Text></div>
+          <Button variant="secondary" onClick={() => setShowCreate(true)}><Plus className="w-4 h-4 mr-1" />Add Membership</Button>
         </div>
       </div>
 
       <div className="p-6"><StatsGrid stats={stats} columns={4} /></div>
 
       <div className="px-6 pb-6">
-        <DataTable data={classes} columns={columns} searchable searchPlaceholder="Search classes..." searchKeys={["name", "trainer", "level"]} loading={false} emptyMessage="No fitness classes found" />
+        <DataTable data={memberships} columns={columns} searchable searchPlaceholder="Search memberships..." searchKeys={["customer_id", "membership_type"]} loading={isLoading} emptyMessage="No fitness memberships found" />
       </div>
+
+      <FormDrawer open={showCreate} onOpenChange={setShowCreate} title="Add Membership" onSubmit={handleCreate} submitLabel="Create" loading={createMembership.isPending}>
+        <div className="space-y-4">
+          <div><Label htmlFor="customer_id">Customer ID</Label><Input id="customer_id" value={formData.customer_id} onChange={(e) => setFormData({ ...formData, customer_id: e.target.value })} placeholder="Customer ID" /></div>
+          <div><Label htmlFor="tenant_id">Tenant ID</Label><Input id="tenant_id" value={formData.tenant_id} onChange={(e) => setFormData({ ...formData, tenant_id: e.target.value })} placeholder="Tenant ID" /></div>
+          <div>
+            <Label htmlFor="membership_type">Membership Type</Label>
+            <select id="membership_type" value={formData.membership_type} onChange={(e) => setFormData({ ...formData, membership_type: e.target.value as any })} className="w-full border border-ui-border-base rounded-md px-3 py-2 bg-ui-bg-base">
+              <option value="basic">Basic</option><option value="premium">Premium</option><option value="vip">VIP</option><option value="student">Student</option><option value="corporate">Corporate</option><option value="family">Family</option>
+            </select>
+          </div>
+          <div><Label htmlFor="monthly_fee">Monthly Fee</Label><Input id="monthly_fee" type="number" value={formData.monthly_fee} onChange={(e) => setFormData({ ...formData, monthly_fee: e.target.value })} placeholder="Monthly fee" /></div>
+          <div><Label htmlFor="currency_code">Currency Code</Label><Input id="currency_code" value={formData.currency_code} onChange={(e) => setFormData({ ...formData, currency_code: e.target.value })} placeholder="usd" /></div>
+          <div><Label htmlFor="start_date">Start Date</Label><Input id="start_date" type="date" value={formData.start_date} onChange={(e) => setFormData({ ...formData, start_date: e.target.value })} /></div>
+        </div>
+      </FormDrawer>
     </Container>
   )
 }

@@ -1,40 +1,25 @@
 import { defineRouteConfig } from "@medusajs/admin-sdk"
-import { Container, Heading, Text, Badge } from "@medusajs/ui"
-import { BuildingStorefront, CurrencyDollar } from "@medusajs/icons"
+import { Container, Heading, Text, Badge, Button, Input, Label, toast } from "@medusajs/ui"
+import { BuildingStorefront, CurrencyDollar, Plus } from "@medusajs/icons"
+import { useState } from "react"
+import { usePropertyListings, useCreatePropertyListing } from "../../hooks/use-real-estate.js"
 import { DataTable } from "../../components/tables/data-table.js"
 import { StatusBadge } from "../../components/common"
 import { StatsGrid } from "../../components/charts/stats-grid.js"
-
-type Property = {
-  id: string
-  title: string
-  type: string
-  price: number
-  location: string
-  status: string
-  bedrooms: number
-  bathrooms: number
-  sqft: number
-  listing_type: string
-}
-
-const mockProperties: Property[] = [
-  { id: "prop_01", title: "Modern Downtown Loft", type: "Apartment", price: 450000, location: "123 Main St, Downtown", status: "active", bedrooms: 2, bathrooms: 2, sqft: 1200, listing_type: "sale" },
-  { id: "prop_02", title: "Suburban Family Home", type: "House", price: 685000, location: "456 Oak Ave, Suburbia", status: "active", bedrooms: 4, bathrooms: 3, sqft: 2800, listing_type: "sale" },
-  { id: "prop_03", title: "Waterfront Condo", type: "Condo", price: 3500, location: "789 Harbor Blvd", status: "active", bedrooms: 1, bathrooms: 1, sqft: 850, listing_type: "rent" },
-  { id: "prop_04", title: "Commercial Office Space", type: "Commercial", price: 8500, location: "321 Business Park Dr", status: "active", bedrooms: 0, bathrooms: 2, sqft: 3500, listing_type: "rent" },
-  { id: "prop_05", title: "Luxury Penthouse", type: "Penthouse", price: 1250000, location: "555 Skyline Tower", status: "pending", bedrooms: 3, bathrooms: 3, sqft: 3200, listing_type: "sale" },
-  { id: "prop_06", title: "Cozy Studio Apartment", type: "Studio", price: 1800, location: "222 College Rd", status: "active", bedrooms: 0, bathrooms: 1, sqft: 450, listing_type: "rent" },
-  { id: "prop_07", title: "Ranch-Style Estate", type: "House", price: 920000, location: "888 Country Lane", status: "sold", bedrooms: 5, bathrooms: 4, sqft: 4200, listing_type: "sale" },
-  { id: "prop_08", title: "Beachfront Villa", type: "Villa", price: 2100000, location: "100 Ocean Dr", status: "active", bedrooms: 6, bathrooms: 5, sqft: 5500, listing_type: "sale" },
-]
+import { FormDrawer } from "../../components/forms/form-drawer.js"
 
 const RealEstatePage = () => {
-  const properties = mockProperties
-  const forSale = properties.filter(p => p.listing_type === "sale").length
-  const forRent = properties.filter(p => p.listing_type === "rent").length
-  const saleProperties = properties.filter(p => p.listing_type === "sale")
-  const avgPrice = saleProperties.length > 0 ? Math.round(saleProperties.reduce((s, p) => s + p.price, 0) / saleProperties.length) : 0
+  const [showCreate, setShowCreate] = useState(false)
+  const [formData, setFormData] = useState({ title: "", property_type: "apartment" as const, listing_type: "sale" as const, price: 0, currency_code: "usd", address_line1: "", city: "", postal_code: "", country_code: "US", bedrooms: 0, bathrooms: 0, area_sqm: 0 })
+
+  const { data, isLoading } = usePropertyListings()
+  const createListing = useCreatePropertyListing()
+
+  const properties = data?.items || []
+  const forSale = properties.filter((p: any) => p.listing_type === "sale").length
+  const forRent = properties.filter((p: any) => p.listing_type === "rent").length
+  const saleProperties = properties.filter((p: any) => p.listing_type === "sale")
+  const avgPrice = saleProperties.length > 0 ? Math.round(saleProperties.reduce((s: number, p: any) => s + (p.price || 0), 0) / saleProperties.length) : 0
 
   const stats = [
     { label: "Total Listings", value: properties.length, icon: <BuildingStorefront className="w-5 h-5" /> },
@@ -43,21 +28,46 @@ const RealEstatePage = () => {
     { label: "Avg Price", value: `$${avgPrice.toLocaleString()}`, icon: <CurrencyDollar className="w-5 h-5" />, color: "orange" as const },
   ]
 
+  const handleCreate = async () => {
+    try {
+      await createListing.mutateAsync({
+        title: formData.title,
+        property_type: formData.property_type,
+        listing_type: formData.listing_type,
+        price: formData.price,
+        currency_code: formData.currency_code,
+        address_line1: formData.address_line1,
+        city: formData.city,
+        postal_code: formData.postal_code,
+        country_code: formData.country_code,
+        bedrooms: formData.bedrooms,
+        bathrooms: formData.bathrooms,
+        area_sqm: formData.area_sqm,
+        tenant_id: "default",
+      } as any)
+      toast.success("Property listing created")
+      setShowCreate(false)
+      setFormData({ title: "", property_type: "apartment", listing_type: "sale", price: 0, currency_code: "usd", address_line1: "", city: "", postal_code: "", country_code: "US", bedrooms: 0, bathrooms: 0, area_sqm: 0 })
+    } catch (error) {
+      toast.error("Failed to create property listing")
+    }
+  }
+
   const columns = [
-    { key: "title", header: "Property", sortable: true, cell: (p: Property) => (
-      <div><Text className="font-medium">{p.title}</Text><Text className="text-ui-fg-muted text-sm">{p.location}</Text></div>
+    { key: "title", header: "Property", sortable: true, cell: (p: any) => (
+      <div><Text className="font-medium">{p.title}</Text><Text className="text-ui-fg-muted text-sm">{p.address_line1}{p.city ? `, ${p.city}` : ""}</Text></div>
     )},
-    { key: "type", header: "Type", cell: (p: Property) => <Badge color="grey">{p.type}</Badge> },
-    { key: "listing_type", header: "Listing", cell: (p: Property) => (
-      <Badge color={p.listing_type === "sale" ? "blue" : "green"}>{p.listing_type === "sale" ? "For Sale" : "For Rent"}</Badge>
+    { key: "property_type", header: "Type", cell: (p: any) => <Badge color="grey">{p.property_type}</Badge> },
+    { key: "listing_type", header: "Listing", cell: (p: any) => (
+      <Badge color={p.listing_type === "sale" ? "blue" : "green"}>{p.listing_type === "sale" ? "For Sale" : p.listing_type === "rent" ? "For Rent" : p.listing_type}</Badge>
     )},
-    { key: "price", header: "Price", sortable: true, cell: (p: Property) => (
-      <Text className="font-medium">{p.listing_type === "rent" ? `$${p.price.toLocaleString()}/mo` : `$${p.price.toLocaleString()}`}</Text>
+    { key: "price", header: "Price", sortable: true, cell: (p: any) => (
+      <Text className="font-medium">{p.listing_type === "rent" ? `$${(p.price || 0).toLocaleString()}/mo` : `$${(p.price || 0).toLocaleString()}`}</Text>
     )},
-    { key: "details", header: "Details", cell: (p: Property) => (
-      <Text className="text-sm">{p.bedrooms > 0 ? `${p.bedrooms} bd / ${p.bathrooms} ba` : `${p.bathrooms} ba`} · {p.sqft.toLocaleString()} sqft</Text>
+    { key: "details", header: "Details", cell: (p: any) => (
+      <Text className="text-sm">{p.bedrooms ? `${p.bedrooms} bd / ${p.bathrooms || 0} ba` : `${p.bathrooms || 0} ba`}{p.area_sqm ? ` · ${p.area_sqm} sqm` : ""}</Text>
     )},
-    { key: "status", header: "Status", cell: (p: Property) => <StatusBadge status={p.status} /> },
+    { key: "status", header: "Status", cell: (p: any) => <StatusBadge status={p.status || "draft"} /> },
   ]
 
   return (
@@ -65,14 +75,40 @@ const RealEstatePage = () => {
       <div className="p-6 border-b border-ui-border-base">
         <div className="flex items-center justify-between">
           <div><Heading level="h1">Real Estate Listings</Heading><Text className="text-ui-fg-muted">Manage property listings, sales, and rentals</Text></div>
+          <Button variant="primary" size="small" onClick={() => setShowCreate(true)}><Plus className="w-4 h-4 mr-1" />Add Listing</Button>
         </div>
       </div>
 
       <div className="p-6"><StatsGrid stats={stats} columns={4} /></div>
 
       <div className="px-6 pb-6">
-        <DataTable data={properties} columns={columns} searchable searchPlaceholder="Search properties..." searchKeys={["title", "location", "type"]} loading={false} emptyMessage="No properties found" />
+        <DataTable data={properties} columns={columns} searchable searchPlaceholder="Search properties..." searchKeys={["title", "city", "property_type"]} loading={isLoading} emptyMessage="No properties found" />
       </div>
+
+      <FormDrawer open={showCreate} onOpenChange={setShowCreate} title="Create Property Listing" onSubmit={handleCreate} submitLabel="Create" loading={createListing.isPending}>
+        <div className="space-y-4">
+          <div><Label htmlFor="title">Title</Label><Input id="title" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} placeholder="Property title" /></div>
+          <div>
+            <Label htmlFor="property_type">Property Type</Label>
+            <select id="property_type" value={formData.property_type} onChange={(e) => setFormData({ ...formData, property_type: e.target.value as any })} className="w-full border border-ui-border-base rounded-md px-3 py-2 bg-ui-bg-base">
+              <option value="apartment">Apartment</option><option value="house">House</option><option value="villa">Villa</option><option value="land">Land</option><option value="commercial">Commercial</option><option value="office">Office</option><option value="warehouse">Warehouse</option><option value="studio">Studio</option>
+            </select>
+          </div>
+          <div>
+            <Label htmlFor="listing_type">Listing Type</Label>
+            <select id="listing_type" value={formData.listing_type} onChange={(e) => setFormData({ ...formData, listing_type: e.target.value as any })} className="w-full border border-ui-border-base rounded-md px-3 py-2 bg-ui-bg-base">
+              <option value="sale">Sale</option><option value="rent">Rent</option><option value="lease">Lease</option><option value="auction">Auction</option>
+            </select>
+          </div>
+          <div><Label htmlFor="price">Price</Label><Input id="price" type="number" value={formData.price} onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })} placeholder="Price" /></div>
+          <div><Label htmlFor="address_line1">Address</Label><Input id="address_line1" value={formData.address_line1} onChange={(e) => setFormData({ ...formData, address_line1: e.target.value })} placeholder="Address" /></div>
+          <div><Label htmlFor="city">City</Label><Input id="city" value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} placeholder="City" /></div>
+          <div><Label htmlFor="postal_code">Postal Code</Label><Input id="postal_code" value={formData.postal_code} onChange={(e) => setFormData({ ...formData, postal_code: e.target.value })} placeholder="Postal code" /></div>
+          <div><Label htmlFor="bedrooms">Bedrooms</Label><Input id="bedrooms" type="number" value={formData.bedrooms} onChange={(e) => setFormData({ ...formData, bedrooms: Number(e.target.value) })} /></div>
+          <div><Label htmlFor="bathrooms">Bathrooms</Label><Input id="bathrooms" type="number" value={formData.bathrooms} onChange={(e) => setFormData({ ...formData, bathrooms: Number(e.target.value) })} /></div>
+          <div><Label htmlFor="area_sqm">Area (sqm)</Label><Input id="area_sqm" type="number" value={formData.area_sqm} onChange={(e) => setFormData({ ...formData, area_sqm: Number(e.target.value) })} /></div>
+        </div>
+      </FormDrawer>
     </Container>
   )
 }

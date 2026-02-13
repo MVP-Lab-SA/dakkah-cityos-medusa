@@ -1,60 +1,69 @@
 import { defineRouteConfig } from "@medusajs/admin-sdk"
-import { Container, Heading, Text, Badge } from "@medusajs/ui"
-import { Heart, CurrencyDollar } from "@medusajs/icons"
+import { Container, Heading, Text, Badge, Button, Input, Label, toast } from "@medusajs/ui"
+import { Heart, CurrencyDollar, Plus } from "@medusajs/icons"
+import { useState } from "react"
+import { usePetProfiles, useCreatePetProfile } from "../../hooks/use-pet-services.js"
 import { DataTable } from "../../components/tables/data-table.js"
 import { StatusBadge } from "../../components/common"
 import { StatsGrid } from "../../components/charts/stats-grid.js"
-
-type PetService = {
-  id: string
-  name: string
-  type: string
-  provider: string
-  provider_email: string
-  price: number
-  duration: string
-  bookings: number
-  rating: number
-  status: string
-}
-
-const mockServices: PetService[] = [
-  { id: "pet_01", name: "Full Grooming Package - Dogs", type: "Grooming", provider: "Pampered Paws Salon", provider_email: "info@pamperedpaws.com", price: 85, duration: "2 hours", bookings: 124, rating: 4.8, status: "active" },
-  { id: "pet_02", name: "Cat Boarding - Premium Suite", type: "Boarding", provider: "Whiskers Inn", provider_email: "stay@whiskersinn.com", price: 55, duration: "Per night", bookings: 89, rating: 4.6, status: "active" },
-  { id: "pet_03", name: "Dog Walking - Group (1hr)", type: "Walking", provider: "Happy Tails Walking", provider_email: "walk@happytails.co", price: 25, duration: "1 hour", bookings: 342, rating: 4.9, status: "active" },
-  { id: "pet_04", name: "Veterinary Checkup", type: "Veterinary", provider: "PetCare Clinic", provider_email: "clinic@petcare.com", price: 120, duration: "30 min", bookings: 56, rating: 4.7, status: "active" },
-  { id: "pet_05", name: "Puppy Training - 6 Week Course", type: "Training", provider: "K9 Academy", provider_email: "train@k9academy.com", price: 350, duration: "6 weeks", bookings: 18, rating: 4.5, status: "active" },
-  { id: "pet_06", name: "Pet Sitting (In-Home)", type: "Sitting", provider: "Furry Friends Sitting", provider_email: "sit@furryfriends.co", price: 45, duration: "Per day", bookings: 67, rating: 4.8, status: "active" },
-  { id: "pet_07", name: "Exotic Pet Care Consultation", type: "Veterinary", provider: "Exotic Animal Clinic", provider_email: "exotic@animalclinic.com", price: 200, duration: "45 min", bookings: 12, rating: 4.4, status: "inactive" },
-  { id: "pet_08", name: "Pet Photography Session", type: "Photography", provider: "PawPrints Studio", provider_email: "photo@pawprints.com", price: 150, duration: "1 hour", bookings: 34, rating: 4.9, status: "active" },
-]
+import { FormDrawer } from "../../components/forms/form-drawer.js"
 
 const PetServicesPage = () => {
-  const services = mockServices
-  const activeBookings = 47
-  const providers = [...new Set(services.map(s => s.provider))].length
-  const revenue = services.reduce((s, svc) => s + (svc.price * svc.bookings), 0)
+  const [showCreate, setShowCreate] = useState(false)
+  const [formData, setFormData] = useState({ name: "", species: "dog" as const, breed: "", owner_id: "", color: "", gender: "unknown" as const })
+
+  const { data, isLoading } = usePetProfiles()
+  const createProfile = useCreatePetProfile()
+
+  const pets = data?.items || []
+  const speciesCount = [...new Set(pets.map((p: any) => p.species))].length
+  const neuteredCount = pets.filter((p: any) => p.is_neutered).length
 
   const stats = [
-    { label: "Total Services", value: services.length, icon: <Heart className="w-5 h-5" /> },
-    { label: "Active Bookings", value: activeBookings, color: "blue" as const },
-    { label: "Providers", value: providers, color: "green" as const },
-    { label: "Revenue", value: `$${revenue.toLocaleString()}`, icon: <CurrencyDollar className="w-5 h-5" />, color: "green" as const },
+    { label: "Total Pets", value: pets.length, icon: <Heart className="w-5 h-5" /> },
+    { label: "Species", value: speciesCount, color: "blue" as const },
+    { label: "Neutered", value: neuteredCount, color: "green" as const },
+    { label: "Total Profiles", value: pets.length, icon: <CurrencyDollar className="w-5 h-5" />, color: "green" as const },
   ]
 
+  const handleCreate = async () => {
+    try {
+      await createProfile.mutateAsync({
+        name: formData.name,
+        species: formData.species,
+        breed: formData.breed,
+        owner_id: formData.owner_id,
+        color: formData.color,
+        gender: formData.gender,
+        tenant_id: "default",
+      } as any)
+      toast.success("Pet profile created")
+      setShowCreate(false)
+      setFormData({ name: "", species: "dog", breed: "", owner_id: "", color: "", gender: "unknown" })
+    } catch (error) {
+      toast.error("Failed to create pet profile")
+    }
+  }
+
+  const getSpeciesColor = (species: string) => {
+    switch (species) {
+      case "dog": return "blue"
+      case "cat": return "orange"
+      case "bird": return "green"
+      case "fish": return "purple"
+      default: return "grey"
+    }
+  }
+
   const columns = [
-    { key: "name", header: "Service", sortable: true, cell: (s: PetService) => (
-      <div><Text className="font-medium">{s.name}</Text><Text className="text-ui-fg-muted text-sm">{s.duration}</Text></div>
+    { key: "name", header: "Pet", sortable: true, cell: (p: any) => (
+      <div><Text className="font-medium">{p.name}</Text><Text className="text-ui-fg-muted text-sm">{p.breed || "—"}</Text></div>
     )},
-    { key: "type", header: "Type", cell: (s: PetService) => <Badge color="grey">{s.type}</Badge> },
-    { key: "provider", header: "Provider", cell: (s: PetService) => (
-      <div><Text className="font-medium">{s.provider}</Text><Text className="text-ui-fg-muted text-sm">{s.provider_email}</Text></div>
-    )},
-    { key: "price", header: "Price", sortable: true, cell: (s: PetService) => <Text className="font-medium">${s.price}</Text> },
-    { key: "bookings", header: "Bookings", sortable: true, cell: (s: PetService) => (
-      <div><Text className="font-medium">{s.bookings}</Text><Text className="text-ui-fg-muted text-sm">⭐ {s.rating}</Text></div>
-    )},
-    { key: "status", header: "Status", cell: (s: PetService) => <StatusBadge status={s.status} /> },
+    { key: "species", header: "Species", cell: (p: any) => <Badge color={getSpeciesColor(p.species) as any}>{p.species}</Badge> },
+    { key: "owner_id", header: "Owner", cell: (p: any) => <Text className="font-mono text-sm">{p.owner_id}</Text> },
+    { key: "gender", header: "Gender", cell: (p: any) => <Badge color="grey">{p.gender || "unknown"}</Badge> },
+    { key: "weight_kg", header: "Weight", sortable: true, cell: (p: any) => p.weight_kg ? `${p.weight_kg} kg` : "—" },
+    { key: "is_neutered", header: "Neutered", cell: (p: any) => p.is_neutered ? <Badge color="green">Yes</Badge> : <Badge color="grey">No</Badge> },
   ]
 
   return (
@@ -62,14 +71,36 @@ const PetServicesPage = () => {
       <div className="p-6 border-b border-ui-border-base">
         <div className="flex items-center justify-between">
           <div><Heading level="h1">Pet Services</Heading><Text className="text-ui-fg-muted">Manage pet care services, providers, and bookings</Text></div>
+          <Button variant="primary" size="small" onClick={() => setShowCreate(true)}><Plus className="w-4 h-4 mr-1" />Add Pet</Button>
         </div>
       </div>
 
       <div className="p-6"><StatsGrid stats={stats} columns={4} /></div>
 
       <div className="px-6 pb-6">
-        <DataTable data={services} columns={columns} searchable searchPlaceholder="Search services..." searchKeys={["name", "provider", "type"]} loading={false} emptyMessage="No pet services found" />
+        <DataTable data={pets} columns={columns} searchable searchPlaceholder="Search pets..." searchKeys={["name", "species", "breed"]} loading={isLoading} emptyMessage="No pet profiles found" />
       </div>
+
+      <FormDrawer open={showCreate} onOpenChange={setShowCreate} title="Create Pet Profile" onSubmit={handleCreate} submitLabel="Create" loading={createProfile.isPending}>
+        <div className="space-y-4">
+          <div><Label htmlFor="name">Name</Label><Input id="name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} placeholder="Pet name" /></div>
+          <div><Label htmlFor="owner_id">Owner ID</Label><Input id="owner_id" value={formData.owner_id} onChange={(e) => setFormData({ ...formData, owner_id: e.target.value })} placeholder="Owner ID" /></div>
+          <div>
+            <Label htmlFor="species">Species</Label>
+            <select id="species" value={formData.species} onChange={(e) => setFormData({ ...formData, species: e.target.value as any })} className="w-full border border-ui-border-base rounded-md px-3 py-2 bg-ui-bg-base">
+              <option value="dog">Dog</option><option value="cat">Cat</option><option value="bird">Bird</option><option value="fish">Fish</option><option value="reptile">Reptile</option><option value="rabbit">Rabbit</option><option value="hamster">Hamster</option><option value="other">Other</option>
+            </select>
+          </div>
+          <div><Label htmlFor="breed">Breed</Label><Input id="breed" value={formData.breed} onChange={(e) => setFormData({ ...formData, breed: e.target.value })} placeholder="Breed" /></div>
+          <div><Label htmlFor="color">Color</Label><Input id="color" value={formData.color} onChange={(e) => setFormData({ ...formData, color: e.target.value })} placeholder="Color" /></div>
+          <div>
+            <Label htmlFor="gender">Gender</Label>
+            <select id="gender" value={formData.gender} onChange={(e) => setFormData({ ...formData, gender: e.target.value as any })} className="w-full border border-ui-border-base rounded-md px-3 py-2 bg-ui-bg-base">
+              <option value="male">Male</option><option value="female">Female</option><option value="unknown">Unknown</option>
+            </select>
+          </div>
+        </div>
+      </FormDrawer>
     </Container>
   )
 }

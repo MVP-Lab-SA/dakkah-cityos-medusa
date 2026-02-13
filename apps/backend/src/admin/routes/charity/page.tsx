@@ -1,77 +1,84 @@
 import { defineRouteConfig } from "@medusajs/admin-sdk"
-import { Container, Heading, Text, Badge } from "@medusajs/ui"
-import { Heart, CurrencyDollar } from "@medusajs/icons"
+import { Container, Heading, Text, Badge, Button, Input, Label, toast } from "@medusajs/ui"
+import { Heart, CurrencyDollar, Plus } from "@medusajs/icons"
+import { useState } from "react"
 import { DataTable } from "../../components/tables/data-table.js"
 import { StatusBadge } from "../../components/common"
 import { StatsGrid } from "../../components/charts/stats-grid.js"
-
-type Campaign = {
-  id: string
-  name: string
-  goal: number
-  raised: number
-  donors: number
-  status: string
-  category: string
-  organizer: string
-  end_date: string
-}
-
-const mockCampaigns: Campaign[] = [
-  { id: "chr_01", name: "Clean Water for Rural Communities", goal: 50000, raised: 42350, donors: 892, status: "active", category: "Environment", organizer: "WaterAid Foundation", end_date: "2026-04-30" },
-  { id: "chr_02", name: "School Supplies for Children", goal: 25000, raised: 25000, donors: 534, status: "completed", category: "Education", organizer: "BrightFutures", end_date: "2026-02-01" },
-  { id: "chr_03", name: "Animal Shelter Renovation", goal: 75000, raised: 31200, donors: 421, status: "active", category: "Animals", organizer: "PawsFirst", end_date: "2026-06-15" },
-  { id: "chr_04", name: "Emergency Disaster Relief Fund", goal: 100000, raised: 89500, donors: 2150, status: "active", category: "Humanitarian", organizer: "GlobalRelief", end_date: "2026-03-31" },
-  { id: "chr_05", name: "Youth Sports Program", goal: 30000, raised: 18750, donors: 267, status: "active", category: "Sports", organizer: "CommunityFirst", end_date: "2026-05-20" },
-  { id: "chr_06", name: "Medical Research Funding", goal: 200000, raised: 156000, donors: 3420, status: "active", category: "Health", organizer: "ResearchHope", end_date: "2026-08-01" },
-  { id: "chr_07", name: "Hunger Relief Initiative", goal: 40000, raised: 40000, donors: 1890, status: "completed", category: "Food Security", organizer: "MealShare", end_date: "2026-01-15" },
-  { id: "chr_08", name: "Arts & Culture Preservation", goal: 60000, raised: 12400, donors: 156, status: "draft", category: "Culture", organizer: "HeritageKeepers", end_date: "2026-09-30" },
-]
+import { FormDrawer } from "../../components/forms/form-drawer.js"
+import { useCharities, useCreateCharity } from "../../hooks/use-charity.js"
+import type { Charity } from "../../hooks/use-charity.js"
 
 const CharityPage = () => {
-  const campaigns = mockCampaigns
-  const activeCampaigns = campaigns.filter(c => c.status === "active").length
-  const totalRaised = campaigns.reduce((s, c) => s + c.raised, 0)
-  const todayDonations = 4280
+  const { data, isLoading } = useCharities()
+  const createCharity = useCreateCharity()
+  const [showCreate, setShowCreate] = useState(false)
+  const [formData, setFormData] = useState<Record<string, string>>({})
+
+  const charities = data?.items || []
+  const activeCount = charities.filter((c: any) => c.is_active !== false).length
+  const verifiedCount = charities.filter((c: any) => c.is_verified).length
+  const totalRaised = charities.reduce((s: number, c: any) => s + (c.total_raised || 0), 0)
 
   const stats = [
-    { label: "Total Campaigns", value: campaigns.length, icon: <Heart className="w-5 h-5" /> },
-    { label: "Donations Today", value: `$${todayDonations.toLocaleString()}`, icon: <CurrencyDollar className="w-5 h-5" />, color: "blue" as const },
+    { label: "Total Charities", value: charities.length, icon: <Heart className="w-5 h-5" /> },
+    { label: "Verified", value: verifiedCount, color: "blue" as const },
     { label: "Total Raised", value: `$${totalRaised.toLocaleString()}`, icon: <CurrencyDollar className="w-5 h-5" />, color: "green" as const },
-    { label: "Active Campaigns", value: activeCampaigns, color: "green" as const },
+    { label: "Active", value: activeCount, color: "green" as const },
   ]
 
   const columns = [
-    { key: "name", header: "Campaign", sortable: true, cell: (c: Campaign) => (
-      <div><Text className="font-medium">{c.name}</Text><Text className="text-ui-fg-muted text-sm">{c.organizer}</Text></div>
+    { key: "name", header: "Charity", sortable: true, cell: (c: Charity) => (
+      <div><Text className="font-medium">{c.name}</Text><Text className="text-ui-fg-muted text-sm">{c.registration_number || "—"}</Text></div>
     )},
-    { key: "category", header: "Category", cell: (c: Campaign) => <Badge color="grey">{c.category}</Badge> },
-    { key: "progress", header: "Progress", sortable: true, cell: (c: Campaign) => (
-      <div>
-        <Text className="font-medium text-sm">${c.raised.toLocaleString()} / ${c.goal.toLocaleString()}</Text>
-        <div className="w-24 h-1.5 bg-ui-bg-subtle rounded-full overflow-hidden mt-1">
-          <div className="h-full bg-ui-tag-green-icon rounded-full" style={{ width: `${Math.min(100, Math.round((c.raised / c.goal) * 100))}%` }} />
-        </div>
-      </div>
+    { key: "category", header: "Category", cell: (c: Charity) => <Badge color="grey">{c.category}</Badge> },
+    { key: "total_raised", header: "Total Raised", sortable: true, cell: (c: Charity) => (
+      <Text className="font-medium">${(c.total_raised || 0).toLocaleString()}</Text>
     )},
-    { key: "donors", header: "Donors", sortable: true, cell: (c: Campaign) => c.donors.toLocaleString() },
-    { key: "end_date", header: "End Date", sortable: true, cell: (c: Campaign) => c.end_date },
-    { key: "status", header: "Status", cell: (c: Campaign) => <StatusBadge status={c.status} /> },
+    { key: "is_verified", header: "Verified", cell: (c: Charity) => <StatusBadge status={c.is_verified ? "verified" : "unverified"} /> },
+    { key: "email", header: "Contact", cell: (c: Charity) => <Text className="text-sm">{c.email || "—"}</Text> },
+    { key: "is_active", header: "Status", cell: (c: Charity) => <StatusBadge status={c.is_active !== false ? "active" : "inactive"} /> },
   ]
+
+  const handleCreate = () => {
+    createCharity.mutate({
+      tenant_id: formData.tenant_id,
+      name: formData.name,
+      description: formData.description,
+      category: formData.category as any || "other",
+      email: formData.email,
+      website: formData.website,
+    }, {
+      onSuccess: () => { toast.success("Charity created"); setShowCreate(false); setFormData({}) },
+      onError: () => toast.error("Failed to create charity"),
+    })
+  }
 
   return (
     <Container className="p-0">
       <div className="p-6 border-b border-ui-border-base">
         <div className="flex items-center justify-between">
-          <div><Heading level="h1">Charity / Donations</Heading><Text className="text-ui-fg-muted">Manage fundraising campaigns, donations, and donors</Text></div>
+          <div><Heading level="h1">Charity / Donations</Heading><Text className="text-ui-fg-muted">Manage charities, donations, and campaigns</Text></div>
+          <Button variant="secondary" onClick={() => setShowCreate(true)}><Plus className="w-4 h-4 mr-1" />Add Charity</Button>
         </div>
       </div>
 
       <div className="p-6"><StatsGrid stats={stats} columns={4} /></div>
 
       <div className="px-6 pb-6">
-        <DataTable data={campaigns} columns={columns} searchable searchPlaceholder="Search campaigns..." searchKeys={["name", "organizer", "category"]} loading={false} emptyMessage="No campaigns found" />
+        <DataTable data={charities} columns={columns} searchable searchPlaceholder="Search charities..." searchKeys={["name", "category", "email"]} loading={isLoading} emptyMessage="No charities found" />
       </div>
+
+      <FormDrawer open={showCreate} onOpenChange={setShowCreate} title="Create Charity" description="Add a new charity organization" onSubmit={handleCreate} loading={createCharity.isPending}>
+        <div className="flex flex-col gap-4">
+          <div><Label>Tenant ID</Label><Input value={formData.tenant_id || ""} onChange={(e) => setFormData({ ...formData, tenant_id: e.target.value })} /></div>
+          <div><Label>Name</Label><Input value={formData.name || ""} onChange={(e) => setFormData({ ...formData, name: e.target.value })} /></div>
+          <div><Label>Description</Label><Input value={formData.description || ""} onChange={(e) => setFormData({ ...formData, description: e.target.value })} /></div>
+          <div><Label>Category</Label><Input value={formData.category || ""} onChange={(e) => setFormData({ ...formData, category: e.target.value })} placeholder="education, health, environment, poverty, disaster, animal, arts, community, other" /></div>
+          <div><Label>Email</Label><Input value={formData.email || ""} onChange={(e) => setFormData({ ...formData, email: e.target.value })} /></div>
+          <div><Label>Website</Label><Input value={formData.website || ""} onChange={(e) => setFormData({ ...formData, website: e.target.value })} /></div>
+        </div>
+      </FormDrawer>
     </Container>
   )
 }

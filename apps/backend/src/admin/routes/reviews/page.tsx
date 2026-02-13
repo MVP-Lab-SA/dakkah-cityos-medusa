@@ -5,46 +5,40 @@ import { useState } from "react"
 import { DataTable } from "../../components/tables/data-table.js"
 import { StatsGrid } from "../../components/charts/stats-grid.js"
 import { ConfirmModal } from "../../components/modals/confirm-modal.js"
-
-type Review = {
-  id: string
-  product: string
-  customer: string
-  rating: number
-  text: string
-  status: string
-  created_at: string
-}
-
-const mockReviews: Review[] = [
-  { id: "rev_1", product: "Wireless Headphones", customer: "Alice Johnson", rating: 5, text: "Excellent sound quality and comfort!", status: "approved", created_at: "2025-02-12" },
-  { id: "rev_2", product: "Running Shoes", customer: "Bob Martinez", rating: 4, text: "Great shoes, slightly tight at first.", status: "pending", created_at: "2025-02-11" },
-  { id: "rev_3", product: "Smart Watch", customer: "Carol Lee", rating: 2, text: "Battery life is disappointing.", status: "pending", created_at: "2025-02-10" },
-  { id: "rev_4", product: "Yoga Mat", customer: "Dan Kim", rating: 1, text: "Terrible quality, fell apart in a week.", status: "flagged", created_at: "2025-02-09" },
-  { id: "rev_5", product: "Backpack", customer: "Eva Chen", rating: 5, text: "Perfect for travel, lots of pockets.", status: "approved", created_at: "2025-02-08" },
-  { id: "rev_6", product: "Coffee Maker", customer: "Frank White", rating: 3, text: "Decent but noisy.", status: "pending", created_at: "2025-02-07" },
-]
+import { useReviews, useApproveReview, useRejectReview } from "../../hooks/use-reviews.js"
+import type { Review } from "../../hooks/use-reviews.js"
 
 const ReviewsPage = () => {
-  const [reviews, setReviews] = useState<Review[]>(mockReviews)
+  const { data, isLoading } = useReviews()
+  const approveReview = useApproveReview()
+  const rejectReview = useRejectReview()
   const [actionReview, setActionReview] = useState<{ review: Review; action: string } | null>(null)
 
-  const avgRating = (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1)
+  const reviews = data?.reviews || []
+  const avgRating = reviews.length > 0 ? (reviews.reduce((s: number, r: Review) => s + r.rating, 0) / reviews.length).toFixed(1) : "0"
+  const pendingCount = reviews.filter((r: Review) => !r.is_approved).length
 
   const stats = [
     { label: "Total Reviews", value: reviews.length, icon: <Star className="w-5 h-5" /> },
     { label: "Average Rating", value: `${avgRating} ★`, color: "green" as const },
-    { label: "Pending Moderation", value: reviews.filter(r => r.status === "pending").length, color: "orange" as const },
-    { label: "Flagged", value: reviews.filter(r => r.status === "flagged").length, color: "red" as const },
+    { label: "Pending Moderation", value: pendingCount, color: "orange" as const },
+    { label: "Verified Purchases", value: reviews.filter((r: Review) => r.is_verified_purchase).length, color: "blue" as const },
   ]
 
   const handleAction = () => {
     if (!actionReview) return
     const { review, action } = actionReview
-    const newStatus = action === "approve" ? "approved" : action === "reject" ? "rejected" : "flagged"
-    setReviews(reviews.map(r => r.id === review.id ? { ...r, status: newStatus } : r))
-    toast.success(`Review ${newStatus}`)
-    setActionReview(null)
+    if (action === "approve") {
+      approveReview.mutate(review.id, {
+        onSuccess: () => { toast.success("Review approved"); setActionReview(null) },
+        onError: () => toast.error("Failed to approve review"),
+      })
+    } else if (action === "reject") {
+      rejectReview.mutate(review.id, {
+        onSuccess: () => { toast.success("Review rejected"); setActionReview(null) },
+        onError: () => toast.error("Failed to reject review"),
+      })
+    }
   }
 
   const renderStars = (rating: number) => (
@@ -55,27 +49,22 @@ const ReviewsPage = () => {
     </div>
   )
 
-  const getStatusColor = (status: string) => {
-    switch (status) { case "approved": return "green"; case "pending": return "orange"; case "rejected": return "red"; case "flagged": return "red"; default: return "grey" }
-  }
-
   const columns = [
-    { key: "product", header: "Product", sortable: true, cell: (r: Review) => <Text className="font-medium">{r.product}</Text> },
-    { key: "customer", header: "Customer", cell: (r: Review) => r.customer },
+    { key: "product", header: "Product", sortable: true, cell: (r: Review) => (
+      <div><Text className="font-medium">{r.product?.title || r.product_id || "—"}</Text><Text className="text-ui-fg-muted text-sm">{r.customer_name || r.customer_email || "—"}</Text></div>
+    )},
     { key: "rating", header: "Rating", sortable: true, cell: (r: Review) => renderStars(r.rating) },
-    { key: "text", header: "Review", cell: (r: Review) => <Text className="text-sm max-w-xs truncate">{r.text}</Text> },
-    { key: "status", header: "Status", cell: (r: Review) => <Badge color={getStatusColor(r.status)}>{r.status}</Badge> },
-    { key: "created_at", header: "Date", sortable: true, cell: (r: Review) => r.created_at },
+    { key: "content", header: "Review", cell: (r: Review) => <Text className="text-sm max-w-xs truncate">{r.title || r.content}</Text> },
+    { key: "is_approved", header: "Status", cell: (r: Review) => <Badge color={r.is_approved ? "green" : "orange"}>{r.is_approved ? "Approved" : "Pending"}</Badge> },
+    { key: "is_verified_purchase", header: "Verified", cell: (r: Review) => r.is_verified_purchase ? <Badge color="blue">Verified</Badge> : <Badge color="grey">Unverified</Badge> },
+    { key: "created_at", header: "Date", sortable: true, cell: (r: Review) => <Text className="text-sm">{r.created_at?.slice(0, 10)}</Text> },
     { key: "actions", header: "", width: "140px", cell: (r: Review) => (
       <div className="flex gap-1">
-        {r.status === "pending" && (
+        {!r.is_approved && (
           <>
             <Button variant="secondary" size="small" onClick={() => setActionReview({ review: r, action: "approve" })}><CheckCircle className="w-4 h-4 text-ui-tag-green-icon" /></Button>
             <Button variant="secondary" size="small" onClick={() => setActionReview({ review: r, action: "reject" })}><XCircle className="w-4 h-4 text-ui-tag-red-icon" /></Button>
           </>
-        )}
-        {r.status !== "flagged" && (
-          <Button variant="secondary" size="small" onClick={() => setActionReview({ review: r, action: "flag" })}><XCircle className="w-4 h-4 text-ui-tag-orange-icon" /></Button>
         )}
       </div>
     )},
@@ -90,16 +79,16 @@ const ReviewsPage = () => {
       </div>
       <div className="p-6"><StatsGrid stats={stats} columns={4} /></div>
       <div className="px-6 pb-6">
-        <DataTable data={reviews} columns={columns} searchable searchPlaceholder="Search reviews..." searchKeys={["product", "customer", "text"]} emptyMessage="No reviews found" />
+        <DataTable data={reviews} columns={columns} searchable searchPlaceholder="Search reviews..." searchKeys={["customer_name", "customer_email", "content", "title"]} loading={isLoading} emptyMessage="No reviews found" />
       </div>
       <ConfirmModal
         open={!!actionReview}
         onOpenChange={() => setActionReview(null)}
         title={actionReview ? `${actionReview.action.charAt(0).toUpperCase() + actionReview.action.slice(1)} Review` : ""}
-        description={actionReview ? `${actionReview.action.charAt(0).toUpperCase() + actionReview.action.slice(1)} review by ${actionReview.review.customer} for "${actionReview.review.product}"?` : ""}
+        description={actionReview ? `${actionReview.action.charAt(0).toUpperCase() + actionReview.action.slice(1)} review by ${actionReview.review.customer_name || actionReview.review.customer_email || "customer"}?` : ""}
         onConfirm={handleAction}
-        confirmLabel={actionReview?.action === "reject" || actionReview?.action === "flag" ? actionReview.action.charAt(0).toUpperCase() + actionReview.action.slice(1) : "Approve"}
-        variant={actionReview?.action === "reject" || actionReview?.action === "flag" ? "danger" : undefined}
+        confirmLabel={actionReview?.action === "reject" ? "Reject" : "Approve"}
+        variant={actionReview?.action === "reject" ? "danger" : undefined}
       />
     </Container>
   )

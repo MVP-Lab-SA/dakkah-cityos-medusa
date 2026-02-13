@@ -1,58 +1,52 @@
 import { defineRouteConfig } from "@medusajs/admin-sdk"
-import { Container, Heading, Text } from "@medusajs/ui"
-import { ShoppingBag } from "@medusajs/icons"
+import { Container, Heading, Text, Button, Input, Label, toast } from "@medusajs/ui"
+import { ShoppingBag, Plus } from "@medusajs/icons"
+import { useState } from "react"
+import { useAuctions, useCreateAuction, AuctionListing } from "../../hooks/use-auctions.js"
 import { DataTable } from "../../components/tables/data-table.js"
 import { StatusBadge } from "../../components/common"
 import { StatsGrid } from "../../components/charts/stats-grid.js"
-
-type Auction = {
-  id: string
-  item: string
-  seller: string
-  starting_bid: number
-  current_bid: number
-  bids_count: number
-  time_left: string
-  status: string
-  category: string
-}
-
-const mockAuctions: Auction[] = [
-  { id: "auc_01", item: "Vintage Rolex Submariner 1969", seller: "LuxeTimepieces", starting_bid: 15000, current_bid: 28500, bids_count: 47, time_left: "2h 15m", status: "live", category: "Watches" },
-  { id: "auc_02", item: "Signed Michael Jordan Jersey", seller: "SportsMemorabilia", starting_bid: 5000, current_bid: 12800, bids_count: 32, time_left: "5h 42m", status: "live", category: "Sports" },
-  { id: "auc_03", item: "1962 Fender Stratocaster", seller: "VintageGuitars", starting_bid: 20000, current_bid: 45000, bids_count: 23, time_left: "0m", status: "ended", category: "Music" },
-  { id: "auc_04", item: "Original Banksy Print - Girl with Balloon", seller: "ArtCollective", starting_bid: 50000, current_bid: 82000, bids_count: 18, time_left: "1d 4h", status: "live", category: "Art" },
-  { id: "auc_05", item: "Rare 1st Edition Harry Potter", seller: "BookVault", starting_bid: 8000, current_bid: 8000, bids_count: 0, time_left: "3d 8h", status: "scheduled", category: "Books" },
-  { id: "auc_06", item: "2019 Porsche 911 GT3 RS", seller: "ExoticAutos", starting_bid: 180000, current_bid: 210000, bids_count: 12, time_left: "0m", status: "ended", category: "Vehicles" },
-  { id: "auc_07", item: "Diamond Engagement Ring 3.5ct", seller: "PremiumGems", starting_bid: 25000, current_bid: 38900, bids_count: 29, time_left: "8h 30m", status: "live", category: "Jewelry" },
-  { id: "auc_08", item: "Antique Chinese Vase Dynasty Era", seller: "AsiaAntiques", starting_bid: 10000, current_bid: 15200, bids_count: 14, time_left: "12h 10m", status: "live", category: "Antiques" },
-]
+import { FormDrawer } from "../../components/forms/form-drawer.js"
 
 const AuctionsPage = () => {
-  const auctions = mockAuctions
-  const liveNow = auctions.filter(a => a.status === "live").length
-  const endedToday = auctions.filter(a => a.status === "ended").length
-  const totalBids = auctions.reduce((s, a) => s + a.bids_count, 0)
+  const [showCreate, setShowCreate] = useState(false)
+  const [formData, setFormData] = useState({ title: "", product_id: "", tenant_id: "", auction_type: "english" as const, starting_price: "", bid_increment: "", currency_code: "usd", starts_at: "", ends_at: "" })
+
+  const { data, isLoading } = useAuctions()
+  const createAuction = useCreateAuction()
+
+  const auctions = data?.items || []
+  const activeCount = auctions.filter((a: any) => a.status === "active").length
+  const endedCount = auctions.filter((a: any) => a.status === "ended").length
 
   const stats = [
     { label: "Total Auctions", value: auctions.length, icon: <ShoppingBag className="w-5 h-5" /> },
-    { label: "Live Now", value: liveNow, color: "green" as const },
-    { label: "Ended Today", value: endedToday, color: "orange" as const },
-    { label: "Total Bids", value: totalBids, color: "blue" as const },
+    { label: "Active", value: activeCount, color: "green" as const },
+    { label: "Ended", value: endedCount, color: "orange" as const },
+    { label: "Scheduled", value: auctions.filter((a: any) => a.status === "scheduled").length, color: "blue" as const },
   ]
 
+  const handleCreate = async () => {
+    try {
+      await createAuction.mutateAsync({ ...formData, starting_price: Number(formData.starting_price), bid_increment: Number(formData.bid_increment) })
+      toast.success("Auction created")
+      setShowCreate(false)
+      setFormData({ title: "", product_id: "", tenant_id: "", auction_type: "english", starting_price: "", bid_increment: "", currency_code: "usd", starts_at: "", ends_at: "" })
+    } catch (error) {
+      toast.error("Failed to create auction")
+    }
+  }
+
   const columns = [
-    { key: "item", header: "Item", sortable: true, cell: (a: Auction) => (
-      <div><Text className="font-medium">{a.item}</Text><Text className="text-ui-fg-muted text-sm">{a.seller} · {a.category}</Text></div>
+    { key: "title", header: "Item", sortable: true, cell: (a: AuctionListing) => (
+      <div><Text className="font-medium">{a.title}</Text><Text className="text-ui-fg-muted text-sm">{a.auction_type} · {a.currency_code?.toUpperCase()}</Text></div>
     )},
-    { key: "current_bid", header: "Current Bid", sortable: true, cell: (a: Auction) => (
-      <div><Text className="font-medium">${a.current_bid.toLocaleString()}</Text><Text className="text-ui-fg-muted text-sm">Start: ${a.starting_bid.toLocaleString()}</Text></div>
+    { key: "starting_price", header: "Starting Price", sortable: true, cell: (a: AuctionListing) => (
+      <div><Text className="font-medium">${(a.starting_price || 0).toLocaleString()}</Text>{a.reserve_price && <Text className="text-ui-fg-muted text-sm">Reserve: ${a.reserve_price.toLocaleString()}</Text>}</div>
     )},
-    { key: "bids_count", header: "Bids", sortable: true, cell: (a: Auction) => a.bids_count },
-    { key: "time_left", header: "Time Left", cell: (a: Auction) => (
-      <Text className={a.status === "live" ? "text-ui-tag-green-text font-medium" : "text-ui-fg-muted"}>{a.status === "ended" ? "Ended" : a.time_left}</Text>
-    )},
-    { key: "status", header: "Status", cell: (a: Auction) => <StatusBadge status={a.status} /> },
+    { key: "bid_increment", header: "Bid Increment", sortable: true, cell: (a: AuctionListing) => `$${(a.bid_increment || 0).toLocaleString()}` },
+    { key: "ends_at", header: "Ends At", sortable: true, cell: (a: AuctionListing) => a.ends_at?.split("T")[0] || "-" },
+    { key: "status", header: "Status", cell: (a: AuctionListing) => <StatusBadge status={a.status} /> },
   ]
 
   return (
@@ -60,14 +54,34 @@ const AuctionsPage = () => {
       <div className="p-6 border-b border-ui-border-base">
         <div className="flex items-center justify-between">
           <div><Heading level="h1">Auction Management</Heading><Text className="text-ui-fg-muted">Manage auctions, bids, and listings</Text></div>
+          <Button variant="secondary" onClick={() => setShowCreate(true)}><Plus className="w-4 h-4 mr-1" />Create Auction</Button>
         </div>
       </div>
 
       <div className="p-6"><StatsGrid stats={stats} columns={4} /></div>
 
       <div className="px-6 pb-6">
-        <DataTable data={auctions} columns={columns} searchable searchPlaceholder="Search auctions..." searchKeys={["item", "seller", "category"]} loading={false} emptyMessage="No auctions found" />
+        <DataTable data={auctions} columns={columns} searchable searchPlaceholder="Search auctions..." searchKeys={["title", "auction_type"]} loading={isLoading} emptyMessage="No auctions found" />
       </div>
+
+      <FormDrawer open={showCreate} onOpenChange={setShowCreate} title="Create Auction" onSubmit={handleCreate} submitLabel="Create" loading={createAuction.isPending}>
+        <div className="space-y-4">
+          <div><Label htmlFor="title">Title</Label><Input id="title" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} placeholder="Auction title" /></div>
+          <div><Label htmlFor="product_id">Product ID</Label><Input id="product_id" value={formData.product_id} onChange={(e) => setFormData({ ...formData, product_id: e.target.value })} placeholder="Product ID" /></div>
+          <div><Label htmlFor="tenant_id">Tenant ID</Label><Input id="tenant_id" value={formData.tenant_id} onChange={(e) => setFormData({ ...formData, tenant_id: e.target.value })} placeholder="Tenant ID" /></div>
+          <div>
+            <Label htmlFor="auction_type">Auction Type</Label>
+            <select id="auction_type" value={formData.auction_type} onChange={(e) => setFormData({ ...formData, auction_type: e.target.value as any })} className="w-full border border-ui-border-base rounded-md px-3 py-2 bg-ui-bg-base">
+              <option value="english">English</option><option value="dutch">Dutch</option><option value="sealed">Sealed</option><option value="reserve">Reserve</option>
+            </select>
+          </div>
+          <div><Label htmlFor="starting_price">Starting Price</Label><Input id="starting_price" type="number" value={formData.starting_price} onChange={(e) => setFormData({ ...formData, starting_price: e.target.value })} placeholder="Starting price" /></div>
+          <div><Label htmlFor="bid_increment">Bid Increment</Label><Input id="bid_increment" type="number" value={formData.bid_increment} onChange={(e) => setFormData({ ...formData, bid_increment: e.target.value })} placeholder="Bid increment" /></div>
+          <div><Label htmlFor="currency_code">Currency Code</Label><Input id="currency_code" value={formData.currency_code} onChange={(e) => setFormData({ ...formData, currency_code: e.target.value })} placeholder="usd" /></div>
+          <div><Label htmlFor="starts_at">Starts At</Label><Input id="starts_at" type="date" value={formData.starts_at} onChange={(e) => setFormData({ ...formData, starts_at: e.target.value })} /></div>
+          <div><Label htmlFor="ends_at">Ends At</Label><Input id="ends_at" type="date" value={formData.ends_at} onChange={(e) => setFormData({ ...formData, ends_at: e.target.value })} /></div>
+        </div>
+      </FormDrawer>
     </Container>
   )
 }
