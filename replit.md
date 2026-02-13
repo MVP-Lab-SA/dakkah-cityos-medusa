@@ -147,3 +147,4 @@ Key components include Wishlist, Comparison, Search, Notifications, Disputes, Tr
 ## Documentation
 - `docs/PLATFORM_MODULE_ASSESSMENT.md` — Deep-dive assessment of all 58 modules (v3.0 — complete API route maps, per-module details, workflow/job registries), 3400+ lines
 - `docs/IMPLEMENTATION_PLAN.md` — 6-phase implementation plan (v2.0 — updated with completion status), covering all deliverables
+- `docs/MODULE_GAP_ANALYSIS.md` — Per-module gap analysis across 4 layers (backend, admin, vendor, user frontend) for all 58 modules
