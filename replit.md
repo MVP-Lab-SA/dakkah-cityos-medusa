@@ -94,3 +94,7 @@ Key components include Wishlist, Comparison, Search, Notifications, Disputes, Tr
 - **Logistics:** Fleetbase
 - **Digital Identity:** Walt.id
 - **Payment Gateway:** Stripe
+
+## Documentation
+- `docs/PLATFORM_MODULE_ASSESSMENT.md` — Deep-dive assessment of all 58 modules (2,590 lines), including complete model registry, gap analysis, and per-module details
+- `docs/IMPLEMENTATION_PLAN.md` — 6-phase implementation plan for all remaining gaps (733 lines), covering infrastructure, migrations, API routes, admin UI, service logic, and Temporal workflows
