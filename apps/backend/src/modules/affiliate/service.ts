@@ -86,6 +86,87 @@ class AffiliateModuleService extends MedusaService({
     }
     return payouts
   }
+
+  async registerAffiliate(data: { vendorId: string; name: string; commissionRate: number; paymentMethod: string }): Promise<any> {
+    if (!data.vendorId || !data.name) {
+      throw new Error("Vendor ID and name are required")
+    }
+    if (data.commissionRate < 0 || data.commissionRate > 100) {
+      throw new Error("Commission rate must be between 0 and 100")
+    }
+    const validPaymentMethods = ["bank_transfer", "paypal", "stripe", "crypto"]
+    if (!validPaymentMethods.includes(data.paymentMethod)) {
+      throw new Error(`Invalid payment method. Must be one of: ${validPaymentMethods.join(", ")}`)
+    }
+
+    const existing = await this.listAffiliates({ vendor_id: data.vendorId }) as any
+    const existingList = Array.isArray(existing) ? existing : [existing].filter(Boolean)
+    if (existingList.length > 0) {
+      throw new Error("An affiliate already exists for this vendor")
+    }
+
+    const affiliate = await (this as any).createAffiliates({
+      vendor_id: data.vendorId,
+      name: data.name,
+      commission_rate: data.commissionRate,
+      payment_method: data.paymentMethod,
+      status: "active",
+      total_earnings: 0,
+      total_referrals: 0,
+      created_at: new Date(),
+    })
+    return affiliate
+  }
+
+  async calculatePayout(affiliateId: string, periodStart: Date, periodEnd: Date): Promise<{ affiliateId: string; pendingAmount: number; commissionCount: number; periodStart: Date; periodEnd: Date }> {
+    const affiliate = await this.retrieveAffiliate(affiliateId)
+    const commissions = await this.listAffiliateCommissions({ affiliate_id: affiliateId }) as any
+    const list = Array.isArray(commissions) ? commissions : [commissions].filter(Boolean)
+
+    const pendingCommissions = list.filter((c: any) => {
+      const date = new Date(c.created_at)
+      return date >= periodStart && date <= periodEnd && c.status !== "paid"
+    })
+
+    const pendingAmount = pendingCommissions.reduce((sum: number, c: any) => sum + Number(c.amount || 0), 0)
+
+    return {
+      affiliateId,
+      pendingAmount: Math.round(pendingAmount * 100) / 100,
+      commissionCount: pendingCommissions.length,
+      periodStart,
+      periodEnd,
+    }
+  }
+
+  async getAffiliatePerformance(affiliateId: string): Promise<{
+    affiliateId: string
+    totalReferrals: number
+    totalConversions: number
+    totalEarnings: number
+    conversionRate: number
+  }> {
+    const affiliate = await this.retrieveAffiliate(affiliateId) as any
+    const links = await this.listReferralLinks({ affiliate_id: affiliateId }) as any
+    const linkList = Array.isArray(links) ? links : [links].filter(Boolean)
+
+    const totalReferrals = linkList.reduce((sum: number, l: any) => sum + Number(l.click_count || 0), 0)
+    const totalConversions = linkList.reduce((sum: number, l: any) => sum + Number(l.conversion_count || 0), 0)
+
+    const commissions = await this.listAffiliateCommissions({ affiliate_id: affiliateId }) as any
+    const commList = Array.isArray(commissions) ? commissions : [commissions].filter(Boolean)
+    const totalEarnings = commList.reduce((sum: number, c: any) => sum + Number(c.amount || 0), 0)
+
+    const conversionRate = totalReferrals > 0 ? Math.round((totalConversions / totalReferrals) * 10000) / 100 : 0
+
+    return {
+      affiliateId,
+      totalReferrals,
+      totalConversions,
+      totalEarnings: Math.round(totalEarnings * 100) / 100,
+      conversionRate,
+    }
+  }
 }
 
 export default AffiliateModuleService

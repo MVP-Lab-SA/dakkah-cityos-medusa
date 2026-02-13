@@ -124,6 +124,28 @@ class EducationModuleService extends MedusaService({
 
     return { total, completed, rate }
   }
+
+  async getCourseAnalytics(courseId: string): Promise<{
+    enrolled: number
+    completed: number
+    averageProgress: number
+    dropoutRate: number
+    completionRate: number
+  }> {
+    const course = await this.retrieveCourse(courseId)
+    const enrollments = await this.listEnrollments({ course_id: courseId }) as any
+    const list = Array.isArray(enrollments) ? enrollments : [enrollments].filter(Boolean)
+
+    const enrolled = list.length
+    const completed = list.filter((e: any) => e.status === "completed" || Number(e.progress) >= 100).length
+    const dropped = list.filter((e: any) => e.status === "dropped" || e.status === "cancelled").length
+    const totalProgress = list.reduce((sum: number, e: any) => sum + Number(e.progress || 0), 0)
+    const averageProgress = enrolled > 0 ? Math.round((totalProgress / enrolled) * 100) / 100 : 0
+    const dropoutRate = enrolled > 0 ? Math.round((dropped / enrolled) * 10000) / 100 : 0
+    const completionRate = enrolled > 0 ? Math.round((completed / enrolled) * 10000) / 100 : 0
+
+    return { enrolled, completed, averageProgress, dropoutRate, completionRate }
+  }
 }
 
 export default EducationModuleService

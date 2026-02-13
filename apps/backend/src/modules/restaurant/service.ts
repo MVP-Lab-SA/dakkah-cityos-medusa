@@ -77,6 +77,105 @@ class RestaurantModuleService extends MedusaService({
     const estimatedMinutes = 30
     return { fee: baseFee, estimatedMinutes }
   }
+
+  async createReservation(restaurantId: string, data: {
+    customerId: string
+    partySize: number
+    date: Date
+    time: string
+    specialRequests?: string
+  }): Promise<any> {
+    if (!data.customerId || !data.partySize || !data.date) {
+      throw new Error("Customer ID, party size, and date are required")
+    }
+
+    if (data.partySize <= 0 || data.partySize > 50) {
+      throw new Error("Party size must be between 1 and 50")
+    }
+
+    if (new Date(data.date) < new Date()) {
+      throw new Error("Reservation date must be in the future")
+    }
+
+    const restaurant = await this.retrieveRestaurant(restaurantId) as any
+    const existingReservations = await this.listTableReservations({
+      restaurant_id: restaurantId,
+      status: ["confirmed", "pending"],
+    }) as any
+    const resList = Array.isArray(existingReservations) ? existingReservations : [existingReservations].filter(Boolean)
+    const targetDate = new Date(data.date).toDateString()
+    const sameDateReservations = resList.filter((r: any) => new Date(r.reservation_date).toDateString() === targetDate)
+    const totalSeats = sameDateReservations.reduce((sum: number, r: any) => sum + Number(r.party_size || 0), 0)
+    const maxCapacity = Number(restaurant.seating_capacity || 100)
+
+    if (totalSeats + data.partySize > maxCapacity) {
+      throw new Error("Restaurant is at full capacity for this date")
+    }
+
+    const reservation = await (this as any).createTableReservations({
+      restaurant_id: restaurantId,
+      customer_id: data.customerId,
+      party_size: data.partySize,
+      reservation_date: data.date,
+      reservation_time: data.time,
+      special_requests: data.specialRequests || null,
+      status: "confirmed",
+      created_at: new Date(),
+    })
+
+    return reservation
+  }
+
+  async updateMenuPricing(menuItemId: string, newPrice: number): Promise<any> {
+    if (newPrice <= 0) {
+      throw new Error("Price must be greater than zero")
+    }
+
+    if (newPrice > 10000) {
+      throw new Error("Price exceeds maximum allowed value")
+    }
+
+    const menuItem = await this.retrieveMenuItem(menuItemId) as any
+    const oldPrice = Number(menuItem.price || 0)
+
+    return await (this as any).updateMenuItems({
+      id: menuItemId,
+      price: newPrice,
+      previous_price: oldPrice,
+      price_updated_at: new Date(),
+    })
+  }
+
+  async getRevenueReport(restaurantId: string, periodStart: Date, periodEnd: Date): Promise<{
+    restaurantId: string
+    totalRevenue: number
+    orderCount: number
+    averageOrderValue: number
+    periodStart: Date
+    periodEnd: Date
+  }> {
+    const restaurant = await this.retrieveRestaurant(restaurantId)
+    const orders = await this.listKitchenOrders({ restaurant_id: restaurantId }) as any
+    const orderList = Array.isArray(orders) ? orders : [orders].filter(Boolean)
+
+    const periodOrders = orderList.filter((o: any) => {
+      const date = new Date(o.placed_at || o.created_at)
+      return date >= periodStart && date <= periodEnd && o.status !== "cancelled"
+    })
+
+    const totalRevenue = periodOrders.reduce((sum: number, o: any) => sum + Number(o.total_amount || 0), 0)
+    const orderCount = periodOrders.length
+    const averageOrderValue = orderCount > 0 ? Math.round((totalRevenue / orderCount) * 100) / 100 : 0
+
+    return {
+      restaurantId,
+      totalRevenue: Math.round(totalRevenue * 100) / 100,
+      orderCount,
+      averageOrderValue,
+      periodStart,
+      periodEnd,
+    }
+  }
 }
 
 export default RestaurantModuleService

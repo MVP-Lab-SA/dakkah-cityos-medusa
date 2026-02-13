@@ -79,6 +79,58 @@ class StoreModuleService extends MedusaService({
       status: enabled ? "maintenance" : "active",
     })
   }
+
+  async suspendStore(storeId: string, reason: string): Promise<any> {
+    if (!reason || !reason.trim()) {
+      throw new Error("Suspension reason is required")
+    }
+    const store = await this.retrieveStore(storeId) as any
+    if (store.status === "suspended") {
+      throw new Error("Store is already suspended")
+    }
+    return await this.updateStores({
+      id: storeId,
+      status: "suspended",
+      suspension_reason: reason,
+      suspended_at: new Date(),
+    })
+  }
+
+  async getStoreMetrics(storeId: string): Promise<{
+    storeId: string
+    status: string
+    productCount: number
+    orderCount: number
+    revenue: number
+    averageRating: number
+  }> {
+    const store = await this.retrieveStore(storeId) as any
+    return {
+      storeId,
+      status: store.status || "unknown",
+      productCount: Number(store.product_count || 0),
+      orderCount: Number(store.order_count || 0),
+      revenue: Number(store.total_revenue || 0),
+      averageRating: Number(store.average_rating || 0),
+    }
+  }
+
+  async updateStoreHours(storeId: string, hours: Record<string, any>): Promise<any> {
+    if (!hours || Object.keys(hours).length === 0) {
+      throw new Error("Operating hours data is required")
+    }
+    const validDays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+    for (const day of Object.keys(hours)) {
+      if (!validDays.includes(day.toLowerCase())) {
+        throw new Error(`Invalid day: ${day}. Must be one of: ${validDays.join(", ")}`)
+      }
+    }
+    await this.retrieveStore(storeId)
+    return await this.updateStores({
+      id: storeId,
+      operating_hours: hours,
+    })
+  }
 }
 
 export default StoreModuleService

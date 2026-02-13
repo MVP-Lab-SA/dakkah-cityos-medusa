@@ -93,6 +93,80 @@ class CharityModuleService extends MedusaService({
 
     return report
   }
+
+  async createCampaign(data: {
+    name: string
+    description: string
+    goalAmount: number
+    startDate: Date
+    endDate: Date
+    organizationId: string
+  }): Promise<any> {
+    if (!data.name || !data.description) {
+      throw new Error("Campaign name and description are required")
+    }
+
+    if (data.goalAmount <= 0) {
+      throw new Error("Goal amount must be greater than zero")
+    }
+
+    if (new Date(data.endDate) <= new Date(data.startDate)) {
+      throw new Error("End date must be after start date")
+    }
+
+    const org = await this.retrieveCharityOrg(data.organizationId) as any
+    if (org.status !== "active" && org.status !== "verified") {
+      throw new Error("Organization must be active or verified to create campaigns")
+    }
+
+    const campaign = await (this as any).createDonationCampaigns({
+      charity_org_id: data.organizationId,
+      title: data.name,
+      description: data.description,
+      goal_amount: data.goalAmount,
+      raised_amount: 0,
+      donor_count: 0,
+      start_date: data.startDate,
+      end_date: data.endDate,
+      status: "active",
+      created_at: new Date(),
+    })
+
+    return campaign
+  }
+
+  async issueTaxReceipt(donationId: string): Promise<{
+    receiptNumber: string
+    donationId: string
+    donorId: string
+    amount: number
+    campaignName: string
+    organizationName: string
+    donatedAt: Date
+    issuedAt: Date
+  }> {
+    const donation = await this.retrieveDonation(donationId) as any
+
+    if (donation.status !== "completed") {
+      throw new Error("Tax receipts can only be issued for completed donations")
+    }
+
+    const campaign = await this.retrieveDonationCampaign(donation.campaign_id) as any
+    const org = await this.retrieveCharityOrg(campaign.charity_org_id) as any
+
+    const receiptNumber = `TR-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`
+
+    return {
+      receiptNumber,
+      donationId,
+      donorId: donation.donor_id,
+      amount: Number(donation.amount),
+      campaignName: campaign.title || campaign.name,
+      organizationName: org.name,
+      donatedAt: donation.donated_at,
+      issuedAt: new Date(),
+    }
+  }
 }
 
 export default CharityModuleService

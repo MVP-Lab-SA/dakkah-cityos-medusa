@@ -76,6 +76,85 @@ class PetServiceModuleService extends MedusaService({
       nextDue: a.next_due_date,
     }))
   }
+
+  async addPetProfile(ownerId: string, data: { name: string; species: string; breed?: string; age?: number; weight?: number; medicalNotes?: string }): Promise<any> {
+    if (!data.name || !data.species) {
+      throw new Error("Pet name and species are required")
+    }
+
+    const validSpecies = ["dog", "cat", "bird", "rabbit", "fish", "reptile", "hamster", "other"]
+    if (!validSpecies.includes(data.species.toLowerCase())) {
+      throw new Error(`Invalid species. Must be one of: ${validSpecies.join(", ")}`)
+    }
+
+    const pet = await (this as any).createPetProfiles({
+      owner_id: ownerId,
+      name: data.name,
+      species: data.species.toLowerCase(),
+      breed: data.breed || null,
+      age: data.age || null,
+      weight: data.weight || null,
+      medical_notes: data.medicalNotes || null,
+      status: "active",
+      created_at: new Date(),
+    })
+
+    return pet
+  }
+
+  async getServiceHistory(petId: string): Promise<{
+    petId: string
+    groomings: any[]
+    vetVisits: any[]
+    totalServices: number
+  }> {
+    const pet = await this.retrievePetProfile(petId)
+    const groomings = await this.listGroomingBookings({ pet_id: petId }) as any
+    const groomingList = Array.isArray(groomings) ? groomings : [groomings].filter(Boolean)
+
+    const vetVisits = await this.listVetAppointments({ pet_id: petId }) as any
+    const vetList = Array.isArray(vetVisits) ? vetVisits : [vetVisits].filter(Boolean)
+
+    return {
+      petId,
+      groomings: groomingList.sort((a: any, b: any) => new Date(b.scheduled_date).getTime() - new Date(a.scheduled_date).getTime()),
+      vetVisits: vetList.sort((a: any, b: any) => new Date(b.appointment_date).getTime() - new Date(a.appointment_date).getTime()),
+      totalServices: groomingList.length + vetList.length,
+    }
+  }
+
+  async calculateServiceCost(serviceType: string, petSize: string, duration: number): Promise<{
+    serviceType: string
+    basePrice: number
+    sizeMultiplier: number
+    durationMultiplier: number
+    totalCost: number
+  }> {
+    const basePrices: Record<string, number> = {
+      grooming: 40,
+      bathing: 25,
+      nail_trim: 15,
+      vet_checkup: 60,
+      vaccination: 35,
+      dental: 80,
+      walking: 20,
+      boarding: 50,
+    }
+
+    const sizeMultipliers: Record<string, number> = {
+      small: 1.0,
+      medium: 1.3,
+      large: 1.6,
+      extra_large: 2.0,
+    }
+
+    const basePrice = basePrices[serviceType] || 30
+    const sizeMultiplier = sizeMultipliers[petSize] || 1.0
+    const durationMultiplier = Math.max(1, duration / 60)
+    const totalCost = Math.round(basePrice * sizeMultiplier * durationMultiplier * 100) / 100
+
+    return { serviceType, basePrice, sizeMultiplier, durationMultiplier, totalCost }
+  }
 }
 
 export default PetServiceModuleService

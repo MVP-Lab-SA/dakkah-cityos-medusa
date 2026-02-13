@@ -123,6 +123,44 @@ class RealEstateModuleService extends MedusaService({
       loanAmount,
     }
   }
+
+  async getMarketAnalysis(filters: { location?: string; propertyType?: string }): Promise<{
+    totalListings: number
+    averagePrice: number
+    medianPrice: number
+    priceRange: { min: number; max: number }
+    averageDaysOnMarket: number
+  }> {
+    const queryFilters: Record<string, any> = { status: "published" }
+    if (filters.location) queryFilters.location = filters.location
+    if (filters.propertyType) queryFilters.property_type = filters.propertyType
+
+    const listings = await this.listPropertyListings(queryFilters) as any
+    const list = Array.isArray(listings) ? listings : [listings].filter(Boolean)
+
+    if (list.length === 0) {
+      return { totalListings: 0, averagePrice: 0, medianPrice: 0, priceRange: { min: 0, max: 0 }, averageDaysOnMarket: 0 }
+    }
+
+    const prices = list.map((l: any) => Number(l.price || l.rent_price || 0)).filter((p: number) => p > 0).sort((a: number, b: number) => a - b)
+    const totalPrice = prices.reduce((sum: number, p: number) => sum + p, 0)
+    const averagePrice = prices.length > 0 ? Math.round(totalPrice / prices.length) : 0
+    const medianPrice = prices.length > 0 ? prices[Math.floor(prices.length / 2)] : 0
+
+    const now = new Date().getTime()
+    const daysOnMarket = list
+      .filter((l: any) => l.published_at)
+      .map((l: any) => Math.floor((now - new Date(l.published_at).getTime()) / (1000 * 60 * 60 * 24)))
+    const averageDaysOnMarket = daysOnMarket.length > 0 ? Math.round(daysOnMarket.reduce((s: number, d: number) => s + d, 0) / daysOnMarket.length) : 0
+
+    return {
+      totalListings: list.length,
+      averagePrice,
+      medianPrice,
+      priceRange: { min: prices[0] || 0, max: prices[prices.length - 1] || 0 },
+      averageDaysOnMarket,
+    }
+  }
 }
 
 export default RealEstateModuleService

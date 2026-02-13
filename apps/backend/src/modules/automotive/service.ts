@@ -82,6 +82,150 @@ class AutomotiveModuleService extends MedusaService({
     })
   }
 
+  async listVehicle(data: {
+    make: string
+    model: string
+    year: number
+    vin: string
+    price: number
+    condition: string
+    sellerId: string
+  }): Promise<any> {
+    if (!data.make || !data.model || !data.year || !data.vin) {
+      throw new Error("Make, model, year, and VIN are required")
+    }
+    if (data.price <= 0) {
+      throw new Error("Price must be greater than zero")
+    }
+    const validConditions = ["new", "certified_pre_owned", "used", "salvage"]
+    if (!validConditions.includes(data.condition)) {
+      throw new Error(`Condition must be one of: ${validConditions.join(", ")}`)
+    }
+    const existing = await this.listVehicleListings({ vin: data.vin }) as any
+    const existingList = Array.isArray(existing) ? existing : [existing].filter(Boolean)
+    const activeListing = existingList.find((v: any) => v.status !== "sold" && v.status !== "cancelled")
+    if (activeListing) {
+      throw new Error("A vehicle with this VIN is already listed")
+    }
+    return await (this as any).createVehicleListings({
+      make: data.make,
+      model: data.model,
+      year: data.year,
+      vin: data.vin,
+      price: data.price,
+      condition: data.condition,
+      seller_id: data.sellerId,
+      status: "draft",
+      listed_at: new Date(),
+    })
+  }
+
+  async scheduleTestDrive(vehicleId: string, data: {
+    customerId: string
+    date: Date
+    dealershipId: string
+  }): Promise<any> {
+    if (!vehicleId || !data.customerId || !data.date) {
+      throw new Error("Vehicle ID, customer ID, and date are required")
+    }
+    const vehicle = await this.retrieveVehicleListing(vehicleId) as any
+    if (vehicle.status !== "published") {
+      throw new Error("Vehicle is not available for test drives")
+    }
+    const scheduleDate = new Date(data.date)
+    if (scheduleDate <= new Date()) {
+      throw new Error("Test drive date must be in the future")
+    }
+    const existingDrives = await this.listTestDrives({
+      vehicle_listing_id: vehicleId,
+      customer_id: data.customerId,
+      status: ["scheduled", "confirmed"],
+    }) as any
+    const driveList = Array.isArray(existingDrives) ? existingDrives : [existingDrives].filter(Boolean)
+    if (driveList.length > 0) {
+      throw new Error("Customer already has a test drive scheduled for this vehicle")
+    }
+    return await (this as any).createTestDrives({
+      vehicle_listing_id: vehicleId,
+      customer_id: data.customerId,
+      dealership_id: data.dealershipId || null,
+      scheduled_date: scheduleDate,
+      status: "scheduled",
+    })
+  }
+
+  async appraise(vehicleId: string): Promise<{
+    vehicleId: string
+    estimatedValue: number
+    factors: Record<string, any>
+  }> {
+    const vehicle = await this.retrieveVehicleListing(vehicleId) as any
+    const basePrice = Number(vehicle.price || 0)
+    const year = Number(vehicle.year || new Date().getFullYear())
+    const age = new Date().getFullYear() - year
+    const mileage = Number(vehicle.mileage || 0)
+
+    let conditionMultiplier = 1.0
+    switch (vehicle.condition) {
+      case "new": conditionMultiplier = 1.0; break
+      case "certified_pre_owned": conditionMultiplier = 0.85; break
+      case "used": conditionMultiplier = 0.7; break
+      case "salvage": conditionMultiplier = 0.4; break
+      default: conditionMultiplier = 0.7
+    }
+
+    const ageDepreciation = Math.max(0.2, 1 - (age * 0.08))
+    const mileageDepreciation = mileage > 0 ? Math.max(0.3, 1 - (mileage / 200000)) : 1.0
+    const estimatedValue = Math.round(basePrice * conditionMultiplier * ageDepreciation * mileageDepreciation)
+
+    return {
+      vehicleId,
+      estimatedValue,
+      factors: {
+        basePrice,
+        age,
+        mileage,
+        condition: vehicle.condition,
+        conditionMultiplier,
+        ageDepreciation,
+        mileageDepreciation,
+      },
+    }
+  }
+
+  async processTradeIn(vehicleId: string, tradeInVehicleId: string): Promise<{
+    purchaseVehicleId: string
+    tradeInVehicleId: string
+    tradeInValue: number
+    purchasePrice: number
+    amountDue: number
+  }> {
+    const purchaseVehicle = await this.retrieveVehicleListing(vehicleId) as any
+    if (purchaseVehicle.status !== "published") {
+      throw new Error("Purchase vehicle is not available for sale")
+    }
+    const appraisal = await this.appraise(tradeInVehicleId)
+    const tradeInValue = appraisal.estimatedValue
+    const purchasePrice = Number(purchaseVehicle.price || 0)
+    const amountDue = Math.max(0, purchasePrice - tradeInValue)
+
+    await (this as any).createTradeIns({
+      vehicle_listing_id: vehicleId,
+      trade_in_vehicle_id: tradeInVehicleId,
+      trade_in_value: tradeInValue,
+      status: "applied",
+      submitted_at: new Date(),
+    })
+
+    return {
+      purchaseVehicleId: vehicleId,
+      tradeInVehicleId,
+      tradeInValue,
+      purchasePrice,
+      amountDue,
+    }
+  }
+
   /** Calculate monthly financing payment for a vehicle */
   async calculateFinancing(price: number, downPayment: number, termMonths: number, annualRate?: number): Promise<{
     monthlyPayment: number

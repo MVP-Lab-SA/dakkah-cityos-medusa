@@ -82,6 +82,136 @@ class EventTicketingModuleService extends MedusaService({
     })
   }
 
+  async purchaseTicket(eventId: string, data: {
+    customerId: string
+    ticketTierId: string
+    quantity: number
+    seatPreference?: string
+  }): Promise<any> {
+    if (!data.customerId || !data.ticketTierId || !data.quantity) {
+      throw new Error("Customer ID, ticket tier ID, and quantity are required")
+    }
+    if (data.quantity <= 0 || data.quantity > 10) {
+      throw new Error("Quantity must be between 1 and 10")
+    }
+
+    const tickets = await this.reserveTickets(eventId, data.quantity, data.ticketTierId, data.customerId)
+
+    for (const ticket of tickets) {
+      await (this as any).updateTickets({
+        id: ticket.id,
+        status: "issued",
+        issued_at: new Date(),
+        seat_preference: data.seatPreference || null,
+      })
+    }
+
+    return {
+      eventId,
+      customerId: data.customerId,
+      tickets,
+      quantity: data.quantity,
+      purchasedAt: new Date(),
+    }
+  }
+
+  async checkIn(ticketId: string): Promise<any> {
+    const ticket = await this.retrieveTicket(ticketId) as any
+
+    if (ticket.status === "used") {
+      throw new Error("Ticket has already been used")
+    }
+    if (ticket.status === "cancelled") {
+      throw new Error("Ticket has been cancelled")
+    }
+    if (ticket.status !== "issued" && ticket.status !== "reserved") {
+      throw new Error("Ticket is not valid for check-in")
+    }
+
+    await (this as any).updateTickets({
+      id: ticketId,
+      status: "used",
+      checked_in_at: new Date(),
+    })
+
+    await (this as any).createCheckIns({
+      ticket_id: ticketId,
+      event_id: ticket.event_id,
+      checked_in_at: new Date(),
+    })
+
+    return await this.retrieveTicket(ticketId)
+  }
+
+  async getEventDashboard(eventId: string): Promise<{
+    event: any
+    capacity: { total: number; sold: number; reserved: number; available: number }
+    revenue: number
+    checkInRate: number
+    ticketBreakdown: Record<string, number>
+  }> {
+    const event = await this.retrieveEvent(eventId) as any
+    const capacity = await this.getEventCapacity(eventId)
+
+    const tickets = await this.listTickets({ event_id: eventId }) as any
+    const ticketList = Array.isArray(tickets) ? tickets : [tickets].filter(Boolean)
+
+    let revenue = 0
+    const ticketBreakdown: Record<string, number> = {}
+    let checkedIn = 0
+
+    for (const ticket of ticketList) {
+      if (ticket.status !== "cancelled") {
+        revenue += Number(ticket.price || 0)
+      }
+      const status = ticket.status || "unknown"
+      ticketBreakdown[status] = (ticketBreakdown[status] || 0) + 1
+      if (ticket.status === "used") {
+        checkedIn++
+      }
+    }
+
+    const issuedAndUsed = (ticketBreakdown["issued"] || 0) + (ticketBreakdown["used"] || 0)
+    const checkInRate = issuedAndUsed > 0 ? Math.round((checkedIn / issuedAndUsed) * 10000) / 100 : 0
+
+    return {
+      event,
+      capacity,
+      revenue,
+      checkInRate,
+      ticketBreakdown,
+    }
+  }
+
+  async transferTicket(ticketId: string, newOwnerId: string): Promise<any> {
+    if (!ticketId || !newOwnerId) {
+      throw new Error("Ticket ID and new owner ID are required")
+    }
+    const ticket = await this.retrieveTicket(ticketId) as any
+
+    if (ticket.status === "used") {
+      throw new Error("Used tickets cannot be transferred")
+    }
+    if (ticket.status === "cancelled") {
+      throw new Error("Cancelled tickets cannot be transferred")
+    }
+
+    const event = await this.retrieveEvent(ticket.event_id) as any
+    if (new Date(event.start_date) < new Date()) {
+      throw new Error("Cannot transfer tickets for events that have already started")
+    }
+
+    const previousOwner = ticket.customer_id
+    await (this as any).updateTickets({
+      id: ticketId,
+      customer_id: newOwnerId,
+      transferred_at: new Date(),
+      transferred_from: previousOwner,
+    })
+
+    return await this.retrieveTicket(ticketId)
+  }
+
   /** Get event capacity and availability */
   async getEventCapacity(eventId: string): Promise<{ total: number; sold: number; reserved: number; available: number }> {
     const event = await this.retrieveEvent(eventId) as any

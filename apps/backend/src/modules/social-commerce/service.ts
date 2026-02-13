@@ -72,6 +72,48 @@ class SocialCommerceModuleService extends MedusaService({
     const commission = engagementScore * baseRate
     return { postId, engagementScore, commission: Math.round(commission * 100) / 100 }
   }
+
+  async getPostAnalytics(postId: string): Promise<{
+    postId: string
+    engagementCount: number
+    shareCount: number
+    engagementRate: number
+    shares: any[]
+  }> {
+    const post = await this.retrieveSocialPost(postId) as any
+    const shares = await this.listSocialShares({ post_id: postId }) as any
+    const shareList = Array.isArray(shares) ? shares : [shares].filter(Boolean)
+
+    const engagementCount = Number(post.engagement_count || 0)
+    const shareCount = Number(post.share_count || 0)
+    const viewCount = Number(post.view_count || 1)
+    const engagementRate = viewCount > 0 ? Math.round((engagementCount / viewCount) * 10000) / 100 : 0
+
+    return {
+      postId,
+      engagementCount,
+      shareCount,
+      engagementRate,
+      shares: shareList,
+    }
+  }
+
+  async schedulePost(postId: string, publishAt: Date): Promise<any> {
+    if (new Date(publishAt) <= new Date()) {
+      throw new Error("Scheduled publication date must be in the future")
+    }
+
+    const post = await this.retrieveSocialPost(postId) as any
+    if (post.status === "published") {
+      throw new Error("Post is already published")
+    }
+
+    return await (this as any).updateSocialPosts({
+      id: postId,
+      status: "scheduled",
+      scheduled_at: publishAt,
+    })
+  }
 }
 
 export default SocialCommerceModuleService

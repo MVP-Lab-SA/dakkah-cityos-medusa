@@ -122,6 +122,101 @@ class AnalyticsModuleService extends MedusaService({
     return sorted
   }
 
+  async trackPageView(data: {
+    sessionId: string
+    pageUrl: string
+    referrer?: string
+    deviceType?: string
+    tenantId: string
+  }): Promise<any> {
+    if (!data.sessionId || !data.pageUrl || !data.tenantId) {
+      throw new Error("Session ID, page URL, and tenant ID are required")
+    }
+    return await (this as any).createAnalyticsEvents({
+      tenant_id: data.tenantId,
+      event_type: "page_view",
+      session_id: data.sessionId,
+      properties: {
+        page_url: data.pageUrl,
+        referrer: data.referrer || null,
+        device_type: data.deviceType || "unknown",
+      },
+      created_at: new Date(),
+    })
+  }
+
+  async getConversionFunnel(tenantId: string, dateRange: { start: Date; end: Date }): Promise<{
+    steps: Array<{ step: string; count: number; conversionRate: number }>
+    overallConversion: number
+  }> {
+    const funnelSteps = ["page_view", "product_view", "add_to_cart", "checkout_started", "purchase"]
+    const steps: Array<{ step: string; count: number; conversionRate: number }> = []
+
+    let firstStepCount = 0
+    for (let i = 0; i < funnelSteps.length; i++) {
+      const eventType = funnelSteps[i]
+      const result = await this.getEventCounts(tenantId, eventType, dateRange)
+      const count = result.count
+
+      if (i === 0) firstStepCount = count
+
+      const conversionRate = i === 0
+        ? 100
+        : steps[i - 1].count > 0
+          ? Math.round((count / steps[i - 1].count) * 10000) / 100
+          : 0
+
+      steps.push({ step: eventType, count, conversionRate })
+    }
+
+    const lastStep = steps[steps.length - 1]
+    const overallConversion = firstStepCount > 0
+      ? Math.round((lastStep.count / firstStepCount) * 10000) / 100
+      : 0
+
+    return { steps, overallConversion }
+  }
+
+  async generateDashboardMetrics(tenantId: string): Promise<{
+    revenue: number
+    orderCount: number
+    averageOrderValue: number
+    conversionRate: number
+    pageViews: number
+    uniqueSessions: number
+  }> {
+    const now = new Date()
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+    const dateRange = { start: thirtyDaysAgo, end: now }
+
+    const salesMetrics = await this.getSalesMetrics(tenantId, dateRange)
+    const pageViewResult = await this.getEventCounts(tenantId, "page_view", dateRange)
+
+    const events = await this.listAnalyticsEvents({
+      tenant_id: tenantId,
+      event_type: "page_view",
+    })
+    const eventList = Array.isArray(events) ? events : [events].filter(Boolean)
+    const filteredEvents = eventList.filter((e) => {
+      const createdAt = new Date(e.created_at)
+      return createdAt >= dateRange.start && createdAt <= dateRange.end
+    })
+    const uniqueSessions = new Set(filteredEvents.map((e: any) => e.session_id).filter(Boolean)).size
+
+    const conversionRate = pageViewResult.count > 0
+      ? Math.round((salesMetrics.orderCount / pageViewResult.count) * 10000) / 100
+      : 0
+
+    return {
+      revenue: salesMetrics.revenue,
+      orderCount: salesMetrics.orderCount,
+      averageOrderValue: salesMetrics.avgOrderValue,
+      conversionRate,
+      pageViews: pageViewResult.count,
+      uniqueSessions,
+    }
+  }
+
   async generateReport(reportId: string) {
     const report = await this.retrieveReport(reportId)
 

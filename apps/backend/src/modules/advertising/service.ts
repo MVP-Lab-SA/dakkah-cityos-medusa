@@ -123,6 +123,104 @@ class AdvertisingModuleService extends MedusaService({
       paused_at: new Date(),
     })
   }
+
+  async approveCreative(creativeId: string, approvedBy: string): Promise<any> {
+    if (!approvedBy) {
+      throw new Error("Approver ID is required")
+    }
+
+    const creative = await this.retrieveAdCreative(creativeId) as any
+    if (creative.status === "approved") {
+      throw new Error("Creative is already approved")
+    }
+
+    if (creative.status === "rejected") {
+      throw new Error("Rejected creatives must be resubmitted before approval")
+    }
+
+    return await (this as any).updateAdCreatives({
+      id: creativeId,
+      status: "approved",
+      approved_by: approvedBy,
+      approved_at: new Date(),
+    })
+  }
+
+  async rejectCreative(creativeId: string, reason: string): Promise<any> {
+    if (!reason || reason.trim().length === 0) {
+      throw new Error("Rejection reason is required")
+    }
+
+    const creative = await this.retrieveAdCreative(creativeId) as any
+    if (creative.status === "rejected") {
+      throw new Error("Creative is already rejected")
+    }
+
+    return await (this as any).updateAdCreatives({
+      id: creativeId,
+      status: "rejected",
+      rejection_reason: reason,
+      rejected_at: new Date(),
+    })
+  }
+
+  async getROIReport(campaignId: string): Promise<{
+    campaignId: string
+    impressions: number
+    clicks: number
+    ctr: number
+    spend: number
+    budget: number
+    budgetUtilization: number
+    costPerClick: number
+    costPerImpression: number
+  }> {
+    const campaign = await this.retrieveAdCampaign(campaignId) as any
+
+    const impressions = Number(campaign.impressions || 0)
+    const clicks = Number(campaign.clicks || 0)
+    const spend = Number(campaign.spent || 0)
+    const budget = Number(campaign.budget || 0)
+    const ctr = impressions > 0 ? Math.round((clicks / impressions) * 10000) / 100 : 0
+    const budgetUtilization = budget > 0 ? Math.round((spend / budget) * 10000) / 100 : 0
+    const costPerClick = clicks > 0 ? Math.round((spend / clicks) * 100) / 100 : 0
+    const costPerImpression = impressions > 0 ? Math.round((spend / impressions) * 10000) / 10000 : 0
+
+    return {
+      campaignId,
+      impressions,
+      clicks,
+      ctr,
+      spend,
+      budget,
+      budgetUtilization,
+      costPerClick,
+      costPerImpression,
+    }
+  }
+
+  async adjustBudget(campaignId: string, newBudget: number): Promise<any> {
+    if (newBudget <= 0) {
+      throw new Error("Budget must be greater than zero")
+    }
+
+    const campaign = await this.retrieveAdCampaign(campaignId) as any
+
+    if (campaign.status === "completed") {
+      throw new Error("Cannot adjust budget for a completed campaign")
+    }
+
+    const spent = Number(campaign.spent || 0)
+    if (newBudget < spent) {
+      throw new Error(`New budget cannot be less than already spent amount ($${spent})`)
+    }
+
+    return await (this as any).updateAdCampaigns({
+      id: campaignId,
+      budget: newBudget,
+      budget_updated_at: new Date(),
+    })
+  }
 }
 
 export default AdvertisingModuleService

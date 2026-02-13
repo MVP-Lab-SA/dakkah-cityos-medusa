@@ -129,6 +129,79 @@ class PersonaModuleService extends MedusaService({
       status: "active",
     })
   }
+
+  async getPersonaCapabilities(personaId: string): Promise<{
+    persona: any
+    capabilities: string[]
+    constraints: Record<string, any>
+  }> {
+    const persona = await this.retrievePersona(personaId) as any
+    const capabilities: string[] = []
+
+    const config = (persona.config || persona.capabilities || {}) as Record<string, any>
+    if (config.permissions) {
+      capabilities.push(...(Array.isArray(config.permissions) ? config.permissions : []))
+    }
+    if (config.features) {
+      capabilities.push(...(Array.isArray(config.features) ? config.features : []))
+    }
+    if (config.actions) {
+      capabilities.push(...(Array.isArray(config.actions) ? config.actions : []))
+    }
+
+    const constraints = persona.constraints || {}
+    if (constraints.read_only || constraints.readOnly) {
+      capabilities.push("read")
+    } else {
+      capabilities.push("read", "write")
+    }
+    if (constraints.kid_safe || constraints.kidSafe) {
+      capabilities.push("kid_safe_content")
+    }
+
+    return {
+      persona,
+      capabilities: [...new Set(capabilities)],
+      constraints,
+    }
+  }
+
+  async validatePersonaAssignment(userId: string, personaId: string): Promise<{
+    eligible: boolean
+    reason?: string
+  }> {
+    if (!userId || !personaId) {
+      return { eligible: false, reason: "User ID and persona ID are required" }
+    }
+
+    try {
+      await this.retrievePersona(personaId)
+    } catch {
+      return { eligible: false, reason: "Persona not found" }
+    }
+
+    const existingAssignments = await this.listPersonaAssignments({
+      user_id: userId,
+      persona_id: personaId,
+      status: "active",
+    }) as any
+    const assignmentList = Array.isArray(existingAssignments) ? existingAssignments : [existingAssignments].filter(Boolean)
+    if (assignmentList.length > 0) {
+      return { eligible: false, reason: "User already has this persona assigned" }
+    }
+
+    const allUserAssignments = await this.listPersonaAssignments({
+      user_id: userId,
+      status: "active",
+    }) as any
+    const userAssignmentList = Array.isArray(allUserAssignments) ? allUserAssignments : [allUserAssignments].filter(Boolean)
+    const maxAssignments = 10
+    if (userAssignmentList.length >= maxAssignments) {
+      return { eligible: false, reason: `User has reached the maximum of ${maxAssignments} active persona assignments` }
+    }
+
+    return { eligible: true }
+  }
 }
 
 export default PersonaModuleService

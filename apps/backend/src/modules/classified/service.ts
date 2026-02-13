@@ -76,15 +76,16 @@ class ClassifiedModuleService extends MedusaService({
   }
 
   /** Renew an expired listing for another 30 days */
-  async renewListing(listingId: string): Promise<any> {
+  async renewListing(listingId: string, durationDays?: number): Promise<any> {
     const listing = await this.retrieveClassifiedListing(listingId) as any
 
     if (!["expired", "published"].includes(listing.status)) {
       throw new Error("Only expired or published listings can be renewed")
     }
 
+    const days = durationDays && durationDays > 0 ? durationDays : 30
     const expiresAt = new Date()
-    expiresAt.setDate(expiresAt.getDate() + 30)
+    expiresAt.setDate(expiresAt.getDate() + days)
 
     return await (this as any).updateClassifiedListings({
       id: listingId,
@@ -92,6 +93,63 @@ class ClassifiedModuleService extends MedusaService({
       expires_at: expiresAt,
       renewed_at: new Date(),
     })
+  }
+
+  async searchListings(filters: {
+    category?: string
+    location?: string
+    priceMin?: number
+    priceMax?: number
+    status?: string
+  }): Promise<any[]> {
+    const queryFilters: Record<string, any> = {}
+
+    if (filters.status) {
+      queryFilters.status = filters.status
+    } else {
+      queryFilters.status = "published"
+    }
+
+    if (filters.category) {
+      queryFilters.category = filters.category
+    }
+
+    if (filters.location) {
+      queryFilters.location = filters.location
+    }
+
+    const listings = await this.listClassifiedListings(queryFilters) as any
+    let results = Array.isArray(listings) ? listings : [listings].filter(Boolean)
+
+    if (filters.priceMin !== undefined) {
+      results = results.filter((l: any) => Number(l.price || 0) >= filters.priceMin!)
+    }
+    if (filters.priceMax !== undefined) {
+      results = results.filter((l: any) => Number(l.price || 0) <= filters.priceMax!)
+    }
+
+    return results
+  }
+
+  async expireOldListings(): Promise<{ expiredCount: number; expiredIds: string[] }> {
+    const published = await this.listClassifiedListings({ status: "published" }) as any
+    const listings = Array.isArray(published) ? published : [published].filter(Boolean)
+
+    const now = new Date()
+    const expiredIds: string[] = []
+
+    for (const listing of listings) {
+      if (listing.expires_at && new Date(listing.expires_at) < now) {
+        await (this as any).updateClassifiedListings({
+          id: listing.id,
+          status: "expired",
+          expired_at: now,
+        })
+        expiredIds.push(listing.id)
+      }
+    }
+
+    return { expiredCount: expiredIds.length, expiredIds }
   }
 }
 

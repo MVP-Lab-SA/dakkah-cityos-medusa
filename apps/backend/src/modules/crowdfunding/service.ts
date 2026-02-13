@@ -104,6 +104,129 @@ class CrowdfundingModuleService extends MedusaService({
     const current = Number(campaign.current_amount || 0)
     return goal > 0 && current >= goal
   }
+
+  async launchCampaign(data: {
+    creatorId: string
+    title: string
+    goalAmount: number
+    endDate: Date
+    rewardTiers?: Array<{ title: string; minimumAmount: number; description?: string; limit?: number }>
+  }): Promise<any> {
+    if (!data.title || !data.title.trim()) {
+      throw new Error("Campaign title is required")
+    }
+    if (data.goalAmount <= 0) {
+      throw new Error("Goal amount must be greater than zero")
+    }
+    const endDate = new Date(data.endDate)
+    if (endDate <= new Date()) {
+      throw new Error("End date must be in the future")
+    }
+    const maxDuration = 90 * 24 * 60 * 60 * 1000
+    if (endDate.getTime() - Date.now() > maxDuration) {
+      throw new Error("Campaign duration cannot exceed 90 days")
+    }
+
+    const campaign = await (this as any).createCrowdfundCampaigns({
+      creator_id: data.creatorId,
+      title: data.title.trim(),
+      goal_amount: data.goalAmount,
+      current_amount: 0,
+      backer_count: 0,
+      end_date: endDate,
+      status: "active",
+      launched_at: new Date(),
+    })
+
+    if (data.rewardTiers && data.rewardTiers.length > 0) {
+      for (const tier of data.rewardTiers) {
+        await (this as any).createRewardTiers({
+          campaign_id: campaign.id,
+          title: tier.title,
+          minimum_amount: tier.minimumAmount,
+          description: tier.description || null,
+          limit: tier.limit || null,
+          claimed_count: 0,
+        })
+      }
+    }
+
+    return campaign
+  }
+
+  async getCampaignDashboard(campaignId: string): Promise<{
+    campaign: any
+    raisedAmount: number
+    backerCount: number
+    daysRemaining: number | null
+    fundingPercentage: number
+    rewardTiers: any[]
+    recentPledges: any[]
+  }> {
+    const campaign = await this.retrieveCrowdfundCampaign(campaignId) as any
+    const goal = Number(campaign.goal_amount || 0)
+    const raised = Number(campaign.current_amount || 0)
+    const fundingPercentage = goal > 0 ? Math.round((raised / goal) * 10000) / 100 : 0
+
+    let daysRemaining: number | null = null
+    if (campaign.end_date) {
+      const diff = new Date(campaign.end_date).getTime() - Date.now()
+      daysRemaining = Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)))
+    }
+
+    const tiers = await this.listRewardTiers({ campaign_id: campaignId }) as any
+    const tierList = Array.isArray(tiers) ? tiers : [tiers].filter(Boolean)
+
+    const pledges = await this.listPledges({ campaign_id: campaignId }) as any
+    const pledgeList = Array.isArray(pledges) ? pledges : [pledges].filter(Boolean)
+    const recentPledges = pledgeList
+      .sort((a: any, b: any) => new Date(b.pledged_at || b.created_at).getTime() - new Date(a.pledged_at || a.created_at).getTime())
+      .slice(0, 10)
+
+    return {
+      campaign,
+      raisedAmount: raised,
+      backerCount: Number(campaign.backer_count || pledgeList.length),
+      daysRemaining,
+      fundingPercentage,
+      rewardTiers: tierList,
+      recentPledges,
+    }
+  }
+
+  async claimReward(pledgeId: string): Promise<any> {
+    const pledge = await this.retrievePledge(pledgeId) as any
+
+    if (pledge.status !== "active") {
+      throw new Error("Only active pledges can claim rewards")
+    }
+    if (!pledge.reward_tier_id) {
+      throw new Error("This pledge has no associated reward tier")
+    }
+
+    const campaign = await this.retrieveCrowdfundCampaign(pledge.campaign_id) as any
+    const goal = Number(campaign.goal_amount || 0)
+    const current = Number(campaign.current_amount || 0)
+    if (current < goal) {
+      throw new Error("Campaign has not met its funding goal yet")
+    }
+
+    const tier = await this.retrieveRewardTier(pledge.reward_tier_id) as any
+    if (tier.limit && Number(tier.claimed_count || 0) >= Number(tier.limit)) {
+      throw new Error("All rewards for this tier have been claimed")
+    }
+
+    await (this as any).updateRewardTiers({
+      id: tier.id,
+      claimed_count: (Number(tier.claimed_count) || 0) + 1,
+    })
+
+    return await (this as any).updatePledges({
+      id: pledgeId,
+      status: "reward_claimed",
+      reward_claimed_at: new Date(),
+    })
+  }
 }
 
 export default CrowdfundingModuleService

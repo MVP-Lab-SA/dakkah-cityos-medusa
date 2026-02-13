@@ -242,6 +242,98 @@ class CartExtensionModuleService extends MedusaService({
     }
   }
 
+  async applyGiftWrap(cartId: string, giftMessage: string): Promise<any> {
+    if (!cartId) {
+      throw new Error("Cart ID is required")
+    }
+    const maxMessageLength = 500
+    if (giftMessage && giftMessage.length > maxMessageLength) {
+      throw new Error(`Gift message cannot exceed ${maxMessageLength} characters`)
+    }
+    let existing = await this.getByCartId(cartId, "")
+    if (existing) {
+      await (this as any).updateCartMetadatas({
+        id: existing.id,
+        gift_wrap: true,
+        gift_message: giftMessage || null,
+      })
+      return await this.retrieveCartMetadata(existing.id)
+    }
+    return await (this as any).createCartMetadatas({
+      cart_id: cartId,
+      tenant_id: "",
+      gift_wrap: true,
+      gift_message: giftMessage || null,
+    })
+  }
+
+  async calculateCartSavings(cartId: string): Promise<{
+    cartId: string
+    originalTotal: number
+    discountTotal: number
+    savings: number
+    savingsPercentage: number
+  }> {
+    const manager = this.manager_
+    try {
+      const cart = await manager.findOne("cart", {
+        where: { id: cartId },
+        relations: ["items"],
+      })
+      if (!cart || !cart.items || cart.items.length === 0) {
+        return { cartId, originalTotal: 0, discountTotal: 0, savings: 0, savingsPercentage: 0 }
+      }
+
+      const originalTotal = (cart.items || []).reduce((sum: number, item: any) => {
+        const comparePrice = item.compare_at_unit_price || item.original_price || item.unit_price || 0
+        return sum + (comparePrice * item.quantity)
+      }, 0)
+
+      const discountTotal = (cart.items || []).reduce((sum: number, item: any) => {
+        return sum + ((item.unit_price || 0) * item.quantity)
+      }, 0)
+
+      const bulkDiscount = await this.applyBulkDiscount(cartId)
+      const bulkSavings = bulkDiscount?.discountAmount || 0
+
+      const savings = Math.max(0, originalTotal - discountTotal) + bulkSavings
+      const savingsPercentage = originalTotal > 0 ? Math.round((savings / originalTotal) * 10000) / 100 : 0
+
+      return { cartId, originalTotal, discountTotal: discountTotal - bulkSavings, savings, savingsPercentage }
+    } catch {
+      return { cartId, originalTotal: 0, discountTotal: 0, savings: 0, savingsPercentage: 0 }
+    }
+  }
+
+  async validateCartForCheckout(cartId: string): Promise<{
+    valid: boolean
+    errors: string[]
+    warnings: string[]
+  }> {
+    const errors: string[] = []
+    const warnings: string[] = []
+
+    const itemValidation = await this.validateCartItems(cartId)
+    if (!itemValidation.valid) {
+      errors.push(...itemValidation.errors)
+    }
+    if (itemValidation.itemCount === 0) {
+      errors.push("Cart is empty")
+    }
+
+    const metadata = await this.getByCartId(cartId, "")
+    if (metadata?.gift_wrap && !metadata?.gift_message) {
+      warnings.push("Gift wrap is enabled but no gift message was provided")
+    }
+
+    const totals = await this.calculateCartTotals(cartId)
+    if (totals && totals.total <= 0) {
+      errors.push("Cart total must be greater than zero")
+    }
+
+    return { valid: errors.length === 0, errors, warnings }
+  }
+
   async mergeGuestCart(guestCartId: string, customerCartId: string) {
     const manager = this.manager_
 

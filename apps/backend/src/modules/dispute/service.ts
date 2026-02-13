@@ -193,6 +193,75 @@ class DisputeModuleService extends MedusaService({
 
     return Array.isArray(messages) ? messages : [messages].filter(Boolean)
   }
+  async escalateDispute(disputeId: string, escalationType: string, notes: string): Promise<any> {
+    if (!escalationType) {
+      throw new Error("Escalation type is required")
+    }
+    const validTypes = ["manager", "legal", "executive", "external"]
+    if (!validTypes.includes(escalationType)) {
+      throw new Error(`Escalation type must be one of: ${validTypes.join(", ")}`)
+    }
+
+    const dispute = await this.retrieveDispute(disputeId)
+    if (["resolved", "closed"].includes(dispute.status)) {
+      throw new Error("Cannot escalate a resolved or closed dispute")
+    }
+
+    await (this as any).updateDisputes({
+      id: disputeId,
+      status: "escalated",
+      priority: "urgent",
+      escalated_at: new Date(),
+      escalation_type: escalationType,
+    })
+
+    if (notes) {
+      await (this as any).createDisputeMessages({
+        dispute_id: disputeId,
+        sender_type: "system",
+        sender_id: "system",
+        content: `Escalated to ${escalationType}: ${notes}`,
+        is_internal: true,
+      })
+    }
+
+    return await this.retrieveDispute(disputeId)
+  }
+
+  async resolveDispute(disputeId: string, resolution: string, refundAmount?: number): Promise<any> {
+    if (!resolution || !resolution.trim()) {
+      throw new Error("Resolution description is required")
+    }
+
+    const dispute = await this.retrieveDispute(disputeId)
+    if (["resolved", "closed"].includes(dispute.status)) {
+      throw new Error("Dispute is already resolved or closed")
+    }
+
+    if (refundAmount !== undefined && refundAmount < 0) {
+      throw new Error("Refund amount cannot be negative")
+    }
+
+    await (this as any).updateDisputes({
+      id: disputeId,
+      status: "resolved",
+      resolution: resolution.trim(),
+      resolution_amount: refundAmount || null,
+      resolved_by: "admin",
+      resolved_at: new Date(),
+    })
+
+    await (this as any).createDisputeMessages({
+      dispute_id: disputeId,
+      sender_type: "admin",
+      sender_id: "admin",
+      content: `Dispute resolved: ${resolution}${refundAmount ? `. Refund: $${(refundAmount / 100).toFixed(2)}` : ""}`,
+      is_internal: false,
+    })
+
+    return await this.retrieveDispute(disputeId)
+  }
+
   /** Get full dispute timeline including status changes and messages */
   async getDisputeTimeline(disputeId: string): Promise<{
     dispute: any

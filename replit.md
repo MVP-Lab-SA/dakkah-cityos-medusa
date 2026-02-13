@@ -114,11 +114,18 @@ Key components include Wishlist, Comparison, Search, Notifications, Disputes, Tr
 - Phase 14: Manage page completion — 23 new manage pages + 23 CRUD configs added, total now 66 manage pages with 65 CRUD configs
 - Phase 15: API route completion — 8 new admin API routes (notification-preferences, tax-config, cart-extension, events) + 7 new store API routes (notification-preferences, shipping, volume-pricing, wishlists, events)
 - Phase 16: Test expansion — 12 new test files with 157 tests for enriched services, all passing
+- Phase 17: Service enrichment round 2 — 21 more services enhanced with 3-5 business logic methods each:
+  - affiliate (91→172L), classified (98→156L), education (129→151L), legal (83→164L), pet-service (81→160L), real-estate (128→166L)
+  - restaurant (82→181L), social-commerce (77→119L), advertising (128→226L), charity (98→172L), parking (80→206L)
+  - automotive (119→263L), crowdfunding (109→232L), digital-product (91→160L), event-ticketing (101→231L)
+  - governance (78→215L), persona (134→207L), store (84→136L), dispute (→295L), cart-extension (→407L), analytics (→246L)
+- Phase 18: Vendor dashboard — 10 vendor API routes + 10 vendor dashboard pages (subscriptions, bookings, auctions, rentals, digital-products, events, memberships, freelance, real-estate, restaurants)
+- Phase 19: Test expansion round 2 — 12 new test files with 97 tests for enriched services, all passing
 
 ### Test Coverage Architecture
-- **Backend (Jest):** 64 test suites in `apps/backend/tests/unit/`
+- **Backend (Jest):** 76 test suites in `apps/backend/tests/unit/`
   - `platform/` — 5 files: outbox-processor, sync-tracker, helpers, cms-registry, registry
-  - `services/` — 31 files: all 58 modules covered with dedicated test files for events, healthcare, notification-prefs, tax-config, financial-product, fitness, freelance, government, grocery, shipping-ext, travel, warranty (+ original 20 files)
+  - `services/` — 43 files: all 58 modules covered with dedicated test files for 33 services (+ original 20 files including simple-modules batch)
   - `subscribers/` — 7 files: all 33 subscribers covered
   - `workflows/` — 6 files: all 30 workflows covered
   - `jobs/` — 1 file: all 16 jobs covered
@@ -138,19 +145,20 @@ Key components include Wishlist, Comparison, Search, Notifications, Disputes, Tr
 | Migration Files | 61 |
 | Admin API Routes | 200+ |
 | Store API Routes | 120+ |
-| Vendor API Routes | 11 |
+| Vendor API Routes | 21 |
 | Admin/Manage Pages | 66 |
+| Vendor Dashboard Pages | 19 |
 | CRUD Configs | 65 |
 | Admin Hooks | 52 |
 | Workflows | 30 |
 | Subscribers | 33 |
 | Jobs | 16 |
-| Storefront Routes | 142 |
+| Storefront Routes | 155+ |
 | Storefront Components | 537 |
-| Backend Test Files | 64 |
+| Backend Test Files | 76 |
 | Storefront Test Files | 7 |
-| Total Tests | 1,377+ |
-| Total Source Files | 2,100+ |
+| Total Tests | 1,474+ |
+| Total Source Files | 2,200+ |
 
 ## Documentation
 - `docs/PLATFORM_MODULE_ASSESSMENT.md` — Deep-dive assessment of all 58 modules (v3.0 — complete API route maps, per-module details, workflow/job registries), 3400+ lines
