@@ -1,0 +1,14 @@
+import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+
+export async function GET(req: MedusaRequest, res: MedusaResponse) {
+  try {
+    const service = req.scope.resolve("loyalty") as any
+    const filters: Record<string, any> = {}
+    if (req.query.program_id) filters.program_id = req.query.program_id
+    if (req.query.customer_id) filters.customer_id = req.query.customer_id
+    const accounts = await service.listLoyaltyAccounts(filters)
+    res.json({ accounts: Array.isArray(accounts) ? accounts : [accounts].filter(Boolean) })
+  } catch (error: any) {
+    res.status(400).json({ message: error.message })
+  }
+}

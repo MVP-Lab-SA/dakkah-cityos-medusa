@@ -1,0 +1,13 @@
+import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+
+export async function GET(req: MedusaRequest, res: MedusaResponse) {
+  try {
+    const service = req.scope.resolve("cmsContent") as any
+    const filters: Record<string, any> = {}
+    if (req.query.is_active !== undefined) filters.is_active = req.query.is_active === "true"
+    const navigations = await service.listCmsNavigations(filters)
+    res.json({ navigations: Array.isArray(navigations) ? navigations : [navigations].filter(Boolean) })
+  } catch (error: any) {
+    res.status(400).json({ message: error.message })
+  }
+}
