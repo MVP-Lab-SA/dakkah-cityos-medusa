@@ -14,74 +14,36 @@ This project is a Medusa.js e-commerce monorepo for multi-tenancy, seamlessly in
 ## System Architecture
 
 ### Structure
-The project uses a Turborepo monorepo with:
-- `apps/backend/`: Medusa.js v2 backend API.
-- `apps/storefront/`: TanStack Start + React storefront.
-- `packages/cityos-contracts/`: Shared TypeScript contracts.
-- `packages/cityos-design-tokens/`: Design token definitions.
-- `packages/cityos-design-runtime/`: Theme runtime and React providers.
-- `packages/cityos-design-system/`: Component type system.
+The project uses a Turborepo monorepo with dedicated packages for the Medusa.js v2 backend API, a TanStack Start + React storefront, shared TypeScript contracts, design token definitions, theme runtime/React providers, and a component type system.
 
 ### Backend Features
-The backend provides modularity for CityOS features including tenant management, a 5-level node hierarchy (CITY→DISTRICT→ZONE→FACILITY→ASSET), policy inheritance-based governance, a persona system, a CMS-compatible event outbox, and i18n. It supports multi-vendor marketplaces, subscriptions, B2B, bookings, promotions, and specialized services.
+The backend provides modularity for CityOS features including tenant management, a 5-level node hierarchy (CITY→DISTRICT→ZONE→FACILITY→ASSET), policy inheritance-based governance, a persona system, a CMS-compatible event outbox, and i18n. It supports multi-vendor marketplaces, subscriptions, B2B, bookings, promotions, and specialized services. Key design decisions include multi-tenant isolation, RBAC, persona precedence, and residency zones.
 
 ### Storefront Architecture
-The storefront utilizes TanStack Start with React for SSR, dynamic routing, and file-based routing. A centralized design system dictates design primitives, theming, and component interfaces. A robust provider chain ensures consistent context, including tenant-scoped routes. It includes a comprehensive Payload CMS-compatible block system with 76 block type contracts and implementations. All UI uses design tokens and follows mobile-first responsive patterns.
+The storefront uses TanStack Start with React for SSR, dynamic routing, and file-based routing. It implements a centralized design system, ensuring consistent context via a robust provider chain, tenant-scoped routes, and a comprehensive Payload CMS-compatible block system with 76 block types. All UI follows mobile-first responsive patterns and utilizes design tokens.
 
 ### Internationalization and Localization
 The system supports full logical CSS properties for RTL/LTR, with `dir="rtl"` for Arabic locales. i18n integration uses a `locale` prop for translations across 30+ namespaces in en/fr/ar JSON files.
 
 ### CMS Integration
-A local CMS registry (`apps/backend/src/lib/platform/cms-registry.ts`), compatible with Payload CMS, defines 27 commerce verticals and additional pages. CMS pages support `countryCode` and `regionZone` for country-level unification. Backend endpoints provide Payload-compatible responses, and frontend hooks use React Query for data fetching.
-
-### Key Design Decisions
-- **Multi-tenant Isolation:** `tenantId` is used across all entities with node-scoped access.
-- **RBAC:** 10 roles with node-scoped access.
-- **Persona Precedence:** Hierarchical resolution from session to tenant-default.
-- **Governance:** Deep merging of policies via an authority chain.
-- **Residency Zones:** Data locality based on GCC/EU, MENA, APAC/AMERICAS/GLOBAL.
-- **Country-Level CMS Scoping:** Pages scoped by `countryCode`/`regionZone` with a 4-step resolution chain.
-- **Payload CMS API Compatibility:** Local registry designed for seamless migration to Payload CMS.
-- **RTL Support:** Dedicated `dir="rtl"` and CSS overrides for Arabic.
-- **Event Outbox:** CMS-compatible envelope format with correlation/causation IDs.
-- **Vite Proxy:** Frontend uses a Vite proxy for API communication.
-- **SSR Architecture:** Route loaders return minimal data during SSR, with client-side data fetching via React Query.
-- **Authentication:** JWT-based authentication for customer SDK.
-- **API Key Usage:** All tenant/governance/node API calls must use `sdk.client.fetch()` for automatic `VITE_MEDUSA_PUBLISHABLE_KEY` inclusion.
-- **Tenant Resolution:** Default tenant "dakkah". Root `/` redirects to `/dakkah/en`.
-- **Route Consolidation:** CMS-eligible routes are consolidated into catch-all routes.
-- **Platform Context API:** Exposed at `/platform/*` (no authentication required) for `tenant`, `nodeHierarchy`, `governanceChain`, `capabilities`, and `systems`.
-
-### Temporal-First Integration Architecture
-All cross-system integration calls flow through Temporal Cloud workflows for durable execution, retries, saga/compensation patterns, and observability, avoiding direct API calls to external systems. This includes an event dispatcher and dynamic AI agent workflows.
+A local CMS registry defines 27 commerce verticals and additional pages, supporting `countryCode` and `regionZone` for country-level unification. Backend endpoints provide Payload-compatible responses, and frontend hooks use React Query. The local registry is designed for seamless migration to Payload CMS. A CMS Hierarchy Sync Engine keeps 8 collections synchronized from Payload CMS to ERPNext.
 
 ### Integration Layer
-- **Durable Sync Tracking:** PostgreSQL-backed sync state (`apps/backend/src/lib/platform/sync-tracker.ts`)
-- **Webhook Endpoints:** `/webhooks/stripe`, `/webhooks/erpnext`, `/webhooks/fleetbase`, `/webhooks/payload-cms` with signature verification. Payload CMS webhook supports 13 collections.
-- **Outbox Processor:** Circuit breakers and rate limiters per external system (`apps/backend/src/lib/platform/outbox-processor.ts`)
-- **Health Check:** `/health` endpoint reports database, external systems, circuit breaker states, Temporal status
-- **Auto-Sync Scheduler:** Starts on backend boot via `sync-scheduler-init` job. Schedules: product sync (hourly), retry failed (30min), hierarchy reconciliation (6hr), cleanup (daily). Dispatches to Temporal.
-- **CMS Hierarchy Sync Engine:** (`apps/backend/src/integrations/cms-hierarchy-sync/engine.ts`) Syncs 8 collections from Payload CMS → ERPNext in dependency order: Countries → Governance Authorities → Scopes → Categories → Subcategories → Tenants → Stores → Portals. Full create-or-update with `custom_cms_ref_id` matching and DurableSyncTracker integration.
-- **Payload CMS Polling:** `payload-cms-poll` job runs every 15 minutes using CMSHierarchySyncEngine for ordered hierarchy sync.
-- **Payload CMS Webhooks:** Real-time sync for all 13 collections (tenants, stores, scopes, categories, subcategories, portals, governance-authorities, policies, personas, persona-assignments, countries, compliance-records, nodes).
-- **Manual CMS Sync:** POST `/admin/integrations/sync/cms` triggers on-demand sync for all or specific collections. GET returns config status.
-- **Environment Variable Convention:** External service URLs use `_DEV` suffix: `PAYLOAD_CMS_URL_DEV`, `ERPNEXT_URL_DEV`, `FLEETBASE_URL_DEV`, `WALTID_URL_DEV`
+All cross-system integration calls flow through Temporal Cloud workflows for durable execution, retries, saga/compensation patterns, and observability. This includes a PostgreSQL-backed durable sync tracking, webhook endpoints with signature verification for Stripe, ERPNext, Fleetbase, and Payload CMS, and an outbox processor with circuit breakers and rate limiters. An auto-sync scheduler manages product sync, hierarchy reconciliation, and cleanup jobs, dispatching to Temporal.
 
-### Storefront Feature Components
-Key components include Wishlist, Comparison, Search, Notifications, Disputes, Tracking, Loyalty, a comprehensive Checkout process, and an Account Dashboard with various sub-features.
+### Authentication and API Usage
+JWT-based authentication is used for the customer SDK. All tenant/governance/node API calls must use `sdk.client.fetch()` for automatic `VITE_MEDUSA_PUBLISHABLE_KEY` inclusion.
 
 ### Manage Page Infrastructure
-- **42 CRUD Configs:** For all manage verticals with vertical-specific form fields.
-- **Shared Components:** DataTable, Charts, Calendar, Map, RichTextEditor, FileUpload, FormWizard.
-- **Enhanced Features:** AnalyticsOverview, BulkActionsBar, AdvancedFilters, StatusWorkflow, ManagePageWrapper.
+The platform supports 42 CRUD configurations for various manage verticals, utilizing shared components like DataTable, Charts, Calendar, and FormWizard. Enhanced features include AnalyticsOverview, BulkActionsBar, and AdvancedFilters.
 
 ### System Responsibility Split
-- **Medusa (Commerce Engine):** Products, orders, payments, commissions, marketplace listings, vendor registration, KYC, payouts, tenant/marketplace/service channel management.
-- **Payload CMS (Entity & Content Management):** Tenant profiles, POI content, vendor public profiles, pages, navigation, service channel display content.
-- **Fleetbase (Geo & Logistics):** Geocoding, address validation, delivery zone management, service area coverage, fleet management, routing, real-time tracking.
-- **ERPNext (Finance, Accounting & ERP):** Sales invoices, payment entries, GL, inventory, procurement, customer/product sync, reporting. Multi-tenant support.
-- **Temporal Cloud (Workflow Orchestration):** 80 system workflows across 35 categories, 21 specialized task queues, dynamic AI agent workflows, event outbox integration.
-- **Walt.id (Decentralized Digital Identity):** DID management, 6 credential types, W3C Verifiable Credentials, wallet integration, trust registries.
+- **Medusa (Commerce Engine):** Products, orders, payments, commissions, marketplace listings, vendor management.
+- **Payload CMS (Entity & Content Management):** Tenant profiles, POI content, vendor public profiles, pages, navigation.
+- **Fleetbase (Geo & Logistics):** Geocoding, address validation, delivery zone management, tracking.
+- **ERPNext (Finance, Accounting & ERP):** Sales invoices, payment entries, GL, inventory, procurement, reporting.
+- **Temporal Cloud (Workflow Orchestration):** 80 system workflows, 21 task queues, dynamic AI agent workflows, event outbox.
+- **Walt.id (Decentralized Digital Identity):** DID management, verifiable credentials, wallet integration.
 
 ## External Dependencies
 - **Database:** PostgreSQL
@@ -95,45 +57,19 @@ Key components include Wishlist, Comparison, Search, Notifications, Disputes, Tr
 - **Digital Identity:** Walt.id
 - **Payment Gateway:** Stripe
 
-## Recent Changes (2026-02-13)
-- Phase 2: Created 19 database migrations (17 original + 2 gap-fill: dispute, wishlist) — all 205 models now have DB tables
-- Phase 3: Implemented 9 store API routes (bundles, consignments, credit, flash-sales, gift-cards, loyalty, newsletter, trade-in, wallet)
-- Phase 4: Added 12 cross-module links bringing total to 27 link definitions, all synced to DB
-- Phase 5: Built 35 admin UI pages for all commerce verticals (56 total admin pages incl. invoices, quotes)
-- Phase 5b: Created 52 admin hooks — ALL admin pages now wired with real API data (zero mock data pages)
-- Phase 6: Enhanced 30 service files with business logic methods (incl. promotion-ext, utilities), created 20 Temporal workflow stubs
-- Phase 7: Created 6 missing admin API routes (disputes, cms, loyalty, inventory-ext, shipping-ext, wishlists) — all hooks now have matching backend routes
-- Phase 8: Upgraded 49 stub store API routes with proper service integration, error handling, pagination, and filters
-- Phase 9: Enhanced 3 smallest services (region-zone 39→162L, cart-extension 65→315L, channel 70→270L) with business logic
-- Phase 10: Expanded PLATFORM_MODULE_ASSESSMENT.md to v3.0 (3400+ lines) with complete API route maps, per-module details, workflow/job registries
-- Phase 11: Comprehensive test coverage — 60 test files, 1220 tests (979 backend Jest + 241 storefront Vitest), ALL passing
-- Phase 12: Deep module audit — 58 modules audited across 4 layers, 4,144-line gap analysis report
-- Phase 13: Service enrichment — 12 thin services enhanced with 3-5 business logic methods each:
-  - events (96→190L), healthcare (89→202L), notification-preferences (115→230L), tax-config (206→293L), financial-product (84→254L), fitness (84→203L)
-  - freelance (139→279L), government (80→173L), grocery (79→181L), shipping-extension (83→245L), travel (79→246L), warranty (101→201L)
-- Phase 14: Manage page completion — 23 new manage pages + 23 CRUD configs added, total now 66 manage pages with 65 CRUD configs
-- Phase 15: API route completion — 8 new admin API routes (notification-preferences, tax-config, cart-extension, events) + 7 new store API routes (notification-preferences, shipping, volume-pricing, wishlists, events)
-- Phase 16: Test expansion — 12 new test files with 157 tests for enriched services, all passing
-- Phase 17: Service enrichment round 2 — 21 more services enhanced with 3-5 business logic methods each:
-  - affiliate (91→172L), classified (98→156L), education (129→151L), legal (83→164L), pet-service (81→160L), real-estate (128→166L)
-  - restaurant (82→181L), social-commerce (77→119L), advertising (128→226L), charity (98→172L), parking (80→206L)
-  - automotive (119→263L), crowdfunding (109→232L), digital-product (91→160L), event-ticketing (101→231L)
-  - governance (78→215L), persona (134→207L), store (84→136L), dispute (→295L), cart-extension (→407L), analytics (→246L)
-- Phase 18: Vendor dashboard — 10 vendor API routes + 10 vendor dashboard pages (subscriptions, bookings, auctions, rentals, digital-products, events, memberships, freelance, real-estate, restaurants)
-- Phase 19: Test expansion round 2 — 12 new test files with 97 tests for enriched services, all passing
+## Implementation Progress
+- Phase 1-12: Initial build-out (58 modules, 258 models, admin pages, storefront, tests, deep audit)
+- Phase 13-16: Service enrichment (12 services), manage pages (23), API routes (15), test expansion (157 tests)
+- Phase 17: Service enrichment round 2 — 21 more services enhanced with 3-5 business logic methods each
+- Phase 18: Vendor dashboard — 10 vendor API routes + 10 vendor dashboard pages
+- Phase 19: Test expansion round 2 — 12 new test files with 97 tests
+- Phase 20: Vendor dashboard expansion — 10 vendor API routes + 10 vendor dashboard pages (classified, crowdfunding, education, healthcare, fitness, grocery, travel, warranty, advertising, charity)
+- Phase 21: Vendor dashboard expansion — 10 more vendor API routes + 10 vendor dashboard pages (automotive, parking, pet-service, legal, government, social-commerce, affiliate, financial-product, insurance, b2b)
+- Phase 22: Vendor route test coverage — 2 batch test files with 82 tests for 20 vendor API routes, all passing
 
 ### Test Coverage Architecture
-- **Backend (Jest):** 76 test suites in `apps/backend/tests/unit/`
-  - `platform/` — 5 files: outbox-processor, sync-tracker, helpers, cms-registry, registry
-  - `services/` — 43 files: all 58 modules covered with dedicated test files for 33 services (+ original 20 files including simple-modules batch)
-  - `subscribers/` — 7 files: all 33 subscribers covered
-  - `workflows/` — 6 files: all 30 workflows covered
-  - `jobs/` — 1 file: all 16 jobs covered
-  - `admin-routes/` — 6 files: disputes, cms, loyalty, inventory/shipping, wishlists, core admin routes
-  - `store-routes/` — 4 files: commerce, services, marketplace, specialized verticals
-  - Pre-existing: governance-service, api-governance, event-dispatcher, payload-sync
-- **Storefront (Vitest):** 7 test suites in `apps/storefront/src/lib/__tests__/` and context/hooks dirs
-  - governance-context, sdk, formatting, data-utils, design-tokens, contracts, admin-hooks
+- **Backend (Jest):** 78 test suites in `apps/backend/tests/unit/`
+- **Storefront (Vitest):** 7 test suites
 - Run backend: `cd apps/backend && TEST_TYPE=unit npx jest`
 - Run storefront: `cd apps/storefront && npx vitest run`
 
@@ -145,22 +81,22 @@ Key components include Wishlist, Comparison, Search, Notifications, Disputes, Tr
 | Migration Files | 61 |
 | Admin API Routes | 200+ |
 | Store API Routes | 120+ |
-| Vendor API Routes | 21 |
+| Vendor API Routes | 37 |
 | Admin/Manage Pages | 66 |
-| Vendor Dashboard Pages | 19 |
+| Vendor Dashboard Pages | 34 |
 | CRUD Configs | 65 |
 | Admin Hooks | 52 |
 | Workflows | 30 |
 | Subscribers | 33 |
 | Jobs | 16 |
-| Storefront Routes | 155+ |
+| Storefront Routes | 175+ |
 | Storefront Components | 537 |
-| Backend Test Files | 76 |
+| Backend Test Files | 78 |
 | Storefront Test Files | 7 |
-| Total Tests | 1,474+ |
-| Total Source Files | 2,200+ |
+| Total Tests | 1,541+ |
+| Total Source Files | 2,300+ |
 
 ## Documentation
-- `docs/PLATFORM_MODULE_ASSESSMENT.md` — Deep-dive assessment of all 58 modules (v3.0 — complete API route maps, per-module details, workflow/job registries), 3400+ lines
-- `docs/IMPLEMENTATION_PLAN.md` — 6-phase implementation plan (v2.0 — updated with completion status), covering all deliverables
-- `docs/MODULE_GAP_ANALYSIS.md` — Per-module gap analysis across 4 layers (backend, admin, vendor, user frontend) for all 58 modules (4,144 lines)
+- `docs/PLATFORM_MODULE_ASSESSMENT.md` — Deep-dive assessment of all 58 modules (v3.0), 3400+ lines
+- `docs/IMPLEMENTATION_PLAN.md` — 6-phase implementation plan (v2.0)
+- `docs/MODULE_GAP_ANALYSIS.md` — Per-module gap analysis across 4 layers for all 58 modules
