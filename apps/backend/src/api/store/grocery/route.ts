@@ -2,15 +2,44 @@ import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   try {
-    const mod = req.scope.resolve("grocery") as any
-    const { limit = "20", offset = "0", tenant_id, category, is_organic } = req.query as Record<string, string | undefined>
+    const groceryService = req.scope.resolve("grocery") as any
+    const {
+      limit = "20",
+      offset = "0",
+      tenant_id,
+      category,
+      is_organic,
+      storage_type,
+      is_available,
+      search,
+    } = req.query as Record<string, string | undefined>
+
     const filters: Record<string, any> = {}
     if (tenant_id) filters.tenant_id = tenant_id
     if (category) filters.category = category
-    if (is_organic) filters.is_organic = is_organic === "true"
-    const items = await mod.listFreshProducts(filters, { skip: Number(offset), take: Number(limit) })
-    return res.json({ items, count: Array.isArray(items) ? items.length : 0, limit: Number(limit), offset: Number(offset) })
+    if (is_organic !== undefined) filters.is_organic = is_organic === "true"
+    if (storage_type) filters.storage_type = storage_type
+    if (is_available !== undefined) filters.is_available = is_available === "true"
+    if (search) filters.name = { $like: `%${search}%` }
+
+    const items = await groceryService.listFreshProducts(filters, {
+      skip: Number(offset),
+      take: Number(limit),
+      order: { created_at: "DESC" },
+    })
+
+    const itemList = Array.isArray(items) ? items : []
+
+    return res.json({
+      items: itemList,
+      count: itemList.length,
+      limit: Number(limit),
+      offset: Number(offset),
+    })
   } catch (error: any) {
-    res.status(500).json({ message: "Failed to fetch grocery products", error: error.message })
+    return res.status(500).json({
+      message: "Failed to fetch grocery products",
+      error: error.message,
+    })
   }
 }

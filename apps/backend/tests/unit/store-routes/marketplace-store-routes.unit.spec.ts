@@ -43,7 +43,7 @@ describe("Marketplace Store Routes", () => {
       const res = createRes()
       await automotiveGET(req as any, res)
       expect(mockService.listVehicleListings).toHaveBeenCalledWith(
-        expect.objectContaining({ make: "Honda", model: "Civic", year: "2023", condition: "new" }),
+        expect.objectContaining({ make: "Honda", model: "Civic", year: 2023, condition: "new" }),
         expect.any(Object),
       )
     })

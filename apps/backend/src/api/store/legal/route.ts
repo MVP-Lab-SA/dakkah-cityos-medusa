@@ -2,14 +2,46 @@ import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   try {
-    const mod = req.scope.resolve("legal") as any
-    const { limit = "20", offset = "0", tenant_id, specialization } = req.query as Record<string, string | undefined>
+    const legalService = req.scope.resolve("legal") as any
+    const {
+      limit = "20",
+      offset = "0",
+      tenant_id,
+      specialization,
+      practice_area,
+      consultation_available,
+      is_active,
+      search,
+    } = req.query as Record<string, string | undefined>
+
     const filters: Record<string, any> = {}
     if (tenant_id) filters.tenant_id = tenant_id
     if (specialization) filters.specialization = specialization
-    const items = await mod.listAttorneyProfiles(filters, { skip: Number(offset), take: Number(limit) })
-    return res.json({ items, count: Array.isArray(items) ? items.length : 0, limit: Number(limit), offset: Number(offset) })
+    if (practice_area) filters.practice_area = practice_area
+    if (consultation_available !== undefined) {
+      filters.consultation_available = consultation_available === "true"
+    }
+    if (is_active !== undefined) filters.is_active = is_active === "true"
+    if (search) filters.name = { $like: `%${search}%` }
+
+    const items = await legalService.listAttorneyProfiles(filters, {
+      skip: Number(offset),
+      take: Number(limit),
+      order: { created_at: "DESC" },
+    })
+
+    const itemList = Array.isArray(items) ? items : []
+
+    return res.json({
+      items: itemList,
+      count: itemList.length,
+      limit: Number(limit),
+      offset: Number(offset),
+    })
   } catch (error: any) {
-    res.status(500).json({ message: "Failed to fetch attorney profiles", error: error.message })
+    return res.status(500).json({
+      message: "Failed to fetch legal services",
+      error: error.message,
+    })
   }
 }
