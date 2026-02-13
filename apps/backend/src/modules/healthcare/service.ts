@@ -72,17 +72,130 @@ class HealthcareModuleService extends MedusaService({
   /**
    * Cancel a scheduled appointment. Only appointments not yet completed can be cancelled.
    */
-  async cancelAppointment(appointmentId: string): Promise<any> {
+  async cancelAppointment(appointmentId: string, reason?: string): Promise<any> {
     const appointment = await this.retrieveHealthcareAppointment(appointmentId)
-    if (["completed", "cancelled"].includes(appointment.status)) {
-      throw new Error("Appointment cannot be cancelled from current status")
+    if (appointment.status !== "scheduled") {
+      throw new Error("Only scheduled appointments can be cancelled")
     }
     const updated = await (this as any).updateHealthcareAppointments({
       id: appointmentId,
       status: "cancelled",
       cancelled_at: new Date(),
+      cancellation_reason: reason || null,
     })
     return updated
+  }
+
+  async createPrescription(appointmentId: string, data: {
+    medications: string
+    dosage: string
+    notes?: string
+    prescribedById: string
+  }): Promise<any> {
+    const appointment = await this.retrieveHealthcareAppointment(appointmentId)
+    if (!data.medications || !data.dosage) {
+      throw new Error("Medications and dosage are required")
+    }
+    if (!data.prescribedById) {
+      throw new Error("Prescriber ID is required")
+    }
+
+    return await (this as any).createPrescriptions({
+      appointment_id: appointmentId,
+      patient_id: appointment.patient_id,
+      practitioner_id: data.prescribedById,
+      medications: data.medications,
+      dosage: data.dosage,
+      notes: data.notes || null,
+      status: "active",
+      prescribed_at: new Date(),
+    })
+  }
+
+  async orderLabTest(patientId: string, data: {
+    testType: string
+    priority?: string
+    practitionerId: string
+    notes?: string
+  }): Promise<any> {
+    if (!data.testType) {
+      throw new Error("Test type is required")
+    }
+    if (!data.practitionerId) {
+      throw new Error("Practitioner ID is required")
+    }
+
+    const priority = data.priority || "normal"
+    const validPriorities = ["urgent", "high", "normal", "low"]
+    if (!validPriorities.includes(priority)) {
+      throw new Error(`Invalid priority. Must be one of: ${validPriorities.join(", ")}`)
+    }
+
+    return await (this as any).createLabOrders({
+      patient_id: patientId,
+      practitioner_id: data.practitionerId,
+      test_type: data.testType,
+      priority,
+      notes: data.notes || null,
+      status: priority === "urgent" ? "in_progress" : "pending",
+      ordered_at: new Date(),
+    })
+  }
+
+  async submitInsuranceClaim(appointmentId: string, data: {
+    insuranceProviderId: string
+    policyNumber: string
+    claimAmount: number
+    currency?: string
+  }): Promise<any> {
+    const appointment = await this.retrieveHealthcareAppointment(appointmentId)
+    if (!data.insuranceProviderId || !data.policyNumber) {
+      throw new Error("Insurance provider ID and policy number are required")
+    }
+    if (!data.claimAmount || data.claimAmount <= 0) {
+      throw new Error("Claim amount must be greater than zero")
+    }
+
+    return await (this as any).createInsuranceClaims({
+      appointment_id: appointmentId,
+      patient_id: appointment.patient_id,
+      insurance_provider_id: data.insuranceProviderId,
+      policy_number: data.policyNumber,
+      claim_amount: data.claimAmount,
+      currency: data.currency || "USD",
+      status: "submitted",
+      submitted_at: new Date(),
+    })
+  }
+
+  async getPractitionerDashboard(practitionerId: string): Promise<any> {
+    const appointments = await this.listHealthcareAppointments({
+      practitioner_id: practitionerId,
+    }) as any
+    const appointmentList = Array.isArray(appointments) ? appointments : [appointments].filter(Boolean)
+
+    const now = new Date()
+    const upcomingAppointments = appointmentList.filter((a: any) =>
+      a.status === "scheduled" && new Date(a.appointment_date) >= now
+    ).sort((a: any, b: any) =>
+      new Date(a.appointment_date).getTime() - new Date(b.appointment_date).getTime()
+    )
+
+    const prescriptions = await this.listPrescriptions({ practitioner_id: practitionerId }) as any
+    const prescriptionList = Array.isArray(prescriptions) ? prescriptions : [prescriptions].filter(Boolean)
+
+    const labOrders = await this.listLabOrders({ practitioner_id: practitionerId }) as any
+    const labOrderList = Array.isArray(labOrders) ? labOrders : [labOrders].filter(Boolean)
+    const pendingLabOrders = labOrderList.filter((l: any) => l.status === "pending" || l.status === "in_progress")
+
+    return {
+      practitionerId,
+      upcomingAppointments,
+      upcomingCount: upcomingAppointments.length,
+      totalPrescriptions: prescriptionList.length,
+      pendingLabOrders,
+      pendingLabOrderCount: pendingLabOrders.length,
+    }
   }
 }
 

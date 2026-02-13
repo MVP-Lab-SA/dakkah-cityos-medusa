@@ -74,6 +74,108 @@ class GroceryModuleService extends MedusaService({
     }
     return substitutes
   }
+
+  async createDeliverySlot(data: {
+    date: Date
+    startTime: string
+    endTime: string
+    maxOrders: number
+    zoneId: string
+  }): Promise<any> {
+    if (!data.startTime || !data.endTime) {
+      throw new Error("Start time and end time are required")
+    }
+
+    if (data.maxOrders <= 0) {
+      throw new Error("Max orders must be a positive number")
+    }
+
+    const slot = await (this as any).createDeliverySlots({
+      slot_date: data.date,
+      start_time: data.startTime,
+      end_time: data.endTime,
+      max_orders: data.maxOrders,
+      capacity_remaining: data.maxOrders,
+      zone_id: data.zoneId,
+      status: "available",
+    })
+
+    return slot
+  }
+
+  async bookDeliverySlot(slotId: string, orderId: string): Promise<any> {
+    const slot = await this.retrieveDeliverySlot(slotId) as any
+
+    if (slot.status !== "available") {
+      throw new Error("This delivery slot is no longer available")
+    }
+
+    const remaining = Number(slot.capacity_remaining || 0)
+    if (remaining <= 0) {
+      throw new Error("This delivery slot is fully booked")
+    }
+
+    const newRemaining = remaining - 1
+    const updated = await (this as any).updateDeliverySlots({
+      id: slotId,
+      capacity_remaining: newRemaining,
+      status: newRemaining === 0 ? "full" : "available",
+    })
+
+    return {
+      slotId,
+      orderId,
+      date: slot.slot_date,
+      startTime: slot.start_time,
+      endTime: slot.end_time,
+      confirmed: true,
+    }
+  }
+
+  async getAvailableSlots(zoneId: string, date: string): Promise<any[]> {
+    const slots = await this.listDeliverySlots({ zone_id: zoneId }) as any
+    const slotList = Array.isArray(slots) ? slots : [slots].filter(Boolean)
+    const targetDate = new Date(date).toDateString()
+
+    return slotList.filter((s: any) =>
+      new Date(s.slot_date).toDateString() === targetDate &&
+      s.status === "available" &&
+      (Number(s.capacity_remaining) || 0) > 0
+    )
+  }
+
+  async updateInventoryFreshness(productId: string, expiryDate: Date, batchNumber: string): Promise<any> {
+    if (!batchNumber) {
+      throw new Error("Batch number is required")
+    }
+
+    if (new Date(expiryDate) <= new Date()) {
+      throw new Error("Expiry date must be in the future")
+    }
+
+    await this.retrieveFreshProduct(productId)
+
+    const existingBatches = await this.listBatchTrackings({ product_id: productId, batch_number: batchNumber }) as any
+    const batchList = Array.isArray(existingBatches) ? existingBatches : [existingBatches].filter(Boolean)
+
+    if (batchList.length > 0) {
+      const updated = await (this as any).updateBatchTrackings({
+        id: batchList[0].id,
+        expiry_date: expiryDate,
+        updated_at: new Date(),
+      })
+      return updated
+    }
+
+    const batch = await (this as any).createBatchTrackings({
+      product_id: productId,
+      batch_number: batchNumber,
+      expiry_date: expiryDate,
+      created_at: new Date(),
+    })
+
+    return batch
+  }
 }
 
 export default GroceryModuleService

@@ -79,6 +79,125 @@ class FitnessModuleService extends MedusaService({
       attended_at: new Date(),
     })
   }
+
+  async createMembership(memberId: string, data: {
+    planType: string
+    startDate: Date
+    durationMonths: number
+    price: number
+  }): Promise<any> {
+    if (!data.planType) {
+      throw new Error("Plan type is required")
+    }
+    if (!data.durationMonths || data.durationMonths <= 0) {
+      throw new Error("Duration must be greater than zero")
+    }
+    if (!data.price || data.price < 0) {
+      throw new Error("Price must be a non-negative number")
+    }
+
+    const startDate = new Date(data.startDate)
+    const endDate = new Date(startDate)
+    endDate.setMonth(endDate.getMonth() + data.durationMonths)
+
+    return await (this as any).createGymMemberships({
+      member_id: memberId,
+      plan_type: data.planType,
+      start_date: startDate,
+      end_date: endDate,
+      duration_months: data.durationMonths,
+      price: data.price,
+      status: "active",
+      created_at: new Date(),
+    })
+  }
+
+  async checkMembershipStatus(memberId: string): Promise<{
+    active: boolean
+    membership: any | null
+    daysRemaining?: number
+    expired?: boolean
+  }> {
+    const memberships = await this.listGymMemberships({ member_id: memberId }) as any
+    const list = Array.isArray(memberships) ? memberships : [memberships].filter(Boolean)
+
+    if (list.length === 0) {
+      return { active: false, membership: null }
+    }
+
+    const sorted = list.sort((a: any, b: any) =>
+      new Date(b.end_date || b.created_at).getTime() - new Date(a.end_date || a.created_at).getTime()
+    )
+    const latest = sorted[0]
+    const now = new Date()
+    const endDate = latest.end_date ? new Date(latest.end_date) : null
+
+    if (latest.status !== "active" || (endDate && endDate < now)) {
+      return { active: false, membership: latest, expired: true, daysRemaining: 0 }
+    }
+
+    const daysRemaining = endDate
+      ? Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+      : undefined
+
+    return { active: true, membership: latest, daysRemaining }
+  }
+
+  async getClassAvailability(classScheduleId: string): Promise<{
+    classScheduleId: string
+    capacity: number
+    booked: number
+    available: number
+    isFull: boolean
+  }> {
+    const schedule = await this.retrieveClassSchedule(classScheduleId)
+    const capacity = schedule.max_capacity || 20
+
+    const bookings = await this.listClassBookings({
+      class_schedule_id: classScheduleId,
+      status: ["confirmed", "attended"],
+    }) as any
+    const bookingList = Array.isArray(bookings) ? bookings : [bookings].filter(Boolean)
+    const booked = bookingList.length
+
+    return {
+      classScheduleId,
+      capacity,
+      booked,
+      available: Math.max(0, capacity - booked),
+      isFull: booked >= capacity,
+    }
+  }
+
+  async recordWorkout(memberId: string, data: {
+    exerciseType: string
+    duration: number
+    caloriesBurned?: number
+    notes?: string
+  }): Promise<any> {
+    if (!data.exerciseType) {
+      throw new Error("Exercise type is required")
+    }
+    if (!data.duration || data.duration <= 0) {
+      throw new Error("Duration must be greater than zero")
+    }
+
+    const membershipStatus = await this.checkMembershipStatus(memberId)
+    if (!membershipStatus.active) {
+      throw new Error("Active membership is required to record workouts")
+    }
+
+    return await (this as any).createWellnessPlans({
+      member_id: memberId,
+      exercise_type: data.exerciseType,
+      duration_minutes: data.duration,
+      calories_burned: data.caloriesBurned || null,
+      notes: data.notes || null,
+      type: "workout_log",
+      recorded_at: new Date(),
+      status: "completed",
+    })
+  }
 }
 
 export default FitnessModuleService

@@ -96,6 +96,106 @@ class WarrantyModuleService extends MedusaService({
     }
     return updated
   }
+
+  async extendWarranty(warrantyId: string, additionalMonths: number, fee: number): Promise<any> {
+    if (additionalMonths <= 0) {
+      throw new Error("Additional months must be a positive number")
+    }
+
+    if (fee < 0) {
+      throw new Error("Fee cannot be negative")
+    }
+
+    const warranty = await this.retrieveWarrantyClaim(warrantyId) as any
+
+    if (warranty.status === "voided" || warranty.status === "claimed") {
+      throw new Error("Cannot extend a voided or already-claimed warranty")
+    }
+
+    const currentExpiry = new Date(warranty.expiry_date)
+    const newExpiry = new Date(currentExpiry)
+    newExpiry.setMonth(newExpiry.getMonth() + additionalMonths)
+
+    const updated = await (this as any).updateWarrantyClaims({
+      id: warrantyId,
+      expiry_date: newExpiry,
+      status: "registered",
+      extension_fee: fee,
+      extended_at: new Date(),
+    })
+
+    return updated
+  }
+
+  async getWarrantyHistory(customerId: string): Promise<any[]> {
+    const warranties = await this.listWarrantyClaims({ customer_id: customerId }) as any
+    const warrantyList = Array.isArray(warranties) ? warranties : [warranties].filter(Boolean)
+
+    const now = new Date()
+    return warrantyList.map((w: any) => {
+      const expiryDate = new Date(w.expiry_date)
+      let computedStatus = w.status
+      if (w.status === "registered" && expiryDate < now) {
+        computedStatus = "expired"
+      }
+
+      return {
+        id: w.id,
+        productId: w.product_id,
+        planId: w.plan_id,
+        purchaseDate: w.purchase_date,
+        expiryDate: w.expiry_date,
+        status: computedStatus,
+        claimNumber: w.claim_number || null,
+        registeredAt: w.registered_at,
+      }
+    })
+  }
+
+  async scheduleRepair(claimId: string, data: {
+    scheduledDate: Date
+    repairType: string
+    technicianNotes?: string
+  }): Promise<any> {
+    if (!data.repairType) {
+      throw new Error("Repair type is required")
+    }
+
+    if (new Date(data.scheduledDate) <= new Date()) {
+      throw new Error("Scheduled date must be in the future")
+    }
+
+    const claim = await this.retrieveWarrantyClaim(claimId) as any
+
+    if (claim.status !== "approved") {
+      throw new Error("Repairs can only be scheduled for approved claims")
+    }
+
+    const repairOrders = await this.listRepairOrders({ warranty_claim_id: claimId }) as any
+    const repairList = Array.isArray(repairOrders) ? repairOrders : [repairOrders].filter(Boolean)
+
+    if (repairList.length > 0) {
+      const updated = await (this as any).updateRepairOrders({
+        id: repairList[0].id,
+        scheduled_date: data.scheduledDate,
+        repair_type: data.repairType,
+        technician_notes: data.technicianNotes || null,
+        status: "scheduled",
+      })
+      return updated
+    }
+
+    const repairOrder = await (this as any).createRepairOrders({
+      warranty_claim_id: claimId,
+      scheduled_date: data.scheduledDate,
+      repair_type: data.repairType,
+      technician_notes: data.technicianNotes || null,
+      status: "scheduled",
+      created_at: new Date(),
+    })
+
+    return repairOrder
+  }
 }
 
 export default WarrantyModuleService

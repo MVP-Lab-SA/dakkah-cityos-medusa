@@ -110,6 +110,121 @@ class NotificationPreferencesModuleService extends MedusaService({
     }
     return results
   }
+
+  async getEffectivePreferences(customerId: string, tenantId: string) {
+    const defaults = [
+      { channel: "email", category: "transactional", enabled: true },
+      { channel: "email", category: "marketing", enabled: true },
+      { channel: "email", category: "security", enabled: true },
+      { channel: "sms", category: "transactional", enabled: false },
+      { channel: "sms", category: "marketing", enabled: false },
+      { channel: "sms", category: "security", enabled: true },
+      { channel: "push", category: "transactional", enabled: true },
+      { channel: "push", category: "marketing", enabled: false },
+      { channel: "push", category: "security", enabled: true },
+      { channel: "in_app", category: "transactional", enabled: true },
+      { channel: "in_app", category: "marketing", enabled: true },
+      { channel: "in_app", category: "security", enabled: true },
+    ]
+
+    const userPrefs = await this.listNotificationPreferences({
+      customer_id: customerId,
+      tenant_id: tenantId,
+    })
+    const prefList = Array.isArray(userPrefs) ? userPrefs : [userPrefs].filter(Boolean)
+
+    const effective = defaults.map((def) => {
+      const override = prefList.find(
+        (p: any) => p.channel === def.channel && (p.event_type === def.category || p.category === def.category)
+      )
+      return {
+        channel: def.channel,
+        category: def.category,
+        enabled: override ? override.enabled : def.enabled,
+        source: override ? "user" : "default",
+      }
+    })
+
+    return effective
+  }
+
+  async updateChannelPreference(customerId: string, channel: string, enabled: boolean) {
+    const validChannels = ["email", "sms", "push", "in_app"]
+    if (!validChannels.includes(channel)) {
+      throw new Error(`Invalid channel. Must be one of: ${validChannels.join(", ")}`)
+    }
+
+    const existing = await this.listNotificationPreferences({
+      customer_id: customerId,
+      channel,
+    })
+    const list = Array.isArray(existing) ? existing : [existing].filter(Boolean)
+
+    const results = []
+    for (const pref of list) {
+      const updated = await (this as any).updateNotificationPreferences({
+        id: pref.id,
+        enabled,
+      })
+      results.push(updated)
+    }
+
+    return { channel, enabled, updated: results.length }
+  }
+
+  async updateCategoryPreference(customerId: string, category: string, enabled: boolean) {
+    const validCategories = ["marketing", "transactional", "security"]
+    if (!validCategories.includes(category)) {
+      throw new Error(`Invalid category. Must be one of: ${validCategories.join(", ")}`)
+    }
+
+    const existing = await this.listNotificationPreferences({
+      customer_id: customerId,
+      event_type: category,
+    })
+    const list = Array.isArray(existing) ? existing : [existing].filter(Boolean)
+
+    const results = []
+    for (const pref of list) {
+      const updated = await (this as any).updateNotificationPreferences({
+        id: pref.id,
+        enabled,
+      })
+      results.push(updated)
+    }
+
+    return { category, enabled, updated: results.length }
+  }
+
+  async shouldNotify(customerId: string, tenantId: string, channel: string, category: string): Promise<boolean> {
+    const effective = await this.getEffectivePreferences(customerId, tenantId)
+    const match = effective.find(
+      (p) => p.channel === channel && p.category === category
+    )
+    return match ? match.enabled : false
+  }
+
+  async bulkOptOut(customerId: string, channels?: string[]) {
+    const targetChannels = channels || ["email", "sms", "push", "in_app"]
+
+    const existing = await this.listNotificationPreferences({
+      customer_id: customerId,
+    })
+    const list = Array.isArray(existing) ? existing : [existing].filter(Boolean)
+
+    const results = []
+    for (const pref of list) {
+      if (targetChannels.includes(pref.channel)) {
+        const updated = await (this as any).updateNotificationPreferences({
+          id: pref.id,
+          enabled: false,
+        })
+        results.push(updated)
+      }
+    }
+
+    return { optedOut: results.length, channels: targetChannels }
+  }
 }
 
 export default NotificationPreferencesModuleService

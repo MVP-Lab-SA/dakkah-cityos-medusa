@@ -201,6 +201,93 @@ class TaxConfigModuleService extends MedusaService({
       return true
     }) || null
   }
+
+  async getTaxSummary(tenantId: string, regionId?: string) {
+    const filters: Record<string, any> = {
+      tenant_id: tenantId,
+      status: "active",
+    }
+    if (regionId) {
+      filters.region_code = regionId
+    }
+
+    const rules = await this.listTaxRules(filters)
+    const ruleList = Array.isArray(rules) ? rules : [rules].filter(Boolean)
+
+    const byRegion: Record<string, any[]> = {}
+    for (const rule of ruleList) {
+      const region = rule.region_code || rule.country_code || "global"
+      if (!byRegion[region]) {
+        byRegion[region] = []
+      }
+      byRegion[region].push(rule)
+    }
+
+    return {
+      tenantId,
+      totalRules: ruleList.length,
+      regions: Object.keys(byRegion).length,
+      byRegion,
+    }
+  }
+
+  async validateTaxId(taxId: string, countryCode: string): Promise<{ valid: boolean; format: string; reason?: string }> {
+    if (!taxId || !countryCode) {
+      return { valid: false, format: "unknown", reason: "Tax ID and country code are required" }
+    }
+
+    const cleaned = taxId.replace(/[\s\-\.]/g, "").toUpperCase()
+
+    const patterns: Record<string, { regex: RegExp; format: string }> = {
+      GB: { regex: /^GB\d{9}$|^GB\d{12}$|^GBGD\d{3}$|^GBHA\d{3}$/, format: "VAT" },
+      DE: { regex: /^DE\d{9}$/, format: "VAT" },
+      FR: { regex: /^FR[A-Z0-9]{2}\d{9}$/, format: "VAT" },
+      IT: { regex: /^IT\d{11}$/, format: "VAT" },
+      ES: { regex: /^ES[A-Z0-9]\d{7}[A-Z0-9]$/, format: "VAT" },
+      US: { regex: /^\d{2}\-?\d{7}$/, format: "TIN" },
+      IN: { regex: /^\d{2}[A-Z]{5}\d{4}[A-Z]\d[A-Z][A-Z0-9]$/, format: "GST" },
+      AU: { regex: /^\d{11}$/, format: "ABN" },
+      CA: { regex: /^\d{9}RT\d{4}$/, format: "GST" },
+    }
+
+    const upper = countryCode.toUpperCase()
+    const pattern = patterns[upper]
+
+    if (!pattern) {
+      return { valid: cleaned.length >= 5 && cleaned.length <= 20, format: "unknown" }
+    }
+
+    const valid = pattern.regex.test(cleaned)
+    return {
+      valid,
+      format: pattern.format,
+      reason: valid ? undefined : `Invalid ${pattern.format} format for ${upper}`,
+    }
+  }
+
+  async getApplicableExemptions(customerId: string, tenantId: string) {
+    const exemptions = await this.listTaxExemptions({
+      tenant_id: tenantId,
+      entity_type: "customer",
+      entity_id: customerId,
+      status: "active",
+    })
+    const list = Array.isArray(exemptions) ? exemptions : [exemptions].filter(Boolean)
+
+    const now = new Date()
+    const active = list.filter((e: any) => {
+      if (new Date(e.valid_from) > now) return false
+      if (e.valid_to && new Date(e.valid_to) < now) return false
+      return true
+    })
+
+    return {
+      customerId,
+      tenantId,
+      exemptions: active,
+      count: active.length,
+    }
+  }
 }
 
 export default TaxConfigModuleService

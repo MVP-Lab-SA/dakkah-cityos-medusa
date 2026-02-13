@@ -134,6 +134,146 @@ class FreelanceModuleService extends MedusaService({
 
     return { contractId, status: "payment_released", amount: contract.rate }
   }
+
+  async completeContract(contractId: string): Promise<any> {
+    const contract = await this.retrieveFreelanceContract(contractId) as any
+
+    if (contract.status !== "active") {
+      throw new Error("Contract must be active to mark as completed")
+    }
+
+    const milestones = await this.listMilestones({ contract_id: contractId }) as any
+    const milestoneList = Array.isArray(milestones) ? milestones : [milestones].filter(Boolean)
+    const incompleteMilestones = milestoneList.filter(
+      (m: any) => m.status !== "approved" && m.status !== "paid" && m.status !== "completed"
+    )
+
+    if (incompleteMilestones.length > 0) {
+      throw new Error(`Cannot complete contract: ${incompleteMilestones.length} milestone(s) are not yet approved`)
+    }
+
+    const updated = await (this as any).updateFreelanceContracts({
+      id: contractId,
+      status: "completed",
+      completed_at: new Date(),
+    })
+
+    await (this as any).updateGigListings({
+      id: contract.gig_listing_id,
+      status: "completed",
+    })
+
+    return updated
+  }
+
+  async raiseDispute(contractId: string, data: {
+    raisedBy: string
+    reason: string
+    evidence?: string
+  }): Promise<any> {
+    if (!data.reason || !data.raisedBy) {
+      throw new Error("Dispute requires a reason and the party raising it")
+    }
+
+    const contract = await this.retrieveFreelanceContract(contractId) as any
+
+    if (contract.status !== "active" && contract.status !== "completed") {
+      throw new Error("Disputes can only be raised on active or completed contracts")
+    }
+
+    const dispute = await (this as any).createFreelanceDisputes({
+      contract_id: contractId,
+      raised_by: data.raisedBy,
+      reason: data.reason,
+      evidence: data.evidence || null,
+      status: "open",
+      raised_at: new Date(),
+    })
+
+    await (this as any).updateFreelanceContracts({
+      id: contractId,
+      status: "disputed",
+    })
+
+    return dispute
+  }
+
+  async logTime(contractId: string, data: {
+    freelancerId: string
+    hours: number
+    description: string
+    date?: Date
+  }): Promise<any> {
+    if (!data.hours || data.hours <= 0) {
+      throw new Error("Hours must be a positive number")
+    }
+
+    if (!data.description) {
+      throw new Error("Description is required for time logs")
+    }
+
+    const contract = await this.retrieveFreelanceContract(contractId) as any
+
+    if (contract.status !== "active") {
+      throw new Error("Can only log time on active contracts")
+    }
+
+    if (contract.freelancer_id !== data.freelancerId) {
+      throw new Error("Only the assigned freelancer can log time on this contract")
+    }
+
+    const timeLog = await (this as any).createTimeLogs({
+      contract_id: contractId,
+      freelancer_id: data.freelancerId,
+      hours: data.hours,
+      description: data.description,
+      logged_date: data.date || new Date(),
+      logged_at: new Date(),
+    })
+
+    return timeLog
+  }
+
+  async getFreelancerStats(freelancerId: string): Promise<{
+    completedContracts: number
+    activeContracts: number
+    totalEarned: number
+    averageRating: number
+    totalHoursLogged: number
+  }> {
+    const contracts = await this.listFreelanceContracts({ freelancer_id: freelancerId }) as any
+    const contractList = Array.isArray(contracts) ? contracts : [contracts].filter(Boolean)
+
+    const completedContracts = contractList.filter((c: any) => c.status === "completed")
+    const activeContracts = contractList.filter((c: any) => c.status === "active")
+
+    const totalEarned = completedContracts.reduce(
+      (sum: number, c: any) => sum + Number(c.rate || 0),
+      0
+    )
+
+    const ratings = completedContracts
+      .filter((c: any) => c.rating != null)
+      .map((c: any) => Number(c.rating))
+    const averageRating = ratings.length > 0
+      ? ratings.reduce((sum: number, r: number) => sum + r, 0) / ratings.length
+      : 0
+
+    const timeLogs = await this.listTimeLogs({ freelancer_id: freelancerId }) as any
+    const timeLogList = Array.isArray(timeLogs) ? timeLogs : [timeLogs].filter(Boolean)
+    const totalHoursLogged = timeLogList.reduce(
+      (sum: number, t: any) => sum + Number(t.hours || 0),
+      0
+    )
+
+    return {
+      completedContracts: completedContracts.length,
+      activeContracts: activeContracts.length,
+      totalEarned,
+      averageRating,
+      totalHoursLogged,
+    }
+  }
 }
 
 export default FreelanceModuleService

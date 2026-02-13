@@ -75,6 +75,99 @@ class GovernmentModuleService extends MedusaService({
     const processingFee = baseFee * 0.05
     return { baseFee, processingFee, totalFee: baseFee + processingFee }
   }
+
+  async issuePermit(applicationId: string, data: {
+    permitType: string
+    validFrom: Date
+    validUntil: Date
+    conditions?: string
+  }): Promise<any> {
+    const application = await this.retrieveServiceRequest(applicationId) as any
+
+    if (application.status !== "resolved") {
+      throw new Error("Permit can only be issued for approved applications")
+    }
+
+    if (new Date(data.validFrom) >= new Date(data.validUntil)) {
+      throw new Error("Valid-from date must be before valid-until date")
+    }
+
+    const permit = await (this as any).createPermits({
+      service_request_id: applicationId,
+      citizen_id: application.citizen_id,
+      permit_type: data.permitType,
+      valid_from: data.validFrom,
+      valid_until: data.validUntil,
+      conditions: data.conditions || null,
+      status: "active",
+      issued_at: new Date(),
+    })
+
+    return permit
+  }
+
+  async renewPermit(permitId: string): Promise<any> {
+    const permit = await this.retrievePermit(permitId) as any
+
+    if (permit.status !== "active" && permit.status !== "expired") {
+      throw new Error("Only active or expired permits can be renewed")
+    }
+
+    const currentValidUntil = new Date(permit.valid_until)
+    const newValidFrom = currentValidUntil > new Date() ? currentValidUntil : new Date()
+    const newValidUntil = new Date(newValidFrom)
+    newValidUntil.setFullYear(newValidUntil.getFullYear() + 1)
+
+    const renewed = await (this as any).updatePermits({
+      id: permitId,
+      valid_from: newValidFrom,
+      valid_until: newValidUntil,
+      status: "active",
+      renewed_at: new Date(),
+    })
+
+    return renewed
+  }
+
+  async getApplicationStatus(applicationId: string): Promise<{
+    applicationId: string
+    status: string
+    permits: any[]
+    timeline: Array<{ event: string; date: Date }>
+  }> {
+    const application = await this.retrieveServiceRequest(applicationId) as any
+    const permits = await this.listPermits({ service_request_id: applicationId }) as any
+    const permitList = Array.isArray(permits) ? permits : [permits].filter(Boolean)
+
+    const timeline: Array<{ event: string; date: Date }> = []
+
+    if (application.created_at) {
+      timeline.push({ event: "submitted", date: new Date(application.created_at) })
+    }
+    if (application.status === "acknowledged") {
+      timeline.push({ event: "acknowledged", date: new Date(application.updated_at || application.created_at) })
+    }
+    if (application.status === "resolved") {
+      timeline.push({ event: "approved", date: new Date(application.updated_at) })
+    }
+    if (application.status === "rejected") {
+      timeline.push({ event: "rejected", date: new Date(application.updated_at) })
+    }
+    for (const permit of permitList) {
+      if (permit.issued_at) {
+        timeline.push({ event: "permit_issued", date: new Date(permit.issued_at) })
+      }
+    }
+
+    timeline.sort((a, b) => a.date.getTime() - b.date.getTime())
+
+    return {
+      applicationId,
+      status: application.status,
+      permits: permitList,
+      timeline,
+    }
+  }
 }
 
 export default GovernmentModuleService

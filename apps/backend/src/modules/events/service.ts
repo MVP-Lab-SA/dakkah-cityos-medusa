@@ -91,6 +91,100 @@ class EventModuleService extends MedusaService({
       metadata: event.metadata,
     }
   }
+
+  async retryFailedEvents(tenantId?: string, maxRetries: number = 3) {
+    const filters: Record<string, any> = { status: "failed" }
+    if (tenantId) {
+      filters.tenant_id = tenantId
+    }
+
+    const failedEvents = await this.listEventOutboxes(filters) as any
+    const list = Array.isArray(failedEvents) ? failedEvents : [failedEvents].filter(Boolean)
+
+    const retried: any[] = []
+    const skipped: any[] = []
+
+    for (const event of list) {
+      if ((event.retry_count || 0) >= maxRetries) {
+        skipped.push({ id: event.id, retry_count: event.retry_count })
+        continue
+      }
+
+      const updated = await (this as any).updateEventOutboxs({
+        id: event.id,
+        status: "pending",
+        error: null,
+      })
+      retried.push(updated)
+    }
+
+    return { retried: retried.length, skipped: skipped.length, retriedEvents: retried, skippedEvents: skipped }
+  }
+
+  async purgeOldEvents(olderThanDays: number) {
+    if (olderThanDays < 1) {
+      throw new Error("olderThanDays must be at least 1")
+    }
+
+    const cutoffDate = new Date()
+    cutoffDate.setDate(cutoffDate.getDate() - olderThanDays)
+
+    const publishedEvents = await this.listEventOutboxes({ status: "published" }) as any
+    const list = Array.isArray(publishedEvents) ? publishedEvents : [publishedEvents].filter(Boolean)
+
+    const toDelete = list.filter((e: any) => {
+      const publishedAt = e.published_at ? new Date(e.published_at) : new Date(e.created_at)
+      return publishedAt < cutoffDate
+    })
+
+    for (const event of toDelete) {
+      await (this as any).deleteEventOutboxs(event.id)
+    }
+
+    return { purged: toDelete.length, cutoffDate }
+  }
+
+  async getEventStats(tenantId: string) {
+    const allEvents = await this.listEventOutboxes({ tenant_id: tenantId }) as any
+    const list = Array.isArray(allEvents) ? allEvents : [allEvents].filter(Boolean)
+
+    const byStatus: Record<string, number> = { pending: 0, published: 0, failed: 0 }
+    const byEventType: Record<string, number> = {}
+
+    for (const event of list) {
+      const status = event.status || "unknown"
+      byStatus[status] = (byStatus[status] || 0) + 1
+
+      const eventType = event.event_type || "unknown"
+      byEventType[eventType] = (byEventType[eventType] || 0) + 1
+    }
+
+    return { tenantId, total: list.length, byStatus, byEventType }
+  }
+
+  async batchPublish(eventIds: string[]) {
+    if (!eventIds || eventIds.length === 0) {
+      throw new Error("No event IDs provided")
+    }
+
+    const results: any[] = []
+    const errors: any[] = []
+
+    for (const eventId of eventIds) {
+      try {
+        const updated = await (this as any).updateEventOutboxs({
+          id: eventId,
+          status: "published",
+          published_at: new Date(),
+        })
+        results.push(updated)
+      } catch (error: any) {
+        errors.push({ eventId, error: error.message })
+      }
+    }
+
+    return { published: results.length, failed: errors.length, results, errors }
+  }
 }
 
 export default EventModuleService

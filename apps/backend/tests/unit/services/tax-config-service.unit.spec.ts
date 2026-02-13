@@ -1,6 +1,6 @@
 jest.mock("@medusajs/framework/utils", () => {
   const chainable = () => {
-    const chain: any = { primaryKey: () => chain, nullable: () => chain, default: () => chain, unique: () => chain }
+    const chain: any = { primaryKey: () => chain, nullable: () => chain, default: () => chain, unique: () => chain, searchable: () => chain, index: () => chain }
     return chain
   }
   return {
@@ -29,6 +29,7 @@ describe("TaxConfigModuleService", () => {
 
   beforeEach(() => {
     service = new TaxConfigModuleService()
+    jest.clearAllMocks()
   })
 
   describe("calculateTax", () => {
@@ -225,6 +226,112 @@ describe("TaxConfigModuleService", () => {
       expect(result.valid).toBe(false)
       expect(result.reason).toBe("Exemption has expired")
       expect(updateSpy).toHaveBeenCalledWith(expect.objectContaining({ status: "expired" }))
+    })
+  })
+
+  describe("validateTaxId", () => {
+    it("validates a correct GB VAT number", async () => {
+      const result = await service.validateTaxId("GB123456789", "GB")
+      expect(result.valid).toBe(true)
+      expect(result.format).toBe("VAT")
+    })
+
+    it("rejects an invalid GB VAT number", async () => {
+      const result = await service.validateTaxId("GB12345", "GB")
+      expect(result.valid).toBe(false)
+      expect(result.format).toBe("VAT")
+      expect(result.reason).toContain("Invalid VAT format")
+    })
+
+    it("validates a correct US TIN", async () => {
+      const result = await service.validateTaxId("12-3456789", "US")
+      expect(result.valid).toBe(true)
+      expect(result.format).toBe("TIN")
+    })
+
+    it("validates a correct FR VAT number", async () => {
+      const result = await service.validateTaxId("FRXX123456789", "FR")
+      expect(result.valid).toBe(true)
+      expect(result.format).toBe("VAT")
+    })
+
+    it("falls back to length check for unknown country codes", async () => {
+      const result = await service.validateTaxId("TAX12345", "AE")
+      expect(result.format).toBe("unknown")
+      expect(result.valid).toBe(true)
+    })
+
+    it("returns invalid when tax ID or country code is missing", async () => {
+      const result = await service.validateTaxId("", "GB")
+      expect(result.valid).toBe(false)
+      expect(result.reason).toContain("required")
+    })
+  })
+
+  describe("getTaxSummary", () => {
+    it("groups rules by region", async () => {
+      jest.spyOn(service, "listTaxRules" as any).mockResolvedValue([
+        { id: "r1", region_code: "CA", country_code: "US", tax_rate: 7.25 },
+        { id: "r2", region_code: "CA", country_code: "US", tax_rate: 1.0 },
+        { id: "r3", region_code: "NY", country_code: "US", tax_rate: 8.0 },
+      ])
+
+      const result = await service.getTaxSummary("tenant-1")
+
+      expect(result.totalRules).toBe(3)
+      expect(result.regions).toBe(2)
+      expect(result.byRegion["CA"]).toHaveLength(2)
+      expect(result.byRegion["NY"]).toHaveLength(1)
+    })
+
+    it("uses country_code when region_code is absent", async () => {
+      jest.spyOn(service, "listTaxRules" as any).mockResolvedValue([
+        { id: "r1", country_code: "GB", tax_rate: 20 },
+      ])
+
+      const result = await service.getTaxSummary("tenant-1")
+
+      expect(result.byRegion["GB"]).toHaveLength(1)
+    })
+
+    it("filters by regionId when provided", async () => {
+      const listSpy = jest.spyOn(service, "listTaxRules" as any).mockResolvedValue([])
+
+      await service.getTaxSummary("tenant-1", "CA")
+
+      expect(listSpy).toHaveBeenCalledWith(expect.objectContaining({ region_code: "CA" }))
+    })
+  })
+
+  describe("getApplicableExemptions", () => {
+    it("returns only currently active exemptions", async () => {
+      const pastDate = new Date()
+      pastDate.setDate(pastDate.getDate() - 30)
+      const futureDate = new Date()
+      futureDate.setDate(futureDate.getDate() + 30)
+
+      jest.spyOn(service, "listTaxExemptions" as any).mockResolvedValue([
+        { id: "ex1", valid_from: pastDate.toISOString(), valid_to: futureDate.toISOString(), status: "active" },
+        { id: "ex2", valid_from: pastDate.toISOString(), valid_to: pastDate.toISOString(), status: "active" },
+      ])
+
+      const result = await service.getApplicableExemptions("cust-1", "tenant-1")
+
+      expect(result.count).toBe(1)
+      expect(result.exemptions[0].id).toBe("ex1")
+    })
+
+    it("filters out exemptions that have not yet started", async () => {
+      const futureDate = new Date()
+      futureDate.setDate(futureDate.getDate() + 30)
+
+      jest.spyOn(service, "listTaxExemptions" as any).mockResolvedValue([
+        { id: "ex1", valid_from: futureDate.toISOString(), valid_to: null, status: "active" },
+      ])
+
+      const result = await service.getApplicableExemptions("cust-1", "tenant-1")
+
+      expect(result.count).toBe(0)
     })
   })
 })
