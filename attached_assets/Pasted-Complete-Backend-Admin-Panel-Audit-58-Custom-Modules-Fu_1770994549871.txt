@@ -1,0 +1,104 @@
+Complete Backend & Admin Panel Audit
+58 Custom Modules — Full Status
+Legend
+Models = Data models defined in code
+DB Tables = Tables that exist in the database
+API = Has admin + store API routes
+Admin UI = Has a dedicated page in the admin panel at /commerce/admin
+Service = Has custom business logic methods (beyond auto-generated CRUD)
+Seeded = Has data in the database
+TIER 1: Fully Implemented (Models + API + Admin UI + Service + Seeded) — 18 modules
+#	Module	Models	Admin UI Page	Widgets	Service Methods	Seeded Data
+1	tenant	7 (tenant, settings, billing, user, invoice, usage, poi)	Tenants page + Billing detail	—	20+ (create, retrieve by slug/domain/handle, billing, team, usage)	1 tenant, settings, billing
+2	vendor	6 (vendor, product, user, order, analytics, marketplace)	Vendors page + Analytics page	vendor-management widget	10+ (CRUD, analytics)	10 vendors, 13 products
+3	booking	5 (booking, availability, reminder, service-product, service-provider)	Bookings page + Settings page	—	15+ (create, slots, schedule, reminders, statistics)	3 bookings, 3 items, 2 reminders
+4	commission	2 (rule, transaction)	Tiers page + Transactions page	commission-config widget	createTransaction, find	6 rules, 3 transactions
+5	company	7 (company, user, approval-workflow, payment-terms, purchase-order, purchase-order-item, tax-exemption)	Company detail page	customer-business-info, order-business-info widgets	15+ (PO, approvals, credit, roles, spending limits)	3 companies, 3 users
+6	subscription	6 (subscription, plan, item, event, pause, billing-cycle)	Subscriptions page	—	20+ (create from plan, billing cycles, pause/resume, history)	3 subs, 5 plans
+7	node	1 (node)	Nodes page	—	8+ (create with validation, ancestors, breadcrumbs, descendants)	10 nodes
+8	governance	1 (governance-authority)	Governance page	—	getCommercePolicy, find	1 authority
+9	persona	2 (persona, assignment)	Personas page	—	getPersonasForTenant	9 personas, 4 assignments
+10	review	1 (review)	Reviews page (with approve/reject/verify actions)	—	8+ (create, rating summary, product/vendor reviews)	6 reviews
+11	volume-pricing	2 (volume-pricing, tier)	Volume Pricing page	product-business-config widget	findApplicableRules, getBestVolumePrice	5 rules, 5 tiers
+12	warranty	5 (warranty-plan, warranty-claim, repair-order, service-center, spare-part)	Warranty page	—	Auto-generated CRUD	5 plans, 2 claims
+13	i18n	1 (translation)	i18n page	—	getSupportedLocales, getTranslation(s)	16 translations
+14	audit	1 (audit-log)	Audit Logs page	—	getAuditTrail, getResourceHistory	6 logs
+15	channel	1 (sales-channel-mapping)	Channels page	—	createMapping, getChannelForRequest	Data via core
+16	payout	2 (payout, transaction-link)	Payouts page	payout-processing widget	Stripe Connect, vendor balance, create payout	3 payouts
+17	invoice	2 (invoice, invoice-item)	— (via API)	—	createInvoiceWithItems, partial/early payment, void, send	3 invoices
+18	quote	2 (quote, quote-item)	— (via API)	quote-management widget	createCartFromQuote, approve/reject/convert	2 quotes
+TIER 2: Has Models + API Routes + Seeded Data, but NO Admin UI Page — 33 modules
+#	Module	Models	API Routes	Seeded Data	Gap
+19	restaurant	7 (restaurant, menu, menu-item, modifier-group, modifier, kitchen-order, table-reservation)	admin + store	5 restaurants, 4 menus, 8 items	No admin UI page
+20	auction	5 (auction-listing, bid, auto-bid-rule, auction-escrow, auction-result)	admin + store	6 listings, 4 bids	No admin UI page
+21	automotive	5 (vehicle-listing, vehicle-service, test-drive, trade-in, part-catalog)	admin + store	6 vehicles, 2 services	No admin UI page
+22	classified	5 (classified-listing, listing-category, listing-image, listing-offer, listing-flag)	admin + store	7 listings, 5 categories	No admin UI page
+23	real-estate	6 (property-listing, property-valuation, viewing-appointment, lease-agreement, property-document, agent-profile)	admin + store	7 properties	No admin UI page
+24	rental	5 (rental-product, rental-agreement, rental-period, rental-return, damage-claim)	admin + store	7 rental products	No admin UI page
+25	healthcare	7 (practitioner, appointment, medical-record, prescription, lab-order, pharmacy-product, insurance-claim)	admin + store	6 practitioners, 2 appointments	No admin UI page
+26	education	6 (course, lesson, enrollment, quiz, certificate, assignment)	admin + store	6 courses, 6 lessons	No admin UI page
+27	freelance	6 (gig-listing, freelance-contract, proposal, freelance-dispute, milestone, time-log)	admin + store	7 gigs, 3 contracts	No admin UI page
+28	travel	7 (property, reservation, room, room-type, rate-plan, guest-profile, amenity)	admin + store	2 properties, 3 reservations, 7 amenities	No admin UI page
+29	grocery	4 (fresh-product, delivery-slot, substitution-rule, batch-tracking)	admin + store	8 fresh products, 4 slots	No admin UI page
+30	fitness	5 (trainer-profile, class-schedule, class-booking, gym-membership, wellness-plan)	admin + store	5 trainers, 2 schedules	No admin UI page
+31	membership	5 (membership, membership-tier, points-ledger, redemption, reward)	admin + store	3 memberships, 6 tiers	No admin UI page
+32	crowdfunding	5 (campaign, backer, pledge, campaign-update, reward-tier)	admin + store	5 campaigns, 3 backers	No admin UI page
+33	charity	4 (charity-org, donation-campaign, donation, impact-report)	admin + store	5 charities, 2 campaigns	No admin UI page
+34	legal	4 (attorney-profile, legal-case, consultation, retainer-agreement)	admin + store	5 attorneys, 2 cases	No admin UI page
+35	financial-product	5 (loan-product, loan-application, insurance-product, insurance-policy, investment-plan)	admin + store	5 loan products, 2 insurance	No admin UI page
+36	social-commerce	5 (live-stream, live-product, social-post, social-share, group-buy)	admin + store	5 streams, 3 live products	No admin UI page
+37	advertising	5 (ad-account, ad-campaign, ad-creative, ad-placement, impression-log)	admin	5 accounts, 2 campaigns	No admin UI page
+38	affiliate	5 (affiliate, affiliate-commission, click-tracking, influencer-campaign, referral-link)	admin	5 affiliates, 2 commissions	No admin UI page
+39	digital-product	2 (digital-asset, download-license)	admin + store	6 assets, 3 licenses	No admin UI page
+40	event-ticketing	6 (event, ticket-type, ticket, venue, check-in, seat-map)	admin + store	6 events, 4 tickets, 2 venues	No admin UI page
+41	pet-service	4 (pet-profile, pet-product, grooming-booking, vet-appointment)	admin + store	5 pets, 3 products	No admin UI page
+42	parking	4 (parking-zone, parking-session, ride-request, shuttle-route)	admin + store	6 zones, 3 sessions	No admin UI page
+43	utilities	4 (utility-account, utility-bill, meter-reading, usage-record)	admin + store	5 accounts, 2 bills	No admin UI page
+44	government	5 (citizen-profile, municipal-license, permit, fine, service-request)	admin + store	10 citizens, 3 licenses	No admin UI page
+45	loyalty	3 (loyalty-program/account, point-transaction)	admin + store	2 programs, 4 ledger entries	No admin UI page
+46	dispute	2 (dispute, dispute-message)	admin + store	seeded via core	No admin UI page
+47	promotion-ext	4 (customer-segment, gift-card-ext, product-bundle, referral)	admin	3 segments, 3 gift cards, 2 bundles	No admin UI page
+48	wishlist	2 (wishlist, wishlist-item)	store	5 wishlists, 4 items	No admin UI page
+49	notification-preferences	1 (notification-preference)	store	48 notifications, 4 prefs	No admin UI page
+50	region-zone	1 (region-zone-mapping)	admin UI page exists	1 mapping	Minimal data
+51	store	1 (store)	admin + store	5 stores	No admin UI page
+TIER 3: Has Models + Minimal/No Service Logic — 7 modules
+#	Module	Models	Gap
+52	cms-content	2 (cms-page, cms-navigation)	Tables don't exist in DB (missing migrations). Uses code-based registry instead
+53	analytics	3 (analytics-event, dashboard, report)	dashboard and report tables don't exist. Service has methods but no matching tables
+54	cart-extension	1 (cart-metadata)	Minimal — only getByCartId
+55	shipping-extension	2 (carrier-config, shipping-rate)	Tables don't exist. Service methods defined but no DB backing
+56	inventory-extension	3 (reservation-hold, stock-alert, warehouse-transfer)	Tables don't exist. Service methods defined but no DB backing
+57	tax-config	2 (tax-exemption, tax-rule)	tax_rule table doesn't exist. tax_exemption exists in company module
+58	events	1 (event-outbox)	Works but is internal infrastructure, not user-facing
+Summary of Gaps
+Gap Type	Count	Details
+Modules missing Admin UI pages	33	Have API routes and data, but no dedicated admin panel page
+Modules missing DB migrations	5	cms-content, analytics (partial), shipping-extension, inventory-extension, tax-config (partial)
+Modules with no custom service logic	~20	Use only auto-generated CRUD from Medusa's MikroORM (restaurant, auction, rental, etc.)
+Admin pages that exist	21	16 dedicated pages + 5 settings/sub-pages
+Admin widgets that exist	7	commission-config, customer-business-info, order-business-info, payout-processing, product-business-config, quote-management, vendor-management
+What's in the Admin Panel Sidebar
+Currently visible in /commerce/admin:
+
+Audit Logs
+Bookings (+ Settings sub-page)
+Channels
+Commission Tiers
+Commission Transactions
+Company Details (detail page only)
+Governance
+i18n
+Nodes
+Payouts
+Personas
+Region Zones
+Subscriptions
+Tenants (+ Billing detail)
+Vendors (+ Analytics sub-page)
+Volume Pricing
+Warranty
+Payment Terms (settings)
+Plus the 7 widgets that appear on existing Medusa pages (products, orders, customers).
+
+And of course all the built-in Medusa admin pages (Products, Orders, Customers, Discounts, Gift Cards, Price Lists, etc.).
