@@ -1,4 +1,4 @@
-import ClassifiedModuleService from "./service"
+import ClassifiedModuleService from "./service.js"
 import { Module } from "@medusajs/framework/utils"
 
 export const CLASSIFIED_MODULE = "classified"

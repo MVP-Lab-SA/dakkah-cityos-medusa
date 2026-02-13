@@ -1,5 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { PLATFORM_CAPABILITIES } from "../../../lib/platform"
+import { PLATFORM_CAPABILITIES } from "../../../lib/platform.js"
 
 export const AUTHENTICATE = false
 

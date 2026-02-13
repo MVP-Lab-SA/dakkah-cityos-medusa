@@ -1,1 +1,1 @@
-export { NodeHierarchySyncService } from "./service";
+export { NodeHierarchySyncService } from "./service.js";

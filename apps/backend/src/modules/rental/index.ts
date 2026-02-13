@@ -1,4 +1,4 @@
-import RentalModuleService from "./service"
+import RentalModuleService from "./service.js"
 import { Module } from "@medusajs/framework/utils"
 
 export const RENTAL_MODULE = "rental"

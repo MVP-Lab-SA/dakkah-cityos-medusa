@@ -2,11 +2,11 @@ import { defineRouteConfig } from "@medusajs/admin-sdk"
 import { Container, Heading, Text, Button, Badge, Input, toast, Label } from "@medusajs/ui"
 import { EllipsisHorizontal, Plus, PencilSquare, Trash } from "@medusajs/icons"
 import { useState } from "react"
-import { useTranslations, useCreateTranslation, useUpdateTranslation, useDeleteTranslation, Translation } from "../../hooks/use-i18n"
-import { DataTable } from "../../components/tables/data-table"
-import { StatsGrid } from "../../components/charts/stats-grid"
-import { FormDrawer } from "../../components/forms/form-drawer"
-import { ConfirmModal } from "../../components/modals/confirm-modal"
+import { useTranslations, useCreateTranslation, useUpdateTranslation, useDeleteTranslation, Translation } from "../../hooks/use-i18n.js"
+import { DataTable } from "../../components/tables/data-table.js"
+import { StatsGrid } from "../../components/charts/stats-grid.js"
+import { FormDrawer } from "../../components/forms/form-drawer.js"
+import { ConfirmModal } from "../../components/modals/confirm-modal.js"
 
 const LOCALES = ["en", "fr", "ar", "de", "es", "zh", "ja", "ko", "pt", "ru"] as const
 

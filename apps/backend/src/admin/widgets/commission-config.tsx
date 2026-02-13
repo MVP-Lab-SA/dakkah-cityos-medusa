@@ -2,7 +2,7 @@ import { defineWidgetConfig } from "@medusajs/admin-sdk"
 import { Container, Heading, Text, Input, Button } from "@medusajs/ui"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
-import { sdk } from "../lib/client"
+import { sdk } from "../lib/client.js"
 
 interface CommissionRule {
   id: string

@@ -2,12 +2,12 @@ import { defineRouteConfig } from "@medusajs/admin-sdk"
 import { Container, Heading, Text, Button, Badge, Input, toast, Label } from "@medusajs/ui"
 import { Channels as ChannelsIcon, Plus, PencilSquare, Trash } from "@medusajs/icons"
 import { useState } from "react"
-import { useChannels, useCreateChannel, useUpdateChannel, useDeleteChannel, Channel } from "../../hooks/use-channels"
-import { DataTable } from "../../components/tables/data-table"
-import { StatusBadge } from "../../components/common"
-import { StatsGrid } from "../../components/charts/stats-grid"
-import { FormDrawer } from "../../components/forms/form-drawer"
-import { ConfirmModal } from "../../components/modals/confirm-modal"
+import { useChannels, useCreateChannel, useUpdateChannel, useDeleteChannel, Channel } from "../../hooks/use-channels.js"
+import { DataTable } from "../../components/tables/data-table.js"
+import { StatusBadge } from "../../components/common.js"
+import { StatsGrid } from "../../components/charts/stats-grid.js"
+import { FormDrawer } from "../../components/forms/form-drawer.js"
+import { ConfirmModal } from "../../components/modals/confirm-modal.js"
 
 const CHANNEL_TYPES = ["web", "mobile", "pos", "api", "kiosk", "social"] as const
 

@@ -1,5 +1,5 @@
 import { Module } from "@medusajs/framework/utils"
-import InventoryExtensionModuleService from "./service"
+import InventoryExtensionModuleService from "./service.js"
 
 export const INVENTORY_EXTENSION_MODULE = "inventoryExtension"
 

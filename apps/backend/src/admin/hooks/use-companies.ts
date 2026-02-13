@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { client } from "../lib/client"
+import { client } from "../lib/client.js"
 
 export interface Company {
   id: string

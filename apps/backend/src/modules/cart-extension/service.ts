@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { MedusaService } from "@medusajs/framework/utils"
-import CartMetadata from "./models/cart-metadata"
+import CartMetadata from "./models/cart-metadata.js"
 
 class CartExtensionModuleService extends MedusaService({
   CartMetadata,

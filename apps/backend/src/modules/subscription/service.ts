@@ -7,7 +7,7 @@ import {
   SubscriptionDiscount,
   SubscriptionEvent,
   SubscriptionPause
-} from "./models";
+} from "./models.js";
 
 /**
  * Subscription Module Service

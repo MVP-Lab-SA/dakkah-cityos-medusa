@@ -1,7 +1,7 @@
 import { defineWidgetConfig } from "@medusajs/admin-sdk"
 import { Container, Heading, Text, Badge, Button, Table } from "@medusajs/ui"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { sdk } from "../lib/client"
+import { sdk } from "../lib/client.js"
 
 interface Vendor {
   id: string

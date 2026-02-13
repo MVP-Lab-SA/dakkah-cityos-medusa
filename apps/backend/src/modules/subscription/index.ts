@@ -1,8 +1,8 @@
-import SubscriptionModuleService from "./service";
+import SubscriptionModuleService from "./service.js";
 import { Module } from "@medusajs/framework/utils";
 
 export default Module("subscription", {
   service: SubscriptionModuleService,
 });
 
-export * from "./models";
+export * from "./models.js";

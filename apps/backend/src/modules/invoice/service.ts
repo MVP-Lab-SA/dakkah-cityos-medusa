@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { MedusaService } from "@medusajs/framework/utils"
-import { Invoice } from "./models/invoice"
-import { InvoiceItem } from "./models/invoice-item"
+import { Invoice } from "./models/invoice.js"
+import { InvoiceItem } from "./models/invoice-item.js"
 
 class InvoiceModuleService extends MedusaService({
   Invoice,

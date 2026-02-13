@@ -1,5 +1,5 @@
 import { MedusaService } from "@medusajs/framework/utils"
-import Node from "./models/node"
+import Node from "./models/node.js"
 
 const HIERARCHY_RULES: Record<string, { depth: number; parent: string | null; children: string | null }> = {
   CITY: { depth: 0, parent: null, children: "DISTRICT" },

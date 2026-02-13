@@ -3,11 +3,11 @@ import { z } from "zod"
 import {
   startDynamicWorkflow,
   listDynamicWorkflows,
-} from "../../../../lib/dynamic-workflow-client"
+} from "../../../../lib/dynamic-workflow-client.js"
 
 const StartDynamicWorkflowSchema = z.object({
   goal: z.string().min(1, "goal is required"),
-  context: z.record(z.any()).optional().default({}),
+  context: z.record(z.string(), z.any()).optional().default({}),
   tools: z.array(z.string()).optional().default([]),
   maxIterations: z.number().int().positive().optional(),
   nodeContext: z

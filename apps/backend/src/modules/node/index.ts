@@ -1,5 +1,5 @@
 import { Module } from "@medusajs/framework/utils"
-import NodeModuleService from "./service"
+import NodeModuleService from "./service.js"
 
 export const NODE_MODULE = "node"
 

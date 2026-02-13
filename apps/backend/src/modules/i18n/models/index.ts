@@ -1,1 +1,1 @@
-export { default as Translation } from "./translation"
+export { default as Translation } from "./translation.js"

@@ -1,4 +1,4 @@
-import CrowdfundingModuleService from "./service"
+import CrowdfundingModuleService from "./service.js"
 import { Module } from "@medusajs/framework/utils"
 
 export const CROWDFUNDING_MODULE = "crowdfunding"

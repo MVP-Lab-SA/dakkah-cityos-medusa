@@ -1,20 +1,20 @@
 // Common components
-export * from "./common/status-badge"
-export * from "./common/stats-card"
-export * from "./common/empty-state"
-export * from "./common/loading-state"
-export * from "./common/tier-badge"
-export * from "./common/money-display"
-export * from "./common/timeline-view"
+export * from "./common/status-badge.js"
+export * from "./common/stats-card.js"
+export * from "./common/empty-state.js"
+export * from "./common/loading-state.js"
+export * from "./common/tier-badge.js"
+export * from "./common/money-display.js"
+export * from "./common/timeline-view.js"
 
 // Table components
-export * from "./tables/data-table"
+export * from "./tables/data-table.js"
 
 // Form components
-export * from "./forms/form-drawer"
+export * from "./forms/form-drawer.js"
 
 // Modal components
-export * from "./modals/confirm-modal"
+export * from "./modals/confirm-modal.js"
 
 // Chart components
-export * from "./charts/stats-grid"
+export * from "./charts/stats-grid.js"

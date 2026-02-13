@@ -30,7 +30,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         const contentId = body.data?.id || body.doc?.id
         if (contentId) {
           try {
-            const { PayloadToMedusaSync } = await import("../../../../integrations/payload-sync/payload-to-medusa")
+            const { PayloadToMedusaSync } = await import("../../../../integrations/payload-sync/payload-to-medusa.js")
             const payloadUrl = process.env.PAYLOAD_CMS_URL_DEV || ""
             const payloadApiKey = process.env.PAYLOAD_API_KEY || ""
             if (payloadUrl && payloadApiKey) {
@@ -52,7 +52,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         const pageId = body.data?.id || body.doc?.id
         if (pageId) {
           try {
-            const { PayloadToMedusaSync } = await import("../../../../integrations/payload-sync/payload-to-medusa")
+            const { PayloadToMedusaSync } = await import("../../../../integrations/payload-sync/payload-to-medusa.js")
             const payloadUrl = process.env.PAYLOAD_CMS_URL_DEV || ""
             const payloadApiKey = process.env.PAYLOAD_API_KEY || ""
             if (payloadUrl && payloadApiKey) {
@@ -98,7 +98,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         const mediaId = body.data?.id || body.doc?.id
         if (mediaId) {
           try {
-            const { PayloadToMedusaSync } = await import("../../../../integrations/payload-sync/payload-to-medusa")
+            const { PayloadToMedusaSync } = await import("../../../../integrations/payload-sync/payload-to-medusa.js")
             const payloadUrl = process.env.PAYLOAD_CMS_URL_DEV || ""
             const payloadApiKey = process.env.PAYLOAD_API_KEY || ""
             if (payloadUrl && payloadApiKey) {

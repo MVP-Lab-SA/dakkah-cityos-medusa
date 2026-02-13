@@ -1,5 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { createIntegrationOrchestrator } from "../../../../integrations/orchestrator"
+import { createIntegrationOrchestrator } from "../../../../integrations/orchestrator.js"
 
 const VALID_SYSTEMS = ["payload", "erpnext", "fleetbase", "waltid", "stripe"]
 const VALID_ENTITY_TYPES = ["product", "tenant", "store", "customer", "order", "node", "vendor"]
@@ -31,7 +31,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
     console.log(`[IntegrationSync] Manual sync triggered: ${system}/${entity_type}/${entity_id || "all"}`)
 
-    const { startWorkflow } = await import("../../../../lib/temporal-client")
+    const { startWorkflow } = await import("../../../../lib/temporal-client.js")
 
     if (!process.env.TEMPORAL_API_KEY) {
       return res.status(503).json({ error: "Temporal not configured. Manual sync requires Temporal." })

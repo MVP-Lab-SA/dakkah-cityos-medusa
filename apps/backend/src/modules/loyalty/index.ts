@@ -1,5 +1,5 @@
 import { Module } from "@medusajs/framework/utils"
-import LoyaltyModuleService from "./service"
+import LoyaltyModuleService from "./service.js"
 
 export const LOYALTY_MODULE = "loyalty"
 

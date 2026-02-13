@@ -1,6 +1,6 @@
 import { defineLink } from "@medusajs/framework/utils"
 import ProductModule from "@medusajs/medusa/product"
-import RentalModule from "../modules/rental"
+import RentalModule from "../modules/rental.js"
 
 export default defineLink(
   ProductModule.linkable.product,

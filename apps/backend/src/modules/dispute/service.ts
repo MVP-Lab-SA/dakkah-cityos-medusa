@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { MedusaService } from "@medusajs/framework/utils"
-import Dispute from "./models/dispute"
-import DisputeMessage from "./models/dispute-message"
+import Dispute from "./models/dispute.js"
+import DisputeMessage from "./models/dispute-message.js"
 
 class DisputeModuleService extends MedusaService({
   Dispute,

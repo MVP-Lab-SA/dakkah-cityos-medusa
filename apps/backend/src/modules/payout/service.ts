@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { MedusaService } from "@medusajs/framework/utils"
-import Payout from "./models/payout"
-import PayoutTransactionLink from "./models/payout-transaction-link"
+import Payout from "./models/payout.js"
+import PayoutTransactionLink from "./models/payout-transaction-link.js"
 
 class PayoutModuleService extends MedusaService({
   Payout,

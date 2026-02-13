@@ -3,7 +3,7 @@ import { Container, Heading, Text, Button, Input, Label, toast } from "@medusajs
 import { Calendar } from "@medusajs/icons"
 import { useState, useEffect } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { client } from "../../../lib/client"
+import { client } from "../../../lib/client.js"
 
 interface BookingConfig {
   // Reminder settings

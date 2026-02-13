@@ -1,9 +1,9 @@
 import { MedusaService } from "@medusajs/framework/utils"
-import WarrantyPlan from "./models/warranty-plan"
-import WarrantyClaim from "./models/warranty-claim"
-import RepairOrder from "./models/repair-order"
-import SparePart from "./models/spare-part"
-import ServiceCenter from "./models/service-center"
+import WarrantyPlan from "./models/warranty-plan.js"
+import WarrantyClaim from "./models/warranty-claim.js"
+import RepairOrder from "./models/repair-order.js"
+import SparePart from "./models/spare-part.js"
+import ServiceCenter from "./models/service-center.js"
 
 class WarrantyModuleService extends MedusaService({
   WarrantyPlan,

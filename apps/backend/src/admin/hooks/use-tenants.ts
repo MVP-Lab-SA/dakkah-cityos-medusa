@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { sdk } from "../lib/client"
+import { sdk } from "../lib/client.js"
 
 export type Tenant = {
   id: string

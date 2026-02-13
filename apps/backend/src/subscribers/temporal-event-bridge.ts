@@ -1,5 +1,5 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
-import { dispatchEventToTemporal, getWorkflowForEvent } from "../lib/event-dispatcher"
+import { dispatchEventToTemporal, getWorkflowForEvent } from "../lib/event-dispatcher.js"
 
 export default async function temporalEventBridge({
   event,

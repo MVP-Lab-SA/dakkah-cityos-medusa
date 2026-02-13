@@ -1,1 +1,1 @@
-export { default as EventOutbox } from "./event-outbox"
+export { default as EventOutbox } from "./event-outbox.js"

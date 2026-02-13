@@ -9,7 +9,7 @@ async function handlePaymentIntentSucceeded(data: any, correlationId: string, re
 
   if (orderId) {
     try {
-      const { dispatchEventToTemporal } = await import("../../../lib/event-dispatcher")
+      const { dispatchEventToTemporal } = await import("../../../lib/event-dispatcher.js")
       await dispatchEventToTemporal("payment.completed", {
         order_id: orderId,
         payment_intent_id: paymentIntent.id,

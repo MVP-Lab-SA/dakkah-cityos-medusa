@@ -1,4 +1,4 @@
-import { startWorkflow } from "./temporal-client"
+import { startWorkflow } from "./temporal-client.js"
 
 const EVENT_WORKFLOW_MAP: Record<string, { workflowId: string; taskQueue: string }> = {
   "order.placed": { workflowId: "xsystem.unified-order-orchestrator", taskQueue: "commerce-queue" },

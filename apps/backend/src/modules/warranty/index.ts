@@ -1,4 +1,4 @@
-import WarrantyModuleService from "./service"
+import WarrantyModuleService from "./service.js"
 import { Module } from "@medusajs/framework/utils"
 
 export const WARRANTY_MODULE = "warranty"

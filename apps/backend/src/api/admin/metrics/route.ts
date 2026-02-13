@@ -1,5 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { metrics } from "../../../lib/monitoring/metrics"
+import { metrics } from "../../../lib/monitoring/metrics.js"
 
 /**
  * Prometheus-compatible metrics endpoint

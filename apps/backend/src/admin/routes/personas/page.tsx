@@ -2,12 +2,12 @@ import { defineRouteConfig } from "@medusajs/admin-sdk"
 import { Container, Heading, Text, Button, Badge, Input, toast, Label } from "@medusajs/ui"
 import { Users, Plus, PencilSquare, Trash } from "@medusajs/icons"
 import { useState } from "react"
-import { usePersonas, useCreatePersona, useUpdatePersona, useDeletePersona, Persona } from "../../hooks/use-personas"
-import { DataTable } from "../../components/tables/data-table"
-import { StatusBadge } from "../../components/common"
-import { StatsGrid } from "../../components/charts/stats-grid"
-import { FormDrawer } from "../../components/forms/form-drawer"
-import { ConfirmModal } from "../../components/modals/confirm-modal"
+import { usePersonas, useCreatePersona, useUpdatePersona, useDeletePersona, Persona } from "../../hooks/use-personas.js"
+import { DataTable } from "../../components/tables/data-table.js"
+import { StatusBadge } from "../../components/common.js"
+import { StatsGrid } from "../../components/charts/stats-grid.js"
+import { FormDrawer } from "../../components/forms/form-drawer.js"
+import { ConfirmModal } from "../../components/modals/confirm-modal.js"
 
 const PERSONA_TYPES = ["consumer", "merchant", "government", "enterprise", "visitor", "operator"] as const
 

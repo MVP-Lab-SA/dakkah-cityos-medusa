@@ -1,5 +1,5 @@
 import { MedusaService } from "@medusajs/framework/utils"
-import AuditLog from "./models/audit-log"
+import AuditLog from "./models/audit-log.js"
 
 class AuditModuleService extends MedusaService({
   AuditLog,

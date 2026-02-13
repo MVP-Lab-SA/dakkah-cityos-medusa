@@ -1,4 +1,4 @@
-import VendorModuleService from "./service"
+import VendorModuleService from "./service.js"
 import { Module } from "@medusajs/framework/utils"
 
 export const VENDOR_MODULE = "vendor"

@@ -1,10 +1,10 @@
 import { MedusaService } from "@medusajs/framework/utils"
-import Course from "./models/course"
-import Lesson from "./models/lesson"
-import Enrollment from "./models/enrollment"
-import Certificate from "./models/certificate"
-import Quiz from "./models/quiz"
-import Assignment from "./models/assignment"
+import Course from "./models/course.js"
+import Lesson from "./models/lesson.js"
+import Enrollment from "./models/enrollment.js"
+import Certificate from "./models/certificate.js"
+import Quiz from "./models/quiz.js"
+import Assignment from "./models/assignment.js"
 
 class EducationModuleService extends MedusaService({
   Course,

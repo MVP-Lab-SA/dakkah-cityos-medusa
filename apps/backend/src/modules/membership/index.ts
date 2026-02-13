@@ -1,4 +1,4 @@
-import MembershipModuleService from "./service"
+import MembershipModuleService from "./service.js"
 import { Module } from "@medusajs/framework/utils"
 
 export const MEMBERSHIP_MODULE = "membership"

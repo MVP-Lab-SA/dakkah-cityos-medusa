@@ -18,7 +18,7 @@ import {
   useVerifyTaxExemption,
   useDeleteTaxExemption,
   TaxExemption,
-} from "../../../hooks/use-companies"
+} from "../../../hooks/use-companies.js"
 
 function CreditManagementSection({ companyId }: { companyId: string }) {
   const { data: credit, isLoading } = useCompanyCredit(companyId)

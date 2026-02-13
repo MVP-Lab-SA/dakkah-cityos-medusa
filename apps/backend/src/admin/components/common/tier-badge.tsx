@@ -1,5 +1,5 @@
 import { Badge } from "@medusajs/ui"
-import { getTierInfo } from "../../lib/formatters"
+import { getTierInfo } from "../../lib/formatters.js"
 
 interface TierBadgeProps {
   tier: string

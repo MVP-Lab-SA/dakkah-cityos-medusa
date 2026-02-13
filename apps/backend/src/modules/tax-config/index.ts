@@ -1,5 +1,5 @@
 import { Module } from "@medusajs/framework/utils"
-import TaxConfigModuleService from "./service"
+import TaxConfigModuleService from "./service.js"
 
 export const TAX_CONFIG_MODULE = "taxConfig"
 

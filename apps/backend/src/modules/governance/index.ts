@@ -1,5 +1,5 @@
 import { Module } from "@medusajs/framework/utils"
-import GovernanceModuleService from "./service"
+import GovernanceModuleService from "./service.js"
 
 export const GOVERNANCE_MODULE = "governance"
 

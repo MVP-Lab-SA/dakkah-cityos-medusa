@@ -1,5 +1,5 @@
 import { Module } from "@medusajs/framework/utils"
-import NotificationPreferencesModuleService from "./service"
+import NotificationPreferencesModuleService from "./service.js"
 
 export const NOTIFICATION_PREFERENCES_MODULE = "notificationPreferences"
 

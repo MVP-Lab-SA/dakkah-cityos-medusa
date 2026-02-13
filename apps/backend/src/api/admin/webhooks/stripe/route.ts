@@ -65,7 +65,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
           }
 
           try {
-            const { dispatchEventToTemporal } = await import("../../../../lib/event-dispatcher")
+            const { dispatchEventToTemporal } = await import("../../../../lib/event-dispatcher.js")
             await dispatchEventToTemporal("invoice.created", {
               order_id: orderId,
               payment_intent_id: paymentIntent.id,

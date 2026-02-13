@@ -1,5 +1,5 @@
 import { Badge } from "@medusajs/ui"
-import { getStatusColor, formatStatusLabel } from "../../lib/formatters"
+import { getStatusColor, formatStatusLabel } from "../../lib/formatters.js"
 
 interface StatusBadgeProps {
   status: string

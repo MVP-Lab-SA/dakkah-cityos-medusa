@@ -2,7 +2,7 @@ import { defineWidgetConfig } from "@medusajs/admin-sdk"
 import { DetailWidgetProps } from "@medusajs/framework/types"
 import { Container, Heading, Text, Badge, Button, Input } from "@medusajs/ui"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { sdk } from "../lib/client"
+import { sdk } from "../lib/client.js"
 import { useState } from "react"
 
 interface Vendor {

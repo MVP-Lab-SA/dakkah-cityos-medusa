@@ -1,9 +1,9 @@
 import { MedusaService } from "@medusajs/framework/utils"
-import CrowdfundCampaign from "./models/campaign"
-import Pledge from "./models/pledge"
-import RewardTier from "./models/reward-tier"
-import CampaignUpdate from "./models/campaign-update"
-import Backer from "./models/backer"
+import CrowdfundCampaign from "./models/campaign.js"
+import Pledge from "./models/pledge.js"
+import RewardTier from "./models/reward-tier.js"
+import CampaignUpdate from "./models/campaign-update.js"
+import Backer from "./models/backer.js"
 
 class CrowdfundingModuleService extends MedusaService({
   CrowdfundCampaign,

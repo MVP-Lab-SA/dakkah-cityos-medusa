@@ -2,12 +2,12 @@ import { defineRouteConfig } from "@medusajs/admin-sdk"
 import { Container, Heading, Text, Button, Badge, Input, toast, Label } from "@medusajs/ui"
 import { ShieldCheck, Plus, PencilSquare, Trash } from "@medusajs/icons"
 import { useState } from "react"
-import { useWarrantyTemplates, useCreateWarrantyTemplate, useUpdateWarrantyTemplate, useDeleteWarrantyTemplate, WarrantyTemplate } from "../../hooks/use-warranty"
-import { DataTable } from "../../components/tables/data-table"
-import { StatusBadge } from "../../components/common"
-import { StatsGrid } from "../../components/charts/stats-grid"
-import { ConfirmModal } from "../../components/modals/confirm-modal"
-import { FormDrawer } from "../../components/forms/form-drawer"
+import { useWarrantyTemplates, useCreateWarrantyTemplate, useUpdateWarrantyTemplate, useDeleteWarrantyTemplate, WarrantyTemplate } from "../../hooks/use-warranty.js"
+import { DataTable } from "../../components/tables/data-table.js"
+import { StatusBadge } from "../../components/common.js"
+import { StatsGrid } from "../../components/charts/stats-grid.js"
+import { ConfirmModal } from "../../components/modals/confirm-modal.js"
+import { FormDrawer } from "../../components/forms/form-drawer.js"
 
 const WarrantyPage = () => {
   const [showCreateDrawer, setShowCreateDrawer] = useState(false)

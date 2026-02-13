@@ -1,4 +1,4 @@
-import DigitalProductModuleService from "./service"
+import DigitalProductModuleService from "./service.js"
 import { Module } from "@medusajs/framework/utils"
 
 export const DIGITAL_PRODUCT_MODULE = "digitalProduct"

@@ -1,8 +1,8 @@
-import CompanyModuleService from "./service";
+import CompanyModuleService from "./service.js";
 import { Module } from "@medusajs/framework/utils";
 
 export default Module("company", {
   service: CompanyModuleService,
 });
 
-export * from "./models";
+export * from "./models.js";

@@ -1,5 +1,5 @@
 import { model } from "@medusajs/framework/utils"
-import { Invoice } from "./invoice"
+import { Invoice } from "./invoice.js"
 
 export const InvoiceItem = model.define("invoice_item", {
   id: model.id().primaryKey(),

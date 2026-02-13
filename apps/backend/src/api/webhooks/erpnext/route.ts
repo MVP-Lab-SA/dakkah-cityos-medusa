@@ -72,7 +72,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     }
 
     try {
-      const { dispatchEventToTemporal } = await import("../../../lib/event-dispatcher")
+      const { dispatchEventToTemporal } = await import("../../../lib/event-dispatcher.js")
       await dispatchEventToTemporal(`erp.${event}`, data, {
         correlationId,
         source: "erpnext-webhook",

@@ -1,6 +1,6 @@
 import { MedusaService } from "@medusajs/framework/utils";
-import VolumePricing from "./models/volume-pricing";
-import VolumePricingTier from "./models/volume-pricing-tier";
+import VolumePricing from "./models/volume-pricing.js";
+import VolumePricingTier from "./models/volume-pricing-tier.js";
 
 /**
  * Volume Pricing Service

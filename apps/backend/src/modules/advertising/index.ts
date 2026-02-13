@@ -1,4 +1,4 @@
-import AdvertisingModuleService from "./service"
+import AdvertisingModuleService from "./service.js"
 import { Module } from "@medusajs/framework/utils"
 
 export const ADVERTISING_MODULE = "advertising"

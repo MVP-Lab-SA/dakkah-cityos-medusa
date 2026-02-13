@@ -1,9 +1,9 @@
 import { MedusaService } from "@medusajs/framework/utils"
-import RentalProduct from "./models/rental-product"
-import RentalAgreement from "./models/rental-agreement"
-import RentalPeriod from "./models/rental-period"
-import RentalReturn from "./models/rental-return"
-import DamageClaim from "./models/damage-claim"
+import RentalProduct from "./models/rental-product.js"
+import RentalAgreement from "./models/rental-agreement.js"
+import RentalPeriod from "./models/rental-period.js"
+import RentalReturn from "./models/rental-return.js"
+import DamageClaim from "./models/damage-claim.js"
 
 class RentalModuleService extends MedusaService({
   RentalProduct,

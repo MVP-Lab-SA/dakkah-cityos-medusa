@@ -7,7 +7,7 @@ import {
   Booking,
   BookingItem,
   BookingReminder,
-} from "./models"
+} from "./models.js"
 
 /**
  * Booking Module Service

@@ -1,8 +1,8 @@
 // @ts-nocheck
 import { MedusaService } from "@medusajs/framework/utils"
-import LoyaltyProgram from "./models/loyalty-program"
-import LoyaltyAccount from "./models/loyalty-account"
-import PointTransaction from "./models/point-transaction"
+import LoyaltyProgram from "./models/loyalty-program.js"
+import LoyaltyAccount from "./models/loyalty-account.js"
+import PointTransaction from "./models/point-transaction.js"
 
 class LoyaltyModuleService extends MedusaService({
   LoyaltyProgram,

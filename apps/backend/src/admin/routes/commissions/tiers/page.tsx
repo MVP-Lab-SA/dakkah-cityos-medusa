@@ -2,7 +2,7 @@ import { defineRouteConfig } from "@medusajs/admin-sdk"
 import { Container, Heading, Text, Button, Badge, Input, Table } from "@medusajs/ui"
 import { useEffect, useState } from "react"
 import { PlusMini, Trash, PencilSquare, CurrencyDollar } from "@medusajs/icons"
-import { sdk } from "../../../lib/client"
+import { sdk } from "../../../lib/client.js"
 
 // Helper to make API calls using the Medusa SDK
 async function client(path: string, options?: { method?: string; body?: any }) {

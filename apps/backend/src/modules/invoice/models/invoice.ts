@@ -44,4 +44,4 @@ export const Invoice = model.define("invoice", {
 })
 
 // Import after definition to avoid circular dependency
-import { InvoiceItem } from "./invoice-item"
+import { InvoiceItem } from "./invoice-item.js"

@@ -62,7 +62,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     }
 
     try {
-      const { dispatchEventToTemporal } = await import("../../../lib/event-dispatcher")
+      const { dispatchEventToTemporal } = await import("../../../lib/event-dispatcher.js")
       await dispatchEventToTemporal(`fulfillment.${event}`, data, {
         correlationId,
         source: "fleetbase-webhook",

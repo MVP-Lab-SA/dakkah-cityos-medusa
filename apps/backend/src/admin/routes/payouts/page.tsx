@@ -2,11 +2,11 @@ import { defineRouteConfig } from "@medusajs/admin-sdk"
 import { Container, Heading, Text, Button, Badge, toast } from "@medusajs/ui"
 import { CurrencyDollar } from "@medusajs/icons"
 import { useState } from "react"
-import { usePayouts, useProcessPayout, Payout } from "../../hooks/use-vendors"
-import { DataTable } from "../../components/tables/data-table"
-import { StatusBadge } from "../../components/common"
-import { StatsGrid } from "../../components/charts/stats-grid"
-import { ConfirmModal } from "../../components/modals/confirm-modal"
+import { usePayouts, useProcessPayout, Payout } from "../../hooks/use-vendors.js"
+import { DataTable } from "../../components/tables/data-table.js"
+import { StatusBadge } from "../../components/common.js"
+import { StatsGrid } from "../../components/charts/stats-grid.js"
+import { ConfirmModal } from "../../components/modals/confirm-modal.js"
 
 const PayoutsPage = () => {
   const [processingPayout, setProcessingPayout] = useState<Payout | null>(null)

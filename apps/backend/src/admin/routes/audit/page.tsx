@@ -1,9 +1,9 @@
 import { defineRouteConfig } from "@medusajs/admin-sdk"
 import { Container, Heading, Text, Badge } from "@medusajs/ui"
 import { ClockSolid } from "@medusajs/icons"
-import { useAuditLogs, AuditLog } from "../../hooks/use-audit"
-import { DataTable } from "../../components/tables/data-table"
-import { StatsGrid } from "../../components/charts/stats-grid"
+import { useAuditLogs, AuditLog } from "../../hooks/use-audit.js"
+import { DataTable } from "../../components/tables/data-table.js"
+import { StatsGrid } from "../../components/charts/stats-grid.js"
 
 const getActionBadgeColor = (action: string) => {
   if (action.startsWith("create") || action.startsWith("add")) return "green"

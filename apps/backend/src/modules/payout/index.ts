@@ -1,4 +1,4 @@
-import PayoutModuleService from "./service"
+import PayoutModuleService from "./service.js"
 import { Module } from "@medusajs/framework/utils"
 
 export const PAYOUT_MODULE = "payout"

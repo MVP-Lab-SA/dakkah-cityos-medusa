@@ -4,8 +4,8 @@ import { CreditCard, Buildings } from "@medusajs/icons"
 import { useState } from "react"
 import { useParams } from "react-router-dom"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { client } from "../../../../lib/client"
-import { StatsGrid } from "../../../../components/charts/stats-grid"
+import { client } from "../../../../lib/client.js"
+import { StatsGrid } from "../../../../components/charts/stats-grid.js"
 
 interface TenantBillingData {
   tenant: {

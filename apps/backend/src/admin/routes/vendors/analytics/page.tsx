@@ -2,8 +2,8 @@ import { defineRouteConfig } from "@medusajs/admin-sdk"
 import { Container, Heading, Text, Badge } from "@medusajs/ui"
 import { ChartBar } from "@medusajs/icons"
 import { useQuery } from "@tanstack/react-query"
-import { client } from "../../../lib/client"
-import { StatsGrid } from "../../../components/charts/stats-grid"
+import { client } from "../../../lib/client.js"
+import { StatsGrid } from "../../../components/charts/stats-grid.js"
 
 interface VendorStats {
   id: string

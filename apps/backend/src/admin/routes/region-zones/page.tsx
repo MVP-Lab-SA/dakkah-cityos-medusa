@@ -2,12 +2,12 @@ import { defineRouteConfig } from "@medusajs/admin-sdk"
 import { Container, Heading, Text, Button, Badge, Input, toast, Label } from "@medusajs/ui"
 import { EllipsisHorizontal, Plus, PencilSquare, Trash } from "@medusajs/icons"
 import { useState } from "react"
-import { useRegionZones, useCreateRegionZone, useUpdateRegionZone, useDeleteRegionZone, RegionZone } from "../../hooks/use-region-zones"
-import { DataTable } from "../../components/tables/data-table"
-import { StatusBadge } from "../../components/common"
-import { StatsGrid } from "../../components/charts/stats-grid"
-import { FormDrawer } from "../../components/forms/form-drawer"
-import { ConfirmModal } from "../../components/modals/confirm-modal"
+import { useRegionZones, useCreateRegionZone, useUpdateRegionZone, useDeleteRegionZone, RegionZone } from "../../hooks/use-region-zones.js"
+import { DataTable } from "../../components/tables/data-table.js"
+import { StatusBadge } from "../../components/common.js"
+import { StatsGrid } from "../../components/charts/stats-grid.js"
+import { FormDrawer } from "../../components/forms/form-drawer.js"
+import { ConfirmModal } from "../../components/modals/confirm-modal.js"
 
 const ZONE_CODES = ["GCC_EU", "MENA", "APAC", "AMERICAS", "GLOBAL"] as const
 

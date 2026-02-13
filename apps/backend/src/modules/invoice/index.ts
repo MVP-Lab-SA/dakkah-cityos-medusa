@@ -1,5 +1,5 @@
 import { Module } from "@medusajs/framework/utils"
-import InvoiceModuleService from "./service"
+import InvoiceModuleService from "./service.js"
 
 export const INVOICE_MODULE = "invoice"
 

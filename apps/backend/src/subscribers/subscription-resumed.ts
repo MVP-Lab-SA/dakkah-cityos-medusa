@@ -1,7 +1,7 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
-import { subscriberLogger } from "../lib/logger"
-import { appConfig } from "../lib/config"
+import { subscriberLogger } from "../lib/logger.js"
+import { appConfig } from "../lib/config.js"
 
 const logger = subscriberLogger
 

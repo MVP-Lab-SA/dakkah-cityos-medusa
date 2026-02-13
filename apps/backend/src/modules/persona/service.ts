@@ -1,6 +1,6 @@
 import { MedusaService } from "@medusajs/framework/utils"
-import Persona from "./models/persona"
-import { PersonaAssignment } from "./models/persona-assignment"
+import Persona from "./models/persona.js"
+import { PersonaAssignment } from "./models/persona-assignment.js"
 
 const SCOPE_PRIORITY: Record<string, number> = {
   "session": 500,

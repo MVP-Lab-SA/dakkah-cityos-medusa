@@ -1,8 +1,8 @@
-import VolumePricingModuleService from "./service";
+import VolumePricingModuleService from "./service.js";
 import { Module } from "@medusajs/framework/utils";
 
 export default Module("volumePricing", {
   service: VolumePricingModuleService,
 });
 
-export * from "./models";
+export * from "./models.js";

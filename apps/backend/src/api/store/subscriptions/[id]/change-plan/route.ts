@@ -2,8 +2,8 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
 import { z } from "zod"
-import { apiLogger } from "../../../../../lib/logger"
-import { formatZodErrors } from "../../../../../lib/validation"
+import { apiLogger } from "../../../../../lib/logger.js"
+import { formatZodErrors } from "../../../../../lib/validation.js"
 
 const logger = apiLogger
 

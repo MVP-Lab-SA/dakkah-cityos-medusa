@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { MedusaService } from "@medusajs/framework/utils"
-import ShippingRate from "./models/shipping-rate"
-import CarrierConfig from "./models/carrier-config"
+import ShippingRate from "./models/shipping-rate.js"
+import CarrierConfig from "./models/carrier-config.js"
 
 class ShippingExtensionModuleService extends MedusaService({
   ShippingRate,

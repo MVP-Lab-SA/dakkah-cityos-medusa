@@ -1,8 +1,8 @@
 // @ts-nocheck
 import { MedusaService } from "@medusajs/framework/utils"
-import AnalyticsEvent from "./models/analytics-event"
-import Report from "./models/report"
-import Dashboard from "./models/dashboard"
+import AnalyticsEvent from "./models/analytics-event.js"
+import Report from "./models/report.js"
+import Dashboard from "./models/dashboard.js"
 
 class AnalyticsModuleService extends MedusaService({
   AnalyticsEvent,

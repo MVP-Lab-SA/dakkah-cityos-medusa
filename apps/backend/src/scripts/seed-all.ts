@@ -1,9 +1,9 @@
 import { ExecArgs } from "@medusajs/framework/types"
-import seedVendors from "./seed-vendors"
-import seedServices from "./seed-services"
-import seedSubscriptions from "./seed-subscriptions"
-import seedCompanies from "./seed-companies"
-import seedVolumePricing from "./seed-volume-pricing"
+import seedVendors from "./seed-vendors.js"
+import seedServices from "./seed-services.js"
+import seedSubscriptions from "./seed-subscriptions.js"
+import seedCompanies from "./seed-companies.js"
+import seedVolumePricing from "./seed-volume-pricing.js"
 
 /**
  * Master seed script - seeds all custom data

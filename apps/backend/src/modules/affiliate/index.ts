@@ -1,4 +1,4 @@
-import AffiliateModuleService from "./service"
+import AffiliateModuleService from "./service.js"
 import { Module } from "@medusajs/framework/utils"
 
 export const AFFILIATE_MODULE = "affiliate"

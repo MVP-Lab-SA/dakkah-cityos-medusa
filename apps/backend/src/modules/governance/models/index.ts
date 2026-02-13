@@ -1,1 +1,1 @@
-export { default as GovernanceAuthority } from "./governance-authority"
+export { default as GovernanceAuthority } from "./governance-authority.js"

@@ -1,1 +1,1 @@
-export { default as RegionZoneMapping } from "./region-zone-mapping"
+export { default as RegionZoneMapping } from "./region-zone-mapping.js"

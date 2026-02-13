@@ -1,5 +1,5 @@
 import { MedusaService } from "@medusajs/framework/utils"
-import GovernanceAuthority from "./models/governance-authority"
+import GovernanceAuthority from "./models/governance-authority.js"
 
 function deepMerge(target: Record<string, any>, source: Record<string, any>): Record<string, any> {
   const result = { ...target }

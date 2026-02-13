@@ -3,8 +3,8 @@ import { Container, Heading, Text, Badge, Button } from "@medusajs/ui"
 import { CurrencyDollar } from "@medusajs/icons"
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { client } from "../../../lib/client"
-import { StatsGrid } from "../../../components/charts/stats-grid"
+import { client } from "../../../lib/client.js"
+import { StatsGrid } from "../../../components/charts/stats-grid.js"
 
 interface Transaction {
   id: string

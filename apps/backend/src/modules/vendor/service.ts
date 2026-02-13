@@ -1,10 +1,10 @@
 import { MedusaService } from "@medusajs/framework/utils"
-import Vendor from "./models/vendor"
-import VendorUser from "./models/vendor-user"
-import { VendorProduct } from "./models/vendor-product"
-import { VendorOrder, VendorOrderItem } from "./models/vendor-order"
-import { VendorAnalyticsSnapshot, VendorPerformanceMetric } from "./models/vendor-analytics"
-import MarketplaceListing from "./models/marketplace-listing"
+import Vendor from "./models/vendor.js"
+import VendorUser from "./models/vendor-user.js"
+import { VendorProduct } from "./models/vendor-product.js"
+import { VendorOrder, VendorOrderItem } from "./models/vendor-order.js"
+import { VendorAnalyticsSnapshot, VendorPerformanceMetric } from "./models/vendor-analytics.js"
+import MarketplaceListing from "./models/marketplace-listing.js"
 
 /**
  * Vendor Module Service

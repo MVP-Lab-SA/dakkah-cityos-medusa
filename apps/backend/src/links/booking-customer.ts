@@ -1,6 +1,6 @@
 import { defineLink } from "@medusajs/framework/utils"
 import CustomerModule from "@medusajs/medusa/customer"
-import BookingModule from "../modules/booking"
+import BookingModule from "../modules/booking.js"
 
 export default defineLink(
   CustomerModule.linkable.customer,

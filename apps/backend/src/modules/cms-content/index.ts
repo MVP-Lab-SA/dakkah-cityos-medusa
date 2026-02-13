@@ -1,5 +1,5 @@
 import { Module } from "@medusajs/framework/utils"
-import CMSContentModuleService from "./service"
+import CMSContentModuleService from "./service.js"
 
 export const CMS_CONTENT_MODULE = "cmsContent"
 

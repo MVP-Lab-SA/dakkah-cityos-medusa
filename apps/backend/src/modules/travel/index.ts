@@ -1,4 +1,4 @@
-import TravelModuleService from "./service"
+import TravelModuleService from "./service.js"
 import { Module } from "@medusajs/framework/utils"
 
 export const TRAVEL_MODULE = "travel"

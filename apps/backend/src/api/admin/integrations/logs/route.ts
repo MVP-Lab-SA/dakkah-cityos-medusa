@@ -1,5 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { createIntegrationOrchestrator } from "../../../../integrations/orchestrator"
+import { createIntegrationOrchestrator } from "../../../../integrations/orchestrator.js"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   try {

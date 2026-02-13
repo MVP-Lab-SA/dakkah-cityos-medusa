@@ -1,4 +1,4 @@
-import RestaurantModuleService from "./service"
+import RestaurantModuleService from "./service.js"
 import { Module } from "@medusajs/framework/utils"
 
 export const RESTAURANT_MODULE = "restaurant"

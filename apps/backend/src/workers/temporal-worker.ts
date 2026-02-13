@@ -1,9 +1,9 @@
 // @ts-nocheck
-import { ACTIVITY_DEFINITIONS } from "../lib/temporal-activities"
-import { ERPNextService } from "../integrations/erpnext/service"
-import { FleetbaseService } from "../integrations/fleetbase/service"
-import { WaltIdService } from "../integrations/waltid/service"
-import { durableSyncTracker } from "../lib/platform/sync-tracker"
+import { ACTIVITY_DEFINITIONS } from "../lib/temporal-activities.js"
+import { ERPNextService } from "../integrations/erpnext/service.js"
+import { FleetbaseService } from "../integrations/fleetbase/service.js"
+import { WaltIdService } from "../integrations/waltid/service.js"
+import { durableSyncTracker } from "../lib/platform/sync-tracker.js"
 import axios from "axios"
 
 let workerInstance: any = null

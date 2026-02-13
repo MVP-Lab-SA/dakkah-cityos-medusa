@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { MedusaService } from "@medusajs/framework/utils"
-import TaxRule from "./models/tax-rule"
-import TaxExemption from "./models/tax-exemption"
+import TaxRule from "./models/tax-rule.js"
+import TaxExemption from "./models/tax-exemption.js"
 
 class TaxConfigModuleService extends MedusaService({
   TaxRule,

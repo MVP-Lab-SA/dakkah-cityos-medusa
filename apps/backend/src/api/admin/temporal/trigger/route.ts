@@ -1,6 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { startWorkflow } from "../../../../lib/temporal-client"
-import { getWorkflowForEvent } from "../../../../lib/event-dispatcher"
+import { startWorkflow } from "../../../../lib/temporal-client.js"
+import { getWorkflowForEvent } from "../../../../lib/event-dispatcher.js"
 import { z } from "zod"
 
 const triggerSchema = z.object({

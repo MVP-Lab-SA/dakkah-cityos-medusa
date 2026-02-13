@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { MedusaService } from "@medusajs/framework/utils"
-import Wishlist from "./models/wishlist"
-import WishlistItem from "./models/wishlist-item"
+import Wishlist from "./models/wishlist.js"
+import WishlistItem from "./models/wishlist-item.js"
 import crypto from "crypto"
 
 class WishlistModuleService extends MedusaService({
