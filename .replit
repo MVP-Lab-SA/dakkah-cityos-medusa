@@ -26,6 +26,7 @@ PAYLOAD_CMS_URL_LOCAL = "http://localhost:3001"
 WALTID_URL_LOCAL = "http://localhost:7000"
 MEDUSA_BACKEND_URL_LOCAL = "http://localhost:9000"
 STOREFRONT_URL_LOCAL = "http://localhost:5000"
+VITE_MEDUSA_PUBLISHABLE_KEY = "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445"
 
 [userenv.development]
 

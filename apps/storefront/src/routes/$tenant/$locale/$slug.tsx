@@ -1,9 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useState, useEffect, lazy, Suspense } from 'react'
 import { TemplateRenderer } from '@/components/cms/template-renderer'
 import type { CMSPage } from '@/lib/types/cityos'
-
-const Store = lazy(() => import('@/pages/store'))
+import ProductCard from '@/components/product-card'
 
 const DEFAULT_TENANT_ID = "01KGZ2JRYX607FWMMYQNQRKVWS"
 
@@ -13,9 +11,27 @@ const TENANT_SLUG_TO_ID: Record<string, string> = {
 
 const BUILT_IN_ROUTES = new Set(["store"])
 
+const LOCALE_TO_COUNTRY: Record<string, string> = {
+  en: "us",
+  fr: "fr",
+  ar: "sa",
+}
+
+function getPublishableKey() {
+  try {
+    return import.meta.env?.VITE_MEDUSA_PUBLISHABLE_KEY || ""
+  } catch {
+    return ""
+  }
+}
+
+function getBaseUrl() {
+  return typeof window === "undefined" ? "http://localhost:9000" : ""
+}
+
 async function resolvePageFromServer(tenantId: string, path: string, locale?: string): Promise<CMSPage | null> {
   try {
-    const baseUrl = typeof window === "undefined" ? "http://localhost:9000" : ""
+    const baseUrl = getBaseUrl()
     const params = new URLSearchParams({ path, tenant_id: tenantId })
     if (locale) params.set("locale", locale)
     const response = await fetch(`${baseUrl}/platform/cms/resolve?${params}`)
@@ -27,18 +43,57 @@ async function resolvePageFromServer(tenantId: string, path: string, locale?: st
   }
 }
 
+async function fetchStoreData(locale: string) {
+  const baseUrl = getBaseUrl()
+  const countryCode = LOCALE_TO_COUNTRY[locale?.toLowerCase()] || locale?.toLowerCase() || "us"
+  const publishableKey = getPublishableKey()
+  const headers: Record<string, string> = {}
+  if (publishableKey) headers["x-publishable-api-key"] = publishableKey
+
+  try {
+    const regionsRes = await fetch(`${baseUrl}/store/regions`, { headers })
+    if (!regionsRes.ok) return { region: null, products: [], count: 0 }
+    const regionsData = await regionsRes.json()
+    const regions = regionsData.regions || []
+    const region = regions.find((r: any) =>
+      r.countries?.some((c: any) => c.iso_2 === countryCode.toLowerCase())
+    ) || regions[0]
+
+    if (!region) return { region: null, products: [], count: 0 }
+
+    const productsRes = await fetch(
+      `${baseUrl}/store/products?limit=12&offset=0&region_id=${region.id}`,
+      { headers }
+    )
+    if (!productsRes.ok) return { region, products: [], count: 0 }
+    const productsData = await productsRes.json()
+
+    return {
+      region,
+      products: productsData.products || [],
+      count: productsData.count || 0,
+    }
+  } catch {
+    return { region: null, products: [], count: 0 }
+  }
+}
+
 export const Route = createFileRoute('/$tenant/$locale/$slug')({
   loader: async ({ params }) => {
     const { slug, locale, tenant } = params
     if (BUILT_IN_ROUTES.has(slug)) {
-      return { page: null, tenantSlug: tenant, locale, slug, isBuiltIn: true }
+      let storeData = { region: null, products: [] as any[], count: 0 }
+      try {
+        storeData = await fetchStoreData(locale)
+      } catch {}
+      return { page: null, tenantSlug: tenant, locale, slug, isBuiltIn: true, storeData }
     }
     const tenantId = TENANT_SLUG_TO_ID[tenant] || DEFAULT_TENANT_ID
     let page: CMSPage | null = null
     try {
       page = await resolvePageFromServer(tenantId, slug, locale)
     } catch {}
-    return { page, tenantSlug: tenant, locale, slug, isBuiltIn: false }
+    return { page, tenantSlug: tenant, locale, slug, isBuiltIn: false, storeData: null }
   },
   component: CMSSlugPageComponent,
   head: ({ loaderData }) => ({
@@ -54,56 +109,26 @@ function CMSSlugPageComponent() {
   const { tenant, locale, slug } = Route.useParams()
 
   if (data?.isBuiltIn && slug === "store") {
+    const products = data.storeData?.products || []
+
     return (
-      <Suspense fallback={<div className="content-container py-6"><div className="text-ds-muted-foreground">Loading store...</div></div>}>
-        <Store />
-      </Suspense>
-    )
-  }
+      <div className="content-container py-6">
+        <h1 className="text-xl mb-6">All Products</h1>
 
-  return <CMSPageResolver data={data} tenant={tenant} locale={locale} slug={slug} />
-}
-
-function CMSPageResolver({ data, tenant, locale, slug }: { data: any; tenant: string; locale: string; slug: string }) {
-  const tenantId = TENANT_SLUG_TO_ID[tenant] || DEFAULT_TENANT_ID
-
-  const [page, setPage] = useState<CMSPage | null>(data?.page || null)
-  const [isLoading, setIsLoading] = useState(!data?.page)
-  const [hasError, setHasError] = useState(false)
-
-  useEffect(() => {
-    if (page || typeof window === "undefined") return
-
-    const params = new URLSearchParams({ path: slug, tenant_id: tenantId })
-    if (locale) params.set("locale", locale)
-
-    fetch(`/platform/cms/resolve?${params}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Not found")
-        return res.json()
-      })
-      .then((d) => {
-        setPage(d.payload?.docs?.[0] || d.data?.page || null)
-        setIsLoading(false)
-      })
-      .catch(() => {
-        setHasError(true)
-        setIsLoading(false)
-      })
-  }, [slug, tenantId, locale, page])
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-ds-muted flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-4 border-ds-border border-t-zinc-900 rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-ds-muted-foreground">Loading...</p>
-        </div>
+        {products.length === 0 ? (
+          <div className="text-zinc-600">No products found</div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {products.map((product: any) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
       </div>
     )
   }
 
-  if (!page || hasError) {
+  if (!data?.page) {
     return (
       <div className="min-h-screen bg-ds-muted flex items-center justify-center">
         <div className="text-center">
@@ -115,6 +140,7 @@ function CMSPageResolver({ data, tenant, locale, slug }: { data: any; tenant: st
     )
   }
 
+  const page = data.page
   const tenantObj = {
     id: typeof page.tenant === "string" ? page.tenant : page.tenant?.id || "",
     slug: tenant,

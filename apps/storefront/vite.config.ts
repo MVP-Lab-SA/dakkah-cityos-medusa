@@ -2,7 +2,6 @@ import medusaAiTags from "@medusajs-ai/tags";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import react from "@vitejs/plugin-react";
-import path from "path";
 import { defineConfig } from "vite";
 import Terminal from "vite-plugin-terminal";
 import viteTsConfigPaths from "vite-tsconfig-paths";
@@ -77,7 +76,7 @@ export default defineConfig(({ mode }) => {
     },
 
     ssr: {
-      noExternal: ["@medusajs/js-sdk", "@medusajs/types", "@dakkah-cityos/design-runtime", "@dakkah-cityos/design-tokens", "@dakkah-cityos/design-system"],
+      noExternal: ["@medusajs/js-sdk", "@medusajs/types"],
       external: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime"],
       optimizeDeps: {
         noDiscovery: true,
@@ -96,18 +95,15 @@ export default defineConfig(({ mode }) => {
         "@medusajs/js-sdk",
         "@medusajs/icons",
         "lodash-es",
+        "@dakkah-cityos/design-runtime",
+        "@dakkah-cityos/design-tokens",
+        "@dakkah-cityos/design-system",
       ],
       exclude: ["@medusajs-ai/tags"],
     },
 
     resolve: {
       dedupe: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime", "@tanstack/react-router", "@tanstack/react-query"],
-      alias: {
-        react: path.resolve(path.dirname(new URL(import.meta.url).pathname), "node_modules/react"),
-        "react-dom": path.resolve(path.dirname(new URL(import.meta.url).pathname), "node_modules/react-dom"),
-        "react/jsx-runtime": path.resolve(path.dirname(new URL(import.meta.url).pathname), "node_modules/react/jsx-runtime"),
-        "react/jsx-dev-runtime": path.resolve(path.dirname(new URL(import.meta.url).pathname), "node_modules/react/jsx-dev-runtime"),
-      },
     },
   };
 });
