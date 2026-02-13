@@ -35,9 +35,9 @@ The Dakkah CityOS Commerce Platform is a **multi-tenant, multi-vertical commerce
 | External Integrations | 5 (Payload CMS, ERPNext, Fleetbase, Walt.id, Stripe) |
 | Temporal Workflows | 20 custom + 30+ system workflows + dynamic agent workflows |
 | Store API Routes | 9 custom storefront endpoints |
-| Admin Pages | 54 (21 original + 33 new) |
+| Admin Pages | 56 (21 original + 33 new + 2 gap-fill: invoices, quotes) |
 | Admin Widgets | 7 |
-| Admin Hooks | 19 |
+| Admin Hooks | 52 (all admin pages wired with real API hooks) |
 | RBAC Roles | 10 |
 | Node Hierarchy Levels | 5 (CITY → DISTRICT → ZONE → FACILITY → ASSET) |
 | Persona Axes | 6 |
