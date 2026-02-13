@@ -76,5 +76,5 @@ waitForPort = 5000
 
 [deployment]
 deploymentTarget = "vm"
-run = ["bash", "/home/runner/workspace/start-prod.sh"]
-build = ["bash", "-c", "cd apps/backend && npx medusa build && cd ../../apps/storefront && npx vite build"]
+run = ["bash", "start-prod.sh"]
+build = ["bash", "build-prod.sh"]
