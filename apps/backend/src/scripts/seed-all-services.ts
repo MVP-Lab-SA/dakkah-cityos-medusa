@@ -315,7 +315,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
           tenant_id: TENANT_ID,
           name: "Government Employee",
           slug: "gov-employee",
-          category: "government",
+          category: "cityops",
           axes: { sector: "public", clearance: "standard" },
           priority: 4,
           status: "active",
@@ -344,11 +344,22 @@ export default async function seedAllServices({ container }: ExecArgs) {
       log("  ✓ CityOS Stores already exist, skipping")
       skippedCount++
     } else {
+      let salesChannelId = "sc-default"
+      try {
+        const scService = container.resolve(Modules.SALES_CHANNEL) as any
+        const channels = await scService.listSalesChannels()
+        const chArr = Array.isArray(channels) ? channels : [channels].filter(Boolean)
+        if (chArr.length > 0 && chArr[0]?.id) {
+          salesChannelId = chArr[0].id
+        }
+      } catch { }
+
       await svc.createStores([
         {
           tenant_id: TENANT_ID,
           handle: "dakkah-main",
           name: "Dakkah Main Store",
+          sales_channel_id: salesChannelId,
           store_type: "marketplace",
           status: "active",
           logo_url: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=200&h=200&fit=crop",
@@ -361,7 +372,8 @@ export default async function seedAllServices({ container }: ExecArgs) {
           tenant_id: TENANT_ID,
           handle: "dakkah-food",
           name: "Dakkah Food Hub",
-          store_type: "vertical",
+          sales_channel_id: salesChannelId,
+          store_type: "retail",
           status: "active",
           logo_url: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200&h=200&fit=crop",
           theme_config: { primaryColor: "#c0392b", accentColor: "#e67e22" },
@@ -371,6 +383,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
           tenant_id: TENANT_ID,
           handle: "dakkah-b2b",
           name: "Dakkah Business",
+          sales_channel_id: salesChannelId,
           store_type: "b2b",
           status: "active",
           logo_url: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=200&h=200&fit=crop",
@@ -407,7 +420,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
           handle: "al-baik",
           business_name: "Al Baik",
           legal_name: "Al Baik Food Systems Company",
-          business_type: "restaurant",
+          business_type: "corporation",
           email: "info@albaik.com",
           phone: "+966112345678",
           address_line1: "King Fahad Road",
@@ -430,7 +443,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
           handle: "jarir-bookstore",
           business_name: "Jarir Bookstore",
           legal_name: "Jarir Marketing Company",
-          business_type: "retailer",
+          business_type: "corporation",
           email: "info@jarir.com",
           phone: "+966114611111",
           address_line1: "Olaya Street",
@@ -453,7 +466,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
           handle: "saudi-oud",
           business_name: "Arabian Oud",
           legal_name: "Arabian Oud Company",
-          business_type: "brand",
+          business_type: "llc",
           email: "info@arabianoud.com",
           phone: "+966114780000",
           address_line1: "Tahlia Street",
@@ -476,7 +489,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
           handle: "tamimi-markets",
           business_name: "Tamimi Markets",
           legal_name: "Abdullah Al Othaim Markets Company",
-          business_type: "retailer",
+          business_type: "corporation",
           email: "info@tamimimarkets.com",
           phone: "+966112345000",
           address_line1: "Al Malaz District",
@@ -499,7 +512,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
           handle: "camel-fashion",
           business_name: "Camel Fashion House",
           legal_name: "Camel Fashion Trading LLC",
-          business_type: "brand",
+          business_type: "llc",
           email: "info@camelfashion.sa",
           phone: "+966112340000",
           address_line1: "Kingdom Tower",
@@ -561,7 +574,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
           commission_percentage: 10,
           priority: 2,
           status: "active",
-          applies_to: "category",
+          applies_to: "specific_categories",
           conditions: { category: "food-beverages" },
           metadata: { seeded: true },
         },
@@ -573,7 +586,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
           commission_percentage: 8,
           priority: 3,
           status: "active",
-          applies_to: "vendor",
+          applies_to: "all_products",
           conditions: { min_monthly_sales: 500000 },
           metadata: { seeded: true },
         },
@@ -585,7 +598,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
           commission_flat_amount: 25,
           priority: 4,
           status: "active",
-          applies_to: "category",
+          applies_to: "specific_categories",
           conditions: { category: "electronics" },
           metadata: { seeded: true },
         },
@@ -656,7 +669,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
           period_end: new Date("2025-02-28"),
           transaction_count: 5000,
           status: "processing",
-          payment_method: "stripe",
+          payment_method: "stripe_connect",
           metadata: { seeded: true },
         },
       ])
@@ -919,7 +932,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
           min_advance_booking_hours: 24,
           max_advance_booking_days: 30,
           cancellation_policy_hours: 12,
-          location_type: "on_site",
+          location_type: "in_person",
           pricing_type: "fixed",
           is_active: true,
           metadata: { name: "Premium Hammam Spa Experience", price: 45000 },
@@ -951,7 +964,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
           min_advance_booking_hours: 48,
           max_advance_booking_days: 60,
           cancellation_policy_hours: 24,
-          location_type: "on_site",
+          location_type: "in_person",
           pricing_type: "fixed",
           is_active: true,
           metadata: { name: "Arabic Calligraphy Workshop", price: 15000 },
@@ -967,7 +980,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
           min_advance_booking_hours: 48,
           max_advance_booking_days: 90,
           cancellation_policy_hours: 48,
-          location_type: "on_site",
+          location_type: "in_person",
           pricing_type: "fixed",
           is_active: true,
           metadata: { name: "Desert Safari Photography Session", price: 85000 },
@@ -1082,7 +1095,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
     const svc = resolveService("invoice")
     if (!svc) throw new Error("Service not found")
 
-    const existing = await svc.listInvoices({ tenant_id: TENANT_ID })
+    const existing = await svc.listInvoices()
     const iList = Array.isArray(existing) ? existing : [existing].filter(Boolean)
 
     if (iList.length > 0 && iList[0]?.id) {
@@ -1173,7 +1186,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
           description: "Tiered pricing for bulk electronics purchases",
           applies_to: "category",
           target_id: "cat-electronics",
-          pricing_type: "tiered",
+          pricing_type: "percentage",
           priority: 1,
           status: "active",
           starts_at: new Date("2025-01-01"),
@@ -1185,7 +1198,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
           description: "Volume discount for enterprise office supply orders",
           applies_to: "category",
           target_id: "cat-office",
-          pricing_type: "volume",
+          pricing_type: "fixed",
           priority: 2,
           status: "active",
           starts_at: new Date("2025-01-01"),
@@ -1841,7 +1854,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
         { tenant_id: TENANT_ID, title: "Luxury Villa – Al Malqa District", description: "Modern 5-bedroom villa with private pool, landscaped garden, and smart home system.", listing_type: "sale", property_type: "villa", status: "active", price: 8500000, currency_code: "sar", address_line1: "Al Malqa District", city: "Riyadh", postal_code: "13524", country_code: "sa", latitude: 24.8000, longitude: 46.6300, bedrooms: 5, bathrooms: 6, area_sqm: 650, year_built: 2023, features: ["pool", "smart_home", "garden", "maid_room", "driver_room"], images: ["https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=600&fit=crop"], metadata: { seeded: true } },
         { tenant_id: TENANT_ID, title: "Office Space – King Fahad Road", description: "Grade A office space in prime Riyadh business district. Fully fitted and ready to move in.", listing_type: "rent", property_type: "office", status: "active", price: 45000, currency_code: "sar", price_period: "monthly", address_line1: "King Fahad Road", city: "Riyadh", postal_code: "11564", country_code: "sa", area_sqm: 250, year_built: 2020, features: ["parking", "reception", "meeting_rooms", "fiber_internet"], images: ["https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=600&fit=crop"], metadata: { seeded: true } },
         { tenant_id: TENANT_ID, title: "Seafront Apartment – Jeddah Corniche", description: "3-bedroom apartment with stunning Red Sea views. Walking distance to Jeddah Corniche.", listing_type: "sale", property_type: "apartment", status: "active", price: 2800000, currency_code: "sar", address_line1: "Corniche Road", city: "Jeddah", postal_code: "21589", country_code: "sa", latitude: 21.5433, longitude: 39.1728, bedrooms: 3, bathrooms: 3, area_sqm: 180, year_built: 2022, features: ["sea_view", "gym", "pool", "concierge"], images: ["https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=600&fit=crop"], metadata: { seeded: true } },
-        { tenant_id: TENANT_ID, title: "Development Land – NEOM", description: "5,000 sqm land plot in NEOM's commercial zone. Ideal for mixed-use development.", listing_type: "sale", property_type: "land", status: "active", price: 15000000, currency_code: "sar", address_line1: "NEOM Commercial Zone", city: "NEOM", country_code: "sa", latitude: 27.9500, longitude: 35.3000, area_sqm: 5000, images: ["https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=600&fit=crop"], metadata: { seeded: true } },
+        { tenant_id: TENANT_ID, title: "Development Land – NEOM", description: "5,000 sqm land plot in NEOM's commercial zone. Ideal for mixed-use development.", listing_type: "sale", property_type: "land", status: "active", price: 15000000, currency_code: "sar", address_line1: "NEOM Commercial Zone", city: "NEOM", postal_code: "49643", country_code: "sa", latitude: 27.9500, longitude: 35.3000, area_sqm: 5000, images: ["https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=600&fit=crop"], metadata: { seeded: true } },
       ])
       log("  ✓ Created 4 property listings")
       seededCount++
@@ -2505,8 +2518,8 @@ export default async function seedAllServices({ container }: ExecArgs) {
     if (wlList.length > 0 && wlList[0]?.id) { log("  ✓ Wishlists exist, skipping"); skippedCount++ }
     else {
       await svc.createWishlists([
-        { tenant_id: TENANT_ID, customer_id: "cust-001", name: "My Wishlist", metadata: { seeded: true } },
-        { tenant_id: TENANT_ID, customer_id: "cust-002", name: "Gift Ideas", metadata: { seeded: true } },
+        { tenant_id: TENANT_ID, customer_id: "cust-001", metadata: { seeded: true } },
+        { tenant_id: TENANT_ID, customer_id: "cust-002", metadata: { seeded: true } },
       ])
       log("  ✓ Created 2 wishlists"); seededCount++
     }
@@ -2522,8 +2535,8 @@ export default async function seedAllServices({ container }: ExecArgs) {
     if (chList.length > 0 && chList[0]?.id) { log("  ✓ Channel mappings exist, skipping"); skippedCount++ }
     else {
       await svc.createSalesChannelMappings([
-        { tenant_id: TENANT_ID, sales_channel_id: "sc-web", store_id: "store-main", metadata: { seeded: true } },
-        { tenant_id: TENANT_ID, sales_channel_id: "sc-mobile", store_id: "store-main", metadata: { seeded: true } },
+        { tenant_id: TENANT_ID, channel_type: "web", name: "Dakkah Web Store", description: "Main web storefront", is_active: true, metadata: { seeded: true } },
+        { tenant_id: TENANT_ID, channel_type: "mobile", name: "Dakkah Mobile App", description: "iOS and Android mobile app", is_active: true, metadata: { seeded: true } },
       ])
       log("  ✓ Created 2 channel mappings"); seededCount++
     }
@@ -2534,14 +2547,15 @@ export default async function seedAllServices({ container }: ExecArgs) {
   try {
     const svc = resolveService("regionZone")
     if (!svc) throw new Error("Service not found")
-    const existing = await svc.listRegionZoneMappings({ tenant_id: TENANT_ID })
+    const existing = await svc.listRegionZoneMappings()
     const rzList = Array.isArray(existing) ? existing : [existing].filter(Boolean)
     if (rzList.length > 0 && rzList[0]?.id) { log("  ✓ Region zone mappings exist, skipping"); skippedCount++ }
     else {
       await svc.createRegionZoneMappings([
-        { tenant_id: TENANT_ID, region_id: "reg-mena", zone_id: "zone-sa", metadata: { seeded: true } },
+        { residency_zone: "MENA", medusa_region_id: "reg-mena", country_codes: ["sa", "ae", "bh", "kw", "om", "qa"], metadata: { seeded: true } },
+        { residency_zone: "GCC", medusa_region_id: "reg-gcc", country_codes: ["sa", "ae", "bh", "kw", "om", "qa"], metadata: { seeded: true } },
       ])
-      log("  ✓ Created 1 region zone mapping"); seededCount++
+      log("  ✓ Created 2 region zone mappings"); seededCount++
     }
   } catch (err: any) { logError("Region Zone", err); failedCount++ }
 

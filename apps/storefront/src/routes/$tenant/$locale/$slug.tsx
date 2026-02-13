@@ -62,7 +62,7 @@ async function fetchStoreData(locale: string) {
     if (!region) return { region: null, products: [], count: 0 }
 
     const productsRes = await fetch(
-      `${baseUrl}/store/products?limit=12&offset=0&region_id=${region.id}`,
+      `${baseUrl}/store/products?limit=100&offset=0&region_id=${region.id}&fields=*variants.calculated_price`,
       { headers }
     )
     if (!productsRes.ok) return { region, products: [], count: 0 }
