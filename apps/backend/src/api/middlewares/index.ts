@@ -3,14 +3,14 @@ import {
   detectTenantMiddleware,
   requireTenantMiddleware,
   injectTenantContextMiddleware,
-} from "./tenant-context.js"
+} from "./tenant-context"
 import {
   scopeToTenantMiddleware,
   scopeToVendorMiddleware,
   scopeToCompanyMiddleware,
-} from "./scope-guards.js"
-import { nodeContextMiddleware } from "./node-context.js"
-import { platformContextMiddleware } from "./platform-context.js"
+} from "./scope-guards"
+import { nodeContextMiddleware } from "./node-context"
+import { platformContextMiddleware } from "./platform-context"
 
 export default defineMiddlewares({
   routes: [
@@ -64,7 +64,7 @@ export default defineMiddlewares({
   ],
 })
 
-export * from "./tenant-context.js"
-export * from "./scope-guards.js"
-export * from "./node-context.js"
-export * from "./platform-context.js"
+export * from "./tenant-context"
+export * from "./scope-guards"
+export * from "./node-context"
+export * from "./platform-context"

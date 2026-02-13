@@ -1,5 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { getTemporalClient } from "../../../../lib/temporal-client.js"
+import { getTemporalClient } from "../../../../lib/temporal-client"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   try {

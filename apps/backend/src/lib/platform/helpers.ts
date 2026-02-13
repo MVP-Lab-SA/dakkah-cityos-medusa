@@ -1,4 +1,4 @@
-import { PLATFORM_SYSTEMS_REGISTRY } from "./registry.js"
+import { PLATFORM_SYSTEMS_REGISTRY } from "./registry"
 
 export function buildNodeHierarchy(flatNodes: any[]): any[] {
   const map = new Map<string, any>()

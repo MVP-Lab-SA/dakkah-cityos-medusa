@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { z } from "zod"
-import { createVendorWorkflow } from "../../../workflows/vendor/create-vendor-workflow.js"
+import { createVendorWorkflow } from "../../../workflows/vendor/create-vendor-workflow"
 
 const createVendorSchema = z.object({
   handle: z.string().min(2),

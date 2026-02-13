@@ -1,8 +1,8 @@
 // @ts-nocheck
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
-import { subscriberLogger } from "../lib/logger.js"
-import { appConfig } from "../lib/config.js"
+import { subscriberLogger } from "../lib/logger"
+import { appConfig } from "../lib/config"
 
 const logger = subscriberLogger
 

@@ -1,5 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { checkTemporalHealth } from "../../../../lib/temporal-client.js"
+import { checkTemporalHealth } from "../../../../lib/temporal-client"
 
 interface SystemHealthCheck {
   name: string

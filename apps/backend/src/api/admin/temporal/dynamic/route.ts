@@ -3,7 +3,7 @@ import { z } from "zod"
 import {
   startDynamicWorkflow,
   listDynamicWorkflows,
-} from "../../../../lib/dynamic-workflow-client.js"
+} from "../../../../lib/dynamic-workflow-client"
 
 const StartDynamicWorkflowSchema = z.object({
   goal: z.string().min(1, "goal is required"),

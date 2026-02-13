@@ -1,2 +1,2 @@
-export { WaltIdService } from "./service.js";
-export type { WaltIdConfig } from "./service.js";
+export { WaltIdService } from "./service";
+export type { WaltIdConfig } from "./service";

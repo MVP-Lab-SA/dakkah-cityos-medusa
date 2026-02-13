@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto"
-import { getTemporalClient } from "./temporal-client.js"
+import { getTemporalClient } from "./temporal-client"
 
 export interface DynamicWorkflowInput {
   goal: string

@@ -1,6 +1,6 @@
 import { MedusaContainer } from "@medusajs/framework/types"
 import cron from "node-cron"
-import { startWorkflow } from "../lib/temporal-client.js"
+import { startWorkflow } from "../lib/temporal-client"
 
 export class IntegrationSyncScheduler {
   private container: MedusaContainer

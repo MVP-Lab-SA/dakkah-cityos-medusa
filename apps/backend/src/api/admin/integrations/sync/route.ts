@@ -1,5 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { createIntegrationOrchestrator } from "../../../../integrations/orchestrator/index.js"
+import { createIntegrationOrchestrator } from "../../../../integrations/orchestrator/index"
 
 const VALID_SYSTEMS = ["payload", "erpnext", "fleetbase", "waltid", "stripe"]
 const VALID_ENTITY_TYPES = ["product", "tenant", "store", "customer", "order", "node", "vendor"]

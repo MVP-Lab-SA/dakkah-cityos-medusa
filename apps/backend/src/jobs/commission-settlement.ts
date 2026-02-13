@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { MedusaContainer } from "@medusajs/framework/types"
-import { jobLogger } from "../lib/logger.js"
+import { jobLogger } from "../lib/logger"
 
 const logger = jobLogger
 

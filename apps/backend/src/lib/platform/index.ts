@@ -1,2 +1,2 @@
-export * from "./registry.js"
-export * from "./helpers.js"
+export * from "./registry"
+export * from "./helpers"

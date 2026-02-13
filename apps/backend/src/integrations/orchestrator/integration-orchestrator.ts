@@ -1,8 +1,8 @@
 import { MedusaContainer } from "@medusajs/framework/types"
 import crypto from "crypto"
-import { SyncTracker, SyncSystem, ISyncEntry } from "./sync-tracker.js"
-import { IntegrationRegistry, createDefaultAdapters, IntegrationHealthStatus } from "./integration-registry.js"
-import { DurableSyncTracker, durableSyncTracker } from "../../lib/platform/sync-tracker.js"
+import { SyncTracker, SyncSystem, ISyncEntry } from "./sync-tracker"
+import { IntegrationRegistry, createDefaultAdapters, IntegrationHealthStatus } from "./integration-registry"
+import { DurableSyncTracker, durableSyncTracker } from "../../lib/platform/sync-tracker"
 
 export interface SyncOptions {
   correlation_id?: string

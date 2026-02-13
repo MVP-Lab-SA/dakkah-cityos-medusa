@@ -1,4 +1,4 @@
-import type { TenantContext } from "../api/middlewares/tenant-context.js"
+import type { TenantContext } from "../api/middlewares/tenant-context"
 
 /**
  * Tenant Scoping Utilities

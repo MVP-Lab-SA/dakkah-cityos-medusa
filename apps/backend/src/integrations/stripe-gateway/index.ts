@@ -1,2 +1,2 @@
-export { StripeGatewayService } from "./service.js";
-export type { StripeGatewayConfig } from "./service.js";
+export { StripeGatewayService } from "./service";
+export type { StripeGatewayConfig } from "./service";

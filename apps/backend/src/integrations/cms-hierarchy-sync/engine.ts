@@ -1,6 +1,6 @@
 // @ts-nocheck
 import axios, { AxiosInstance } from "axios"
-import { DurableSyncTracker, durableSyncTracker } from "../../lib/platform/sync-tracker.js"
+import { DurableSyncTracker, durableSyncTracker } from "../../lib/platform/sync-tracker"
 
 export interface CMSSyncConfig {
   payloadUrl: string

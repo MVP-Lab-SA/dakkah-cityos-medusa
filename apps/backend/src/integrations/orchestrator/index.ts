@@ -1,8 +1,8 @@
-export { SyncTracker } from "./sync-tracker.js"
-export type { ISyncEntry, SyncSystem, SyncDirection, SyncStatus, SyncStats } from "./sync-tracker.js"
+export { SyncTracker } from "./sync-tracker"
+export type { ISyncEntry, SyncSystem, SyncDirection, SyncStatus, SyncStats } from "./sync-tracker"
 
-export { IntegrationRegistry, createDefaultAdapters } from "./integration-registry.js"
-export type { IIntegrationAdapter, IntegrationHealthStatus } from "./integration-registry.js"
+export { IntegrationRegistry, createDefaultAdapters } from "./integration-registry"
+export type { IIntegrationAdapter, IntegrationHealthStatus } from "./integration-registry"
 
-export { IntegrationOrchestrator, createIntegrationOrchestrator } from "./integration-orchestrator.js"
-export type { SyncOptions, SyncDashboard } from "./integration-orchestrator.js"
+export { IntegrationOrchestrator, createIntegrationOrchestrator } from "./integration-orchestrator"
+export type { SyncOptions, SyncDashboard } from "./integration-orchestrator"

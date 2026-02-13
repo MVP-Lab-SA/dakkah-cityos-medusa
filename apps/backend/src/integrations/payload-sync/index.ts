@@ -1,2 +1,2 @@
-export * from "./medusa-to-payload.js";
-export * from "./payload-to-medusa.js";
+export * from "./medusa-to-payload";
+export * from "./payload-to-medusa";

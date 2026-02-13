@@ -1,5 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { resolveLocalCMSPage } from "../../../../lib/platform/cms-registry.js"
+import { resolveLocalCMSPage } from "../../../../lib/platform/cms-registry"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   try {

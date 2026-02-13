@@ -4,7 +4,7 @@ import {
   queryDynamicWorkflowStatus,
   signalDynamicWorkflow,
   cancelDynamicWorkflow,
-} from "../../../../../lib/dynamic-workflow-client.js"
+} from "../../../../../lib/dynamic-workflow-client"
 
 const SignalWorkflowSchema = z.object({
   signal: z.string().min(1, "signal name is required"),

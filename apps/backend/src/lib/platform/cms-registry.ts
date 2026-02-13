@@ -1,4 +1,4 @@
-import { DEFAULT_TENANT_ID } from "./registry.js"
+import { DEFAULT_TENANT_ID } from "./registry"
 
 type RegionZone = "GCC_EU" | "MENA" | "APAC" | "AMERICAS" | "GLOBAL"
 type NodeLevel = "CITY" | "DISTRICT" | "ZONE" | "FACILITY" | "ASSET"

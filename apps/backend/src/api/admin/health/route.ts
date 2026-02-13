@@ -1,6 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { getCache } from "../../../lib/cache/redis-cache.js"
-import { metrics } from "../../../lib/monitoring/metrics.js"
+import { getCache } from "../../../lib/cache/redis-cache"
+import { metrics } from "../../../lib/monitoring/metrics"
 
 /**
  * Health check endpoint for CityOS Commerce
