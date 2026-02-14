@@ -1,0 +1,93 @@
+const shutdownHandlers: Array<() => Promise<void>> = []
+let isShuttingDown = false
+
+export function registerShutdownHandler(handler: () => Promise<void>) {
+  shutdownHandlers.push(handler)
+}
+
+async function gracefulShutdown(signal: string) {
+  if (isShuttingDown) return
+  isShuttingDown = true
+
+  console.log(
+    JSON.stringify({
+      timestamp: new Date().toISOString(),
+      level: "info",
+      message: `Received ${signal}. Starting graceful shutdown...`,
+      type: "lifecycle",
+    })
+  )
+
+  const shutdownTimeout = setTimeout(() => {
+    console.error(
+      JSON.stringify({
+        timestamp: new Date().toISOString(),
+        level: "error",
+        message: "Graceful shutdown timed out after 30s. Forcing exit.",
+        type: "lifecycle",
+      })
+    )
+    process.exit(1)
+  }, 30_000)
+
+  for (const handler of shutdownHandlers) {
+    try {
+      await handler()
+    } catch (error) {
+      console.error(
+        JSON.stringify({
+          timestamp: new Date().toISOString(),
+          level: "error",
+          message: "Shutdown handler failed",
+          error: error instanceof Error ? error.message : String(error),
+          type: "lifecycle",
+        })
+      )
+    }
+  }
+
+  clearTimeout(shutdownTimeout)
+
+  console.log(
+    JSON.stringify({
+      timestamp: new Date().toISOString(),
+      level: "info",
+      message: "Graceful shutdown complete.",
+      type: "lifecycle",
+    })
+  )
+
+  process.exit(0)
+}
+
+export function initGracefulShutdown() {
+  process.on("SIGTERM", () => gracefulShutdown("SIGTERM"))
+  process.on("SIGINT", () => gracefulShutdown("SIGINT"))
+
+  process.on("uncaughtException", (error) => {
+    console.error(
+      JSON.stringify({
+        timestamp: new Date().toISOString(),
+        level: "error",
+        message: "Uncaught exception",
+        error: { name: error.name, message: error.message, stack: error.stack },
+        type: "lifecycle",
+      })
+    )
+    gracefulShutdown("uncaughtException")
+  })
+
+  process.on("unhandledRejection", (reason) => {
+    console.error(
+      JSON.stringify({
+        timestamp: new Date().toISOString(),
+        level: "error",
+        message: "Unhandled rejection",
+        error: reason instanceof Error
+          ? { name: reason.name, message: reason.message, stack: reason.stack }
+          : { message: String(reason) },
+        type: "lifecycle",
+      })
+    )
+  })
+}

@@ -77,5 +77,5 @@ waitForPort = 5000
 
 [deployment]
 deploymentTarget = "vm"
-run = ["bash", "start-prod.sh"]
+run = ["bash", "/home/runner/workspace/start.sh"]
 build = ["bash", "build-prod.sh"]

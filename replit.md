@@ -12,18 +12,13 @@ This project is a Medusa.js e-commerce monorepo for multi-tenancy, seamlessly in
 - Payload CMS API compatibility for future migration
 
 ## System Architecture
-
-### Structure
 The project uses a Turborepo monorepo with dedicated packages for the Medusa.js v2 backend API, a TanStack Start + React storefront, shared TypeScript contracts, design token definitions, theme runtime/React providers, and a component type system.
 
-### Backend Features
+### Backend
 The backend provides modularity for CityOS features including tenant management, a 5-level node hierarchy (CITY→DISTRICT→ZONE→FACILITY→ASSET), policy inheritance-based governance, a persona system, a CMS-compatible event outbox, and i18n. It supports multi-vendor marketplaces, subscriptions, B2B, bookings, promotions, and specialized services. Key design decisions include multi-tenant isolation, RBAC, persona precedence, and residency zones.
 
-### Storefront Architecture
-The storefront uses TanStack Start with React for SSR, dynamic routing, and file-based routing. It implements a centralized design system, ensuring consistent context via a robust provider chain, tenant-scoped routes, and a comprehensive Payload CMS-compatible block system with 76 block types. All UI follows mobile-first responsive patterns and utilizes design tokens.
-
-### Internationalization and Localization
-The system supports full logical CSS properties for RTL/LTR, with `dir="rtl"` for Arabic locales. i18n integration uses a `locale` prop for translations across 30+ namespaces in en/fr/ar JSON files.
+### Storefront
+The storefront uses TanStack Start with React for SSR, dynamic routing, and file-based routing. It implements a centralized design system, ensuring consistent context via a robust provider chain, tenant-scoped routes, and a comprehensive Payload CMS-compatible block system with 76 block types. All UI follows mobile-first responsive patterns and utilizes design tokens. The system supports full logical CSS properties for RTL/LTR, with `dir="rtl"` for Arabic locales, and i18n integration using a `locale` prop for translations across 30+ namespaces in en/fr/ar JSON files.
 
 ### CMS Integration
 A local CMS registry defines 27 commerce verticals and additional pages, supporting `countryCode` and `regionZone` for country-level unification. Backend endpoints provide Payload-compatible responses, and frontend hooks use React Query. The local registry is designed for seamless migration to Payload CMS. A CMS Hierarchy Sync Engine keeps 8 collections synchronized from Payload CMS to ERPNext.
@@ -56,66 +51,3 @@ The platform supports 42 CRUD configurations for various manage verticals, utili
 - **Logistics:** Fleetbase
 - **Digital Identity:** Walt.id
 - **Payment Gateway:** Stripe
-
-## Implementation Progress
-- Phase 1-12: Initial build-out (58 modules, 258 models, admin pages, storefront, tests, deep audit)
-- Phase 13-16: Service enrichment (12 services), manage pages (23), API routes (15), test expansion (157 tests)
-- Phase 17: Service enrichment round 2 — 21 more services enhanced with 3-5 business logic methods each
-- Phase 18: Vendor dashboard — 10 vendor API routes + 10 vendor dashboard pages
-- Phase 19: Test expansion round 2 — 12 new test files with 97 tests
-- Phase 20: Vendor dashboard expansion — 10 vendor API routes + 10 vendor dashboard pages (classified, crowdfunding, education, healthcare, fitness, grocery, travel, warranty, advertising, charity)
-- Phase 21: Vendor dashboard expansion — 10 more vendor API routes + 10 vendor dashboard pages (automotive, parking, pet-service, legal, government, social-commerce, affiliate, financial-product, insurance, b2b)
-- Phase 22: Vendor route test coverage — 2 batch test files with 82 tests for 20 vendor API routes, all passing
-- Phase 23: Customer-facing storefront pages — 20 new browsing/listing pages for verticals (classifieds, crowdfunding, freelance, real-estate, restaurants, automotive, parking, pet-services, legal, healthcare, fitness, education, charity, travel, insurance, financial, government, social-commerce, warranties, grocery)
-- Phase 24: Store API route enhancement — 21 store routes enhanced with proper filtering, pagination, error handling; insurance store route created
-- Phase 25: Store route test coverage — 2 batch test files with 60 tests for 20 store API routes, all passing
-- Phase 26: Vendor dashboard expansion — 10 vendor API routes + 10 vendor dashboard pages (loyalty, wishlists, flash-sales, bundles, consignments, gift-cards, newsletter, notification-preferences, tax-config, shipping-extension)
-- Phase 27: Vendor dashboard expansion — 10 more vendor API routes + 10 vendor dashboard pages (inventory-extension, volume-pricing, dropshipping, print-on-demand, white-label, try-before-you-buy, credit, wallet, trade-in, cart-extension)
-- Phase 28: Customer storefront expansion — 8 new browsing pages (affiliate, loyalty-program, gift-cards-shop, flash-deals, consignment-shop, dropshipping-marketplace, print-on-demand-shop, white-label-shop) + 76 vendor route tests
-- Phase 29: Contract fixes (wallet API/UI alignment, flash-sales route fix) + 7 more customer pages (trade-in, try-before-you-buy, b2b, credit, newsletter, volume-deals, wallet) + 5 new store API routes (trade-ins, newsletters, try-before-you-buy, b2b, dropshipping) + 24 store route tests + 40 integration layer tests (webhooks, outbox processor, temporal workflows)
-- Phase 30: 20 detail/single-item view pages for all verticals (classifieds, automotive, real-estate, restaurants, freelance, healthcare, fitness, education, charity, travel, insurance, financial, government, social-commerce, parking, pet-services, legal, crowdfunding, grocery, warranties) + 3 admin components (BulkActionsBar, AnalyticsOverview, AdvancedFilters) + 3 vendor onboarding pages + 36 e2e lifecycle tests (order + vendor) + i18n translations for 14 verticals in en/fr/ar
-- Phase 31: 16 more detail pages for newer verticals (affiliate, loyalty-program, gift-cards-shop, flash-deals, consignment-shop, dropshipping-marketplace, print-on-demand-shop, white-label-shop, trade-in, try-before-you-buy, b2b, credit, volume-deals, bundles, subscriptions, newsletter) + 13 admin manage pages (insurance, flash-sales, bundles, consignments, gift-cards, newsletters, dropshipping, print-on-demand, white-label, try-before-you-buy, credit, wallet, trade-in)
-- Phase 32: 19 i18n verticals added (en/fr/ar, 97 keys per language) + 15 backend test files (179 new tests) + 5 detail page fixes (bookings, consignment, dropshipping, print-on-demand, white-label) + 4 admin manage pages (cms-content, company, inventory-extension, warranty) + 7 admin API routes (charity, cms-content, company, inventory-extension, promotion-ext, shipping-extension, warranty) + CRUD config deduplication. Score: 98% → 99%
-- Phase 33: 6 vendor dashboard pages (analytics, cart-extension, inventory-extension, shipping-extension, transactions, home) + 1 store route (subscriptions) + vendor profile detail page + 5 storefront test files (68 tests) + LSP fixes. Score: 99%
-- Phase 34: 5 vendor API routes (dispute, invoice, quote, review, event-ticketing) + 5 vendor dashboard pages + 8 i18n verticals (en/fr/ar: government, grocery, legal, parking, petService, financial, freelance, restaurant) + 10 module test files (115 tests) + 4 storefront test files (78 tests) + 4 utility modules (currency, date-utils, url-utils, filters)
-- Phase 35: Enhanced all 15 sub-80% modules with 40+ new service methods + 7 new store API routes (analytics, promotions, channels, disputes, tax-config, audit, cart-extension) + 12 backend test files (232 tests) + 4 storefront test files (57 tests) + 4 storefront utility modules (cms-utils, tenant-utils, locale-utils, search-utils). All modules now score 80%+
-- Phase 36: 13 admin manage pages (availability, charities, commission-rules, integrations, metrics, payment-terms, pricing-tiers, promotions-ext, purchase-orders, service-providers, subscription-plans, temporal, webhooks) + 15 test files (130 tests: 7 store route tests, 5 module tests, 3 storefront tests) + 3 storefront utility modules (manage-utils, api-client, navigation-utils). Admin manage pages now 96.
-- Phase 37: 5 i18n namespaces (classified, socialCommerce, warranty, volumeDeals, flashSales in en/fr/ar) + commission service enhanced (2→7 methods) + 6 vendor route test files (138 tests, batches 5-10) + 6 admin route test files (84 tests) covering vendors, tenants, commerce, subscriptions, settings, B2B. All 66 vendor routes + major admin routes now tested.
-- Phase 38: Database seeding fixes — dynamic Dakkah tenant resolution (`{ handle: "dakkah" }` with fallback) added to all 7 seed-verticals files (replacing hardcoded IDs), placeholder image URLs replaced with real Unsplash images across all seed files, multi-image arrays expanded (1→3-4 images per product) in seed-saudi-products, images added to live streams/pet profiles/membership tiers/rewards/stores.
-- Phase 38B: Comprehensive placeholder URL audit and cleanup — replaced ALL remaining `example.com`, `example.sa`, `cdn.example.com`, and `cdn.cityos.sa` placeholder URLs across 10 seed files (44 total replacements) with branded `dakkah.sa` domain URLs. Added Unsplash thumbnails to vendor_order_items. Zero placeholder URLs remaining across all seed scripts.
-- Phase 39: Unified all seed files under Dakkah tenant — 9 seed files updated (seed-verticals-2, seed-fix-remaining, seed-vendors, seed-companies, seed-services, seed-subscriptions, seed-volume-pricing, seed-multi-tenant, seed-complete/seed.ts). All now use dynamic `{ handle: "dakkah" }` resolution with fallback. Added `tenant_id` to vendor, company, service, subscription, volume-pricing creation calls. Fixed seed-multi-tenant to reuse existing Dakkah tenant instead of creating separate "dakkah-marketplace". Unified all emails from `dakkah.com` to `dakkah.sa`. 17/24 seed files now have Dakkah tenant resolution; remaining 7 are core Medusa data (products/regions/categories) with no tenant_id fields.
-- Phase 40: Comprehensive vertical seed data + image coverage — 12 new vertical seed sections added to seed-all-services.ts (insurance, trade-in, wallet, rental/try-before-you-buy, gift-cards, flash-sales, consignment, dropshipping, print-on-demand, newsletter, bundles, white-label). Added images to 9 existing verticals (freelance, grocery, financial-product, government, advertising, affiliate, loyalty, booking, subscription) + 7 more commerce verticals (company, rental, classified, parking, membership, digital-product, warranty). Total Unsplash image URLs: 326 across all seed files (148 in seed-all-services.ts). All 45 commerce vertical sections now have images; 24 infrastructure/config sections appropriately have none.
-
-### Test Coverage Architecture
-- **Backend (Jest):** 147 test suites in `apps/backend/tests/unit/`
-- **Storefront (Vitest):** 23 test suites
-- Run backend: `cd apps/backend && TEST_TYPE=unit npx jest`
-- Run storefront: `cd apps/storefront && npx vitest run`
-
-## Platform Metrics
-| Metric | Count |
-|--------|-------|
-| Custom Modules | 58 |
-| Model Files | 258 |
-| Migration Files | 61 |
-| Admin API Routes | 207 |
-| Store API Routes | 134 |
-| Vendor API Routes | 66 |
-| Admin/Manage Pages | 96 |
-| Vendor Dashboard Pages | 73 |
-| CRUD Configs | 82 |
-| Admin Hooks | 52 |
-| Workflows | 30 |
-| Subscribers | 33 |
-| Jobs | 17 |
-| Storefront Routes | 335 |
-| Storefront Components | 620+ |
-| Backend Test Files | 147 |
-| Storefront Test Files | 23 |
-| Total Tests | 2,735+ |
-| Total Source Files | 2,970+ |
-
-## Documentation
-- `docs/PLATFORM_MODULE_ASSESSMENT.md` — Deep-dive assessment of all 58 modules (v3.0), 3400+ lines
-- `docs/IMPLEMENTATION_PLAN.md` — 6-phase implementation plan (v2.0)
-- `docs/MODULE_GAP_ANALYSIS.md` — Per-module gap analysis across 4 layers for all 58 modules

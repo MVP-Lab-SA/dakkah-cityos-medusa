@@ -11,9 +11,43 @@ import {
 } from "./scope-guards"
 import { nodeContextMiddleware } from "./node-context"
 import { platformContextMiddleware } from "./platform-context"
+import { securityHeadersMiddleware } from "../../lib/middleware/security-headers"
+import { requestLoggerMiddleware } from "../../lib/middleware/request-logger"
+import {
+  storeApiRateLimiter,
+  adminApiRateLimiter,
+  authRateLimiter,
+  webhookRateLimiter,
+  healthCheckRateLimiter,
+} from "../../lib/middleware/rate-limiter"
 
 export default defineMiddlewares({
   routes: [
+    {
+      matcher: "/*",
+      middlewares: [securityHeadersMiddleware, requestLoggerMiddleware],
+    },
+
+    {
+      matcher: "/auth/*",
+      middlewares: [authRateLimiter],
+    },
+
+    {
+      matcher: "/webhooks/*",
+      middlewares: [webhookRateLimiter],
+    },
+
+    {
+      matcher: "/store/health",
+      middlewares: [healthCheckRateLimiter],
+    },
+
+    {
+      matcher: "/admin/health",
+      middlewares: [healthCheckRateLimiter],
+    },
+
     {
       matcher: "/platform/*",
       middlewares: [platformContextMiddleware],
@@ -27,10 +61,16 @@ export default defineMiddlewares({
     {
       matcher: "/store/*",
       middlewares: [
+        storeApiRateLimiter,
         detectTenantMiddleware,
         requireTenantMiddleware,
         injectTenantContextMiddleware,
       ],
+    },
+
+    {
+      matcher: "/admin/*",
+      middlewares: [adminApiRateLimiter],
     },
 
     {
@@ -46,6 +86,7 @@ export default defineMiddlewares({
     {
       matcher: "/vendor/*",
       middlewares: [
+        storeApiRateLimiter,
         detectTenantMiddleware,
         injectTenantContextMiddleware,
         scopeToVendorMiddleware,
@@ -55,6 +96,7 @@ export default defineMiddlewares({
     {
       matcher: "/store/b2b/*",
       middlewares: [
+        storeApiRateLimiter,
         detectTenantMiddleware,
         requireTenantMiddleware,
         injectTenantContextMiddleware,
