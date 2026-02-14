@@ -74,6 +74,7 @@ The platform supports 42 CRUD configurations for various manage verticals, utili
 - Phase 28: Customer storefront expansion — 8 new browsing pages (affiliate, loyalty-program, gift-cards-shop, flash-deals, consignment-shop, dropshipping-marketplace, print-on-demand-shop, white-label-shop) + 76 vendor route tests
 - Phase 29: Contract fixes (wallet API/UI alignment, flash-sales route fix) + 7 more customer pages (trade-in, try-before-you-buy, b2b, credit, newsletter, volume-deals, wallet) + 5 new store API routes (trade-ins, newsletters, try-before-you-buy, b2b, dropshipping) + 24 store route tests + 40 integration layer tests (webhooks, outbox processor, temporal workflows)
 - Phase 30: 20 detail/single-item view pages for all verticals (classifieds, automotive, real-estate, restaurants, freelance, healthcare, fitness, education, charity, travel, insurance, financial, government, social-commerce, parking, pet-services, legal, crowdfunding, grocery, warranties) + 3 admin components (BulkActionsBar, AnalyticsOverview, AdvancedFilters) + 3 vendor onboarding pages + 36 e2e lifecycle tests (order + vendor) + i18n translations for 14 verticals in en/fr/ar
+- Phase 31: 16 more detail pages for newer verticals (affiliate, loyalty-program, gift-cards-shop, flash-deals, consignment-shop, dropshipping-marketplace, print-on-demand-shop, white-label-shop, trade-in, try-before-you-buy, b2b, credit, volume-deals, bundles, subscriptions, newsletter) + 13 admin manage pages (insurance, flash-sales, bundles, consignments, gift-cards, newsletters, dropshipping, print-on-demand, white-label, try-before-you-buy, credit, wallet, trade-in)
 
 ### Test Coverage Architecture
 - **Backend (Jest):** 88 test suites in `apps/backend/tests/unit/`
@@ -90,19 +91,19 @@ The platform supports 42 CRUD configurations for various manage verticals, utili
 | Admin API Routes | 200+ |
 | Store API Routes | 135+ |
 | Vendor API Routes | 57 |
-| Admin/Manage Pages | 66 |
+| Admin/Manage Pages | 79 |
 | Vendor Dashboard Pages | 54 |
-| CRUD Configs | 65 |
+| CRUD Configs | 78 |
 | Admin Hooks | 52 |
 | Workflows | 30 |
 | Subscribers | 33 |
 | Jobs | 16 |
-| Storefront Routes | 272 |
+| Storefront Routes | 301 |
 | Storefront Components | 558 |
 | Backend Test Files | 88 |
 | Storefront Test Files | 7 |
 | Total Tests | 1,777+ |
-| Total Source Files | 2,600+ |
+| Total Source Files | 2,700+ |
 
 ## Documentation
 - `docs/PLATFORM_MODULE_ASSESSMENT.md` — Deep-dive assessment of all 58 modules (v3.0), 3400+ lines

@@ -89,7 +89,9 @@ import { Route as TenantLocaleAutomotiveIndexRouteImport } from './routes/$tenan
 import { Route as TenantLocaleAuctionsIndexRouteImport } from './routes/$tenant/$locale/auctions/index'
 import { Route as TenantLocaleAffiliateIndexRouteImport } from './routes/$tenant/$locale/affiliate/index'
 import { Route as TenantLocaleAccountIndexRouteImport } from './routes/$tenant/$locale/account/index'
+import { Route as TenantLocaleWhiteLabelShopIdRouteImport } from './routes/$tenant/$locale/white-label-shop/$id'
 import { Route as TenantLocaleWarrantiesIdRouteImport } from './routes/$tenant/$locale/warranties/$id'
+import { Route as TenantLocaleVolumeDealsIdRouteImport } from './routes/$tenant/$locale/volume-deals/$id'
 import { Route as TenantLocaleVerifyAgeRouteImport } from './routes/$tenant/$locale/verify/age'
 import { Route as TenantLocaleVendorsHandleRouteImport } from './routes/$tenant/$locale/vendors/$handle'
 import { Route as TenantLocaleVendorWishlistsRouteImport } from './routes/$tenant/$locale/vendor/wishlists'
@@ -145,9 +147,12 @@ import { Route as TenantLocaleVendorAutomotiveRouteImport } from './routes/$tena
 import { Route as TenantLocaleVendorAuctionsRouteImport } from './routes/$tenant/$locale/vendor/auctions'
 import { Route as TenantLocaleVendorAffiliateRouteImport } from './routes/$tenant/$locale/vendor/affiliate'
 import { Route as TenantLocaleVendorAdvertisingRouteImport } from './routes/$tenant/$locale/vendor/advertising'
+import { Route as TenantLocaleTryBeforeYouBuyIdRouteImport } from './routes/$tenant/$locale/try-before-you-buy/$id'
 import { Route as TenantLocaleTravelIdRouteImport } from './routes/$tenant/$locale/travel/$id'
+import { Route as TenantLocaleTradeInIdRouteImport } from './routes/$tenant/$locale/trade-in/$id'
 import { Route as TenantLocaleSubscriptionsSuccessRouteImport } from './routes/$tenant/$locale/subscriptions/success'
 import { Route as TenantLocaleSubscriptionsCheckoutRouteImport } from './routes/$tenant/$locale/subscriptions/checkout'
+import { Route as TenantLocaleSubscriptionsIdRouteImport } from './routes/$tenant/$locale/subscriptions/$id'
 import { Route as TenantLocaleSocialCommerceIdRouteImport } from './routes/$tenant/$locale/social-commerce/$id'
 import { Route as TenantLocaleRestaurantsIdRouteImport } from './routes/$tenant/$locale/restaurants/$id'
 import { Route as TenantLocaleRentalsIdRouteImport } from './routes/$tenant/$locale/rentals/$id'
@@ -155,16 +160,22 @@ import { Route as TenantLocaleRealEstateIdRouteImport } from './routes/$tenant/$
 import { Route as TenantLocaleQuotesRequestRouteImport } from './routes/$tenant/$locale/quotes/request'
 import { Route as TenantLocaleQuotesIdRouteImport } from './routes/$tenant/$locale/quotes/$id'
 import { Route as TenantLocaleProductsHandleRouteImport } from './routes/$tenant/$locale/products/$handle'
+import { Route as TenantLocalePrintOnDemandShopIdRouteImport } from './routes/$tenant/$locale/print-on-demand-shop/$id'
 import { Route as TenantLocalePlacesIdRouteImport } from './routes/$tenant/$locale/places/$id'
 import { Route as TenantLocalePetServicesIdRouteImport } from './routes/$tenant/$locale/pet-services/$id'
 import { Route as TenantLocaleParkingIdRouteImport } from './routes/$tenant/$locale/parking/$id'
+import { Route as TenantLocaleNewsletterIdRouteImport } from './routes/$tenant/$locale/newsletter/$id'
 import { Route as TenantLocaleMembershipsIdRouteImport } from './routes/$tenant/$locale/memberships/$id'
 import { Route as TenantLocaleManageWishlistsRouteImport } from './routes/$tenant/$locale/manage/wishlists'
+import { Route as TenantLocaleManageWhiteLabelRouteImport } from './routes/$tenant/$locale/manage/white-label'
 import { Route as TenantLocaleManageWarrantiesRouteImport } from './routes/$tenant/$locale/manage/warranties'
+import { Route as TenantLocaleManageWalletRouteImport } from './routes/$tenant/$locale/manage/wallet'
 import { Route as TenantLocaleManageVolumePricingRouteImport } from './routes/$tenant/$locale/manage/volume-pricing'
 import { Route as TenantLocaleManageVendorsRouteImport } from './routes/$tenant/$locale/manage/vendors'
 import { Route as TenantLocaleManageUtilitiesRouteImport } from './routes/$tenant/$locale/manage/utilities'
+import { Route as TenantLocaleManageTryBeforeYouBuyRouteImport } from './routes/$tenant/$locale/manage/try-before-you-buy'
 import { Route as TenantLocaleManageTravelRouteImport } from './routes/$tenant/$locale/manage/travel'
+import { Route as TenantLocaleManageTradeInRouteImport } from './routes/$tenant/$locale/manage/trade-in'
 import { Route as TenantLocaleManageTenantsAdminRouteImport } from './routes/$tenant/$locale/manage/tenants-admin'
 import { Route as TenantLocaleManageTeamRouteImport } from './routes/$tenant/$locale/manage/team'
 import { Route as TenantLocaleManageTaxConfigRouteImport } from './routes/$tenant/$locale/manage/tax-config'
@@ -182,6 +193,7 @@ import { Route as TenantLocaleManageQuotesRouteImport } from './routes/$tenant/$
 import { Route as TenantLocaleManagePromotionsRouteImport } from './routes/$tenant/$locale/manage/promotions'
 import { Route as TenantLocaleManagePromotionExtensionsRouteImport } from './routes/$tenant/$locale/manage/promotion-extensions'
 import { Route as TenantLocaleManageProductsRouteImport } from './routes/$tenant/$locale/manage/products'
+import { Route as TenantLocaleManagePrintOnDemandRouteImport } from './routes/$tenant/$locale/manage/print-on-demand'
 import { Route as TenantLocaleManagePetServicesRouteImport } from './routes/$tenant/$locale/manage/pet-services'
 import { Route as TenantLocaleManagePersonasRouteImport } from './routes/$tenant/$locale/manage/personas'
 import { Route as TenantLocaleManagePayoutsRouteImport } from './routes/$tenant/$locale/manage/payouts'
@@ -189,26 +201,33 @@ import { Route as TenantLocaleManageParkingRouteImport } from './routes/$tenant/
 import { Route as TenantLocaleManageOrdersRouteImport } from './routes/$tenant/$locale/manage/orders'
 import { Route as TenantLocaleManageNotificationPreferencesRouteImport } from './routes/$tenant/$locale/manage/notification-preferences'
 import { Route as TenantLocaleManageNodesRouteImport } from './routes/$tenant/$locale/manage/nodes'
+import { Route as TenantLocaleManageNewslettersRouteImport } from './routes/$tenant/$locale/manage/newsletters'
 import { Route as TenantLocaleManageMembershipsRouteImport } from './routes/$tenant/$locale/manage/memberships'
 import { Route as TenantLocaleManageLoyaltyRouteImport } from './routes/$tenant/$locale/manage/loyalty'
 import { Route as TenantLocaleManageLegalRouteImport } from './routes/$tenant/$locale/manage/legal'
 import { Route as TenantLocaleManageInvoicesRouteImport } from './routes/$tenant/$locale/manage/invoices'
 import { Route as TenantLocaleManageInventoryRouteImport } from './routes/$tenant/$locale/manage/inventory'
+import { Route as TenantLocaleManageInsuranceRouteImport } from './routes/$tenant/$locale/manage/insurance'
 import { Route as TenantLocaleManageI18nRouteImport } from './routes/$tenant/$locale/manage/i18n'
 import { Route as TenantLocaleManageHealthcareRouteImport } from './routes/$tenant/$locale/manage/healthcare'
 import { Route as TenantLocaleManageGroceryRouteImport } from './routes/$tenant/$locale/manage/grocery'
 import { Route as TenantLocaleManageGovernmentRouteImport } from './routes/$tenant/$locale/manage/government'
 import { Route as TenantLocaleManageGovernanceRouteImport } from './routes/$tenant/$locale/manage/governance'
+import { Route as TenantLocaleManageGiftCardsRouteImport } from './routes/$tenant/$locale/manage/gift-cards'
 import { Route as TenantLocaleManageFreelanceRouteImport } from './routes/$tenant/$locale/manage/freelance'
+import { Route as TenantLocaleManageFlashSalesRouteImport } from './routes/$tenant/$locale/manage/flash-sales'
 import { Route as TenantLocaleManageFitnessRouteImport } from './routes/$tenant/$locale/manage/fitness'
 import { Route as TenantLocaleManageFinancialProductsRouteImport } from './routes/$tenant/$locale/manage/financial-products'
 import { Route as TenantLocaleManageEventsRouteImport } from './routes/$tenant/$locale/manage/events'
 import { Route as TenantLocaleManageEventTicketingRouteImport } from './routes/$tenant/$locale/manage/event-ticketing'
 import { Route as TenantLocaleManageEducationRouteImport } from './routes/$tenant/$locale/manage/education'
+import { Route as TenantLocaleManageDropshippingRouteImport } from './routes/$tenant/$locale/manage/dropshipping'
 import { Route as TenantLocaleManageDisputesRouteImport } from './routes/$tenant/$locale/manage/disputes'
 import { Route as TenantLocaleManageDigitalProductsRouteImport } from './routes/$tenant/$locale/manage/digital-products'
 import { Route as TenantLocaleManageCustomersRouteImport } from './routes/$tenant/$locale/manage/customers'
 import { Route as TenantLocaleManageCrowdfundingRouteImport } from './routes/$tenant/$locale/manage/crowdfunding'
+import { Route as TenantLocaleManageCreditRouteImport } from './routes/$tenant/$locale/manage/credit'
+import { Route as TenantLocaleManageConsignmentsRouteImport } from './routes/$tenant/$locale/manage/consignments'
 import { Route as TenantLocaleManageCompaniesAdminRouteImport } from './routes/$tenant/$locale/manage/companies-admin'
 import { Route as TenantLocaleManageCompaniesRouteImport } from './routes/$tenant/$locale/manage/companies'
 import { Route as TenantLocaleManageCommissionsRouteImport } from './routes/$tenant/$locale/manage/commissions'
@@ -217,6 +236,7 @@ import { Route as TenantLocaleManageClassifiedsRouteImport } from './routes/$ten
 import { Route as TenantLocaleManageCharityRouteImport } from './routes/$tenant/$locale/manage/charity'
 import { Route as TenantLocaleManageChannelsRouteImport } from './routes/$tenant/$locale/manage/channels'
 import { Route as TenantLocaleManageCartExtensionsRouteImport } from './routes/$tenant/$locale/manage/cart-extensions'
+import { Route as TenantLocaleManageBundlesRouteImport } from './routes/$tenant/$locale/manage/bundles'
 import { Route as TenantLocaleManageBookingsRouteImport } from './routes/$tenant/$locale/manage/bookings'
 import { Route as TenantLocaleManageAutomotiveRouteImport } from './routes/$tenant/$locale/manage/automotive'
 import { Route as TenantLocaleManageAuditRouteImport } from './routes/$tenant/$locale/manage/audit'
@@ -224,19 +244,25 @@ import { Route as TenantLocaleManageAuctionsRouteImport } from './routes/$tenant
 import { Route as TenantLocaleManageAnalyticsRouteImport } from './routes/$tenant/$locale/manage/analytics'
 import { Route as TenantLocaleManageAffiliatesRouteImport } from './routes/$tenant/$locale/manage/affiliates'
 import { Route as TenantLocaleManageAdvertisingRouteImport } from './routes/$tenant/$locale/manage/advertising'
+import { Route as TenantLocaleLoyaltyProgramIdRouteImport } from './routes/$tenant/$locale/loyalty-program/$id'
 import { Route as TenantLocaleLegalIdRouteImport } from './routes/$tenant/$locale/legal/$id'
 import { Route as TenantLocaleInsuranceIdRouteImport } from './routes/$tenant/$locale/insurance/$id'
 import { Route as TenantLocaleHelpSlugRouteImport } from './routes/$tenant/$locale/help/$slug'
 import { Route as TenantLocaleHealthcareIdRouteImport } from './routes/$tenant/$locale/healthcare/$id'
 import { Route as TenantLocaleGroceryIdRouteImport } from './routes/$tenant/$locale/grocery/$id'
 import { Route as TenantLocaleGovernmentIdRouteImport } from './routes/$tenant/$locale/government/$id'
+import { Route as TenantLocaleGiftCardsShopIdRouteImport } from './routes/$tenant/$locale/gift-cards-shop/$id'
 import { Route as TenantLocaleFreelanceIdRouteImport } from './routes/$tenant/$locale/freelance/$id'
+import { Route as TenantLocaleFlashDealsIdRouteImport } from './routes/$tenant/$locale/flash-deals/$id'
 import { Route as TenantLocaleFitnessIdRouteImport } from './routes/$tenant/$locale/fitness/$id'
 import { Route as TenantLocaleFinancialIdRouteImport } from './routes/$tenant/$locale/financial/$id'
 import { Route as TenantLocaleEventsIdRouteImport } from './routes/$tenant/$locale/events/$id'
 import { Route as TenantLocaleEducationIdRouteImport } from './routes/$tenant/$locale/education/$id'
+import { Route as TenantLocaleDropshippingMarketplaceIdRouteImport } from './routes/$tenant/$locale/dropshipping-marketplace/$id'
 import { Route as TenantLocaleDigitalIdRouteImport } from './routes/$tenant/$locale/digital/$id'
 import { Route as TenantLocaleCrowdfundingIdRouteImport } from './routes/$tenant/$locale/crowdfunding/$id'
+import { Route as TenantLocaleCreditIdRouteImport } from './routes/$tenant/$locale/credit/$id'
+import { Route as TenantLocaleConsignmentShopIdRouteImport } from './routes/$tenant/$locale/consignment-shop/$id'
 import { Route as TenantLocaleClassifiedsIdRouteImport } from './routes/$tenant/$locale/classifieds/$id'
 import { Route as TenantLocaleCharityIdRouteImport } from './routes/$tenant/$locale/charity/$id'
 import { Route as TenantLocaleCampaignsIdRouteImport } from './routes/$tenant/$locale/campaigns/$id'
@@ -244,13 +270,16 @@ import { Route as TenantLocaleBusinessTeamRouteImport } from './routes/$tenant/$
 import { Route as TenantLocaleBusinessOrdersRouteImport } from './routes/$tenant/$locale/business/orders'
 import { Route as TenantLocaleBusinessCatalogRouteImport } from './routes/$tenant/$locale/business/catalog'
 import { Route as TenantLocaleBusinessApprovalsRouteImport } from './routes/$tenant/$locale/business/approvals'
+import { Route as TenantLocaleBundlesIdRouteImport } from './routes/$tenant/$locale/bundles/$id'
 import { Route as TenantLocaleBookingsConfirmationRouteImport } from './routes/$tenant/$locale/bookings/confirmation'
 import { Route as TenantLocaleBookingsServiceHandleRouteImport } from './routes/$tenant/$locale/bookings/$serviceHandle'
 import { Route as TenantLocaleBlogSlugRouteImport } from './routes/$tenant/$locale/blog/$slug'
 import { Route as TenantLocaleB2bRegisterRouteImport } from './routes/$tenant/$locale/b2b/register'
 import { Route as TenantLocaleB2bDashboardRouteImport } from './routes/$tenant/$locale/b2b/dashboard'
+import { Route as TenantLocaleB2bIdRouteImport } from './routes/$tenant/$locale/b2b/$id'
 import { Route as TenantLocaleAutomotiveIdRouteImport } from './routes/$tenant/$locale/automotive/$id'
 import { Route as TenantLocaleAuctionsIdRouteImport } from './routes/$tenant/$locale/auctions/$id'
+import { Route as TenantLocaleAffiliateIdRouteImport } from './routes/$tenant/$locale/affiliate/$id'
 import { Route as TenantLocaleAccountWishlistRouteImport } from './routes/$tenant/$locale/account/wishlist'
 import { Route as TenantLocaleAccountWalletRouteImport } from './routes/$tenant/$locale/account/wallet'
 import { Route as TenantLocaleAccountVerificationRouteImport } from './routes/$tenant/$locale/account/verification'
@@ -709,10 +738,22 @@ const TenantLocaleAccountIndexRoute =
     path: '/account/',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
+const TenantLocaleWhiteLabelShopIdRoute =
+  TenantLocaleWhiteLabelShopIdRouteImport.update({
+    id: '/white-label-shop/$id',
+    path: '/white-label-shop/$id',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
 const TenantLocaleWarrantiesIdRoute =
   TenantLocaleWarrantiesIdRouteImport.update({
     id: '/warranties/$id',
     path: '/warranties/$id',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
+const TenantLocaleVolumeDealsIdRoute =
+  TenantLocaleVolumeDealsIdRouteImport.update({
+    id: '/volume-deals/$id',
+    path: '/volume-deals/$id',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
 const TenantLocaleVerifyAgeRoute = TenantLocaleVerifyAgeRouteImport.update({
@@ -1042,10 +1083,21 @@ const TenantLocaleVendorAdvertisingRoute =
     path: '/vendor/advertising',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
+const TenantLocaleTryBeforeYouBuyIdRoute =
+  TenantLocaleTryBeforeYouBuyIdRouteImport.update({
+    id: '/try-before-you-buy/$id',
+    path: '/try-before-you-buy/$id',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
 const TenantLocaleTravelIdRoute = TenantLocaleTravelIdRouteImport.update({
   id: '/travel/$id',
   path: '/travel/$id',
   getParentRoute: () => TenantLocaleRoute,
+} as any)
+const TenantLocaleTradeInIdRoute = TenantLocaleTradeInIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => TenantLocaleTradeInRoute,
 } as any)
 const TenantLocaleSubscriptionsSuccessRoute =
   TenantLocaleSubscriptionsSuccessRouteImport.update({
@@ -1057,6 +1109,12 @@ const TenantLocaleSubscriptionsCheckoutRoute =
   TenantLocaleSubscriptionsCheckoutRouteImport.update({
     id: '/subscriptions/checkout',
     path: '/subscriptions/checkout',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
+const TenantLocaleSubscriptionsIdRoute =
+  TenantLocaleSubscriptionsIdRouteImport.update({
+    id: '/subscriptions/$id',
+    path: '/subscriptions/$id',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
 const TenantLocaleSocialCommerceIdRoute =
@@ -1099,6 +1157,12 @@ const TenantLocaleProductsHandleRoute =
     path: '/products/$handle',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
+const TenantLocalePrintOnDemandShopIdRoute =
+  TenantLocalePrintOnDemandShopIdRouteImport.update({
+    id: '/print-on-demand-shop/$id',
+    path: '/print-on-demand-shop/$id',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
 const TenantLocalePlacesIdRoute = TenantLocalePlacesIdRouteImport.update({
   id: '/places/$id',
   path: '/places/$id',
@@ -1115,6 +1179,12 @@ const TenantLocaleParkingIdRoute = TenantLocaleParkingIdRouteImport.update({
   path: '/parking/$id',
   getParentRoute: () => TenantLocaleRoute,
 } as any)
+const TenantLocaleNewsletterIdRoute =
+  TenantLocaleNewsletterIdRouteImport.update({
+    id: '/newsletter/$id',
+    path: '/newsletter/$id',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
 const TenantLocaleMembershipsIdRoute =
   TenantLocaleMembershipsIdRouteImport.update({
     id: '/memberships/$id',
@@ -1127,10 +1197,22 @@ const TenantLocaleManageWishlistsRoute =
     path: '/manage/wishlists',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
+const TenantLocaleManageWhiteLabelRoute =
+  TenantLocaleManageWhiteLabelRouteImport.update({
+    id: '/manage/white-label',
+    path: '/manage/white-label',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
 const TenantLocaleManageWarrantiesRoute =
   TenantLocaleManageWarrantiesRouteImport.update({
     id: '/manage/warranties',
     path: '/manage/warranties',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
+const TenantLocaleManageWalletRoute =
+  TenantLocaleManageWalletRouteImport.update({
+    id: '/manage/wallet',
+    path: '/manage/wallet',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
 const TenantLocaleManageVolumePricingRoute =
@@ -1151,10 +1233,22 @@ const TenantLocaleManageUtilitiesRoute =
     path: '/manage/utilities',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
+const TenantLocaleManageTryBeforeYouBuyRoute =
+  TenantLocaleManageTryBeforeYouBuyRouteImport.update({
+    id: '/manage/try-before-you-buy',
+    path: '/manage/try-before-you-buy',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
 const TenantLocaleManageTravelRoute =
   TenantLocaleManageTravelRouteImport.update({
     id: '/manage/travel',
     path: '/manage/travel',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
+const TenantLocaleManageTradeInRoute =
+  TenantLocaleManageTradeInRouteImport.update({
+    id: '/manage/trade-in',
+    path: '/manage/trade-in',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
 const TenantLocaleManageTenantsAdminRoute =
@@ -1258,6 +1352,12 @@ const TenantLocaleManageProductsRoute =
     path: '/manage/products',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
+const TenantLocaleManagePrintOnDemandRoute =
+  TenantLocaleManagePrintOnDemandRouteImport.update({
+    id: '/manage/print-on-demand',
+    path: '/manage/print-on-demand',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
 const TenantLocaleManagePetServicesRoute =
   TenantLocaleManagePetServicesRouteImport.update({
     id: '/manage/pet-services',
@@ -1299,6 +1399,12 @@ const TenantLocaleManageNodesRoute = TenantLocaleManageNodesRouteImport.update({
   path: '/manage/nodes',
   getParentRoute: () => TenantLocaleRoute,
 } as any)
+const TenantLocaleManageNewslettersRoute =
+  TenantLocaleManageNewslettersRouteImport.update({
+    id: '/manage/newsletters',
+    path: '/manage/newsletters',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
 const TenantLocaleManageMembershipsRoute =
   TenantLocaleManageMembershipsRouteImport.update({
     id: '/manage/memberships',
@@ -1326,6 +1432,12 @@ const TenantLocaleManageInventoryRoute =
   TenantLocaleManageInventoryRouteImport.update({
     id: '/manage/inventory',
     path: '/manage/inventory',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
+const TenantLocaleManageInsuranceRoute =
+  TenantLocaleManageInsuranceRouteImport.update({
+    id: '/manage/insurance',
+    path: '/manage/insurance',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
 const TenantLocaleManageI18nRoute = TenantLocaleManageI18nRouteImport.update({
@@ -1357,10 +1469,22 @@ const TenantLocaleManageGovernanceRoute =
     path: '/manage/governance',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
+const TenantLocaleManageGiftCardsRoute =
+  TenantLocaleManageGiftCardsRouteImport.update({
+    id: '/manage/gift-cards',
+    path: '/manage/gift-cards',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
 const TenantLocaleManageFreelanceRoute =
   TenantLocaleManageFreelanceRouteImport.update({
     id: '/manage/freelance',
     path: '/manage/freelance',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
+const TenantLocaleManageFlashSalesRoute =
+  TenantLocaleManageFlashSalesRouteImport.update({
+    id: '/manage/flash-sales',
+    path: '/manage/flash-sales',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
 const TenantLocaleManageFitnessRoute =
@@ -1393,6 +1517,12 @@ const TenantLocaleManageEducationRoute =
     path: '/manage/education',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
+const TenantLocaleManageDropshippingRoute =
+  TenantLocaleManageDropshippingRouteImport.update({
+    id: '/manage/dropshipping',
+    path: '/manage/dropshipping',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
 const TenantLocaleManageDisputesRoute =
   TenantLocaleManageDisputesRouteImport.update({
     id: '/manage/disputes',
@@ -1415,6 +1545,18 @@ const TenantLocaleManageCrowdfundingRoute =
   TenantLocaleManageCrowdfundingRouteImport.update({
     id: '/manage/crowdfunding',
     path: '/manage/crowdfunding',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
+const TenantLocaleManageCreditRoute =
+  TenantLocaleManageCreditRouteImport.update({
+    id: '/manage/credit',
+    path: '/manage/credit',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
+const TenantLocaleManageConsignmentsRoute =
+  TenantLocaleManageConsignmentsRouteImport.update({
+    id: '/manage/consignments',
+    path: '/manage/consignments',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
 const TenantLocaleManageCompaniesAdminRoute =
@@ -1464,6 +1606,12 @@ const TenantLocaleManageCartExtensionsRoute =
     path: '/manage/cart-extensions',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
+const TenantLocaleManageBundlesRoute =
+  TenantLocaleManageBundlesRouteImport.update({
+    id: '/manage/bundles',
+    path: '/manage/bundles',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
 const TenantLocaleManageBookingsRoute =
   TenantLocaleManageBookingsRouteImport.update({
     id: '/manage/bookings',
@@ -1505,6 +1653,12 @@ const TenantLocaleManageAdvertisingRoute =
     path: '/manage/advertising',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
+const TenantLocaleLoyaltyProgramIdRoute =
+  TenantLocaleLoyaltyProgramIdRouteImport.update({
+    id: '/loyalty-program/$id',
+    path: '/loyalty-program/$id',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
 const TenantLocaleLegalIdRoute = TenantLocaleLegalIdRouteImport.update({
   id: '/legal/$id',
   path: '/legal/$id',
@@ -1537,11 +1691,23 @@ const TenantLocaleGovernmentIdRoute =
     path: '/government/$id',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
+const TenantLocaleGiftCardsShopIdRoute =
+  TenantLocaleGiftCardsShopIdRouteImport.update({
+    id: '/gift-cards-shop/$id',
+    path: '/gift-cards-shop/$id',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
 const TenantLocaleFreelanceIdRoute = TenantLocaleFreelanceIdRouteImport.update({
   id: '/freelance/$id',
   path: '/freelance/$id',
   getParentRoute: () => TenantLocaleRoute,
 } as any)
+const TenantLocaleFlashDealsIdRoute =
+  TenantLocaleFlashDealsIdRouteImport.update({
+    id: '/flash-deals/$id',
+    path: '/flash-deals/$id',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
 const TenantLocaleFitnessIdRoute = TenantLocaleFitnessIdRouteImport.update({
   id: '/fitness/$id',
   path: '/fitness/$id',
@@ -1562,6 +1728,12 @@ const TenantLocaleEducationIdRoute = TenantLocaleEducationIdRouteImport.update({
   path: '/education/$id',
   getParentRoute: () => TenantLocaleRoute,
 } as any)
+const TenantLocaleDropshippingMarketplaceIdRoute =
+  TenantLocaleDropshippingMarketplaceIdRouteImport.update({
+    id: '/dropshipping-marketplace/$id',
+    path: '/dropshipping-marketplace/$id',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
 const TenantLocaleDigitalIdRoute = TenantLocaleDigitalIdRouteImport.update({
   id: '/digital/$id',
   path: '/digital/$id',
@@ -1571,6 +1743,17 @@ const TenantLocaleCrowdfundingIdRoute =
   TenantLocaleCrowdfundingIdRouteImport.update({
     id: '/crowdfunding/$id',
     path: '/crowdfunding/$id',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
+const TenantLocaleCreditIdRoute = TenantLocaleCreditIdRouteImport.update({
+  id: '/credit/$id',
+  path: '/credit/$id',
+  getParentRoute: () => TenantLocaleRoute,
+} as any)
+const TenantLocaleConsignmentShopIdRoute =
+  TenantLocaleConsignmentShopIdRouteImport.update({
+    id: '/consignment-shop/$id',
+    path: '/consignment-shop/$id',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
 const TenantLocaleClassifiedsIdRoute =
@@ -1613,6 +1796,11 @@ const TenantLocaleBusinessApprovalsRoute =
     path: '/business/approvals',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
+const TenantLocaleBundlesIdRoute = TenantLocaleBundlesIdRouteImport.update({
+  id: '/bundles/$id',
+  path: '/bundles/$id',
+  getParentRoute: () => TenantLocaleRoute,
+} as any)
 const TenantLocaleBookingsConfirmationRoute =
   TenantLocaleBookingsConfirmationRouteImport.update({
     id: '/bookings/confirmation',
@@ -1641,6 +1829,11 @@ const TenantLocaleB2bDashboardRoute =
     path: '/b2b/dashboard',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
+const TenantLocaleB2bIdRoute = TenantLocaleB2bIdRouteImport.update({
+  id: '/b2b/$id',
+  path: '/b2b/$id',
+  getParentRoute: () => TenantLocaleRoute,
+} as any)
 const TenantLocaleAutomotiveIdRoute =
   TenantLocaleAutomotiveIdRouteImport.update({
     id: '/automotive/$id',
@@ -1650,6 +1843,11 @@ const TenantLocaleAutomotiveIdRoute =
 const TenantLocaleAuctionsIdRoute = TenantLocaleAuctionsIdRouteImport.update({
   id: '/auctions/$id',
   path: '/auctions/$id',
+  getParentRoute: () => TenantLocaleRoute,
+} as any)
+const TenantLocaleAffiliateIdRoute = TenantLocaleAffiliateIdRouteImport.update({
+  id: '/affiliate/$id',
+  path: '/affiliate/$id',
   getParentRoute: () => TenantLocaleRoute,
 } as any)
 const TenantLocaleAccountWishlistRoute =
@@ -1894,13 +2092,16 @@ export interface FileRoutesByFullPath {
   '/$tenant/$locale/account/verification': typeof TenantLocaleAccountVerificationRoute
   '/$tenant/$locale/account/wallet': typeof TenantLocaleAccountWalletRoute
   '/$tenant/$locale/account/wishlist': typeof TenantLocaleAccountWishlistRoute
+  '/$tenant/$locale/affiliate/$id': typeof TenantLocaleAffiliateIdRoute
   '/$tenant/$locale/auctions/$id': typeof TenantLocaleAuctionsIdRoute
   '/$tenant/$locale/automotive/$id': typeof TenantLocaleAutomotiveIdRoute
+  '/$tenant/$locale/b2b/$id': typeof TenantLocaleB2bIdRoute
   '/$tenant/$locale/b2b/dashboard': typeof TenantLocaleB2bDashboardRoute
   '/$tenant/$locale/b2b/register': typeof TenantLocaleB2bRegisterRoute
   '/$tenant/$locale/blog/$slug': typeof TenantLocaleBlogSlugRoute
   '/$tenant/$locale/bookings/$serviceHandle': typeof TenantLocaleBookingsServiceHandleRoute
   '/$tenant/$locale/bookings/confirmation': typeof TenantLocaleBookingsConfirmationRoute
+  '/$tenant/$locale/bundles/$id': typeof TenantLocaleBundlesIdRoute
   '/$tenant/$locale/business/approvals': typeof TenantLocaleBusinessApprovalsRoute
   '/$tenant/$locale/business/catalog': typeof TenantLocaleBusinessCatalogRoute
   '/$tenant/$locale/business/orders': typeof TenantLocaleBusinessOrdersRoute
@@ -1908,19 +2109,25 @@ export interface FileRoutesByFullPath {
   '/$tenant/$locale/campaigns/$id': typeof TenantLocaleCampaignsIdRoute
   '/$tenant/$locale/charity/$id': typeof TenantLocaleCharityIdRoute
   '/$tenant/$locale/classifieds/$id': typeof TenantLocaleClassifiedsIdRoute
+  '/$tenant/$locale/consignment-shop/$id': typeof TenantLocaleConsignmentShopIdRoute
+  '/$tenant/$locale/credit/$id': typeof TenantLocaleCreditIdRoute
   '/$tenant/$locale/crowdfunding/$id': typeof TenantLocaleCrowdfundingIdRoute
   '/$tenant/$locale/digital/$id': typeof TenantLocaleDigitalIdRoute
+  '/$tenant/$locale/dropshipping-marketplace/$id': typeof TenantLocaleDropshippingMarketplaceIdRoute
   '/$tenant/$locale/education/$id': typeof TenantLocaleEducationIdRoute
   '/$tenant/$locale/events/$id': typeof TenantLocaleEventsIdRoute
   '/$tenant/$locale/financial/$id': typeof TenantLocaleFinancialIdRoute
   '/$tenant/$locale/fitness/$id': typeof TenantLocaleFitnessIdRoute
+  '/$tenant/$locale/flash-deals/$id': typeof TenantLocaleFlashDealsIdRoute
   '/$tenant/$locale/freelance/$id': typeof TenantLocaleFreelanceIdRoute
+  '/$tenant/$locale/gift-cards-shop/$id': typeof TenantLocaleGiftCardsShopIdRoute
   '/$tenant/$locale/government/$id': typeof TenantLocaleGovernmentIdRoute
   '/$tenant/$locale/grocery/$id': typeof TenantLocaleGroceryIdRoute
   '/$tenant/$locale/healthcare/$id': typeof TenantLocaleHealthcareIdRoute
   '/$tenant/$locale/help/$slug': typeof TenantLocaleHelpSlugRoute
   '/$tenant/$locale/insurance/$id': typeof TenantLocaleInsuranceIdRoute
   '/$tenant/$locale/legal/$id': typeof TenantLocaleLegalIdRoute
+  '/$tenant/$locale/loyalty-program/$id': typeof TenantLocaleLoyaltyProgramIdRoute
   '/$tenant/$locale/manage/advertising': typeof TenantLocaleManageAdvertisingRoute
   '/$tenant/$locale/manage/affiliates': typeof TenantLocaleManageAffiliatesRoute
   '/$tenant/$locale/manage/analytics': typeof TenantLocaleManageAnalyticsRoute
@@ -1928,6 +2135,7 @@ export interface FileRoutesByFullPath {
   '/$tenant/$locale/manage/audit': typeof TenantLocaleManageAuditRoute
   '/$tenant/$locale/manage/automotive': typeof TenantLocaleManageAutomotiveRoute
   '/$tenant/$locale/manage/bookings': typeof TenantLocaleManageBookingsRoute
+  '/$tenant/$locale/manage/bundles': typeof TenantLocaleManageBundlesRoute
   '/$tenant/$locale/manage/cart-extensions': typeof TenantLocaleManageCartExtensionsRoute
   '/$tenant/$locale/manage/channels': typeof TenantLocaleManageChannelsRoute
   '/$tenant/$locale/manage/charity': typeof TenantLocaleManageCharityRoute
@@ -1936,26 +2144,33 @@ export interface FileRoutesByFullPath {
   '/$tenant/$locale/manage/commissions': typeof TenantLocaleManageCommissionsRoute
   '/$tenant/$locale/manage/companies': typeof TenantLocaleManageCompaniesRoute
   '/$tenant/$locale/manage/companies-admin': typeof TenantLocaleManageCompaniesAdminRoute
+  '/$tenant/$locale/manage/consignments': typeof TenantLocaleManageConsignmentsRoute
+  '/$tenant/$locale/manage/credit': typeof TenantLocaleManageCreditRoute
   '/$tenant/$locale/manage/crowdfunding': typeof TenantLocaleManageCrowdfundingRoute
   '/$tenant/$locale/manage/customers': typeof TenantLocaleManageCustomersRoute
   '/$tenant/$locale/manage/digital-products': typeof TenantLocaleManageDigitalProductsRoute
   '/$tenant/$locale/manage/disputes': typeof TenantLocaleManageDisputesRoute
+  '/$tenant/$locale/manage/dropshipping': typeof TenantLocaleManageDropshippingRoute
   '/$tenant/$locale/manage/education': typeof TenantLocaleManageEducationRoute
   '/$tenant/$locale/manage/event-ticketing': typeof TenantLocaleManageEventTicketingRoute
   '/$tenant/$locale/manage/events': typeof TenantLocaleManageEventsRoute
   '/$tenant/$locale/manage/financial-products': typeof TenantLocaleManageFinancialProductsRoute
   '/$tenant/$locale/manage/fitness': typeof TenantLocaleManageFitnessRoute
+  '/$tenant/$locale/manage/flash-sales': typeof TenantLocaleManageFlashSalesRoute
   '/$tenant/$locale/manage/freelance': typeof TenantLocaleManageFreelanceRoute
+  '/$tenant/$locale/manage/gift-cards': typeof TenantLocaleManageGiftCardsRoute
   '/$tenant/$locale/manage/governance': typeof TenantLocaleManageGovernanceRoute
   '/$tenant/$locale/manage/government': typeof TenantLocaleManageGovernmentRoute
   '/$tenant/$locale/manage/grocery': typeof TenantLocaleManageGroceryRoute
   '/$tenant/$locale/manage/healthcare': typeof TenantLocaleManageHealthcareRoute
   '/$tenant/$locale/manage/i18n': typeof TenantLocaleManageI18nRoute
+  '/$tenant/$locale/manage/insurance': typeof TenantLocaleManageInsuranceRoute
   '/$tenant/$locale/manage/inventory': typeof TenantLocaleManageInventoryRoute
   '/$tenant/$locale/manage/invoices': typeof TenantLocaleManageInvoicesRoute
   '/$tenant/$locale/manage/legal': typeof TenantLocaleManageLegalRoute
   '/$tenant/$locale/manage/loyalty': typeof TenantLocaleManageLoyaltyRoute
   '/$tenant/$locale/manage/memberships': typeof TenantLocaleManageMembershipsRoute
+  '/$tenant/$locale/manage/newsletters': typeof TenantLocaleManageNewslettersRoute
   '/$tenant/$locale/manage/nodes': typeof TenantLocaleManageNodesRoute
   '/$tenant/$locale/manage/notification-preferences': typeof TenantLocaleManageNotificationPreferencesRoute
   '/$tenant/$locale/manage/orders': typeof TenantLocaleManageOrdersRoute
@@ -1963,6 +2178,7 @@ export interface FileRoutesByFullPath {
   '/$tenant/$locale/manage/payouts': typeof TenantLocaleManagePayoutsRoute
   '/$tenant/$locale/manage/personas': typeof TenantLocaleManagePersonasRoute
   '/$tenant/$locale/manage/pet-services': typeof TenantLocaleManagePetServicesRoute
+  '/$tenant/$locale/manage/print-on-demand': typeof TenantLocaleManagePrintOnDemandRoute
   '/$tenant/$locale/manage/products': typeof TenantLocaleManageProductsRoute
   '/$tenant/$locale/manage/promotion-extensions': typeof TenantLocaleManagePromotionExtensionsRoute
   '/$tenant/$locale/manage/promotions': typeof TenantLocaleManagePromotionsRoute
@@ -1980,16 +2196,22 @@ export interface FileRoutesByFullPath {
   '/$tenant/$locale/manage/tax-config': typeof TenantLocaleManageTaxConfigRoute
   '/$tenant/$locale/manage/team': typeof TenantLocaleManageTeamRoute
   '/$tenant/$locale/manage/tenants-admin': typeof TenantLocaleManageTenantsAdminRoute
+  '/$tenant/$locale/manage/trade-in': typeof TenantLocaleManageTradeInRoute
   '/$tenant/$locale/manage/travel': typeof TenantLocaleManageTravelRoute
+  '/$tenant/$locale/manage/try-before-you-buy': typeof TenantLocaleManageTryBeforeYouBuyRoute
   '/$tenant/$locale/manage/utilities': typeof TenantLocaleManageUtilitiesRoute
   '/$tenant/$locale/manage/vendors': typeof TenantLocaleManageVendorsRoute
   '/$tenant/$locale/manage/volume-pricing': typeof TenantLocaleManageVolumePricingRoute
+  '/$tenant/$locale/manage/wallet': typeof TenantLocaleManageWalletRoute
   '/$tenant/$locale/manage/warranties': typeof TenantLocaleManageWarrantiesRoute
+  '/$tenant/$locale/manage/white-label': typeof TenantLocaleManageWhiteLabelRoute
   '/$tenant/$locale/manage/wishlists': typeof TenantLocaleManageWishlistsRoute
   '/$tenant/$locale/memberships/$id': typeof TenantLocaleMembershipsIdRoute
+  '/$tenant/$locale/newsletter/$id': typeof TenantLocaleNewsletterIdRoute
   '/$tenant/$locale/parking/$id': typeof TenantLocaleParkingIdRoute
   '/$tenant/$locale/pet-services/$id': typeof TenantLocalePetServicesIdRoute
   '/$tenant/$locale/places/$id': typeof TenantLocalePlacesIdRoute
+  '/$tenant/$locale/print-on-demand-shop/$id': typeof TenantLocalePrintOnDemandShopIdRoute
   '/$tenant/$locale/products/$handle': typeof TenantLocaleProductsHandleRoute
   '/$tenant/$locale/quotes/$id': typeof TenantLocaleQuotesIdRoute
   '/$tenant/$locale/quotes/request': typeof TenantLocaleQuotesRequestRoute
@@ -1997,9 +2219,12 @@ export interface FileRoutesByFullPath {
   '/$tenant/$locale/rentals/$id': typeof TenantLocaleRentalsIdRoute
   '/$tenant/$locale/restaurants/$id': typeof TenantLocaleRestaurantsIdRoute
   '/$tenant/$locale/social-commerce/$id': typeof TenantLocaleSocialCommerceIdRoute
+  '/$tenant/$locale/subscriptions/$id': typeof TenantLocaleSubscriptionsIdRoute
   '/$tenant/$locale/subscriptions/checkout': typeof TenantLocaleSubscriptionsCheckoutRoute
   '/$tenant/$locale/subscriptions/success': typeof TenantLocaleSubscriptionsSuccessRoute
+  '/$tenant/$locale/trade-in/$id': typeof TenantLocaleTradeInIdRoute
   '/$tenant/$locale/travel/$id': typeof TenantLocaleTravelIdRoute
+  '/$tenant/$locale/try-before-you-buy/$id': typeof TenantLocaleTryBeforeYouBuyIdRoute
   '/$tenant/$locale/vendor/advertising': typeof TenantLocaleVendorAdvertisingRoute
   '/$tenant/$locale/vendor/affiliate': typeof TenantLocaleVendorAffiliateRoute
   '/$tenant/$locale/vendor/auctions': typeof TenantLocaleVendorAuctionsRoute
@@ -2055,7 +2280,9 @@ export interface FileRoutesByFullPath {
   '/$tenant/$locale/vendor/wishlists': typeof TenantLocaleVendorWishlistsRoute
   '/$tenant/$locale/vendors/$handle': typeof TenantLocaleVendorsHandleRoute
   '/$tenant/$locale/verify/age': typeof TenantLocaleVerifyAgeRoute
+  '/$tenant/$locale/volume-deals/$id': typeof TenantLocaleVolumeDealsIdRoute
   '/$tenant/$locale/warranties/$id': typeof TenantLocaleWarrantiesIdRoute
+  '/$tenant/$locale/white-label-shop/$id': typeof TenantLocaleWhiteLabelShopIdRoute
   '/$tenant/$locale/account': typeof TenantLocaleAccountIndexRoute
   '/$tenant/$locale/affiliate': typeof TenantLocaleAffiliateIndexRoute
   '/$tenant/$locale/auctions': typeof TenantLocaleAuctionsIndexRoute
@@ -2165,13 +2392,16 @@ export interface FileRoutesByTo {
   '/$tenant/$locale/account/verification': typeof TenantLocaleAccountVerificationRoute
   '/$tenant/$locale/account/wallet': typeof TenantLocaleAccountWalletRoute
   '/$tenant/$locale/account/wishlist': typeof TenantLocaleAccountWishlistRoute
+  '/$tenant/$locale/affiliate/$id': typeof TenantLocaleAffiliateIdRoute
   '/$tenant/$locale/auctions/$id': typeof TenantLocaleAuctionsIdRoute
   '/$tenant/$locale/automotive/$id': typeof TenantLocaleAutomotiveIdRoute
+  '/$tenant/$locale/b2b/$id': typeof TenantLocaleB2bIdRoute
   '/$tenant/$locale/b2b/dashboard': typeof TenantLocaleB2bDashboardRoute
   '/$tenant/$locale/b2b/register': typeof TenantLocaleB2bRegisterRoute
   '/$tenant/$locale/blog/$slug': typeof TenantLocaleBlogSlugRoute
   '/$tenant/$locale/bookings/$serviceHandle': typeof TenantLocaleBookingsServiceHandleRoute
   '/$tenant/$locale/bookings/confirmation': typeof TenantLocaleBookingsConfirmationRoute
+  '/$tenant/$locale/bundles/$id': typeof TenantLocaleBundlesIdRoute
   '/$tenant/$locale/business/approvals': typeof TenantLocaleBusinessApprovalsRoute
   '/$tenant/$locale/business/catalog': typeof TenantLocaleBusinessCatalogRoute
   '/$tenant/$locale/business/orders': typeof TenantLocaleBusinessOrdersRoute
@@ -2179,19 +2409,25 @@ export interface FileRoutesByTo {
   '/$tenant/$locale/campaigns/$id': typeof TenantLocaleCampaignsIdRoute
   '/$tenant/$locale/charity/$id': typeof TenantLocaleCharityIdRoute
   '/$tenant/$locale/classifieds/$id': typeof TenantLocaleClassifiedsIdRoute
+  '/$tenant/$locale/consignment-shop/$id': typeof TenantLocaleConsignmentShopIdRoute
+  '/$tenant/$locale/credit/$id': typeof TenantLocaleCreditIdRoute
   '/$tenant/$locale/crowdfunding/$id': typeof TenantLocaleCrowdfundingIdRoute
   '/$tenant/$locale/digital/$id': typeof TenantLocaleDigitalIdRoute
+  '/$tenant/$locale/dropshipping-marketplace/$id': typeof TenantLocaleDropshippingMarketplaceIdRoute
   '/$tenant/$locale/education/$id': typeof TenantLocaleEducationIdRoute
   '/$tenant/$locale/events/$id': typeof TenantLocaleEventsIdRoute
   '/$tenant/$locale/financial/$id': typeof TenantLocaleFinancialIdRoute
   '/$tenant/$locale/fitness/$id': typeof TenantLocaleFitnessIdRoute
+  '/$tenant/$locale/flash-deals/$id': typeof TenantLocaleFlashDealsIdRoute
   '/$tenant/$locale/freelance/$id': typeof TenantLocaleFreelanceIdRoute
+  '/$tenant/$locale/gift-cards-shop/$id': typeof TenantLocaleGiftCardsShopIdRoute
   '/$tenant/$locale/government/$id': typeof TenantLocaleGovernmentIdRoute
   '/$tenant/$locale/grocery/$id': typeof TenantLocaleGroceryIdRoute
   '/$tenant/$locale/healthcare/$id': typeof TenantLocaleHealthcareIdRoute
   '/$tenant/$locale/help/$slug': typeof TenantLocaleHelpSlugRoute
   '/$tenant/$locale/insurance/$id': typeof TenantLocaleInsuranceIdRoute
   '/$tenant/$locale/legal/$id': typeof TenantLocaleLegalIdRoute
+  '/$tenant/$locale/loyalty-program/$id': typeof TenantLocaleLoyaltyProgramIdRoute
   '/$tenant/$locale/manage/advertising': typeof TenantLocaleManageAdvertisingRoute
   '/$tenant/$locale/manage/affiliates': typeof TenantLocaleManageAffiliatesRoute
   '/$tenant/$locale/manage/analytics': typeof TenantLocaleManageAnalyticsRoute
@@ -2199,6 +2435,7 @@ export interface FileRoutesByTo {
   '/$tenant/$locale/manage/audit': typeof TenantLocaleManageAuditRoute
   '/$tenant/$locale/manage/automotive': typeof TenantLocaleManageAutomotiveRoute
   '/$tenant/$locale/manage/bookings': typeof TenantLocaleManageBookingsRoute
+  '/$tenant/$locale/manage/bundles': typeof TenantLocaleManageBundlesRoute
   '/$tenant/$locale/manage/cart-extensions': typeof TenantLocaleManageCartExtensionsRoute
   '/$tenant/$locale/manage/channels': typeof TenantLocaleManageChannelsRoute
   '/$tenant/$locale/manage/charity': typeof TenantLocaleManageCharityRoute
@@ -2207,26 +2444,33 @@ export interface FileRoutesByTo {
   '/$tenant/$locale/manage/commissions': typeof TenantLocaleManageCommissionsRoute
   '/$tenant/$locale/manage/companies': typeof TenantLocaleManageCompaniesRoute
   '/$tenant/$locale/manage/companies-admin': typeof TenantLocaleManageCompaniesAdminRoute
+  '/$tenant/$locale/manage/consignments': typeof TenantLocaleManageConsignmentsRoute
+  '/$tenant/$locale/manage/credit': typeof TenantLocaleManageCreditRoute
   '/$tenant/$locale/manage/crowdfunding': typeof TenantLocaleManageCrowdfundingRoute
   '/$tenant/$locale/manage/customers': typeof TenantLocaleManageCustomersRoute
   '/$tenant/$locale/manage/digital-products': typeof TenantLocaleManageDigitalProductsRoute
   '/$tenant/$locale/manage/disputes': typeof TenantLocaleManageDisputesRoute
+  '/$tenant/$locale/manage/dropshipping': typeof TenantLocaleManageDropshippingRoute
   '/$tenant/$locale/manage/education': typeof TenantLocaleManageEducationRoute
   '/$tenant/$locale/manage/event-ticketing': typeof TenantLocaleManageEventTicketingRoute
   '/$tenant/$locale/manage/events': typeof TenantLocaleManageEventsRoute
   '/$tenant/$locale/manage/financial-products': typeof TenantLocaleManageFinancialProductsRoute
   '/$tenant/$locale/manage/fitness': typeof TenantLocaleManageFitnessRoute
+  '/$tenant/$locale/manage/flash-sales': typeof TenantLocaleManageFlashSalesRoute
   '/$tenant/$locale/manage/freelance': typeof TenantLocaleManageFreelanceRoute
+  '/$tenant/$locale/manage/gift-cards': typeof TenantLocaleManageGiftCardsRoute
   '/$tenant/$locale/manage/governance': typeof TenantLocaleManageGovernanceRoute
   '/$tenant/$locale/manage/government': typeof TenantLocaleManageGovernmentRoute
   '/$tenant/$locale/manage/grocery': typeof TenantLocaleManageGroceryRoute
   '/$tenant/$locale/manage/healthcare': typeof TenantLocaleManageHealthcareRoute
   '/$tenant/$locale/manage/i18n': typeof TenantLocaleManageI18nRoute
+  '/$tenant/$locale/manage/insurance': typeof TenantLocaleManageInsuranceRoute
   '/$tenant/$locale/manage/inventory': typeof TenantLocaleManageInventoryRoute
   '/$tenant/$locale/manage/invoices': typeof TenantLocaleManageInvoicesRoute
   '/$tenant/$locale/manage/legal': typeof TenantLocaleManageLegalRoute
   '/$tenant/$locale/manage/loyalty': typeof TenantLocaleManageLoyaltyRoute
   '/$tenant/$locale/manage/memberships': typeof TenantLocaleManageMembershipsRoute
+  '/$tenant/$locale/manage/newsletters': typeof TenantLocaleManageNewslettersRoute
   '/$tenant/$locale/manage/nodes': typeof TenantLocaleManageNodesRoute
   '/$tenant/$locale/manage/notification-preferences': typeof TenantLocaleManageNotificationPreferencesRoute
   '/$tenant/$locale/manage/orders': typeof TenantLocaleManageOrdersRoute
@@ -2234,6 +2478,7 @@ export interface FileRoutesByTo {
   '/$tenant/$locale/manage/payouts': typeof TenantLocaleManagePayoutsRoute
   '/$tenant/$locale/manage/personas': typeof TenantLocaleManagePersonasRoute
   '/$tenant/$locale/manage/pet-services': typeof TenantLocaleManagePetServicesRoute
+  '/$tenant/$locale/manage/print-on-demand': typeof TenantLocaleManagePrintOnDemandRoute
   '/$tenant/$locale/manage/products': typeof TenantLocaleManageProductsRoute
   '/$tenant/$locale/manage/promotion-extensions': typeof TenantLocaleManagePromotionExtensionsRoute
   '/$tenant/$locale/manage/promotions': typeof TenantLocaleManagePromotionsRoute
@@ -2251,16 +2496,22 @@ export interface FileRoutesByTo {
   '/$tenant/$locale/manage/tax-config': typeof TenantLocaleManageTaxConfigRoute
   '/$tenant/$locale/manage/team': typeof TenantLocaleManageTeamRoute
   '/$tenant/$locale/manage/tenants-admin': typeof TenantLocaleManageTenantsAdminRoute
+  '/$tenant/$locale/manage/trade-in': typeof TenantLocaleManageTradeInRoute
   '/$tenant/$locale/manage/travel': typeof TenantLocaleManageTravelRoute
+  '/$tenant/$locale/manage/try-before-you-buy': typeof TenantLocaleManageTryBeforeYouBuyRoute
   '/$tenant/$locale/manage/utilities': typeof TenantLocaleManageUtilitiesRoute
   '/$tenant/$locale/manage/vendors': typeof TenantLocaleManageVendorsRoute
   '/$tenant/$locale/manage/volume-pricing': typeof TenantLocaleManageVolumePricingRoute
+  '/$tenant/$locale/manage/wallet': typeof TenantLocaleManageWalletRoute
   '/$tenant/$locale/manage/warranties': typeof TenantLocaleManageWarrantiesRoute
+  '/$tenant/$locale/manage/white-label': typeof TenantLocaleManageWhiteLabelRoute
   '/$tenant/$locale/manage/wishlists': typeof TenantLocaleManageWishlistsRoute
   '/$tenant/$locale/memberships/$id': typeof TenantLocaleMembershipsIdRoute
+  '/$tenant/$locale/newsletter/$id': typeof TenantLocaleNewsletterIdRoute
   '/$tenant/$locale/parking/$id': typeof TenantLocaleParkingIdRoute
   '/$tenant/$locale/pet-services/$id': typeof TenantLocalePetServicesIdRoute
   '/$tenant/$locale/places/$id': typeof TenantLocalePlacesIdRoute
+  '/$tenant/$locale/print-on-demand-shop/$id': typeof TenantLocalePrintOnDemandShopIdRoute
   '/$tenant/$locale/products/$handle': typeof TenantLocaleProductsHandleRoute
   '/$tenant/$locale/quotes/$id': typeof TenantLocaleQuotesIdRoute
   '/$tenant/$locale/quotes/request': typeof TenantLocaleQuotesRequestRoute
@@ -2268,9 +2519,12 @@ export interface FileRoutesByTo {
   '/$tenant/$locale/rentals/$id': typeof TenantLocaleRentalsIdRoute
   '/$tenant/$locale/restaurants/$id': typeof TenantLocaleRestaurantsIdRoute
   '/$tenant/$locale/social-commerce/$id': typeof TenantLocaleSocialCommerceIdRoute
+  '/$tenant/$locale/subscriptions/$id': typeof TenantLocaleSubscriptionsIdRoute
   '/$tenant/$locale/subscriptions/checkout': typeof TenantLocaleSubscriptionsCheckoutRoute
   '/$tenant/$locale/subscriptions/success': typeof TenantLocaleSubscriptionsSuccessRoute
+  '/$tenant/$locale/trade-in/$id': typeof TenantLocaleTradeInIdRoute
   '/$tenant/$locale/travel/$id': typeof TenantLocaleTravelIdRoute
+  '/$tenant/$locale/try-before-you-buy/$id': typeof TenantLocaleTryBeforeYouBuyIdRoute
   '/$tenant/$locale/vendor/advertising': typeof TenantLocaleVendorAdvertisingRoute
   '/$tenant/$locale/vendor/affiliate': typeof TenantLocaleVendorAffiliateRoute
   '/$tenant/$locale/vendor/auctions': typeof TenantLocaleVendorAuctionsRoute
@@ -2325,7 +2579,9 @@ export interface FileRoutesByTo {
   '/$tenant/$locale/vendor/wishlists': typeof TenantLocaleVendorWishlistsRoute
   '/$tenant/$locale/vendors/$handle': typeof TenantLocaleVendorsHandleRoute
   '/$tenant/$locale/verify/age': typeof TenantLocaleVerifyAgeRoute
+  '/$tenant/$locale/volume-deals/$id': typeof TenantLocaleVolumeDealsIdRoute
   '/$tenant/$locale/warranties/$id': typeof TenantLocaleWarrantiesIdRoute
+  '/$tenant/$locale/white-label-shop/$id': typeof TenantLocaleWhiteLabelShopIdRoute
   '/$tenant/$locale/account': typeof TenantLocaleAccountIndexRoute
   '/$tenant/$locale/affiliate': typeof TenantLocaleAffiliateIndexRoute
   '/$tenant/$locale/auctions': typeof TenantLocaleAuctionsIndexRoute
@@ -2438,13 +2694,16 @@ export interface FileRoutesById {
   '/$tenant/$locale/account/verification': typeof TenantLocaleAccountVerificationRoute
   '/$tenant/$locale/account/wallet': typeof TenantLocaleAccountWalletRoute
   '/$tenant/$locale/account/wishlist': typeof TenantLocaleAccountWishlistRoute
+  '/$tenant/$locale/affiliate/$id': typeof TenantLocaleAffiliateIdRoute
   '/$tenant/$locale/auctions/$id': typeof TenantLocaleAuctionsIdRoute
   '/$tenant/$locale/automotive/$id': typeof TenantLocaleAutomotiveIdRoute
+  '/$tenant/$locale/b2b/$id': typeof TenantLocaleB2bIdRoute
   '/$tenant/$locale/b2b/dashboard': typeof TenantLocaleB2bDashboardRoute
   '/$tenant/$locale/b2b/register': typeof TenantLocaleB2bRegisterRoute
   '/$tenant/$locale/blog/$slug': typeof TenantLocaleBlogSlugRoute
   '/$tenant/$locale/bookings/$serviceHandle': typeof TenantLocaleBookingsServiceHandleRoute
   '/$tenant/$locale/bookings/confirmation': typeof TenantLocaleBookingsConfirmationRoute
+  '/$tenant/$locale/bundles/$id': typeof TenantLocaleBundlesIdRoute
   '/$tenant/$locale/business/approvals': typeof TenantLocaleBusinessApprovalsRoute
   '/$tenant/$locale/business/catalog': typeof TenantLocaleBusinessCatalogRoute
   '/$tenant/$locale/business/orders': typeof TenantLocaleBusinessOrdersRoute
@@ -2452,19 +2711,25 @@ export interface FileRoutesById {
   '/$tenant/$locale/campaigns/$id': typeof TenantLocaleCampaignsIdRoute
   '/$tenant/$locale/charity/$id': typeof TenantLocaleCharityIdRoute
   '/$tenant/$locale/classifieds/$id': typeof TenantLocaleClassifiedsIdRoute
+  '/$tenant/$locale/consignment-shop/$id': typeof TenantLocaleConsignmentShopIdRoute
+  '/$tenant/$locale/credit/$id': typeof TenantLocaleCreditIdRoute
   '/$tenant/$locale/crowdfunding/$id': typeof TenantLocaleCrowdfundingIdRoute
   '/$tenant/$locale/digital/$id': typeof TenantLocaleDigitalIdRoute
+  '/$tenant/$locale/dropshipping-marketplace/$id': typeof TenantLocaleDropshippingMarketplaceIdRoute
   '/$tenant/$locale/education/$id': typeof TenantLocaleEducationIdRoute
   '/$tenant/$locale/events/$id': typeof TenantLocaleEventsIdRoute
   '/$tenant/$locale/financial/$id': typeof TenantLocaleFinancialIdRoute
   '/$tenant/$locale/fitness/$id': typeof TenantLocaleFitnessIdRoute
+  '/$tenant/$locale/flash-deals/$id': typeof TenantLocaleFlashDealsIdRoute
   '/$tenant/$locale/freelance/$id': typeof TenantLocaleFreelanceIdRoute
+  '/$tenant/$locale/gift-cards-shop/$id': typeof TenantLocaleGiftCardsShopIdRoute
   '/$tenant/$locale/government/$id': typeof TenantLocaleGovernmentIdRoute
   '/$tenant/$locale/grocery/$id': typeof TenantLocaleGroceryIdRoute
   '/$tenant/$locale/healthcare/$id': typeof TenantLocaleHealthcareIdRoute
   '/$tenant/$locale/help/$slug': typeof TenantLocaleHelpSlugRoute
   '/$tenant/$locale/insurance/$id': typeof TenantLocaleInsuranceIdRoute
   '/$tenant/$locale/legal/$id': typeof TenantLocaleLegalIdRoute
+  '/$tenant/$locale/loyalty-program/$id': typeof TenantLocaleLoyaltyProgramIdRoute
   '/$tenant/$locale/manage/advertising': typeof TenantLocaleManageAdvertisingRoute
   '/$tenant/$locale/manage/affiliates': typeof TenantLocaleManageAffiliatesRoute
   '/$tenant/$locale/manage/analytics': typeof TenantLocaleManageAnalyticsRoute
@@ -2472,6 +2737,7 @@ export interface FileRoutesById {
   '/$tenant/$locale/manage/audit': typeof TenantLocaleManageAuditRoute
   '/$tenant/$locale/manage/automotive': typeof TenantLocaleManageAutomotiveRoute
   '/$tenant/$locale/manage/bookings': typeof TenantLocaleManageBookingsRoute
+  '/$tenant/$locale/manage/bundles': typeof TenantLocaleManageBundlesRoute
   '/$tenant/$locale/manage/cart-extensions': typeof TenantLocaleManageCartExtensionsRoute
   '/$tenant/$locale/manage/channels': typeof TenantLocaleManageChannelsRoute
   '/$tenant/$locale/manage/charity': typeof TenantLocaleManageCharityRoute
@@ -2480,26 +2746,33 @@ export interface FileRoutesById {
   '/$tenant/$locale/manage/commissions': typeof TenantLocaleManageCommissionsRoute
   '/$tenant/$locale/manage/companies': typeof TenantLocaleManageCompaniesRoute
   '/$tenant/$locale/manage/companies-admin': typeof TenantLocaleManageCompaniesAdminRoute
+  '/$tenant/$locale/manage/consignments': typeof TenantLocaleManageConsignmentsRoute
+  '/$tenant/$locale/manage/credit': typeof TenantLocaleManageCreditRoute
   '/$tenant/$locale/manage/crowdfunding': typeof TenantLocaleManageCrowdfundingRoute
   '/$tenant/$locale/manage/customers': typeof TenantLocaleManageCustomersRoute
   '/$tenant/$locale/manage/digital-products': typeof TenantLocaleManageDigitalProductsRoute
   '/$tenant/$locale/manage/disputes': typeof TenantLocaleManageDisputesRoute
+  '/$tenant/$locale/manage/dropshipping': typeof TenantLocaleManageDropshippingRoute
   '/$tenant/$locale/manage/education': typeof TenantLocaleManageEducationRoute
   '/$tenant/$locale/manage/event-ticketing': typeof TenantLocaleManageEventTicketingRoute
   '/$tenant/$locale/manage/events': typeof TenantLocaleManageEventsRoute
   '/$tenant/$locale/manage/financial-products': typeof TenantLocaleManageFinancialProductsRoute
   '/$tenant/$locale/manage/fitness': typeof TenantLocaleManageFitnessRoute
+  '/$tenant/$locale/manage/flash-sales': typeof TenantLocaleManageFlashSalesRoute
   '/$tenant/$locale/manage/freelance': typeof TenantLocaleManageFreelanceRoute
+  '/$tenant/$locale/manage/gift-cards': typeof TenantLocaleManageGiftCardsRoute
   '/$tenant/$locale/manage/governance': typeof TenantLocaleManageGovernanceRoute
   '/$tenant/$locale/manage/government': typeof TenantLocaleManageGovernmentRoute
   '/$tenant/$locale/manage/grocery': typeof TenantLocaleManageGroceryRoute
   '/$tenant/$locale/manage/healthcare': typeof TenantLocaleManageHealthcareRoute
   '/$tenant/$locale/manage/i18n': typeof TenantLocaleManageI18nRoute
+  '/$tenant/$locale/manage/insurance': typeof TenantLocaleManageInsuranceRoute
   '/$tenant/$locale/manage/inventory': typeof TenantLocaleManageInventoryRoute
   '/$tenant/$locale/manage/invoices': typeof TenantLocaleManageInvoicesRoute
   '/$tenant/$locale/manage/legal': typeof TenantLocaleManageLegalRoute
   '/$tenant/$locale/manage/loyalty': typeof TenantLocaleManageLoyaltyRoute
   '/$tenant/$locale/manage/memberships': typeof TenantLocaleManageMembershipsRoute
+  '/$tenant/$locale/manage/newsletters': typeof TenantLocaleManageNewslettersRoute
   '/$tenant/$locale/manage/nodes': typeof TenantLocaleManageNodesRoute
   '/$tenant/$locale/manage/notification-preferences': typeof TenantLocaleManageNotificationPreferencesRoute
   '/$tenant/$locale/manage/orders': typeof TenantLocaleManageOrdersRoute
@@ -2507,6 +2780,7 @@ export interface FileRoutesById {
   '/$tenant/$locale/manage/payouts': typeof TenantLocaleManagePayoutsRoute
   '/$tenant/$locale/manage/personas': typeof TenantLocaleManagePersonasRoute
   '/$tenant/$locale/manage/pet-services': typeof TenantLocaleManagePetServicesRoute
+  '/$tenant/$locale/manage/print-on-demand': typeof TenantLocaleManagePrintOnDemandRoute
   '/$tenant/$locale/manage/products': typeof TenantLocaleManageProductsRoute
   '/$tenant/$locale/manage/promotion-extensions': typeof TenantLocaleManagePromotionExtensionsRoute
   '/$tenant/$locale/manage/promotions': typeof TenantLocaleManagePromotionsRoute
@@ -2524,16 +2798,22 @@ export interface FileRoutesById {
   '/$tenant/$locale/manage/tax-config': typeof TenantLocaleManageTaxConfigRoute
   '/$tenant/$locale/manage/team': typeof TenantLocaleManageTeamRoute
   '/$tenant/$locale/manage/tenants-admin': typeof TenantLocaleManageTenantsAdminRoute
+  '/$tenant/$locale/manage/trade-in': typeof TenantLocaleManageTradeInRoute
   '/$tenant/$locale/manage/travel': typeof TenantLocaleManageTravelRoute
+  '/$tenant/$locale/manage/try-before-you-buy': typeof TenantLocaleManageTryBeforeYouBuyRoute
   '/$tenant/$locale/manage/utilities': typeof TenantLocaleManageUtilitiesRoute
   '/$tenant/$locale/manage/vendors': typeof TenantLocaleManageVendorsRoute
   '/$tenant/$locale/manage/volume-pricing': typeof TenantLocaleManageVolumePricingRoute
+  '/$tenant/$locale/manage/wallet': typeof TenantLocaleManageWalletRoute
   '/$tenant/$locale/manage/warranties': typeof TenantLocaleManageWarrantiesRoute
+  '/$tenant/$locale/manage/white-label': typeof TenantLocaleManageWhiteLabelRoute
   '/$tenant/$locale/manage/wishlists': typeof TenantLocaleManageWishlistsRoute
   '/$tenant/$locale/memberships/$id': typeof TenantLocaleMembershipsIdRoute
+  '/$tenant/$locale/newsletter/$id': typeof TenantLocaleNewsletterIdRoute
   '/$tenant/$locale/parking/$id': typeof TenantLocaleParkingIdRoute
   '/$tenant/$locale/pet-services/$id': typeof TenantLocalePetServicesIdRoute
   '/$tenant/$locale/places/$id': typeof TenantLocalePlacesIdRoute
+  '/$tenant/$locale/print-on-demand-shop/$id': typeof TenantLocalePrintOnDemandShopIdRoute
   '/$tenant/$locale/products/$handle': typeof TenantLocaleProductsHandleRoute
   '/$tenant/$locale/quotes/$id': typeof TenantLocaleQuotesIdRoute
   '/$tenant/$locale/quotes/request': typeof TenantLocaleQuotesRequestRoute
@@ -2541,9 +2821,12 @@ export interface FileRoutesById {
   '/$tenant/$locale/rentals/$id': typeof TenantLocaleRentalsIdRoute
   '/$tenant/$locale/restaurants/$id': typeof TenantLocaleRestaurantsIdRoute
   '/$tenant/$locale/social-commerce/$id': typeof TenantLocaleSocialCommerceIdRoute
+  '/$tenant/$locale/subscriptions/$id': typeof TenantLocaleSubscriptionsIdRoute
   '/$tenant/$locale/subscriptions/checkout': typeof TenantLocaleSubscriptionsCheckoutRoute
   '/$tenant/$locale/subscriptions/success': typeof TenantLocaleSubscriptionsSuccessRoute
+  '/$tenant/$locale/trade-in/$id': typeof TenantLocaleTradeInIdRoute
   '/$tenant/$locale/travel/$id': typeof TenantLocaleTravelIdRoute
+  '/$tenant/$locale/try-before-you-buy/$id': typeof TenantLocaleTryBeforeYouBuyIdRoute
   '/$tenant/$locale/vendor/advertising': typeof TenantLocaleVendorAdvertisingRoute
   '/$tenant/$locale/vendor/affiliate': typeof TenantLocaleVendorAffiliateRoute
   '/$tenant/$locale/vendor/auctions': typeof TenantLocaleVendorAuctionsRoute
@@ -2599,7 +2882,9 @@ export interface FileRoutesById {
   '/$tenant/$locale/vendor/wishlists': typeof TenantLocaleVendorWishlistsRoute
   '/$tenant/$locale/vendors/$handle': typeof TenantLocaleVendorsHandleRoute
   '/$tenant/$locale/verify/age': typeof TenantLocaleVerifyAgeRoute
+  '/$tenant/$locale/volume-deals/$id': typeof TenantLocaleVolumeDealsIdRoute
   '/$tenant/$locale/warranties/$id': typeof TenantLocaleWarrantiesIdRoute
+  '/$tenant/$locale/white-label-shop/$id': typeof TenantLocaleWhiteLabelShopIdRoute
   '/$tenant/$locale/account/': typeof TenantLocaleAccountIndexRoute
   '/$tenant/$locale/affiliate/': typeof TenantLocaleAffiliateIndexRoute
   '/$tenant/$locale/auctions/': typeof TenantLocaleAuctionsIndexRoute
@@ -2713,13 +2998,16 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/account/verification'
     | '/$tenant/$locale/account/wallet'
     | '/$tenant/$locale/account/wishlist'
+    | '/$tenant/$locale/affiliate/$id'
     | '/$tenant/$locale/auctions/$id'
     | '/$tenant/$locale/automotive/$id'
+    | '/$tenant/$locale/b2b/$id'
     | '/$tenant/$locale/b2b/dashboard'
     | '/$tenant/$locale/b2b/register'
     | '/$tenant/$locale/blog/$slug'
     | '/$tenant/$locale/bookings/$serviceHandle'
     | '/$tenant/$locale/bookings/confirmation'
+    | '/$tenant/$locale/bundles/$id'
     | '/$tenant/$locale/business/approvals'
     | '/$tenant/$locale/business/catalog'
     | '/$tenant/$locale/business/orders'
@@ -2727,19 +3015,25 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/campaigns/$id'
     | '/$tenant/$locale/charity/$id'
     | '/$tenant/$locale/classifieds/$id'
+    | '/$tenant/$locale/consignment-shop/$id'
+    | '/$tenant/$locale/credit/$id'
     | '/$tenant/$locale/crowdfunding/$id'
     | '/$tenant/$locale/digital/$id'
+    | '/$tenant/$locale/dropshipping-marketplace/$id'
     | '/$tenant/$locale/education/$id'
     | '/$tenant/$locale/events/$id'
     | '/$tenant/$locale/financial/$id'
     | '/$tenant/$locale/fitness/$id'
+    | '/$tenant/$locale/flash-deals/$id'
     | '/$tenant/$locale/freelance/$id'
+    | '/$tenant/$locale/gift-cards-shop/$id'
     | '/$tenant/$locale/government/$id'
     | '/$tenant/$locale/grocery/$id'
     | '/$tenant/$locale/healthcare/$id'
     | '/$tenant/$locale/help/$slug'
     | '/$tenant/$locale/insurance/$id'
     | '/$tenant/$locale/legal/$id'
+    | '/$tenant/$locale/loyalty-program/$id'
     | '/$tenant/$locale/manage/advertising'
     | '/$tenant/$locale/manage/affiliates'
     | '/$tenant/$locale/manage/analytics'
@@ -2747,6 +3041,7 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/manage/audit'
     | '/$tenant/$locale/manage/automotive'
     | '/$tenant/$locale/manage/bookings'
+    | '/$tenant/$locale/manage/bundles'
     | '/$tenant/$locale/manage/cart-extensions'
     | '/$tenant/$locale/manage/channels'
     | '/$tenant/$locale/manage/charity'
@@ -2755,26 +3050,33 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/manage/commissions'
     | '/$tenant/$locale/manage/companies'
     | '/$tenant/$locale/manage/companies-admin'
+    | '/$tenant/$locale/manage/consignments'
+    | '/$tenant/$locale/manage/credit'
     | '/$tenant/$locale/manage/crowdfunding'
     | '/$tenant/$locale/manage/customers'
     | '/$tenant/$locale/manage/digital-products'
     | '/$tenant/$locale/manage/disputes'
+    | '/$tenant/$locale/manage/dropshipping'
     | '/$tenant/$locale/manage/education'
     | '/$tenant/$locale/manage/event-ticketing'
     | '/$tenant/$locale/manage/events'
     | '/$tenant/$locale/manage/financial-products'
     | '/$tenant/$locale/manage/fitness'
+    | '/$tenant/$locale/manage/flash-sales'
     | '/$tenant/$locale/manage/freelance'
+    | '/$tenant/$locale/manage/gift-cards'
     | '/$tenant/$locale/manage/governance'
     | '/$tenant/$locale/manage/government'
     | '/$tenant/$locale/manage/grocery'
     | '/$tenant/$locale/manage/healthcare'
     | '/$tenant/$locale/manage/i18n'
+    | '/$tenant/$locale/manage/insurance'
     | '/$tenant/$locale/manage/inventory'
     | '/$tenant/$locale/manage/invoices'
     | '/$tenant/$locale/manage/legal'
     | '/$tenant/$locale/manage/loyalty'
     | '/$tenant/$locale/manage/memberships'
+    | '/$tenant/$locale/manage/newsletters'
     | '/$tenant/$locale/manage/nodes'
     | '/$tenant/$locale/manage/notification-preferences'
     | '/$tenant/$locale/manage/orders'
@@ -2782,6 +3084,7 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/manage/payouts'
     | '/$tenant/$locale/manage/personas'
     | '/$tenant/$locale/manage/pet-services'
+    | '/$tenant/$locale/manage/print-on-demand'
     | '/$tenant/$locale/manage/products'
     | '/$tenant/$locale/manage/promotion-extensions'
     | '/$tenant/$locale/manage/promotions'
@@ -2799,16 +3102,22 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/manage/tax-config'
     | '/$tenant/$locale/manage/team'
     | '/$tenant/$locale/manage/tenants-admin'
+    | '/$tenant/$locale/manage/trade-in'
     | '/$tenant/$locale/manage/travel'
+    | '/$tenant/$locale/manage/try-before-you-buy'
     | '/$tenant/$locale/manage/utilities'
     | '/$tenant/$locale/manage/vendors'
     | '/$tenant/$locale/manage/volume-pricing'
+    | '/$tenant/$locale/manage/wallet'
     | '/$tenant/$locale/manage/warranties'
+    | '/$tenant/$locale/manage/white-label'
     | '/$tenant/$locale/manage/wishlists'
     | '/$tenant/$locale/memberships/$id'
+    | '/$tenant/$locale/newsletter/$id'
     | '/$tenant/$locale/parking/$id'
     | '/$tenant/$locale/pet-services/$id'
     | '/$tenant/$locale/places/$id'
+    | '/$tenant/$locale/print-on-demand-shop/$id'
     | '/$tenant/$locale/products/$handle'
     | '/$tenant/$locale/quotes/$id'
     | '/$tenant/$locale/quotes/request'
@@ -2816,9 +3125,12 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/rentals/$id'
     | '/$tenant/$locale/restaurants/$id'
     | '/$tenant/$locale/social-commerce/$id'
+    | '/$tenant/$locale/subscriptions/$id'
     | '/$tenant/$locale/subscriptions/checkout'
     | '/$tenant/$locale/subscriptions/success'
+    | '/$tenant/$locale/trade-in/$id'
     | '/$tenant/$locale/travel/$id'
+    | '/$tenant/$locale/try-before-you-buy/$id'
     | '/$tenant/$locale/vendor/advertising'
     | '/$tenant/$locale/vendor/affiliate'
     | '/$tenant/$locale/vendor/auctions'
@@ -2874,7 +3186,9 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/vendor/wishlists'
     | '/$tenant/$locale/vendors/$handle'
     | '/$tenant/$locale/verify/age'
+    | '/$tenant/$locale/volume-deals/$id'
     | '/$tenant/$locale/warranties/$id'
+    | '/$tenant/$locale/white-label-shop/$id'
     | '/$tenant/$locale/account'
     | '/$tenant/$locale/affiliate'
     | '/$tenant/$locale/auctions'
@@ -2984,13 +3298,16 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/account/verification'
     | '/$tenant/$locale/account/wallet'
     | '/$tenant/$locale/account/wishlist'
+    | '/$tenant/$locale/affiliate/$id'
     | '/$tenant/$locale/auctions/$id'
     | '/$tenant/$locale/automotive/$id'
+    | '/$tenant/$locale/b2b/$id'
     | '/$tenant/$locale/b2b/dashboard'
     | '/$tenant/$locale/b2b/register'
     | '/$tenant/$locale/blog/$slug'
     | '/$tenant/$locale/bookings/$serviceHandle'
     | '/$tenant/$locale/bookings/confirmation'
+    | '/$tenant/$locale/bundles/$id'
     | '/$tenant/$locale/business/approvals'
     | '/$tenant/$locale/business/catalog'
     | '/$tenant/$locale/business/orders'
@@ -2998,19 +3315,25 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/campaigns/$id'
     | '/$tenant/$locale/charity/$id'
     | '/$tenant/$locale/classifieds/$id'
+    | '/$tenant/$locale/consignment-shop/$id'
+    | '/$tenant/$locale/credit/$id'
     | '/$tenant/$locale/crowdfunding/$id'
     | '/$tenant/$locale/digital/$id'
+    | '/$tenant/$locale/dropshipping-marketplace/$id'
     | '/$tenant/$locale/education/$id'
     | '/$tenant/$locale/events/$id'
     | '/$tenant/$locale/financial/$id'
     | '/$tenant/$locale/fitness/$id'
+    | '/$tenant/$locale/flash-deals/$id'
     | '/$tenant/$locale/freelance/$id'
+    | '/$tenant/$locale/gift-cards-shop/$id'
     | '/$tenant/$locale/government/$id'
     | '/$tenant/$locale/grocery/$id'
     | '/$tenant/$locale/healthcare/$id'
     | '/$tenant/$locale/help/$slug'
     | '/$tenant/$locale/insurance/$id'
     | '/$tenant/$locale/legal/$id'
+    | '/$tenant/$locale/loyalty-program/$id'
     | '/$tenant/$locale/manage/advertising'
     | '/$tenant/$locale/manage/affiliates'
     | '/$tenant/$locale/manage/analytics'
@@ -3018,6 +3341,7 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/manage/audit'
     | '/$tenant/$locale/manage/automotive'
     | '/$tenant/$locale/manage/bookings'
+    | '/$tenant/$locale/manage/bundles'
     | '/$tenant/$locale/manage/cart-extensions'
     | '/$tenant/$locale/manage/channels'
     | '/$tenant/$locale/manage/charity'
@@ -3026,26 +3350,33 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/manage/commissions'
     | '/$tenant/$locale/manage/companies'
     | '/$tenant/$locale/manage/companies-admin'
+    | '/$tenant/$locale/manage/consignments'
+    | '/$tenant/$locale/manage/credit'
     | '/$tenant/$locale/manage/crowdfunding'
     | '/$tenant/$locale/manage/customers'
     | '/$tenant/$locale/manage/digital-products'
     | '/$tenant/$locale/manage/disputes'
+    | '/$tenant/$locale/manage/dropshipping'
     | '/$tenant/$locale/manage/education'
     | '/$tenant/$locale/manage/event-ticketing'
     | '/$tenant/$locale/manage/events'
     | '/$tenant/$locale/manage/financial-products'
     | '/$tenant/$locale/manage/fitness'
+    | '/$tenant/$locale/manage/flash-sales'
     | '/$tenant/$locale/manage/freelance'
+    | '/$tenant/$locale/manage/gift-cards'
     | '/$tenant/$locale/manage/governance'
     | '/$tenant/$locale/manage/government'
     | '/$tenant/$locale/manage/grocery'
     | '/$tenant/$locale/manage/healthcare'
     | '/$tenant/$locale/manage/i18n'
+    | '/$tenant/$locale/manage/insurance'
     | '/$tenant/$locale/manage/inventory'
     | '/$tenant/$locale/manage/invoices'
     | '/$tenant/$locale/manage/legal'
     | '/$tenant/$locale/manage/loyalty'
     | '/$tenant/$locale/manage/memberships'
+    | '/$tenant/$locale/manage/newsletters'
     | '/$tenant/$locale/manage/nodes'
     | '/$tenant/$locale/manage/notification-preferences'
     | '/$tenant/$locale/manage/orders'
@@ -3053,6 +3384,7 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/manage/payouts'
     | '/$tenant/$locale/manage/personas'
     | '/$tenant/$locale/manage/pet-services'
+    | '/$tenant/$locale/manage/print-on-demand'
     | '/$tenant/$locale/manage/products'
     | '/$tenant/$locale/manage/promotion-extensions'
     | '/$tenant/$locale/manage/promotions'
@@ -3070,16 +3402,22 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/manage/tax-config'
     | '/$tenant/$locale/manage/team'
     | '/$tenant/$locale/manage/tenants-admin'
+    | '/$tenant/$locale/manage/trade-in'
     | '/$tenant/$locale/manage/travel'
+    | '/$tenant/$locale/manage/try-before-you-buy'
     | '/$tenant/$locale/manage/utilities'
     | '/$tenant/$locale/manage/vendors'
     | '/$tenant/$locale/manage/volume-pricing'
+    | '/$tenant/$locale/manage/wallet'
     | '/$tenant/$locale/manage/warranties'
+    | '/$tenant/$locale/manage/white-label'
     | '/$tenant/$locale/manage/wishlists'
     | '/$tenant/$locale/memberships/$id'
+    | '/$tenant/$locale/newsletter/$id'
     | '/$tenant/$locale/parking/$id'
     | '/$tenant/$locale/pet-services/$id'
     | '/$tenant/$locale/places/$id'
+    | '/$tenant/$locale/print-on-demand-shop/$id'
     | '/$tenant/$locale/products/$handle'
     | '/$tenant/$locale/quotes/$id'
     | '/$tenant/$locale/quotes/request'
@@ -3087,9 +3425,12 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/rentals/$id'
     | '/$tenant/$locale/restaurants/$id'
     | '/$tenant/$locale/social-commerce/$id'
+    | '/$tenant/$locale/subscriptions/$id'
     | '/$tenant/$locale/subscriptions/checkout'
     | '/$tenant/$locale/subscriptions/success'
+    | '/$tenant/$locale/trade-in/$id'
     | '/$tenant/$locale/travel/$id'
+    | '/$tenant/$locale/try-before-you-buy/$id'
     | '/$tenant/$locale/vendor/advertising'
     | '/$tenant/$locale/vendor/affiliate'
     | '/$tenant/$locale/vendor/auctions'
@@ -3144,7 +3485,9 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/vendor/wishlists'
     | '/$tenant/$locale/vendors/$handle'
     | '/$tenant/$locale/verify/age'
+    | '/$tenant/$locale/volume-deals/$id'
     | '/$tenant/$locale/warranties/$id'
+    | '/$tenant/$locale/white-label-shop/$id'
     | '/$tenant/$locale/account'
     | '/$tenant/$locale/affiliate'
     | '/$tenant/$locale/auctions'
@@ -3256,13 +3599,16 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/account/verification'
     | '/$tenant/$locale/account/wallet'
     | '/$tenant/$locale/account/wishlist'
+    | '/$tenant/$locale/affiliate/$id'
     | '/$tenant/$locale/auctions/$id'
     | '/$tenant/$locale/automotive/$id'
+    | '/$tenant/$locale/b2b/$id'
     | '/$tenant/$locale/b2b/dashboard'
     | '/$tenant/$locale/b2b/register'
     | '/$tenant/$locale/blog/$slug'
     | '/$tenant/$locale/bookings/$serviceHandle'
     | '/$tenant/$locale/bookings/confirmation'
+    | '/$tenant/$locale/bundles/$id'
     | '/$tenant/$locale/business/approvals'
     | '/$tenant/$locale/business/catalog'
     | '/$tenant/$locale/business/orders'
@@ -3270,19 +3616,25 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/campaigns/$id'
     | '/$tenant/$locale/charity/$id'
     | '/$tenant/$locale/classifieds/$id'
+    | '/$tenant/$locale/consignment-shop/$id'
+    | '/$tenant/$locale/credit/$id'
     | '/$tenant/$locale/crowdfunding/$id'
     | '/$tenant/$locale/digital/$id'
+    | '/$tenant/$locale/dropshipping-marketplace/$id'
     | '/$tenant/$locale/education/$id'
     | '/$tenant/$locale/events/$id'
     | '/$tenant/$locale/financial/$id'
     | '/$tenant/$locale/fitness/$id'
+    | '/$tenant/$locale/flash-deals/$id'
     | '/$tenant/$locale/freelance/$id'
+    | '/$tenant/$locale/gift-cards-shop/$id'
     | '/$tenant/$locale/government/$id'
     | '/$tenant/$locale/grocery/$id'
     | '/$tenant/$locale/healthcare/$id'
     | '/$tenant/$locale/help/$slug'
     | '/$tenant/$locale/insurance/$id'
     | '/$tenant/$locale/legal/$id'
+    | '/$tenant/$locale/loyalty-program/$id'
     | '/$tenant/$locale/manage/advertising'
     | '/$tenant/$locale/manage/affiliates'
     | '/$tenant/$locale/manage/analytics'
@@ -3290,6 +3642,7 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/manage/audit'
     | '/$tenant/$locale/manage/automotive'
     | '/$tenant/$locale/manage/bookings'
+    | '/$tenant/$locale/manage/bundles'
     | '/$tenant/$locale/manage/cart-extensions'
     | '/$tenant/$locale/manage/channels'
     | '/$tenant/$locale/manage/charity'
@@ -3298,26 +3651,33 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/manage/commissions'
     | '/$tenant/$locale/manage/companies'
     | '/$tenant/$locale/manage/companies-admin'
+    | '/$tenant/$locale/manage/consignments'
+    | '/$tenant/$locale/manage/credit'
     | '/$tenant/$locale/manage/crowdfunding'
     | '/$tenant/$locale/manage/customers'
     | '/$tenant/$locale/manage/digital-products'
     | '/$tenant/$locale/manage/disputes'
+    | '/$tenant/$locale/manage/dropshipping'
     | '/$tenant/$locale/manage/education'
     | '/$tenant/$locale/manage/event-ticketing'
     | '/$tenant/$locale/manage/events'
     | '/$tenant/$locale/manage/financial-products'
     | '/$tenant/$locale/manage/fitness'
+    | '/$tenant/$locale/manage/flash-sales'
     | '/$tenant/$locale/manage/freelance'
+    | '/$tenant/$locale/manage/gift-cards'
     | '/$tenant/$locale/manage/governance'
     | '/$tenant/$locale/manage/government'
     | '/$tenant/$locale/manage/grocery'
     | '/$tenant/$locale/manage/healthcare'
     | '/$tenant/$locale/manage/i18n'
+    | '/$tenant/$locale/manage/insurance'
     | '/$tenant/$locale/manage/inventory'
     | '/$tenant/$locale/manage/invoices'
     | '/$tenant/$locale/manage/legal'
     | '/$tenant/$locale/manage/loyalty'
     | '/$tenant/$locale/manage/memberships'
+    | '/$tenant/$locale/manage/newsletters'
     | '/$tenant/$locale/manage/nodes'
     | '/$tenant/$locale/manage/notification-preferences'
     | '/$tenant/$locale/manage/orders'
@@ -3325,6 +3685,7 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/manage/payouts'
     | '/$tenant/$locale/manage/personas'
     | '/$tenant/$locale/manage/pet-services'
+    | '/$tenant/$locale/manage/print-on-demand'
     | '/$tenant/$locale/manage/products'
     | '/$tenant/$locale/manage/promotion-extensions'
     | '/$tenant/$locale/manage/promotions'
@@ -3342,16 +3703,22 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/manage/tax-config'
     | '/$tenant/$locale/manage/team'
     | '/$tenant/$locale/manage/tenants-admin'
+    | '/$tenant/$locale/manage/trade-in'
     | '/$tenant/$locale/manage/travel'
+    | '/$tenant/$locale/manage/try-before-you-buy'
     | '/$tenant/$locale/manage/utilities'
     | '/$tenant/$locale/manage/vendors'
     | '/$tenant/$locale/manage/volume-pricing'
+    | '/$tenant/$locale/manage/wallet'
     | '/$tenant/$locale/manage/warranties'
+    | '/$tenant/$locale/manage/white-label'
     | '/$tenant/$locale/manage/wishlists'
     | '/$tenant/$locale/memberships/$id'
+    | '/$tenant/$locale/newsletter/$id'
     | '/$tenant/$locale/parking/$id'
     | '/$tenant/$locale/pet-services/$id'
     | '/$tenant/$locale/places/$id'
+    | '/$tenant/$locale/print-on-demand-shop/$id'
     | '/$tenant/$locale/products/$handle'
     | '/$tenant/$locale/quotes/$id'
     | '/$tenant/$locale/quotes/request'
@@ -3359,9 +3726,12 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/rentals/$id'
     | '/$tenant/$locale/restaurants/$id'
     | '/$tenant/$locale/social-commerce/$id'
+    | '/$tenant/$locale/subscriptions/$id'
     | '/$tenant/$locale/subscriptions/checkout'
     | '/$tenant/$locale/subscriptions/success'
+    | '/$tenant/$locale/trade-in/$id'
     | '/$tenant/$locale/travel/$id'
+    | '/$tenant/$locale/try-before-you-buy/$id'
     | '/$tenant/$locale/vendor/advertising'
     | '/$tenant/$locale/vendor/affiliate'
     | '/$tenant/$locale/vendor/auctions'
@@ -3417,7 +3787,9 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/vendor/wishlists'
     | '/$tenant/$locale/vendors/$handle'
     | '/$tenant/$locale/verify/age'
+    | '/$tenant/$locale/volume-deals/$id'
     | '/$tenant/$locale/warranties/$id'
+    | '/$tenant/$locale/white-label-shop/$id'
     | '/$tenant/$locale/account/'
     | '/$tenant/$locale/affiliate/'
     | '/$tenant/$locale/auctions/'
@@ -4052,11 +4424,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleAccountIndexRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
+    '/$tenant/$locale/white-label-shop/$id': {
+      id: '/$tenant/$locale/white-label-shop/$id'
+      path: '/white-label-shop/$id'
+      fullPath: '/$tenant/$locale/white-label-shop/$id'
+      preLoaderRoute: typeof TenantLocaleWhiteLabelShopIdRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
     '/$tenant/$locale/warranties/$id': {
       id: '/$tenant/$locale/warranties/$id'
       path: '/warranties/$id'
       fullPath: '/$tenant/$locale/warranties/$id'
       preLoaderRoute: typeof TenantLocaleWarrantiesIdRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/volume-deals/$id': {
+      id: '/$tenant/$locale/volume-deals/$id'
+      path: '/volume-deals/$id'
+      fullPath: '/$tenant/$locale/volume-deals/$id'
+      preLoaderRoute: typeof TenantLocaleVolumeDealsIdRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$tenant/$locale/verify/age': {
@@ -4444,12 +4830,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleVendorAdvertisingRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
+    '/$tenant/$locale/try-before-you-buy/$id': {
+      id: '/$tenant/$locale/try-before-you-buy/$id'
+      path: '/try-before-you-buy/$id'
+      fullPath: '/$tenant/$locale/try-before-you-buy/$id'
+      preLoaderRoute: typeof TenantLocaleTryBeforeYouBuyIdRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
     '/$tenant/$locale/travel/$id': {
       id: '/$tenant/$locale/travel/$id'
       path: '/travel/$id'
       fullPath: '/$tenant/$locale/travel/$id'
       preLoaderRoute: typeof TenantLocaleTravelIdRouteImport
       parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/trade-in/$id': {
+      id: '/$tenant/$locale/trade-in/$id'
+      path: '/$id'
+      fullPath: '/$tenant/$locale/trade-in/$id'
+      preLoaderRoute: typeof TenantLocaleTradeInIdRouteImport
+      parentRoute: typeof TenantLocaleTradeInRoute
     }
     '/$tenant/$locale/subscriptions/success': {
       id: '/$tenant/$locale/subscriptions/success'
@@ -4463,6 +4863,13 @@ declare module '@tanstack/react-router' {
       path: '/subscriptions/checkout'
       fullPath: '/$tenant/$locale/subscriptions/checkout'
       preLoaderRoute: typeof TenantLocaleSubscriptionsCheckoutRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/subscriptions/$id': {
+      id: '/$tenant/$locale/subscriptions/$id'
+      path: '/subscriptions/$id'
+      fullPath: '/$tenant/$locale/subscriptions/$id'
+      preLoaderRoute: typeof TenantLocaleSubscriptionsIdRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$tenant/$locale/social-commerce/$id': {
@@ -4514,6 +4921,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleProductsHandleRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
+    '/$tenant/$locale/print-on-demand-shop/$id': {
+      id: '/$tenant/$locale/print-on-demand-shop/$id'
+      path: '/print-on-demand-shop/$id'
+      fullPath: '/$tenant/$locale/print-on-demand-shop/$id'
+      preLoaderRoute: typeof TenantLocalePrintOnDemandShopIdRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
     '/$tenant/$locale/places/$id': {
       id: '/$tenant/$locale/places/$id'
       path: '/places/$id'
@@ -4535,6 +4949,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleParkingIdRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
+    '/$tenant/$locale/newsletter/$id': {
+      id: '/$tenant/$locale/newsletter/$id'
+      path: '/newsletter/$id'
+      fullPath: '/$tenant/$locale/newsletter/$id'
+      preLoaderRoute: typeof TenantLocaleNewsletterIdRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
     '/$tenant/$locale/memberships/$id': {
       id: '/$tenant/$locale/memberships/$id'
       path: '/memberships/$id'
@@ -4549,11 +4970,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleManageWishlistsRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
+    '/$tenant/$locale/manage/white-label': {
+      id: '/$tenant/$locale/manage/white-label'
+      path: '/manage/white-label'
+      fullPath: '/$tenant/$locale/manage/white-label'
+      preLoaderRoute: typeof TenantLocaleManageWhiteLabelRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
     '/$tenant/$locale/manage/warranties': {
       id: '/$tenant/$locale/manage/warranties'
       path: '/manage/warranties'
       fullPath: '/$tenant/$locale/manage/warranties'
       preLoaderRoute: typeof TenantLocaleManageWarrantiesRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/manage/wallet': {
+      id: '/$tenant/$locale/manage/wallet'
+      path: '/manage/wallet'
+      fullPath: '/$tenant/$locale/manage/wallet'
+      preLoaderRoute: typeof TenantLocaleManageWalletRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$tenant/$locale/manage/volume-pricing': {
@@ -4577,11 +5012,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleManageUtilitiesRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
+    '/$tenant/$locale/manage/try-before-you-buy': {
+      id: '/$tenant/$locale/manage/try-before-you-buy'
+      path: '/manage/try-before-you-buy'
+      fullPath: '/$tenant/$locale/manage/try-before-you-buy'
+      preLoaderRoute: typeof TenantLocaleManageTryBeforeYouBuyRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
     '/$tenant/$locale/manage/travel': {
       id: '/$tenant/$locale/manage/travel'
       path: '/manage/travel'
       fullPath: '/$tenant/$locale/manage/travel'
       preLoaderRoute: typeof TenantLocaleManageTravelRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/manage/trade-in': {
+      id: '/$tenant/$locale/manage/trade-in'
+      path: '/manage/trade-in'
+      fullPath: '/$tenant/$locale/manage/trade-in'
+      preLoaderRoute: typeof TenantLocaleManageTradeInRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$tenant/$locale/manage/tenants-admin': {
@@ -4703,6 +5152,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleManageProductsRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
+    '/$tenant/$locale/manage/print-on-demand': {
+      id: '/$tenant/$locale/manage/print-on-demand'
+      path: '/manage/print-on-demand'
+      fullPath: '/$tenant/$locale/manage/print-on-demand'
+      preLoaderRoute: typeof TenantLocaleManagePrintOnDemandRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
     '/$tenant/$locale/manage/pet-services': {
       id: '/$tenant/$locale/manage/pet-services'
       path: '/manage/pet-services'
@@ -4752,6 +5208,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleManageNodesRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
+    '/$tenant/$locale/manage/newsletters': {
+      id: '/$tenant/$locale/manage/newsletters'
+      path: '/manage/newsletters'
+      fullPath: '/$tenant/$locale/manage/newsletters'
+      preLoaderRoute: typeof TenantLocaleManageNewslettersRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
     '/$tenant/$locale/manage/memberships': {
       id: '/$tenant/$locale/manage/memberships'
       path: '/manage/memberships'
@@ -4785,6 +5248,13 @@ declare module '@tanstack/react-router' {
       path: '/manage/inventory'
       fullPath: '/$tenant/$locale/manage/inventory'
       preLoaderRoute: typeof TenantLocaleManageInventoryRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/manage/insurance': {
+      id: '/$tenant/$locale/manage/insurance'
+      path: '/manage/insurance'
+      fullPath: '/$tenant/$locale/manage/insurance'
+      preLoaderRoute: typeof TenantLocaleManageInsuranceRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$tenant/$locale/manage/i18n': {
@@ -4822,11 +5292,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleManageGovernanceRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
+    '/$tenant/$locale/manage/gift-cards': {
+      id: '/$tenant/$locale/manage/gift-cards'
+      path: '/manage/gift-cards'
+      fullPath: '/$tenant/$locale/manage/gift-cards'
+      preLoaderRoute: typeof TenantLocaleManageGiftCardsRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
     '/$tenant/$locale/manage/freelance': {
       id: '/$tenant/$locale/manage/freelance'
       path: '/manage/freelance'
       fullPath: '/$tenant/$locale/manage/freelance'
       preLoaderRoute: typeof TenantLocaleManageFreelanceRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/manage/flash-sales': {
+      id: '/$tenant/$locale/manage/flash-sales'
+      path: '/manage/flash-sales'
+      fullPath: '/$tenant/$locale/manage/flash-sales'
+      preLoaderRoute: typeof TenantLocaleManageFlashSalesRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$tenant/$locale/manage/fitness': {
@@ -4864,6 +5348,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleManageEducationRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
+    '/$tenant/$locale/manage/dropshipping': {
+      id: '/$tenant/$locale/manage/dropshipping'
+      path: '/manage/dropshipping'
+      fullPath: '/$tenant/$locale/manage/dropshipping'
+      preLoaderRoute: typeof TenantLocaleManageDropshippingRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
     '/$tenant/$locale/manage/disputes': {
       id: '/$tenant/$locale/manage/disputes'
       path: '/manage/disputes'
@@ -4890,6 +5381,20 @@ declare module '@tanstack/react-router' {
       path: '/manage/crowdfunding'
       fullPath: '/$tenant/$locale/manage/crowdfunding'
       preLoaderRoute: typeof TenantLocaleManageCrowdfundingRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/manage/credit': {
+      id: '/$tenant/$locale/manage/credit'
+      path: '/manage/credit'
+      fullPath: '/$tenant/$locale/manage/credit'
+      preLoaderRoute: typeof TenantLocaleManageCreditRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/manage/consignments': {
+      id: '/$tenant/$locale/manage/consignments'
+      path: '/manage/consignments'
+      fullPath: '/$tenant/$locale/manage/consignments'
+      preLoaderRoute: typeof TenantLocaleManageConsignmentsRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$tenant/$locale/manage/companies-admin': {
@@ -4948,6 +5453,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleManageCartExtensionsRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
+    '/$tenant/$locale/manage/bundles': {
+      id: '/$tenant/$locale/manage/bundles'
+      path: '/manage/bundles'
+      fullPath: '/$tenant/$locale/manage/bundles'
+      preLoaderRoute: typeof TenantLocaleManageBundlesRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
     '/$tenant/$locale/manage/bookings': {
       id: '/$tenant/$locale/manage/bookings'
       path: '/manage/bookings'
@@ -4997,6 +5509,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleManageAdvertisingRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
+    '/$tenant/$locale/loyalty-program/$id': {
+      id: '/$tenant/$locale/loyalty-program/$id'
+      path: '/loyalty-program/$id'
+      fullPath: '/$tenant/$locale/loyalty-program/$id'
+      preLoaderRoute: typeof TenantLocaleLoyaltyProgramIdRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
     '/$tenant/$locale/legal/$id': {
       id: '/$tenant/$locale/legal/$id'
       path: '/legal/$id'
@@ -5039,11 +5558,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleGovernmentIdRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
+    '/$tenant/$locale/gift-cards-shop/$id': {
+      id: '/$tenant/$locale/gift-cards-shop/$id'
+      path: '/gift-cards-shop/$id'
+      fullPath: '/$tenant/$locale/gift-cards-shop/$id'
+      preLoaderRoute: typeof TenantLocaleGiftCardsShopIdRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
     '/$tenant/$locale/freelance/$id': {
       id: '/$tenant/$locale/freelance/$id'
       path: '/freelance/$id'
       fullPath: '/$tenant/$locale/freelance/$id'
       preLoaderRoute: typeof TenantLocaleFreelanceIdRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/flash-deals/$id': {
+      id: '/$tenant/$locale/flash-deals/$id'
+      path: '/flash-deals/$id'
+      fullPath: '/$tenant/$locale/flash-deals/$id'
+      preLoaderRoute: typeof TenantLocaleFlashDealsIdRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$tenant/$locale/fitness/$id': {
@@ -5074,6 +5607,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleEducationIdRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
+    '/$tenant/$locale/dropshipping-marketplace/$id': {
+      id: '/$tenant/$locale/dropshipping-marketplace/$id'
+      path: '/dropshipping-marketplace/$id'
+      fullPath: '/$tenant/$locale/dropshipping-marketplace/$id'
+      preLoaderRoute: typeof TenantLocaleDropshippingMarketplaceIdRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
     '/$tenant/$locale/digital/$id': {
       id: '/$tenant/$locale/digital/$id'
       path: '/digital/$id'
@@ -5086,6 +5626,20 @@ declare module '@tanstack/react-router' {
       path: '/crowdfunding/$id'
       fullPath: '/$tenant/$locale/crowdfunding/$id'
       preLoaderRoute: typeof TenantLocaleCrowdfundingIdRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/credit/$id': {
+      id: '/$tenant/$locale/credit/$id'
+      path: '/credit/$id'
+      fullPath: '/$tenant/$locale/credit/$id'
+      preLoaderRoute: typeof TenantLocaleCreditIdRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/consignment-shop/$id': {
+      id: '/$tenant/$locale/consignment-shop/$id'
+      path: '/consignment-shop/$id'
+      fullPath: '/$tenant/$locale/consignment-shop/$id'
+      preLoaderRoute: typeof TenantLocaleConsignmentShopIdRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$tenant/$locale/classifieds/$id': {
@@ -5137,6 +5691,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleBusinessApprovalsRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
+    '/$tenant/$locale/bundles/$id': {
+      id: '/$tenant/$locale/bundles/$id'
+      path: '/bundles/$id'
+      fullPath: '/$tenant/$locale/bundles/$id'
+      preLoaderRoute: typeof TenantLocaleBundlesIdRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
     '/$tenant/$locale/bookings/confirmation': {
       id: '/$tenant/$locale/bookings/confirmation'
       path: '/bookings/confirmation'
@@ -5172,6 +5733,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleB2bDashboardRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
+    '/$tenant/$locale/b2b/$id': {
+      id: '/$tenant/$locale/b2b/$id'
+      path: '/b2b/$id'
+      fullPath: '/$tenant/$locale/b2b/$id'
+      preLoaderRoute: typeof TenantLocaleB2bIdRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
     '/$tenant/$locale/automotive/$id': {
       id: '/$tenant/$locale/automotive/$id'
       path: '/automotive/$id'
@@ -5184,6 +5752,13 @@ declare module '@tanstack/react-router' {
       path: '/auctions/$id'
       fullPath: '/$tenant/$locale/auctions/$id'
       preLoaderRoute: typeof TenantLocaleAuctionsIdRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/affiliate/$id': {
+      id: '/$tenant/$locale/affiliate/$id'
+      path: '/affiliate/$id'
+      fullPath: '/$tenant/$locale/affiliate/$id'
+      preLoaderRoute: typeof TenantLocaleAffiliateIdRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$tenant/$locale/account/wishlist': {
@@ -5439,10 +6014,12 @@ declare module '@tanstack/react-start/server' {
 }
 
 interface TenantLocaleTradeInRouteChildren {
+  TenantLocaleTradeInIdRoute: typeof TenantLocaleTradeInIdRoute
   TenantLocaleTradeInIndexRoute: typeof TenantLocaleTradeInIndexRoute
 }
 
 const TenantLocaleTradeInRouteChildren: TenantLocaleTradeInRouteChildren = {
+  TenantLocaleTradeInIdRoute: TenantLocaleTradeInIdRoute,
   TenantLocaleTradeInIndexRoute: TenantLocaleTradeInIndexRoute,
 }
 
@@ -5525,13 +6102,16 @@ interface TenantLocaleRouteChildren {
   TenantLocaleAccountVerificationRoute: typeof TenantLocaleAccountVerificationRoute
   TenantLocaleAccountWalletRoute: typeof TenantLocaleAccountWalletRoute
   TenantLocaleAccountWishlistRoute: typeof TenantLocaleAccountWishlistRoute
+  TenantLocaleAffiliateIdRoute: typeof TenantLocaleAffiliateIdRoute
   TenantLocaleAuctionsIdRoute: typeof TenantLocaleAuctionsIdRoute
   TenantLocaleAutomotiveIdRoute: typeof TenantLocaleAutomotiveIdRoute
+  TenantLocaleB2bIdRoute: typeof TenantLocaleB2bIdRoute
   TenantLocaleB2bDashboardRoute: typeof TenantLocaleB2bDashboardRoute
   TenantLocaleB2bRegisterRoute: typeof TenantLocaleB2bRegisterRoute
   TenantLocaleBlogSlugRoute: typeof TenantLocaleBlogSlugRoute
   TenantLocaleBookingsServiceHandleRoute: typeof TenantLocaleBookingsServiceHandleRoute
   TenantLocaleBookingsConfirmationRoute: typeof TenantLocaleBookingsConfirmationRoute
+  TenantLocaleBundlesIdRoute: typeof TenantLocaleBundlesIdRoute
   TenantLocaleBusinessApprovalsRoute: typeof TenantLocaleBusinessApprovalsRoute
   TenantLocaleBusinessCatalogRoute: typeof TenantLocaleBusinessCatalogRoute
   TenantLocaleBusinessOrdersRoute: typeof TenantLocaleBusinessOrdersRoute
@@ -5539,19 +6119,25 @@ interface TenantLocaleRouteChildren {
   TenantLocaleCampaignsIdRoute: typeof TenantLocaleCampaignsIdRoute
   TenantLocaleCharityIdRoute: typeof TenantLocaleCharityIdRoute
   TenantLocaleClassifiedsIdRoute: typeof TenantLocaleClassifiedsIdRoute
+  TenantLocaleConsignmentShopIdRoute: typeof TenantLocaleConsignmentShopIdRoute
+  TenantLocaleCreditIdRoute: typeof TenantLocaleCreditIdRoute
   TenantLocaleCrowdfundingIdRoute: typeof TenantLocaleCrowdfundingIdRoute
   TenantLocaleDigitalIdRoute: typeof TenantLocaleDigitalIdRoute
+  TenantLocaleDropshippingMarketplaceIdRoute: typeof TenantLocaleDropshippingMarketplaceIdRoute
   TenantLocaleEducationIdRoute: typeof TenantLocaleEducationIdRoute
   TenantLocaleEventsIdRoute: typeof TenantLocaleEventsIdRoute
   TenantLocaleFinancialIdRoute: typeof TenantLocaleFinancialIdRoute
   TenantLocaleFitnessIdRoute: typeof TenantLocaleFitnessIdRoute
+  TenantLocaleFlashDealsIdRoute: typeof TenantLocaleFlashDealsIdRoute
   TenantLocaleFreelanceIdRoute: typeof TenantLocaleFreelanceIdRoute
+  TenantLocaleGiftCardsShopIdRoute: typeof TenantLocaleGiftCardsShopIdRoute
   TenantLocaleGovernmentIdRoute: typeof TenantLocaleGovernmentIdRoute
   TenantLocaleGroceryIdRoute: typeof TenantLocaleGroceryIdRoute
   TenantLocaleHealthcareIdRoute: typeof TenantLocaleHealthcareIdRoute
   TenantLocaleHelpSlugRoute: typeof TenantLocaleHelpSlugRoute
   TenantLocaleInsuranceIdRoute: typeof TenantLocaleInsuranceIdRoute
   TenantLocaleLegalIdRoute: typeof TenantLocaleLegalIdRoute
+  TenantLocaleLoyaltyProgramIdRoute: typeof TenantLocaleLoyaltyProgramIdRoute
   TenantLocaleManageAdvertisingRoute: typeof TenantLocaleManageAdvertisingRoute
   TenantLocaleManageAffiliatesRoute: typeof TenantLocaleManageAffiliatesRoute
   TenantLocaleManageAnalyticsRoute: typeof TenantLocaleManageAnalyticsRoute
@@ -5559,6 +6145,7 @@ interface TenantLocaleRouteChildren {
   TenantLocaleManageAuditRoute: typeof TenantLocaleManageAuditRoute
   TenantLocaleManageAutomotiveRoute: typeof TenantLocaleManageAutomotiveRoute
   TenantLocaleManageBookingsRoute: typeof TenantLocaleManageBookingsRoute
+  TenantLocaleManageBundlesRoute: typeof TenantLocaleManageBundlesRoute
   TenantLocaleManageCartExtensionsRoute: typeof TenantLocaleManageCartExtensionsRoute
   TenantLocaleManageChannelsRoute: typeof TenantLocaleManageChannelsRoute
   TenantLocaleManageCharityRoute: typeof TenantLocaleManageCharityRoute
@@ -5567,26 +6154,33 @@ interface TenantLocaleRouteChildren {
   TenantLocaleManageCommissionsRoute: typeof TenantLocaleManageCommissionsRoute
   TenantLocaleManageCompaniesRoute: typeof TenantLocaleManageCompaniesRoute
   TenantLocaleManageCompaniesAdminRoute: typeof TenantLocaleManageCompaniesAdminRoute
+  TenantLocaleManageConsignmentsRoute: typeof TenantLocaleManageConsignmentsRoute
+  TenantLocaleManageCreditRoute: typeof TenantLocaleManageCreditRoute
   TenantLocaleManageCrowdfundingRoute: typeof TenantLocaleManageCrowdfundingRoute
   TenantLocaleManageCustomersRoute: typeof TenantLocaleManageCustomersRoute
   TenantLocaleManageDigitalProductsRoute: typeof TenantLocaleManageDigitalProductsRoute
   TenantLocaleManageDisputesRoute: typeof TenantLocaleManageDisputesRoute
+  TenantLocaleManageDropshippingRoute: typeof TenantLocaleManageDropshippingRoute
   TenantLocaleManageEducationRoute: typeof TenantLocaleManageEducationRoute
   TenantLocaleManageEventTicketingRoute: typeof TenantLocaleManageEventTicketingRoute
   TenantLocaleManageEventsRoute: typeof TenantLocaleManageEventsRoute
   TenantLocaleManageFinancialProductsRoute: typeof TenantLocaleManageFinancialProductsRoute
   TenantLocaleManageFitnessRoute: typeof TenantLocaleManageFitnessRoute
+  TenantLocaleManageFlashSalesRoute: typeof TenantLocaleManageFlashSalesRoute
   TenantLocaleManageFreelanceRoute: typeof TenantLocaleManageFreelanceRoute
+  TenantLocaleManageGiftCardsRoute: typeof TenantLocaleManageGiftCardsRoute
   TenantLocaleManageGovernanceRoute: typeof TenantLocaleManageGovernanceRoute
   TenantLocaleManageGovernmentRoute: typeof TenantLocaleManageGovernmentRoute
   TenantLocaleManageGroceryRoute: typeof TenantLocaleManageGroceryRoute
   TenantLocaleManageHealthcareRoute: typeof TenantLocaleManageHealthcareRoute
   TenantLocaleManageI18nRoute: typeof TenantLocaleManageI18nRoute
+  TenantLocaleManageInsuranceRoute: typeof TenantLocaleManageInsuranceRoute
   TenantLocaleManageInventoryRoute: typeof TenantLocaleManageInventoryRoute
   TenantLocaleManageInvoicesRoute: typeof TenantLocaleManageInvoicesRoute
   TenantLocaleManageLegalRoute: typeof TenantLocaleManageLegalRoute
   TenantLocaleManageLoyaltyRoute: typeof TenantLocaleManageLoyaltyRoute
   TenantLocaleManageMembershipsRoute: typeof TenantLocaleManageMembershipsRoute
+  TenantLocaleManageNewslettersRoute: typeof TenantLocaleManageNewslettersRoute
   TenantLocaleManageNodesRoute: typeof TenantLocaleManageNodesRoute
   TenantLocaleManageNotificationPreferencesRoute: typeof TenantLocaleManageNotificationPreferencesRoute
   TenantLocaleManageOrdersRoute: typeof TenantLocaleManageOrdersRoute
@@ -5594,6 +6188,7 @@ interface TenantLocaleRouteChildren {
   TenantLocaleManagePayoutsRoute: typeof TenantLocaleManagePayoutsRoute
   TenantLocaleManagePersonasRoute: typeof TenantLocaleManagePersonasRoute
   TenantLocaleManagePetServicesRoute: typeof TenantLocaleManagePetServicesRoute
+  TenantLocaleManagePrintOnDemandRoute: typeof TenantLocaleManagePrintOnDemandRoute
   TenantLocaleManageProductsRoute: typeof TenantLocaleManageProductsRoute
   TenantLocaleManagePromotionExtensionsRoute: typeof TenantLocaleManagePromotionExtensionsRoute
   TenantLocaleManagePromotionsRoute: typeof TenantLocaleManagePromotionsRoute
@@ -5611,16 +6206,22 @@ interface TenantLocaleRouteChildren {
   TenantLocaleManageTaxConfigRoute: typeof TenantLocaleManageTaxConfigRoute
   TenantLocaleManageTeamRoute: typeof TenantLocaleManageTeamRoute
   TenantLocaleManageTenantsAdminRoute: typeof TenantLocaleManageTenantsAdminRoute
+  TenantLocaleManageTradeInRoute: typeof TenantLocaleManageTradeInRoute
   TenantLocaleManageTravelRoute: typeof TenantLocaleManageTravelRoute
+  TenantLocaleManageTryBeforeYouBuyRoute: typeof TenantLocaleManageTryBeforeYouBuyRoute
   TenantLocaleManageUtilitiesRoute: typeof TenantLocaleManageUtilitiesRoute
   TenantLocaleManageVendorsRoute: typeof TenantLocaleManageVendorsRoute
   TenantLocaleManageVolumePricingRoute: typeof TenantLocaleManageVolumePricingRoute
+  TenantLocaleManageWalletRoute: typeof TenantLocaleManageWalletRoute
   TenantLocaleManageWarrantiesRoute: typeof TenantLocaleManageWarrantiesRoute
+  TenantLocaleManageWhiteLabelRoute: typeof TenantLocaleManageWhiteLabelRoute
   TenantLocaleManageWishlistsRoute: typeof TenantLocaleManageWishlistsRoute
   TenantLocaleMembershipsIdRoute: typeof TenantLocaleMembershipsIdRoute
+  TenantLocaleNewsletterIdRoute: typeof TenantLocaleNewsletterIdRoute
   TenantLocaleParkingIdRoute: typeof TenantLocaleParkingIdRoute
   TenantLocalePetServicesIdRoute: typeof TenantLocalePetServicesIdRoute
   TenantLocalePlacesIdRoute: typeof TenantLocalePlacesIdRoute
+  TenantLocalePrintOnDemandShopIdRoute: typeof TenantLocalePrintOnDemandShopIdRoute
   TenantLocaleProductsHandleRoute: typeof TenantLocaleProductsHandleRoute
   TenantLocaleQuotesIdRoute: typeof TenantLocaleQuotesIdRoute
   TenantLocaleQuotesRequestRoute: typeof TenantLocaleQuotesRequestRoute
@@ -5628,9 +6229,11 @@ interface TenantLocaleRouteChildren {
   TenantLocaleRentalsIdRoute: typeof TenantLocaleRentalsIdRoute
   TenantLocaleRestaurantsIdRoute: typeof TenantLocaleRestaurantsIdRoute
   TenantLocaleSocialCommerceIdRoute: typeof TenantLocaleSocialCommerceIdRoute
+  TenantLocaleSubscriptionsIdRoute: typeof TenantLocaleSubscriptionsIdRoute
   TenantLocaleSubscriptionsCheckoutRoute: typeof TenantLocaleSubscriptionsCheckoutRoute
   TenantLocaleSubscriptionsSuccessRoute: typeof TenantLocaleSubscriptionsSuccessRoute
   TenantLocaleTravelIdRoute: typeof TenantLocaleTravelIdRoute
+  TenantLocaleTryBeforeYouBuyIdRoute: typeof TenantLocaleTryBeforeYouBuyIdRoute
   TenantLocaleVendorAdvertisingRoute: typeof TenantLocaleVendorAdvertisingRoute
   TenantLocaleVendorAffiliateRoute: typeof TenantLocaleVendorAffiliateRoute
   TenantLocaleVendorAuctionsRoute: typeof TenantLocaleVendorAuctionsRoute
@@ -5686,7 +6289,9 @@ interface TenantLocaleRouteChildren {
   TenantLocaleVendorWishlistsRoute: typeof TenantLocaleVendorWishlistsRoute
   TenantLocaleVendorsHandleRoute: typeof TenantLocaleVendorsHandleRoute
   TenantLocaleVerifyAgeRoute: typeof TenantLocaleVerifyAgeRoute
+  TenantLocaleVolumeDealsIdRoute: typeof TenantLocaleVolumeDealsIdRoute
   TenantLocaleWarrantiesIdRoute: typeof TenantLocaleWarrantiesIdRoute
+  TenantLocaleWhiteLabelShopIdRoute: typeof TenantLocaleWhiteLabelShopIdRoute
   TenantLocaleAccountIndexRoute: typeof TenantLocaleAccountIndexRoute
   TenantLocaleAffiliateIndexRoute: typeof TenantLocaleAffiliateIndexRoute
   TenantLocaleAuctionsIndexRoute: typeof TenantLocaleAuctionsIndexRoute
@@ -5791,14 +6396,17 @@ const TenantLocaleRouteChildren: TenantLocaleRouteChildren = {
   TenantLocaleAccountVerificationRoute: TenantLocaleAccountVerificationRoute,
   TenantLocaleAccountWalletRoute: TenantLocaleAccountWalletRoute,
   TenantLocaleAccountWishlistRoute: TenantLocaleAccountWishlistRoute,
+  TenantLocaleAffiliateIdRoute: TenantLocaleAffiliateIdRoute,
   TenantLocaleAuctionsIdRoute: TenantLocaleAuctionsIdRoute,
   TenantLocaleAutomotiveIdRoute: TenantLocaleAutomotiveIdRoute,
+  TenantLocaleB2bIdRoute: TenantLocaleB2bIdRoute,
   TenantLocaleB2bDashboardRoute: TenantLocaleB2bDashboardRoute,
   TenantLocaleB2bRegisterRoute: TenantLocaleB2bRegisterRoute,
   TenantLocaleBlogSlugRoute: TenantLocaleBlogSlugRoute,
   TenantLocaleBookingsServiceHandleRoute:
     TenantLocaleBookingsServiceHandleRoute,
   TenantLocaleBookingsConfirmationRoute: TenantLocaleBookingsConfirmationRoute,
+  TenantLocaleBundlesIdRoute: TenantLocaleBundlesIdRoute,
   TenantLocaleBusinessApprovalsRoute: TenantLocaleBusinessApprovalsRoute,
   TenantLocaleBusinessCatalogRoute: TenantLocaleBusinessCatalogRoute,
   TenantLocaleBusinessOrdersRoute: TenantLocaleBusinessOrdersRoute,
@@ -5806,19 +6414,26 @@ const TenantLocaleRouteChildren: TenantLocaleRouteChildren = {
   TenantLocaleCampaignsIdRoute: TenantLocaleCampaignsIdRoute,
   TenantLocaleCharityIdRoute: TenantLocaleCharityIdRoute,
   TenantLocaleClassifiedsIdRoute: TenantLocaleClassifiedsIdRoute,
+  TenantLocaleConsignmentShopIdRoute: TenantLocaleConsignmentShopIdRoute,
+  TenantLocaleCreditIdRoute: TenantLocaleCreditIdRoute,
   TenantLocaleCrowdfundingIdRoute: TenantLocaleCrowdfundingIdRoute,
   TenantLocaleDigitalIdRoute: TenantLocaleDigitalIdRoute,
+  TenantLocaleDropshippingMarketplaceIdRoute:
+    TenantLocaleDropshippingMarketplaceIdRoute,
   TenantLocaleEducationIdRoute: TenantLocaleEducationIdRoute,
   TenantLocaleEventsIdRoute: TenantLocaleEventsIdRoute,
   TenantLocaleFinancialIdRoute: TenantLocaleFinancialIdRoute,
   TenantLocaleFitnessIdRoute: TenantLocaleFitnessIdRoute,
+  TenantLocaleFlashDealsIdRoute: TenantLocaleFlashDealsIdRoute,
   TenantLocaleFreelanceIdRoute: TenantLocaleFreelanceIdRoute,
+  TenantLocaleGiftCardsShopIdRoute: TenantLocaleGiftCardsShopIdRoute,
   TenantLocaleGovernmentIdRoute: TenantLocaleGovernmentIdRoute,
   TenantLocaleGroceryIdRoute: TenantLocaleGroceryIdRoute,
   TenantLocaleHealthcareIdRoute: TenantLocaleHealthcareIdRoute,
   TenantLocaleHelpSlugRoute: TenantLocaleHelpSlugRoute,
   TenantLocaleInsuranceIdRoute: TenantLocaleInsuranceIdRoute,
   TenantLocaleLegalIdRoute: TenantLocaleLegalIdRoute,
+  TenantLocaleLoyaltyProgramIdRoute: TenantLocaleLoyaltyProgramIdRoute,
   TenantLocaleManageAdvertisingRoute: TenantLocaleManageAdvertisingRoute,
   TenantLocaleManageAffiliatesRoute: TenantLocaleManageAffiliatesRoute,
   TenantLocaleManageAnalyticsRoute: TenantLocaleManageAnalyticsRoute,
@@ -5826,6 +6441,7 @@ const TenantLocaleRouteChildren: TenantLocaleRouteChildren = {
   TenantLocaleManageAuditRoute: TenantLocaleManageAuditRoute,
   TenantLocaleManageAutomotiveRoute: TenantLocaleManageAutomotiveRoute,
   TenantLocaleManageBookingsRoute: TenantLocaleManageBookingsRoute,
+  TenantLocaleManageBundlesRoute: TenantLocaleManageBundlesRoute,
   TenantLocaleManageCartExtensionsRoute: TenantLocaleManageCartExtensionsRoute,
   TenantLocaleManageChannelsRoute: TenantLocaleManageChannelsRoute,
   TenantLocaleManageCharityRoute: TenantLocaleManageCharityRoute,
@@ -5834,28 +6450,35 @@ const TenantLocaleRouteChildren: TenantLocaleRouteChildren = {
   TenantLocaleManageCommissionsRoute: TenantLocaleManageCommissionsRoute,
   TenantLocaleManageCompaniesRoute: TenantLocaleManageCompaniesRoute,
   TenantLocaleManageCompaniesAdminRoute: TenantLocaleManageCompaniesAdminRoute,
+  TenantLocaleManageConsignmentsRoute: TenantLocaleManageConsignmentsRoute,
+  TenantLocaleManageCreditRoute: TenantLocaleManageCreditRoute,
   TenantLocaleManageCrowdfundingRoute: TenantLocaleManageCrowdfundingRoute,
   TenantLocaleManageCustomersRoute: TenantLocaleManageCustomersRoute,
   TenantLocaleManageDigitalProductsRoute:
     TenantLocaleManageDigitalProductsRoute,
   TenantLocaleManageDisputesRoute: TenantLocaleManageDisputesRoute,
+  TenantLocaleManageDropshippingRoute: TenantLocaleManageDropshippingRoute,
   TenantLocaleManageEducationRoute: TenantLocaleManageEducationRoute,
   TenantLocaleManageEventTicketingRoute: TenantLocaleManageEventTicketingRoute,
   TenantLocaleManageEventsRoute: TenantLocaleManageEventsRoute,
   TenantLocaleManageFinancialProductsRoute:
     TenantLocaleManageFinancialProductsRoute,
   TenantLocaleManageFitnessRoute: TenantLocaleManageFitnessRoute,
+  TenantLocaleManageFlashSalesRoute: TenantLocaleManageFlashSalesRoute,
   TenantLocaleManageFreelanceRoute: TenantLocaleManageFreelanceRoute,
+  TenantLocaleManageGiftCardsRoute: TenantLocaleManageGiftCardsRoute,
   TenantLocaleManageGovernanceRoute: TenantLocaleManageGovernanceRoute,
   TenantLocaleManageGovernmentRoute: TenantLocaleManageGovernmentRoute,
   TenantLocaleManageGroceryRoute: TenantLocaleManageGroceryRoute,
   TenantLocaleManageHealthcareRoute: TenantLocaleManageHealthcareRoute,
   TenantLocaleManageI18nRoute: TenantLocaleManageI18nRoute,
+  TenantLocaleManageInsuranceRoute: TenantLocaleManageInsuranceRoute,
   TenantLocaleManageInventoryRoute: TenantLocaleManageInventoryRoute,
   TenantLocaleManageInvoicesRoute: TenantLocaleManageInvoicesRoute,
   TenantLocaleManageLegalRoute: TenantLocaleManageLegalRoute,
   TenantLocaleManageLoyaltyRoute: TenantLocaleManageLoyaltyRoute,
   TenantLocaleManageMembershipsRoute: TenantLocaleManageMembershipsRoute,
+  TenantLocaleManageNewslettersRoute: TenantLocaleManageNewslettersRoute,
   TenantLocaleManageNodesRoute: TenantLocaleManageNodesRoute,
   TenantLocaleManageNotificationPreferencesRoute:
     TenantLocaleManageNotificationPreferencesRoute,
@@ -5864,6 +6487,7 @@ const TenantLocaleRouteChildren: TenantLocaleRouteChildren = {
   TenantLocaleManagePayoutsRoute: TenantLocaleManagePayoutsRoute,
   TenantLocaleManagePersonasRoute: TenantLocaleManagePersonasRoute,
   TenantLocaleManagePetServicesRoute: TenantLocaleManagePetServicesRoute,
+  TenantLocaleManagePrintOnDemandRoute: TenantLocaleManagePrintOnDemandRoute,
   TenantLocaleManageProductsRoute: TenantLocaleManageProductsRoute,
   TenantLocaleManagePromotionExtensionsRoute:
     TenantLocaleManagePromotionExtensionsRoute,
@@ -5883,16 +6507,23 @@ const TenantLocaleRouteChildren: TenantLocaleRouteChildren = {
   TenantLocaleManageTaxConfigRoute: TenantLocaleManageTaxConfigRoute,
   TenantLocaleManageTeamRoute: TenantLocaleManageTeamRoute,
   TenantLocaleManageTenantsAdminRoute: TenantLocaleManageTenantsAdminRoute,
+  TenantLocaleManageTradeInRoute: TenantLocaleManageTradeInRoute,
   TenantLocaleManageTravelRoute: TenantLocaleManageTravelRoute,
+  TenantLocaleManageTryBeforeYouBuyRoute:
+    TenantLocaleManageTryBeforeYouBuyRoute,
   TenantLocaleManageUtilitiesRoute: TenantLocaleManageUtilitiesRoute,
   TenantLocaleManageVendorsRoute: TenantLocaleManageVendorsRoute,
   TenantLocaleManageVolumePricingRoute: TenantLocaleManageVolumePricingRoute,
+  TenantLocaleManageWalletRoute: TenantLocaleManageWalletRoute,
   TenantLocaleManageWarrantiesRoute: TenantLocaleManageWarrantiesRoute,
+  TenantLocaleManageWhiteLabelRoute: TenantLocaleManageWhiteLabelRoute,
   TenantLocaleManageWishlistsRoute: TenantLocaleManageWishlistsRoute,
   TenantLocaleMembershipsIdRoute: TenantLocaleMembershipsIdRoute,
+  TenantLocaleNewsletterIdRoute: TenantLocaleNewsletterIdRoute,
   TenantLocaleParkingIdRoute: TenantLocaleParkingIdRoute,
   TenantLocalePetServicesIdRoute: TenantLocalePetServicesIdRoute,
   TenantLocalePlacesIdRoute: TenantLocalePlacesIdRoute,
+  TenantLocalePrintOnDemandShopIdRoute: TenantLocalePrintOnDemandShopIdRoute,
   TenantLocaleProductsHandleRoute: TenantLocaleProductsHandleRoute,
   TenantLocaleQuotesIdRoute: TenantLocaleQuotesIdRoute,
   TenantLocaleQuotesRequestRoute: TenantLocaleQuotesRequestRoute,
@@ -5900,10 +6531,12 @@ const TenantLocaleRouteChildren: TenantLocaleRouteChildren = {
   TenantLocaleRentalsIdRoute: TenantLocaleRentalsIdRoute,
   TenantLocaleRestaurantsIdRoute: TenantLocaleRestaurantsIdRoute,
   TenantLocaleSocialCommerceIdRoute: TenantLocaleSocialCommerceIdRoute,
+  TenantLocaleSubscriptionsIdRoute: TenantLocaleSubscriptionsIdRoute,
   TenantLocaleSubscriptionsCheckoutRoute:
     TenantLocaleSubscriptionsCheckoutRoute,
   TenantLocaleSubscriptionsSuccessRoute: TenantLocaleSubscriptionsSuccessRoute,
   TenantLocaleTravelIdRoute: TenantLocaleTravelIdRoute,
+  TenantLocaleTryBeforeYouBuyIdRoute: TenantLocaleTryBeforeYouBuyIdRoute,
   TenantLocaleVendorAdvertisingRoute: TenantLocaleVendorAdvertisingRoute,
   TenantLocaleVendorAffiliateRoute: TenantLocaleVendorAffiliateRoute,
   TenantLocaleVendorAuctionsRoute: TenantLocaleVendorAuctionsRoute,
@@ -5963,7 +6596,9 @@ const TenantLocaleRouteChildren: TenantLocaleRouteChildren = {
   TenantLocaleVendorWishlistsRoute: TenantLocaleVendorWishlistsRoute,
   TenantLocaleVendorsHandleRoute: TenantLocaleVendorsHandleRoute,
   TenantLocaleVerifyAgeRoute: TenantLocaleVerifyAgeRoute,
+  TenantLocaleVolumeDealsIdRoute: TenantLocaleVolumeDealsIdRoute,
   TenantLocaleWarrantiesIdRoute: TenantLocaleWarrantiesIdRoute,
+  TenantLocaleWhiteLabelShopIdRoute: TenantLocaleWhiteLabelShopIdRoute,
   TenantLocaleAccountIndexRoute: TenantLocaleAccountIndexRoute,
   TenantLocaleAffiliateIndexRoute: TenantLocaleAffiliateIndexRoute,
   TenantLocaleAuctionsIndexRoute: TenantLocaleAuctionsIndexRoute,
