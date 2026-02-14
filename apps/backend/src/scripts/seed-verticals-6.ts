@@ -265,11 +265,11 @@ export default async function seedVerticals6({ container }: ExecArgs) {
     await dataSource.raw(`
       INSERT INTO review (id, rating, title, content, customer_id, customer_name, customer_email, product_id, vendor_id, order_id, is_verified_purchase, is_approved, helpful_count, images, metadata, created_at, updated_at)
       VALUES
-        ('seed6_rev_01', 5, 'ممتاز جداً!', 'تيشيرت بجودة عالية جداً، القماش ممتاز والتصميم أنيق. أنصح بالشراء بشدة.', '${customerIds[0]}', 'محمد', 'mohammed@example.com', '${productIds[0]}', '${vendorIds[0]}', null, true, true, 12, '[]', '{"verified":true}', '${now}', '${now}'),
-        ('seed6_rev_02', 4, 'منتج جيد', 'هودي مريح جداً وجودة القماش ممتازة. المقاس مناسب تماماً. خصمت نجمة بسبب تأخر التوصيل.', '${customerIds[1]}', 'فاطمة', 'fatima@example.com', '${productIds[1]}', '${vendorIds[0]}', null, true, true, 8, '[]', '{"verified":true}', '${now}', '${now}'),
-        ('seed6_rev_03', 5, 'أفضل كوب!', 'كوب عملي وجميل، يحافظ على حرارة المشروبات لفترة طويلة. هدية مثالية.', '${customerIds[2]}', 'أحمد', 'ahmed@example.com', '${productIds[2]}', '${vendorIds[1]}', null, true, true, 15, '[]', '{"verified":true}', '${now}', '${now}'),
-        ('seed6_rev_04', 3, 'مقبول', 'حقيبة توت عادية، الخياطة جيدة لكن التصميم بسيط. السعر مناسب للجودة.', '${customerIds[0]}', 'محمد', 'mohammed@example.com', '${productIds[3]}', '${vendorIds[1]}', null, true, true, 3, '[]', '{"verified":true}', '${now}', '${now}'),
-        ('seed6_rev_05', 4, 'سماعات رائعة', 'جودة الصوت ممتازة والبطارية تدوم طويلاً. العزل جيد جداً. سعر مناسب مقارنة بالمنافسين.', '${customerIds[1]}', 'فاطمة', 'fatima@example.com', '${productIds[5]}', '${vendorIds[0]}', null, true, true, 20, '[]', '{"verified":true}', '${now}', '${now}')
+        ('seed6_rev_01', 5, 'ممتاز جداً!', 'تيشيرت بجودة عالية جداً، القماش ممتاز والتصميم أنيق. أنصح بالشراء بشدة.', '${customerIds[0]}', 'محمد', 'mohammed@dakkah.sa', '${productIds[0]}', '${vendorIds[0]}', null, true, true, 12, '[]', '{"verified":true}', '${now}', '${now}'),
+        ('seed6_rev_02', 4, 'منتج جيد', 'هودي مريح جداً وجودة القماش ممتازة. المقاس مناسب تماماً. خصمت نجمة بسبب تأخر التوصيل.', '${customerIds[1]}', 'فاطمة', 'fatima@dakkah.sa', '${productIds[1]}', '${vendorIds[0]}', null, true, true, 8, '[]', '{"verified":true}', '${now}', '${now}'),
+        ('seed6_rev_03', 5, 'أفضل كوب!', 'كوب عملي وجميل، يحافظ على حرارة المشروبات لفترة طويلة. هدية مثالية.', '${customerIds[2]}', 'أحمد', 'ahmed@dakkah.sa', '${productIds[2]}', '${vendorIds[1]}', null, true, true, 15, '[]', '{"verified":true}', '${now}', '${now}'),
+        ('seed6_rev_04', 3, 'مقبول', 'حقيبة توت عادية، الخياطة جيدة لكن التصميم بسيط. السعر مناسب للجودة.', '${customerIds[0]}', 'محمد', 'mohammed@dakkah.sa', '${productIds[3]}', '${vendorIds[1]}', null, true, true, 3, '[]', '{"verified":true}', '${now}', '${now}'),
+        ('seed6_rev_05', 4, 'سماعات رائعة', 'جودة الصوت ممتازة والبطارية تدوم طويلاً. العزل جيد جداً. سعر مناسب مقارنة بالمنافسين.', '${customerIds[1]}', 'فاطمة', 'fatima@dakkah.sa', '${productIds[5]}', '${vendorIds[0]}', null, true, true, 20, '[]', '{"verified":true}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
     console.log("  ✓ Created 5 reviews")
@@ -320,9 +320,9 @@ export default async function seedVerticals6({ container }: ExecArgs) {
     await dataSource.raw(`
       INSERT INTO social_share (id, tenant_id, product_id, sharer_id, platform, share_url, click_count, conversion_count, revenue_generated, shared_at, metadata, created_at, updated_at)
       VALUES
-        ('seed6_ss_01', '${tenantId}', '${productIds[0]}', '${customerIds[0]}', 'whatsapp', 'https://store.example.sa/p/tshirt?ref=wh_01', 45, 5, 475, '${past7d}', '{"campaign":"summer_share"}', '${now}', '${now}'),
-        ('seed6_ss_02', '${tenantId}', '${productIds[5]}', '${customerIds[1]}', 'instagram', 'https://store.example.sa/p/earbuds?ref=ig_01', 120, 12, 2388, '${past14d}', '{"campaign":"tech_share"}', '${now}', '${now}'),
-        ('seed6_ss_03', '${tenantId}', '${productIds[1]}', '${customerIds[2]}', 'twitter', 'https://store.example.sa/p/hoodie?ref=tw_01', 30, 3, 447, '${past30d}', '{"campaign":"winter_collection"}', '${now}', '${now}')
+        ('seed6_ss_01', '${tenantId}', '${productIds[0]}', '${customerIds[0]}', 'whatsapp', 'https://store.dakkah.sa/p/tshirt?ref=wh_01', 45, 5, 475, '${past7d}', '{"campaign":"summer_share"}', '${now}', '${now}'),
+        ('seed6_ss_02', '${tenantId}', '${productIds[5]}', '${customerIds[1]}', 'instagram', 'https://store.dakkah.sa/p/earbuds?ref=ig_01', 120, 12, 2388, '${past14d}', '{"campaign":"tech_share"}', '${now}', '${now}'),
+        ('seed6_ss_03', '${tenantId}', '${productIds[1]}', '${customerIds[2]}', 'twitter', 'https://store.dakkah.sa/p/hoodie?ref=tw_01', 30, 3, 447, '${past30d}', '{"campaign":"winter_collection"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
     console.log("  ✓ Created 3 social shares")
@@ -499,8 +499,8 @@ export default async function seedVerticals6({ container }: ExecArgs) {
     await dataSource.raw(`
       INSERT INTO vendor_order_item (id, vendor_order_id, line_item_id, product_id, variant_id, title, sku, thumbnail, quantity, fulfilled_quantity, returned_quantity, unit_price, subtotal, discount_amount, tax_amount, total, vendor_cost, commission_amount, net_amount, status, metadata, created_at, updated_at)
       VALUES
-        ('seed6_voi_01', 'seed6_vo_01', 'li_seed6_001', '${productIds[0]}', null, 'تيشيرت قطني ممتاز', 'VND1-TSH-001', null, 2, 0, 0, 95, 190, 0, 29, 219, 70, 23, 196, 'pending', '{"size":"L","color":"أسود"}', '${now}', '${now}'),
-        ('seed6_voi_02', 'seed6_vo_02', 'li_seed6_002', '${productIds[2]}', null, 'كوب سيراميك فاخر', 'VND2-MUG-001', null, 3, 3, 0, 39, 117, 0, 18, 135, 36, 11, 124, 'delivered', '{"design":"arabic_calligraphy"}', '${now}', '${now}')
+        ('seed6_voi_01', 'seed6_vo_01', 'li_seed6_001', '${productIds[0]}', null, 'تيشيرت قطني ممتاز', 'VND1-TSH-001', 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200', 2, 0, 0, 95, 190, 0, 29, 219, 70, 23, 196, 'pending', '{"size":"L","color":"أسود"}', '${now}', '${now}'),
+        ('seed6_voi_02', 'seed6_vo_02', 'li_seed6_002', '${productIds[2]}', null, 'كوب سيراميك فاخر', 'VND2-MUG-001', 'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=200', 3, 3, 0, 39, 117, 0, 18, 135, 36, 11, 124, 'delivered', '{"design":"arabic_calligraphy"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
     console.log("  ✓ Created 2 vendor order items")
@@ -516,8 +516,8 @@ export default async function seedVerticals6({ container }: ExecArgs) {
     await dataSource.raw(`
       INSERT INTO service_center (id, tenant_id, name, address_line1, address_line2, city, state, postal_code, country_code, phone, email, specializations, is_active, capacity_per_day, current_load, metadata, created_at, updated_at)
       VALUES
-        ('seed6_sc_01', '${tenantId}', 'مركز خدمة الرياض - العليا', 'شارع العليا، برج المملكة', 'الدور الأرضي، محل رقم 5', 'الرياض', 'منطقة الرياض', '11564', 'SA', '+966112345001', 'service.riyadh@example.sa', '${JSON.stringify(["electronics", "appliances", "mobile_devices"]).replace(/'/g, "''")}', true, 25, 12, '{"parking_available":true,"working_hours":"09:00-21:00"}', '${now}', '${now}'),
-        ('seed6_sc_02', '${tenantId}', 'مركز خدمة جدة - الكورنيش', 'كورنيش جدة، مجمع البحر الأحمر', null, 'جدة', 'منطقة مكة المكرمة', '23511', 'SA', '+966126789002', 'service.jeddah@example.sa', '${JSON.stringify(["electronics", "home_equipment", "warranty_repairs"]).replace(/'/g, "''")}', true, 20, 8, '{"parking_available":true,"working_hours":"10:00-22:00"}', '${now}', '${now}')
+        ('seed6_sc_01', '${tenantId}', 'مركز خدمة الرياض - العليا', 'شارع العليا، برج المملكة', 'الدور الأرضي، محل رقم 5', 'الرياض', 'منطقة الرياض', '11564', 'SA', '+966112345001', 'service.riyadh@dakkah.sa', '${JSON.stringify(["electronics", "appliances", "mobile_devices"]).replace(/'/g, "''")}', true, 25, 12, '{"parking_available":true,"working_hours":"09:00-21:00"}', '${now}', '${now}'),
+        ('seed6_sc_02', '${tenantId}', 'مركز خدمة جدة - الكورنيش', 'كورنيش جدة، مجمع البحر الأحمر', null, 'جدة', 'منطقة مكة المكرمة', '23511', 'SA', '+966126789002', 'service.jeddah@dakkah.sa', '${JSON.stringify(["electronics", "home_equipment", "warranty_repairs"]).replace(/'/g, "''")}', true, 20, 8, '{"parking_available":true,"working_hours":"10:00-22:00"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
     console.log("  ✓ Created 2 service centers")
@@ -641,8 +641,8 @@ export default async function seedVerticals6({ container }: ExecArgs) {
     await dataSource.raw(`
       INSERT INTO donation (id, tenant_id, campaign_id, charity_id, donor_id, amount, currency_code, donation_type, status, is_anonymous, donor_name, donor_email, message, payment_reference, tax_receipt_id, recurring_id, completed_at, metadata, created_at, updated_at)
       VALUES
-        ('seed6_don_01', '${tenantId}', '${donationCampaignIds[0]}', '${charityOrgIds[0]}', '${customerIds[0]}', 500, 'sar', 'one_time', 'completed', false, 'محمد الأحمدي', 'mohammed@example.com', 'بارك الله في جهودكم', 'PAY-2026-001', 'TR-001', null, '${past7d}', '{"source":"website"}', '${now}', '${now}'),
-        ('seed6_don_02', '${tenantId}', '${donationCampaignIds[0]}', '${charityOrgIds[0]}', '${customerIds[1]}', 100, 'sar', 'monthly', 'completed', false, 'فاطمة القحطاني', 'fatima@example.com', 'صدقة جارية', 'PAY-2026-002', 'TR-002', 'rec_seed6_01', '${past14d}', '{"source":"app","recurring":true}', '${now}', '${now}'),
+        ('seed6_don_01', '${tenantId}', '${donationCampaignIds[0]}', '${charityOrgIds[0]}', '${customerIds[0]}', 500, 'sar', 'one_time', 'completed', false, 'محمد الأحمدي', 'mohammed@dakkah.sa', 'بارك الله في جهودكم', 'PAY-2026-001', 'TR-001', null, '${past7d}', '{"source":"website"}', '${now}', '${now}'),
+        ('seed6_don_02', '${tenantId}', '${donationCampaignIds[0]}', '${charityOrgIds[0]}', '${customerIds[1]}', 100, 'sar', 'monthly', 'completed', false, 'فاطمة القحطاني', 'fatima@dakkah.sa', 'صدقة جارية', 'PAY-2026-002', 'TR-002', 'rec_seed6_01', '${past14d}', '{"source":"app","recurring":true}', '${now}', '${now}'),
         ('seed6_don_03', '${tenantId}', '${donationCampaignIds[1]}', '${charityOrgIds[1]}', null, 1000, 'sar', 'one_time', 'completed', true, null, null, null, 'PAY-2026-003', null, null, '${past30d}', '{"source":"anonymous"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
@@ -676,8 +676,8 @@ export default async function seedVerticals6({ container }: ExecArgs) {
     await dataSource.raw(`
       INSERT INTO certificate (id, tenant_id, enrollment_id, course_id, student_id, certificate_number, title, issued_at, expires_at, credential_url, verification_code, skills, metadata, created_at, updated_at)
       VALUES
-        ('seed6_cert_01', '${tenantId}', 'enr_seed6_01', 'course_seed6_01', '${customerIds[0]}', 'CERT-2026-SA-00451', 'شهادة إتمام دورة تطوير تطبيقات الويب', '${past7d}', null, 'https://verify.example.sa/cert/CERT-2026-SA-00451', 'VER-A1B2C3D4', '${JSON.stringify(["React", "Node.js", "TypeScript", "PostgreSQL"]).replace(/'/g, "''")}', '{"grade":"excellent","score":95}', '${now}', '${now}'),
-        ('seed6_cert_02', '${tenantId}', 'enr_seed6_02', 'course_seed6_02', '${customerIds[1]}', 'CERT-2026-SA-00452', 'شهادة إتمام دورة التسويق الرقمي', '${past14d}', '${future365d}', 'https://verify.example.sa/cert/CERT-2026-SA-00452', 'VER-E5F6G7H8', '${JSON.stringify(["SEO", "Google Ads", "Social Media Marketing", "Analytics"]).replace(/'/g, "''")}', '{"grade":"very_good","score":88}', '${now}', '${now}')
+        ('seed6_cert_01', '${tenantId}', 'enr_seed6_01', 'course_seed6_01', '${customerIds[0]}', 'CERT-2026-SA-00451', 'شهادة إتمام دورة تطوير تطبيقات الويب', '${past7d}', null, 'https://verify.dakkah.sa/cert/CERT-2026-SA-00451', 'VER-A1B2C3D4', '${JSON.stringify(["React", "Node.js", "TypeScript", "PostgreSQL"]).replace(/'/g, "''")}', '{"grade":"excellent","score":95}', '${now}', '${now}'),
+        ('seed6_cert_02', '${tenantId}', 'enr_seed6_02', 'course_seed6_02', '${customerIds[1]}', 'CERT-2026-SA-00452', 'شهادة إتمام دورة التسويق الرقمي', '${past14d}', '${future365d}', 'https://verify.dakkah.sa/cert/CERT-2026-SA-00452', 'VER-E5F6G7H8', '${JSON.stringify(["SEO", "Google Ads", "Social Media Marketing", "Analytics"]).replace(/'/g, "''")}', '{"grade":"very_good","score":88}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
     console.log("  ✓ Created 2 certificates")
@@ -693,10 +693,10 @@ export default async function seedVerticals6({ container }: ExecArgs) {
     await dataSource.raw(`
       INSERT INTO ticket (id, tenant_id, event_id, ticket_type_id, order_id, customer_id, attendee_name, attendee_email, barcode, qr_data, status, seat_info, checked_in_at, transferred_to, transferred_at, metadata, created_at, updated_at)
       VALUES
-        ('seed6_tkt_01', '${tenantId}', '${eventIds[0]}', '${ticketTypeIds[0]}', null, '${customerIds[0]}', 'محمد الأحمدي', 'mohammed@example.com', 'TKT-2026-00001-A', 'https://tickets.example.sa/qr/TKT-2026-00001-A', 'valid', '${JSON.stringify({ section: "VIP", row: "A", seat: "5" }).replace(/'/g, "''")}', null, null, null, '{"purchased_at":"${past7d}"}', '${now}', '${now}'),
-        ('seed6_tkt_02', '${tenantId}', '${eventIds[0]}', '${ticketTypeIds[0]}', null, '${customerIds[0]}', 'سارة الأحمدي', 'sara@example.com', 'TKT-2026-00002-A', 'https://tickets.example.sa/qr/TKT-2026-00002-A', 'valid', '${JSON.stringify({ section: "VIP", row: "A", seat: "6" }).replace(/'/g, "''")}', null, null, null, '{"purchased_at":"${past7d}","companion_ticket":true}', '${now}', '${now}'),
-        ('seed6_tkt_03', '${tenantId}', '${eventIds[1]}', '${ticketTypeIds[1]}', null, '${customerIds[1]}', 'فاطمة القحطاني', 'fatima@example.com', 'TKT-2026-00003-B', 'https://tickets.example.sa/qr/TKT-2026-00003-B', 'valid', '${JSON.stringify({ section: "عادي", row: "D", seat: "12" }).replace(/'/g, "''")}', null, null, null, '{"purchased_at":"${past14d}"}', '${now}', '${now}'),
-        ('seed6_tkt_04', '${tenantId}', '${eventIds[1]}', '${ticketTypeIds[1]}', null, '${customerIds[2]}', 'أحمد العمري', 'ahmed@example.com', 'TKT-2026-00004-B', 'https://tickets.example.sa/qr/TKT-2026-00004-B', 'used', '${JSON.stringify({ section: "عادي", row: "E", seat: "8" }).replace(/'/g, "''")}', '${past7d}', null, null, '{"purchased_at":"${past30d}","checked_in":true}', '${now}', '${now}')
+        ('seed6_tkt_01', '${tenantId}', '${eventIds[0]}', '${ticketTypeIds[0]}', null, '${customerIds[0]}', 'محمد الأحمدي', 'mohammed@dakkah.sa', 'TKT-2026-00001-A', 'https://tickets.dakkah.sa/qr/TKT-2026-00001-A', 'valid', '${JSON.stringify({ section: "VIP", row: "A", seat: "5" }).replace(/'/g, "''")}', null, null, null, '{"purchased_at":"${past7d}"}', '${now}', '${now}'),
+        ('seed6_tkt_02', '${tenantId}', '${eventIds[0]}', '${ticketTypeIds[0]}', null, '${customerIds[0]}', 'سارة الأحمدي', 'sara@dakkah.sa', 'TKT-2026-00002-A', 'https://tickets.dakkah.sa/qr/TKT-2026-00002-A', 'valid', '${JSON.stringify({ section: "VIP", row: "A", seat: "6" }).replace(/'/g, "''")}', null, null, null, '{"purchased_at":"${past7d}","companion_ticket":true}', '${now}', '${now}'),
+        ('seed6_tkt_03', '${tenantId}', '${eventIds[1]}', '${ticketTypeIds[1]}', null, '${customerIds[1]}', 'فاطمة القحطاني', 'fatima@dakkah.sa', 'TKT-2026-00003-B', 'https://tickets.dakkah.sa/qr/TKT-2026-00003-B', 'valid', '${JSON.stringify({ section: "عادي", row: "D", seat: "12" }).replace(/'/g, "''")}', null, null, null, '{"purchased_at":"${past14d}"}', '${now}', '${now}'),
+        ('seed6_tkt_04', '${tenantId}', '${eventIds[1]}', '${ticketTypeIds[1]}', null, '${customerIds[2]}', 'أحمد العمري', 'ahmed@dakkah.sa', 'TKT-2026-00004-B', 'https://tickets.dakkah.sa/qr/TKT-2026-00004-B', 'used', '${JSON.stringify({ section: "عادي", row: "E", seat: "8" }).replace(/'/g, "''")}', '${past7d}', null, null, '{"purchased_at":"${past30d}","checked_in":true}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
     console.log("  ✓ Created 4 tickets")

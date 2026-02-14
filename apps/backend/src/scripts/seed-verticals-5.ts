@@ -188,13 +188,13 @@ export default async function seedVerticals5({ container }: ExecArgs) {
       VALUES
         ('seed5_fdispute_01', '${tenantId}', 'seed5_fcontract_02', '${customerIds.fatima}', 'freelancer_translation_01',
           'quality', 'Translation quality does not meet agreed standards with multiple linguistic errors in legal documents',
-          '${j(["https://example.com/evidence/translation_errors.pdf"])}',
+          '${j(["https://cdn.dakkah.sa/evidence/translation_errors.pdf"])}',
           'resolved', '20 percent deduction and retranslation of affected pages', '${userIds[0]}', '${past1}', 750,
           '${j({ dispute_type: "quality", category: "translation" })}',
           '${rawNum(750)}', '${now}', '${now}'),
         ('seed5_fdispute_02', '${tenantId}', 'seed5_fcontract_03', '${customerIds.ahmed}', 'freelancer_photo_01',
           'non_delivery', 'First batch delivery delayed by two weeks past the agreed deadline',
-          '${j(["https://example.com/evidence/timeline_proof.pdf"])}',
+          '${j(["https://cdn.dakkah.sa/evidence/timeline_proof.pdf"])}',
           'filed', NULL, NULL, NULL, NULL,
           '${j({ dispute_type: "delivery_delay", category: "photography" })}',
           NULL, '${now}', '${now}')
@@ -215,17 +215,17 @@ export default async function seedVerticals5({ container }: ExecArgs) {
       VALUES
         ('seed5_citizen_01', '${tenantId}', '${customerIds.mohammed}', '1087654321', 'Mohammed Al-Dosari', '1990-03-15',
           '${j({ street: "King Fahd Road", district: "Al Olaya", city: "Riyadh", postal_code: "11564", country: "SA" })}',
-          '+966501234567', 'mohammed@example.sa', 'ar',
+          '+966501234567', 'mohammed@dakkah.sa', 'ar',
           '${j(["infrastructure", "licensing", "permits"])}', 5,
           '${j({ verified: true, absher_linked: true })}', '${now}', '${now}'),
         ('seed5_citizen_02', '${tenantId}', '${customerIds.fatima}', '1098765432', 'Fatima Al-Qahtani', '1995-07-22',
           '${j({ street: "Tahlia Street", district: "Sulaimaniyah", city: "Riyadh", postal_code: "12241", country: "SA" })}',
-          '+966509876543', 'fatima@example.sa', 'ar',
+          '+966509876543', 'fatima@dakkah.sa', 'ar',
           '${j(["sanitation", "permits"])}', 3,
           '${j({ verified: true, absher_linked: true })}', '${now}', '${now}'),
         ('seed5_citizen_03', '${tenantId}', '${customerIds.ahmed}', '1076543210', 'Ahmed Al-Otaibi', '1988-11-08',
           '${j({ street: "Prince Sultan Road", district: "Al Rawdah", city: "Jeddah", postal_code: "23433", country: "SA" })}',
-          '+966551234567', 'ahmed@example.sa', 'ar',
+          '+966551234567', 'ahmed@dakkah.sa', 'ar',
           '${j(["infrastructure", "traffic"])}', 7,
           '${j({ verified: true, absher_linked: false })}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
@@ -288,7 +288,7 @@ export default async function seedVerticals5({ container }: ExecArgs) {
           'Non-compliance with cleanliness regulations - unauthorized construction waste',
           2000, 'sar', 'issued', '${past1}', '${future1}', NULL, NULL,
           '${j({ lat: 24.6938, lng: 46.685, address: "Tahlia Street, Riyadh" })}',
-          '${j({ inspector_id: "INS-RYD-015", photos: ["https://example.com/evidence/violation_01.jpg"] })}',
+          '${j({ inspector_id: "INS-RYD-015", photos: ["https://cdn.dakkah.sa/evidence/violation_01.jpg"] })}',
           '${j({ violation_code: "MUN-003" })}',
           '${rawNum(2000)}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
@@ -348,14 +348,14 @@ export default async function seedVerticals5({ container }: ExecArgs) {
         ('seed5_medrec_01', '${tenantId}', '${customerIds.mohammed}', 'consultation', '${practitionerIds[0]}', '${appointmentIds[0]}',
           'Routine Cardiac Examination', 'Comprehensive heart and cardiovascular exam - normal results with 6-month follow-up recommended',
           '${j({ blood_pressure: "120/80", heart_rate: 72, ecg: "normal", cholesterol: { total: 190, hdl: 55, ldl: 120 } })}',
-          '${j([{ name: "ECG_report.pdf", url: "https://example.com/records/ecg_001.pdf" }])}',
+          '${j([{ name: "ECG_report.pdf", url: "https://cdn.dakkah.sa/records/ecg_001.pdf" }])}',
           false, 'practitioner', '${past2}',
           '${j({ department: "cardiology", hospital: "King Faisal Specialist Hospital" })}',
           '${now}', '${now}'),
         ('seed5_medrec_02', '${tenantId}', '${customerIds.fatima}', 'lab_result', '${practitionerIds[1]}', '${appointmentIds[1]}',
           'Complete Blood Panel Results', 'Routine blood test results - all values within normal range',
           '${j({ cbc: { wbc: 7.5, rbc: 4.8, hemoglobin: 13.2, platelets: 250 }, blood_sugar: { fasting: 95 }, thyroid: { tsh: 2.1 } })}',
-          '${j([{ name: "lab_results.pdf", url: "https://example.com/records/lab_001.pdf" }])}',
+          '${j([{ name: "lab_results.pdf", url: "https://cdn.dakkah.sa/records/lab_001.pdf" }])}',
           false, 'patient', '${past1}',
           '${j({ department: "dermatology", hospital: "Al Habib Hospital" })}',
           '${now}', '${now}'),
@@ -451,14 +451,14 @@ export default async function seedVerticals5({ container }: ExecArgs) {
           '${j({ office_location: "Riyadh - Al Olaya", consultation_number: "CONS-2026-001" })}',
           '${rawNum(800)}', '${now}', '${now}'),
         ('seed5_lcons_02', '${tenantId}', '${attorneyProfileIds[1]}', '${customerIds.fatima}', '${legalCaseIds[1]}',
-          'follow_up', 'completed', '${past1}', 45, true, 'https://meet.example.com/legal-cons-002', 600, 'sar',
+          'follow_up', 'completed', '${past1}', 45, true, 'https://meet.dakkah.sa/legal-cons-002', 600, 'sar',
           'Follow-up on labor case - reviewing case developments and next steps',
           '${j(["Submit claim statement", "Attend conciliation session", "Prepare response brief"])}',
           '${past1}',
           '${j({ consultation_number: "CONS-2026-002" })}',
           '${rawNum(600)}', '${now}', '${now}'),
         ('seed5_lcons_03', '${tenantId}', '${attorneyProfileIds[0]}', '${customerIds.ahmed}', NULL,
-          'strategy', 'scheduled', '${future1}', 30, true, 'https://meet.example.com/legal-cons-003', 500, 'sar',
+          'strategy', 'scheduled', '${future1}', 30, true, 'https://meet.dakkah.sa/legal-cons-003', 500, 'sar',
           NULL, NULL, NULL,
           '${j({ consultation_number: "CONS-2026-003", topic: "Company formation consultation" })}',
           '${rawNum(500)}', '${now}', '${now}')
@@ -638,13 +638,13 @@ export default async function seedVerticals5({ container }: ExecArgs) {
     await dataSource.raw(`
       INSERT INTO property_document (id, tenant_id, listing_id, lease_id, document_type, title, file_url, file_type, uploaded_by, is_verified, verified_by, expires_at, metadata, created_at, updated_at)
       VALUES
-        ('seed5_propdoc_01', '${tenantId}', '${propertyListingIds[0]}', 'seed5_lease_01', 'title_deed', 'Title Deed - Al Olaya Apartment', 'https://cdn.example.com/docs/title_deed_001.pdf', 'pdf', '${userIds[0]}', true, '${userIds[1]}', NULL,
+        ('seed5_propdoc_01', '${tenantId}', '${propertyListingIds[0]}', 'seed5_lease_01', 'title_deed', 'Title Deed - Al Olaya Apartment', 'https://cdn.dakkah.sa/docs/title_deed_001.pdf', 'pdf', '${userIds[0]}', true, '${userIds[1]}', NULL,
           '${j({ deed_number: "DEED-RYD-2026-001", notary: "First Notary Office Riyadh", city: "Riyadh" })}',
           '${now}', '${now}'),
-        ('seed5_propdoc_02', '${tenantId}', '${propertyListingIds[0]}', NULL, 'floor_plan', 'Floor Plan - 3BR Apartment', 'https://cdn.example.com/docs/floor_plan_001.pdf', 'pdf', '${userIds[0]}', true, '${userIds[1]}', NULL,
+        ('seed5_propdoc_02', '${tenantId}', '${propertyListingIds[0]}', NULL, 'floor_plan', 'Floor Plan - 3BR Apartment', 'https://cdn.dakkah.sa/docs/floor_plan_001.pdf', 'pdf', '${userIds[0]}', true, '${userIds[1]}', NULL,
           '${j({ area_sqm: 185, rooms: 3, bathrooms: 2, floor: 5 })}',
           '${now}', '${now}'),
-        ('seed5_propdoc_03', '${tenantId}', '${propertyListingIds[2]}', NULL, 'inspection', 'Building Inspection Report - Al Shati Villa', 'https://cdn.example.com/docs/inspection_001.pdf', 'pdf', 'inspector_001', true, '${userIds[1]}', '${future2}',
+        ('seed5_propdoc_03', '${tenantId}', '${propertyListingIds[2]}', NULL, 'inspection', 'Building Inspection Report - Al Shati Villa', 'https://cdn.dakkah.sa/docs/inspection_001.pdf', 'pdf', 'inspector_001', true, '${userIds[1]}', '${future2}',
           '${j({ inspector_name: "Eng. Fahad Al-Shahri", rating: "excellent", city: "Jeddah" })}',
           '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING

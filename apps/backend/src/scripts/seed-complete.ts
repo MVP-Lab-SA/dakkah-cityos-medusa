@@ -1170,17 +1170,17 @@ export default async function seedComplete({ container }: ExecArgs) {
     {
       first_name: "Mohammed",
       last_name: "Al-Rashid",
-      email: "mohammed@example.com",
+      email: "mohammed@dakkah.sa",
     },
     {
       first_name: "Fatima",
       last_name: "Al-Saud",
-      email: "fatima@example.com",
+      email: "fatima@dakkah.sa",
     },
     {
       first_name: "Ahmed",
       last_name: "Hassan",
-      email: "ahmed@example.com",
+      email: "ahmed@dakkah.sa",
     },
   ]
 

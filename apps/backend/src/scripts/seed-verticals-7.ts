@@ -322,7 +322,7 @@ export default async function seedVerticals7({ container }: ExecArgs) {
          $3, $4, 'sar',
          4999, 1850, 0, 1027, 7876,
          'paid', $5, 'mada', 'in_stripe_001',
-         'https://cdn.cityos.sa/invoices/INV-2026-RYD-001.pdf',
+         'https://cdn.dakkah.sa/invoices/INV-2026-RYD-001.pdf',
          $4,
          '[{"description":"Enterprise Plan - Monthly","amount":4999},{"description":"API Overages (37,000 calls)","amount":1850},{"description":"VAT 15%","amount":1027}]',
          '{"payment_reference":"MADA-TXN-98712"}',

@@ -141,7 +141,7 @@ const services = [
     base_price: "85",
     pricing_type: "fixed",
     location_type: "virtual",
-    virtual_meeting_url: "https://meet.example.com/wellness",
+    virtual_meeting_url: "https://meet.dakkah.sa/wellness",
     is_active: true,
     is_bookable_online: true,
     requires_confirmation: false,

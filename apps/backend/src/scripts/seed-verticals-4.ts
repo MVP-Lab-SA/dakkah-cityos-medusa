@@ -436,9 +436,9 @@ export default async function seedVerticals4({ container }: ExecArgs) {
     await dataSource.raw(`
       INSERT INTO booking (id, booking_number, tenant_id, customer_id, customer_name, customer_email, customer_phone, service_product_id, provider_id, start_time, end_time, timezone, status, attendee_count, location_type, currency_code, subtotal, discount_total, tax_total, total, payment_status, metadata, created_at, updated_at)
       VALUES
-        ('seed4_booking_1', 'BK-2026-00101', '${tenantId}', '${customerIds[0]}', 'محمد الأحمدي', 'mohammed@example.sa', '+966501112233', 'svc_prod_seed4_1', null, '${bookingStart1}', '${bookingEnd1}', 'Asia/Riyadh', 'confirmed', 1, 'in_person', 'sar', 200, 0, 30, 230, 'paid', '{"service":"استشارة قانونية"}', '${now}', '${now}'),
-        ('seed4_booking_2', 'BK-2026-00102', '${tenantId}', '${customerIds[1]}', 'فاطمة الزهراني', 'fatima@example.sa', '+966502223344', 'svc_prod_seed4_2', null, '${bookingStart2}', '${bookingEnd2}', 'Asia/Riyadh', 'pending', 2, 'virtual', 'sar', 350, 50, 45, 345, 'unpaid', '{"service":"حصة يوغا خاصة"}', '${now}', '${now}'),
-        ('seed4_booking_3', 'BK-2026-00103', '${tenantId}', '${customerIds[2]}', 'أحمد القحطاني', 'ahmed@example.sa', '+966503334455', 'svc_prod_seed4_3', null, '${bookingStart3}', '${bookingEnd3}', 'Asia/Riyadh', 'confirmed', 1, 'in_person', 'sar', 500, 0, 75, 575, 'deposit_paid', '{"service":"صيانة سيارة شاملة"}', '${now}', '${now}')
+        ('seed4_booking_1', 'BK-2026-00101', '${tenantId}', '${customerIds[0]}', 'محمد الأحمدي', 'mohammed@dakkah.sa', '+966501112233', 'svc_prod_seed4_1', null, '${bookingStart1}', '${bookingEnd1}', 'Asia/Riyadh', 'confirmed', 1, 'in_person', 'sar', 200, 0, 30, 230, 'paid', '{"service":"استشارة قانونية"}', '${now}', '${now}'),
+        ('seed4_booking_2', 'BK-2026-00102', '${tenantId}', '${customerIds[1]}', 'فاطمة الزهراني', 'fatima@dakkah.sa', '+966502223344', 'svc_prod_seed4_2', null, '${bookingStart2}', '${bookingEnd2}', 'Asia/Riyadh', 'pending', 2, 'virtual', 'sar', 350, 50, 45, 345, 'unpaid', '{"service":"حصة يوغا خاصة"}', '${now}', '${now}'),
+        ('seed4_booking_3', 'BK-2026-00103', '${tenantId}', '${customerIds[2]}', 'أحمد القحطاني', 'ahmed@dakkah.sa', '+966503334455', 'svc_prod_seed4_3', null, '${bookingStart3}', '${bookingEnd3}', 'Asia/Riyadh', 'confirmed', 1, 'in_person', 'sar', 500, 0, 75, 575, 'deposit_paid', '{"service":"صيانة سيارة شاملة"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
     console.log("  ✓ booking seeded")
@@ -533,8 +533,8 @@ export default async function seedVerticals4({ container }: ExecArgs) {
     await dataSource.raw(`
       INSERT INTO booking_reminder (id, booking_id, tenant_id, reminder_type, send_before_minutes, scheduled_for, status, sent_at, delivered_at, opened_at, error_message, retry_count, recipient_email, recipient_phone, subject, message, metadata, created_at, updated_at)
       VALUES
-        ('seed4_bk_reminder_1', 'seed4_booking_1', '${tenantId}', 'email', 1440, '${reminder1Time}', 'scheduled', null, null, null, null, 0, 'mohammed@example.sa', '+966501112233', 'تذكير بموعدك غداً', 'مرحباً محمد، نذكرك بموعد الاستشارة القانونية غداً الساعة 10:00 صباحاً', '{"template":"booking_reminder_24h"}', '${now}', '${now}'),
-        ('seed4_bk_reminder_2', 'seed4_booking_2', '${tenantId}', 'sms', 60, '${reminder2Time}', 'scheduled', null, null, null, null, 0, 'fatima@example.sa', '+966502223344', 'تذكير بحصة اليوغا', 'مرحباً فاطمة، حصة اليوغا بعد ساعة. رابط الاجتماع: https://meet.example.com/yoga', '{"template":"booking_reminder_1h"}', '${now}', '${now}')
+        ('seed4_bk_reminder_1', 'seed4_booking_1', '${tenantId}', 'email', 1440, '${reminder1Time}', 'scheduled', null, null, null, null, 0, 'mohammed@dakkah.sa', '+966501112233', 'تذكير بموعدك غداً', 'مرحباً محمد، نذكرك بموعد الاستشارة القانونية غداً الساعة 10:00 صباحاً', '{"template":"booking_reminder_24h"}', '${now}', '${now}'),
+        ('seed4_bk_reminder_2', 'seed4_booking_2', '${tenantId}', 'sms', 60, '${reminder2Time}', 'scheduled', null, null, null, null, 0, 'fatima@dakkah.sa', '+966502223344', 'تذكير بحصة اليوغا', 'مرحباً فاطمة، حصة اليوغا بعد ساعة. رابط الاجتماع: https://meet.dakkah.sa/yoga', '{"template":"booking_reminder_1h"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
     console.log("  ✓ booking_reminder seeded")
@@ -749,9 +749,9 @@ export default async function seedVerticals4({ container }: ExecArgs) {
     await dataSource.raw(`
       INSERT INTO account_holder (id, provider_id, external_id, email, data, metadata, created_at, updated_at)
       VALUES
-        ('seed4_acct_holder_1', 'pp_system_default', '${customerIds[0]}', 'mohammed@example.sa', '{"name":"محمد الأحمدي","national_id":"1098765432","bank":"الراجحي","iban":"SA0380000000608010167519"}', '{"kyc_verified":true}', '${now}', '${now}'),
-        ('seed4_acct_holder_2', 'pp_system_default', '${customerIds[1]}', 'fatima@example.sa', '{"name":"فاطمة الزهراني","national_id":"1087654321","bank":"الأهلي","iban":"SA4420000001234567891234"}', '{"kyc_verified":true}', '${now}', '${now}'),
-        ('seed4_acct_holder_3', 'pp_system_default', '${customerIds[2]}', 'ahmed@example.sa', '{"name":"أحمد القحطاني","national_id":"1076543210","bank":"الإنماء","iban":"SA5505000068201234567890"}', '{"kyc_verified":false}', '${now}', '${now}')
+        ('seed4_acct_holder_1', 'pp_system_default', '${customerIds[0]}', 'mohammed@dakkah.sa', '{"name":"محمد الأحمدي","national_id":"1098765432","bank":"الراجحي","iban":"SA0380000000608010167519"}', '{"kyc_verified":true}', '${now}', '${now}'),
+        ('seed4_acct_holder_2', 'pp_system_default', '${customerIds[1]}', 'fatima@dakkah.sa', '{"name":"فاطمة الزهراني","national_id":"1087654321","bank":"الأهلي","iban":"SA4420000001234567891234"}', '{"kyc_verified":true}', '${now}', '${now}'),
+        ('seed4_acct_holder_3', 'pp_system_default', '${customerIds[2]}', 'ahmed@dakkah.sa', '{"name":"أحمد القحطاني","national_id":"1076543210","bank":"الإنماء","iban":"SA5505000068201234567890"}', '{"kyc_verified":false}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
     console.log("  ✓ account_holder seeded")
