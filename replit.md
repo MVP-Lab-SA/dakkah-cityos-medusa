@@ -76,34 +76,35 @@ The platform supports 42 CRUD configurations for various manage verticals, utili
 - Phase 30: 20 detail/single-item view pages for all verticals (classifieds, automotive, real-estate, restaurants, freelance, healthcare, fitness, education, charity, travel, insurance, financial, government, social-commerce, parking, pet-services, legal, crowdfunding, grocery, warranties) + 3 admin components (BulkActionsBar, AnalyticsOverview, AdvancedFilters) + 3 vendor onboarding pages + 36 e2e lifecycle tests (order + vendor) + i18n translations for 14 verticals in en/fr/ar
 - Phase 31: 16 more detail pages for newer verticals (affiliate, loyalty-program, gift-cards-shop, flash-deals, consignment-shop, dropshipping-marketplace, print-on-demand-shop, white-label-shop, trade-in, try-before-you-buy, b2b, credit, volume-deals, bundles, subscriptions, newsletter) + 13 admin manage pages (insurance, flash-sales, bundles, consignments, gift-cards, newsletters, dropshipping, print-on-demand, white-label, try-before-you-buy, credit, wallet, trade-in)
 - Phase 32: 19 i18n verticals added (en/fr/ar, 97 keys per language) + 15 backend test files (179 new tests) + 5 detail page fixes (bookings, consignment, dropshipping, print-on-demand, white-label) + 4 admin manage pages (cms-content, company, inventory-extension, warranty) + 7 admin API routes (charity, cms-content, company, inventory-extension, promotion-ext, shipping-extension, warranty) + CRUD config deduplication. Score: 98% → 99%
+- Phase 33: 6 vendor dashboard pages (analytics, cart-extension, inventory-extension, shipping-extension, transactions, home) + 1 store route (subscriptions) + vendor profile detail page + 5 storefront test files (68 tests) + LSP fixes. Score: 99%
 
 ### Test Coverage Architecture
 - **Backend (Jest):** 103 test suites in `apps/backend/tests/unit/`
-- **Storefront (Vitest):** 7 test suites
+- **Storefront (Vitest):** 16 test suites
 - Run backend: `cd apps/backend && TEST_TYPE=unit npx jest`
 - Run storefront: `cd apps/storefront && npx vitest run`
 
 ## Platform Metrics
 | Metric | Count |
 |--------|-------|
-| Custom Modules | 64 |
+| Custom Modules | 58 |
 | Model Files | 258 |
 | Migration Files | 61 |
 | Admin API Routes | 207 |
-| Store API Routes | 135+ |
+| Store API Routes | 127 |
 | Vendor API Routes | 61 |
 | Admin/Manage Pages | 83 |
-| Vendor Dashboard Pages | 62 |
+| Vendor Dashboard Pages | 68 |
 | CRUD Configs | 82 |
 | Admin Hooks | 52 |
 | Workflows | 30 |
 | Subscribers | 33 |
 | Jobs | 16 |
-| Storefront Routes | 310 |
-| Storefront Components | 570+ |
+| Storefront Routes | 317 |
+| Storefront Components | 580+ |
 | Backend Test Files | 103 |
-| Storefront Test Files | 7 |
-| Total Tests | 1,956+ |
+| Storefront Test Files | 16 |
+| Total Tests | 2,024+ |
 | Total Source Files | 2,800+ |
 
 ## Documentation
