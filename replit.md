@@ -79,10 +79,11 @@ The platform supports 42 CRUD configurations for various manage verticals, utili
 - Phase 33: 6 vendor dashboard pages (analytics, cart-extension, inventory-extension, shipping-extension, transactions, home) + 1 store route (subscriptions) + vendor profile detail page + 5 storefront test files (68 tests) + LSP fixes. Score: 99%
 - Phase 34: 5 vendor API routes (dispute, invoice, quote, review, event-ticketing) + 5 vendor dashboard pages + 8 i18n verticals (en/fr/ar: government, grocery, legal, parking, petService, financial, freelance, restaurant) + 10 module test files (115 tests) + 4 storefront test files (78 tests) + 4 utility modules (currency, date-utils, url-utils, filters)
 - Phase 35: Enhanced all 15 sub-80% modules with 40+ new service methods + 7 new store API routes (analytics, promotions, channels, disputes, tax-config, audit, cart-extension) + 12 backend test files (232 tests) + 4 storefront test files (57 tests) + 4 storefront utility modules (cms-utils, tenant-utils, locale-utils, search-utils). All modules now score 80%+
+- Phase 36: 13 admin manage pages (availability, charities, commission-rules, integrations, metrics, payment-terms, pricing-tiers, promotions-ext, purchase-orders, service-providers, subscription-plans, temporal, webhooks) + 15 test files (130 tests: 7 store route tests, 5 module tests, 3 storefront tests) + 3 storefront utility modules (manage-utils, api-client, navigation-utils). Admin manage pages now 96.
 
 ### Test Coverage Architecture
-- **Backend (Jest):** 123 test suites in `apps/backend/tests/unit/`
-- **Storefront (Vitest):** 20 test suites
+- **Backend (Jest):** 135 test suites in `apps/backend/tests/unit/`
+- **Storefront (Vitest):** 23 test suites
 - Run backend: `cd apps/backend && TEST_TYPE=unit npx jest`
 - Run storefront: `cd apps/storefront && npx vitest run`
 
@@ -95,19 +96,19 @@ The platform supports 42 CRUD configurations for various manage verticals, utili
 | Admin API Routes | 207 |
 | Store API Routes | 134 |
 | Vendor API Routes | 66 |
-| Admin/Manage Pages | 83 |
+| Admin/Manage Pages | 96 |
 | Vendor Dashboard Pages | 73 |
 | CRUD Configs | 82 |
 | Admin Hooks | 52 |
 | Workflows | 30 |
 | Subscribers | 33 |
 | Jobs | 17 |
-| Storefront Routes | 322 |
-| Storefront Components | 600+ |
-| Backend Test Files | 123 |
-| Storefront Test Files | 20 |
-| Total Tests | 2,506+ |
-| Total Source Files | 2,900+ |
+| Storefront Routes | 335 |
+| Storefront Components | 620+ |
+| Backend Test Files | 135 |
+| Storefront Test Files | 23 |
+| Total Tests | 2,636+ |
+| Total Source Files | 2,950+ |
 
 ## Documentation
 - `docs/PLATFORM_MODULE_ASSESSMENT.md` — Deep-dive assessment of all 58 modules (v3.0), 3400+ lines

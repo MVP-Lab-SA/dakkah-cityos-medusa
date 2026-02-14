@@ -1,0 +1,224 @@
+// @ts-nocheck
+import { createFileRoute } from "@tanstack/react-router"
+import { useState, useCallback } from "react"
+import { ManageLayout } from "@/components/manage"
+import { Container, PageHeader, DataTable, StatusBadge, SkeletonTable, Button, DropdownMenu, FormDrawer, ConfirmDialog, useToast, Tabs } from "@/components/manage/ui"
+import { t } from "@/lib/i18n"
+import { useTenant } from "@/lib/context/tenant-context"
+import { useQuery } from "@tanstack/react-query"
+import { sdk } from "@/lib/utils/sdk"
+import { useManageCrud } from "@/lib/hooks/use-manage-crud"
+import { Plus } from "@medusajs/icons"
+
+export const Route = createFileRoute("/$tenant/$locale/manage/availability")({
+  component: ManageAvailabilityPage,
+})
+
+const config = {
+  moduleKey: "availability",
+  singularLabel: "Availability Slot",
+  pluralLabel: "Availability Slots",
+  label: "Availability",
+  apiEndpoint: "/admin/availability",
+  fields: [
+    { key: "name", label: "Name", type: "text" as const, required: true, placeholder: "Slot name" },
+    { key: "entity_type", label: "Entity Type", type: "select" as const, options: [
+      { value: "service", label: "Service" },
+      { value: "provider", label: "Provider" },
+      { value: "resource", label: "Resource" },
+    ]},
+    { key: "day_of_week", label: "Day of Week", type: "select" as const, options: [
+      { value: "monday", label: "Monday" },
+      { value: "tuesday", label: "Tuesday" },
+      { value: "wednesday", label: "Wednesday" },
+      { value: "thursday", label: "Thursday" },
+      { value: "friday", label: "Friday" },
+      { value: "saturday", label: "Saturday" },
+      { value: "sunday", label: "Sunday" },
+    ]},
+    { key: "start_time", label: "Start Time", type: "text" as const, placeholder: "09:00" },
+    { key: "end_time", label: "End Time", type: "text" as const, placeholder: "17:00" },
+    { key: "is_available", label: "Available", type: "checkbox" as const, placeholder: "Slot is available" },
+  ],
+  defaultValues: { name: "", entity_type: "service", day_of_week: "monday", start_time: "", end_time: "", is_available: true },
+}
+
+const STATUS_FILTERS = ["all", "available", "unavailable"] as const
+
+function ManageAvailabilityPage() {
+  const { locale: routeLocale } = Route.useParams()
+  const { locale: ctxLocale } = useTenant()
+  const locale = routeLocale || ctxLocale || "en"
+  const { addToast } = useToast()
+
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [editingItem, setEditingItem] = useState<any>(null)
+  const [formValues, setFormValues] = useState<Record<string, any>>(config.defaultValues)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
+  const [statusFilter, setStatusFilter] = useState<string>("all")
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["manage", config.moduleKey],
+    queryFn: async () => {
+      const response = await sdk.client.fetch(config.apiEndpoint, { method: "GET" })
+      return response
+    },
+    enabled: typeof window !== "undefined",
+  })
+
+  const { createMutation, updateMutation, deleteMutation } = useManageCrud({
+    moduleKey: config.moduleKey,
+    apiEndpoint: config.apiEndpoint,
+  })
+
+  const handleCreate = useCallback(() => {
+    setEditingItem(null)
+    setFormValues({ ...config.defaultValues })
+    setDrawerOpen(true)
+  }, [])
+
+  const handleEdit = useCallback((row: any) => {
+    setEditingItem(row)
+    const values: Record<string, any> = {}
+    config.fields.forEach((f) => { values[f.key] = row[f.key] ?? config.defaultValues[f.key] ?? "" })
+    setFormValues(values)
+    setDrawerOpen(true)
+  }, [])
+
+  const handleFormChange = useCallback((key: string, value: any) => {
+    setFormValues((prev) => ({ ...prev, [key]: value }))
+  }, [])
+
+  const handleSubmit = useCallback(async () => {
+    try {
+      if (editingItem) {
+        await updateMutation.mutateAsync({ id: editingItem.id, ...formValues })
+        addToast("success", `${config.singularLabel} updated successfully`)
+      } else {
+        await createMutation.mutateAsync(formValues)
+        addToast("success", `${config.singularLabel} created successfully`)
+      }
+      setDrawerOpen(false)
+      setEditingItem(null)
+    } catch (e) {
+      addToast("error", `Failed to save ${config.singularLabel.toLowerCase()}`)
+    }
+  }, [editingItem, formValues, updateMutation, createMutation, addToast])
+
+  const handleDelete = useCallback(async () => {
+    if (!deleteId) return
+    try {
+      await deleteMutation.mutateAsync(deleteId)
+      addToast("success", `${config.singularLabel} deleted successfully`)
+      setDeleteId(null)
+    } catch (e) {
+      addToast("error", `Failed to delete ${config.singularLabel.toLowerCase()}`)
+    }
+  }, [deleteId, deleteMutation, addToast])
+
+  const allItems = ((data as any)?.items || (data as any)?.availability || []).map((item: any) => ({
+    id: item.id,
+    name: item.name || "—",
+    entity_type: item.entity_type || "—",
+    day_of_week: item.day_of_week || "—",
+    start_time: item.start_time || "—",
+    end_time: item.end_time || "—",
+    is_available: item.is_available,
+    status: item.is_available === false ? "unavailable" : "available",
+  }))
+
+  const items = statusFilter === "all"
+    ? allItems
+    : allItems.filter((i: any) => i.status === statusFilter)
+
+  const columns = [
+    {
+      key: "name",
+      header: t(locale, "manage.name"),
+      render: (val: unknown) => <span className="font-medium">{val as string}</span>,
+    },
+    { key: "entity_type", header: "Entity Type" },
+    { key: "day_of_week", header: "Day" },
+    { key: "start_time", header: "Start Time" },
+    { key: "end_time", header: "End Time" },
+    {
+      key: "status",
+      header: t(locale, "manage.status"),
+      render: (val: unknown) => <StatusBadge status={val as string} />,
+    },
+    {
+      key: "actions",
+      header: t(locale, "manage.actions"),
+      align: "end" as const,
+      render: (_: unknown, row: any) => (
+        <DropdownMenu
+          items={[
+            { label: "Edit", onClick: () => handleEdit(row) },
+            { type: "separator" as const },
+            { label: "Delete", onClick: () => setDeleteId(row.id), variant: "danger" as const },
+          ]}
+        />
+      ),
+    },
+  ]
+
+  if (isLoading) {
+    return (
+      <ManageLayout locale={locale}>
+        <Container>
+          <SkeletonTable rows={8} cols={7} />
+        </Container>
+      </ManageLayout>
+    )
+  }
+
+  return (
+    <ManageLayout locale={locale}>
+      <Container>
+        <PageHeader
+          title={config.label}
+          subtitle="Manage availability slots and schedules"
+          actions={
+            <Button variant="primary" size="base" onClick={handleCreate}>
+              <Plus className="w-4 h-4" />
+              Add {config.singularLabel}
+            </Button>
+          }
+        />
+
+        <Tabs
+          tabs={STATUS_FILTERS.map((s) => ({
+            id: s,
+            label: s === "all" ? t(locale, "manage.all_statuses") : s.replace(/_/g, " "),
+          }))}
+          activeTab={statusFilter}
+          onTabChange={setStatusFilter}
+          className="mb-4"
+        />
+
+        <DataTable columns={columns} data={items} emptyTitle="No availability slots found" countLabel="slots" />
+      </Container>
+
+      <FormDrawer
+        open={drawerOpen}
+        onClose={() => { setDrawerOpen(false); setEditingItem(null) }}
+        title={editingItem ? `Edit ${config.singularLabel}` : `Create ${config.singularLabel}`}
+        fields={config.fields}
+        values={formValues}
+        onChange={handleFormChange}
+        onSubmit={handleSubmit}
+        loading={createMutation.isPending || updateMutation.isPending}
+        submitLabel={editingItem ? "Save changes" : "Create"}
+      />
+
+      <ConfirmDialog
+        open={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        title={`Delete ${config.singularLabel}`}
+        description={`Are you sure you want to delete this ${config.singularLabel.toLowerCase()}? This action cannot be undone.`}
+        loading={deleteMutation.isPending}
+      />
+    </ManageLayout>
+  )
+}
