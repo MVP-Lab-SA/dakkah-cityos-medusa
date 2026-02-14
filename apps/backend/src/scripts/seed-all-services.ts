@@ -865,7 +865,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
           price: 4900,
           features: { max_orders: 100, support: "email", analytics: "basic" },
           sort_order: 1,
-          metadata: { seeded: true },
+          metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop" },
         },
         {
           tenant_id: TENANT_ID,
@@ -880,7 +880,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
           compare_at_price: 19900,
           features: { max_orders: 1000, support: "priority", analytics: "advanced", api_access: true },
           sort_order: 2,
-          metadata: { seeded: true },
+          metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop" },
         },
         {
           tenant_id: TENANT_ID,
@@ -894,7 +894,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
           price: 149900,
           features: { max_orders: -1, support: "dedicated", analytics: "enterprise", api_access: true, white_label: true },
           sort_order: 3,
-          metadata: { seeded: true },
+          metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop" },
         },
       ])
       log("  ✓ Created 3 subscription plans")
@@ -935,7 +935,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
           location_type: "in_person",
           pricing_type: "fixed",
           is_active: true,
-          metadata: { name: "Premium Hammam Spa Experience", price: 45000 },
+          metadata: { name: "Premium Hammam Spa Experience", price: 45000, image_url: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&h=600&fit=crop" },
         },
         {
           tenant_id: TENANT_ID,
@@ -952,7 +952,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
           virtual_meeting_provider: "zoom",
           pricing_type: "fixed",
           is_active: true,
-          metadata: { name: "Business Strategy Consultation", price: 75000 },
+          metadata: { name: "Business Strategy Consultation", price: 75000, image_url: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&h=600&fit=crop" },
         },
         {
           tenant_id: TENANT_ID,
@@ -967,7 +967,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
           location_type: "in_person",
           pricing_type: "fixed",
           is_active: true,
-          metadata: { name: "Arabic Calligraphy Workshop", price: 15000 },
+          metadata: { name: "Arabic Calligraphy Workshop", price: 15000, image_url: "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&h=600&fit=crop" },
         },
         {
           tenant_id: TENANT_ID,
@@ -983,7 +983,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
           location_type: "in_person",
           pricing_type: "fixed",
           is_active: true,
-          metadata: { name: "Desert Safari Photography Session", price: 85000 },
+          metadata: { name: "Desert Safari Photography Session", price: 85000, image_url: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800&h=600&fit=crop" },
         },
       ])
       log("  ✓ Created 4 service products")
@@ -1629,11 +1629,11 @@ export default async function seedAllServices({ container }: ExecArgs) {
       skippedCount++
     } else {
       await svc.createFreshProducts([
-        { tenant_id: TENANT_ID, product_id: "prod-dates-001", storage_type: "ambient", shelf_life_days: 180, origin_country: "sa", organic: true, unit_type: "kg", min_order_quantity: 1, is_seasonal: true, season_start: "August", season_end: "October", metadata: { name: "Ajwa Dates – Madinah Premium", seeded: true } },
-        { tenant_id: TENANT_ID, product_id: "prod-lamb-001", storage_type: "chilled", shelf_life_days: 5, optimal_temp_min: 0, optimal_temp_max: 4, origin_country: "sa", organic: false, unit_type: "kg", min_order_quantity: 1, metadata: { name: "Saudi Lamb – Fresh Cut", seeded: true } },
-        { tenant_id: TENANT_ID, product_id: "prod-camel-milk", storage_type: "chilled", shelf_life_days: 7, optimal_temp_min: 2, optimal_temp_max: 6, origin_country: "sa", organic: true, unit_type: "liter", min_order_quantity: 1, metadata: { name: "Camel Milk – Farm Fresh", seeded: true } },
-        { tenant_id: TENANT_ID, product_id: "prod-saffron-001", storage_type: "ambient", shelf_life_days: 365, origin_country: "ir", organic: true, unit_type: "gram", min_order_quantity: 1, metadata: { name: "Iranian Saffron – Grade 1", seeded: true } },
-        { tenant_id: TENANT_ID, product_id: "prod-arabic-bread", storage_type: "ambient", shelf_life_days: 3, origin_country: "sa", organic: false, unit_type: "pack", min_order_quantity: 1, metadata: { name: "Khubz – Arabic Flatbread", seeded: true } },
+        { tenant_id: TENANT_ID, product_id: "prod-dates-001", storage_type: "ambient", shelf_life_days: 180, origin_country: "sa", organic: true, unit_type: "kg", min_order_quantity: 1, is_seasonal: true, season_start: "August", season_end: "October", metadata: { name: "Ajwa Dates – Madinah Premium", seeded: true, image_url: "https://images.unsplash.com/photo-1591369822096-ffd140ec948f?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, product_id: "prod-lamb-001", storage_type: "chilled", shelf_life_days: 5, optimal_temp_min: 0, optimal_temp_max: 4, origin_country: "sa", organic: false, unit_type: "kg", min_order_quantity: 1, metadata: { name: "Saudi Lamb – Fresh Cut", seeded: true, image_url: "https://images.unsplash.com/photo-1588347818036-558601350947?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, product_id: "prod-camel-milk", storage_type: "chilled", shelf_life_days: 7, optimal_temp_min: 2, optimal_temp_max: 6, origin_country: "sa", organic: true, unit_type: "liter", min_order_quantity: 1, metadata: { name: "Camel Milk – Farm Fresh", seeded: true, image_url: "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, product_id: "prod-saffron-001", storage_type: "ambient", shelf_life_days: 365, origin_country: "ir", organic: true, unit_type: "gram", min_order_quantity: 1, metadata: { name: "Iranian Saffron – Grade 1", seeded: true, image_url: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, product_id: "prod-arabic-bread", storage_type: "ambient", shelf_life_days: 3, origin_country: "sa", organic: false, unit_type: "pack", min_order_quantity: 1, metadata: { name: "Khubz – Arabic Flatbread", seeded: true, image_url: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&h=600&fit=crop" } },
       ])
       log("  ✓ Created 5 fresh products")
       seededCount++
@@ -1769,10 +1769,10 @@ export default async function seedAllServices({ container }: ExecArgs) {
       skippedCount++
     } else {
       await svc.createGigListings([
-        { tenant_id: TENANT_ID, freelancer_id: "freelancer-001", title: "Arabic & English Translation – Certified", description: "Professional certified translation services for legal, medical, and business documents. Native Arabic speaker with 10 years experience.", category: "translation", listing_type: "fixed_price", price: 15000, currency_code: "sar", delivery_time_days: 3, revisions_included: 2, status: "active", skill_tags: ["arabic", "english", "legal", "medical"], avg_rating: 4.9, total_orders: 350, metadata: { seeded: true } },
-        { tenant_id: TENANT_ID, freelancer_id: "freelancer-002", title: "UI/UX Design for Arabic Apps", description: "I design beautiful, RTL-first mobile and web interfaces. Specializing in Arabic-first experiences for Saudi market.", category: "design", listing_type: "fixed_price", price: 50000, currency_code: "sar", delivery_time_days: 7, revisions_included: 3, status: "active", skill_tags: ["ui_design", "ux_design", "arabic", "figma"], avg_rating: 4.8, total_orders: 120, metadata: { seeded: true } },
-        { tenant_id: TENANT_ID, freelancer_id: "freelancer-003", title: "Social Media Management – Saudi Market", description: "Full social media management for Instagram, TikTok, X, and Snapchat. Content creation in Arabic and English.", category: "marketing", listing_type: "hourly", hourly_rate: 20000, currency_code: "sar", status: "active", skill_tags: ["social_media", "marketing", "content_creation"], avg_rating: 4.7, total_orders: 80, metadata: { seeded: true } },
-        { tenant_id: TENANT_ID, freelancer_id: "freelancer-004", title: "Video Production & Editing – Riyadh", description: "Professional video production for corporate, events, and social media. Drone footage available. Based in Riyadh.", category: "video", listing_type: "fixed_price", price: 100000, currency_code: "sar", delivery_time_days: 10, revisions_included: 2, status: "active", skill_tags: ["video_production", "editing", "drone", "corporate"], avg_rating: 4.6, total_orders: 45, metadata: { seeded: true } },
+        { tenant_id: TENANT_ID, freelancer_id: "freelancer-001", title: "Arabic & English Translation – Certified", description: "Professional certified translation services for legal, medical, and business documents. Native Arabic speaker with 10 years experience.", category: "translation", listing_type: "fixed_price", price: 15000, currency_code: "sar", delivery_time_days: 3, revisions_included: 2, status: "active", skill_tags: ["arabic", "english", "legal", "medical"], avg_rating: 4.9, total_orders: 350, metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, freelancer_id: "freelancer-002", title: "UI/UX Design for Arabic Apps", description: "I design beautiful, RTL-first mobile and web interfaces. Specializing in Arabic-first experiences for Saudi market.", category: "design", listing_type: "fixed_price", price: 50000, currency_code: "sar", delivery_time_days: 7, revisions_included: 3, status: "active", skill_tags: ["ui_design", "ux_design", "arabic", "figma"], avg_rating: 4.8, total_orders: 120, metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, freelancer_id: "freelancer-003", title: "Social Media Management – Saudi Market", description: "Full social media management for Instagram, TikTok, X, and Snapchat. Content creation in Arabic and English.", category: "marketing", listing_type: "hourly", hourly_rate: 20000, currency_code: "sar", status: "active", skill_tags: ["social_media", "marketing", "content_creation"], avg_rating: 4.7, total_orders: 80, metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, freelancer_id: "freelancer-004", title: "Video Production & Editing – Riyadh", description: "Professional video production for corporate, events, and social media. Drone footage available. Based in Riyadh.", category: "video", listing_type: "fixed_price", price: 100000, currency_code: "sar", delivery_time_days: 10, revisions_included: 2, status: "active", skill_tags: ["video_production", "editing", "drone", "corporate"], avg_rating: 4.6, total_orders: 45, metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&h=600&fit=crop" } },
       ])
       log("  ✓ Created 4 gig listings")
       seededCount++
@@ -2105,9 +2105,9 @@ export default async function seedAllServices({ container }: ExecArgs) {
       skippedCount++
     } else {
       await svc.createLoanProducts([
-        { tenant_id: TENANT_ID, name: "Murabaha Personal Finance", description: "Sharia-compliant personal financing with fixed profit rate. No interest charges.", loan_type: "personal", min_amount: 10000, max_amount: 500000, currency_code: "sar", interest_rate_min: 4.5, interest_rate_max: 8.0, interest_type: "fixed", min_term_months: 12, max_term_months: 60, processing_fee_pct: 1, is_active: true, metadata: { seeded: true, sharia_compliant: true } },
-        { tenant_id: TENANT_ID, name: "SME Business Financing", description: "Islamic financing for small and medium enterprises. Supports Vision 2030 entrepreneurship goals.", loan_type: "business", min_amount: 100000, max_amount: 5000000, currency_code: "sar", interest_rate_min: 5.0, interest_rate_max: 10.0, interest_type: "reducing_balance", min_term_months: 24, max_term_months: 120, processing_fee_pct: 1.5, is_active: true, metadata: { seeded: true, sharia_compliant: true } },
-        { tenant_id: TENANT_ID, name: "Home Ijara Financing", description: "Islamic mortgage (Ijara) for Saudi nationals. Own your dream home with Sharia-compliant payments.", loan_type: "mortgage", min_amount: 500000, max_amount: 5000000, currency_code: "sar", interest_rate_min: 3.5, interest_rate_max: 6.0, interest_type: "fixed", min_term_months: 60, max_term_months: 300, processing_fee_pct: 0.5, is_active: true, metadata: { seeded: true, sharia_compliant: true } },
+        { tenant_id: TENANT_ID, name: "Murabaha Personal Finance", description: "Sharia-compliant personal financing with fixed profit rate. No interest charges.", loan_type: "personal", min_amount: 10000, max_amount: 500000, currency_code: "sar", interest_rate_min: 4.5, interest_rate_max: 8.0, interest_type: "fixed", min_term_months: 12, max_term_months: 60, processing_fee_pct: 1, is_active: true, metadata: { seeded: true, sharia_compliant: true, image_url: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, name: "SME Business Financing", description: "Islamic financing for small and medium enterprises. Supports Vision 2030 entrepreneurship goals.", loan_type: "business", min_amount: 100000, max_amount: 5000000, currency_code: "sar", interest_rate_min: 5.0, interest_rate_max: 10.0, interest_type: "reducing_balance", min_term_months: 24, max_term_months: 120, processing_fee_pct: 1.5, is_active: true, metadata: { seeded: true, sharia_compliant: true, image_url: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, name: "Home Ijara Financing", description: "Islamic mortgage (Ijara) for Saudi nationals. Own your dream home with Sharia-compliant payments.", loan_type: "mortgage", min_amount: 500000, max_amount: 5000000, currency_code: "sar", interest_rate_min: 3.5, interest_rate_max: 6.0, interest_type: "fixed", min_term_months: 60, max_term_months: 300, processing_fee_pct: 0.5, is_active: true, metadata: { seeded: true, sharia_compliant: true, image_url: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=600&fit=crop" } },
       ])
       log("  ✓ Created 3 loan products")
       seededCount++
@@ -2133,9 +2133,9 @@ export default async function seedAllServices({ container }: ExecArgs) {
       skippedCount++
     } else {
       await svc.createCitizenProfiles([
-        { tenant_id: TENANT_ID, customer_id: "cust-citizen-001", national_id: "1234567890", full_name: "Abdullah Mohammed Al-Rashid", date_of_birth: new Date("1985-06-15"), address: { city: "Riyadh", district: "Al Olaya" }, phone: "+966501234567", email: "abdullah@email.com", preferred_language: "ar", total_requests: 5, metadata: { seeded: true } },
-        { tenant_id: TENANT_ID, customer_id: "cust-citizen-002", national_id: "0987654321", full_name: "Nora Khalid Al-Faisal", date_of_birth: new Date("1990-02-20"), address: { city: "Jeddah", district: "Al Rawdah" }, phone: "+966509876543", email: "nora@email.com", preferred_language: "ar", total_requests: 3, metadata: { seeded: true } },
-        { tenant_id: TENANT_ID, customer_id: "cust-citizen-003", national_id: "1122334455", full_name: "Omar Hassan Al-Zahrani", date_of_birth: new Date("1978-11-08"), address: { city: "Dammam", district: "Al Faisaliyah" }, phone: "+966551122334", email: "omar@email.com", preferred_language: "en", total_requests: 8, metadata: { seeded: true } },
+        { tenant_id: TENANT_ID, customer_id: "cust-citizen-001", national_id: "1234567890", full_name: "Abdullah Mohammed Al-Rashid", date_of_birth: new Date("1985-06-15"), address: { city: "Riyadh", district: "Al Olaya" }, phone: "+966501234567", email: "abdullah@email.com", preferred_language: "ar", total_requests: 5, metadata: { seeded: true, avatar_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop" } },
+        { tenant_id: TENANT_ID, customer_id: "cust-citizen-002", national_id: "0987654321", full_name: "Nora Khalid Al-Faisal", date_of_birth: new Date("1990-02-20"), address: { city: "Jeddah", district: "Al Rawdah" }, phone: "+966509876543", email: "nora@email.com", preferred_language: "ar", total_requests: 3, metadata: { seeded: true, avatar_url: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop" } },
+        { tenant_id: TENANT_ID, customer_id: "cust-citizen-003", national_id: "1122334455", full_name: "Omar Hassan Al-Zahrani", date_of_birth: new Date("1978-11-08"), address: { city: "Dammam", district: "Al Faisaliyah" }, phone: "+966551122334", email: "omar@email.com", preferred_language: "en", total_requests: 8, metadata: { seeded: true, avatar_url: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop" } },
       ])
       log("  ✓ Created 3 citizen profiles")
       seededCount++
@@ -2189,9 +2189,9 @@ export default async function seedAllServices({ container }: ExecArgs) {
       skippedCount++
     } else {
       await svc.createAdAccounts([
-        { tenant_id: TENANT_ID, advertiser_id: "vendor-albaik", account_name: "Al Baik Advertising", balance: 50000, currency_code: "sar", total_spent: 120000, total_deposited: 170000, status: "active", auto_recharge: true, auto_recharge_amount: 25000, auto_recharge_threshold: 5000, metadata: { seeded: true } },
-        { tenant_id: TENANT_ID, advertiser_id: "vendor-jarir", account_name: "Jarir Marketing Ads", balance: 80000, currency_code: "sar", total_spent: 250000, total_deposited: 330000, status: "active", auto_recharge: true, auto_recharge_amount: 50000, auto_recharge_threshold: 10000, metadata: { seeded: true } },
-        { tenant_id: TENANT_ID, advertiser_id: "vendor-oud", account_name: "Arabian Oud Promotions", balance: 35000, currency_code: "sar", total_spent: 65000, total_deposited: 100000, status: "active", metadata: { seeded: true } },
+        { tenant_id: TENANT_ID, advertiser_id: "vendor-albaik", account_name: "Al Baik Advertising", balance: 50000, currency_code: "sar", total_spent: 120000, total_deposited: 170000, status: "active", auto_recharge: true, auto_recharge_amount: 25000, auto_recharge_threshold: 5000, metadata: { seeded: true, logo_url: "https://images.unsplash.com/photo-1567521464027-f127ff144326?w=400&h=400&fit=crop" } },
+        { tenant_id: TENANT_ID, advertiser_id: "vendor-jarir", account_name: "Jarir Marketing Ads", balance: 80000, currency_code: "sar", total_spent: 250000, total_deposited: 330000, status: "active", auto_recharge: true, auto_recharge_amount: 50000, auto_recharge_threshold: 10000, metadata: { seeded: true, logo_url: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=400&h=400&fit=crop" } },
+        { tenant_id: TENANT_ID, advertiser_id: "vendor-oud", account_name: "Arabian Oud Promotions", balance: 35000, currency_code: "sar", total_spent: 65000, total_deposited: 100000, status: "active", metadata: { seeded: true, logo_url: "https://images.unsplash.com/photo-1541643600914-78b084683601?w=400&h=400&fit=crop" } },
       ])
       log("  ✓ Created 3 ad accounts")
       seededCount++
@@ -2217,9 +2217,9 @@ export default async function seedAllServices({ container }: ExecArgs) {
       skippedCount++
     } else {
       await svc.createAffiliates([
-        { tenant_id: TENANT_ID, name: "TechReview Arabia", email: "partners@techreviewarabia.com", affiliate_type: "influencer", status: "active", commission_rate: 8, commission_type: "percentage", payout_method: "bank_transfer", payout_minimum: 5000, total_earnings: 45000, total_clicks: 25000, total_conversions: 850, bio: "Top tech reviewer in Saudi Arabia with 500K+ followers on YouTube", social_links: { youtube: "https://youtube.com/techreviewarabia", instagram: "@techreviewarabia" }, metadata: { seeded: true } },
-        { tenant_id: TENANT_ID, name: "Saudi Lifestyle Blog", email: "affiliate@saudilifestyle.com", affiliate_type: "partner", status: "active", commission_rate: 5, commission_type: "percentage", payout_method: "bank_transfer", payout_minimum: 3000, total_earnings: 28000, total_clicks: 18000, total_conversions: 620, bio: "Leading lifestyle and culture blog covering Saudi Arabia", metadata: { seeded: true } },
-        { tenant_id: TENANT_ID, name: "Riyadh Food Guide", email: "collab@riyadhfoodguide.com", affiliate_type: "influencer", status: "active", commission_rate: 10, commission_type: "percentage", payout_method: "bank_transfer", payout_minimum: 2000, total_earnings: 15000, total_clicks: 12000, total_conversions: 450, bio: "The most popular food review account in Riyadh", social_links: { instagram: "@riyadhfoodguide", tiktok: "@riyadhfoodguide" }, metadata: { seeded: true } },
+        { tenant_id: TENANT_ID, name: "TechReview Arabia", email: "partners@techreviewarabia.com", affiliate_type: "influencer", status: "active", commission_rate: 8, commission_type: "percentage", payout_method: "bank_transfer", payout_minimum: 5000, total_earnings: 45000, total_clicks: 25000, total_conversions: 850, bio: "Top tech reviewer in Saudi Arabia with 500K+ followers on YouTube", social_links: { youtube: "https://youtube.com/techreviewarabia", instagram: "@techreviewarabia" }, metadata: { seeded: true, avatar_url: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop" } },
+        { tenant_id: TENANT_ID, name: "Saudi Lifestyle Blog", email: "affiliate@saudilifestyle.com", affiliate_type: "partner", status: "active", commission_rate: 5, commission_type: "percentage", payout_method: "bank_transfer", payout_minimum: 3000, total_earnings: 28000, total_clicks: 18000, total_conversions: 620, bio: "Leading lifestyle and culture blog covering Saudi Arabia", metadata: { seeded: true, avatar_url: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop" } },
+        { tenant_id: TENANT_ID, name: "Riyadh Food Guide", email: "collab@riyadhfoodguide.com", affiliate_type: "influencer", status: "active", commission_rate: 10, commission_type: "percentage", payout_method: "bank_transfer", payout_minimum: 2000, total_earnings: 15000, total_clicks: 12000, total_conversions: 450, bio: "The most popular food review account in Riyadh", social_links: { instagram: "@riyadhfoodguide", tiktok: "@riyadhfoodguide" }, metadata: { seeded: true, avatar_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop" } },
       ])
       log("  ✓ Created 3 affiliates")
       seededCount++
@@ -2245,7 +2245,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
       skippedCount++
     } else {
       await svc.createLoyaltyPrograms([
-        { tenant_id: TENANT_ID, name: "Dakkah Rewards", description: "Earn points on every purchase across all Dakkah CityOS services. Redeem for discounts, upgrades, and exclusive experiences.", points_per_currency: 1, currency_code: "sar", status: "active", tiers: [{ name: "Bronze", min_points: 0, multiplier: 1 }, { name: "Silver", min_points: 5000, multiplier: 1.5 }, { name: "Gold", min_points: 20000, multiplier: 2 }, { name: "Platinum", min_points: 50000, multiplier: 3 }], earn_rules: { purchase: 1, review: 50, referral: 500 }, metadata: { seeded: true } },
+        { tenant_id: TENANT_ID, name: "Dakkah Rewards", description: "Earn points on every purchase across all Dakkah CityOS services. Redeem for discounts, upgrades, and exclusive experiences.", points_per_currency: 1, currency_code: "sar", status: "active", tiers: [{ name: "Bronze", min_points: 0, multiplier: 1 }, { name: "Silver", min_points: 5000, multiplier: 1.5 }, { name: "Gold", min_points: 20000, multiplier: 2 }, { name: "Platinum", min_points: 50000, multiplier: 3 }], earn_rules: { purchase: 1, review: 50, referral: 500 }, metadata: { seeded: true, logo_url: "https://images.unsplash.com/photo-1553729459-uj89bdab0e5a?w=400&h=400&fit=crop", banner_image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200&h=400&fit=crop" } },
       ])
       log("  ✓ Created 1 loyalty program")
       seededCount++
@@ -2649,6 +2649,229 @@ export default async function seedAllServices({ container }: ExecArgs) {
       }
     }
   } catch (err: any) { logError("Event Outbox", err); failedCount++ }
+
+  // INSURANCE MODULE
+  log("━━━ [EXTRA] INSURANCE ━━━")
+  try {
+    const svc = resolveService("insurance") as any
+    if (!svc) throw new Error("Service not found")
+    const existing = await svc.listInsurancePolicys?.() || await svc.listInsurancePolicies?.() || []
+    const insList = Array.isArray(existing) ? existing : [existing].filter(Boolean)
+    if (insList.length > 0 && insList[0]?.id) { log("  ✓ Insurance policies exist, skipping"); skippedCount++ }
+    else {
+      const create = svc.createInsurancePolicys?.bind(svc) || svc.createInsurancePolicies?.bind(svc)
+      if (create) {
+        await create([
+          { tenant_id: TENANT_ID, customer_id: "cust-001", policy_type: "auto", policy_number: "INS-AUTO-2025-001", provider: "Tawuniya", premium_amount: 350000, currency_code: "sar", coverage_amount: 5000000, start_date: new Date("2025-01-01"), end_date: new Date("2026-01-01"), status: "active", metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&h=600&fit=crop" } },
+          { tenant_id: TENANT_ID, customer_id: "cust-002", policy_type: "health", policy_number: "INS-HEALTH-2025-001", provider: "Bupa Arabia", premium_amount: 800000, currency_code: "sar", coverage_amount: 10000000, start_date: new Date("2025-01-01"), end_date: new Date("2026-01-01"), status: "active", metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&h=600&fit=crop" } },
+          { tenant_id: TENANT_ID, customer_id: "cust-003", policy_type: "property", policy_number: "INS-PROP-2025-001", provider: "Al Rajhi Takaful", premium_amount: 450000, currency_code: "sar", coverage_amount: 20000000, start_date: new Date("2025-03-01"), end_date: new Date("2026-03-01"), status: "active", metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=600&fit=crop" } },
+        ])
+        log("  ✓ Created 3 insurance policies"); seededCount++
+      }
+    }
+  } catch (err: any) { logError("Insurance", err); failedCount++ }
+
+  // TRADE-IN MODULE
+  log("━━━ [EXTRA] TRADE-IN ━━━")
+  try {
+    const svc = resolveService("tradeIn") as any
+    if (!svc) throw new Error("Service not found")
+    const existing = await svc.listTradeIns({ tenant_id: TENANT_ID })
+    const tiList = Array.isArray(existing) ? existing : [existing].filter(Boolean)
+    if (tiList.length > 0 && tiList[0]?.id) { log("  ✓ Trade-ins exist, skipping"); skippedCount++ }
+    else {
+      await svc.createTradeIns([
+        { tenant_id: TENANT_ID, customer_id: "cust-001", item_name: "iPhone 14 Pro Max 256GB", item_category: "electronics", item_condition: "good", estimated_value: 280000, currency_code: "sar", status: "pending_evaluation", images: ["https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&h=600&fit=crop"], description: "Used for 1 year, minor scratches on screen protector. Original box included.", metadata: { seeded: true } },
+        { tenant_id: TENANT_ID, customer_id: "cust-002", item_name: "Samsung Galaxy S24 Ultra", item_category: "electronics", item_condition: "excellent", estimated_value: 350000, currency_code: "sar", status: "approved", approved_value: 340000, images: ["https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=800&h=600&fit=crop"], description: "Like new condition. All accessories included.", metadata: { seeded: true } },
+        { tenant_id: TENANT_ID, customer_id: "cust-003", item_name: "MacBook Pro M2 14-inch", item_category: "electronics", item_condition: "fair", estimated_value: 450000, currency_code: "sar", status: "completed", approved_value: 420000, images: ["https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&h=600&fit=crop"], description: "Minor dent on corner. Battery health 85%. Works perfectly.", metadata: { seeded: true } },
+      ])
+      log("  ✓ Created 3 trade-ins"); seededCount++
+    }
+  } catch (err: any) { logError("Trade-In", err); failedCount++ }
+
+  // WALLET MODULE
+  log("━━━ [EXTRA] WALLET ━━━")
+  try {
+    const svc = resolveService("wallet") as any
+    if (!svc) throw new Error("Service not found")
+    const existing = await svc.listWallets({ tenant_id: TENANT_ID })
+    const wList = Array.isArray(existing) ? existing : [existing].filter(Boolean)
+    if (wList.length > 0 && wList[0]?.id) { log("  ✓ Wallets exist, skipping"); skippedCount++ }
+    else {
+      await svc.createWallets([
+        { tenant_id: TENANT_ID, customer_id: "cust-001", balance: 150000, currency_code: "sar", status: "active", metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, customer_id: "cust-002", balance: 75000, currency_code: "sar", status: "active", metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, customer_id: "cust-003", balance: 320000, currency_code: "sar", status: "active", metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop" } },
+      ])
+      log("  ✓ Created 3 wallets"); seededCount++
+      await svc.createWalletTransactions([
+        { tenant_id: TENANT_ID, wallet_id: "wallet-seed-1", type: "credit", amount: 150000, currency_code: "sar", description: "Initial top-up via mada card", status: "completed", metadata: { seeded: true } },
+        { tenant_id: TENANT_ID, wallet_id: "wallet-seed-2", type: "debit", amount: 25000, currency_code: "sar", description: "Payment for order #ORD-2025-1234", status: "completed", metadata: { seeded: true } },
+      ])
+      log("  ✓ Created 2 wallet transactions"); seededCount++
+    }
+  } catch (err: any) { logError("Wallet", err); failedCount++ }
+
+  // RENTAL / TRY-BEFORE-YOU-BUY MODULE
+  log("━━━ [EXTRA] RENTAL / TRY-BEFORE-YOU-BUY ━━━")
+  try {
+    const svc = resolveService("rental") as any
+    if (!svc) throw new Error("Service not found")
+    const existing = await svc.listRentalAgreements?.({ tenant_id: TENANT_ID }) || []
+    const rnList = Array.isArray(existing) ? existing : [existing].filter(Boolean)
+    if (rnList.length > 0 && rnList[0]?.id) { log("  ✓ Rental agreements exist, skipping"); skippedCount++ }
+    else {
+      await svc.createRentalAgreements([
+        { tenant_id: TENANT_ID, customer_id: "cust-001", product_id: "prod-camera-rent", rental_type: "try_before_buy", status: "active", start_date: new Date("2025-03-01"), end_date: new Date("2025-03-15"), daily_rate: 5000, currency_code: "sar", deposit_amount: 200000, purchase_option_price: 450000, metadata: { seeded: true, item_name: "Sony A7IV Camera Kit", image_url: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, customer_id: "cust-002", product_id: "prod-laptop-rent", rental_type: "try_before_buy", status: "active", start_date: new Date("2025-02-15"), end_date: new Date("2025-03-15"), daily_rate: 8000, currency_code: "sar", deposit_amount: 300000, purchase_option_price: 650000, metadata: { seeded: true, item_name: "MacBook Pro M3 Max", image_url: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, customer_id: "cust-003", product_id: "prod-furniture-rent", rental_type: "standard", status: "completed", start_date: new Date("2024-12-01"), end_date: new Date("2025-02-28"), daily_rate: 3000, currency_code: "sar", deposit_amount: 100000, metadata: { seeded: true, item_name: "Herman Miller Aeron Chair", image_url: "https://images.unsplash.com/photo-1580480055273-228ff5388ef8?w=800&h=600&fit=crop" } },
+      ])
+      log("  ✓ Created 3 rental/try-before-you-buy agreements"); seededCount++
+    }
+  } catch (err: any) { logError("Rental / Try-Before-You-Buy", err); failedCount++ }
+
+  // GIFT CARDS
+  log("━━━ [EXTRA] GIFT CARDS ━━━")
+  try {
+    const svc = resolveService("promotionExt") as any
+    if (!svc) throw new Error("Service not found")
+    const existing = await svc.listGiftCardExts?.({ tenant_id: TENANT_ID }) || []
+    const gcList = Array.isArray(existing) ? existing : [existing].filter(Boolean)
+    if (gcList.length > 0 && gcList[0]?.id) { log("  ✓ Gift cards exist, skipping"); skippedCount++ }
+    else {
+      const create = svc.createGiftCardExts?.bind(svc) || svc.createGiftCardExtensions?.bind(svc)
+      if (create) {
+        await create([
+          { tenant_id: TENANT_ID, code: "GIFT-EID-2025-001", balance: 50000, original_amount: 50000, currency_code: "sar", status: "active", recipient_email: "sara@email.com", sender_name: "Ahmed", message: "Eid Mubarak! Enjoy shopping on Dakkah.", expires_at: new Date("2026-06-01"), metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1549465220-1a8b9238f932?w=800&h=600&fit=crop" } },
+          { tenant_id: TENANT_ID, code: "GIFT-BDAY-2025-001", balance: 100000, original_amount: 100000, currency_code: "sar", status: "active", recipient_email: "khalid@email.com", sender_name: "Nora", message: "Happy Birthday! Treat yourself.", expires_at: new Date("2026-03-01"), metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1513201099705-a9746e1e201f?w=800&h=600&fit=crop" } },
+          { tenant_id: TENANT_ID, code: "GIFT-CORP-2025-001", balance: 25000, original_amount: 50000, currency_code: "sar", status: "partially_used", recipient_email: "omar@company.com", sender_name: "HR Department", message: "Thank you for your service.", expires_at: new Date("2025-12-31"), metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1607344645866-009c320b63e0?w=800&h=600&fit=crop" } },
+        ])
+        log("  ✓ Created 3 gift cards"); seededCount++
+      }
+    }
+  } catch (err: any) { logError("Gift Cards", err); failedCount++ }
+
+  // FLASH SALES
+  log("━━━ [EXTRA] FLASH SALES ━━━")
+  try {
+    const svc = resolveService("promotionExt") as any
+    if (!svc) throw new Error("Service not found")
+    const existing = await svc.listCustomerSegments?.({ tenant_id: TENANT_ID }) || []
+    const fsList = Array.isArray(existing) ? existing : [existing].filter(Boolean)
+    if (fsList.length > 2) { log("  ✓ Flash sale segments exist, skipping"); skippedCount++ }
+    else {
+      const create = svc.createCustomerSegments?.bind(svc)
+      if (create) {
+        await create([
+          { tenant_id: TENANT_ID, name: "Flash Sale – Ramadan Electronics", description: "Exclusive flash sale on electronics during Ramadan 2025. Up to 70% off.", segment_type: "flash_sale", conditions: { min_purchase_history: 3, regions: ["sa"] }, is_active: true, starts_at: new Date("2025-03-01T18:00:00Z"), ends_at: new Date("2025-03-01T22:00:00Z"), metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?w=800&h=600&fit=crop", discount_percentage: 70 } },
+          { tenant_id: TENANT_ID, name: "Flash Sale – Saudi National Day", description: "Celebrate Saudi National Day with special deals across all categories.", segment_type: "flash_sale", conditions: { regions: ["sa"] }, is_active: true, starts_at: new Date("2025-09-23T00:00:00Z"), ends_at: new Date("2025-09-24T00:00:00Z"), metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1573164713988-8665fc963095?w=800&h=600&fit=crop", discount_percentage: 50 } },
+        ])
+        log("  ✓ Created 2 flash sale segments"); seededCount++
+      }
+    }
+  } catch (err: any) { logError("Flash Sales", err); failedCount++ }
+
+  // CONSIGNMENT
+  log("━━━ [EXTRA] CONSIGNMENT ━━━")
+  try {
+    const svc = resolveService("inventoryExtension") as any
+    if (!svc) throw new Error("Service not found")
+    const existing = await svc.listStockAlerts?.({ tenant_id: TENANT_ID }) || await svc.listStockAlerts?.() || []
+    const csList = Array.isArray(existing) ? existing : [existing].filter(Boolean)
+    if (csList.length > 0 && csList[0]?.id) { log("  ✓ Consignment stock alerts exist, skipping"); skippedCount++ }
+    else {
+      const create = svc.createStockAlerts?.bind(svc)
+      if (create) {
+        await create([
+          { tenant_id: TENANT_ID, product_id: "prod-consign-001", warehouse_id: "wh-riyadh", alert_type: "low_stock", threshold: 10, current_stock: 5, status: "triggered", metadata: { seeded: true, item_name: "Consigned Designer Handbag", image_url: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800&h=600&fit=crop" } },
+          { tenant_id: TENANT_ID, product_id: "prod-consign-002", warehouse_id: "wh-jeddah", alert_type: "low_stock", threshold: 5, current_stock: 2, status: "triggered", metadata: { seeded: true, item_name: "Consigned Vintage Watch", image_url: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=800&h=600&fit=crop" } },
+        ])
+        log("  ✓ Created 2 consignment stock alerts"); seededCount++
+      }
+    }
+  } catch (err: any) { logError("Consignment", err); failedCount++ }
+
+  // DROPSHIPPING
+  log("━━━ [EXTRA] DROPSHIPPING ━━━")
+  try {
+    const svc = resolveService("digitalProduct") as any
+    if (!svc) throw new Error("Service not found")
+    const existing = await svc.listDigitalAssets?.({ tenant_id: TENANT_ID }) || []
+    const dsList = Array.isArray(existing) ? existing : [existing].filter(Boolean)
+    if (dsList.length > 3) { log("  ✓ Digital assets (dropship) exist, skipping"); skippedCount++ }
+    else {
+      const create = svc.createDigitalAssets?.bind(svc)
+      if (create) {
+        await create([
+          { tenant_id: TENANT_ID, product_id: "prod-dropship-001", asset_type: "dropship_listing", title: "Smart Watch – Dropship from Shenzhen", file_url: "https://cdn.dakkah.sa/dropship/smartwatch-spec.pdf", supplier_id: "supplier-cn-001", status: "active", metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&h=600&fit=crop", supplier_price: 15000, retail_price: 45000 } },
+          { tenant_id: TENANT_ID, product_id: "prod-dropship-002", asset_type: "dropship_listing", title: "Wireless Earbuds – Premium Quality", file_url: "https://cdn.dakkah.sa/dropship/earbuds-spec.pdf", supplier_id: "supplier-cn-002", status: "active", metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1590658268037-6bf12f032f55?w=800&h=600&fit=crop", supplier_price: 8000, retail_price: 25000 } },
+        ])
+        log("  ✓ Created 2 dropship digital assets"); seededCount++
+      }
+    }
+  } catch (err: any) { logError("Dropshipping", err); failedCount++ }
+
+  // PRINT-ON-DEMAND
+  log("━━━ [EXTRA] PRINT-ON-DEMAND ━━━")
+  try {
+    const svc = resolveService("digitalProduct") as any
+    if (!svc) throw new Error("Service not found")
+    const create = svc.createDigitalAssets?.bind(svc)
+    if (create) {
+      await create([
+        { tenant_id: TENANT_ID, product_id: "prod-pod-001", asset_type: "print_design", title: "Saudi Heritage T-Shirt Design", file_url: "https://cdn.dakkah.sa/pod/heritage-tshirt.png", status: "active", metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&h=600&fit=crop", base_cost: 3500, retail_price: 12000, print_provider: "Printful" } },
+        { tenant_id: TENANT_ID, product_id: "prod-pod-002", asset_type: "print_design", title: "Arabic Calligraphy Mug", file_url: "https://cdn.dakkah.sa/pod/calligraphy-mug.png", status: "active", metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=800&h=600&fit=crop", base_cost: 2500, retail_price: 8500, print_provider: "Printful" } },
+        { tenant_id: TENANT_ID, product_id: "prod-pod-003", asset_type: "print_design", title: "Vision 2030 Canvas Print", file_url: "https://cdn.dakkah.sa/pod/vision2030-canvas.png", status: "active", metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=800&h=600&fit=crop", base_cost: 8000, retail_price: 25000, print_provider: "Gelato" } },
+      ])
+      log("  ✓ Created 3 print-on-demand designs"); seededCount++
+    }
+  } catch (err: any) { logError("Print-On-Demand", err); failedCount++ }
+
+  // NEWSLETTER
+  log("━━━ [EXTRA] NEWSLETTER ━━━")
+  try {
+    const svc = resolveService("notificationPreferences") as any
+    if (!svc) throw new Error("Service not found")
+    const create = svc.createNotificationPreferences?.bind(svc)
+    if (create) {
+      await create([
+        { tenant_id: TENANT_ID, customer_id: "cust-newsletter-001", channel: "email", enabled: true, categories: ["newsletter", "weekly_digest", "new_arrivals"], frequency: "weekly", metadata: { seeded: true, newsletter_name: "Dakkah Weekly", image_url: "https://images.unsplash.com/photo-1586339949916-3e9457bef6d3?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, customer_id: "cust-newsletter-002", channel: "email", enabled: true, categories: ["newsletter", "deals", "seasonal"], frequency: "daily", metadata: { seeded: true, newsletter_name: "Daily Deals Digest", image_url: "https://images.unsplash.com/photo-1557200134-90327ee9fafa?w=800&h=600&fit=crop" } },
+      ])
+      log("  ✓ Created 2 newsletter subscriptions"); seededCount++
+    }
+  } catch (err: any) { logError("Newsletter", err); failedCount++ }
+
+  // BUNDLES
+  log("━━━ [EXTRA] BUNDLES ━━━")
+  try {
+    const svc = resolveService("promotionExt") as any
+    if (!svc) throw new Error("Service not found")
+    const create = svc.createProductBundles?.bind(svc)
+    if (create) {
+      await create([
+        { tenant_id: TENANT_ID, name: "Ramadan Essentials Bundle", description: "Everything you need for Ramadan: dates, Arabic coffee, prayer beads, and oud incense.", bundle_type: "fixed", status: "active", original_price: 35000, bundle_price: 25000, currency_code: "sar", product_ids: ["prod-dates-001", "prod-coffee-001", "prod-beads-001", "prod-oud-001"], max_quantity: 100, metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, name: "Tech Starter Kit", description: "Complete tech setup: laptop sleeve, wireless mouse, USB-C hub, and screen protector.", bundle_type: "fixed", status: "active", original_price: 45000, bundle_price: 35000, currency_code: "sar", product_ids: ["prod-sleeve-001", "prod-mouse-001", "prod-hub-001"], max_quantity: 50, metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, name: "Saudi Gourmet Gift Box", description: "Premium gift box with Saudi honey, saffron, dates, and Arabic coffee beans.", bundle_type: "gift", status: "active", original_price: 60000, bundle_price: 48000, currency_code: "sar", product_ids: ["prod-honey-001", "prod-saffron-001", "prod-dates-001"], max_quantity: 200, metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1607344645866-009c320b63e0?w=800&h=600&fit=crop" } },
+      ])
+      log("  ✓ Created 3 product bundles"); seededCount++
+    }
+  } catch (err: any) { logError("Bundles", err); failedCount++ }
+
+  // WHITE-LABEL
+  log("━━━ [EXTRA] WHITE-LABEL ━━━")
+  try {
+    const svc = resolveService("digitalProduct") as any
+    if (!svc) throw new Error("Service not found")
+    const create = svc.createDigitalAssets?.bind(svc)
+    if (create) {
+      await create([
+        { tenant_id: TENANT_ID, product_id: "prod-wl-001", asset_type: "white_label", title: "White-Label E-Commerce Platform", file_url: "https://cdn.dakkah.sa/whitelabel/ecommerce-docs.pdf", status: "active", metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop", monthly_license: 250000, setup_fee: 500000 } },
+        { tenant_id: TENANT_ID, product_id: "prod-wl-002", asset_type: "white_label", title: "White-Label Food Delivery App", file_url: "https://cdn.dakkah.sa/whitelabel/food-delivery-docs.pdf", status: "active", metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&h=600&fit=crop", monthly_license: 180000, setup_fee: 350000 } },
+      ])
+      log("  ✓ Created 2 white-label products"); seededCount++
+    }
+  } catch (err: any) { logError("White-Label", err); failedCount++ }
 
   // ════════════════════════════════════════════════════════════════
   // SUMMARY
