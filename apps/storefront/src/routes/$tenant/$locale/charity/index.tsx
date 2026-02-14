@@ -126,7 +126,7 @@ function CharityPage() {
                     return (
                       <a key={campaign.id} href={`${prefix}/charity/${campaign.id}`} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-primary/30 transition-all duration-200">
                         <div className="aspect-[4/3] bg-ds-muted relative overflow-hidden">
-                          {campaign.thumbnail && <img src={campaign.thumbnail} alt={campaign.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />}
+                          {(campaign.logo_url || campaign.thumbnail) && <img src={campaign.logo_url || campaign.thumbnail} alt={campaign.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />}
                           {campaign.category && <span className="absolute top-3 left-3 px-2 py-1 text-xs font-medium rounded-full bg-ds-primary/90 text-ds-primary-foreground">{campaign.category}</span>}
                         </div>
                         <div className="p-4 space-y-3">

@@ -136,7 +136,7 @@ function TravelPage() {
                   {filtered.map((pkg: any) => (
                     <a key={pkg.id} href={`${prefix}/travel/${pkg.id}`} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-primary/30 transition-all duration-200">
                       <div className="aspect-[4/3] bg-ds-muted relative overflow-hidden">
-                        {pkg.thumbnail && <img src={pkg.thumbnail} alt={pkg.destination || pkg.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />}
+                        {((pkg.images && pkg.images[0]) || pkg.thumbnail) && <img src={(pkg.images && pkg.images[0]) || pkg.thumbnail} alt={pkg.destination || pkg.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />}
                         {pkg.duration && <span className="absolute top-3 right-3 px-2 py-1 text-xs font-medium rounded-full bg-black/60 text-white">{pkg.duration} days</span>}
                       </div>
                       <div className="p-4 space-y-2">

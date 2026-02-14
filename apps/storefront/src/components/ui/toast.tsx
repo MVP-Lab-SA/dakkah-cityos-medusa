@@ -33,18 +33,6 @@ const defaultToastValue: ToastContextType = {
 }
 
 export function ToastProvider({ children }: { children: ReactNode }) {
-  if (typeof window === "undefined") {
-    return (
-      <ToastContext.Provider value={defaultToastValue}>
-        {children}
-      </ToastContext.Provider>
-    )
-  }
-
-  return <ClientToastProvider>{children}</ClientToastProvider>
-}
-
-function ClientToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([])
 
   const addToast = useCallback((type: ToastType, message: string, duration = 5000) => {
@@ -76,10 +64,6 @@ function ClientToastProvider({ children }: { children: ReactNode }) {
 }
 
 export function useToast() {
-  if (typeof window === "undefined") {
-    return defaultToastValue
-  }
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const context = useContext(ToastContext)
   if (!context) {
     return defaultToastValue

@@ -41,10 +41,6 @@ const BrandingContext = createContext<BrandingContextType>({
 })
 
 export const useBranding = () => {
-  if (typeof window === "undefined") {
-    return { branding: null, tenantHandle: null, setTenantHandle: () => {}, isLoading: false }
-  }
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   return useContext(BrandingContext)
 }
 
@@ -57,35 +53,16 @@ export const BrandingProvider: React.FC<BrandingProviderProps> = ({
   children,
   initialTenantHandle = null,
 }) => {
-  if (typeof window === 'undefined') {
-    return (
-      <BrandingContext.Provider
-        value={{
-          branding: null,
-          tenantHandle: initialTenantHandle,
-          setTenantHandle: () => {},
-          isLoading: false,
-        }}
-      >
-        {children}
-      </BrandingContext.Provider>
-    )
-  }
+  const [tenantHandle, setTenantHandle] = useState<string | null>(initialTenantHandle)
+  const [isMounted, setIsMounted] = useState(false)
 
-  return (
-    <ClientBrandingProvider initialTenantHandle={initialTenantHandle}>
-      {children}
-    </ClientBrandingProvider>
-  )
-}
-
-const ClientBrandingProvider: React.FC<BrandingProviderProps> = ({
-  children,
-  initialTenantHandle = null,
-}) => {
-  const [tenantHandle, setTenantHandle] = useState<string | null>(
-    initialTenantHandle || localStorage.getItem('tenant_handle')
-  )
+  useEffect(() => {
+    setIsMounted(true)
+    if (!initialTenantHandle) {
+      const stored = localStorage.getItem('tenant_handle')
+      if (stored) setTenantHandle(stored)
+    }
+  }, [])
 
   const { data: branding, isLoading } = useQuery({
     queryKey: queryKeys.tenants.byHandle(tenantHandle || 'default'),
@@ -96,7 +73,7 @@ const ClientBrandingProvider: React.FC<BrandingProviderProps> = ({
       const stores = await client.getStores()
       return stores.find(s => s.handle === tenantHandle) || null
     },
-    enabled: !!tenantHandle,
+    enabled: isMounted && !!tenantHandle,
   })
 
   useEffect(() => {

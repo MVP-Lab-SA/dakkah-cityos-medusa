@@ -135,7 +135,7 @@ function SocialCommercePage() {
                   {filtered.map((listing: any) => (
                     <a key={listing.id} href={`${prefix}/social-commerce/${listing.id}`} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-primary/30 transition-all duration-200">
                       <div className="aspect-square bg-ds-muted relative overflow-hidden">
-                        {listing.thumbnail && <img src={listing.thumbnail} alt={listing.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />}
+                        {((listing.images && listing.images[0]) || listing.thumbnail) && <img src={(listing.images && listing.images[0]) || listing.thumbnail} alt={listing.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />}
                         {listing.platform && (
                           <span className="absolute top-3 left-3 px-2 py-1 text-xs font-medium rounded-full bg-black/60 text-white capitalize">{listing.platform}</span>
                         )}

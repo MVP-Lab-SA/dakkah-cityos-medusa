@@ -136,7 +136,7 @@ function EducationPage() {
                   {filtered.map((course: any) => (
                     <a key={course.id} href={`${prefix}/education/${course.id}`} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-primary/30 transition-all duration-200">
                       <div className="aspect-video bg-ds-muted relative overflow-hidden">
-                        {course.thumbnail && <img src={course.thumbnail} alt={course.title || course.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />}
+                        {(course.thumbnail_url || course.thumbnail) && <img src={course.thumbnail_url || course.thumbnail} alt={course.title || course.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />}
                         {course.level && <span className="absolute top-3 left-3 px-2 py-1 text-xs font-medium rounded-full bg-ds-primary text-ds-primary-foreground">{course.level}</span>}
                       </div>
                       <div className="p-4 space-y-2">

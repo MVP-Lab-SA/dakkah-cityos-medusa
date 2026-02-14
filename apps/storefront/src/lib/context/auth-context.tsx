@@ -78,19 +78,13 @@ const defaultAuthValue: AuthContextType = {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  if (typeof window === "undefined") {
-    return (
-      <AuthContext.Provider value={defaultAuthValue}>
-        {children}
-      </AuthContext.Provider>
-    )
-  }
-
   return <ClientAuthProvider>{children}</ClientAuthProvider>
 }
 
 function ClientAuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient()
+  const [isMounted, setIsMounted] = useState(false)
+  useEffect(() => { setIsMounted(true) }, [])
 
   const {
     data: customer,
@@ -101,6 +95,7 @@ function ClientAuthProvider({ children }: { children: ReactNode }) {
     queryFn: fetchCurrentCustomer,
     staleTime: 1000 * 60 * 5,
     retry: false,
+    enabled: isMounted,
   })
 
   // Login mutation
@@ -252,10 +247,6 @@ function ClientAuthProvider({ children }: { children: ReactNode }) {
 }
 
 export function useAuth() {
-  if (typeof window === "undefined") {
-    return defaultAuthValue
-  }
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const context = useContext(AuthContext)
   if (!context) {
     return defaultAuthValue

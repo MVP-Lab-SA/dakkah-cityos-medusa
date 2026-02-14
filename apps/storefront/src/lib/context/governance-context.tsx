@@ -26,28 +26,19 @@ const defaultValue: GovernanceContextValue = {
 const GovernanceContext = createContext<GovernanceContextValue>(defaultValue)
 
 export function useGovernanceContext() {
-  if (typeof window === "undefined") {
-    return defaultValue
-  }
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   return useContext(GovernanceContext)
 }
 
 export function GovernanceProvider({ children }: { children: React.ReactNode }) {
-  if (typeof window === "undefined") {
-    return (
-      <GovernanceContext.Provider value={defaultValue}>
-        {children}
-      </GovernanceContext.Provider>
-    )
-  }
-
   return <ClientGovernanceProvider>{children}</ClientGovernanceProvider>
 }
 
 function ClientGovernanceProvider({ children }: { children: React.ReactNode }) {
-  const { tenant } = useTenant()
-  const tenantId = tenant?.id || ""
+  const tenantCtx = useTenant()
+  const tenantId = tenantCtx?.tenant?.id || ""
+
+  const [isMounted, setIsMounted] = React.useState(false)
+  React.useEffect(() => { setIsMounted(true) }, [])
 
   const { data, isLoading } = useQuery({
     queryKey: queryKeys.governance.policies(tenantId),
@@ -60,7 +51,7 @@ function ClientGovernanceProvider({ children }: { children: React.ReactNode }) {
       })
       return response
     },
-    enabled: typeof window !== "undefined" && !!tenantId,
+    enabled: isMounted && !!tenantId,
     staleTime: 5 * 60 * 1000,
   })
 

@@ -31,10 +31,6 @@ const defaultValue: PlatformContextValue = {
 const PlatformContext = createContext<PlatformContextValue>(defaultValue)
 
 export function usePlatformContextValue() {
-  if (typeof window === "undefined") {
-    return defaultValue
-  }
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   return useContext(PlatformContext)
 }
 
@@ -45,14 +41,6 @@ export function PlatformContextProvider({
   children: React.ReactNode
   tenantSlug: string
 }) {
-  if (typeof window === "undefined") {
-    return (
-      <PlatformContext.Provider value={defaultValue}>
-        {children}
-      </PlatformContext.Provider>
-    )
-  }
-
   return <ClientPlatformProvider tenantSlug={tenantSlug}>{children}</ClientPlatformProvider>
 }
 

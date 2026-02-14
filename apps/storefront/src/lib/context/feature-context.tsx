@@ -208,10 +208,6 @@ const defaultFeatureContextValue: FeatureContextValue = {
 }
 
 export function useFeatures() {
-  if (typeof window === "undefined") {
-    return defaultFeatureContextValue
-  }
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const context = useContext(FeatureContext)
   if (!context) {
     return defaultFeatureContextValue

@@ -15,10 +15,6 @@ const defaultCartValue: CartContextType = {
 const CartContext = createContext<CartContextType | undefined>(undefined)
 
 export const useCartDrawer = () => {
-  if (typeof window === "undefined") {
-    return defaultCartValue
-  }
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const context = useContext(CartContext)
   if (!context) {
     return defaultCartValue
@@ -27,18 +23,6 @@ export const useCartDrawer = () => {
 }
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-  if (typeof window === "undefined") {
-    return (
-      <CartContext.Provider value={defaultCartValue}>
-        {children}
-      </CartContext.Provider>
-    )
-  }
-
-  return <ClientCartProvider>{children}</ClientCartProvider>
-}
-
-const ClientCartProvider = ({ children }: { children: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false)
 
   const openCart = () => setIsOpen(true)

@@ -155,8 +155,8 @@ function HealthcarePage() {
                     <a key={item.id} href={`${prefix}/healthcare/${item.id}`} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-primary/30 transition-all duration-200 p-6">
                       <div className="flex items-center gap-4">
                         <div className="w-16 h-16 rounded-full bg-ds-muted overflow-hidden flex-shrink-0">
-                          {item.photo ? (
-                            <img src={item.photo} alt={item.provider_name} className="w-full h-full object-cover" />
+                          {(item.photo_url || item.photo) ? (
+                            <img src={item.photo_url || item.photo} alt={item.provider_name} className="w-full h-full object-cover" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-ds-muted-foreground text-xl font-bold">
                               {(item.provider_name || "D").charAt(0)}

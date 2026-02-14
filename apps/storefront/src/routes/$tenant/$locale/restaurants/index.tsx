@@ -149,8 +149,8 @@ function RestaurantsPage() {
                   {filteredItems.map((item: any) => (
                     <a key={item.id} href={`${prefix}/restaurants/${item.id}`} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-primary/30 transition-all duration-200">
                       <div className="aspect-[4/3] bg-ds-muted relative overflow-hidden">
-                        {item.thumbnail ? (
-                          <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                        {(item.banner_url || item.logo_url) ? (
+                          <img src={item.banner_url || item.logo_url} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-ds-muted-foreground">
                             <svg className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1" /></svg>

@@ -148,8 +148,8 @@ function CrowdfundingPage() {
                         className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-primary/30 transition-all duration-200"
                       >
                         <div className="aspect-[16/9] bg-ds-muted relative overflow-hidden">
-                          {item.thumbnail ? (
-                            <img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                          {((item.images && item.images[0]) || item.thumbnail) ? (
+                            <img src={(item.images && item.images[0]) || item.thumbnail} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-ds-muted-foreground">
                               <svg className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>

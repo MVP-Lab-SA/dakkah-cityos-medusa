@@ -15,18 +15,11 @@ const defaultToastContextValue: ToastContextType = {
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
 export const useToastContext = () => {
-  if (typeof window === "undefined") {
-    return defaultToastContextValue;
-  }
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  return useContext(ToastContext);
+  const ctx = useContext(ToastContext);
+  return ctx ?? defaultToastContextValue;
 };
 
 export const useToast = () => {
-  if (typeof window === "undefined") {
-    return defaultToastContextValue;
-  }
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const context = useContext(ToastContext);
   if (!context) {
     return defaultToastContextValue;
@@ -35,14 +28,6 @@ export const useToast = () => {
 };
 
 export const ToastProvider = ({ children }: { children: ReactNode }) => {
-  if (typeof window === "undefined") {
-    return (
-      <ToastContext.Provider value={defaultToastContextValue}>
-        {children}
-      </ToastContext.Provider>
-    );
-  }
-
   return <ClientToastProvider>{children}</ClientToastProvider>;
 };
 

@@ -6,6 +6,7 @@ export interface EventCardData {
   id: string
   title: string
   thumbnail?: string
+  image_url?: string
   date: string
   endDate?: string
   venue?: { name: string; address?: string }
@@ -46,9 +47,9 @@ export function EventCard({
     <div className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:border-ds-ring transition-colors">
       <Link to={`${prefix}/events/${event.id}` as any} className="block">
         <div className="relative aspect-[4/3] bg-ds-muted overflow-hidden">
-          {event.thumbnail ? (
+          {(event.image_url || event.thumbnail) ? (
             <img
-              src={event.thumbnail}
+              src={event.image_url || event.thumbnail}
               alt={event.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
