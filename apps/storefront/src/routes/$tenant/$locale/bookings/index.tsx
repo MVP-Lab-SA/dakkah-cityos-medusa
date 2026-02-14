@@ -15,32 +15,61 @@ export const Route = createFileRoute("/$tenant/$locale/bookings/")({
       })
       if (!resp.ok) return { items: [], count: 0 }
       const data = await resp.json()
-      return { items: data.services || data.items || [], count: data.count || 0 }
+      const raw = data.services || data.items || []
+      const items = raw.map((s: any) => {
+        const meta = s.metadata || {}
+        return {
+          id: s.id,
+          name: meta.name || s.product_id || "Untitled Service",
+          description: meta.short_description || meta.description || "",
+          fullDescription: meta.description || "",
+          thumbnail: meta.thumbnail || (meta.images && meta.images[0]) || null,
+          images: meta.images || [],
+          price: meta.price || null,
+          currency: meta.currency || "SAR",
+          category: meta.category || null,
+          provider_name: meta.provider_name || null,
+          rating: meta.rating || null,
+          review_count: meta.review_count || 0,
+          location: meta.location || null,
+          service_type: s.service_type,
+          duration_minutes: s.duration_minutes,
+          max_capacity: s.max_capacity,
+          location_type: s.location_type,
+        }
+      })
+      return { items, count: data.count || items.length }
     } catch {
       return { items: [], count: 0 }
     }
   },
 })
 
-const categoryOptions = ["all", "consultation", "training", "support", "wellness", "beauty", "fitness", "other"] as const
-const serviceTypeOptions = ["all", "in-person", "virtual", "hybrid"] as const
+const categoryOptions = ["all", "wellness", "consultation", "education", "experience", "fitness", "beauty", "health", "creative", "automotive"] as const
 
 function BookingsPage() {
   const { tenant, locale } = Route.useParams()
   const prefix = `/${tenant}/${locale}`
   const [searchQuery, setSearchQuery] = useState("")
   const [categoryFilter, setCategoryFilter] = useState<string>("all")
-  const [typeFilter, setTypeFilter] = useState<string>("all")
 
   const loaderData = Route.useLoaderData()
-  const data = loaderData
-  const isLoading = false
-  const error = null
-  const items = data?.items || []
+  const items = loaderData?.items || []
 
-  const filteredItems = items.filter((item: any) =>
-    searchQuery ? (item.name || item.title || "").toLowerCase().includes(searchQuery.toLowerCase()) : true
-  )
+  const filteredItems = items.filter((item: any) => {
+    const matchesSearch = searchQuery
+      ? (item.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.description || "").toLowerCase().includes(searchQuery.toLowerCase())
+      : true
+    const matchesCategory = categoryFilter === "all" || item.category === categoryFilter
+    return matchesSearch && matchesCategory
+  })
+
+  const formatPrice = (price: number | null, currency: string) => {
+    if (!price) return "Contact for pricing"
+    const amount = price >= 100 ? price / 100 : price
+    return `${amount.toLocaleString()} ${currency}`
+  }
 
   return (
     <div className="min-h-screen bg-ds-background">
@@ -53,9 +82,15 @@ function BookingsPage() {
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Book a Service</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
-            Schedule a consultation, training session, or support call with our expert team.
-            Choose from a variety of services tailored to your needs.
+            Schedule consultations, classes, experiences, and wellness sessions with top-rated providers across Saudi Arabia.
           </p>
+          <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
+            <span>{items.length} services available</span>
+            <span>|</span>
+            <span>Instant booking</span>
+            <span>|</span>
+            <span>Verified providers</span>
+          </div>
         </div>
       </div>
 
@@ -88,52 +123,17 @@ function BookingsPage() {
                   ))}
                 </div>
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Service Type</label>
-                <div className="space-y-1">
-                  {serviceTypeOptions.map((opt) => (
-                    <button
-                      key={opt}
-                      onClick={() => setTypeFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${typeFilter === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}
-                    >
-                      {opt === "all" ? "All Types" : opt.charAt(0).toUpperCase() + opt.slice(1)}
-                    </button>
-                  ))}
-                </div>
-              </div>
             </div>
           </aside>
 
           <main className="flex-1">
-            {error ? (
-              <div className="bg-ds-destructive/10 border border-ds-destructive/20 rounded-xl p-8 text-center">
-                <svg className="w-12 h-12 text-ds-destructive mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                </svg>
-                <p className="text-ds-destructive font-medium">Something went wrong loading services.</p>
-              </div>
-            ) : isLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="bg-ds-background border border-ds-border rounded-xl overflow-hidden">
-                    <div className="aspect-[4/3] bg-ds-muted animate-pulse" />
-                    <div className="p-4 space-y-3">
-                      <div className="h-5 w-3/4 bg-ds-muted rounded animate-pulse" />
-                      <div className="h-4 w-1/2 bg-ds-muted rounded animate-pulse" />
-                      <div className="h-8 w-full bg-ds-muted rounded animate-pulse" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : filteredItems.length === 0 ? (
+            {filteredItems.length === 0 ? (
               <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No services available</h3>
-                <p className="text-ds-muted-foreground text-sm">Check back soon for bookable services.</p>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No services found</h3>
+                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -141,41 +141,82 @@ function BookingsPage() {
                   <a
                     key={item.id}
                     href={`${prefix}/bookings/${item.id}`}
-                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-primary/30 transition-all duration-200"
+                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-blue-300 transition-all duration-200"
                   >
-                    <div className="aspect-[4/3] bg-gradient-to-br from-blue-50 to-indigo-100 relative overflow-hidden flex items-center justify-center">
-                      {item.thumbnail || item.image ? (
-                        <img src={item.thumbnail || item.image} alt={item.name || item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <div className="aspect-[4/3] bg-gradient-to-br from-blue-50 to-indigo-100 relative overflow-hidden">
+                      {item.thumbnail ? (
+                        <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
-                        <svg className="w-16 h-16 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
+                        <div className="w-full h-full flex items-center justify-center">
+                          <svg className="w-16 h-16 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
                       )}
                       {item.category && (
-                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-blue-600 text-white rounded-md">{item.category}</span>
+                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-blue-600 text-white rounded-md capitalize">{item.category}</span>
                       )}
-                      {item.service_type && (
-                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-ds-background text-ds-foreground rounded-md border border-ds-border">{item.service_type}</span>
+                      {item.location_type && (
+                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-white/90 text-gray-700 rounded-md capitalize">
+                          {item.location_type === "in_person" ? "In Person" : item.location_type === "customer_location" ? "At Your Location" : item.location_type === "virtual" ? "Virtual" : "Flexible"}
+                        </span>
+                      )}
+                      {item.images && item.images.length > 1 && (
+                        <div className="absolute bottom-2 right-2 px-2 py-0.5 text-xs font-medium bg-black/50 text-white rounded-md flex items-center gap-1">
+                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                          {item.images.length}
+                        </div>
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-ds-foreground group-hover:text-ds-primary transition-colors line-clamp-1">{item.name || item.title}</h3>
-                      {item.description && (
-                        <p className="text-sm text-ds-muted-foreground mt-1 line-clamp-2">{item.description}</p>
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-blue-600 transition-colors line-clamp-1">{item.name}</h3>
+                      {item.provider_name && (
+                        <p className="text-xs text-ds-muted-foreground mt-0.5">by {item.provider_name}</p>
                       )}
-                      <div className="space-y-2 text-sm mt-3">
-                        {(item.duration || item.duration_minutes) && (
-                          <div className="flex items-center gap-1.5 text-ds-muted-foreground">
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                            <span>{item.duration || item.duration_minutes} min</span>
-                          </div>
-                        )}
-                        <div className="flex justify-between items-center pt-2 border-t border-ds-border">
-                          <span className="font-bold text-ds-primary">
-                            {item.price ? `$${Number(item.price).toLocaleString()}` : "Contact for pricing"}
+                      {item.description && (
+                        <p className="text-sm text-ds-muted-foreground mt-1.5 line-clamp-2">{item.description}</p>
+                      )}
+
+                      <div className="flex items-center gap-3 mt-3 text-xs text-ds-muted-foreground">
+                        {item.duration_minutes && (
+                          <span className="flex items-center gap-1">
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            {item.duration_minutes} min
                           </span>
-                          <span className="text-xs font-medium text-blue-600 group-hover:text-blue-700">Book Now →</span>
+                        )}
+                        {item.max_capacity > 1 && (
+                          <span className="flex items-center gap-1">
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                            Up to {item.max_capacity}
+                          </span>
+                        )}
+                      </div>
+
+                      {item.rating && (
+                        <div className="flex items-center gap-1.5 mt-2">
+                          <div className="flex items-center">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <svg key={star} className={`w-3.5 h-3.5 ${star <= Math.round(item.rating) ? "text-amber-400" : "text-gray-200"}`} fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                              </svg>
+                            ))}
+                          </div>
+                          <span className="text-xs text-ds-muted-foreground">{item.rating} ({item.review_count})</span>
                         </div>
+                      )}
+
+                      {item.location && (
+                        <div className="flex items-center gap-1 mt-2 text-xs text-ds-muted-foreground">
+                          <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                          <span className="truncate">{item.location}</span>
+                        </div>
+                      )}
+
+                      <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
+                        <span className="font-bold text-blue-600 text-lg">
+                          {formatPrice(item.price, item.currency)}
+                        </span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 rounded-lg group-hover:bg-blue-700 transition-colors">Book Now</span>
                       </div>
                     </div>
                   </a>
