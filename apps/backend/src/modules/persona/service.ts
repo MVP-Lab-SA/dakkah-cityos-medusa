@@ -202,6 +202,168 @@ class PersonaModuleService extends MedusaService({
 
     return { eligible: true }
   }
+
+  async resolvePersonaPrecedence(customerId: string, tenantId: string): Promise<{
+    customerId: string
+    tenantId: string
+    activeAssignments: any[]
+    effectivePersona: any | null
+    precedenceOrder: Array<{ scope: string; priority: number; personaId: string }>
+  }> {
+    const assignments = await this.listPersonaAssignments({
+      tenant_id: tenantId,
+      user_id: customerId,
+      status: "active",
+    }) as any
+    const assignmentList = Array.isArray(assignments) ? assignments : [assignments].filter(Boolean)
+
+    const now = new Date()
+    const active = assignmentList.filter((a: any) => {
+      if (a.starts_at && new Date(a.starts_at) > now) return false
+      if (a.ends_at && new Date(a.ends_at) < now) return false
+      return true
+    })
+
+    const ranked = active.map((a: any) => ({
+      ...a,
+      effectivePriority: (SCOPE_PRIORITY[a.scope] || 0) + (a.priority || 0),
+    }))
+
+    ranked.sort((a: any, b: any) => b.effectivePriority - a.effectivePriority)
+
+    const precedenceOrder = ranked.map((a: any) => ({
+      scope: a.scope,
+      priority: a.effectivePriority,
+      personaId: a.persona_id,
+    }))
+
+    let effectivePersona = null
+    if (ranked.length > 0) {
+      try {
+        effectivePersona = await this.retrievePersona(ranked[0].persona_id)
+      } catch {
+        effectivePersona = null
+      }
+    }
+
+    return {
+      customerId,
+      tenantId,
+      activeAssignments: active,
+      effectivePersona,
+      precedenceOrder,
+    }
+  }
+
+  async getPersonaRecommendations(personaId: string): Promise<{
+    personaId: string
+    personaName: string
+    recommendations: Array<{ type: string; category: string; reason: string; score: number }>
+    constraints: Record<string, any>
+  }> {
+    const persona = await this.retrievePersona(personaId) as any
+    if (!persona) {
+      throw new Error(`Persona ${personaId} not found`)
+    }
+
+    const constraints = persona.constraints || {}
+    const config = (persona.config || persona.capabilities || {}) as Record<string, any>
+    const recommendations: Array<{ type: string; category: string; reason: string; score: number }> = []
+
+    const preferences = config.preferences || config.interests || {}
+    const categories = Array.isArray(preferences) ? preferences : Object.keys(preferences)
+
+    for (const category of categories) {
+      const score = typeof preferences[category] === "number" ? preferences[category] : 0.5
+      recommendations.push({
+        type: "product",
+        category: String(category),
+        reason: `Matches persona preference for ${category}`,
+        score: Number(score),
+      })
+    }
+
+    if (constraints.kid_safe || constraints.kidSafe) {
+      recommendations.push({
+        type: "content",
+        category: "family_friendly",
+        reason: "Kid-safe persona requires family-friendly content",
+        score: 1.0,
+      })
+    }
+
+    const geoScope = constraints.geo_scope || constraints.geoScope
+    if (geoScope && geoScope !== "global") {
+      recommendations.push({
+        type: "content",
+        category: "local",
+        reason: `Geo-scoped persona prefers local content (${geoScope})`,
+        score: 0.8,
+      })
+    }
+
+    recommendations.sort((a, b) => b.score - a.score)
+
+    return {
+      personaId,
+      personaName: persona.name || persona.label || personaId,
+      recommendations,
+      constraints,
+    }
+  }
+
+  async mergePersonaProfiles(primaryId: string, secondaryId: string): Promise<{
+    mergedPersona: any
+    primaryId: string
+    secondaryId: string
+    mergedConstraints: Record<string, any>
+  }> {
+    const primary = await this.retrievePersona(primaryId) as any
+    const secondary = await this.retrievePersona(secondaryId) as any
+
+    if (!primary) throw new Error(`Primary persona ${primaryId} not found`)
+    if (!secondary) throw new Error(`Secondary persona ${secondaryId} not found`)
+
+    const mergedConstraints = this.mergePersonaConstraints([primary, secondary])
+
+    const primaryConfig = (primary.config || primary.capabilities || {}) as Record<string, any>
+    const secondaryConfig = (secondary.config || secondary.capabilities || {}) as Record<string, any>
+
+    const mergedConfig: Record<string, any> = { ...primaryConfig }
+
+    for (const key of Object.keys(secondaryConfig)) {
+      if (!(key in mergedConfig)) {
+        mergedConfig[key] = secondaryConfig[key]
+      } else if (Array.isArray(mergedConfig[key]) && Array.isArray(secondaryConfig[key])) {
+        mergedConfig[key] = [...new Set([...mergedConfig[key], ...secondaryConfig[key]])]
+      } else if (typeof mergedConfig[key] === "number" && typeof secondaryConfig[key] === "number") {
+        mergedConfig[key] = Math.max(mergedConfig[key], secondaryConfig[key])
+      }
+    }
+
+    const mergedPersona = await (this as any).updatePersonas({
+      id: primaryId,
+      config: mergedConfig,
+      constraints: {
+        kid_safe: mergedConstraints.kidSafe,
+        read_only: mergedConstraints.readOnly,
+        geo_scope: mergedConstraints.geoScope,
+        max_data_classification: mergedConstraints.maxDataClassification,
+      },
+      metadata: {
+        ...(primary.metadata || {}),
+        merged_from: secondaryId,
+        merged_at: new Date().toISOString(),
+      },
+    })
+
+    return {
+      mergedPersona,
+      primaryId,
+      secondaryId,
+      mergedConstraints,
+    }
+  }
 }
 
 export default PersonaModuleService

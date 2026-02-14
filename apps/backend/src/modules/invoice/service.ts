@@ -162,6 +162,125 @@ class InvoiceModuleService extends MedusaService({
       internal_notes: reason,
     })
   }
+
+  async generateInvoiceNumberByTenant(tenantId: string): Promise<string> {
+    const now = new Date()
+    const year = now.getFullYear()
+
+    const invoices = await this.listInvoices({
+      company_id: tenantId,
+      invoice_number: { $like: `INV-${year}-%` },
+    })
+    const invoiceList = Array.isArray(invoices) ? invoices : [invoices].filter(Boolean)
+
+    const sequence = String(invoiceList.length + 1).padStart(5, '0')
+    return `INV-${year}-${sequence}`
+  }
+
+  async calculateInvoiceTotals(invoiceId: string): Promise<{
+    subtotal: number
+    taxTotal: number
+    total: number
+    itemCount: number
+  }> {
+    const invoice = await this.retrieveInvoice(invoiceId) as any
+    if (!invoice) {
+      throw new Error(`Invoice ${invoiceId} not found`)
+    }
+
+    const items = await this.listInvoiceItems({ invoice_id: invoiceId })
+    const itemList = Array.isArray(items) ? items : [items].filter(Boolean)
+
+    let subtotal = 0
+    let taxTotal = 0
+
+    for (const item of itemList) {
+      const itemSubtotal = Number(item.quantity || 0) * Number(item.unit_price || 0)
+      subtotal += itemSubtotal
+      taxTotal += Number(item.tax_total || 0)
+    }
+
+    const total = subtotal + taxTotal
+
+    await this.updateInvoices({
+      id: invoiceId,
+      subtotal,
+      tax_total: taxTotal,
+      total,
+      amount_due: total - Number(invoice.amount_paid || 0),
+    })
+
+    return {
+      subtotal,
+      taxTotal,
+      total,
+      itemCount: itemList.length,
+    }
+  }
+
+  async markOverdue(tenantId: string): Promise<{
+    updated: number
+    invoiceIds: string[]
+  }> {
+    const now = new Date()
+
+    const invoices = await this.listInvoices({
+      company_id: tenantId,
+      status: "sent",
+      due_date: { $lt: now.toISOString() },
+    })
+    const invoiceList = Array.isArray(invoices) ? invoices : [invoices].filter(Boolean)
+
+    const updatedIds: string[] = []
+    for (const invoice of invoiceList) {
+      await this.updateInvoices({
+        id: invoice.id,
+        status: "overdue",
+      })
+      updatedIds.push(invoice.id)
+    }
+
+    return {
+      updated: updatedIds.length,
+      invoiceIds: updatedIds,
+    }
+  }
+
+  async getPaymentSummary(invoiceId: string): Promise<{
+    invoiceId: string
+    status: string
+    total: number
+    amountPaid: number
+    balanceRemaining: number
+    isFullyPaid: boolean
+    paidAt: string | null
+    dueDate: string | null
+    isOverdue: boolean
+  }> {
+    const invoice = await this.retrieveInvoice(invoiceId) as any
+    if (!invoice) {
+      throw new Error(`Invoice ${invoiceId} not found`)
+    }
+
+    const total = Number(invoice.total || 0)
+    const amountPaid = Number(invoice.amount_paid || 0)
+    const balanceRemaining = Math.max(0, total - amountPaid)
+    const now = new Date()
+    const dueDate = invoice.due_date ? new Date(invoice.due_date) : null
+    const isOverdue = dueDate ? dueDate < now && balanceRemaining > 0 : false
+
+    return {
+      invoiceId,
+      status: invoice.status,
+      total,
+      amountPaid,
+      balanceRemaining,
+      isFullyPaid: balanceRemaining <= 0,
+      paidAt: invoice.paid_at || null,
+      dueDate: invoice.due_date || null,
+      isOverdue,
+    }
+  }
 }
 
 export default InvoiceModuleService

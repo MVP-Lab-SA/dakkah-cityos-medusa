@@ -136,6 +136,41 @@ class DigitalProductModuleService extends MedusaService({
     }
   }
 
+  async revokeAccessWithReason(productId: string, customerId: string, reason?: string): Promise<any> {
+    const licenses = await this.listDownloadLicenses({
+      asset_id: productId,
+      customer_id: customerId,
+      status: "active",
+    }) as any
+    const licenseList = Array.isArray(licenses) ? licenses : [licenses].filter(Boolean)
+    if (licenseList.length === 0) {
+      throw new Error("No active license found to revoke")
+    }
+
+    const revokedLicenses = []
+    for (const license of licenseList) {
+      const updated = await (this as any).updateDownloadLicenses({
+        id: license.id,
+        status: "revoked",
+        revoked_at: new Date(),
+        metadata: {
+          ...(license.metadata || {}),
+          revoke_reason: reason || "No reason provided",
+          revoked_by: "system",
+        },
+      })
+      revokedLicenses.push(updated)
+    }
+
+    return {
+      productId,
+      customerId,
+      reason: reason || "No reason provided",
+      revokedCount: revokedLicenses.length,
+      revokedAt: new Date().toISOString(),
+    }
+  }
+
   /**
    * Revoke a customer's access to a digital asset by deactivating their license.
    */
@@ -154,6 +189,98 @@ class DigitalProductModuleService extends MedusaService({
       status: "revoked",
       revoked_at: new Date(),
     })
+  }
+
+  async generateTimedDownloadLink(productId: string, customerId: string, expiresIn?: number): Promise<{
+    url: string
+    token: string
+    expiresAt: Date
+    productId: string
+    customerId: string
+  }> {
+    const asset = await this.retrieveDigitalAsset(productId) as any
+    if (!asset) {
+      throw new Error("Digital product not found")
+    }
+
+    const licenses = await this.listDownloadLicenses({
+      asset_id: productId,
+      customer_id: customerId,
+      status: "active",
+    }) as any
+    const licenseList = Array.isArray(licenses) ? licenses : [licenses].filter(Boolean)
+    if (licenseList.length === 0) {
+      throw new Error("No active license found for this product and customer")
+    }
+
+    const license = licenseList[0]
+    const maxDownloads = Number(license.max_downloads || 100)
+    const currentDownloads = Number(license.download_count || 0)
+    if (currentDownloads >= maxDownloads) {
+      throw new Error("Download limit reached for this license")
+    }
+
+    const ttlMs = (expiresIn || 3600) * 1000
+    const expiresAt = new Date(Date.now() + ttlMs)
+    const token = `DL-${productId.slice(0, 8)}-${customerId.slice(0, 8)}-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 10)}`
+
+    return {
+      url: `/downloads/${token}`,
+      token,
+      expiresAt,
+      productId,
+      customerId,
+    }
+  }
+
+  async trackDownloadWithLimits(productId: string, customerId: string): Promise<{
+    productId: string
+    customerId: string
+    downloadCount: number
+    maxDownloads: number
+    remainingDownloads: number
+    limitReached: boolean
+  }> {
+    const licenses = await this.listDownloadLicenses({
+      asset_id: productId,
+      customer_id: customerId,
+      status: "active",
+    }) as any
+    const licenseList = Array.isArray(licenses) ? licenses : [licenses].filter(Boolean)
+    if (licenseList.length === 0) {
+      throw new Error("No active license found")
+    }
+
+    const license = licenseList[0]
+    const maxDownloads = Number(license.max_downloads || 100)
+    const currentDownloads = Number(license.download_count || 0)
+
+    if (currentDownloads >= maxDownloads) {
+      return {
+        productId,
+        customerId,
+        downloadCount: currentDownloads,
+        maxDownloads,
+        remainingDownloads: 0,
+        limitReached: true,
+      }
+    }
+
+    const newCount = currentDownloads + 1
+    await (this as any).updateDownloadLicenses({
+      id: license.id,
+      download_count: newCount,
+      last_downloaded_at: new Date(),
+    })
+
+    return {
+      productId,
+      customerId,
+      downloadCount: newCount,
+      maxDownloads,
+      remainingDownloads: Math.max(0, maxDownloads - newCount),
+      limitReached: newCount >= maxDownloads,
+    }
   }
 }
 

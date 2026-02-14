@@ -210,6 +210,150 @@ class GovernanceModuleService extends MedusaService({
 
     return { policyId, history }
   }
+
+  async evaluatePolicyChain(nodeId: string, policyType: string): Promise<{
+    effectivePolicy: Record<string, any>
+    chain: Array<{ authorityId: string; authorityType: string; policies: Record<string, any> }>
+    policyType: string
+  }> {
+    const chain = await this.buildAuthorityChain(nodeId)
+    let effectivePolicy: Record<string, any> = {}
+    const policyChain: Array<{ authorityId: string; authorityType: string; policies: Record<string, any> }> = []
+
+    for (const authority of chain) {
+      const policies = authority.policies || {}
+      const typePolicies = policies[policyType] || {}
+
+      if (Object.keys(typePolicies).length > 0) {
+        effectivePolicy = deepMerge(effectivePolicy, typePolicies)
+        policyChain.push({
+          authorityId: authority.id,
+          authorityType: authority.type,
+          policies: typePolicies,
+        })
+      }
+    }
+
+    return {
+      effectivePolicy,
+      chain: policyChain,
+      policyType,
+    }
+  }
+
+  async checkComplianceStatus(tenantId: string): Promise<{
+    tenantId: string
+    compliant: boolean
+    totalPolicies: number
+    violations: Array<{ policyName: string; policyType: string; authorityId: string; reason: string }>
+    checkedAt: Date
+  }> {
+    const authorities = await this.listGovernanceAuthorities({ tenant_id: tenantId }) as any
+    const authorityList = Array.isArray(authorities) ? authorities : [authorities].filter(Boolean)
+
+    const violations: Array<{ policyName: string; policyType: string; authorityId: string; reason: string }> = []
+    let totalPolicies = 0
+
+    for (const authority of authorityList) {
+      const policies = authority.policies || {}
+      for (const pType of Object.keys(policies)) {
+        for (const pName of Object.keys(policies[pType])) {
+          totalPolicies++
+          const policy = policies[pType][pName]
+
+          if (policy.status === "violated" || policy.status === "non_compliant") {
+            violations.push({
+              policyName: pName,
+              policyType: pType,
+              authorityId: authority.id,
+              reason: `Policy status is ${policy.status}`,
+            })
+            continue
+          }
+
+          if (policy.effective_date && new Date(policy.effective_date) > new Date()) {
+            continue
+          }
+
+          const rules = policy.rules || {}
+          for (const [rule, expected] of Object.entries(rules)) {
+            if (typeof expected === "boolean" && !expected) {
+              violations.push({
+                policyName: pName,
+                policyType: pType,
+                authorityId: authority.id,
+                reason: `Rule "${rule}" is not satisfied`,
+              })
+            }
+          }
+        }
+      }
+    }
+
+    return {
+      tenantId,
+      compliant: violations.length === 0,
+      totalPolicies,
+      violations,
+      checkedAt: new Date(),
+    }
+  }
+
+  async getPolicyAuditTrail(policyId: string): Promise<{
+    policyId: string
+    trail: Array<{
+      version: number
+      authorityId: string
+      authorityType: string
+      changedAt: string
+      status: string
+      rules: Record<string, any>
+      effectiveDate: string | null
+    }>
+  }> {
+    const authorities = await this.listGovernanceAuthorities({}) as any
+    const authorityList = Array.isArray(authorities) ? authorities : [authorities].filter(Boolean)
+
+    const trail: Array<{
+      version: number
+      authorityId: string
+      authorityType: string
+      changedAt: string
+      status: string
+      rules: Record<string, any>
+      effectiveDate: string | null
+    }> = []
+    let version = 0
+
+    for (const authority of authorityList) {
+      const policies = authority.policies || {}
+      for (const pType of Object.keys(policies)) {
+        for (const pName of Object.keys(policies[pType])) {
+          if (pName === policyId || `${pType}.${pName}` === policyId) {
+            const policy = policies[pType][pName]
+            version++
+            trail.push({
+              version,
+              authorityId: authority.id,
+              authorityType: authority.type,
+              changedAt: policy.created_at || authority.updated_at || authority.created_at || new Date().toISOString(),
+              status: policy.status || "active",
+              rules: policy.rules || {},
+              effectiveDate: policy.effective_date || null,
+            })
+          }
+        }
+      }
+    }
+
+    if (trail.length === 0) {
+      throw new Error(`No audit trail found for policy "${policyId}"`)
+    }
+
+    trail.sort((a, b) => new Date(a.changedAt).getTime() - new Date(b.changedAt).getTime())
+
+    return { policyId, trail }
+  }
 }
 
 export default GovernanceModuleService

@@ -150,6 +150,123 @@ class PromotionExtModuleService extends MedusaService({
       promotions: deactivated,
     }
   }
+  async calculateStackedDiscounts(cartData: { items: any[]; promotionIds: string[] }) {
+    let totalDiscount = 0
+    const appliedPromotions: any[] = []
+
+    for (const promotionId of cartData.promotionIds) {
+      try {
+        const promotion = await this.retrieveGiftCardExt(promotionId)
+
+        if (!promotion.is_active) continue
+        if (promotion.expires_at && new Date(promotion.expires_at) < new Date()) continue
+
+        const remainingValue = Number(promotion.remaining_value)
+        if (remainingValue <= 0) continue
+
+        let promotionDiscount = 0
+        for (const item of cartData.items) {
+          const itemTotal = (item.quantity || 1) * (item.price || 0)
+          const availableDiscount = Math.min(itemTotal, remainingValue - promotionDiscount)
+
+          if (availableDiscount > 0) {
+            promotionDiscount += availableDiscount
+          }
+
+          if (promotionDiscount >= remainingValue) break
+        }
+
+        if (promotionDiscount > 0) {
+          totalDiscount += promotionDiscount
+          appliedPromotions.push({
+            promotionId,
+            discountAmount: promotionDiscount,
+            remainingBudget: remainingValue - promotionDiscount,
+          })
+        }
+      } catch {
+        continue
+      }
+    }
+
+    return {
+      totalDiscount,
+      appliedPromotions,
+      promotionCount: appliedPromotions.length,
+    }
+  }
+
+  async getCustomerEligiblePromotions(customerId: string, tenantId: string) {
+    const now = new Date()
+
+    const activePromotions = await this.listGiftCardExts({
+      tenant_id: tenantId,
+      is_active: true,
+    })
+
+    const promotionList = Array.isArray(activePromotions) ? activePromotions : [activePromotions].filter(Boolean)
+
+    const eligible = promotionList.filter((promo: any) => {
+      if (promo.expires_at && new Date(promo.expires_at) < now) return false
+
+      const remainingValue = Number(promo.remaining_value)
+      if (remainingValue <= 0) return false
+
+      if (promo.metadata?.restricted_customers) {
+        const restricted = promo.metadata.restricted_customers as string[]
+        if (!restricted.includes(customerId)) return false
+      }
+
+      if (promo.metadata?.excluded_customers) {
+        const excluded = promo.metadata.excluded_customers as string[]
+        if (excluded.includes(customerId)) return false
+      }
+
+      return true
+    })
+
+    return {
+      customerId,
+      tenantId,
+      promotions: eligible,
+      count: eligible.length,
+    }
+  }
+
+  async trackRedemption(promotionId: string, orderId: string, customerId: string) {
+    const promotion = await this.retrieveGiftCardExt(promotionId)
+
+    if (!promotion.is_active) {
+      throw new Error("Promotion is not active")
+    }
+
+    const existingMetadata = promotion.metadata || {}
+    const redemptions = (existingMetadata.redemptions as any[]) || []
+
+    redemptions.push({
+      orderId,
+      customerId,
+      redeemedAt: new Date().toISOString(),
+    })
+
+    await (this as any).updateGiftCardExts({
+      id: promotionId,
+      metadata: {
+        ...existingMetadata,
+        redemptions,
+        total_redemptions: redemptions.length,
+        last_redeemed_at: new Date().toISOString(),
+      },
+    })
+
+    return {
+      promotionId,
+      orderId,
+      customerId,
+      redemptionCount: redemptions.length,
+      trackedAt: new Date().toISOString(),
+    }
+  }
 }
 
 export default PromotionExtModuleService

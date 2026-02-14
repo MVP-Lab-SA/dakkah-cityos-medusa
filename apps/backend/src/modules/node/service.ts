@@ -147,6 +147,82 @@ class NodeModuleService extends MedusaService({
       metadata: data.metadata || null,
     })
   }
+
+  async getNodePath(nodeId: string): Promise<Array<{
+    id: string
+    name: string
+    type: string
+    depth: number
+  }>> {
+    const path: Array<{ id: string; name: string; type: string; depth: number }> = []
+    let currentId: string | null = nodeId
+
+    while (currentId) {
+      const node = await this.retrieveNode(currentId) as any
+      if (!node) break
+
+      path.unshift({
+        id: node.id,
+        name: node.name,
+        type: node.type,
+        depth: node.depth,
+      })
+      currentId = node.parent_id || null
+    }
+
+    return path
+  }
+
+  async getNodeDescendants(nodeId: string, maxDepth?: number): Promise<any[]> {
+    const descendants: any[] = []
+    const queue: Array<{ id: string; currentDepth: number }> = [{ id: nodeId, currentDepth: 0 }]
+
+    while (queue.length > 0) {
+      const { id: currentId, currentDepth } = queue.shift()!
+
+      if (maxDepth !== undefined && currentDepth >= maxDepth) continue
+
+      const children = await this.listChildren(currentId)
+      const childList = Array.isArray(children) ? children : [children].filter(Boolean)
+
+      for (const child of childList) {
+        descendants.push(child)
+        queue.push({ id: child.id, currentDepth: currentDepth + 1 })
+      }
+    }
+
+    return descendants
+  }
+
+  async validateNodePlacement(parentId: string, level: string): Promise<{
+    valid: boolean
+    reason?: string
+    expectedParentType?: string
+  }> {
+    const rule = HIERARCHY_RULES[level]
+    if (!rule) {
+      return { valid: false, reason: `Invalid node level: ${level}` }
+    }
+
+    if (!rule.parent) {
+      return { valid: false, reason: `${level} is a root level and cannot have a parent` }
+    }
+
+    const parent = await this.retrieveNode(parentId) as any
+    if (!parent) {
+      return { valid: false, reason: `Parent node ${parentId} not found` }
+    }
+
+    if (parent.type !== rule.parent) {
+      return {
+        valid: false,
+        reason: `${level} requires parent of type ${rule.parent}, but got ${parent.type}`,
+        expectedParentType: rule.parent,
+      }
+    }
+
+    return { valid: true }
+  }
 }
 
 export default NodeModuleService

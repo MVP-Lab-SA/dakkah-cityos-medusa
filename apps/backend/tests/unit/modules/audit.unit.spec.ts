@@ -185,4 +185,152 @@ describe("AuditModuleService", () => {
       expect(result).toEqual([])
     })
   })
+
+  describe("getAuditSummary", () => {
+    it("returns summary with event counts and top actors", async () => {
+      const now = new Date()
+      jest.spyOn(service, "listAuditLogs" as any).mockResolvedValue([
+        { id: "l1", action: "create", actor_id: "u1", created_at: now.toISOString() },
+        { id: "l2", action: "update", actor_id: "u1", created_at: now.toISOString() },
+        { id: "l3", action: "create", actor_id: "u2", created_at: now.toISOString() },
+      ])
+
+      const start = new Date(now.getTime() - 86400000)
+      const end = new Date(now.getTime() + 86400000)
+      const result = await service.getAuditSummary("t1", { start, end })
+
+      expect(result.totalEvents).toBe(3)
+      expect(result.eventsByType["create"]).toBe(2)
+      expect(result.topActors[0].actorId).toBe("u1")
+    })
+
+    it("flags high delete volume", async () => {
+      const now = new Date()
+      const deleteLogs = Array.from({ length: 15 }, (_, i) => ({
+        id: `l${i}`, action: "delete", actor_id: "u1", created_at: now.toISOString(),
+      }))
+      jest.spyOn(service, "listAuditLogs" as any).mockResolvedValue(deleteLogs)
+
+      const start = new Date(now.getTime() - 86400000)
+      const end = new Date(now.getTime() + 86400000)
+      const result = await service.getAuditSummary("t1", { start, end })
+
+      const deleteFlag = result.riskFlags.find(f => f.type === "high_delete_volume")
+      expect(deleteFlag).toBeDefined()
+      expect(deleteFlag!.severity).toBe("high")
+    })
+
+    it("returns zero events for empty date range", async () => {
+      jest.spyOn(service, "listAuditLogs" as any).mockResolvedValue([])
+
+      const result = await service.getAuditSummary("t1", { start: new Date(), end: new Date() })
+      expect(result.totalEvents).toBe(0)
+    })
+  })
+
+  describe("searchAuditLogs", () => {
+    it("filters logs by actor and action", async () => {
+      const listSpy = jest.spyOn(service, "listAuditLogs" as any).mockResolvedValue([])
+
+      await service.searchAuditLogs("t1", { actorId: "u1", action: "create" })
+
+      expect(listSpy).toHaveBeenCalledWith(expect.objectContaining({
+        actor_id: "u1",
+        action: "create",
+      }))
+    })
+
+    it("filters by entity type", async () => {
+      const listSpy = jest.spyOn(service, "listAuditLogs" as any).mockResolvedValue([])
+
+      await service.searchAuditLogs("t1", { entityType: "product" })
+
+      expect(listSpy).toHaveBeenCalledWith(expect.objectContaining({
+        resource_type: "product",
+      }))
+    })
+
+    it("filters by date range", async () => {
+      const now = new Date()
+      jest.spyOn(service, "listAuditLogs" as any).mockResolvedValue([
+        { id: "l1", created_at: now.toISOString() },
+        { id: "l2", created_at: new Date("2020-01-01").toISOString() },
+      ])
+
+      const result = await service.searchAuditLogs("t1", {
+        dateRange: { start: new Date(now.getTime() - 86400000), end: new Date(now.getTime() + 86400000) },
+      })
+
+      expect(result).toHaveLength(1)
+    })
+  })
+
+  describe("flagSuspiciousActivity", () => {
+    it("flags high frequency actors", async () => {
+      const now = new Date()
+      const logs = Array.from({ length: 55 }, (_, i) => ({
+        id: `l${i}`, action: "update", actor_id: "u1",
+        created_at: new Date(now.getTime() - 3600000).toISOString(),
+      }))
+      jest.spyOn(service, "listAuditLogs" as any).mockResolvedValue(logs)
+
+      const result = await service.flagSuspiciousActivity("t1")
+
+      const flag = result.flags.find(f => f.type === "high_frequency")
+      expect(flag).toBeDefined()
+      expect(flag!.actorId).toBe("u1")
+    })
+
+    it("flags bulk delete operations", async () => {
+      const now = new Date()
+      const logs = Array.from({ length: 8 }, (_, i) => ({
+        id: `l${i}`, action: "delete", actor_id: "u1",
+        created_at: new Date(now.getTime() - 3600000).toISOString(),
+      }))
+      jest.spyOn(service, "listAuditLogs" as any).mockResolvedValue(logs)
+
+      const result = await service.flagSuspiciousActivity("t1")
+
+      const flag = result.flags.find(f => f.type === "bulk_delete")
+      expect(flag).toBeDefined()
+      expect(flag!.severity).toBe("high")
+    })
+
+    it("returns zero flags when activity is normal", async () => {
+      const now = new Date()
+      jest.spyOn(service, "listAuditLogs" as any).mockResolvedValue([
+        { id: "l1", action: "read", actor_id: "u1", created_at: new Date(now.getTime() - 3600000).toISOString() },
+      ])
+
+      const result = await service.flagSuspiciousActivity("t1")
+      expect(result.flagsFound).toBe(0)
+    })
+  })
+
+  describe("exportAuditReport", () => {
+    it("generates JSON report with summary and logs", async () => {
+      const now = new Date()
+      jest.spyOn(service, "listAuditLogs" as any).mockResolvedValue([
+        { id: "l1", action: "create", actor_id: "u1", resource_type: "product", resource_id: "p1", created_at: now.toISOString() },
+      ])
+
+      const result = await service.exportAuditReport("t1", "json")
+
+      expect(result.tenantId).toBe("t1")
+      expect(result.format).toBe("json")
+      expect(result.summary).toBeDefined()
+    })
+
+    it("generates CSV report with csv content", async () => {
+      const now = new Date()
+      jest.spyOn(service, "listAuditLogs" as any).mockResolvedValue([
+        { id: "l1", action: "create", actor_id: "u1", resource_type: "product", resource_id: "p1", created_at: now.toISOString() },
+      ])
+
+      const result = await service.exportAuditReport("t1", "csv") as any
+
+      expect(result.csvContent).toBeDefined()
+      expect(result.csvContent).toContain("id,action")
+    })
+  })
 })

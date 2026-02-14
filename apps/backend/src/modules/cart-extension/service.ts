@@ -334,6 +334,229 @@ class CartExtensionModuleService extends MedusaService({
     return { valid: errors.length === 0, errors, warnings }
   }
 
+  async calculateCartInsights(cartId: string): Promise<{
+    cartId: string
+    savings: { originalTotal: number; currentTotal: number; totalSavings: number; savingsPercentage: number }
+    recommendations: Array<{ type: string; message: string; potentialSaving: number }>
+    loyaltyPoints: { potential: number; multiplier: number; tierBonus: number }
+  }> {
+    const manager = this.manager_
+    try {
+      const cart = await manager.findOne("cart", {
+        where: { id: cartId },
+        relations: ["items"],
+      })
+
+      if (!cart || !cart.items || cart.items.length === 0) {
+        return {
+          cartId,
+          savings: { originalTotal: 0, currentTotal: 0, totalSavings: 0, savingsPercentage: 0 },
+          recommendations: [],
+          loyaltyPoints: { potential: 0, multiplier: 1, tierBonus: 0 },
+        }
+      }
+
+      const items = cart.items || []
+      const originalTotal = items.reduce((sum: number, item: any) => {
+        const comparePrice = item.compare_at_unit_price || item.original_price || item.unit_price || 0
+        return sum + (comparePrice * item.quantity)
+      }, 0)
+
+      const currentTotal = items.reduce((sum: number, item: any) => {
+        return sum + ((item.unit_price || 0) * item.quantity)
+      }, 0)
+
+      const totalSavings = Math.max(0, originalTotal - currentTotal)
+      const savingsPercentage = originalTotal > 0 ? Math.round((totalSavings / originalTotal) * 10000) / 100 : 0
+
+      const recommendations: Array<{ type: string; message: string; potentialSaving: number }> = []
+
+      if (items.length === 2) {
+        recommendations.push({
+          type: "bundle_suggestion",
+          message: "Add one more item to qualify for a 5% bulk discount",
+          potentialSaving: Math.round(currentTotal * 0.05),
+        })
+      }
+
+      if (currentTotal > 0 && currentTotal < 5000) {
+        const freeShippingThreshold = 5000
+        recommendations.push({
+          type: "free_shipping",
+          message: `Add ${((freeShippingThreshold - currentTotal) / 100).toFixed(2)} more to qualify for free shipping`,
+          potentialSaving: 500,
+        })
+      }
+
+      const basePoints = Math.floor(currentTotal / 100)
+      const multiplier = items.length >= 5 ? 2 : 1
+      const tierBonus = items.length >= 10 ? 50 : 0
+
+      return {
+        cartId,
+        savings: { originalTotal, currentTotal, totalSavings, savingsPercentage },
+        recommendations,
+        loyaltyPoints: { potential: basePoints * multiplier + tierBonus, multiplier, tierBonus },
+      }
+    } catch {
+      return {
+        cartId,
+        savings: { originalTotal: 0, currentTotal: 0, totalSavings: 0, savingsPercentage: 0 },
+        recommendations: [],
+        loyaltyPoints: { potential: 0, multiplier: 1, tierBonus: 0 },
+      }
+    }
+  }
+
+  async applyBundleDiscounts(cartId: string): Promise<{
+    cartId: string
+    bundlesDetected: Array<{ name: string; items: string[]; discount: number }>
+    totalBundleDiscount: number
+    applied: boolean
+  }> {
+    const manager = this.manager_
+    try {
+      const cart = await manager.findOne("cart", {
+        where: { id: cartId },
+        relations: ["items", "items.variant"],
+      })
+
+      if (!cart || !cart.items || cart.items.length === 0) {
+        return { cartId, bundlesDetected: [], totalBundleDiscount: 0, applied: false }
+      }
+
+      const items = cart.items || []
+      const bundlesDetected: Array<{ name: string; items: string[]; discount: number }> = []
+
+      const productGroups: Record<string, any[]> = {}
+      for (const item of items) {
+        const category = item.metadata?.category || item.product_type || "general"
+        if (!productGroups[category]) productGroups[category] = []
+        productGroups[category].push(item)
+      }
+
+      for (const [category, groupItems] of Object.entries(productGroups)) {
+        if (groupItems.length >= 2) {
+          const groupTotal = groupItems.reduce((sum: number, item: any) => {
+            return sum + ((item.unit_price || 0) * item.quantity)
+          }, 0)
+          const discount = Math.round(groupTotal * 0.1)
+          bundlesDetected.push({
+            name: `${category}_bundle`,
+            items: groupItems.map((i: any) => i.id),
+            discount,
+          })
+        }
+      }
+
+      if (items.length >= 3) {
+        const subtotal = items.reduce((sum: number, item: any) => {
+          return sum + ((item.unit_price || 0) * item.quantity)
+        }, 0)
+        const mixDiscount = Math.round(subtotal * 0.05)
+        bundlesDetected.push({
+          name: "mix_and_match",
+          items: items.map((i: any) => i.id),
+          discount: mixDiscount,
+        })
+      }
+
+      const totalBundleDiscount = bundlesDetected.reduce((sum, b) => sum + b.discount, 0)
+
+      return {
+        cartId,
+        bundlesDetected,
+        totalBundleDiscount,
+        applied: bundlesDetected.length > 0,
+      }
+    } catch {
+      return { cartId, bundlesDetected: [], totalBundleDiscount: 0, applied: false }
+    }
+  }
+
+  async validateCartLimits(cartId: string, tenantId: string): Promise<{
+    valid: boolean
+    cartId: string
+    checks: Array<{ rule: string; passed: boolean; message: string; current: number; limit: number }>
+  }> {
+    const manager = this.manager_
+    try {
+      const cart = await manager.findOne("cart", {
+        where: { id: cartId },
+        relations: ["items"],
+      })
+
+      if (!cart || !cart.items) {
+        return {
+          valid: false,
+          cartId,
+          checks: [{ rule: "cart_exists", passed: false, message: "Cart not found", current: 0, limit: 0 }],
+        }
+      }
+
+      const items = cart.items || []
+      const checks: Array<{ rule: string; passed: boolean; message: string; current: number; limit: number }> = []
+
+      const maxItems = 50
+      const totalItems = items.reduce((sum: number, item: any) => sum + (item.quantity || 0), 0)
+      checks.push({
+        rule: "max_items",
+        passed: totalItems <= maxItems,
+        message: totalItems <= maxItems ? "Item count within limit" : `Cart exceeds maximum of ${maxItems} items`,
+        current: totalItems,
+        limit: maxItems,
+      })
+
+      const maxWeight = 50000
+      const totalWeight = items.reduce((sum: number, item: any) => {
+        const weight = item.weight || item.metadata?.weight || 0
+        return sum + (weight * (item.quantity || 0))
+      }, 0)
+      checks.push({
+        rule: "max_weight",
+        passed: totalWeight <= maxWeight,
+        message: totalWeight <= maxWeight ? "Weight within limit" : `Cart exceeds maximum weight of ${maxWeight}g`,
+        current: totalWeight,
+        limit: maxWeight,
+      })
+
+      const maxValue = 10000000
+      const totalValue = items.reduce((sum: number, item: any) => {
+        return sum + ((item.unit_price || 0) * (item.quantity || 0))
+      }, 0)
+      checks.push({
+        rule: "max_value",
+        passed: totalValue <= maxValue,
+        message: totalValue <= maxValue ? "Cart value within limit" : `Cart exceeds maximum value`,
+        current: totalValue,
+        limit: maxValue,
+      })
+
+      const maxPerItem = 20
+      for (const item of items) {
+        if ((item.quantity || 0) > maxPerItem) {
+          checks.push({
+            rule: "max_per_item",
+            passed: false,
+            message: `Item ${item.id} exceeds per-item limit of ${maxPerItem}`,
+            current: item.quantity,
+            limit: maxPerItem,
+          })
+        }
+      }
+
+      const valid = checks.every((c) => c.passed)
+
+      return { valid, cartId, checks }
+    } catch {
+      return {
+        valid: false,
+        cartId,
+        checks: [{ rule: "validation_error", passed: false, message: "Failed to validate cart limits", current: 0, limit: 0 }],
+      }
+    }
+  }
+
   async mergeGuestCart(guestCartId: string, customerCartId: string) {
     const manager = this.manager_
 

@@ -217,6 +217,123 @@ class ChannelModuleService extends MedusaService({
     }
   }
 
+  async getChannelAnalytics(channelId: string) {
+    try {
+      const channel = await this.retrieveSalesChannelMapping(channelId)
+
+      if (!channel) {
+        return null
+      }
+
+      const allMappings = await this.listSalesChannelMappings({
+        tenant_id: channel.tenant_id,
+      }) as any
+      const mappingList = Array.isArray(allMappings) ? allMappings : [allMappings].filter(Boolean)
+      const totalChannels = mappingList.length
+
+      return {
+        channelId,
+        channelName: channel.name,
+        channelType: channel.channel_type,
+        isActive: channel.is_active,
+        totalPeerChannels: totalChannels,
+        createdAt: channel.created_at,
+        config: channel.config || {},
+        metadata: channel.metadata || {},
+      }
+    } catch (error) {
+      return null
+    }
+  }
+
+  async syncChannelInventory(channelId: string, productIds: string[]) {
+    try {
+      const channel = await this.retrieveSalesChannelMapping(channelId)
+
+      if (!channel) {
+        throw new Error("Channel not found")
+      }
+
+      if (!channel.is_active) {
+        throw new Error("Channel is not active")
+      }
+
+      const existingConfig = channel.config || {}
+      const syncedProducts = existingConfig.synced_products || []
+
+      const newProducts = productIds.filter((id: string) => !syncedProducts.includes(id))
+      const updatedSyncedProducts = [...syncedProducts, ...newProducts]
+
+      const updatedConfig = {
+        ...existingConfig,
+        synced_products: updatedSyncedProducts,
+        last_inventory_sync: new Date().toISOString(),
+        sync_count: (existingConfig.sync_count || 0) + 1,
+      }
+
+      await (this as any).updateSalesChannelMappings({
+        id: channelId,
+        config: updatedConfig,
+      })
+
+      return {
+        channelId,
+        channelName: channel.name,
+        syncedCount: newProducts.length,
+        totalSynced: updatedSyncedProducts.length,
+        newProductIds: newProducts,
+        syncTimestamp: new Date().toISOString(),
+      }
+    } catch (error: any) {
+      throw new Error(`Failed to sync inventory: ${error.message}`)
+    }
+  }
+
+  async validateChannelConfig(channelId: string) {
+    try {
+      const channel = await this.retrieveSalesChannelMapping(channelId)
+
+      if (!channel) {
+        return { valid: false, errors: ["Channel not found"] }
+      }
+
+      const errors: string[] = []
+      const warnings: string[] = []
+
+      if (!channel.name || channel.name.trim() === "") {
+        errors.push("Channel name is required")
+      }
+
+      if (!channel.channel_type) {
+        errors.push("Channel type is required")
+      }
+
+      if (!channel.tenant_id) {
+        errors.push("Tenant ID is required")
+      }
+
+      if (!channel.medusa_sales_channel_id) {
+        warnings.push("No Medusa sales channel linked")
+      }
+
+      const config = channel.config || {}
+      if (!config || Object.keys(config).length === 0) {
+        warnings.push("Channel has no configuration settings")
+      }
+
+      return {
+        channelId,
+        channelName: channel.name,
+        valid: errors.length === 0,
+        errors,
+        warnings,
+        configKeys: Object.keys(config),
+      }
+    } catch (error) {
+      return { valid: false, errors: ["Failed to validate channel configuration"] }
+    }
+  }
+
   private getBaseCapabilitiesByType(channelType: string): Record<string, boolean> {
     const baseMap: Record<string, Record<string, boolean>> = {
       web: {

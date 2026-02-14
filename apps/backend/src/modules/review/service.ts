@@ -132,6 +132,149 @@ class ReviewModuleService extends MedusaService({
       { helpful_count: (review.helpful_count || 0) + 1 }
     )
   }
+
+  async getReviewAnalytics(vendorId: string) {
+    const reviews = await this.listReviews(
+      { vendor_id: vendorId, is_approved: true }
+    ) as any
+    const reviewList = Array.isArray(reviews) ? reviews : [reviews].filter(Boolean)
+
+    if (reviewList.length === 0) {
+      return {
+        vendorId,
+        averageRating: 0,
+        totalReviews: 0,
+        ratingDistribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+        responseRate: 0,
+        verifiedPurchaseRate: 0,
+      }
+    }
+
+    const distribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+    let totalRating = 0
+    let verifiedCount = 0
+    let respondedCount = 0
+
+    for (const review of reviewList) {
+      totalRating += review.rating
+      distribution[review.rating as keyof typeof distribution]++
+      if (review.is_verified_purchase) verifiedCount++
+      if (review.vendor_response || review.response) respondedCount++
+    }
+
+    return {
+      vendorId,
+      averageRating: Math.round((totalRating / reviewList.length) * 10) / 10,
+      totalReviews: reviewList.length,
+      ratingDistribution: distribution,
+      responseRate: Math.round((respondedCount / reviewList.length) * 100),
+      verifiedPurchaseRate: Math.round((verifiedCount / reviewList.length) * 100),
+    }
+  }
+
+  async flagInappropriateReview(reviewId: string, reason: string, reporterId: string) {
+    if (!reviewId || !reason || !reporterId) {
+      throw new Error("Review ID, reason, and reporter ID are required")
+    }
+
+    const review = await this.retrieveReview(reviewId) as any
+
+    const existingFlags = Array.isArray(review.flags) ? review.flags : []
+    const alreadyFlagged = existingFlags.some(
+      (f: any) => f.reporterId === reporterId
+    )
+    if (alreadyFlagged) {
+      throw new Error("You have already flagged this review")
+    }
+
+    const newFlag = {
+      reporterId,
+      reason,
+      flaggedAt: new Date().toISOString(),
+    }
+
+    const updatedFlags = [...existingFlags, newFlag]
+    const flagCount = updatedFlags.length
+    const needsModeration = flagCount >= 3
+
+    await this.updateReviews(
+      { id: reviewId },
+      {
+        metadata: {
+          ...(review.metadata || {}),
+          flags: updatedFlags,
+          flag_count: flagCount,
+          needs_moderation: needsModeration,
+          last_flagged_at: new Date().toISOString(),
+        },
+      }
+    )
+
+    return {
+      reviewId,
+      flagCount,
+      needsModeration,
+      status: needsModeration ? "pending_moderation" : "flagged",
+    }
+  }
+
+  async getReviewTrends(vendorId: string, months?: number) {
+    const monthCount = months || 6
+    const now = new Date()
+    const reviews = await this.listReviews(
+      { vendor_id: vendorId, is_approved: true }
+    ) as any
+    const reviewList = Array.isArray(reviews) ? reviews : [reviews].filter(Boolean)
+
+    const trends: Array<{
+      month: string
+      year: number
+      totalReviews: number
+      averageRating: number
+      positiveCount: number
+      negativeCount: number
+    }> = []
+
+    for (let i = monthCount - 1; i >= 0; i--) {
+      const targetDate = new Date(now.getFullYear(), now.getMonth() - i, 1)
+      const monthStart = new Date(targetDate.getFullYear(), targetDate.getMonth(), 1)
+      const monthEnd = new Date(targetDate.getFullYear(), targetDate.getMonth() + 1, 0, 23, 59, 59)
+
+      const monthReviews = reviewList.filter((r: any) => {
+        const createdAt = new Date(r.created_at)
+        return createdAt >= monthStart && createdAt <= monthEnd
+      })
+
+      let totalRating = 0
+      let positiveCount = 0
+      let negativeCount = 0
+
+      for (const review of monthReviews) {
+        totalRating += review.rating
+        if (review.rating >= 4) positiveCount++
+        if (review.rating <= 2) negativeCount++
+      }
+
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+      trends.push({
+        month: monthNames[targetDate.getMonth()],
+        year: targetDate.getFullYear(),
+        totalReviews: monthReviews.length,
+        averageRating: monthReviews.length > 0
+          ? Math.round((totalRating / monthReviews.length) * 10) / 10
+          : 0,
+        positiveCount,
+        negativeCount,
+      })
+    }
+
+    return {
+      vendorId,
+      periodMonths: monthCount,
+      trends,
+    }
+  }
 }
 
 export default ReviewModuleService

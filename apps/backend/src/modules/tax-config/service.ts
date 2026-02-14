@@ -288,6 +288,141 @@ class TaxConfigModuleService extends MedusaService({
       count: active.length,
     }
   }
+
+  async getEffectiveTaxRate(tenantId: string, region: string, productCategory?: string): Promise<{
+    effectiveRate: number
+    rules: any[]
+    region: string
+    category: string | null
+  }> {
+    const allRules = await this.listTaxRules({
+      tenant_id: tenantId,
+      status: "active",
+    })
+    const ruleList = Array.isArray(allRules) ? allRules : [allRules].filter(Boolean)
+
+    const now = new Date()
+    const applicable = ruleList
+      .filter((rule: any) => {
+        if (rule.valid_from && new Date(rule.valid_from) > now) return false
+        if (rule.valid_to && new Date(rule.valid_to) < now) return false
+
+        const ruleRegion = rule.region_code || rule.country_code || ""
+        if (ruleRegion && ruleRegion !== region) return false
+
+        if (productCategory && rule.category && rule.category !== productCategory) return false
+
+        return true
+      })
+      .sort((a: any, b: any) => (b.priority || 0) - (a.priority || 0))
+
+    let effectiveRate = 0
+    for (const rule of applicable) {
+      if (rule.tax_type === "exempt") {
+        return { effectiveRate: 0, rules: [rule], region, category: productCategory || null }
+      }
+      effectiveRate += Number(rule.tax_rate || 0)
+    }
+
+    return {
+      effectiveRate,
+      rules: applicable,
+      region,
+      category: productCategory || null,
+    }
+  }
+
+  async validateTaxExemption(customerId: string, tenantId: string): Promise<{
+    hasValidExemption: boolean
+    exemptions: any[]
+    expiringSoon: any[]
+  }> {
+    const exemptions = await this.listTaxExemptions({
+      tenant_id: tenantId,
+      entity_type: "customer",
+      entity_id: customerId,
+    })
+    const list = Array.isArray(exemptions) ? exemptions : [exemptions].filter(Boolean)
+
+    const now = new Date()
+    const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
+
+    const valid: any[] = []
+    const expiringSoon: any[] = []
+
+    for (const exemption of list) {
+      if (exemption.status !== "active") continue
+      if (new Date(exemption.valid_from) > now) continue
+      if (exemption.valid_to && new Date(exemption.valid_to) < now) continue
+
+      valid.push(exemption)
+
+      if (exemption.valid_to && new Date(exemption.valid_to) <= thirtyDaysFromNow) {
+        expiringSoon.push(exemption)
+      }
+    }
+
+    return {
+      hasValidExemption: valid.length > 0,
+      exemptions: valid,
+      expiringSoon,
+    }
+  }
+
+  async generateTaxReport(tenantId: string, dateRange: { start: Date; end: Date }): Promise<{
+    tenantId: string
+    dateRange: { start: string; end: string }
+    totalRules: number
+    byRegion: Record<string, { ruleCount: number; rates: number[]; averageRate: number }>
+    summary: { totalRegions: number; averageRate: number }
+  }> {
+    const allRules = await this.listTaxRules({
+      tenant_id: tenantId,
+      status: "active",
+    })
+    const ruleList = Array.isArray(allRules) ? allRules : [allRules].filter(Boolean)
+
+    const startDate = new Date(dateRange.start)
+    const endDate = new Date(dateRange.end)
+
+    const filtered = ruleList.filter((rule: any) => {
+      if (rule.valid_from && new Date(rule.valid_from) > endDate) return false
+      if (rule.valid_to && new Date(rule.valid_to) < startDate) return false
+      return true
+    })
+
+    const byRegion: Record<string, { ruleCount: number; rates: number[]; averageRate: number }> = {}
+
+    for (const rule of filtered) {
+      const region = rule.region_code || rule.country_code || "global"
+      if (!byRegion[region]) {
+        byRegion[region] = { ruleCount: 0, rates: [], averageRate: 0 }
+      }
+      byRegion[region].ruleCount++
+      byRegion[region].rates.push(Number(rule.tax_rate || 0))
+    }
+
+    let totalRate = 0
+    let totalCount = 0
+    for (const region of Object.keys(byRegion)) {
+      const entry = byRegion[region]
+      const sum = entry.rates.reduce((a, b) => a + b, 0)
+      entry.averageRate = entry.rates.length > 0 ? Math.round((sum / entry.rates.length) * 100) / 100 : 0
+      totalRate += sum
+      totalCount += entry.rates.length
+    }
+
+    return {
+      tenantId,
+      dateRange: { start: startDate.toISOString(), end: endDate.toISOString() },
+      totalRules: filtered.length,
+      byRegion,
+      summary: {
+        totalRegions: Object.keys(byRegion).length,
+        averageRate: totalCount > 0 ? Math.round((totalRate / totalCount) * 100) / 100 : 0,
+      },
+    }
+  }
 }
 
 export default TaxConfigModuleService

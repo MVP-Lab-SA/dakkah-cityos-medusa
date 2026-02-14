@@ -214,4 +214,107 @@ describe("PersonaModuleService", () => {
       expect(result.eligible).toBe(true)
     })
   })
+
+  describe("resolvePersonaPrecedence", () => {
+    it("returns effective persona based on scope priority", async () => {
+      jest.spyOn(service, "listPersonaAssignments" as any).mockResolvedValue([
+        { id: "a1", scope: "tenant-default", priority: 0, persona_id: "p1", user_id: "u1", status: "active" },
+        { id: "a2", scope: "session", priority: 0, persona_id: "p2", user_id: "u1", status: "active", scope_reference: "sess-1" },
+      ])
+      jest.spyOn(service, "retrievePersona" as any).mockResolvedValue({
+        id: "p2", name: "Session Persona",
+      })
+
+      const result = await service.resolvePersonaPrecedence("u1", "t-1")
+      expect(result.effectivePersona!.id).toBe("p2")
+      expect(result.precedenceOrder[0].scope).toBe("session")
+    })
+
+    it("returns null effective persona when no assignments exist", async () => {
+      jest.spyOn(service, "listPersonaAssignments" as any).mockResolvedValue([])
+
+      const result = await service.resolvePersonaPrecedence("u1", "t-1")
+      expect(result.effectivePersona).toBeNull()
+      expect(result.precedenceOrder).toHaveLength(0)
+    })
+
+    it("filters expired assignments", async () => {
+      jest.spyOn(service, "listPersonaAssignments" as any).mockResolvedValue([
+        { id: "a1", scope: "user-default", priority: 0, persona_id: "p1", user_id: "u1", status: "active", ends_at: new Date("2020-01-01").toISOString() },
+      ])
+
+      const result = await service.resolvePersonaPrecedence("u1", "t-1")
+      expect(result.effectivePersona).toBeNull()
+    })
+  })
+
+  describe("getPersonaRecommendations", () => {
+    it("returns recommendations based on persona preferences", async () => {
+      jest.spyOn(service, "retrievePersona" as any).mockResolvedValue({
+        id: "p1", name: "Shopper",
+        config: { preferences: { electronics: 0.9, books: 0.7 } },
+        constraints: {},
+      })
+
+      const result = await service.getPersonaRecommendations("p1")
+      expect(result.recommendations.length).toBeGreaterThanOrEqual(2)
+      expect(result.recommendations[0].score).toBeGreaterThanOrEqual(result.recommendations[1].score)
+    })
+
+    it("adds kid-safe recommendation for kid-safe persona", async () => {
+      jest.spyOn(service, "retrievePersona" as any).mockResolvedValue({
+        id: "p1", name: "Child",
+        config: {},
+        constraints: { kid_safe: true },
+      })
+
+      const result = await service.getPersonaRecommendations("p1")
+      const kidSafe = result.recommendations.find(r => r.category === "family_friendly")
+      expect(kidSafe).toBeDefined()
+      expect(kidSafe!.score).toBe(1.0)
+    })
+
+    it("adds local content recommendation for geo-scoped persona", async () => {
+      jest.spyOn(service, "retrievePersona" as any).mockResolvedValue({
+        id: "p1", name: "Local",
+        config: {},
+        constraints: { geo_scope: "city" },
+      })
+
+      const result = await service.getPersonaRecommendations("p1")
+      const local = result.recommendations.find(r => r.category === "local")
+      expect(local).toBeDefined()
+    })
+  })
+
+  describe("mergePersonaProfiles", () => {
+    it("merges two persona profiles and returns merged constraints", async () => {
+      jest.spyOn(service, "retrievePersona" as any)
+        .mockResolvedValueOnce({
+          id: "p1", name: "Primary",
+          config: { features: ["search"], level: 3 },
+          constraints: { kid_safe: false, read_only: false, geo_scope: "city" },
+          metadata: {},
+        })
+        .mockResolvedValueOnce({
+          id: "p2", name: "Secondary",
+          config: { features: ["filter"], level: 5 },
+          constraints: { kid_safe: true, read_only: false, geo_scope: "global" },
+          metadata: {},
+        })
+      jest.spyOn(service as any, "updatePersonas").mockResolvedValue({ id: "p1" })
+
+      const result = await service.mergePersonaProfiles("p1", "p2")
+      expect(result.mergedConstraints.kidSafe).toBe(true)
+      expect(result.mergedConstraints.geoScope).toBe("city")
+      expect(result.primaryId).toBe("p1")
+    })
+
+    it("throws when primary persona not found", async () => {
+      jest.spyOn(service, "retrievePersona" as any).mockResolvedValue(null)
+
+      await expect(service.mergePersonaProfiles("p1", "p2"))
+        .rejects.toThrow("Primary persona p1 not found")
+    })
+  })
 })

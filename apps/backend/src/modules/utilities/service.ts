@@ -259,6 +259,146 @@ class UtilitiesModuleService extends MedusaService({
       billCount: billList.length,
     }
   }
+
+  async generateBillingSummary(accountId: string, year: number, month: number) {
+    const account = await this.retrieveUtilityAccount(accountId)
+
+    const startDate = new Date(year, month - 1, 1)
+    const endDate = new Date(year, month, 0, 23, 59, 59)
+
+    const bills = await this.listUtilityBills({
+      account_id: accountId,
+      billing_period_start: { $gte: startDate },
+      billing_period_end: { $lte: endDate },
+    })
+
+    const billList = Array.isArray(bills) ? bills : [bills].filter(Boolean)
+
+    let totalAmount = 0
+    let totalPaid = 0
+    let totalPending = 0
+
+    for (const bill of billList) {
+      const amount = Number(bill.amount)
+      totalAmount += amount
+      if (bill.status === "paid") {
+        totalPaid += amount
+      } else {
+        totalPending += amount
+      }
+    }
+
+    return {
+      accountId,
+      accountNumber: account.account_number,
+      period: { year, month, startDate, endDate },
+      billCount: billList.length,
+      totalAmount: Math.round(totalAmount * 100) / 100,
+      totalPaid: Math.round(totalPaid * 100) / 100,
+      totalPending: Math.round(totalPending * 100) / 100,
+      bills: billList,
+    }
+  }
+
+  async detectAnomalousUsage(accountId: string, thresholdMultiplier?: number) {
+    const multiplier = thresholdMultiplier || 2.0
+    const account = await this.retrieveUtilityAccount(accountId)
+
+    const now = new Date()
+    const threeMonthsAgo = new Date()
+    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3)
+
+    const oneMonthAgo = new Date()
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1)
+
+    const historicalReadings = await this.listMeterReadings({
+      account_id: accountId,
+      reading_date: { $gte: threeMonthsAgo, $lte: oneMonthAgo },
+    })
+    const historicalList = Array.isArray(historicalReadings) ? historicalReadings : [historicalReadings].filter(Boolean)
+
+    const recentReadings = await this.listMeterReadings({
+      account_id: accountId,
+      reading_date: { $gte: oneMonthAgo, $lte: now },
+    })
+    const recentList = Array.isArray(recentReadings) ? recentReadings : [recentReadings].filter(Boolean)
+
+    let historicalConsumption = 0
+    const sortedHistorical = historicalList.sort(
+      (a, b) => new Date(a.reading_date).getTime() - new Date(b.reading_date).getTime()
+    )
+    if (sortedHistorical.length > 1) {
+      historicalConsumption = sortedHistorical[sortedHistorical.length - 1].reading_value - sortedHistorical[0].reading_value
+    }
+
+    let recentConsumption = 0
+    const sortedRecent = recentList.sort(
+      (a, b) => new Date(a.reading_date).getTime() - new Date(b.reading_date).getTime()
+    )
+    if (sortedRecent.length > 1) {
+      recentConsumption = sortedRecent[sortedRecent.length - 1].reading_value - sortedRecent[0].reading_value
+    }
+
+    const avgMonthlyConsumption = historicalList.length > 1 ? historicalConsumption / 2 : 0
+    const isAnomalous = avgMonthlyConsumption > 0 && recentConsumption > avgMonthlyConsumption * multiplier
+
+    return {
+      accountId,
+      accountNumber: account.account_number,
+      recentConsumption,
+      averageConsumption: Math.round(avgMonthlyConsumption * 100) / 100,
+      thresholdMultiplier: multiplier,
+      threshold: Math.round(avgMonthlyConsumption * multiplier * 100) / 100,
+      isAnomalous,
+      deviationPercent: avgMonthlyConsumption > 0
+        ? Math.round(((recentConsumption - avgMonthlyConsumption) / avgMonthlyConsumption) * 10000) / 100
+        : 0,
+    }
+  }
+
+  async getServiceOutages(tenantId: string, startDate: Date, endDate: Date) {
+    const accounts = await this.listUtilityAccounts({
+      tenant_id: tenantId,
+    })
+
+    const accountList = Array.isArray(accounts) ? accounts : [accounts].filter(Boolean)
+
+    const outages: any[] = []
+    for (const account of accountList) {
+      const readings = await this.listMeterReadings({
+        account_id: account.id,
+        reading_date: { $gte: startDate, $lte: endDate },
+      })
+
+      const readingList = Array.isArray(readings) ? readings : [readings].filter(Boolean)
+      const sorted = readingList.sort(
+        (a, b) => new Date(a.reading_date).getTime() - new Date(b.reading_date).getTime()
+      )
+
+      for (let i = 1; i < sorted.length; i++) {
+        const gap = new Date(sorted[i].reading_date).getTime() - new Date(sorted[i - 1].reading_date).getTime()
+        const gapHours = gap / (1000 * 60 * 60)
+
+        if (gapHours > 48 && sorted[i].reading_value === sorted[i - 1].reading_value) {
+          outages.push({
+            accountId: account.id,
+            accountNumber: account.account_number,
+            utilityType: account.utility_type,
+            outageStart: sorted[i - 1].reading_date,
+            outageEnd: sorted[i].reading_date,
+            durationHours: Math.round(gapHours * 100) / 100,
+          })
+        }
+      }
+    }
+
+    return {
+      tenantId,
+      period: { startDate, endDate },
+      outageCount: outages.length,
+      outages,
+    }
+  }
 }
 
 export default UtilitiesModuleService

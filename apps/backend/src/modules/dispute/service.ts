@@ -290,6 +290,107 @@ class DisputeModuleService extends MedusaService({
 
     return { dispute, messages, events }
   }
+
+  async autoAssignMediator(disputeId: string): Promise<{
+    disputeId: string
+    mediatorId: string
+    mediatorType: string
+    assignedAt: Date
+  }> {
+    const dispute = await this.retrieveDispute(disputeId) as any
+    if (!dispute) {
+      throw new Error(`Dispute ${disputeId} not found`)
+    }
+
+    if (["resolved", "closed"].includes(dispute.status)) {
+      throw new Error("Cannot assign mediator to a resolved or closed dispute")
+    }
+
+    const mediatorMap: Record<string, string> = {
+      "product_quality": "quality_specialist",
+      "delivery": "logistics_specialist",
+      "billing": "finance_specialist",
+      "service": "customer_service_lead",
+      "fraud": "fraud_investigator",
+      "refund": "finance_specialist",
+    }
+
+    const mediatorType = mediatorMap[dispute.type] || "general_mediator"
+    const mediatorId = `mediator_${mediatorType}_${Date.now()}`
+
+    await (this as any).updateDisputes({
+      id: disputeId,
+      status: dispute.status === "open" ? "under_review" : dispute.status,
+      metadata: {
+        ...(dispute.metadata || {}),
+        mediator_id: mediatorId,
+        mediator_type: mediatorType,
+        mediator_assigned_at: new Date().toISOString(),
+      },
+    })
+
+    await (this as any).createDisputeMessages({
+      dispute_id: disputeId,
+      sender_type: "system",
+      sender_id: "system",
+      content: `Mediator assigned: ${mediatorType} (${mediatorId})`,
+      is_internal: true,
+    })
+
+    return {
+      disputeId,
+      mediatorId,
+      mediatorType,
+      assignedAt: new Date(),
+    }
+  }
+
+  async calculateCompensation(disputeId: string): Promise<{
+    disputeId: string
+    disputeType: string
+    baseAmount: number
+    compensationRate: number
+    compensationAmount: number
+    recommendation: string
+  }> {
+    const dispute = await this.retrieveDispute(disputeId) as any
+    if (!dispute) {
+      throw new Error(`Dispute ${disputeId} not found`)
+    }
+
+    const compensationRates: Record<string, { rate: number; recommendation: string }> = {
+      "product_quality": { rate: 1.0, recommendation: "full_refund" },
+      "delivery": { rate: 0.5, recommendation: "partial_refund" },
+      "billing": { rate: 1.0, recommendation: "full_refund" },
+      "service": { rate: 0.25, recommendation: "store_credit" },
+      "fraud": { rate: 1.0, recommendation: "full_refund_and_investigation" },
+      "refund": { rate: 1.0, recommendation: "full_refund" },
+    }
+
+    const config = compensationRates[dispute.type] || { rate: 0.5, recommendation: "review_required" }
+
+    const baseAmount = Number(dispute.resolution_amount || dispute.metadata?.order_amount || 0)
+    let compensationRate = config.rate
+
+    if (dispute.priority === "urgent" || dispute.priority === "high") {
+      compensationRate = Math.min(1.0, compensationRate + 0.1)
+    }
+
+    if (dispute.escalated_at) {
+      compensationRate = Math.min(1.0, compensationRate + 0.15)
+    }
+
+    const compensationAmount = Math.round(baseAmount * compensationRate * 100) / 100
+
+    return {
+      disputeId,
+      disputeType: dispute.type,
+      baseAmount,
+      compensationRate,
+      compensationAmount,
+      recommendation: config.recommendation,
+    }
+  }
 }
 
 export default DisputeModuleService
