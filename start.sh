@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Kill any stale processes on our ports
+fuser -k 9000/tcp 2>/dev/null
+fuser -k 5000/tcp 2>/dev/null
+sleep 1
+
 # Start Medusa backend in background with limited memory
 cd /home/runner/workspace/apps/backend
 NODE_OPTIONS="--max-old-space-size=512" npx medusa develop &
@@ -18,4 +23,4 @@ done
 # Start storefront
 cd /home/runner/workspace/apps/storefront
 echo "Starting storefront on port 5000..."
-NODE_OPTIONS="--max-old-space-size=1024" exec npx vite dev --host 0.0.0.0 --port 5000
+NODE_OPTIONS="--max-old-space-size=1024" exec npx vite dev --host 0.0.0.0 --port 5000 --strictPort
