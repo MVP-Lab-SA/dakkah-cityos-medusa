@@ -100,12 +100,31 @@ const subscriptionPlans = [
 
 export default async function seedSubscriptions({ container }: ExecArgs) {
   const subscriptionModule = container.resolve("subscription") as any
+  const tenantService = container.resolve("tenant") as any
+
+  let tenantId = "ten_default"
+  try {
+    const tenants = await tenantService.listTenants({ handle: "dakkah" })
+    const list = Array.isArray(tenants) ? tenants : [tenants].filter(Boolean)
+    if (list.length > 0 && list[0]?.id) {
+      tenantId = list[0].id
+      console.log(`Using Dakkah tenant: ${tenantId}`)
+    } else {
+      const allTenants = await tenantService.listTenants()
+      const allList = Array.isArray(allTenants) ? allTenants : [allTenants].filter(Boolean)
+      if (allList.length > 0 && allList[0]?.id) {
+        tenantId = allList[0].id
+        console.log(`Dakkah not found, using first tenant: ${tenantId}`)
+      }
+    }
+  } catch (err: any) {
+    console.log(`Could not fetch tenants: ${err.message}. Using placeholder: ${tenantId}`)
+  }
 
   console.log("Seeding subscription plans...")
 
   for (const planData of subscriptionPlans) {
     try {
-      // Check if plan already exists
       const existing = await subscriptionModule.listSubscriptionPlans({ handle: planData.handle })
       const existingList = Array.isArray(existing) ? existing : [existing].filter(Boolean)
 
@@ -114,7 +133,7 @@ export default async function seedSubscriptions({ container }: ExecArgs) {
         continue
       }
 
-      await subscriptionModule.createSubscriptionPlans(planData)
+      await subscriptionModule.createSubscriptionPlans({ ...planData, tenant_id: tenantId })
       console.log(`  - Created plan: ${planData.name}`)
     } catch (error: any) {
       console.error(`  - Failed to create plan ${planData.handle}: ${error.message}`)

@@ -7,16 +7,26 @@ export default async function seedVerticals2({ container }: ExecArgs) {
   console.log("========================================\n")
 
   const tenantService = container.resolve("tenant") as any
-  const existingTenants = await tenantService.listTenants()
-  const tenantList = Array.isArray(existingTenants) ? existingTenants : [existingTenants].filter(Boolean)
-
-  if (!tenantList.length || !tenantList[0]?.id) {
-    console.log("ERROR: No tenant found. Run seed-complete first.")
-    return
+  let tenantId = "ten_default"
+  try {
+    const tenants = await tenantService.listTenants({ handle: "dakkah" })
+    const list = Array.isArray(tenants) ? tenants : [tenants].filter(Boolean)
+    if (list.length > 0 && list[0]?.id) {
+      tenantId = list[0].id
+      console.log(`Using Dakkah tenant: ${tenantId}`)
+    } else {
+      const allTenants = await tenantService.listTenants()
+      const allList = Array.isArray(allTenants) ? allTenants : [allTenants].filter(Boolean)
+      if (allList.length > 0 && allList[0]?.id) {
+        tenantId = allList[0].id
+        console.log(`Dakkah not found, using first tenant: ${tenantId}`)
+      } else {
+        console.log(`No tenants found, using placeholder: ${tenantId}`)
+      }
+    }
+  } catch (err: any) {
+    console.log(`Could not fetch tenants: ${err.message}. Using placeholder: ${tenantId}`)
   }
-
-  const tenantId = tenantList[0].id
-  console.log(`Using tenant: ${tenantList[0].name} (${tenantId})\n`)
 
   // ============================================================
   // 1. CLASSIFIED – 3 listings

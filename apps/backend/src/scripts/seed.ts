@@ -34,7 +34,7 @@ export default async function seedCoreData({ container }: ExecArgs) {
     const { data: existingUsers } = await query.graph({
       entity: "user",
       fields: ["id", "email"],
-      filters: { email: "admin@dakkah.com" },
+      filters: { email: "admin@dakkah.sa" },
     })
 
     if (!existingUsers || existingUsers.length === 0) {
@@ -45,7 +45,7 @@ export default async function seedCoreData({ container }: ExecArgs) {
         provider_identities: [
           {
             provider: "emailpass",
-            entity_id: "admin@dakkah.com",
+            entity_id: "admin@dakkah.sa",
             provider_metadata: {
               password: "admin123456",
             },
@@ -54,7 +54,7 @@ export default async function seedCoreData({ container }: ExecArgs) {
       })
 
       const user = await userModuleService.createUsers({
-        email: "admin@dakkah.com",
+        email: "admin@dakkah.sa",
         first_name: "Admin",
         last_name: "Dakkah",
       })
@@ -66,7 +66,7 @@ export default async function seedCoreData({ container }: ExecArgs) {
         },
       })
 
-      logger.info("  Created admin user: admin@dakkah.com")
+      logger.info("  Created admin user: admin@dakkah.sa")
     } else {
       logger.info("  Admin user already exists")
     }
@@ -389,6 +389,6 @@ export default async function seedCoreData({ container }: ExecArgs) {
   logger.info("Core Seed Complete!")
   logger.info("========================================")
   logger.info(`Publishable API Key: [REDACTED - retrieve from admin panel]`)
-  logger.info("Admin Email: admin@dakkah.com")
+  logger.info("Admin Email: admin@dakkah.sa")
   logger.info("========================================")
 }

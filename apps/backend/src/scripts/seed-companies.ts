@@ -131,12 +131,31 @@ const companies = [
 
 export default async function seedCompanies({ container }: ExecArgs) {
   const companyModule = container.resolve("company") as any
+  const tenantService = container.resolve("tenant") as any
+
+  let tenantId = "ten_default"
+  try {
+    const tenants = await tenantService.listTenants({ handle: "dakkah" })
+    const list = Array.isArray(tenants) ? tenants : [tenants].filter(Boolean)
+    if (list.length > 0 && list[0]?.id) {
+      tenantId = list[0].id
+      console.log(`Using Dakkah tenant: ${tenantId}`)
+    } else {
+      const allTenants = await tenantService.listTenants()
+      const allList = Array.isArray(allTenants) ? allTenants : [allTenants].filter(Boolean)
+      if (allList.length > 0 && allList[0]?.id) {
+        tenantId = allList[0].id
+        console.log(`Dakkah not found, using first tenant: ${tenantId}`)
+      }
+    }
+  } catch (err: any) {
+    console.log(`Could not fetch tenants: ${err.message}. Using placeholder: ${tenantId}`)
+  }
 
   console.log("Seeding B2B companies...")
 
   for (const companyData of companies) {
     try {
-      // Check if company already exists by name
       const existing = await companyModule.listCompanies({ name: companyData.name })
       const existingList = Array.isArray(existing) ? existing : [existing].filter(Boolean)
 
@@ -145,7 +164,7 @@ export default async function seedCompanies({ container }: ExecArgs) {
         continue
       }
 
-      await companyModule.createCompanies(companyData)
+      await companyModule.createCompanies({ ...companyData, tenant_id: tenantId })
       console.log(`  - Created company: ${companyData.name}`)
     } catch (error: any) {
       console.error(`  - Failed to create company ${companyData.name}: ${error.message}`)

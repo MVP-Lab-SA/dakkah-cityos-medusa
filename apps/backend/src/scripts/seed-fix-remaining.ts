@@ -4,7 +4,24 @@ import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils"
 
 export default async function seedFixRemaining({ container }: ExecArgs) {
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER)
-  const TENANT_ID = "dakkah"
+  let TENANT_ID = "ten_default"
+  try {
+    const tenantSvc = container.resolve("tenant") as any
+    const tenants = await tenantSvc.listTenants({ handle: "dakkah" })
+    const list = Array.isArray(tenants) ? tenants : [tenants].filter(Boolean)
+    if (list.length > 0 && list[0]?.id) {
+      TENANT_ID = list[0].id
+    } else {
+      const allTenants = await tenantSvc.listTenants()
+      const allList = Array.isArray(allTenants) ? allTenants : [allTenants].filter(Boolean)
+      if (allList.length > 0 && allList[0]?.id) {
+        TENANT_ID = allList[0].id
+      }
+    }
+  } catch (err: any) {
+    logger.warn(`Could not fetch tenants: ${err.message}`)
+  }
+  logger.info(`Using tenant ID: ${TENANT_ID}`)
 
   const log = (msg: string) => {
     console.log(msg)

@@ -105,12 +105,31 @@ const vendors = [
 
 export default async function seedVendors({ container }: ExecArgs) {
   const vendorModule = container.resolve("vendor") as any
+  const tenantService = container.resolve("tenant") as any
+
+  let tenantId = "ten_default"
+  try {
+    const tenants = await tenantService.listTenants({ handle: "dakkah" })
+    const list = Array.isArray(tenants) ? tenants : [tenants].filter(Boolean)
+    if (list.length > 0 && list[0]?.id) {
+      tenantId = list[0].id
+      console.log(`Using Dakkah tenant: ${tenantId}`)
+    } else {
+      const allTenants = await tenantService.listTenants()
+      const allList = Array.isArray(allTenants) ? allTenants : [allTenants].filter(Boolean)
+      if (allList.length > 0 && allList[0]?.id) {
+        tenantId = allList[0].id
+        console.log(`Dakkah not found, using first tenant: ${tenantId}`)
+      }
+    }
+  } catch (err: any) {
+    console.log(`Could not fetch tenants: ${err.message}. Using placeholder: ${tenantId}`)
+  }
 
   console.log("Seeding vendors...")
 
   for (const vendorData of vendors) {
     try {
-      // Check if vendor already exists
       const existing = await vendorModule.listVendors({ handle: vendorData.handle })
       const existingList = Array.isArray(existing) ? existing : [existing].filter(Boolean)
 
@@ -119,7 +138,7 @@ export default async function seedVendors({ container }: ExecArgs) {
         continue
       }
 
-      await vendorModule.createVendors(vendorData)
+      await vendorModule.createVendors({ ...vendorData, tenant_id: tenantId })
       console.log(`  - Created vendor: ${vendorData.business_name}`)
     } catch (error: any) {
       console.error(`  - Failed to create vendor ${vendorData.handle}: ${error.message}`)

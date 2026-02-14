@@ -39,7 +39,7 @@ export default async function seedComplete({ container }: ExecArgs) {
     const { data: existingUsers } = await query.graph({
       entity: "user",
       fields: ["id", "email"],
-      filters: { email: "admin@dakkah.com" },
+      filters: { email: "admin@dakkah.sa" },
     })
 
     if (!existingUsers || existingUsers.length === 0) {
@@ -50,7 +50,7 @@ export default async function seedComplete({ container }: ExecArgs) {
         provider_identities: [
           {
             provider: "emailpass",
-            entity_id: "admin@dakkah.com",
+            entity_id: "admin@dakkah.sa",
             provider_metadata: {
               password: "admin123456",
             },
@@ -59,7 +59,7 @@ export default async function seedComplete({ container }: ExecArgs) {
       })
 
       const user = await userModuleService.createUsers({
-        email: "admin@dakkah.com",
+        email: "admin@dakkah.sa",
         first_name: "Admin",
         last_name: "Dakkah",
       })
@@ -71,7 +71,7 @@ export default async function seedComplete({ container }: ExecArgs) {
         },
       })
 
-      console.log("  Created admin user: admin@dakkah.com")
+      console.log("  Created admin user: admin@dakkah.sa")
     } else {
       console.log("  Admin user already exists")
     }
@@ -392,7 +392,7 @@ export default async function seedComplete({ container }: ExecArgs) {
         date_format: "dd/MM/yyyy",
         status: "active",
         subscription_tier: "enterprise",
-        billing_email: "billing@dakkah.com",
+        billing_email: "billing@dakkah.sa",
         primary_color: "#1a5f2a",
         accent_color: "#d4af37",
         settings: {
@@ -1380,7 +1380,7 @@ export default async function seedComplete({ container }: ExecArgs) {
   console.log("========================================")
   console.log(`
 Summary:
-  - Admin User: admin@dakkah.com
+  - Admin User: admin@dakkah.sa
   - Publishable API Key: [REDACTED - retrieve from admin panel]
   - Sales Channels: ${allChannels.length}
   - Regions: ${menaRegion ? "MENA + International" : "existing"}

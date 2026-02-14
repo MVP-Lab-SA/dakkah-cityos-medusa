@@ -2,11 +2,30 @@ import { ExecArgs } from "@medusajs/framework/types"
 
 export default async function seedVolumePricing({ container }: ExecArgs) {
   const volumePricingModule = container.resolve("volumePricing") as any
+  const tenantService = container.resolve("tenant") as any
   const query = container.resolve("query")
+
+  let tenantId = "ten_default"
+  try {
+    const tenants = await tenantService.listTenants({ handle: "dakkah" })
+    const list = Array.isArray(tenants) ? tenants : [tenants].filter(Boolean)
+    if (list.length > 0 && list[0]?.id) {
+      tenantId = list[0].id
+      console.log(`Using Dakkah tenant: ${tenantId}`)
+    } else {
+      const allTenants = await tenantService.listTenants()
+      const allList = Array.isArray(allTenants) ? allTenants : [allTenants].filter(Boolean)
+      if (allList.length > 0 && allList[0]?.id) {
+        tenantId = allList[0].id
+        console.log(`Dakkah not found, using first tenant: ${tenantId}`)
+      }
+    }
+  } catch (err: any) {
+    console.log(`Could not fetch tenants: ${err.message}. Using placeholder: ${tenantId}`)
+  }
 
   console.log("Seeding volume pricing tiers...")
 
-  // Get all products
   const { data: products } = await query.graph({
     entity: "product",
     fields: ["id", "title", "handle"],
@@ -18,7 +37,6 @@ export default async function seedVolumePricing({ container }: ExecArgs) {
     return
   }
 
-  // Volume pricing tiers to apply
   const tiers = [
     { min_quantity: 5, max_quantity: 9, discount_type: "percentage", discount_value: "5", label: "5% off 5+" },
     { min_quantity: 10, max_quantity: 24, discount_type: "percentage", discount_value: "10", label: "10% off 10+" },
@@ -26,12 +44,10 @@ export default async function seedVolumePricing({ container }: ExecArgs) {
     { min_quantity: 50, max_quantity: null, discount_type: "percentage", discount_value: "20", label: "20% off 50+" },
   ]
 
-  // Apply to first 10 products as an example
   const productsToPrice = products.slice(0, 10)
 
   for (const product of productsToPrice) {
     try {
-      // Check if volume pricing already exists
       const existing = await volumePricingModule.listVolumePricingRules({ product_id: product.id })
       const existingList = Array.isArray(existing) ? existing : [existing].filter(Boolean)
 
@@ -40,18 +56,18 @@ export default async function seedVolumePricing({ container }: ExecArgs) {
         continue
       }
 
-      // Create volume pricing rule
       const rule = await volumePricingModule.createVolumePricingRules({
         product_id: product.id,
+        tenant_id: tenantId,
         name: `Volume pricing for ${product.title}`,
         is_active: true,
         priority: 1,
       })
 
-      // Create tiers for this rule
       for (const tier of tiers) {
         await volumePricingModule.createVolumePricingTiers({
           rule_id: rule.id,
+          tenant_id: tenantId,
           min_quantity: tier.min_quantity,
           max_quantity: tier.max_quantity,
           discount_type: tier.discount_type,

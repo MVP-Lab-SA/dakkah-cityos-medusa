@@ -174,12 +174,31 @@ const services = [
 
 export default async function seedServices({ container }: ExecArgs) {
   const bookingModule = container.resolve("booking") as any
+  const tenantService = container.resolve("tenant") as any
+
+  let tenantId = "ten_default"
+  try {
+    const tenants = await tenantService.listTenants({ handle: "dakkah" })
+    const list = Array.isArray(tenants) ? tenants : [tenants].filter(Boolean)
+    if (list.length > 0 && list[0]?.id) {
+      tenantId = list[0].id
+      console.log(`Using Dakkah tenant: ${tenantId}`)
+    } else {
+      const allTenants = await tenantService.listTenants()
+      const allList = Array.isArray(allTenants) ? allTenants : [allTenants].filter(Boolean)
+      if (allList.length > 0 && allList[0]?.id) {
+        tenantId = allList[0].id
+        console.log(`Dakkah not found, using first tenant: ${tenantId}`)
+      }
+    }
+  } catch (err: any) {
+    console.log(`Could not fetch tenants: ${err.message}. Using placeholder: ${tenantId}`)
+  }
 
   console.log("Seeding services...")
 
   for (const serviceData of services) {
     try {
-      // Check if service already exists
       const existing = await bookingModule.listServiceProducts({ handle: serviceData.handle })
       const existingList = Array.isArray(existing) ? existing : [existing].filter(Boolean)
 
@@ -188,7 +207,7 @@ export default async function seedServices({ container }: ExecArgs) {
         continue
       }
 
-      await bookingModule.createServiceProducts(serviceData)
+      await bookingModule.createServiceProducts({ ...serviceData, tenant_id: tenantId })
       console.log(`  - Created service: ${serviceData.name}`)
     } catch (error: any) {
       console.error(`  - Failed to create service ${serviceData.handle}: ${error.message}`)
@@ -226,9 +245,10 @@ export default async function seedServices({ container }: ExecArgs) {
       await bookingModule.createAvailabilities({
         owner_type: "service",
         owner_id: service.id,
+        tenant_id: tenantId,
         schedule_type: "weekly_recurring",
         weekly_schedule: weeklySchedule,
-        timezone: "America/New_York",
+        timezone: "Asia/Riyadh",
         is_active: true,
       })
       console.log(`  - Created availability for: ${service.name}`)
