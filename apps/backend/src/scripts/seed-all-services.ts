@@ -716,7 +716,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
           tier: "enterprise",
           requires_approval: true,
           auto_approve_limit: 50000,
-          metadata: { seeded: true },
+          metadata: { seeded: true, logo_url: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=600&fit=crop" },
         },
         {
           tenant_id: TENANT_ID,
@@ -736,7 +736,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
           tier: "enterprise",
           requires_approval: true,
           auto_approve_limit: 25000,
-          metadata: { seeded: true },
+          metadata: { seeded: true, logo_url: "https://images.unsplash.com/photo-1554469384-e58fac16e23a?w=800&h=600&fit=crop" },
         },
         {
           tenant_id: TENANT_ID,
@@ -756,7 +756,7 @@ export default async function seedAllServices({ container }: ExecArgs) {
           tier: "premium",
           requires_approval: true,
           auto_approve_limit: 10000,
-          metadata: { seeded: true },
+          metadata: { seeded: true, logo_url: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop" },
         },
       ])
       log("  ✓ Created 3 companies")
@@ -1711,10 +1711,10 @@ export default async function seedAllServices({ container }: ExecArgs) {
       skippedCount++
     } else {
       await svc.createRentalProducts([
-        { tenant_id: TENANT_ID, product_id: "prod-rental-001", rental_type: "daily", base_price: 75000, currency_code: "sar", deposit_amount: 200000, late_fee_per_day: 15000, min_duration: 1, max_duration: 30, is_available: true, condition_on_listing: "new", metadata: { name: "Toyota Land Cruiser 2024", seeded: true } },
-        { tenant_id: TENANT_ID, product_id: "prod-rental-002", rental_type: "daily", base_price: 120000, currency_code: "sar", deposit_amount: 500000, late_fee_per_day: 25000, min_duration: 1, max_duration: 14, is_available: true, condition_on_listing: "new", metadata: { name: "Desert Camping Kit (Full)", seeded: true } },
-        { tenant_id: TENANT_ID, product_id: "prod-rental-003", rental_type: "monthly", base_price: 350000, currency_code: "sar", deposit_amount: 700000, min_duration: 3, max_duration: 12, is_available: true, condition_on_listing: "like_new", metadata: { name: "Furnished Office Space – Al Olaya", seeded: true } },
-        { tenant_id: TENANT_ID, product_id: "prod-rental-004", rental_type: "hourly", base_price: 50000, currency_code: "sar", deposit_amount: 100000, min_duration: 2, max_duration: 8, is_available: true, condition_on_listing: "new", metadata: { name: "Professional Camera Kit (RED Komodo)", seeded: true } },
+        { tenant_id: TENANT_ID, product_id: "prod-rental-001", rental_type: "daily", base_price: 75000, currency_code: "sar", deposit_amount: 200000, late_fee_per_day: 15000, min_duration: 1, max_duration: 30, is_available: true, condition_on_listing: "new", metadata: { name: "Toyota Land Cruiser 2024", seeded: true, image_url: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, product_id: "prod-rental-002", rental_type: "daily", base_price: 120000, currency_code: "sar", deposit_amount: 500000, late_fee_per_day: 25000, min_duration: 1, max_duration: 14, is_available: true, condition_on_listing: "new", metadata: { name: "Desert Camping Kit (Full)", seeded: true, image_url: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, product_id: "prod-rental-003", rental_type: "monthly", base_price: 350000, currency_code: "sar", deposit_amount: 700000, min_duration: 3, max_duration: 12, is_available: true, condition_on_listing: "like_new", metadata: { name: "Furnished Office Space – Al Olaya", seeded: true, image_url: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, product_id: "prod-rental-004", rental_type: "hourly", base_price: 50000, currency_code: "sar", deposit_amount: 100000, min_duration: 2, max_duration: 8, is_available: true, condition_on_listing: "new", metadata: { name: "Professional Camera Kit (RED Komodo)", seeded: true, image_url: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800&h=600&fit=crop" } },
       ])
       log("  ✓ Created 4 rental products")
       seededCount++
@@ -1740,10 +1740,10 @@ export default async function seedAllServices({ container }: ExecArgs) {
       skippedCount++
     } else {
       await svc.createClassifiedListings([
-        { tenant_id: TENANT_ID, seller_id: "seller-001", title: "2023 Mercedes S-Class S500 – Mint Condition", description: "Low mileage S500 with full AMG package. Riyadh registered. Service history available.", listing_type: "sell", condition: "like_new", price: 650000, currency_code: "sar", is_negotiable: true, location_city: "Riyadh", location_country: "sa", status: "active", metadata: { seeded: true } },
-        { tenant_id: TENANT_ID, seller_id: "seller-002", title: "3BR Villa for Rent – Al Malqa District", description: "Spacious 3-bedroom villa with private pool and garden. Modern finishes. Close to schools.", listing_type: "sell", condition: "good", price: 180000, currency_code: "sar", is_negotiable: true, location_city: "Riyadh", location_country: "sa", status: "active", metadata: { seeded: true, type: "real_estate_rent", per: "year" } },
-        { tenant_id: TENANT_ID, seller_id: "seller-003", title: "iPhone 15 Pro Max 256GB – Brand New Sealed", description: "Factory sealed iPhone 15 Pro Max. Natural Titanium. Saudi warranty.", listing_type: "sell", condition: "new", price: 5500, currency_code: "sar", is_negotiable: false, location_city: "Jeddah", location_country: "sa", status: "active", metadata: { seeded: true } },
-        { tenant_id: TENANT_ID, seller_id: "seller-004", title: "Handmade Persian Carpet – 3x5m", description: "Authentic handwoven Persian carpet from Isfahan. Silk and wool blend. Certificate of authenticity included.", listing_type: "sell", condition: "good", price: 45000, currency_code: "sar", is_negotiable: true, location_city: "Dammam", location_country: "sa", status: "active", metadata: { seeded: true } },
+        { tenant_id: TENANT_ID, seller_id: "seller-001", title: "2023 Mercedes S-Class S500 – Mint Condition", description: "Low mileage S500 with full AMG package. Riyadh registered. Service history available.", listing_type: "sell", condition: "like_new", price: 650000, currency_code: "sar", is_negotiable: true, location_city: "Riyadh", location_country: "sa", status: "active", metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, seller_id: "seller-002", title: "3BR Villa for Rent – Al Malqa District", description: "Spacious 3-bedroom villa with private pool and garden. Modern finishes. Close to schools.", listing_type: "sell", condition: "good", price: 180000, currency_code: "sar", is_negotiable: true, location_city: "Riyadh", location_country: "sa", status: "active", metadata: { seeded: true, type: "real_estate_rent", per: "year", image_url: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, seller_id: "seller-003", title: "iPhone 15 Pro Max 256GB – Brand New Sealed", description: "Factory sealed iPhone 15 Pro Max. Natural Titanium. Saudi warranty.", listing_type: "sell", condition: "new", price: 5500, currency_code: "sar", is_negotiable: false, location_city: "Jeddah", location_country: "sa", status: "active", metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, seller_id: "seller-004", title: "Handmade Persian Carpet – 3x5m", description: "Authentic handwoven Persian carpet from Isfahan. Silk and wool blend. Certificate of authenticity included.", listing_type: "sell", condition: "good", price: 45000, currency_code: "sar", is_negotiable: true, location_city: "Dammam", location_country: "sa", status: "active", metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1600166898405-da9535204843?w=800&h=600&fit=crop" } },
       ])
       log("  ✓ Created 4 classified listings")
       seededCount++
@@ -1965,9 +1965,9 @@ export default async function seedAllServices({ container }: ExecArgs) {
       skippedCount++
     } else {
       await svc.createParkingZones([
-        { tenant_id: TENANT_ID, name: "Kingdom Tower Parking", description: "Multi-level valet and self-parking at Kingdom Tower", zone_type: "garage", address: { line1: "Kingdom Tower", city: "Riyadh", country: "sa" }, latitude: 24.7113, longitude: 46.6742, total_spots: 2500, available_spots: 800, hourly_rate: 1500, daily_rate: 10000, currency_code: "sar", operating_hours: { weekday: "06:00-00:00", weekend: "06:00-02:00" }, is_active: true, has_ev_charging: true, has_disabled_spots: true, metadata: { seeded: true } },
-        { tenant_id: TENANT_ID, name: "Al Olaya Street Parking", description: "Smart street parking along Al Olaya commercial strip", zone_type: "street", address: { line1: "Al Olaya Street", city: "Riyadh", country: "sa" }, latitude: 24.6911, longitude: 46.6853, total_spots: 500, available_spots: 120, hourly_rate: 500, currency_code: "sar", is_active: true, metadata: { seeded: true } },
-        { tenant_id: TENANT_ID, name: "King Khalid Airport Parking", description: "Long-term and short-term parking at KKIA", zone_type: "airport", address: { line1: "King Khalid International Airport", city: "Riyadh", country: "sa" }, latitude: 24.9574, longitude: 46.6987, total_spots: 8000, available_spots: 3500, hourly_rate: 1000, daily_rate: 7500, monthly_rate: 100000, currency_code: "sar", is_active: true, has_ev_charging: true, has_disabled_spots: true, metadata: { seeded: true } },
+        { tenant_id: TENANT_ID, name: "Kingdom Tower Parking", description: "Multi-level valet and self-parking at Kingdom Tower", zone_type: "garage", address: { line1: "Kingdom Tower", city: "Riyadh", country: "sa" }, latitude: 24.7113, longitude: 46.6742, total_spots: 2500, available_spots: 800, hourly_rate: 1500, daily_rate: 10000, currency_code: "sar", operating_hours: { weekday: "06:00-00:00", weekend: "06:00-02:00" }, is_active: true, has_ev_charging: true, has_disabled_spots: true, metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1590674899484-d5640e854abe?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, name: "Al Olaya Street Parking", description: "Smart street parking along Al Olaya commercial strip", zone_type: "street", address: { line1: "Al Olaya Street", city: "Riyadh", country: "sa" }, latitude: 24.6911, longitude: 46.6853, total_spots: 500, available_spots: 120, hourly_rate: 500, currency_code: "sar", is_active: true, metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, name: "King Khalid Airport Parking", description: "Long-term and short-term parking at KKIA", zone_type: "airport", address: { line1: "King Khalid International Airport", city: "Riyadh", country: "sa" }, latitude: 24.9574, longitude: 46.6987, total_spots: 8000, available_spots: 3500, hourly_rate: 1000, daily_rate: 7500, monthly_rate: 100000, currency_code: "sar", is_active: true, has_ev_charging: true, has_disabled_spots: true, metadata: { seeded: true, image_url: "https://images.unsplash.com/photo-1573348722427-f1d6819fdf98?w=800&h=600&fit=crop" } },
       ])
       log("  ✓ Created 3 parking zones")
       seededCount++
@@ -2271,9 +2271,9 @@ export default async function seedAllServices({ container }: ExecArgs) {
       skippedCount++
     } else {
       await svc.createMembershipTiers([
-        { tenant_id: TENANT_ID, name: "Dakkah Explorer", tier_level: 1, min_points: 0, currency_code: "sar", benefits: ["Free shipping on orders over 200 SAR", "Birthday discount"], color_code: "#cd7f32", is_active: true, metadata: { seeded: true } },
-        { tenant_id: TENANT_ID, name: "Dakkah Elite", tier_level: 2, min_points: 10000, annual_fee: 9900, currency_code: "sar", benefits: ["Free express shipping", "Priority customer support", "Early access to sales", "5% cashback"], color_code: "#c0c0c0", is_active: true, metadata: { seeded: true } },
-        { tenant_id: TENANT_ID, name: "Dakkah VIP", tier_level: 3, min_points: 50000, annual_fee: 29900, currency_code: "sar", benefits: ["Free same-day delivery", "Personal shopping assistant", "Exclusive VIP events", "10% cashback", "Airport lounge access"], color_code: "#ffd700", is_active: true, metadata: { seeded: true } },
+        { tenant_id: TENANT_ID, name: "Dakkah Explorer", tier_level: 1, min_points: 0, currency_code: "sar", benefits: ["Free shipping on orders over 200 SAR", "Birthday discount"], color_code: "#cd7f32", is_active: true, metadata: { seeded: true, badge_image: "https://images.unsplash.com/photo-1569937756447-1d44f657dc69?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, name: "Dakkah Elite", tier_level: 2, min_points: 10000, annual_fee: 9900, currency_code: "sar", benefits: ["Free express shipping", "Priority customer support", "Early access to sales", "5% cashback"], color_code: "#c0c0c0", is_active: true, metadata: { seeded: true, badge_image: "https://images.unsplash.com/photo-1553729459-uj9hoKAlJyc?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, name: "Dakkah VIP", tier_level: 3, min_points: 50000, annual_fee: 29900, currency_code: "sar", benefits: ["Free same-day delivery", "Personal shopping assistant", "Exclusive VIP events", "10% cashback", "Airport lounge access"], color_code: "#ffd700", is_active: true, metadata: { seeded: true, badge_image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&h=600&fit=crop" } },
       ])
       log("  ✓ Created 3 membership tiers")
       seededCount++
@@ -2299,9 +2299,9 @@ export default async function seedAllServices({ container }: ExecArgs) {
       skippedCount++
     } else {
       await svc.createDigitalAssets([
-        { tenant_id: TENANT_ID, product_id: "prod-ebook-001", title: "Saudi Business Guide 2025", file_url: "https://cdn.dakkah.sa/files/saudi-business-guide-2025.pdf", file_type: "ebook", file_size_bytes: 15000000, preview_url: "https://cdn.dakkah.sa/previews/saudi-business-guide-preview.pdf", version: "2.0", max_downloads: 5, is_active: true, metadata: { seeded: true, price: 14900, currency: "sar" } },
-        { tenant_id: TENANT_ID, product_id: "prod-template-001", title: "Arabic UI Kit for Figma", file_url: "https://cdn.dakkah.sa/files/arabic-ui-kit.fig", file_type: "archive", file_size_bytes: 85000000, preview_url: "https://cdn.dakkah.sa/previews/arabic-ui-kit-preview.png", version: "3.1", max_downloads: -1, is_active: true, metadata: { seeded: true, price: 29900, currency: "sar" } },
-        { tenant_id: TENANT_ID, product_id: "prod-course-vid-001", title: "Arabic Calligraphy Video Course", file_url: "https://cdn.dakkah.sa/files/calligraphy-course.zip", file_type: "video", file_size_bytes: 2500000000, preview_url: "https://cdn.dakkah.sa/previews/calligraphy-preview.mp4", version: "1.0", max_downloads: 3, is_active: true, metadata: { seeded: true, price: 49900, currency: "sar" } },
+        { tenant_id: TENANT_ID, product_id: "prod-ebook-001", title: "Saudi Business Guide 2025", file_url: "https://cdn.dakkah.sa/files/saudi-business-guide-2025.pdf", file_type: "ebook", file_size_bytes: 15000000, preview_url: "https://cdn.dakkah.sa/previews/saudi-business-guide-preview.pdf", version: "2.0", max_downloads: 5, is_active: true, metadata: { seeded: true, price: 14900, currency: "sar", cover_image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, product_id: "prod-template-001", title: "Arabic UI Kit for Figma", file_url: "https://cdn.dakkah.sa/files/arabic-ui-kit.fig", file_type: "archive", file_size_bytes: 85000000, preview_url: "https://cdn.dakkah.sa/previews/arabic-ui-kit-preview.png", version: "3.1", max_downloads: -1, is_active: true, metadata: { seeded: true, price: 29900, currency: "sar", cover_image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, product_id: "prod-course-vid-001", title: "Arabic Calligraphy Video Course", file_url: "https://cdn.dakkah.sa/files/calligraphy-course.zip", file_type: "video", file_size_bytes: 2500000000, preview_url: "https://cdn.dakkah.sa/previews/calligraphy-preview.mp4", version: "1.0", max_downloads: 3, is_active: true, metadata: { seeded: true, price: 49900, currency: "sar", cover_image: "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&h=600&fit=crop" } },
       ])
       log("  ✓ Created 3 digital assets")
       seededCount++
@@ -2327,9 +2327,9 @@ export default async function seedAllServices({ container }: ExecArgs) {
       skippedCount++
     } else {
       await svc.createWarrantyPlans([
-        { tenant_id: TENANT_ID, name: "Standard Electronics Warranty", description: "1-year warranty covering manufacturing defects for electronics.", plan_type: "standard", duration_months: 12, price: 9900, currency_code: "sar", coverage: { defects: true, accidental: false, theft: false }, is_active: true, metadata: { seeded: true } },
-        { tenant_id: TENANT_ID, name: "Extended Premium Warranty", description: "3-year extended warranty with accidental damage protection.", plan_type: "extended", duration_months: 36, price: 29900, currency_code: "sar", coverage: { defects: true, accidental: true, theft: false, screen_damage: true }, is_active: true, metadata: { seeded: true } },
-        { tenant_id: TENANT_ID, name: "Complete Protection Plan", description: "Comprehensive 2-year plan covering accidental damage, theft, and all repairs.", plan_type: "premium", duration_months: 24, price: 49900, currency_code: "sar", coverage: { defects: true, accidental: true, theft: true, screen_damage: true, water_damage: true }, is_active: true, metadata: { seeded: true } },
+        { tenant_id: TENANT_ID, name: "Standard Electronics Warranty", description: "1-year warranty covering manufacturing defects for electronics.", plan_type: "standard", duration_months: 12, price: 9900, currency_code: "sar", coverage: { defects: true, accidental: false, theft: false }, is_active: true, metadata: { seeded: true, icon_url: "https://images.unsplash.com/photo-1581092921461-eab10380ed5d?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, name: "Extended Premium Warranty", description: "3-year extended warranty with accidental damage protection.", plan_type: "extended", duration_months: 36, price: 29900, currency_code: "sar", coverage: { defects: true, accidental: true, theft: false, screen_damage: true }, is_active: true, metadata: { seeded: true, icon_url: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&h=600&fit=crop" } },
+        { tenant_id: TENANT_ID, name: "Complete Protection Plan", description: "Comprehensive 2-year plan covering accidental damage, theft, and all repairs.", plan_type: "premium", duration_months: 24, price: 49900, currency_code: "sar", coverage: { defects: true, accidental: true, theft: true, screen_damage: true, water_damage: true }, is_active: true, metadata: { seeded: true, icon_url: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop" } },
       ])
       log("  ✓ Created 3 warranty plans")
       seededCount++
