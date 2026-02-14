@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import { useLocation } from "@tanstack/react-router"
 import type { CMSPage } from "@/lib/types/cityos"
 import { DynamicPage } from "@/components/pages/dynamic-page"
+import { sdk } from "@/lib/utils/sdk"
 
 interface TemplateRendererProps {
   page: CMSPage
@@ -42,9 +43,8 @@ function VerticalListTemplate({ page, tenant, locale }: { page: CMSPage; tenant:
       setIsLoading(false)
       return
     }
-    fetch(config.medusaEndpoint)
-      .then((res) => res.json())
-      .then((data) => {
+    sdk.client.fetch(config.medusaEndpoint, { method: "GET" })
+      .then((data: any) => {
         const dataItems = data.items || data[config.verticalSlug] || Object.values(data).find(v => Array.isArray(v)) || []
         setItems(Array.isArray(dataItems) ? dataItems : [])
         setIsLoading(false)
@@ -184,9 +184,8 @@ function VerticalDetailTemplate({ page, tenant, locale }: { page: CMSPage; tenan
       setIsLoading(false)
       return
     }
-    fetch(`${config.medusaEndpoint}/${itemId}`)
-      .then((res) => res.json())
-      .then((data) => {
+    sdk.client.fetch(`${config.medusaEndpoint}/${itemId}`, { method: "GET" })
+      .then((data: any) => {
         const resolved = data.item || data[config.verticalSlug?.replace(/-/g, "_")] || data
         setItem(resolved)
         setIsLoading(false)
