@@ -124,6 +124,239 @@ class CommissionModuleService extends MedusaService({
       payout_status: "unpaid",
     })
   }
+
+  // Get vendor commission summary with aggregated amounts by status
+  async getVendorCommissionSummary({
+    vendorId,
+    tenantId,
+    startDate,
+    endDate,
+  }: {
+    vendorId: string
+    tenantId: string
+    startDate?: Date
+    endDate?: Date
+  }) {
+    const filters: any = {
+      vendor_id: vendorId,
+      tenant_id: tenantId,
+      transaction_type: "sale",
+    }
+
+    if (startDate || endDate) {
+      filters.transaction_date = {}
+      if (startDate) {
+        filters.transaction_date.$gte = startDate
+      }
+      if (endDate) {
+        filters.transaction_date.$lte = endDate
+      }
+    }
+
+    const transactions = await this.listCommissionTransactions({
+      filters,
+      config: {
+        select: ["id", "commission_amount", "status", "payout_status", "transaction_date"],
+      }
+    })
+
+    let totalEarned = 0
+    let totalPending = 0
+    let totalPaid = 0
+
+    transactions.forEach((transaction) => {
+      const amount = Number(transaction.commission_amount || 0)
+      totalEarned += amount
+
+      if (transaction.payout_status === "paid") {
+        totalPaid += amount
+      } else if (transaction.status === "pending") {
+        totalPending += amount
+      }
+    })
+
+    return {
+      total_earned: totalEarned,
+      total_pending: totalPending,
+      total_paid: totalPaid,
+      transaction_count: transactions.length,
+    }
+  }
+
+  // Process commission payout for given transaction IDs
+  async processCommissionPayout(transactionIds: string[]) {
+    const now = new Date()
+
+    const transactions = await this.listCommissionTransactions({
+      filters: {
+        id: { $in: transactionIds }
+      },
+      config: {
+        select: ["id"],
+      }
+    })
+
+    if (transactions.length === 0) {
+      return { processed_count: 0 }
+    }
+
+    await this.updateCommissionTransactions(
+      transactionIds,
+      {
+        payout_status: "paid",
+        payout_date: now,
+      }
+    )
+
+    return { processed_count: transactions.length }
+  }
+
+  // Get all commission rules for a tenant sorted by priority
+  async getCommissionRulesByTenant({
+    tenantId,
+    status,
+  }: {
+    tenantId: string
+    status?: "active" | "inactive"
+  }) {
+    const filters: any = {
+      tenant_id: tenantId,
+    }
+
+    if (status) {
+      filters.status = status
+    }
+
+    return await this.listCommissionRules({
+      filters,
+      config: {
+        order: { priority: "DESC" }
+      }
+    })
+  }
+
+  // Adjust commission for a transaction
+  async adjustCommission({
+    transactionId,
+    adjustmentAmount,
+    reason,
+  }: {
+    transactionId: string
+    adjustmentAmount: number
+    reason: string
+  }) {
+    // Find the original transaction
+    const transactions = await this.listCommissionTransactions({
+      filters: {
+        id: transactionId,
+      },
+      config: {
+        select: ["id", "vendor_id", "tenant_id", "order_id", "line_item_id", "commission_amount", "net_amount", "order_total"],
+      }
+    })
+
+    const originalTransaction = transactions[0]
+    if (!originalTransaction) {
+      throw new Error(`Commission transaction ${transactionId} not found`)
+    }
+
+    // Update original transaction with adjusted amounts
+    const newCommissionAmount = Number(originalTransaction.commission_amount || 0) + adjustmentAmount
+    const newNetAmount = Number(originalTransaction.order_total || 0) - newCommissionAmount
+
+    await this.updateCommissionTransactions(
+      [transactionId],
+      {
+        commission_amount: newCommissionAmount,
+        net_amount: newNetAmount,
+      }
+    )
+
+    // Create adjustment transaction
+    const adjustmentTransaction = await this.createCommissionTransactions({
+      vendor_id: originalTransaction.vendor_id,
+      tenant_id: originalTransaction.tenant_id,
+      order_id: originalTransaction.order_id,
+      line_item_id: originalTransaction.line_item_id,
+      commission_amount: adjustmentAmount,
+      net_amount: -adjustmentAmount,
+      transaction_type: "adjustment",
+      status: "completed",
+      payout_status: "unpaid",
+      transaction_date: new Date(),
+      order_subtotal: 0,
+      order_total: 0,
+      commission_rate: 0,
+      commission_flat: null,
+    } as any)
+
+    return {
+      original_transaction: originalTransaction,
+      adjustment_transaction: adjustmentTransaction,
+    }
+  }
+
+  // Get top earning vendors for a tenant
+  async getTopEarningVendors({
+    tenantId,
+    limit = 10,
+    startDate,
+    endDate,
+  }: {
+    tenantId: string
+    limit?: number
+    startDate?: Date
+    endDate?: Date
+  }) {
+    const filters: any = {
+      tenant_id: tenantId,
+      transaction_type: "sale",
+    }
+
+    if (startDate || endDate) {
+      filters.transaction_date = {}
+      if (startDate) {
+        filters.transaction_date.$gte = startDate
+      }
+      if (endDate) {
+        filters.transaction_date.$lte = endDate
+      }
+    }
+
+    const transactions = await this.listCommissionTransactions({
+      filters,
+      config: {
+        select: ["vendor_id", "commission_amount"],
+      }
+    })
+
+    // Group by vendor_id and aggregate
+    const vendorMap = new Map<string, { total_commission: number; transaction_count: number }>()
+
+    transactions.forEach((transaction) => {
+      const vendorId = transaction.vendor_id
+      const amount = Number(transaction.commission_amount || 0)
+
+      if (!vendorMap.has(vendorId)) {
+        vendorMap.set(vendorId, { total_commission: 0, transaction_count: 0 })
+      }
+
+      const vendorData = vendorMap.get(vendorId)!
+      vendorData.total_commission += amount
+      vendorData.transaction_count += 1
+    })
+
+    // Convert to array and sort by total_commission DESC
+    const vendors = Array.from(vendorMap.entries())
+      .map(([vendor_id, data]) => ({
+        vendor_id,
+        ...data,
+      }))
+      .sort((a, b) => b.total_commission - a.total_commission)
+      .slice(0, limit)
+
+    return vendors
+  }
 }
 
 export default CommissionModuleService
