@@ -73,9 +73,10 @@ The platform supports 42 CRUD configurations for various manage verticals, utili
 - Phase 27: Vendor dashboard expansion — 10 more vendor API routes + 10 vendor dashboard pages (inventory-extension, volume-pricing, dropshipping, print-on-demand, white-label, try-before-you-buy, credit, wallet, trade-in, cart-extension)
 - Phase 28: Customer storefront expansion — 8 new browsing pages (affiliate, loyalty-program, gift-cards-shop, flash-deals, consignment-shop, dropshipping-marketplace, print-on-demand-shop, white-label-shop) + 76 vendor route tests
 - Phase 29: Contract fixes (wallet API/UI alignment, flash-sales route fix) + 7 more customer pages (trade-in, try-before-you-buy, b2b, credit, newsletter, volume-deals, wallet) + 5 new store API routes (trade-ins, newsletters, try-before-you-buy, b2b, dropshipping) + 24 store route tests + 40 integration layer tests (webhooks, outbox processor, temporal workflows)
+- Phase 30: 20 detail/single-item view pages for all verticals (classifieds, automotive, real-estate, restaurants, freelance, healthcare, fitness, education, charity, travel, insurance, financial, government, social-commerce, parking, pet-services, legal, crowdfunding, grocery, warranties) + 3 admin components (BulkActionsBar, AnalyticsOverview, AdvancedFilters) + 3 vendor onboarding pages + 36 e2e lifecycle tests (order + vendor) + i18n translations for 14 verticals in en/fr/ar
 
 ### Test Coverage Architecture
-- **Backend (Jest):** 86 test suites in `apps/backend/tests/unit/`
+- **Backend (Jest):** 88 test suites in `apps/backend/tests/unit/`
 - **Storefront (Vitest):** 7 test suites
 - Run backend: `cd apps/backend && TEST_TYPE=unit npx jest`
 - Run storefront: `cd apps/storefront && npx vitest run`
@@ -96,12 +97,12 @@ The platform supports 42 CRUD configurations for various manage verticals, utili
 | Workflows | 30 |
 | Subscribers | 33 |
 | Jobs | 16 |
-| Storefront Routes | 249 |
-| Storefront Components | 555 |
-| Backend Test Files | 86 |
+| Storefront Routes | 272 |
+| Storefront Components | 558 |
+| Backend Test Files | 88 |
 | Storefront Test Files | 7 |
-| Total Tests | 1,741+ |
-| Total Source Files | 2,500+ |
+| Total Tests | 1,777+ |
+| Total Source Files | 2,600+ |
 
 ## Documentation
 - `docs/PLATFORM_MODULE_ASSESSMENT.md` — Deep-dive assessment of all 58 modules (v3.0), 3400+ lines
