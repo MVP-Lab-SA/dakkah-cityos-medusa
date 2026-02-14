@@ -1,11 +1,25 @@
 // @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
-import { useQuery } from "@tanstack/react-query"
-import { sdk } from "@/lib/utils/sdk"
 import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/travel/")({
   component: TravelPage,
+  loader: async () => {
+    try {
+      const isServer = typeof window === "undefined"
+      const baseUrl = isServer ? "http://localhost:9000" : ""
+      const resp = await fetch(`${baseUrl}/store/travel`, {
+        headers: {
+          "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445",
+        },
+      })
+      if (!resp.ok) return { items: [], count: 0 }
+      const data = await resp.json()
+      return { items: data.items || data.listings || data.products || [], count: data.count || 0 }
+    } catch {
+      return { items: [], count: 0 }
+    }
+  },
 })
 
 const destinations = ["all", "europe", "asia", "americas", "africa", "oceania", "middle-east"] as const
@@ -22,19 +36,10 @@ function TravelPage() {
   const [page, setPage] = useState(1)
   const limit = 12
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["travel", destination, duration, priceRange, page],
-    queryFn: () =>
-      sdk.client.fetch<{ packages: any[]; count: number }>(`/store/travel`, {
-        query: {
-          ...(destination !== "all" && { destination }),
-          ...(duration !== "all" && { duration }),
-          ...(priceRange !== "all" && { price_range: priceRange }),
-          limit,
-          offset: (page - 1) * limit,
-        },
-      }),
-  })
+  const loaderData = Route.useLoaderData()
+  const data = loaderData
+  const isLoading = false
+  const error = null
 
   const packages = data?.packages || []
   const totalPages = Math.ceil((data?.count || 0) / limit)

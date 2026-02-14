@@ -1,11 +1,25 @@
 // @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
-import { useQuery } from "@tanstack/react-query"
-import { sdk } from "@/lib/utils/sdk"
 import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/automotive/")({
   component: AutomotivePage,
+  loader: async () => {
+    try {
+      const isServer = typeof window === "undefined"
+      const baseUrl = isServer ? "http://localhost:9000" : ""
+      const resp = await fetch(`${baseUrl}/store/automotive`, {
+        headers: {
+          "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445",
+        },
+      })
+      if (!resp.ok) return { items: [], count: 0 }
+      const data = await resp.json()
+      return { items: data.items || data.listings || data.products || [], count: data.count || 0 }
+    } catch {
+      return { items: [], count: 0 }
+    }
+  },
 })
 
 const makeOptions = ["all", "toyota", "honda", "ford", "chevrolet", "bmw", "mercedes", "audi", "tesla", "nissan", "hyundai"] as const
@@ -24,25 +38,10 @@ function AutomotivePage() {
   const [page, setPage] = useState(1)
   const limit = 12
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["automotive", makeFilter, priceRange, yearFilter, conditionFilter, page],
-    queryFn: async () => {
-      const params = new URLSearchParams()
-      if (makeFilter !== "all") params.set("make", makeFilter)
-      if (priceRange !== "all") params.set("price_range", priceRange)
-      if (yearFilter !== "all") params.set("year", yearFilter)
-      if (conditionFilter !== "all") params.set("condition", conditionFilter)
-      params.set("limit", String(limit))
-      params.set("offset", String((page - 1) * limit))
-      const qs = params.toString()
-      const response = await sdk.client.fetch<{ items: any[]; count: number }>(
-        `/store/automotive${qs ? `?${qs}` : ""}`,
-        { method: "GET", credentials: "include" }
-      )
-      return response
-    },
-  })
-
+  const loaderData = Route.useLoaderData()
+  const data = loaderData
+  const isLoading = false
+  const error = null
   const items = data?.items || []
   const totalCount = data?.count || 0
   const totalPages = Math.ceil(totalCount / limit)

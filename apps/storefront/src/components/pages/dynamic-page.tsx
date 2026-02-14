@@ -1,9 +1,5 @@
 import React from 'react'
-import { HeroBlock } from '../blocks/hero-block'
-import { ContentBlock } from '../blocks/content-block'
-import { ProductsBlock } from '../blocks/products-block'
-import { FeaturesBlock } from '../blocks/features-block'
-import { CTABlock } from '../blocks/cta-block'
+import { BLOCK_REGISTRY } from '../blocks/block-registry'
 
 interface DynamicPageProps {
   page: any
@@ -26,26 +22,12 @@ export const DynamicPage: React.FC<DynamicPageProps> = ({ page, branding, locale
   return (
     <div className="w-full">
       {page.layout.map((block: any, index: number) => {
-        switch (block.blockType) {
-          case 'hero':
-            return <HeroBlock key={index} {...block} branding={branding} locale={locale} />
-          
-          case 'content':
-            return <ContentBlock key={index} {...block} locale={locale} />
-          
-          case 'products':
-            return <ProductsBlock key={index} {...block} locale={locale} />
-          
-          case 'features':
-            return <FeaturesBlock key={index} {...block} locale={locale} />
-          
-          case 'cta':
-            return <CTABlock key={index} {...block} branding={branding} locale={locale} />
-          
-          default:
-            console.warn(`Unknown block type: ${block.blockType}`)
-            return null
+        const Component = BLOCK_REGISTRY[block.blockType]
+        if (!Component) {
+          return null
         }
+        const { blockType, blockName, ...props } = block
+        return <Component key={block.id || index} {...props} branding={branding} locale={locale} />
       })}
     </div>
   )

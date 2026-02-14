@@ -1,11 +1,25 @@
 // @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
-import { useQuery } from "@tanstack/react-query"
-import { sdk } from "@/lib/utils/sdk"
 import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/insurance/")({
   component: InsurancePage,
+  loader: async () => {
+    try {
+      const isServer = typeof window === "undefined"
+      const baseUrl = isServer ? "http://localhost:9000" : ""
+      const resp = await fetch(`${baseUrl}/store/insurance`, {
+        headers: {
+          "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445",
+        },
+      })
+      if (!resp.ok) return { items: [], count: 0 }
+      const data = await resp.json()
+      return { items: data.items || data.listings || data.products || [], count: data.count || 0 }
+    } catch {
+      return { items: [], count: 0 }
+    }
+  },
 })
 
 const coverageTypes = ["all", "health", "auto", "home", "life", "travel", "business", "pet"] as const
@@ -20,18 +34,10 @@ function InsurancePage() {
   const [page, setPage] = useState(1)
   const limit = 12
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["insurance", coverageType, premiumRange, page],
-    queryFn: () =>
-      sdk.client.fetch<{ products: any[]; count: number }>(`/store/insurance`, {
-        query: {
-          ...(coverageType !== "all" && { coverage_type: coverageType }),
-          ...(premiumRange !== "all" && { premium_range: premiumRange }),
-          limit,
-          offset: (page - 1) * limit,
-        },
-      }),
-  })
+  const loaderData = Route.useLoaderData()
+  const data = loaderData
+  const isLoading = false
+  const error = null
 
   const products = data?.products || []
   const totalPages = Math.ceil((data?.count || 0) / limit)

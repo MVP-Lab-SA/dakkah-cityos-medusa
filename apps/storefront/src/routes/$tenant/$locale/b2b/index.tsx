@@ -1,11 +1,25 @@
 // @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
-import { useQuery } from "@tanstack/react-query"
-import { sdk } from "@/lib/utils/sdk"
 import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/b2b/")({
   component: B2BMarketplacePage,
+  loader: async () => {
+    try {
+      const isServer = typeof window === "undefined"
+      const baseUrl = isServer ? "http://localhost:9000" : ""
+      const resp = await fetch(`${baseUrl}/store/products?${qs}`, {
+        headers: {
+          "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445",
+        },
+      })
+      if (!resp.ok) return { items: [], count: 0 }
+      const data = await resp.json()
+      return { items: data.items || data.listings || data.products || [], count: data.count || 0 }
+    } catch {
+      return { items: [], count: 0 }
+    }
+  },
 })
 
 const categoryOptions = ["all", "raw-materials", "electronics", "packaging", "office-supplies", "industrial", "food-beverage", "textiles", "other"] as const
@@ -20,24 +34,10 @@ function B2BMarketplacePage() {
   const [page, setPage] = useState(1)
   const limit = 12
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["b2b-products", categoryFilter, minOrderFilter, page],
-    queryFn: async () => {
-      const params = new URLSearchParams()
-      params.set("type", "b2b")
-      if (categoryFilter !== "all") params.set("category", categoryFilter)
-      if (minOrderFilter !== "all") params.set("min_order", minOrderFilter)
-      params.set("limit", String(limit))
-      params.set("offset", String((page - 1) * limit))
-      const qs = params.toString()
-      const response = await sdk.client.fetch<{ products: any[]; count: number }>(
-        `/store/products?${qs}`,
-        { method: "GET", credentials: "include" }
-      )
-      return response
-    },
-  })
-
+  const loaderData = Route.useLoaderData()
+  const data = loaderData
+  const isLoading = false
+  const error = null
   const items = data?.products || []
   const totalCount = data?.count || 0
   const totalPages = Math.ceil(totalCount / limit)

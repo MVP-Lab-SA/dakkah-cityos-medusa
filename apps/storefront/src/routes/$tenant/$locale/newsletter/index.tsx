@@ -1,11 +1,25 @@
 // @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
-import { useQuery } from "@tanstack/react-query"
-import { sdk } from "@/lib/utils/sdk"
 import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/newsletter/")({
   component: NewsletterPage,
+  loader: async () => {
+    try {
+      const isServer = typeof window === "undefined"
+      const baseUrl = isServer ? "http://localhost:9000" : ""
+      const resp = await fetch(`${baseUrl}/store/newsletters`, {
+        headers: {
+          "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445",
+        },
+      })
+      if (!resp.ok) return { items: [], count: 0 }
+      const data = await resp.json()
+      return { items: data.items || data.listings || data.products || [], count: data.count || 0 }
+    } catch {
+      return { items: [], count: 0 }
+    }
+  },
 })
 
 function NewsletterPage() {
@@ -14,17 +28,10 @@ function NewsletterPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [subscribedIds, setSubscribedIds] = useState<Set<string>>(new Set())
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["newsletters"],
-    queryFn: async () => {
-      const response = await sdk.client.fetch<{ newsletters: any[]; count: number }>(
-        `/store/newsletters`,
-        { method: "GET", credentials: "include" }
-      )
-      return response
-    },
-  })
-
+  const loaderData = Route.useLoaderData()
+  const data = loaderData
+  const isLoading = false
+  const error = null
   const items = data?.newsletters || []
 
   const filteredItems = items.filter((item) =>

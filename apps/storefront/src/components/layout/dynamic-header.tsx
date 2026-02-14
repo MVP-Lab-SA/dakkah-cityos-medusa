@@ -57,6 +57,25 @@ export function DynamicHeader({
     })
   }
 
+  navItems.push({
+    label: "Browse",
+    href: "#",
+    children: [
+      { label: "Restaurants", href: `${prefix}/restaurants` },
+      { label: "Real Estate", href: `${prefix}/real-estate` },
+      { label: "Automotive", href: `${prefix}/automotive` },
+      { label: "Healthcare", href: `${prefix}/healthcare` },
+      { label: "Education", href: `${prefix}/education` },
+      { label: "Events", href: `${prefix}/events` },
+      { label: "Travel", href: `${prefix}/travel` },
+      { label: "Fitness", href: `${prefix}/fitness` },
+      { label: "Grocery", href: `${prefix}/grocery` },
+      { label: "Rentals", href: `${prefix}/rentals` },
+      { label: "Freelance", href: `${prefix}/freelance` },
+      { label: "Digital Products", href: `${prefix}/digital-products` },
+    ]
+  })
+
   header.customLinks?.forEach(link => {
     navItems.push({
       label: link.label,

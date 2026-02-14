@@ -1,11 +1,25 @@
 // @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
-import { useQuery } from "@tanstack/react-query"
-import { sdk } from "@/lib/utils/sdk"
 import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/grocery/")({
   component: GroceryPage,
+  loader: async () => {
+    try {
+      const isServer = typeof window === "undefined"
+      const baseUrl = isServer ? "http://localhost:9000" : ""
+      const resp = await fetch(`${baseUrl}/store/grocery`, {
+        headers: {
+          "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445",
+        },
+      })
+      if (!resp.ok) return { items: [], count: 0 }
+      const data = await resp.json()
+      return { items: data.items || data.listings || data.products || [], count: data.count || 0 }
+    } catch {
+      return { items: [], count: 0 }
+    }
+  },
 })
 
 const categories = ["all", "fruits", "vegetables", "dairy", "meat", "bakery", "beverages", "snacks", "frozen", "pantry"] as const
@@ -22,19 +36,10 @@ function GroceryPage() {
   const [page, setPage] = useState(1)
   const limit = 12
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["grocery", category, dietary, priceRange, page],
-    queryFn: () =>
-      sdk.client.fetch<{ products: any[]; count: number }>(`/store/grocery`, {
-        query: {
-          ...(category !== "all" && { category }),
-          ...(dietary !== "all" && { dietary }),
-          ...(priceRange !== "all" && { price_range: priceRange }),
-          limit,
-          offset: (page - 1) * limit,
-        },
-      }),
-  })
+  const loaderData = Route.useLoaderData()
+  const data = loaderData
+  const isLoading = false
+  const error = null
 
   const products = data?.products || []
   const totalPages = Math.ceil((data?.count || 0) / limit)

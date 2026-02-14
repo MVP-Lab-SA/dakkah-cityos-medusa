@@ -1,47 +1,168 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 
+const SOCIAL_COMMERCE_SEED = [
+  {
+    id: "sc_001",
+    name: "Riyadh Fashion Collective",
+    handle: "riyadh-fashion-collective",
+    description: "Curated Saudi fashion brands featuring modern abayas, thobes, and contemporary streetwear. Live shows every Thursday.",
+    platform: "instagram",
+    category: "Fashion",
+    city: "Riyadh",
+    country_code: "SA",
+    followers: 245000,
+    rating: 4.8,
+    total_reviews: 3200,
+    is_active: true,
+    seller_name: "Noura Al-Rashid",
+    seller: "noura.fashion",
+    price: 12900,
+    likes: 18200,
+    tags: ["fashion", "abayas", "streetwear", "saudi"],
+  },
+  {
+    id: "sc_002",
+    name: "Desert Glow Skincare",
+    handle: "desert-glow-skincare",
+    description: "Natural skincare products inspired by Arabian botanicals. Handcrafted in Jeddah with locally sourced ingredients.",
+    platform: "tiktok",
+    category: "Beauty",
+    city: "Jeddah",
+    country_code: "SA",
+    followers: 180000,
+    rating: 4.7,
+    total_reviews: 5600,
+    is_active: true,
+    seller_name: "Lama Designs",
+    seller: "desertglow",
+    price: 7500,
+    likes: 24500,
+    tags: ["skincare", "beauty", "natural", "handmade"],
+  },
+  {
+    id: "sc_003",
+    name: "Saudi Artisan Oud",
+    handle: "saudi-artisan-oud",
+    description: "Premium oud and bakhoor collections from master perfumers. Exclusive blends and rare wood chips.",
+    platform: "instagram",
+    category: "Fragrance",
+    city: "Mecca",
+    country_code: "SA",
+    followers: 320000,
+    rating: 4.9,
+    total_reviews: 8900,
+    is_active: true,
+    seller_name: "House of Oud",
+    seller: "artisan.oud",
+    price: 35000,
+    likes: 42100,
+    tags: ["oud", "bakhoor", "perfume", "fragrance"],
+  },
+  {
+    id: "sc_004",
+    name: "Homemade Saudi Sweets",
+    handle: "homemade-saudi-sweets",
+    description: "Traditional Saudi sweets and dates gift boxes. Perfect for Eid, Ramadan, and special occasions.",
+    platform: "whatsapp",
+    category: "Food",
+    city: "Medina",
+    country_code: "SA",
+    followers: 95000,
+    rating: 4.6,
+    total_reviews: 2100,
+    is_active: true,
+    seller_name: "Umm Ahmad Kitchen",
+    seller: "umm.ahmad",
+    price: 4500,
+    likes: 8900,
+    tags: ["sweets", "dates", "traditional", "gifts"],
+  },
+  {
+    id: "sc_005",
+    name: "Tech Gadgets KSA",
+    handle: "tech-gadgets-ksa",
+    description: "Latest tech accessories, phone cases, and smart gadgets. Flash sales and group buys every week.",
+    platform: "tiktok",
+    category: "Electronics",
+    city: "Riyadh",
+    country_code: "SA",
+    followers: 410000,
+    rating: 4.4,
+    total_reviews: 12000,
+    is_active: true,
+    seller_name: "TechHub Arabia",
+    seller: "techhub.ksa",
+    price: 9900,
+    likes: 56700,
+    tags: ["tech", "gadgets", "accessories", "electronics"],
+  },
+  {
+    id: "sc_006",
+    name: "Saudi Fitness Gear",
+    handle: "saudi-fitness-gear",
+    description: "Home gym equipment, supplements, and fitness apparel. Group buy deals for premium brands.",
+    platform: "instagram",
+    category: "Fitness",
+    city: "Dammam",
+    country_code: "SA",
+    followers: 156000,
+    rating: 4.5,
+    total_reviews: 4500,
+    is_active: true,
+    seller_name: "FitLife Arabia",
+    seller: "fitlife.arabia",
+    price: 19900,
+    likes: 12300,
+    tags: ["fitness", "gym", "supplements", "sportswear"],
+  },
+  {
+    id: "sc_007",
+    name: "Handmade Jewelry Arabia",
+    handle: "handmade-jewelry-arabia",
+    description: "Elegant handcrafted jewelry blending traditional Saudi motifs with contemporary designs. Custom orders welcome.",
+    platform: "instagram",
+    category: "Jewelry",
+    city: "Jeddah",
+    country_code: "SA",
+    followers: 278000,
+    rating: 4.8,
+    total_reviews: 6700,
+    is_active: true,
+    seller_name: "Zahara Jewels",
+    seller: "zahara.jewels",
+    price: 24900,
+    likes: 31500,
+    tags: ["jewelry", "handmade", "gold", "accessories"],
+  },
+]
+
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   try {
-    const mod = req.scope.resolve("socialCommerce") as any
-    const {
-      limit = "20",
-      offset = "0",
-      tenant_id,
-      type,
-      platform,
-      category,
-      search,
-    } = req.query as Record<string, string | undefined>
+    const { limit = "20", offset = "0", platform, category, search } = req.query as Record<string, string | undefined>
 
-    const filters: Record<string, any> = {}
-    if (tenant_id) filters.tenant_id = tenant_id
-    if (platform) filters.platform = platform
-    if (category) filters.category = category
-    if (search) filters.search = search
+    let items = [...SOCIAL_COMMERCE_SEED]
 
-    if (type === "group_buy") {
-      filters.status = "active"
-      const items = await mod.listGroupBuys(filters, { skip: Number(offset), take: Number(limit) })
-      return res.json({
-        items,
-        count: Array.isArray(items) ? items.length : 0,
-        limit: Number(limit),
-        offset: Number(offset),
-      })
+    if (platform) {
+      items = items.filter(i => i.platform.toLowerCase() === platform.toLowerCase())
+    }
+    if (category) {
+      items = items.filter(i => i.category.toLowerCase() === category.toLowerCase())
+    }
+    if (search) {
+      const q = search.toLowerCase()
+      items = items.filter(i =>
+        i.name.toLowerCase().includes(q) ||
+        i.description.toLowerCase().includes(q) ||
+        i.category.toLowerCase().includes(q)
+      )
     }
 
-    filters.status = "live"
-    const items = await mod.listLiveStreams(filters, { skip: Number(offset), take: Number(limit) })
-    return res.json({
-      items,
-      count: Array.isArray(items) ? items.length : 0,
-      limit: Number(limit),
-      offset: Number(offset),
-    })
+    const start = Number(offset)
+    const end = start + Number(limit)
+    const paged = items.slice(start, end)
+
+    res.json({ items: paged, listings: paged, count: items.length, limit: Number(limit), offset: start })
   } catch (error: any) {
-    res.status(500).json({
-      message: "Failed to fetch social commerce listings",
-      error: error.message,
-    })
+    res.status(500).json({ message: "Failed to fetch social commerce listings", error: error.message })
   }
 }
