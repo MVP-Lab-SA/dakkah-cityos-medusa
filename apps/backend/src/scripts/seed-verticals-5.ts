@@ -8,7 +8,18 @@ export default async function seedVerticals5({ container }: ExecArgs) {
 
   const dataSource = container.resolve("__pg_connection__")
 
-  const tenantId = "01KGZ2JRYX607FWMMYQNQRKVWS"
+  let tenantId = "01KGZ2JRYX607FWMMYQNQRKVWS"
+  try {
+    const tenantService = container.resolve("tenant") as any
+    const tenants = await tenantService.listTenants({ handle: "dakkah" })
+    const tenantList = Array.isArray(tenants) ? tenants : [tenants].filter(Boolean)
+    if (tenantList.length > 0 && tenantList[0]?.id) {
+      tenantId = tenantList[0].id
+      console.log(`Using Dakkah tenant: ${tenantId}`)
+    }
+  } catch (e: any) {
+    console.log(`Using fallback tenant ID: ${tenantId}`)
+  }
   const storeId = "store_01KGX5ERB6T6XX9Z8N1PXD1P69"
   const customerIds = {
     mohammed: "cus_01KGZ2JS53BEYQAQ28YYZEMPKC",

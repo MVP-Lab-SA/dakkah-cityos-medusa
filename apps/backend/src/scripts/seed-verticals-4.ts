@@ -8,7 +8,18 @@ export default async function seedVerticals4({ container }: ExecArgs) {
 
   const dataSource = container.resolve("__pg_connection__")
 
-  const tenantId = "01KGZ2JRYX607FWMMYQNQRKVWS"
+  let tenantId = "01KGZ2JRYX607FWMMYQNQRKVWS"
+  try {
+    const tenantService = container.resolve("tenant") as any
+    const tenants = await tenantService.listTenants({ handle: "dakkah" })
+    const tenantList = Array.isArray(tenants) ? tenants : [tenants].filter(Boolean)
+    if (tenantList.length > 0 && tenantList[0]?.id) {
+      tenantId = tenantList[0].id
+      console.log(`Using Dakkah tenant: ${tenantId}`)
+    }
+  } catch (e: any) {
+    console.log(`Using fallback tenant ID: ${tenantId}`)
+  }
   const storeId = "store_01KGX5ERB6T6XX9Z8N1PXD1P69"
   const customerIds = [
     "cus_01KGZ2JS53BEYQAQ28YYZEMPKC",
@@ -122,7 +133,7 @@ export default async function seedVerticals4({ container }: ExecArgs) {
       INSERT INTO ad_creative (id, tenant_id, campaign_id, placement_id, creative_type, title, body_text, image_url, video_url, click_url, cta_text, product_ids, is_approved, approved_by, approved_at, metadata, created_at, updated_at)
       VALUES
         ('seed4_ad_creative_1', '${tenantId}', '${campaignIds[0]}', '${placementIds[0]}', 'image', 'عروض رمضان الحصرية', 'خصومات تصل إلى 50% على جميع المنتجات خلال شهر رمضان المبارك', 'https://images.unsplash.com/photo-1564769625905-50e93615e769?w=800', null, 'https://cityos.sa/ramadan-sale', 'تسوق الآن', null, true, '${userIds[0]}', '${past1}', '{"format":"banner_1200x628"}', '${now}', '${now}'),
-        ('seed4_ad_creative_2', '${tenantId}', '${campaignIds[0]}', '${placementIds[1]}', 'video', 'جولة في المدينة الذكية', 'اكتشف مستقبل الحياة الذكية في مدينة نيوم', null, 'https://cdn.example.com/videos/cityos-tour.mp4', 'https://cityos.sa/smart-city', 'شاهد المزيد', null, true, '${userIds[0]}', '${past1}', '{"duration_seconds":30}', '${now}', '${now}'),
+        ('seed4_ad_creative_2', '${tenantId}', '${campaignIds[0]}', '${placementIds[1]}', 'video', 'جولة في المدينة الذكية', 'اكتشف مستقبل الحياة الذكية في مدينة نيوم', null, 'https://images.unsplash.com/video-1600066890217-bc25e11b5e4f?w=800', 'https://cityos.sa/smart-city', 'شاهد المزيد', null, true, '${userIds[0]}', '${past1}', '{"duration_seconds":30}', '${now}', '${now}'),
         ('seed4_ad_creative_3', '${tenantId}', '${campaignIds[1]}', '${placementIds[0]}', 'product_card', 'أفضل الإلكترونيات', 'تشكيلة واسعة من الأجهزة الإلكترونية بأسعار منافسة', 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=800', null, 'https://cityos.sa/electronics', 'اطلب الآن', '["prod_01","prod_02"]', false, null, null, '{"category":"electronics"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)

@@ -8,7 +8,18 @@ export default async function seedVerticals6({ container }: ExecArgs) {
 
   const dataSource = container.resolve("__pg_connection__")
 
-  const tenantId = "01KGZ2JRYX607FWMMYQNQRKVWS"
+  let tenantId = "01KGZ2JRYX607FWMMYQNQRKVWS"
+  try {
+    const tenantService = container.resolve("tenant") as any
+    const tenants = await tenantService.listTenants({ handle: "dakkah" })
+    const tenantList = Array.isArray(tenants) ? tenants : [tenants].filter(Boolean)
+    if (tenantList.length > 0 && tenantList[0]?.id) {
+      tenantId = tenantList[0].id
+      console.log(`Using Dakkah tenant: ${tenantId}`)
+    }
+  } catch (e: any) {
+    console.log(`Using fallback tenant ID: ${tenantId}`)
+  }
   const storeId = "store_01KGX5ERB6T6XX9Z8N1PXD1P69"
   const customerIds = [
     "cus_01KGZ2JS53BEYQAQ28YYZEMPKC",
@@ -612,9 +623,9 @@ export default async function seedVerticals6({ container }: ExecArgs) {
     await dataSource.raw(`
       INSERT INTO reward (id, tenant_id, name, description, reward_type, points_required, value, currency_code, available_quantity, redeemed_count, min_tier_level, is_active, valid_from, valid_until, image_url, metadata, created_at, updated_at)
       VALUES
-        ('seed6_rwd_01', '${tenantId}', 'خصم 50 ريال', 'احصل على خصم 50 ريال على طلبك القادم', 'discount', 200, 50, 'sar', 100, 15, 0, true, '${past30d}', '${future180d}', null, '{"min_order":150}', '${now}', '${now}'),
-        ('seed6_rwd_02', '${tenantId}', 'شحن مجاني', 'شحن مجاني على أي طلب بدون حد أدنى', 'service', 150, 25, 'sar', 200, 45, 1, true, '${past30d}', '${future180d}', null, '{"applies_to":"all_orders"}', '${now}', '${now}'),
-        ('seed6_rwd_03', '${tenantId}', 'ترقية عضوية VIP', 'ترقية فورية إلى عضوية VIP لمدة 3 أشهر', 'upgrade', 500, null, 'sar', 50, 5, 2, true, '${past30d}', '${future365d}', null, '{"vip_duration_months":3}', '${now}', '${now}')
+        ('seed6_rwd_01', '${tenantId}', 'خصم 50 ريال', 'احصل على خصم 50 ريال على طلبك القادم', 'discount', 200, 50, 'sar', 100, 15, 0, true, '${past30d}', '${future180d}', 'https://images.unsplash.com/photo-1585399776694-d9b5b55fac6c?w=400', '{"min_order":150}', '${now}', '${now}'),
+        ('seed6_rwd_02', '${tenantId}', 'شحن مجاني', 'شحن مجاني على أي طلب بدون حد أدنى', 'service', 150, 25, 'sar', 200, 45, 1, true, '${past30d}', '${future180d}', 'https://images.unsplash.com/photo-1516534775068-bb57d19bec1e?w=400', '{"applies_to":"all_orders"}', '${now}', '${now}'),
+        ('seed6_rwd_03', '${tenantId}', 'ترقية عضوية VIP', 'ترقية فورية إلى عضوية VIP لمدة 3 أشهر', 'upgrade', 500, null, 'sar', 50, 5, 2, true, '${past30d}', '${future365d}', 'https://images.unsplash.com/photo-1549887534-7929be5b4df5?w=400', '{"vip_duration_months":3}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
     console.log("  ✓ Created 3 rewards")

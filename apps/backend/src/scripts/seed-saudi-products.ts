@@ -54,7 +54,10 @@ export default async function ({ container }: ExecArgs) {
       handle: "classic-white-thobe",
       status: ProductStatus.PUBLISHED,
       images: [
-        { url: "https://images.unsplash.com/photo-1589656966895-2f33e7653819?w=800&q=80" }
+        { url: "https://images.unsplash.com/photo-1589656966895-2f33e7653819?w=800&q=80" },
+        { url: "https://images.unsplash.com/photo-1591047990795-ec42a0f36e29?w=800&q=80" },
+        { url: "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=800&q=80" },
+        { url: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=800&q=80" }
       ],
       category_ids: getCategoryId("mens-thobes") ? [getCategoryId("mens-thobes")!] : [],
       variants: [
@@ -94,7 +97,10 @@ export default async function ({ container }: ExecArgs) {
       handle: "classic-black-abaya",
       status: ProductStatus.PUBLISHED,
       images: [
-        { url: "https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=800&q=80" }
+        { url: "https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=800&q=80" },
+        { url: "https://images.unsplash.com/photo-1595777707802-c9b1fcf46264?w=800&q=80" },
+        { url: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=800&q=80" },
+        { url: "https://images.unsplash.com/photo-1609709295948-17d77cb2a69b?w=800&q=80" }
       ],
       category_ids: getCategoryId("womens-abayas") ? [getCategoryId("womens-abayas")!] : [],
       variants: [
@@ -134,7 +140,9 @@ export default async function ({ container }: ExecArgs) {
       handle: "red-white-shemagh",
       status: ProductStatus.PUBLISHED,
       images: [
-        { url: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&q=80" }
+        { url: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&q=80" },
+        { url: "https://images.unsplash.com/photo-1554895917-82f97b32fd86?w=800&q=80" },
+        { url: "https://images.unsplash.com/photo-1615529328331-f8917597711f?w=800&q=80" }
       ],
       category_ids: getCategoryId("shemagh-ghutra") ? [getCategoryId("shemagh-ghutra")!] : [],
       variants: [
@@ -156,7 +164,10 @@ export default async function ({ container }: ExecArgs) {
       handle: "cambodian-oud-oil",
       status: ProductStatus.PUBLISHED,
       images: [
-        { url: "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?w=800&q=80" }
+        { url: "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?w=800&q=80" },
+        { url: "https://images.unsplash.com/photo-1605651202774-7d573fd3f12d?w=800&q=80" },
+        { url: "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=800&q=80" },
+        { url: "https://images.unsplash.com/photo-1590080876-a370317a9e70?w=800&q=80" }
       ],
       category_ids: getCategoryId("oud-oil") ? [getCategoryId("oud-oil")!] : getCategoryId("fragrances-oud") ? [getCategoryId("fragrances-oud")!] : [],
       variants: [
@@ -187,7 +198,10 @@ export default async function ({ container }: ExecArgs) {
       handle: "ajwa-dates-madinah",
       status: ProductStatus.PUBLISHED,
       images: [
-        { url: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=800&q=80" }
+        { url: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=800&q=80" },
+        { url: "https://images.unsplash.com/photo-1488477807830-63789f68bb65?w=800&q=80" },
+        { url: "https://images.unsplash.com/photo-1599599810694-b5ac4dd19b90?w=800&q=80" },
+        { url: "https://images.unsplash.com/photo-1599599810991-eb3c14e4159f?w=800&q=80" }
       ],
       category_ids: getCategoryId("premium-dates") ? [getCategoryId("premium-dates")!] : getCategoryId("dates-sweets") ? [getCategoryId("dates-sweets")!] : [],
       variants: [
@@ -218,7 +232,10 @@ export default async function ({ container }: ExecArgs) {
       handle: "saudi-khawlani-coffee",
       status: ProductStatus.PUBLISHED,
       images: [
-        { url: "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=800&q=80" }
+        { url: "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=800&q=80" },
+        { url: "https://images.unsplash.com/photo-1559056199-641a0ac8b8d5?w=800&q=80" },
+        { url: "https://images.unsplash.com/photo-1582514959869-ea8c16ceb1f1?w=800&q=80" },
+        { url: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&q=80" }
       ],
       category_ids: getCategoryId("arabic-coffee") ? [getCategoryId("arabic-coffee")!] : getCategoryId("coffee-tea") ? [getCategoryId("coffee-tea")!] : [],
       variants: [

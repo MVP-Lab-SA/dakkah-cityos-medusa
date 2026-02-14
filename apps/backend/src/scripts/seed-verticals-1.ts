@@ -6,17 +6,24 @@ export default async function seedVerticals1({ container }: ExecArgs) {
   console.log("Seeding Vertical Modules - Batch 1")
   console.log("========================================\n")
 
-  const tenantService = container.resolve("tenant")
+  const tenantService = container.resolve("tenant") as any
 
   let tenantId = "ten_default"
   try {
-    const tenants = await tenantService.listTenants({}, { take: 1 })
+    const tenants = await tenantService.listTenants({ handle: "dakkah" })
     const list = Array.isArray(tenants) ? tenants : [tenants].filter(Boolean)
     if (list.length > 0 && list[0]?.id) {
       tenantId = list[0].id
-      console.log(`Using existing tenant: ${tenantId}`)
+      console.log(`Using Dakkah tenant: ${tenantId}`)
     } else {
-      console.log(`No tenants found, using placeholder: ${tenantId}`)
+      const allTenants = await tenantService.listTenants({}, { take: 1 })
+      const allList = Array.isArray(allTenants) ? allTenants : [allTenants].filter(Boolean)
+      if (allList.length > 0 && allList[0]?.id) {
+        tenantId = allList[0].id
+        console.log(`Dakkah not found, using first tenant: ${tenantId}`)
+      } else {
+        console.log(`No tenants found, using placeholder: ${tenantId}`)
+      }
     }
   } catch (err: any) {
     console.log(`Could not fetch tenants: ${err.message}. Using placeholder: ${tenantId}`)

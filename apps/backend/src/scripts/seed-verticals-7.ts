@@ -9,7 +9,18 @@ export default async function seedVerticals7({ container }: ExecArgs) {
 
   const dataSource = container.resolve("__pg_connection__")
 
-  const TENANT_ID = "01KGZ2JRYX607FWMMYQNQRKVWS"
+  let TENANT_ID = "01KGZ2JRYX607FWMMYQNQRKVWS"
+  try {
+    const tenantService = container.resolve("tenant") as any
+    const tenants = await tenantService.listTenants({ handle: "dakkah" })
+    const tenantList = Array.isArray(tenants) ? tenants : [tenants].filter(Boolean)
+    if (tenantList.length > 0 && tenantList[0]?.id) {
+      TENANT_ID = tenantList[0].id
+      console.log(`Using Dakkah tenant: ${TENANT_ID}`)
+    }
+  } catch (e: any) {
+    console.log(`Using fallback tenant ID: ${TENANT_ID}`)
+  }
   const CUSTOMER_MOHAMMED = "cus_01KGZ2JS53BEYQAQ28YYZEMPKC"
   const CUSTOMER_FATIMA = "cus_01KGZ2JS5P4S10CEF14VAYEZZ7"
   const CUSTOMER_AHMED = "cus_01KGZ2JS6ET997Q1HXY8BBNQ0F"
@@ -143,8 +154,8 @@ export default async function seedVerticals7({ container }: ExecArgs) {
          '["sar","usd"]',
          'https://marketplace.cityos.sa', 'marketplace', null,
          '{"primaryFont":"IBM Plex Sans Arabic","layout":"modern","rtl":true}',
-         'https://cdn.cityos.sa/logos/marketplace-logo.svg',
-         'https://cdn.cityos.sa/icons/favicon-32.png',
+         'https://images.unsplash.com/photo-1560472355-536de3962603?w=200&q=80',
+         'https://images.unsplash.com/photo-1560472355-536de3962603?w=32&q=80',
          '{"primary":"#1B5E20","secondary":"#FFD600","accent":"#00BCD4","background":"#FAFAFA"}',
          'marketplace', 'active',
          'سوق الرياض - تسوق إلكتروني | CityOS Marketplace',
@@ -159,8 +170,8 @@ export default async function seedVerticals7({ container }: ExecArgs) {
          '["sar","usd","aed"]',
          'https://wholesale.cityos.sa', 'wholesale', null,
          '{"primaryFont":"Inter","layout":"professional","rtl":false}',
-         'https://cdn.cityos.sa/logos/wholesale-logo.svg',
-         'https://cdn.cityos.sa/icons/favicon-b2b.png',
+         'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=200&q=80',
+         'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=32&q=80',
          '{"primary":"#0D47A1","secondary":"#FF6F00","accent":"#4CAF50","background":"#F5F5F5"}',
          'b2b', 'active',
          'CityOS Wholesale - B2B Procurement Platform',

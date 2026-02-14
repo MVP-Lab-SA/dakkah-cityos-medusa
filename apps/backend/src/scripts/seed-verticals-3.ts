@@ -6,17 +6,24 @@ export default async function seedVerticals3({ container }: ExecArgs) {
   console.log("Seeding Vertical Modules - Batch 3")
   console.log("========================================\n")
 
-  const tenantService = container.resolve("tenant")
+  const tenantService = container.resolve("tenant") as any
 
   let tenantId = "ten_default"
   try {
-    const tenants = await tenantService.listTenants({}, { take: 1 })
+    const tenants = await tenantService.listTenants({ handle: "dakkah" })
     const list = Array.isArray(tenants) ? tenants : [tenants].filter(Boolean)
     if (list.length > 0 && list[0]?.id) {
       tenantId = list[0].id
-      console.log(`Using existing tenant: ${tenantId}`)
+      console.log(`Using Dakkah tenant: ${tenantId}`)
     } else {
-      console.log(`No tenants found, using placeholder: ${tenantId}`)
+      const allTenants = await tenantService.listTenants({}, { take: 1 })
+      const allList = Array.isArray(allTenants) ? allTenants : [allTenants].filter(Boolean)
+      if (allList.length > 0 && allList[0]?.id) {
+        tenantId = allList[0].id
+        console.log(`Dakkah not found, using first tenant: ${tenantId}`)
+      } else {
+        console.log(`No tenants found, using placeholder: ${tenantId}`)
+      }
     }
   } catch (err: any) {
     console.log(`Could not fetch tenants: ${err.message}. Using placeholder: ${tenantId}`)
@@ -276,6 +283,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
         name: "Simba",
         species: "cat",
         breed: "Persian",
+        photo_url: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&q=80",
         date_of_birth: new Date("2023-03-15"),
         weight_kg: 5.2,
         color: "White",
@@ -295,6 +303,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
         name: "Rex",
         species: "dog",
         breed: "German Shepherd",
+        photo_url: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&q=80",
         date_of_birth: new Date("2022-08-20"),
         weight_kg: 35,
         color: "Black and Tan",
@@ -579,7 +588,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
           peak_viewers: 0,
           total_sales: 0,
           total_orders: 0,
-          thumbnail_url: "https://example.com/ramadan-fashion-thumb.jpg",
+          thumbnail_url: "https://images.unsplash.com/photo-1558171813-4c088753af8f?w=800&q=80",
         }),
         socialCommerceService.createLiveStreams({
           tenant_id: tenantId,
@@ -595,6 +604,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
           peak_viewers: 890,
           total_sales: 45000,
           total_orders: 67,
+          thumbnail_url: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80",
         }),
       ])
 
@@ -857,6 +867,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
           perks: { points_multiplier: 1, free_shipping_threshold: 200 },
           upgrade_threshold: 5000,
           color_code: "#C0C0C0",
+          icon_url: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80",
           is_active: true,
         }),
         membershipService.createMembershipTiers({
@@ -878,6 +889,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
           upgrade_threshold: 15000,
           downgrade_threshold: 3000,
           color_code: "#FFD700",
+          icon_url: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80",
           is_active: true,
         }),
         membershipService.createMembershipTiers({
@@ -900,6 +912,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
           perks: { points_multiplier: 3, free_shipping: true, express_shipping: true, concierge: true },
           downgrade_threshold: 10000,
           color_code: "#E5E4E2",
+          icon_url: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80",
           is_active: true,
         }),
       ])
