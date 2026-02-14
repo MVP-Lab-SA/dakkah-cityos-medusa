@@ -19,13 +19,13 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     return res.status(401).json({ message: "Vendor authentication required" })
   }
 
-  const mod = req.scope.resolve("promotionExt") as any
+  const mod = req.scope.resolve("flashSale") as any
   const { limit = "20", offset = "0", status } = req.query as Record<string, string | undefined>
 
   const filters: Record<string, any> = { vendor_id: vendorId }
   if (status) filters.status = status
 
-  const items = await mod.listProductBundles(filters, {
+  const items = await mod.listFlashSales(filters, {
     skip: Number(offset),
     take: Number(limit),
     order: { created_at: "DESC" },
@@ -45,13 +45,13 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     return res.status(401).json({ message: "Vendor authentication required" })
   }
 
-  const mod = req.scope.resolve("promotionExt") as any
+  const mod = req.scope.resolve("flashSale") as any
   const validation = createSchema.safeParse(req.body)
   if (!validation.success) {
     return res.status(400).json({ message: "Validation failed", errors: validation.error.issues })
   }
 
-  const item = await mod.createProductBundles({
+  const item = await mod.createFlashSales({
     ...validation.data,
     vendor_id: vendorId,
   })

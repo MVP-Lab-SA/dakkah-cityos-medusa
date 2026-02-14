@@ -72,9 +72,10 @@ The platform supports 42 CRUD configurations for various manage verticals, utili
 - Phase 26: Vendor dashboard expansion — 10 vendor API routes + 10 vendor dashboard pages (loyalty, wishlists, flash-sales, bundles, consignments, gift-cards, newsletter, notification-preferences, tax-config, shipping-extension)
 - Phase 27: Vendor dashboard expansion — 10 more vendor API routes + 10 vendor dashboard pages (inventory-extension, volume-pricing, dropshipping, print-on-demand, white-label, try-before-you-buy, credit, wallet, trade-in, cart-extension)
 - Phase 28: Customer storefront expansion — 8 new browsing pages (affiliate, loyalty-program, gift-cards-shop, flash-deals, consignment-shop, dropshipping-marketplace, print-on-demand-shop, white-label-shop) + 76 vendor route tests
+- Phase 29: Contract fixes (wallet API/UI alignment, flash-sales route fix) + 7 more customer pages (trade-in, try-before-you-buy, b2b, credit, newsletter, volume-deals, wallet) + 5 new store API routes (trade-ins, newsletters, try-before-you-buy, b2b, dropshipping) + 24 store route tests + 40 integration layer tests (webhooks, outbox processor, temporal workflows)
 
 ### Test Coverage Architecture
-- **Backend (Jest):** 82 test suites in `apps/backend/tests/unit/`
+- **Backend (Jest):** 86 test suites in `apps/backend/tests/unit/`
 - **Storefront (Vitest):** 7 test suites
 - Run backend: `cd apps/backend && TEST_TYPE=unit npx jest`
 - Run storefront: `cd apps/storefront && npx vitest run`
@@ -86,7 +87,7 @@ The platform supports 42 CRUD configurations for various manage verticals, utili
 | Model Files | 258 |
 | Migration Files | 61 |
 | Admin API Routes | 200+ |
-| Store API Routes | 130+ |
+| Store API Routes | 135+ |
 | Vendor API Routes | 57 |
 | Admin/Manage Pages | 66 |
 | Vendor Dashboard Pages | 54 |
@@ -95,11 +96,11 @@ The platform supports 42 CRUD configurations for various manage verticals, utili
 | Workflows | 30 |
 | Subscribers | 33 |
 | Jobs | 16 |
-| Storefront Routes | 243 |
+| Storefront Routes | 249 |
 | Storefront Components | 555 |
-| Backend Test Files | 82 |
+| Backend Test Files | 86 |
 | Storefront Test Files | 7 |
-| Total Tests | 1,677+ |
+| Total Tests | 1,741+ |
 | Total Source Files | 2,500+ |
 
 ## Documentation

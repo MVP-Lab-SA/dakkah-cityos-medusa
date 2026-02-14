@@ -89,11 +89,11 @@ describe("Vendor Routes Batch 3", () => {
   })
 
   describe("Flash Sales /vendor/flash-sales", () => {
-    const mockService = { listProductBundles: jest.fn(), createProductBundles: jest.fn() }
+    const mockService = { listFlashSales: jest.fn(), createFlashSales: jest.fn() }
 
     it("GET returns items with pagination when vendor_id present", async () => {
       const items = [{ id: "fs_1", title: "Summer Sale" }]
-      mockService.listProductBundles.mockResolvedValue(items)
+      mockService.listFlashSales.mockResolvedValue(items)
       const req = createReq({ scope: { resolve: jest.fn(() => mockService) } })
       const res = createRes()
       await flashSalesGET(req as any, res)
@@ -110,7 +110,7 @@ describe("Vendor Routes Batch 3", () => {
 
     it("POST creates item with valid data", async () => {
       const item = { id: "fs_2", title: "Flash Deal" }
-      mockService.createProductBundles.mockResolvedValue(item)
+      mockService.createFlashSales.mockResolvedValue(item)
       const req = createReq({
         scope: { resolve: jest.fn(() => mockService) },
         body: { title: "Flash Deal", discount_type: "percentage", discount_value: 20, starts_at: "2026-01-01", ends_at: "2026-01-02" },

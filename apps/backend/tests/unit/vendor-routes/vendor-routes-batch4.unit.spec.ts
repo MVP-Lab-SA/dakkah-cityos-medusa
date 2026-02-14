@@ -317,12 +317,12 @@ describe("Vendor Routes Batch 4", () => {
     const mockService = { listLoyaltyAccounts: jest.fn() }
 
     it("GET returns items with pagination when vendor_id present", async () => {
-      const items = [{ id: "wal_1", balance: 500 }]
+      const items = [{ id: "wal_1", balance: 500, pending: 100, total_earned: 1000, currency_code: "usd", activity: [] }]
       mockService.listLoyaltyAccounts.mockResolvedValue(items)
       const req = createReq({ scope: { resolve: jest.fn(() => mockService) } })
       const res = createRes()
       await walletGET(req as any, res)
-      expect(res.json).toHaveBeenCalledWith({ balance: 500, accounts: items, count: 1, limit: 20, offset: 0 })
+      expect(res.json).toHaveBeenCalledWith({ balance: 500, pending: 100, total_earned: 1000, currency_code: "usd", transactions: [] })
     })
 
     it("GET returns 401 when vendor_id missing", async () => {

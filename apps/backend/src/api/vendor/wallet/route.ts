@@ -19,13 +19,30 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
   const accounts = Array.isArray(items) ? items : [items].filter(Boolean)
 
-  const totalBalance = accounts.reduce((sum: number, acc: any) => sum + (acc.balance || 0), 0)
+  const balance = accounts.reduce((sum: number, acc: any) => sum + (acc.balance || 0), 0)
+  const pending = accounts.reduce((sum: number, acc: any) => sum + (acc.pending || 0), 0)
+  const total_earned = accounts.reduce((sum: number, acc: any) => sum + (acc.total_earned || 0), 0)
+  const currency_code = accounts[0]?.currency_code || "usd"
+
+  const transactions = accounts.flatMap((acc: any) => {
+    if (!acc.activity || !Array.isArray(acc.activity)) {
+      return []
+    }
+    return acc.activity.map((activity: any) => ({
+      id: activity.id || `${acc.id}-${activity.created_at}`,
+      date: activity.created_at || new Date().toISOString(),
+      type: activity.type || "transaction",
+      amount: activity.amount || 0,
+      reference: activity.reference || acc.id,
+      currency_code: acc.currency_code || currency_code,
+    }))
+  })
 
   return res.json({
-    balance: totalBalance,
-    accounts,
-    count: accounts.length,
-    limit: Number(limit),
-    offset: Number(offset),
+    balance,
+    pending,
+    total_earned,
+    currency_code,
+    transactions,
   })
 }
