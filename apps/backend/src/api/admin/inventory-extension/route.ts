@@ -1,0 +1,29 @@
+import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { z } from "zod"
+
+const createSchema = z.object({
+  tenant_id: z.string(),
+  variant_id: z.string(),
+  quantity: z.number(),
+  reason: z.enum(["cart", "checkout", "order", "manual"]).optional(),
+  reference_id: z.string().optional(),
+  expires_at: z.string().optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
+})
+
+export async function GET(req: MedusaRequest, res: MedusaResponse) {
+  const mod = req.scope.resolve("inventoryExtension") as any
+  const { limit = "20", offset = "0", status } = req.query as Record<string, string | undefined>
+  const filters: Record<string, any> = {}
+  if (status) filters.status = status
+  const items = await mod.listReservationHolds(filters, { skip: Number(offset), take: Number(limit) })
+  return res.json({ items, count: Array.isArray(items) ? items.length : 0, limit: Number(limit), offset: Number(offset) })
+}
+
+export async function POST(req: MedusaRequest, res: MedusaResponse) {
+  const mod = req.scope.resolve("inventoryExtension") as any
+  const validation = createSchema.safeParse(req.body)
+  if (!validation.success) return res.status(400).json({ message: "Validation failed", errors: validation.error.issues })
+  const item = await mod.createReservationHolds(validation.data)
+  return res.status(201).json({ item })
+}

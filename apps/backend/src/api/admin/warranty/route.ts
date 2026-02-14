@@ -1,0 +1,33 @@
+import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { z } from "zod"
+
+const createSchema = z.object({
+  tenant_id: z.string(),
+  name: z.string(),
+  description: z.string().optional(),
+  plan_type: z.enum(["standard", "extended", "premium", "accidental"]),
+  duration_months: z.number(),
+  price: z.number().optional(),
+  currency_code: z.string(),
+  coverage: z.any(),
+  exclusions: z.any().optional(),
+  is_active: z.boolean().optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
+})
+
+export async function GET(req: MedusaRequest, res: MedusaResponse) {
+  const mod = req.scope.resolve("warranty") as any
+  const { limit = "20", offset = "0", status } = req.query as Record<string, string | undefined>
+  const filters: Record<string, any> = {}
+  if (status) filters.is_active = status === "active"
+  const items = await mod.listWarrantyPlans(filters, { skip: Number(offset), take: Number(limit) })
+  return res.json({ items, count: Array.isArray(items) ? items.length : 0, limit: Number(limit), offset: Number(offset) })
+}
+
+export async function POST(req: MedusaRequest, res: MedusaResponse) {
+  const mod = req.scope.resolve("warranty") as any
+  const validation = createSchema.safeParse(req.body)
+  if (!validation.success) return res.status(400).json({ message: "Validation failed", errors: validation.error.issues })
+  const item = await mod.createWarrantyPlans(validation.data)
+  return res.status(201).json({ item })
+}

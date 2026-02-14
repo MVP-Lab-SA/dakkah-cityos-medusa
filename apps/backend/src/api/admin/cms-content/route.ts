@@ -1,0 +1,36 @@
+import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { z } from "zod"
+
+const createSchema = z.object({
+  tenant_id: z.string(),
+  title: z.string(),
+  slug: z.string(),
+  type: z.enum(["page", "post", "block"]).optional(),
+  content: z.string().optional(),
+  excerpt: z.string().optional(),
+  author: z.string().optional(),
+  status: z.enum(["draft", "published", "archived"]).optional(),
+  featured_image: z.string().optional(),
+  seo_title: z.string().optional(),
+  seo_description: z.string().optional(),
+  locale: z.string().optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
+})
+
+export async function GET(req: MedusaRequest, res: MedusaResponse) {
+  const mod = req.scope.resolve("cmsContent") as any
+  const { limit = "20", offset = "0", status, type } = req.query as Record<string, string | undefined>
+  const filters: Record<string, any> = {}
+  if (status) filters.status = status
+  if (type) filters.type = type
+  const items = await mod.listCmsPages(filters, { skip: Number(offset), take: Number(limit) })
+  return res.json({ items, count: Array.isArray(items) ? items.length : 0, limit: Number(limit), offset: Number(offset) })
+}
+
+export async function POST(req: MedusaRequest, res: MedusaResponse) {
+  const mod = req.scope.resolve("cmsContent") as any
+  const validation = createSchema.safeParse(req.body)
+  if (!validation.success) return res.status(400).json({ message: "Validation failed", errors: validation.error.issues })
+  const item = await mod.createCmsPages(validation.data)
+  return res.status(201).json({ item })
+}

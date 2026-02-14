@@ -1,0 +1,35 @@
+import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { z } from "zod"
+
+const createSchema = z.object({
+  tenant_id: z.string(),
+  name: z.string(),
+  carrier: z.string().optional(),
+  origin_zone: z.string().optional(),
+  dest_zone: z.string().optional(),
+  weight_min: z.number().optional(),
+  weight_max: z.number().optional(),
+  rate: z.number().optional(),
+  currency_code: z.string().optional(),
+  estimated_days_min: z.number().optional(),
+  estimated_days_max: z.number().optional(),
+  is_active: z.boolean().optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
+})
+
+export async function GET(req: MedusaRequest, res: MedusaResponse) {
+  const mod = req.scope.resolve("shippingExtension") as any
+  const { limit = "20", offset = "0", status } = req.query as Record<string, string | undefined>
+  const filters: Record<string, any> = {}
+  if (status) filters.is_active = status === "active"
+  const items = await mod.listShippingRates(filters, { skip: Number(offset), take: Number(limit) })
+  return res.json({ items, count: Array.isArray(items) ? items.length : 0, limit: Number(limit), offset: Number(offset) })
+}
+
+export async function POST(req: MedusaRequest, res: MedusaResponse) {
+  const mod = req.scope.resolve("shippingExtension") as any
+  const validation = createSchema.safeParse(req.body)
+  if (!validation.success) return res.status(400).json({ message: "Validation failed", errors: validation.error.issues })
+  const item = await mod.createShippingRates(validation.data)
+  return res.status(201).json({ item })
+}
