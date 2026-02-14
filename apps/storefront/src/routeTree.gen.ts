@@ -110,10 +110,12 @@ import { Route as TenantLocaleVendorSubscriptionsRouteImport } from './routes/$t
 import { Route as TenantLocaleVendorSocialCommerceRouteImport } from './routes/$tenant/$locale/vendor/social-commerce'
 import { Route as TenantLocaleVendorShippingRulesRouteImport } from './routes/$tenant/$locale/vendor/shipping-rules'
 import { Route as TenantLocaleVendorShippingExtensionRouteImport } from './routes/$tenant/$locale/vendor/shipping-extension'
+import { Route as TenantLocaleVendorReviewsRouteImport } from './routes/$tenant/$locale/vendor/reviews'
 import { Route as TenantLocaleVendorRestaurantsRouteImport } from './routes/$tenant/$locale/vendor/restaurants'
 import { Route as TenantLocaleVendorRentalsRouteImport } from './routes/$tenant/$locale/vendor/rentals'
 import { Route as TenantLocaleVendorRegisterRouteImport } from './routes/$tenant/$locale/vendor/register'
 import { Route as TenantLocaleVendorRealEstateRouteImport } from './routes/$tenant/$locale/vendor/real-estate'
+import { Route as TenantLocaleVendorQuotesRouteImport } from './routes/$tenant/$locale/vendor/quotes'
 import { Route as TenantLocaleVendorPrintOnDemandRouteImport } from './routes/$tenant/$locale/vendor/print-on-demand'
 import { Route as TenantLocaleVendorPetServiceRouteImport } from './routes/$tenant/$locale/vendor/pet-service'
 import { Route as TenantLocaleVendorPayoutsRouteImport } from './routes/$tenant/$locale/vendor/payouts'
@@ -123,6 +125,7 @@ import { Route as TenantLocaleVendorNewsletterRouteImport } from './routes/$tena
 import { Route as TenantLocaleVendorMembershipsRouteImport } from './routes/$tenant/$locale/vendor/memberships'
 import { Route as TenantLocaleVendorLoyaltyRouteImport } from './routes/$tenant/$locale/vendor/loyalty'
 import { Route as TenantLocaleVendorLegalRouteImport } from './routes/$tenant/$locale/vendor/legal'
+import { Route as TenantLocaleVendorInvoicesRouteImport } from './routes/$tenant/$locale/vendor/invoices'
 import { Route as TenantLocaleVendorInventoryExtensionRouteImport } from './routes/$tenant/$locale/vendor/inventory-extension'
 import { Route as TenantLocaleVendorInventoryRouteImport } from './routes/$tenant/$locale/vendor/inventory'
 import { Route as TenantLocaleVendorInsuranceRouteImport } from './routes/$tenant/$locale/vendor/insurance'
@@ -136,8 +139,10 @@ import { Route as TenantLocaleVendorFlashSalesRouteImport } from './routes/$tena
 import { Route as TenantLocaleVendorFitnessRouteImport } from './routes/$tenant/$locale/vendor/fitness'
 import { Route as TenantLocaleVendorFinancialProductRouteImport } from './routes/$tenant/$locale/vendor/financial-product'
 import { Route as TenantLocaleVendorEventsRouteImport } from './routes/$tenant/$locale/vendor/events'
+import { Route as TenantLocaleVendorEventTicketingRouteImport } from './routes/$tenant/$locale/vendor/event-ticketing'
 import { Route as TenantLocaleVendorEducationRouteImport } from './routes/$tenant/$locale/vendor/education'
 import { Route as TenantLocaleVendorDropshippingRouteImport } from './routes/$tenant/$locale/vendor/dropshipping'
+import { Route as TenantLocaleVendorDisputesRouteImport } from './routes/$tenant/$locale/vendor/disputes'
 import { Route as TenantLocaleVendorDigitalProductsRouteImport } from './routes/$tenant/$locale/vendor/digital-products'
 import { Route as TenantLocaleVendorCrowdfundingRouteImport } from './routes/$tenant/$locale/vendor/crowdfunding'
 import { Route as TenantLocaleVendorCreditRouteImport } from './routes/$tenant/$locale/vendor/credit'
@@ -878,6 +883,12 @@ const TenantLocaleVendorShippingExtensionRoute =
     path: '/vendor/shipping-extension',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
+const TenantLocaleVendorReviewsRoute =
+  TenantLocaleVendorReviewsRouteImport.update({
+    id: '/vendor/reviews',
+    path: '/vendor/reviews',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
 const TenantLocaleVendorRestaurantsRoute =
   TenantLocaleVendorRestaurantsRouteImport.update({
     id: '/vendor/restaurants',
@@ -900,6 +911,12 @@ const TenantLocaleVendorRealEstateRoute =
   TenantLocaleVendorRealEstateRouteImport.update({
     id: '/vendor/real-estate',
     path: '/vendor/real-estate',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
+const TenantLocaleVendorQuotesRoute =
+  TenantLocaleVendorQuotesRouteImport.update({
+    id: '/vendor/quotes',
+    path: '/vendor/quotes',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
 const TenantLocaleVendorPrintOnDemandRoute =
@@ -955,6 +972,12 @@ const TenantLocaleVendorLegalRoute = TenantLocaleVendorLegalRouteImport.update({
   path: '/vendor/legal',
   getParentRoute: () => TenantLocaleRoute,
 } as any)
+const TenantLocaleVendorInvoicesRoute =
+  TenantLocaleVendorInvoicesRouteImport.update({
+    id: '/vendor/invoices',
+    path: '/vendor/invoices',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
 const TenantLocaleVendorInventoryExtensionRoute =
   TenantLocaleVendorInventoryExtensionRouteImport.update({
     id: '/vendor/inventory-extension',
@@ -1032,6 +1055,12 @@ const TenantLocaleVendorEventsRoute =
     path: '/vendor/events',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
+const TenantLocaleVendorEventTicketingRoute =
+  TenantLocaleVendorEventTicketingRouteImport.update({
+    id: '/vendor/event-ticketing',
+    path: '/vendor/event-ticketing',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
 const TenantLocaleVendorEducationRoute =
   TenantLocaleVendorEducationRouteImport.update({
     id: '/vendor/education',
@@ -1042,6 +1071,12 @@ const TenantLocaleVendorDropshippingRoute =
   TenantLocaleVendorDropshippingRouteImport.update({
     id: '/vendor/dropshipping',
     path: '/vendor/dropshipping',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
+const TenantLocaleVendorDisputesRoute =
+  TenantLocaleVendorDisputesRouteImport.update({
+    id: '/vendor/disputes',
+    path: '/vendor/disputes',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
 const TenantLocaleVendorDigitalProductsRoute =
@@ -2359,8 +2394,10 @@ export interface FileRoutesByFullPath {
   '/$tenant/$locale/vendor/credit': typeof TenantLocaleVendorCreditRoute
   '/$tenant/$locale/vendor/crowdfunding': typeof TenantLocaleVendorCrowdfundingRoute
   '/$tenant/$locale/vendor/digital-products': typeof TenantLocaleVendorDigitalProductsRoute
+  '/$tenant/$locale/vendor/disputes': typeof TenantLocaleVendorDisputesRoute
   '/$tenant/$locale/vendor/dropshipping': typeof TenantLocaleVendorDropshippingRoute
   '/$tenant/$locale/vendor/education': typeof TenantLocaleVendorEducationRoute
+  '/$tenant/$locale/vendor/event-ticketing': typeof TenantLocaleVendorEventTicketingRoute
   '/$tenant/$locale/vendor/events': typeof TenantLocaleVendorEventsRoute
   '/$tenant/$locale/vendor/financial-product': typeof TenantLocaleVendorFinancialProductRoute
   '/$tenant/$locale/vendor/fitness': typeof TenantLocaleVendorFitnessRoute
@@ -2374,6 +2411,7 @@ export interface FileRoutesByFullPath {
   '/$tenant/$locale/vendor/insurance': typeof TenantLocaleVendorInsuranceRoute
   '/$tenant/$locale/vendor/inventory': typeof TenantLocaleVendorInventoryRoute
   '/$tenant/$locale/vendor/inventory-extension': typeof TenantLocaleVendorInventoryExtensionRoute
+  '/$tenant/$locale/vendor/invoices': typeof TenantLocaleVendorInvoicesRoute
   '/$tenant/$locale/vendor/legal': typeof TenantLocaleVendorLegalRoute
   '/$tenant/$locale/vendor/loyalty': typeof TenantLocaleVendorLoyaltyRoute
   '/$tenant/$locale/vendor/memberships': typeof TenantLocaleVendorMembershipsRoute
@@ -2383,10 +2421,12 @@ export interface FileRoutesByFullPath {
   '/$tenant/$locale/vendor/payouts': typeof TenantLocaleVendorPayoutsRouteWithChildren
   '/$tenant/$locale/vendor/pet-service': typeof TenantLocaleVendorPetServiceRoute
   '/$tenant/$locale/vendor/print-on-demand': typeof TenantLocaleVendorPrintOnDemandRoute
+  '/$tenant/$locale/vendor/quotes': typeof TenantLocaleVendorQuotesRoute
   '/$tenant/$locale/vendor/real-estate': typeof TenantLocaleVendorRealEstateRoute
   '/$tenant/$locale/vendor/register': typeof TenantLocaleVendorRegisterRoute
   '/$tenant/$locale/vendor/rentals': typeof TenantLocaleVendorRentalsRoute
   '/$tenant/$locale/vendor/restaurants': typeof TenantLocaleVendorRestaurantsRoute
+  '/$tenant/$locale/vendor/reviews': typeof TenantLocaleVendorReviewsRoute
   '/$tenant/$locale/vendor/shipping-extension': typeof TenantLocaleVendorShippingExtensionRoute
   '/$tenant/$locale/vendor/shipping-rules': typeof TenantLocaleVendorShippingRulesRoute
   '/$tenant/$locale/vendor/social-commerce': typeof TenantLocaleVendorSocialCommerceRoute
@@ -2675,8 +2715,10 @@ export interface FileRoutesByTo {
   '/$tenant/$locale/vendor/credit': typeof TenantLocaleVendorCreditRoute
   '/$tenant/$locale/vendor/crowdfunding': typeof TenantLocaleVendorCrowdfundingRoute
   '/$tenant/$locale/vendor/digital-products': typeof TenantLocaleVendorDigitalProductsRoute
+  '/$tenant/$locale/vendor/disputes': typeof TenantLocaleVendorDisputesRoute
   '/$tenant/$locale/vendor/dropshipping': typeof TenantLocaleVendorDropshippingRoute
   '/$tenant/$locale/vendor/education': typeof TenantLocaleVendorEducationRoute
+  '/$tenant/$locale/vendor/event-ticketing': typeof TenantLocaleVendorEventTicketingRoute
   '/$tenant/$locale/vendor/events': typeof TenantLocaleVendorEventsRoute
   '/$tenant/$locale/vendor/financial-product': typeof TenantLocaleVendorFinancialProductRoute
   '/$tenant/$locale/vendor/fitness': typeof TenantLocaleVendorFitnessRoute
@@ -2690,6 +2732,7 @@ export interface FileRoutesByTo {
   '/$tenant/$locale/vendor/insurance': typeof TenantLocaleVendorInsuranceRoute
   '/$tenant/$locale/vendor/inventory': typeof TenantLocaleVendorInventoryRoute
   '/$tenant/$locale/vendor/inventory-extension': typeof TenantLocaleVendorInventoryExtensionRoute
+  '/$tenant/$locale/vendor/invoices': typeof TenantLocaleVendorInvoicesRoute
   '/$tenant/$locale/vendor/legal': typeof TenantLocaleVendorLegalRoute
   '/$tenant/$locale/vendor/loyalty': typeof TenantLocaleVendorLoyaltyRoute
   '/$tenant/$locale/vendor/memberships': typeof TenantLocaleVendorMembershipsRoute
@@ -2698,10 +2741,12 @@ export interface FileRoutesByTo {
   '/$tenant/$locale/vendor/parking': typeof TenantLocaleVendorParkingRoute
   '/$tenant/$locale/vendor/pet-service': typeof TenantLocaleVendorPetServiceRoute
   '/$tenant/$locale/vendor/print-on-demand': typeof TenantLocaleVendorPrintOnDemandRoute
+  '/$tenant/$locale/vendor/quotes': typeof TenantLocaleVendorQuotesRoute
   '/$tenant/$locale/vendor/real-estate': typeof TenantLocaleVendorRealEstateRoute
   '/$tenant/$locale/vendor/register': typeof TenantLocaleVendorRegisterRoute
   '/$tenant/$locale/vendor/rentals': typeof TenantLocaleVendorRentalsRoute
   '/$tenant/$locale/vendor/restaurants': typeof TenantLocaleVendorRestaurantsRoute
+  '/$tenant/$locale/vendor/reviews': typeof TenantLocaleVendorReviewsRoute
   '/$tenant/$locale/vendor/shipping-extension': typeof TenantLocaleVendorShippingExtensionRoute
   '/$tenant/$locale/vendor/shipping-rules': typeof TenantLocaleVendorShippingRulesRoute
   '/$tenant/$locale/vendor/social-commerce': typeof TenantLocaleVendorSocialCommerceRoute
@@ -2993,8 +3038,10 @@ export interface FileRoutesById {
   '/$tenant/$locale/vendor/credit': typeof TenantLocaleVendorCreditRoute
   '/$tenant/$locale/vendor/crowdfunding': typeof TenantLocaleVendorCrowdfundingRoute
   '/$tenant/$locale/vendor/digital-products': typeof TenantLocaleVendorDigitalProductsRoute
+  '/$tenant/$locale/vendor/disputes': typeof TenantLocaleVendorDisputesRoute
   '/$tenant/$locale/vendor/dropshipping': typeof TenantLocaleVendorDropshippingRoute
   '/$tenant/$locale/vendor/education': typeof TenantLocaleVendorEducationRoute
+  '/$tenant/$locale/vendor/event-ticketing': typeof TenantLocaleVendorEventTicketingRoute
   '/$tenant/$locale/vendor/events': typeof TenantLocaleVendorEventsRoute
   '/$tenant/$locale/vendor/financial-product': typeof TenantLocaleVendorFinancialProductRoute
   '/$tenant/$locale/vendor/fitness': typeof TenantLocaleVendorFitnessRoute
@@ -3008,6 +3055,7 @@ export interface FileRoutesById {
   '/$tenant/$locale/vendor/insurance': typeof TenantLocaleVendorInsuranceRoute
   '/$tenant/$locale/vendor/inventory': typeof TenantLocaleVendorInventoryRoute
   '/$tenant/$locale/vendor/inventory-extension': typeof TenantLocaleVendorInventoryExtensionRoute
+  '/$tenant/$locale/vendor/invoices': typeof TenantLocaleVendorInvoicesRoute
   '/$tenant/$locale/vendor/legal': typeof TenantLocaleVendorLegalRoute
   '/$tenant/$locale/vendor/loyalty': typeof TenantLocaleVendorLoyaltyRoute
   '/$tenant/$locale/vendor/memberships': typeof TenantLocaleVendorMembershipsRoute
@@ -3017,10 +3065,12 @@ export interface FileRoutesById {
   '/$tenant/$locale/vendor/payouts': typeof TenantLocaleVendorPayoutsRouteWithChildren
   '/$tenant/$locale/vendor/pet-service': typeof TenantLocaleVendorPetServiceRoute
   '/$tenant/$locale/vendor/print-on-demand': typeof TenantLocaleVendorPrintOnDemandRoute
+  '/$tenant/$locale/vendor/quotes': typeof TenantLocaleVendorQuotesRoute
   '/$tenant/$locale/vendor/real-estate': typeof TenantLocaleVendorRealEstateRoute
   '/$tenant/$locale/vendor/register': typeof TenantLocaleVendorRegisterRoute
   '/$tenant/$locale/vendor/rentals': typeof TenantLocaleVendorRentalsRoute
   '/$tenant/$locale/vendor/restaurants': typeof TenantLocaleVendorRestaurantsRoute
+  '/$tenant/$locale/vendor/reviews': typeof TenantLocaleVendorReviewsRoute
   '/$tenant/$locale/vendor/shipping-extension': typeof TenantLocaleVendorShippingExtensionRoute
   '/$tenant/$locale/vendor/shipping-rules': typeof TenantLocaleVendorShippingRulesRoute
   '/$tenant/$locale/vendor/social-commerce': typeof TenantLocaleVendorSocialCommerceRoute
@@ -3313,8 +3363,10 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/vendor/credit'
     | '/$tenant/$locale/vendor/crowdfunding'
     | '/$tenant/$locale/vendor/digital-products'
+    | '/$tenant/$locale/vendor/disputes'
     | '/$tenant/$locale/vendor/dropshipping'
     | '/$tenant/$locale/vendor/education'
+    | '/$tenant/$locale/vendor/event-ticketing'
     | '/$tenant/$locale/vendor/events'
     | '/$tenant/$locale/vendor/financial-product'
     | '/$tenant/$locale/vendor/fitness'
@@ -3328,6 +3380,7 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/vendor/insurance'
     | '/$tenant/$locale/vendor/inventory'
     | '/$tenant/$locale/vendor/inventory-extension'
+    | '/$tenant/$locale/vendor/invoices'
     | '/$tenant/$locale/vendor/legal'
     | '/$tenant/$locale/vendor/loyalty'
     | '/$tenant/$locale/vendor/memberships'
@@ -3337,10 +3390,12 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/vendor/payouts'
     | '/$tenant/$locale/vendor/pet-service'
     | '/$tenant/$locale/vendor/print-on-demand'
+    | '/$tenant/$locale/vendor/quotes'
     | '/$tenant/$locale/vendor/real-estate'
     | '/$tenant/$locale/vendor/register'
     | '/$tenant/$locale/vendor/rentals'
     | '/$tenant/$locale/vendor/restaurants'
+    | '/$tenant/$locale/vendor/reviews'
     | '/$tenant/$locale/vendor/shipping-extension'
     | '/$tenant/$locale/vendor/shipping-rules'
     | '/$tenant/$locale/vendor/social-commerce'
@@ -3629,8 +3684,10 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/vendor/credit'
     | '/$tenant/$locale/vendor/crowdfunding'
     | '/$tenant/$locale/vendor/digital-products'
+    | '/$tenant/$locale/vendor/disputes'
     | '/$tenant/$locale/vendor/dropshipping'
     | '/$tenant/$locale/vendor/education'
+    | '/$tenant/$locale/vendor/event-ticketing'
     | '/$tenant/$locale/vendor/events'
     | '/$tenant/$locale/vendor/financial-product'
     | '/$tenant/$locale/vendor/fitness'
@@ -3644,6 +3701,7 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/vendor/insurance'
     | '/$tenant/$locale/vendor/inventory'
     | '/$tenant/$locale/vendor/inventory-extension'
+    | '/$tenant/$locale/vendor/invoices'
     | '/$tenant/$locale/vendor/legal'
     | '/$tenant/$locale/vendor/loyalty'
     | '/$tenant/$locale/vendor/memberships'
@@ -3652,10 +3710,12 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/vendor/parking'
     | '/$tenant/$locale/vendor/pet-service'
     | '/$tenant/$locale/vendor/print-on-demand'
+    | '/$tenant/$locale/vendor/quotes'
     | '/$tenant/$locale/vendor/real-estate'
     | '/$tenant/$locale/vendor/register'
     | '/$tenant/$locale/vendor/rentals'
     | '/$tenant/$locale/vendor/restaurants'
+    | '/$tenant/$locale/vendor/reviews'
     | '/$tenant/$locale/vendor/shipping-extension'
     | '/$tenant/$locale/vendor/shipping-rules'
     | '/$tenant/$locale/vendor/social-commerce'
@@ -3946,8 +4006,10 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/vendor/credit'
     | '/$tenant/$locale/vendor/crowdfunding'
     | '/$tenant/$locale/vendor/digital-products'
+    | '/$tenant/$locale/vendor/disputes'
     | '/$tenant/$locale/vendor/dropshipping'
     | '/$tenant/$locale/vendor/education'
+    | '/$tenant/$locale/vendor/event-ticketing'
     | '/$tenant/$locale/vendor/events'
     | '/$tenant/$locale/vendor/financial-product'
     | '/$tenant/$locale/vendor/fitness'
@@ -3961,6 +4023,7 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/vendor/insurance'
     | '/$tenant/$locale/vendor/inventory'
     | '/$tenant/$locale/vendor/inventory-extension'
+    | '/$tenant/$locale/vendor/invoices'
     | '/$tenant/$locale/vendor/legal'
     | '/$tenant/$locale/vendor/loyalty'
     | '/$tenant/$locale/vendor/memberships'
@@ -3970,10 +4033,12 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/vendor/payouts'
     | '/$tenant/$locale/vendor/pet-service'
     | '/$tenant/$locale/vendor/print-on-demand'
+    | '/$tenant/$locale/vendor/quotes'
     | '/$tenant/$locale/vendor/real-estate'
     | '/$tenant/$locale/vendor/register'
     | '/$tenant/$locale/vendor/rentals'
     | '/$tenant/$locale/vendor/restaurants'
+    | '/$tenant/$locale/vendor/reviews'
     | '/$tenant/$locale/vendor/shipping-extension'
     | '/$tenant/$locale/vendor/shipping-rules'
     | '/$tenant/$locale/vendor/social-commerce'
@@ -4776,6 +4841,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleVendorShippingExtensionRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
+    '/$tenant/$locale/vendor/reviews': {
+      id: '/$tenant/$locale/vendor/reviews'
+      path: '/vendor/reviews'
+      fullPath: '/$tenant/$locale/vendor/reviews'
+      preLoaderRoute: typeof TenantLocaleVendorReviewsRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
     '/$tenant/$locale/vendor/restaurants': {
       id: '/$tenant/$locale/vendor/restaurants'
       path: '/vendor/restaurants'
@@ -4802,6 +4874,13 @@ declare module '@tanstack/react-router' {
       path: '/vendor/real-estate'
       fullPath: '/$tenant/$locale/vendor/real-estate'
       preLoaderRoute: typeof TenantLocaleVendorRealEstateRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/vendor/quotes': {
+      id: '/$tenant/$locale/vendor/quotes'
+      path: '/vendor/quotes'
+      fullPath: '/$tenant/$locale/vendor/quotes'
+      preLoaderRoute: typeof TenantLocaleVendorQuotesRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$tenant/$locale/vendor/print-on-demand': {
@@ -4865,6 +4944,13 @@ declare module '@tanstack/react-router' {
       path: '/vendor/legal'
       fullPath: '/$tenant/$locale/vendor/legal'
       preLoaderRoute: typeof TenantLocaleVendorLegalRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/vendor/invoices': {
+      id: '/$tenant/$locale/vendor/invoices'
+      path: '/vendor/invoices'
+      fullPath: '/$tenant/$locale/vendor/invoices'
+      preLoaderRoute: typeof TenantLocaleVendorInvoicesRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$tenant/$locale/vendor/inventory-extension': {
@@ -4958,6 +5044,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleVendorEventsRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
+    '/$tenant/$locale/vendor/event-ticketing': {
+      id: '/$tenant/$locale/vendor/event-ticketing'
+      path: '/vendor/event-ticketing'
+      fullPath: '/$tenant/$locale/vendor/event-ticketing'
+      preLoaderRoute: typeof TenantLocaleVendorEventTicketingRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
     '/$tenant/$locale/vendor/education': {
       id: '/$tenant/$locale/vendor/education'
       path: '/vendor/education'
@@ -4970,6 +5063,13 @@ declare module '@tanstack/react-router' {
       path: '/vendor/dropshipping'
       fullPath: '/$tenant/$locale/vendor/dropshipping'
       preLoaderRoute: typeof TenantLocaleVendorDropshippingRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/vendor/disputes': {
+      id: '/$tenant/$locale/vendor/disputes'
+      path: '/vendor/disputes'
+      fullPath: '/$tenant/$locale/vendor/disputes'
+      preLoaderRoute: typeof TenantLocaleVendorDisputesRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$tenant/$locale/vendor/digital-products': {
@@ -6576,8 +6676,10 @@ interface TenantLocaleRouteChildren {
   TenantLocaleVendorCreditRoute: typeof TenantLocaleVendorCreditRoute
   TenantLocaleVendorCrowdfundingRoute: typeof TenantLocaleVendorCrowdfundingRoute
   TenantLocaleVendorDigitalProductsRoute: typeof TenantLocaleVendorDigitalProductsRoute
+  TenantLocaleVendorDisputesRoute: typeof TenantLocaleVendorDisputesRoute
   TenantLocaleVendorDropshippingRoute: typeof TenantLocaleVendorDropshippingRoute
   TenantLocaleVendorEducationRoute: typeof TenantLocaleVendorEducationRoute
+  TenantLocaleVendorEventTicketingRoute: typeof TenantLocaleVendorEventTicketingRoute
   TenantLocaleVendorEventsRoute: typeof TenantLocaleVendorEventsRoute
   TenantLocaleVendorFinancialProductRoute: typeof TenantLocaleVendorFinancialProductRoute
   TenantLocaleVendorFitnessRoute: typeof TenantLocaleVendorFitnessRoute
@@ -6591,6 +6693,7 @@ interface TenantLocaleRouteChildren {
   TenantLocaleVendorInsuranceRoute: typeof TenantLocaleVendorInsuranceRoute
   TenantLocaleVendorInventoryRoute: typeof TenantLocaleVendorInventoryRoute
   TenantLocaleVendorInventoryExtensionRoute: typeof TenantLocaleVendorInventoryExtensionRoute
+  TenantLocaleVendorInvoicesRoute: typeof TenantLocaleVendorInvoicesRoute
   TenantLocaleVendorLegalRoute: typeof TenantLocaleVendorLegalRoute
   TenantLocaleVendorLoyaltyRoute: typeof TenantLocaleVendorLoyaltyRoute
   TenantLocaleVendorMembershipsRoute: typeof TenantLocaleVendorMembershipsRoute
@@ -6600,10 +6703,12 @@ interface TenantLocaleRouteChildren {
   TenantLocaleVendorPayoutsRoute: typeof TenantLocaleVendorPayoutsRouteWithChildren
   TenantLocaleVendorPetServiceRoute: typeof TenantLocaleVendorPetServiceRoute
   TenantLocaleVendorPrintOnDemandRoute: typeof TenantLocaleVendorPrintOnDemandRoute
+  TenantLocaleVendorQuotesRoute: typeof TenantLocaleVendorQuotesRoute
   TenantLocaleVendorRealEstateRoute: typeof TenantLocaleVendorRealEstateRoute
   TenantLocaleVendorRegisterRoute: typeof TenantLocaleVendorRegisterRoute
   TenantLocaleVendorRentalsRoute: typeof TenantLocaleVendorRentalsRoute
   TenantLocaleVendorRestaurantsRoute: typeof TenantLocaleVendorRestaurantsRoute
+  TenantLocaleVendorReviewsRoute: typeof TenantLocaleVendorReviewsRoute
   TenantLocaleVendorShippingExtensionRoute: typeof TenantLocaleVendorShippingExtensionRoute
   TenantLocaleVendorShippingRulesRoute: typeof TenantLocaleVendorShippingRulesRoute
   TenantLocaleVendorSocialCommerceRoute: typeof TenantLocaleVendorSocialCommerceRoute
@@ -6897,8 +7002,10 @@ const TenantLocaleRouteChildren: TenantLocaleRouteChildren = {
   TenantLocaleVendorCrowdfundingRoute: TenantLocaleVendorCrowdfundingRoute,
   TenantLocaleVendorDigitalProductsRoute:
     TenantLocaleVendorDigitalProductsRoute,
+  TenantLocaleVendorDisputesRoute: TenantLocaleVendorDisputesRoute,
   TenantLocaleVendorDropshippingRoute: TenantLocaleVendorDropshippingRoute,
   TenantLocaleVendorEducationRoute: TenantLocaleVendorEducationRoute,
+  TenantLocaleVendorEventTicketingRoute: TenantLocaleVendorEventTicketingRoute,
   TenantLocaleVendorEventsRoute: TenantLocaleVendorEventsRoute,
   TenantLocaleVendorFinancialProductRoute:
     TenantLocaleVendorFinancialProductRoute,
@@ -6914,6 +7021,7 @@ const TenantLocaleRouteChildren: TenantLocaleRouteChildren = {
   TenantLocaleVendorInventoryRoute: TenantLocaleVendorInventoryRoute,
   TenantLocaleVendorInventoryExtensionRoute:
     TenantLocaleVendorInventoryExtensionRoute,
+  TenantLocaleVendorInvoicesRoute: TenantLocaleVendorInvoicesRoute,
   TenantLocaleVendorLegalRoute: TenantLocaleVendorLegalRoute,
   TenantLocaleVendorLoyaltyRoute: TenantLocaleVendorLoyaltyRoute,
   TenantLocaleVendorMembershipsRoute: TenantLocaleVendorMembershipsRoute,
@@ -6924,10 +7032,12 @@ const TenantLocaleRouteChildren: TenantLocaleRouteChildren = {
   TenantLocaleVendorPayoutsRoute: TenantLocaleVendorPayoutsRouteWithChildren,
   TenantLocaleVendorPetServiceRoute: TenantLocaleVendorPetServiceRoute,
   TenantLocaleVendorPrintOnDemandRoute: TenantLocaleVendorPrintOnDemandRoute,
+  TenantLocaleVendorQuotesRoute: TenantLocaleVendorQuotesRoute,
   TenantLocaleVendorRealEstateRoute: TenantLocaleVendorRealEstateRoute,
   TenantLocaleVendorRegisterRoute: TenantLocaleVendorRegisterRoute,
   TenantLocaleVendorRentalsRoute: TenantLocaleVendorRentalsRoute,
   TenantLocaleVendorRestaurantsRoute: TenantLocaleVendorRestaurantsRoute,
+  TenantLocaleVendorReviewsRoute: TenantLocaleVendorReviewsRoute,
   TenantLocaleVendorShippingExtensionRoute:
     TenantLocaleVendorShippingExtensionRoute,
   TenantLocaleVendorShippingRulesRoute: TenantLocaleVendorShippingRulesRoute,
