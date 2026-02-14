@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react"
+import { useLocation } from "@tanstack/react-router"
 import type { CMSPage } from "@/lib/types/cityos"
 import { DynamicPage } from "@/components/pages/dynamic-page"
 
@@ -175,7 +176,8 @@ function VerticalDetailTemplate({ page, tenant, locale }: { page: CMSPage; tenan
   const [item, setItem] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  const itemId = typeof window !== "undefined" ? window.location.pathname.split("/").pop() : ""
+  const routerLocation = useLocation()
+  const itemId = routerLocation.pathname.split("/").pop() || ""
 
   useEffect(() => {
     if (!config?.medusaEndpoint || !itemId) {

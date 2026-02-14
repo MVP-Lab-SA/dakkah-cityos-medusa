@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from "react"
+import { useEffect, useState, type ReactNode } from "react"
 import { useNavigate, useLocation } from "@tanstack/react-router"
 import { useRequireAuth } from "@/lib/context/auth-context"
 import { useTenantPrefix } from "@/lib/context/tenant-context"
@@ -11,25 +11,18 @@ interface AuthGuardProps {
 }
 
 export function AuthGuard({ children, requireB2B = false, fallbackPath }: AuthGuardProps) {
-  if (typeof window === "undefined") {
-    return (
-      <div className="min-h-[400px] flex items-center justify-center">
-        <p className="text-sm text-ds-muted-foreground">Loading...</p>
-      </div>
-    )
-  }
-
-  return <ClientAuthGuard requireB2B={requireB2B} fallbackPath={fallbackPath}>{children}</ClientAuthGuard>
-}
-
-function ClientAuthGuard({ children, requireB2B = false, fallbackPath }: AuthGuardProps) {
   const { isAuthenticated, isB2B, isLoading } = useRequireAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const prefix = useTenantPrefix()
+  const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
-    if (isLoading) return
+    setIsMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!isMounted || isLoading) return
 
     if (!isAuthenticated) {
       const redirectPath = fallbackPath || `${prefix}/login`
@@ -42,9 +35,9 @@ function ClientAuthGuard({ children, requireB2B = false, fallbackPath }: AuthGua
     if (requireB2B && !isB2B) {
       navigate({ to: `${prefix}/account` as any })
     }
-  }, [isAuthenticated, isB2B, isLoading, requireB2B, navigate, location.pathname, prefix, fallbackPath])
+  }, [isMounted, isAuthenticated, isB2B, isLoading, requireB2B, navigate, location.pathname, prefix, fallbackPath])
 
-  if (isLoading) {
+  if (!isMounted || isLoading) {
     return (
       <div className="min-h-[400px] flex items-center justify-center">
         <div className="text-center space-y-4">

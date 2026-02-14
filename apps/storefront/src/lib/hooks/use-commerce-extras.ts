@@ -1,25 +1,12 @@
 import { useQuery } from "@tanstack/react-query"
-
-const baseUrl = typeof window !== "undefined"
-  ? (import.meta.env.VITE_MEDUSA_BACKEND_URL || "http://localhost:9000")
-  : "http://localhost:9000"
+import { sdk } from "../utils/sdk"
 
 async function fetchApi<T>(path: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(`${baseUrl}${path}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options?.headers,
-    },
-    credentials: "include",
+  const response = await sdk.client.fetch<T>(path, {
+    method: options?.method || "GET",
+    body: options?.body,
   })
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: "Request failed" }))
-    throw new Error(error.message || "Request failed")
-  }
-
-  return response.json()
+  return response as T
 }
 
 export const commerceExtrasKeys = {

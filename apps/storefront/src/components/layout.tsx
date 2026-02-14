@@ -9,24 +9,10 @@ import { ThemeProvider } from "@dakkah-cityos/design-runtime"
 import { Outlet, useLocation } from "@tanstack/react-router"
 
 const Layout = () => {
-  if (typeof window === "undefined") {
-    return (
-      <div id="app-root" className="min-h-screen flex flex-col">
-        <main className="relative flex-1">
-          <Outlet />
-        </main>
-      </div>
-    )
-  }
-
-  return <ClientLayout />
-};
-
-function ClientLayout() {
   useStoreTheme()
   const location = useLocation()
   const isManagePage = /\/[^/]+\/[^/]+\/manage(\/|$)/.test(location.pathname)
-  
+
   if (isManagePage) {
     return (
       <ThemeProvider>

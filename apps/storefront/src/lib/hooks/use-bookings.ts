@@ -21,24 +21,12 @@ export const bookingKeys = {
   detail: (id: string) => [...bookingKeys.all, "detail", id] as const,
 }
 
-// API Fetch helper
 async function fetchApi<T>(path: string, options?: RequestInit): Promise<T> {
-  const baseUrl = import.meta.env.VITE_MEDUSA_BACKEND_URL || "http://localhost:9000"
-  const response = await fetch(`${baseUrl}${path}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options?.headers,
-    },
-    credentials: "include",
+  const response = await sdk.client.fetch<T>(path, {
+    method: options?.method || "GET",
+    body: options?.body,
   })
-  
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: "Request failed" }))
-    throw new Error(error.message || "Request failed")
-  }
-  
-  return response.json()
+  return response as T
 }
 
 // Hooks - Services

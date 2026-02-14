@@ -30,18 +30,6 @@ const navItems = [
 ]
 
 export function AccountLayout({ children, title, description }: AccountLayoutProps) {
-  if (typeof window === "undefined") {
-    return (
-      <div className="min-h-screen bg-ds-muted flex items-center justify-center">
-        <p className="text-sm text-ds-muted-foreground">Loading account...</p>
-      </div>
-    )
-  }
-
-  return <ClientAccountLayout title={title} description={description}>{children}</ClientAccountLayout>
-}
-
-function ClientAccountLayout({ children, title, description }: AccountLayoutProps) {
   const location = useLocation()
   const prefix = useTenantPrefix()
   const baseHref = `${prefix}/account`
@@ -58,7 +46,6 @@ function ClientAccountLayout({ children, title, description }: AccountLayoutProp
   return (
     <AuthGuard>
       <div className="min-h-screen bg-ds-muted">
-        {/* Header */}
         <div className="bg-ds-background border-b border-ds-border">
           <div className="content-container py-8">
             <div className="flex items-center justify-between">
@@ -82,7 +69,6 @@ function ClientAccountLayout({ children, title, description }: AccountLayoutProp
 
         <div className="content-container py-8">
           <div className="flex flex-col lg:flex-row gap-8">
-            {/* Sidebar */}
             <aside className="lg:w-64 flex-shrink-0">
               <nav className="bg-ds-background rounded-lg border border-ds-border overflow-hidden">
                 {navItems.map((item) => {
@@ -109,7 +95,6 @@ function ClientAccountLayout({ children, title, description }: AccountLayoutProp
                 })}
               </nav>
 
-              {/* B2B Quick Access */}
               {isB2B && (
                 <div className="mt-4 bg-ds-background rounded-lg border border-ds-border p-4">
                   <h3 className="text-sm font-semibold text-ds-foreground mb-3">Business</h3>
@@ -133,7 +118,6 @@ function ClientAccountLayout({ children, title, description }: AccountLayoutProp
               )}
             </aside>
 
-            {/* Main Content */}
             <main className="flex-1 min-w-0">{children}</main>
           </div>
         </div>

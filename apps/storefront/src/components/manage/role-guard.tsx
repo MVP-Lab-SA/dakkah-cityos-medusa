@@ -135,10 +135,6 @@ export function RoleGuard({ children, locale: localeProp }: RoleGuardProps) {
   const locale = localeProp || ctxLocale || "en"
   const { customer, isLoading, isAuthenticated } = useAuth()
 
-  if (typeof window === "undefined") {
-    return <LoadingState locale={locale} />
-  }
-
   if (isLoading) {
     return <LoadingState locale={locale} />
   }

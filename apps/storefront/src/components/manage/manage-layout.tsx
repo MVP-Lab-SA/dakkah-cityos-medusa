@@ -16,17 +16,6 @@ export function ManageLayout({ children, locale: localeProp }: ManageLayoutProps
   const { locale: ctxLocale, tenantSlug } = useTenant()
   const locale = localeProp || ctxLocale || "en"
 
-  if (typeof window === "undefined") {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="w-8 h-8 border-2 border-violet-600 border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-sm text-gray-500">{t(locale, "common.loading")}</p>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <RoleGuard locale={locale}>
       <ManageLayoutClient locale={locale} tenantSlug={tenantSlug}>
