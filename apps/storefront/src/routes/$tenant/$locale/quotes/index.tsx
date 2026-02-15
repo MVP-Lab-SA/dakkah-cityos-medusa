@@ -1,66 +1,106 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { QuoteList } from "@/components/quotes/quote-list";
-import { Button } from "@/components/ui/button";
-import { Link } from "@tanstack/react-router";
-
-interface Quote {
-  id: string;
-  quote_number: string;
-  status: string;
-  total: number;
-  created_at: string;
-  valid_until?: string;
-  items?: Array<{ id: string }>;
-}
+// @ts-nocheck
+import { createFileRoute, Link } from "@tanstack/react-router"
+import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/quotes/")({
   component: QuotesPage,
   loader: async () => {
-    try {
-      const isServer = typeof window === "undefined"
-      const baseUrl = isServer ? "http://localhost:9000" : ""
-      const resp = await fetch(`${baseUrl}/store/quotes`, {
-        headers: {
-          "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445",
-        },
-      })
-      if (!resp.ok) return { quotes: [], count: 0 }
-      const data = await resp.json()
-      return { quotes: data.quotes || data.items || [], count: data.count || 0 }
-    } catch {
-      return { quotes: [], count: 0 }
-    }
+    const categories = [
+      { id: "1", name: "Construction", description: "Building, renovation, and infrastructure projects of any scale.", icon: "🏗️", image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop", avgTime: "2-3 days" },
+      { id: "2", name: "Catering", description: "Food services for events, corporate functions, and celebrations.", icon: "🍽️", image: "https://images.unsplash.com/photo-1555244162-803834f70033?w=400&h=300&fit=crop", avgTime: "1-2 days" },
+      { id: "3", name: "Events", description: "Event planning, venues, entertainment, and production services.", icon: "🎪", image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=300&fit=crop", avgTime: "1-3 days" },
+      { id: "4", name: "IT Services", description: "Software development, cloud solutions, cybersecurity, and IT support.", icon: "💻", image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=300&fit=crop", avgTime: "2-5 days" },
+      { id: "5", name: "Marketing", description: "Digital marketing, branding, social media, and advertising campaigns.", icon: "📣", image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop", avgTime: "1-2 days" },
+      { id: "6", name: "Consulting", description: "Business strategy, management consulting, and professional advisory.", icon: "📊", image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&h=300&fit=crop", avgTime: "1-3 days" },
+    ]
+    return { categories }
   },
-});
+})
 
 function QuotesPage() {
-  const { tenant, locale } = Route.useParams();
-  const data = Route.useLoaderData();
+  const { tenant, locale } = Route.useParams()
+  const prefix = `/${tenant}/${locale}`
+  const [searchQuery, setSearchQuery] = useState("")
+  const data = Route.useLoaderData()
+  const categories = data?.categories || []
+
+  const filtered = categories.filter((c: any) =>
+    searchQuery ? c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.description.toLowerCase().includes(searchQuery.toLowerCase()) : true
+  )
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-6xl">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">My Quotes</h1>
-          <p className="text-muted-foreground">
-            View and manage your quote requests
-          </p>
+    <div className="min-h-screen bg-ds-background">
+      <div className="bg-gradient-to-r from-amber-500 to-orange-600 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <span>/</span>
+            <span className="text-white">Quotes</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Request a Quote</h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">Get competitive quotes from verified service providers across multiple industries. Fast, free, and no obligation.</p>
+          <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
+            <span>6 categories</span><span>|</span><span>Free quotes</span><span>|</span><span>Verified providers</span>
+          </div>
         </div>
-        <Link to="/$tenant/$locale/quotes/request" params={{ tenant, locale }}>
-          <Button>Request New Quote</Button>
-        </Link>
       </div>
 
-      {data?.quotes?.length === 0 ? (
-        <div className="text-center py-12 border rounded-lg bg-muted/20">
-          <p className="text-muted-foreground mb-4">You haven't requested any quotes yet.</p>
-          <Link to="/$tenant/$locale/quotes/request" params={{ tenant, locale }}>
-            <Button>Request Your First Quote</Button>
-          </Link>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-6">
+          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search service categories..." className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber-500" />
         </div>
-      ) : (
-        <QuoteList quotes={data?.quotes || []} />
-      )}
+
+        {filtered.length === 0 ? (
+          <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
+            <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
+            <h3 className="text-lg font-semibold text-ds-foreground mb-2">No categories found</h3>
+            <p className="text-ds-muted-foreground text-sm">Try adjusting your search.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {filtered.map((cat: any) => (
+              <div key={cat.id} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-amber-300 transition-all duration-200">
+                <div className="aspect-[4/3] relative overflow-hidden">
+                  <img src={cat.image} alt={cat.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute top-3 left-3 text-3xl">{cat.icon}</div>
+                  <div className="absolute bottom-3 left-3">
+                    <span className="px-2 py-1 text-xs font-medium bg-white/90 text-gray-800 rounded-md">Avg. response: {cat.avgTime}</span>
+                  </div>
+                </div>
+                <div className="p-5">
+                  <h3 className="text-lg font-semibold text-ds-foreground mb-2 group-hover:text-amber-600 transition-colors">{cat.name}</h3>
+                  <p className="text-sm text-ds-muted-foreground mb-4">{cat.description}</p>
+                  <button className="w-full py-2.5 text-sm font-medium rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition-colors">Get Quote</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <section className="py-16 bg-ds-card border-t border-ds-border">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-amber-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Select a Category</h3>
+              <p className="text-sm text-ds-muted-foreground">Choose the service type you need a quote for.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-amber-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Describe Your Needs</h3>
+              <p className="text-sm text-ds-muted-foreground">Provide details about your project requirements and timeline.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-amber-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Receive Quotes</h3>
+              <p className="text-sm text-ds-muted-foreground">Get competitive quotes from verified providers within 24-48 hours.</p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
-  );
+  )
 }

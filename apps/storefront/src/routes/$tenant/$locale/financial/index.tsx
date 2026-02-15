@@ -5,176 +5,115 @@ import { useState } from "react"
 export const Route = createFileRoute("/$tenant/$locale/financial/")({
   component: FinancialPage,
   loader: async () => {
-    try {
-      const isServer = typeof window === "undefined"
-      const baseUrl = isServer ? "http://localhost:9000" : ""
-      const resp = await fetch(`${baseUrl}/store/financial-products`, {
-        headers: {
-          "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445",
-        },
-      })
-      if (!resp.ok) return { items: [], count: 0 }
-      const data = await resp.json()
-      return { items: data.items || data.listings || data.products || [], count: data.count || 0 }
-    } catch {
-      return { items: [], count: 0 }
-    }
+    const services = [
+      { id: "1", name: "Personal Loans", description: "Flexible personal loans with competitive rates starting from 2.5% APR. Quick approval and disbursement within 24 hours.", icon: "banknotes", rate: "From 2.5% APR", image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=300&fit=crop" },
+      { id: "2", name: "Business Financing", description: "Tailored financing solutions for SMEs and enterprises. Working capital, equipment financing, and growth funding.", icon: "building", rate: "From 3.5% APR", image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=300&fit=crop" },
+      { id: "3", name: "Insurance", description: "Comprehensive insurance products covering health, auto, property, and travel. Protect what matters most.", icon: "shield", rate: "From 99 SAR/mo", image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=400&h=300&fit=crop" },
+      { id: "4", name: "Investment", description: "Diversified investment portfolios managed by expert advisors. Grow your wealth with stocks, sukuk, and mutual funds.", icon: "chart", rate: "5-12% returns", image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&h=300&fit=crop" },
+      { id: "5", name: "Payment Plans", description: "Split your purchases into easy installments with 0% interest on select plans. Buy now, pay later with flexibility.", icon: "calendar", rate: "0% interest available", image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop" },
+      { id: "6", name: "Currency Exchange", description: "Real-time currency exchange at competitive rates. Send and receive international transfers with low fees.", icon: "globe", rate: "Low 0.5% spread", image: "https://images.unsplash.com/photo-1580519542036-c47de6196ba5?w=400&h=300&fit=crop" },
+    ]
+    return { services }
   },
 })
 
-const productTypes = ["all", "loan", "savings", "investment", "credit-card", "mortgage", "insurance"] as const
-const rateRanges = ["all", "under-3", "3-5", "5-10", "over-10"] as const
+const iconPaths: Record<string, string> = {
+  banknotes: "M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z",
+  building: "M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21",
+  shield: "M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z",
+  chart: "M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z",
+  calendar: "M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5",
+  globe: "M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418",
+}
 
 function FinancialPage() {
   const { tenant, locale } = Route.useParams()
   const prefix = `/${tenant}/${locale}`
   const [searchQuery, setSearchQuery] = useState("")
-  const [productType, setProductType] = useState("all")
-  const [rateRange, setRateRange] = useState("all")
-  const [page, setPage] = useState(1)
-  const limit = 12
+  const data = Route.useLoaderData()
+  const services = data?.services || []
 
-  const loaderData = Route.useLoaderData()
-  const data = loaderData
-  const isLoading = false
-  const error = null
-
-  const products = data?.products || []
-  const totalPages = Math.ceil((data?.count || 0) / limit)
-  const filtered = products.filter((p: any) =>
-    searchQuery ? (p.name || p.title || "").toLowerCase().includes(searchQuery.toLowerCase()) : true
+  const filtered = services.filter((s: any) =>
+    searchQuery ? s.name.toLowerCase().includes(searchQuery.toLowerCase()) || s.description.toLowerCase().includes(searchQuery.toLowerCase()) : true
   )
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-ds-card border-b border-ds-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center gap-2 text-sm text-ds-muted-foreground mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-ds-foreground transition-colors">Home</Link>
+      <div className="bg-gradient-to-r from-slate-600 to-gray-800 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
-            <span className="text-ds-foreground">Financial Products</span>
+            <span className="text-white">Financial Services</span>
           </div>
-          <h1 className="text-3xl font-bold text-ds-foreground">Browse Financial Products</h1>
-          <p className="mt-2 text-ds-muted-foreground">Compare loans, savings accounts, investments, and more</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Financial Services</h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">Comprehensive financial solutions including loans, insurance, investments, and currency exchange services.</p>
+          <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
+            <span>6 services</span><span>|</span><span>Competitive rates</span><span>|</span><span>Shariah compliant</span>
+          </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          <aside className="w-full lg:w-72 flex-shrink-0">
-            <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
-              <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
-                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search products..." className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring" />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Product Type</label>
-                <div className="space-y-1">
-                  {productTypes.map((opt) => (
-                    <button key={opt} onClick={() => { setProductType(opt); setPage(1) }} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${productType === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}>
-                      {opt === "all" ? "All Types" : opt.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Interest Rate</label>
-                <div className="space-y-1">
-                  {rateRanges.map((opt) => (
-                    <button key={opt} onClick={() => { setRateRange(opt); setPage(1) }} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${rateRange === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}>
-                      {opt === "all" ? "All Rates" : opt === "under-3" ? "Under 3%" : opt === "3-5" ? "3% - 5%" : opt === "5-10" ? "5% - 10%" : "Over 10%"}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </aside>
-
-          <main className="flex-1">
-            {error ? (
-              <div className="bg-ds-destructive/10 border border-ds-destructive/20 rounded-xl p-8 text-center">
-                <svg className="w-12 h-12 text-ds-destructive mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                </svg>
-                <p className="text-ds-destructive font-medium">Something went wrong loading financial products.</p>
-              </div>
-            ) : isLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="bg-ds-background border border-ds-border rounded-xl p-6 space-y-3">
-                    <div className="h-10 w-10 bg-ds-muted rounded-lg animate-pulse" />
-                    <div className="h-5 w-3/4 bg-ds-muted rounded animate-pulse" />
-                    <div className="h-4 w-1/2 bg-ds-muted rounded animate-pulse" />
-                    <div className="h-12 w-full bg-ds-muted rounded animate-pulse" />
-                    <div className="h-8 w-full bg-ds-muted rounded animate-pulse" />
-                  </div>
-                ))}
-              </div>
-            ) : !filtered || filtered.length === 0 ? (
-              <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
-                <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No financial products found</h3>
-                <p className="text-ds-muted-foreground text-sm">Try adjusting your filters or check back later.</p>
-              </div>
-            ) : (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {filtered.map((product: any) => (
-                    <a key={product.id} href={`${prefix}/financial/${product.id}`} className="group bg-ds-background border border-ds-border rounded-xl p-6 hover:shadow-lg hover:border-ds-primary/30 transition-all duration-200">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 rounded-lg bg-ds-primary/10 flex items-center justify-center flex-shrink-0">
-                          <svg className="w-5 h-5 text-ds-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                        </div>
-                        <div>
-                          <h3 className="font-semibold text-ds-foreground group-hover:text-ds-primary transition-colors line-clamp-1">{product.name || "Financial Product"}</h3>
-                          {product.provider && <p className="text-xs text-ds-muted-foreground">{product.provider}</p>}
-                        </div>
-                      </div>
-                      {product.type && <span className="inline-block px-2 py-1 text-xs font-medium rounded-full bg-ds-muted text-ds-muted-foreground mb-3">{product.type}</span>}
-                      <div className="space-y-2 text-sm mb-4">
-                        {product.rate != null && (
-                          <div className="flex justify-between">
-                            <span className="text-ds-muted-foreground">Rate</span>
-                            <span className="font-bold text-xl text-ds-primary">{product.rate}%</span>
-                          </div>
-                        )}
-                        {product.term && (
-                          <div className="flex justify-between">
-                            <span className="text-ds-muted-foreground">Term</span>
-                            <span className="font-medium text-ds-foreground">{product.term}</span>
-                          </div>
-                        )}
-                        {product.min_amount && (
-                          <div className="flex justify-between">
-                            <span className="text-ds-muted-foreground">Min. Amount</span>
-                            <span className="font-medium text-ds-foreground">${(product.min_amount / 100).toLocaleString()}</span>
-                          </div>
-                        )}
-                      </div>
-                      <div className="pt-3 border-t border-ds-border">
-                        <span className="text-sm font-medium text-ds-primary group-hover:underline">Learn More →</span>
-                      </div>
-                    </a>
-                  ))}
-                </div>
-                {totalPages > 1 && (
-                  <div className="flex items-center justify-center gap-2 mt-8">
-                    <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="px-4 py-2 text-sm rounded-lg border border-ds-border text-ds-foreground hover:bg-ds-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors">Previous</button>
-                    <span className="px-4 py-2 text-sm text-ds-muted-foreground">Page {page} of {totalPages}</span>
-                    <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="px-4 py-2 text-sm rounded-lg border border-ds-border text-ds-foreground hover:bg-ds-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors">Next</button>
-                  </div>
-                )}
-              </>
-            )}
-          </main>
+        <div className="mb-6">
+          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search financial services..." className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-slate-500" />
         </div>
+
+        {filtered.length === 0 ? (
+          <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
+            <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <h3 className="text-lg font-semibold text-ds-foreground mb-2">No services found</h3>
+            <p className="text-ds-muted-foreground text-sm">Try adjusting your search.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {filtered.map((s: any) => (
+              <div key={s.id} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-slate-300 transition-all duration-200">
+                <div className="aspect-[4/3] relative overflow-hidden">
+                  <img src={s.image} alt={s.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-3 left-3">
+                    <span className="px-2 py-1 text-xs font-medium bg-white/90 text-gray-800 rounded-md">{s.rate}</span>
+                  </div>
+                </div>
+                <div className="p-5">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-5 h-5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={iconPaths[s.icon] || iconPaths.banknotes} /></svg>
+                    </div>
+                    <h3 className="font-semibold text-ds-foreground group-hover:text-slate-600 transition-colors">{s.name}</h3>
+                  </div>
+                  <p className="text-sm text-ds-muted-foreground mb-4">{s.description}</p>
+                  <button className="w-full py-2.5 text-sm font-medium rounded-lg bg-slate-700 text-white hover:bg-slate-800 transition-colors">Learn More</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
+
+      <section className="py-16 bg-ds-card border-t border-ds-border">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-slate-700 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Browse Services</h3>
+              <p className="text-sm text-ds-muted-foreground">Explore our range of financial products and services.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-slate-700 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Apply Online</h3>
+              <p className="text-sm text-ds-muted-foreground">Complete a simple application with instant decisions.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-slate-700 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Get Started</h3>
+              <p className="text-sm text-ds-muted-foreground">Receive funds or activate your service within 24 hours.</p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

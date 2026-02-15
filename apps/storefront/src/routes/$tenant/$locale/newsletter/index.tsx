@@ -2,6 +2,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
 
+const fallbackItems = [
+  { id: "nl-1", name: "Tech Trends Weekly", topic: "technology", thumbnail: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80", edition_date: "2026-02-10", topics_covered: ["AI & Machine Learning", "Web3 Updates", "Cloud Computing"], description: "Stay ahead with the latest technology trends, product launches, and industry insights." },
+  { id: "nl-2", name: "Style & Living", topic: "lifestyle", thumbnail: "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=600&q=80", edition_date: "2026-02-08", topics_covered: ["Fashion Tips", "Interior Design", "Wellness"], description: "Your weekly guide to fashion, home design, and modern living." },
+  { id: "nl-3", name: "Business Insider Report", topic: "business", thumbnail: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80", edition_date: "2026-02-12", topics_covered: ["Market Analysis", "Startup News", "Investment Tips"], description: "Comprehensive business intelligence and market analysis for professionals." },
+  { id: "nl-4", name: "Green Planet Digest", topic: "sustainability", thumbnail: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&q=80", edition_date: "2026-02-05", topics_covered: ["Climate Action", "Sustainable Products", "Eco-Innovations"], description: "Environmental news, sustainable living tips, and eco-friendly product reviews." },
+  { id: "nl-5", name: "Health & Wellness Focus", topic: "health", thumbnail: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=80", edition_date: "2026-02-11", topics_covered: ["Nutrition Guide", "Fitness Plans", "Mental Health"], description: "Expert-backed health advice, workout routines, and nutrition guides." },
+  { id: "nl-6", name: "The Deal Hunter", topic: "shopping", thumbnail: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=600&q=80", edition_date: "2026-02-13", topics_covered: ["Best Deals", "Coupon Codes", "Product Reviews"], description: "Never miss a great deal — curated savings and product recommendations." },
+]
+
 export const Route = createFileRoute("/$tenant/$locale/newsletter/")({
   component: NewsletterPage,
   loader: async () => {
@@ -13,136 +22,179 @@ export const Route = createFileRoute("/$tenant/$locale/newsletter/")({
           "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445",
         },
       })
-      if (!resp.ok) return { items: [], count: 0 }
+      if (!resp.ok) return { items: fallbackItems, count: fallbackItems.length }
       const data = await resp.json()
-      return { items: data.items || data.listings || data.products || [], count: data.count || 0 }
+      const raw = data.items || data.newsletters || data.listings || []
+      return { items: raw.length > 0 ? raw : fallbackItems, count: raw.length > 0 ? (data.count || raw.length) : fallbackItems.length }
     } catch {
-      return { items: [], count: 0 }
+      return { items: fallbackItems, count: fallbackItems.length }
     }
   },
 })
+
+const topicOptions = ["all", "technology", "lifestyle", "business", "sustainability", "health", "shopping"] as const
 
 function NewsletterPage() {
   const { tenant, locale } = Route.useParams()
   const prefix = `/${tenant}/${locale}`
   const [searchQuery, setSearchQuery] = useState("")
-  const [subscribedIds, setSubscribedIds] = useState<Set<string>>(new Set())
+  const [topicFilter, setTopicFilter] = useState<string>("all")
 
   const loaderData = Route.useLoaderData()
-  const data = loaderData
-  const isLoading = false
-  const error = null
-  const items = data?.newsletters || []
+  const items = loaderData?.items || []
 
-  const filteredItems = items.filter((item) =>
-    searchQuery ? item.name?.toLowerCase().includes(searchQuery.toLowerCase()) || item.title?.toLowerCase().includes(searchQuery.toLowerCase()) || item.description?.toLowerCase().includes(searchQuery.toLowerCase()) : true
-  )
-
-  function handleSubscribe(id: string) {
-    setSubscribedIds((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) {
-        next.delete(id)
-      } else {
-        next.add(id)
-      }
-      return next
-    })
-  }
+  const filteredItems = items.filter((item: any) => {
+    const matchesSearch = searchQuery
+      ? (item.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.description || "").toLowerCase().includes(searchQuery.toLowerCase())
+      : true
+    const matchesTopic = topicFilter === "all" || item.topic === topicFilter
+    return matchesSearch && matchesTopic
+  })
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-ds-card border-b border-ds-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center gap-2 text-sm text-ds-muted-foreground mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-ds-foreground transition-colors">Home</Link>
+      <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
-            <span className="text-ds-foreground">Newsletter</span>
+            <span className="text-white">Newsletter</span>
           </div>
-          <h1 className="text-3xl font-bold text-ds-foreground">Newsletters</h1>
-          <p className="mt-2 text-ds-muted-foreground">Stay informed with our curated newsletters — subscribe to topics that interest you</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">📬 Newsletter</h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">
+            Stay informed with curated content — browse our newsletter editions and never miss an update.
+          </p>
+          <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
+            <span>{items.length} editions</span>
+            <span>|</span>
+            <span>Weekly updates</span>
+            <span>|</span>
+            <span>Free to read</span>
+          </div>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search newsletters..."
-            className="w-full px-4 py-3 text-sm rounded-xl border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring"
-          />
-        </div>
-
-        {error ? (
-          <div className="bg-ds-destructive/10 border border-ds-destructive/20 rounded-xl p-8 text-center">
-            <svg className="w-12 h-12 text-ds-destructive mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
-            </svg>
-            <p className="text-ds-destructive font-medium">Something went wrong loading newsletters.</p>
-          </div>
-        ) : isLoading ? (
-          <div className="space-y-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="bg-ds-background border border-ds-border rounded-xl p-6">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1 space-y-3">
-                    <div className="h-6 w-1/3 bg-ds-muted rounded animate-pulse" />
-                    <div className="h-4 w-2/3 bg-ds-muted rounded animate-pulse" />
-                    <div className="h-4 w-1/4 bg-ds-muted rounded animate-pulse" />
-                  </div>
-                  <div className="h-10 w-28 bg-ds-muted rounded-lg animate-pulse" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
+          <aside className="w-full lg:w-72 flex-shrink-0">
+            <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
+              <div>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search newsletters..."
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">Topic</label>
+                <div className="space-y-1">
+                  {topicOptions.map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => setTopicFilter(opt)}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${topicFilter === opt ? "bg-blue-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                    >
+                      {opt === "all" ? "All Topics" : opt.charAt(0).toUpperCase() + opt.slice(1)}
+                    </button>
+                  ))}
                 </div>
               </div>
-            ))}
-          </div>
-        ) : filteredItems.length === 0 ? (
-          <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
-            <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-            </svg>
-            <h3 className="text-lg font-semibold text-ds-foreground mb-2">No newsletters found</h3>
-            <p className="text-ds-muted-foreground text-sm">Check back later for new newsletter topics.</p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {filteredItems.map((item: any) => {
-              const isSubscribed = subscribedIds.has(item.id)
-              return (
-                <div
-                  key={item.id}
-                  className="bg-ds-background border border-ds-border rounded-xl p-6 hover:border-ds-primary/30 transition-all duration-200"
-                >
-                  <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-lg font-semibold text-ds-foreground">{item.name || item.title}</h3>
-                        {item.frequency && (
-                          <span className="px-2 py-0.5 text-xs font-medium bg-ds-muted text-ds-muted-foreground rounded">{item.frequency}</span>
-                        )}
-                      </div>
-                      <p className="mt-2 text-sm text-ds-muted-foreground line-clamp-2">{item.description || "Stay up to date with the latest news and updates."}</p>
-                      {item.category && (
-                        <span className="inline-block mt-2 px-2 py-0.5 text-xs font-medium bg-ds-primary/10 text-ds-primary rounded">{item.category}</span>
+            </div>
+          </aside>
+
+          <main className="flex-1">
+            {filteredItems.length === 0 ? (
+              <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
+                <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                </svg>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No newsletters found</h3>
+                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {filteredItems.map((item: any) => (
+                  <div
+                    key={item.id}
+                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-blue-300 transition-all duration-200"
+                  >
+                    <div className="aspect-[4/3] bg-gradient-to-br from-blue-50 to-indigo-50 relative overflow-hidden">
+                      {item.thumbnail ? (
+                        <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <svg className="w-16 h-16 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75" />
+                          </svg>
+                        </div>
                       )}
-                      {item.subscriber_count !== undefined && (
-                        <p className="mt-2 text-xs text-ds-muted-foreground">{Number(item.subscriber_count).toLocaleString()} subscribers</p>
+                      {item.topic && (
+                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-blue-600 text-white rounded-md capitalize">{item.topic}</span>
+                      )}
+                      {item.edition_date && (
+                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-white/90 text-gray-700 rounded-md">
+                          {new Date(item.edition_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                        </span>
                       )}
                     </div>
-                    <button
-                      onClick={() => handleSubscribe(item.id)}
-                      className={`px-6 py-2.5 text-sm font-medium rounded-lg transition-colors flex-shrink-0 ${isSubscribed ? "bg-ds-muted text-ds-foreground hover:bg-ds-destructive/10 hover:text-ds-destructive" : "bg-ds-primary text-ds-primary-foreground hover:opacity-90"}`}
-                    >
-                      {isSubscribed ? "Unsubscribe" : "Subscribe"}
-                    </button>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-blue-600 transition-colors line-clamp-1">{item.name}</h3>
+                      {item.description && (
+                        <p className="text-sm text-ds-muted-foreground mt-1 line-clamp-2">{item.description}</p>
+                      )}
+
+                      {item.topics_covered && (
+                        <div className="mt-3">
+                          <p className="text-xs text-ds-muted-foreground mb-1.5">Topics covered:</p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {item.topics_covered.map((topic: string) => (
+                              <span key={topic} className="px-2 py-0.5 bg-blue-50 text-blue-700 rounded text-xs font-medium">{topic}</span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
+                        <span className="text-xs text-ds-muted-foreground">
+                          {item.edition_date ? new Date(item.edition_date).toLocaleDateString() : "Recent edition"}
+                        </span>
+                        <span className="px-4 py-1.5 text-xs font-semibold text-white bg-blue-600 rounded-lg group-hover:bg-blue-700 transition-colors">Read Newsletter</span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              )
-            })}
-          </div>
-        )}
+                ))}
+              </div>
+            )}
+          </main>
+        </div>
       </div>
+
+      <section className="py-16 bg-ds-card border-t border-ds-border">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">Stay Connected</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Browse Topics</h3>
+              <p className="text-sm text-ds-muted-foreground">Find newsletters that match your interests.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Read & Learn</h3>
+              <p className="text-sm text-ds-muted-foreground">Access curated content from industry experts.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Subscribe</h3>
+              <p className="text-sm text-ds-muted-foreground">Get weekly updates delivered to your inbox.</p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

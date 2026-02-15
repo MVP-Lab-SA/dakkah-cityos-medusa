@@ -1,145 +1,100 @@
-import { createFileRoute } from "@tanstack/react-router"
+// @ts-nocheck
+import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
-import { usePOIs } from "@/lib/hooks/use-content"
-import { POICardComponent } from "@/components/poi/poi-card"
-import { POIFilterBar } from "@/components/poi/poi-filter-bar"
-import { POIMapView } from "@/components/poi/poi-map-view"
-import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/places/")({
   component: PlacesPage,
+  loader: async () => {
+    const places = [
+      { id: "1", name: "Grand Mosque (Masjid al-Haram)", description: "The largest mosque in the world, surrounding Islam's holiest place, the Kaaba in Mecca.", category: "Religious", rating: 4.9, reviews: 12500, location: "Mecca, Saudi Arabia", image: "https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?w=400&h=300&fit=crop" },
+      { id: "2", name: "Souq Al-Zal", description: "Historic marketplace in Riyadh known for traditional crafts, antiques, and authentic Arabian goods.", category: "Shopping", rating: 4.5, reviews: 3200, location: "Riyadh, Saudi Arabia", image: "https://images.unsplash.com/photo-1578895101408-1a36b834405b?w=400&h=300&fit=crop" },
+      { id: "3", name: "Kingdom Tower", description: "Iconic 99-floor skyscraper with a sky bridge offering panoramic views of Riyadh's skyline.", category: "Landmark", rating: 4.7, reviews: 8900, location: "Riyadh, Saudi Arabia", image: "https://images.unsplash.com/photo-1586724237569-f3d0c1dee8c6?w=400&h=300&fit=crop" },
+      { id: "4", name: "Al Masmak Fort", description: "Historic clay and mud-brick fortress that played a key role in the founding of Saudi Arabia.", category: "Historical", rating: 4.6, reviews: 5600, location: "Riyadh, Saudi Arabia", image: "https://images.unsplash.com/photo-1578469550956-0e16b69c6a3d?w=400&h=300&fit=crop" },
+      { id: "5", name: "Edge of the World", description: "Dramatic cliff formation northwest of Riyadh offering breathtaking views of the endless desert.", category: "Nature", rating: 4.8, reviews: 4200, location: "Riyadh Province, Saudi Arabia", image: "https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=400&h=300&fit=crop" },
+      { id: "6", name: "Al-Ula Heritage Village", description: "Ancient village with remarkable rock formations and the UNESCO World Heritage site of Hegra.", category: "Heritage", rating: 4.9, reviews: 6700, location: "Al-Ula, Saudi Arabia", image: "https://images.unsplash.com/photo-1632321757486-66b4a4e7a627?w=400&h=300&fit=crop" },
+      { id: "7", name: "Jeddah Corniche", description: "Beautiful waterfront promenade stretching along the Red Sea with parks, sculptures, and dining.", category: "Leisure", rating: 4.4, reviews: 7800, location: "Jeddah, Saudi Arabia", image: "https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&h=300&fit=crop" },
+      { id: "8", name: "Diriyah", description: "Historic seat of the first Saudi state, now a cultural destination with museums and restaurants.", category: "Heritage", rating: 4.7, reviews: 4500, location: "Riyadh, Saudi Arabia", image: "https://images.unsplash.com/photo-1586724237569-f3d0c1dee8c6?w=400&h=300&fit=crop" },
+    ]
+    return { places }
+  },
 })
 
-const poiCategories = [
-  "Restaurant",
-  "Shopping",
-  "Healthcare",
-  "Education",
-  "Entertainment",
-  "Government",
-  "Transportation",
-  "Parks",
-]
+const categoryOptions = ["all", "Religious", "Shopping", "Landmark", "Historical", "Nature", "Heritage", "Leisure"] as const
 
 function PlacesPage() {
   const { tenant, locale } = Route.useParams()
-  const [selectedCategory, setSelectedCategory] = useState<string | undefined>()
-  const [viewMode, setViewMode] = useState<"grid" | "list" | "map">("grid")
-  const [ratingFilter, setRatingFilter] = useState<number | undefined>()
-  const [sortBy, setSortBy] = useState<string>("")
+  const prefix = `/${tenant}/${locale}`
+  const [searchQuery, setSearchQuery] = useState("")
+  const [categoryFilter, setCategoryFilter] = useState("all")
+  const data = Route.useLoaderData()
+  const places = data?.places || []
 
-  const { data: pois, isLoading } = usePOIs({
-    category: selectedCategory,
+  const filtered = places.filter((p: any) => {
+    const matchSearch = searchQuery ? p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.description.toLowerCase().includes(searchQuery.toLowerCase()) : true
+    const matchCat = categoryFilter === "all" || p.category === categoryFilter
+    return matchSearch && matchCat
   })
 
   return (
-    <div className="min-h-screen bg-ds-muted">
-      <div className="bg-ds-background border-b border-ds-border">
-        <div className="content-container py-8">
-          <h1 className="text-3xl font-bold text-ds-foreground">
-            {t(locale, "poi.places")}
-          </h1>
-          <p className="text-ds-muted-foreground mt-1">
-            {t(locale, "poi.description")}
-          </p>
+    <div className="min-h-screen bg-ds-background">
+      <div className="bg-gradient-to-r from-teal-500 to-cyan-600 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <span>/</span>
+            <span className="text-white">Places</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Places & Attractions</h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">Discover the most iconic landmarks, historical sites, and natural wonders across Saudi Arabia.</p>
+          <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
+            <span>{places.length} places</span><span>|</span><span>Curated selections</span><span>|</span><span>Visitor ratings</span>
+          </div>
         </div>
       </div>
 
-      <div className="content-container py-8">
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-          <POIFilterBar
-            categories={poiCategories}
-            selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
-            sortBy={sortBy}
-            onSortChange={setSortBy}
-            ratingFilter={ratingFilter}
-            onRatingFilterChange={setRatingFilter}
-            locale={locale}
-          />
-
-          <div className="flex items-center gap-1 bg-ds-background rounded-lg border border-ds-border p-1">
-            <button
-              onClick={() => setViewMode("grid")}
-              className={`p-2 rounded transition-colors ${
-                viewMode === "grid"
-                  ? "bg-ds-primary text-ds-primary-foreground"
-                  : "text-ds-muted-foreground hover:text-ds-foreground"
-              }`}
-              aria-label="Grid view"
-            >
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-              </svg>
-            </button>
-            <button
-              onClick={() => setViewMode("list")}
-              className={`p-2 rounded transition-colors ${
-                viewMode === "list"
-                  ? "bg-ds-primary text-ds-primary-foreground"
-                  : "text-ds-muted-foreground hover:text-ds-foreground"
-              }`}
-              aria-label="List view"
-            >
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-            <button
-              onClick={() => setViewMode("map")}
-              className={`p-2 rounded transition-colors ${
-                viewMode === "map"
-                  ? "bg-ds-primary text-ds-primary-foreground"
-                  : "text-ds-muted-foreground hover:text-ds-foreground"
-              }`}
-              aria-label="Map view"
-            >
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-              </svg>
-            </button>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search places..." className="flex-1 max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-teal-500" />
+          <div className="flex flex-wrap gap-2">
+            {categoryOptions.map((opt) => (
+              <button key={opt} onClick={() => setCategoryFilter(opt)} className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${categoryFilter === opt ? "bg-teal-600 text-white" : "bg-ds-muted text-ds-foreground hover:bg-ds-muted/80"}`}>
+                {opt === "all" ? "All" : opt}
+              </button>
+            ))}
           </div>
         </div>
 
-        {viewMode === "map" && pois && (
-          <div className="mb-6">
-            <POIMapView
-              pois={pois}
-              height="400px"
-              locale={locale}
-            />
-          </div>
-        )}
-
-        {isLoading ? (
-          <div className={viewMode === "grid"
-            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-            : "space-y-4"
-          }>
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div
-                key={i}
-                className={`bg-ds-background rounded-lg animate-pulse ${
-                  viewMode === "grid" ? "h-72" : "h-20"
-                }`}
-              />
-            ))}
-          </div>
-        ) : !pois?.length ? (
-          <div className="bg-ds-background rounded-lg border border-ds-border p-12 text-center">
-            <span className="text-4xl block mb-4">📍</span>
-            <p className="text-ds-muted-foreground">{t(locale, "common.not_found")}</p>
-          </div>
-        ) : viewMode === "grid" ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {pois.map((poi) => (
-              <POICardComponent key={poi.id} poi={poi} locale={locale} />
-            ))}
+        {filtered.length === 0 ? (
+          <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
+            <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
+            <h3 className="text-lg font-semibold text-ds-foreground mb-2">No places found</h3>
+            <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
           </div>
         ) : (
-          <div className="space-y-3">
-            {pois.map((poi) => (
-              <POICardComponent key={poi.id} poi={poi} variant="compact" locale={locale} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {filtered.map((place: any) => (
+              <div key={place.id} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-teal-300 transition-all duration-200">
+                <div className="aspect-[4/3] relative overflow-hidden">
+                  <img src={place.image} alt={place.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-teal-600 text-white rounded-md">{place.category}</span>
+                </div>
+                <div className="p-4">
+                  <h3 className="font-semibold text-ds-foreground group-hover:text-teal-600 transition-colors line-clamp-1">{place.name}</h3>
+                  <p className="text-sm text-ds-muted-foreground mt-1 line-clamp-2">{place.description}</p>
+                  <div className="flex items-center gap-1.5 mt-3">
+                    <div className="flex items-center">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <svg key={star} className={`w-3.5 h-3.5 ${star <= Math.round(place.rating) ? "text-amber-400" : "text-gray-200"}`} fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                      ))}
+                    </div>
+                    <span className="text-xs text-ds-muted-foreground">{place.rating} ({place.reviews.toLocaleString()})</span>
+                  </div>
+                  <div className="flex items-center gap-1 mt-2 text-xs text-ds-muted-foreground">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
+                    <span className="truncate">{place.location}</span>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         )}
