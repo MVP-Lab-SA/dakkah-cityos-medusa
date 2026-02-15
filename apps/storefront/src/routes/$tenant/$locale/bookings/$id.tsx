@@ -8,11 +8,18 @@ import { ResourceAvailabilityBlock } from "@/components/blocks/resource-availabi
 function normalizeDetail(item: any) {
   if (!item) return null
   const meta = typeof item.metadata === 'string' ? JSON.parse(item.metadata) : (item.metadata || {})
+  
+  const rawPrice = item.price ?? meta.price ?? item.total ?? 0
+  const currency = item.currency_code || meta.currency_code || "USD"
+  const priceObj = typeof rawPrice === 'object' && rawPrice.amount != null 
+    ? rawPrice 
+    : { amount: Number(rawPrice), currencyCode: currency }
+
   return { ...meta, ...item,
     thumbnail: item.thumbnail || item.photo_url || item.banner_url || item.logo_url || meta.thumbnail || (meta.images && meta.images[0]) || null,
     images: meta.images || [item.photo_url || item.banner_url || item.logo_url].filter(Boolean),
     description: item.description || meta.description || "",
-    price: item.price ?? meta.price ?? null,
+    price: priceObj,
     rating: item.rating ?? item.avg_rating ?? meta.rating ?? null,
     review_count: item.review_count ?? meta.review_count ?? null,
     location: item.location || item.city || item.address || meta.location || null,
@@ -190,7 +197,7 @@ function BookingDetailPage() {
                 <div className="text-center">
                   <p className="text-sm text-ds-muted-foreground">Total Price</p>
                   <p className="text-3xl font-bold text-ds-foreground">
-                    {booking.price != null ? `$${Number(booking.price / 100).toFixed(2)}` : booking.total ? `$${Number(booking.total).toFixed(2)}` : "Free"}
+                    {booking.price?.amount ? `$${Number(booking.price.amount / 100).toFixed(2)}` : "Free"}
                   </p>
                 </div>
 
