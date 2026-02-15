@@ -20,6 +20,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     const nodes = await nodeModule.listNodesByTenant(tenantId, filters)
     return res.json({ nodes })
   } catch (error: any) {
-    return handleApiError(res, error, "STORE-CITYOS-NODES")
-  }
+    return handleApiError(res, error, "STORE-CITYOS-NODES")}
 }
+

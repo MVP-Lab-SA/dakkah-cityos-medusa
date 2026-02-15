@@ -72,7 +72,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ quotes: enrichedQuotes, count: enrichedQuotes.length })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin quotes")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin quotes")}
 }
+

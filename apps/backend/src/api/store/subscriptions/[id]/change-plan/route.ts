@@ -141,8 +141,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         credit: proratedCredit,
       }
     })
-  } catch (error) {
+  } catch (error: any) {
     logger.error("Failed to change subscription plan", error, { subscriptionId: id })
-    handleApiError(res, error, "STORE-SUBSCRIPTIONS-ID-CHANGE-PLAN")
-  }
+    handleApiError(res, error, "STORE-SUBSCRIPTIONS-ID-CHANGE-PLAN")}
 }
+

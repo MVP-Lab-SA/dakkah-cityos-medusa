@@ -43,8 +43,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       message: "Booking rescheduled successfully",
     })
   } catch (error: any) {
-    res.status(400).json({
-      message: error.message || "Failed to reschedule booking",
-    })
+    return handleApiError(res, error, "STORE-BOOKINGS-ID-RESCHEDULE")
   }
 }
+

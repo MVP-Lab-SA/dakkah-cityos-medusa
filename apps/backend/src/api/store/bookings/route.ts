@@ -46,8 +46,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       limit: Number(limit),
     })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-BOOKINGS")
-  }
+    handleApiError(res, error, "STORE-BOOKINGS")}
 }
 
 /**
@@ -99,8 +98,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       booking: { ...booking, service },
     })
   } catch (error: any) {
-    res.status(400).json({
-      message: error.message || "Failed to create booking",
-    })
+    return handleApiError(res, error, "STORE-BOOKINGS")
   }
 }
+

@@ -7,8 +7,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     const page = await service.retrieveCmsPage(req.params.id)
     res.json({ page })
   } catch (error: any) {
-    res.status(404).json({ message: error.message })
-  }
+    return handleApiError(res, error, "ADMIN-CMS-PAGES-ID")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -17,8 +16,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     const page = await service.updateCmsPages(req.params.id, req.body)
     res.json({ page })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "ADMIN-CMS-PAGES-ID")}
 }
 
 export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
@@ -27,6 +25,6 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
     await service.deleteCmsPages(req.params.id)
     res.status(200).json({ id: req.params.id, deleted: true })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "ADMIN-CMS-PAGES-ID")}
 }
+

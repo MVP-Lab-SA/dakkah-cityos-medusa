@@ -34,10 +34,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       workflowId: resolvedWorkflowId,
       runId: result.runId,
     })
-  } catch (err: any) {
-    return res.status(503).json({
-      error: "Failed to trigger workflow",
-      message: err.message,
-    })
+  } catch (error: any) {
+    return handleApiError(res, error, "ADMIN-TEMPORAL-TRIGGER")
   }
 }
+

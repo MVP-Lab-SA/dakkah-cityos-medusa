@@ -57,6 +57,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       offset: parseInt(offset),
     })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-CONTENT-POIS")
-  }
+    handleApiError(res, error, "STORE-CONTENT-POIS")}
 }
+

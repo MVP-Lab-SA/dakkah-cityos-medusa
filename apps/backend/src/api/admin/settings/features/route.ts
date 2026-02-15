@@ -281,9 +281,8 @@ export async function GET(
       features: storeFeatures
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin settings features")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin settings features")}
 }
 
 /**
@@ -329,9 +328,8 @@ export async function PUT(
       message: "Features updated successfully"
     })
 
-  } catch (error) {
-    handleApiError(res, error, "PUT admin settings features")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "PUT admin settings features")}
 }
 
 /**
@@ -350,9 +348,8 @@ export async function POST(
       message: "Features reset to defaults"
     })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin settings features")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin settings features")}
 }
 
 // Helper function for deep merge
@@ -369,3 +366,4 @@ function deepMerge(target: any, source: any): any {
   
   return result
 }
+

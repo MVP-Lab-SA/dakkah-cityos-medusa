@@ -13,7 +13,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ purchase_order })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin purchase-orders id reject")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin purchase-orders id reject")}
 }
+

@@ -10,6 +10,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     await reviewService.markHelpful(id)
     res.json({ success: true })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-REVIEWS-ID-HELPFUL")
-  }
+    handleApiError(res, error, "STORE-REVIEWS-ID-HELPFUL")}
 }
+

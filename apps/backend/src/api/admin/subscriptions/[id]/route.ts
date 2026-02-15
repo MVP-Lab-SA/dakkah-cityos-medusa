@@ -30,9 +30,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ subscription });
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin subscriptions id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin subscriptions id")}
 }
 
 // POST /admin/subscriptions/:id - Update subscription
@@ -66,9 +65,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ subscription: updated });
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin subscriptions id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin subscriptions id")}
 }
 
 // DELETE /admin/subscriptions/:id - Cancel subscription
@@ -96,7 +94,7 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ id, deleted: true });
 
-  } catch (error) {
-    handleApiError(res, error, "DELETE admin subscriptions id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "DELETE admin subscriptions id")}
 }
+

@@ -115,6 +115,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       }
     })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "VENDOR-PRODUCTS")}
 }
+

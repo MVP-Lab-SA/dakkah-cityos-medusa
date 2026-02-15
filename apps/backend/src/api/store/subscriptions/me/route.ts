@@ -29,7 +29,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       limit: Number(limit),
     });
 
-  } catch (error) {
-    handleApiError(res, error, "GET store subscriptions me")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET store subscriptions me")}
 }
+

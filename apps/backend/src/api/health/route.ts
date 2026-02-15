@@ -48,8 +48,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     overallStatus = "degraded"
     services.database = {
       status: "unhealthy",
-      error: error.message,
-    }
+      error: error.message,}
   }
 
   for (const [systemId, config] of Object.entries(ENV_CHECKS)) {
@@ -84,9 +83,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   try {
     const temporalMod = require("../../lib/temporal-client")
     temporalStatus = await temporalMod.checkTemporalHealth()
-  } catch (err: any) {
-    temporalStatus = { connected: false, error: err.message }
-  }
+  } catch (error: any) {
+    temporalStatus = { connected: false, error: err.message }}
 
   if (!temporalStatus.connected && services.temporal?.configured) {
     overallStatus = "degraded"
@@ -113,3 +111,4 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     response_time_ms: Date.now() - startTime,
   })
 }
+

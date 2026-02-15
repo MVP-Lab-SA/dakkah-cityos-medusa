@@ -16,8 +16,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
     res.json({ insights })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "STORE-CART-EXTENSION")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -44,6 +43,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     const result = await cartExtensionService.applyBundleDiscounts(cart_id)
     res.json({ bundle_discounts: result })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "STORE-CART-EXTENSION")}
 }
+

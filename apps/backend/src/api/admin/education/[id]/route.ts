@@ -34,9 +34,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     if (!item) return res.status(404).json({ message: "Not found" })
     return res.json({ item })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin education id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin education id")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -48,9 +47,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     const item = await moduleService.updateCourses({ id, ...validation.data })
     return res.json({ item })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin education id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin education id")}
 }
 
 export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
@@ -60,7 +58,7 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
     await moduleService.deleteCourses([id])
     return res.status(204).send()
 
-  } catch (error) {
-    handleApiError(res, error, "DELETE admin education id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "DELETE admin education id")}
 }
+

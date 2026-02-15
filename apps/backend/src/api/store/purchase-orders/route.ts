@@ -34,8 +34,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       limit: Number(limit),
     })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-PURCHASE-ORDERS")
-  }
+    handleApiError(res, error, "STORE-PURCHASE-ORDERS")}
 }
 
 /**
@@ -133,8 +132,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     
     res.status(201).json({ purchase_order: completePO })
   } catch (error: any) {
-    res.status(400).json({
-      message: error.message || "Failed to create purchase order",
-    })
+    return handleApiError(res, error, "STORE-PURCHASE-ORDERS")
   }
 }
+

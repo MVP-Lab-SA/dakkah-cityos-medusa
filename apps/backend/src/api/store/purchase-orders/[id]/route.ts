@@ -37,10 +37,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     
     res.json({ purchase_order: purchaseOrder })
   } catch (error: any) {
-    res.status(404).json({
-      message: "Purchase order not found",
-      error: error.message,
-    })
+    return handleApiError(res, error, "STORE-PURCHASE-ORDERS-ID")
   }
 }
 
@@ -81,8 +78,7 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
     
     res.json({ message: "Purchase order cancelled" })
   } catch (error: any) {
-    res.status(400).json({
-      message: error.message || "Failed to cancel purchase order",
-    })
+    return handleApiError(res, error, "STORE-PURCHASE-ORDERS-ID")
   }
 }
+

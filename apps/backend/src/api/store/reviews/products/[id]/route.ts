@@ -27,6 +27,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       offset: parseInt(offset),
     })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-REVIEWS-PRODUCTS-ID")
-  }
+    handleApiError(res, error, "STORE-REVIEWS-PRODUCTS-ID")}
 }
+

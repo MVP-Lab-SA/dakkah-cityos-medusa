@@ -20,11 +20,10 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       pagination: { take: 1 },
     })
     ;(health.checks as Record<string, unknown>).database = { status: "healthy" }
-  } catch (error) {
+  } catch (error: any) {
     ;(health.checks as Record<string, unknown>).database = {
       status: "unhealthy",
-      error: error instanceof Error ? error.message : "Connection failed",
-    }
+      error: error instanceof Error ? error.message : "Connection failed",}
     health.status = "degraded"
   }
 
@@ -63,3 +62,4 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate")
   return res.status(statusCode).json(health)
 }
+

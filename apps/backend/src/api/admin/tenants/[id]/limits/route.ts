@@ -78,9 +78,8 @@ export async function GET(
       }
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin tenants id limits")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin tenants id limits")}
 }
 
 // PUT - Update tenant limits
@@ -142,7 +141,7 @@ export async function PUT(
       limits: newLimits
     })
 
-  } catch (error) {
-    handleApiError(res, error, "PUT admin tenants id limits")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "PUT admin tenants id limits")}
 }
+

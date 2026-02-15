@@ -91,9 +91,8 @@ export async function POST(
       status: newStatus
     })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin invoices id partial-payment")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin invoices id partial-payment")}
 }
 
 // GET - Get payment history for invoice
@@ -125,7 +124,7 @@ export async function GET(
       payments: invoice.payments || []
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin invoices id partial-payment")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin invoices id partial-payment")}
 }
+

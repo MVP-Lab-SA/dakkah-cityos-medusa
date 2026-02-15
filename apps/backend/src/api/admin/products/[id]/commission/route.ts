@@ -32,9 +32,8 @@ export async function GET(
       commission: commissions[0]
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin products id commission")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin products id commission")}
 }
 
 // POST - Create per-product commission override
@@ -85,9 +84,8 @@ export async function POST(
       commission
     })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin products id commission")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin products id commission")}
 }
 
 // PUT - Update per-product commission override
@@ -146,9 +144,8 @@ export async function PUT(
       commission: updated[0]
     })
 
-  } catch (error) {
-    handleApiError(res, error, "PUT admin products id commission")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "PUT admin products id commission")}
 }
 
 // DELETE - Remove per-product commission override
@@ -178,7 +175,7 @@ export async function DELETE(
       product_id: id
     })
 
-  } catch (error) {
-    handleApiError(res, error, "DELETE admin products id commission")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "DELETE admin products id commission")}
 }
+

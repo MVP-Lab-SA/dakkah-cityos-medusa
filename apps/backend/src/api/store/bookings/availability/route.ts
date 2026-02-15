@@ -54,6 +54,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       count: formattedSlots.length,
     })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-BOOKINGS-AVAILABILITY")
-  }
+    handleApiError(res, error, "STORE-BOOKINGS-AVAILABILITY")}
 }
+

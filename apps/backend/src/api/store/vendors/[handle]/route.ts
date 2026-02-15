@@ -50,6 +50,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     
     res.json({ vendor: publicProfile })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-VENDORS-HANDLE")
-  }
+    handleApiError(res, error, "STORE-VENDORS-HANDLE")}
 }
+

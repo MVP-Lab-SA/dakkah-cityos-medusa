@@ -125,9 +125,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     }
 
     res.json({ early_payment: calculation })
-  } catch (error) {
-    handleApiError(res, error, "ADMIN-INVOICES-ID-EARLY-PAYMENT")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "ADMIN-INVOICES-ID-EARLY-PAYMENT")}
 }
 
 /**
@@ -185,9 +184,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       success: true,
       early_payment_discount: result
     })
-  } catch (error) {
-    handleApiError(res, error, "ADMIN-INVOICES-ID-EARLY-PAYMENT")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "ADMIN-INVOICES-ID-EARLY-PAYMENT")}
 }
 
 function formatCurrency(amount: number, currency: string): string {
@@ -196,3 +194,4 @@ function formatCurrency(amount: number, currency: string): string {
     currency: currency.toUpperCase()
   }).format(amount)
 }
+

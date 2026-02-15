@@ -79,8 +79,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       recent_transactions: Array.isArray(transactions) ? transactions : [],
     })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-LOYALTY")
-  }
+    handleApiError(res, error, "STORE-LOYALTY")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -112,6 +111,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       },
     })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-LOYALTY")
-  }
+    handleApiError(res, error, "STORE-LOYALTY")}
 }
+

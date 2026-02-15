@@ -28,9 +28,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     if (!item) return res.status(404).json({ message: "Not found" })
     return res.json({ item })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin healthcare id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin healthcare id")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -42,9 +41,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     const item = await moduleService.updatePractitioners({ id, ...validation.data })
     return res.json({ item })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin healthcare id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin healthcare id")}
 }
 
 export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
@@ -54,7 +52,7 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
     await moduleService.deletePractitioners([id])
     return res.status(204).send()
 
-  } catch (error) {
-    handleApiError(res, error, "DELETE admin healthcare id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "DELETE admin healthcare id")}
 }
+

@@ -93,7 +93,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ events })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin subscriptions id events")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin subscriptions id events")}
 }
+

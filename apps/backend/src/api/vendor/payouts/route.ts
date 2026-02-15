@@ -88,7 +88,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       count: payouts.length,
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET vendor payouts")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET vendor payouts")}
 }
+

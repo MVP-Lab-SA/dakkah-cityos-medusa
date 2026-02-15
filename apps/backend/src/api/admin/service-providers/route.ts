@@ -25,9 +25,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ providers })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin service-providers")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin service-providers")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -38,7 +37,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   
     res.status(201).json({ provider })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin service-providers")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin service-providers")}
 }
+

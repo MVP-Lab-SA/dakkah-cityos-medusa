@@ -48,6 +48,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     })
   } catch (error: any) {
     logger.error(`[IntegrationLogs] fetching sync logs: ${error.message}`)
-    return handleApiError(res, error, "ADMIN-INTEGRATIONS-LOGS")
-  }
+    return handleApiError(res, error, "ADMIN-INTEGRATIONS-LOGS")}
 }
+

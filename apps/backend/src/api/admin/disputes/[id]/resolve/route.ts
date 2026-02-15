@@ -13,6 +13,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     })
     res.json({ dispute })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "ADMIN-DISPUTES-ID-RESOLVE")}
 }
+

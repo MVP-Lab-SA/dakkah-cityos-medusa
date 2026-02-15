@@ -32,8 +32,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       message: "Booking cancelled successfully",
     })
   } catch (error: any) {
-    res.status(400).json({
-      message: error.message || "Failed to cancel booking",
-    })
+    return handleApiError(res, error, "STORE-BOOKINGS-ID-CANCEL")
   }
 }
+

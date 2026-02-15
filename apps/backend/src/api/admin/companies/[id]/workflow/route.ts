@@ -44,9 +44,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ company_id: id, workflow })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin companies id workflow")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin companies id workflow")}
 }
 
 export async function PUT(req: MedusaRequest, res: MedusaResponse) {
@@ -97,7 +96,7 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
       message: "Workflow configuration updated" 
     })
 
-  } catch (error) {
-    handleApiError(res, error, "PUT admin companies id workflow")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "PUT admin companies id workflow")}
 }
+

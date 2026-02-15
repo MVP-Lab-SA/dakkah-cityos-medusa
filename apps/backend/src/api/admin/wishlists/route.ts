@@ -9,8 +9,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     const [items, count] = await service.listAndCountWishlists({}, { take: limit, skip: offset })
     res.json({ items, count, limit, offset })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "ADMIN-WISHLISTS")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -19,6 +18,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     const item = await service.createWishlists(req.body)
     res.status(201).json({ item })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "ADMIN-WISHLISTS")}
 }
+

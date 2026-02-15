@@ -20,7 +20,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     res.setHeader("Content-Type", "text/plain; charset=utf-8")
     return res.send(metrics.exportPrometheus())
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin metrics")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin metrics")}
 }
+

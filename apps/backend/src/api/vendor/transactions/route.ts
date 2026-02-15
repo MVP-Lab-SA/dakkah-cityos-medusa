@@ -34,7 +34,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       offset: Number(offset),
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET vendor transactions")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET vendor transactions")}
 }
+

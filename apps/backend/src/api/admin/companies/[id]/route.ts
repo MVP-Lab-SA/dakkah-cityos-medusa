@@ -39,9 +39,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ company })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin companies id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin companies id")}
 }
 
 export async function PUT(req: MedusaRequest, res: MedusaResponse) {
@@ -54,9 +53,8 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ company })
 
-  } catch (error) {
-    handleApiError(res, error, "PUT admin companies id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "PUT admin companies id")}
 }
 
 export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
@@ -68,7 +66,7 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
   
     res.status(200).json({ id, deleted: true })
 
-  } catch (error) {
-    handleApiError(res, error, "DELETE admin companies id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "DELETE admin companies id")}
 }
+

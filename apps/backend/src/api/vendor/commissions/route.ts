@@ -76,7 +76,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       count: transactions.length,
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET vendor commissions")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET vendor commissions")}
 }
+

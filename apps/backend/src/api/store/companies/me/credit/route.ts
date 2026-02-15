@@ -64,6 +64,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       },
     })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-COMPANIES-ME-CREDIT")
-  }
+    handleApiError(res, error, "STORE-COMPANIES-ME-CREDIT")}
 }
+

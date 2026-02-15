@@ -39,9 +39,8 @@ export async function GET(
 
     res.json({ discount: discounts[0] })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin subscriptions discounts id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin subscriptions discounts id")}
 }
 
 // PUT - Update subscription discount
@@ -84,9 +83,8 @@ export async function PUT(
 
     res.json({ discount: discounts[0] })
 
-  } catch (error) {
-    handleApiError(res, error, "PUT admin subscriptions discounts id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "PUT admin subscriptions discounts id")}
 }
 
 // DELETE - Delete subscription discount
@@ -102,7 +100,7 @@ export async function DELETE(
 
     res.json({ message: "Discount deleted", id })
 
-  } catch (error) {
-    handleApiError(res, error, "DELETE admin subscriptions discounts id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "DELETE admin subscriptions discounts id")}
 }
+

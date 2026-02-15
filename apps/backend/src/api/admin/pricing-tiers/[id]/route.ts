@@ -43,9 +43,8 @@ export async function GET(
       companies
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin pricing-tiers id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin pricing-tiers id")}
 }
 
 // PUT - Update pricing tier
@@ -91,9 +90,8 @@ export async function PUT(
 
     res.json({ tier: tiers[0] })
 
-  } catch (error) {
-    handleApiError(res, error, "PUT admin pricing-tiers id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "PUT admin pricing-tiers id")}
 }
 
 // DELETE - Delete pricing tier
@@ -124,7 +122,7 @@ export async function DELETE(
 
     res.json({ message: "Pricing tier deleted", id })
 
-  } catch (error) {
-    handleApiError(res, error, "DELETE admin pricing-tiers id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "DELETE admin pricing-tiers id")}
 }
+

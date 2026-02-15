@@ -23,9 +23,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
     res.json({ quote });
 
-  } catch (error) {
-    handleApiError(res, error, "GET store quotes id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET store quotes id")}
 }
 
 /**
@@ -56,7 +55,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
     res.json({ quote: updatedQuote });
 
-  } catch (error) {
-    handleApiError(res, error, "POST store quotes id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST store quotes id")}
 }
+

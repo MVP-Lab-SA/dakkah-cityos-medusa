@@ -77,8 +77,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       results,
     })
   } catch (error: any) {
-    return handleApiError(res, error, "ADMIN-INTEGRATIONS-SYNC-CMS")
-  }
+    return handleApiError(res, error, "ADMIN-INTEGRATIONS-SYNC-CMS")}
 }
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
@@ -103,6 +102,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       job_name: "payload-cms-poll",
     })
   } catch (error: any) {
-    return handleApiError(res, error, "ADMIN-INTEGRATIONS-SYNC-CMS")
-  }
+    return handleApiError(res, error, "ADMIN-INTEGRATIONS-SYNC-CMS")}
 }
+

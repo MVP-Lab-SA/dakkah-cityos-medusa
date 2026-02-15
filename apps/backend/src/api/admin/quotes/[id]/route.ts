@@ -51,9 +51,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ quote: { ...quote, items, company, customer } })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin quotes id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin quotes id")}
 }
 
 // PUT /admin/quotes/:id - Update quote
@@ -87,7 +86,7 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ quote })
 
-  } catch (error) {
-    handleApiError(res, error, "PUT admin quotes id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "PUT admin quotes id")}
 }
+

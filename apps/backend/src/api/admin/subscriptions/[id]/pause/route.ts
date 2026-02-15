@@ -42,7 +42,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       message: "Subscription paused",
     })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin subscriptions id pause")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin subscriptions id pause")}
 }
+

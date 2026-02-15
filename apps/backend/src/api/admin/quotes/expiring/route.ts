@@ -151,8 +151,7 @@ export async function POST(
         new_valid_until: newExpiry 
       })
     } catch (error: any) {
-      results.push({ quote_id: quoteId, status: "error", error: error.message })
-    }
+      results.push({ quote_id: quoteId, status: "error", error: error.message })}
   }
 
   res.json({
@@ -160,3 +159,4 @@ export async function POST(
     results
   })
 }
+

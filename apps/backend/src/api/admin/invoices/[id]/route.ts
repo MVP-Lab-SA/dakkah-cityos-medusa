@@ -102,3 +102,4 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
   
   res.json({ success: true })
 }
+

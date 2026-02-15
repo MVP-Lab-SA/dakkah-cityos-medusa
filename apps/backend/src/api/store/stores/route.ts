@@ -11,6 +11,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     res.json({ stores })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-STORES")
-  }
+    handleApiError(res, error, "STORE-STORES")}
 }
+

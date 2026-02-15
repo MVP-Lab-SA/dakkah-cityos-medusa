@@ -40,6 +40,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       offset: Number(offset),
     })
   } catch (error: any) {
-    return handleApiError(res, error, "STORE-B2B")
-  }
+    return handleApiError(res, error, "STORE-B2B")}
 }
+

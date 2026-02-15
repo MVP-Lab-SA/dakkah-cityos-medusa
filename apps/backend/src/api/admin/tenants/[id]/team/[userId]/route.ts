@@ -51,9 +51,8 @@ export async function PUT(
 
     res.json({ message: "Team member updated" })
 
-  } catch (error) {
-    handleApiError(res, error, "PUT admin tenants id team userId")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "PUT admin tenants id team userId")}
 }
 
 // DELETE - Remove team member
@@ -94,7 +93,7 @@ export async function DELETE(
 
     res.json({ message: "Team member removed", user_id: userId })
 
-  } catch (error) {
-    handleApiError(res, error, "DELETE admin tenants id team userId")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "DELETE admin tenants id team userId")}
 }
+

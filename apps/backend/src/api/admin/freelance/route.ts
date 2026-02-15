@@ -28,9 +28,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     const items = await mod.listGigListings({}, { skip: Number(offset), take: Number(limit) })
     return res.json({ items, count: Array.isArray(items) ? items.length : 0, limit: Number(limit), offset: Number(offset) })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin freelance")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin freelance")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -41,7 +40,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     const item = await mod.createGigListings(validation.data)
     return res.status(201).json({ item })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin freelance")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin freelance")}
 }
+

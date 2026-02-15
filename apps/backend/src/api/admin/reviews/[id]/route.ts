@@ -20,9 +20,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ review: reviews[0] })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin reviews id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin reviews id")}
 }
 
 // DELETE /admin/reviews/:id
@@ -35,7 +34,7 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ success: true })
 
-  } catch (error) {
-    handleApiError(res, error, "DELETE admin reviews id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "DELETE admin reviews id")}
 }
+

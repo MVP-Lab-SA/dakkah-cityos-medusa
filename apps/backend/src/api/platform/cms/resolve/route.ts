@@ -176,12 +176,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
         payload: emptyPayload,
       })
     }
-  } catch (error) {
-return res.status(500).json({
-      success: false,
-      error: error instanceof Error ? error.message : "Internal server error",
-      errors: [{ message: error instanceof Error ? error.message : "Internal server error" }],
-    })
+  } catch (error: any) {
+return handleApiError(res, error, "PLATFORM-CMS-RESOLVE")
   }
 }
 
@@ -205,3 +201,4 @@ async function resolveTenantId(req: MedusaRequest, tenantSlug?: string): Promise
 
   return DEFAULT_TENANT_ID
 }
+

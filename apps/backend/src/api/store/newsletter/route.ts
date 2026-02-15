@@ -34,6 +34,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       },
     })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-NEWSLETTER")
-  }
+    handleApiError(res, error, "STORE-NEWSLETTER")}
 }
+

@@ -34,7 +34,7 @@ export async function POST(
 
     return res.json({ vendor: result.vendor })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin vendors id approve")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin vendors id approve")}
 }
+

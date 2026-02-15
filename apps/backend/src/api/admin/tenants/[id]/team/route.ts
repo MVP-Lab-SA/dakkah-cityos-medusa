@@ -31,9 +31,8 @@ export async function GET(
 
     res.json({ members })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin tenants id team")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin tenants id team")}
 }
 
 // POST - Invite team member
@@ -81,7 +80,7 @@ export async function POST(
       invitation
     })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin tenants id team")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin tenants id team")}
 }
+

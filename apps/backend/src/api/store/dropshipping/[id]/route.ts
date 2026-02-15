@@ -10,8 +10,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     return res.json({ item })
   } catch (error: any) {
     if (error.type === "not_found" || error.message?.includes("not found")) {
-      return res.status(404).json({ message: "Dropshipping product not found" })
-    }
+      return handleApiError(res, error, "STORE-DROPSHIPPING-ID")}
     handleApiError(res, error, "STORE-DROPSHIPPING-ID")
   }
 }
+

@@ -49,3 +49,4 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
   await mod.deleteVehicleListings([id])
   return res.status(204).send()
 }
+

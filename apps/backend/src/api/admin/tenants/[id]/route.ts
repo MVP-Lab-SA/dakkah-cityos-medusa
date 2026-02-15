@@ -34,9 +34,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ tenant })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin tenants id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin tenants id")}
 }
 
 export async function PUT(req: MedusaRequest, res: MedusaResponse) {
@@ -49,7 +48,7 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ tenant })
 
-  } catch (error) {
-    handleApiError(res, error, "PUT admin tenants id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "PUT admin tenants id")}
 }
+

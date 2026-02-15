@@ -19,6 +19,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     } catch {}
     return res.status(404).json({ message: "Not found" })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-FITNESS-ID")
-  }
+    handleApiError(res, error, "STORE-FITNESS-ID")}
 }
+

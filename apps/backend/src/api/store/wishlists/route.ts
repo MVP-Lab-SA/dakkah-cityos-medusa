@@ -13,8 +13,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     const [items, count] = await service.listAndCountWishlists({ customer_id: customerId }, { take: limit, skip: offset })
     res.json({ items, count, limit, offset })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "STORE-WISHLISTS")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -28,6 +27,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     const item = await service.createWishlists({ ...body, customer_id: customerId })
     res.status(201).json({ item })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "STORE-WISHLISTS")}
 }
+

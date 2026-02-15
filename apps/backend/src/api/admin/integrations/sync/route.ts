@@ -55,14 +55,12 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
       logger.info(`[IntegrationSync] Manual sync dispatched to Temporal: ${result.runId}`)
       return res.json({ triggered: true, system, entity_type, entity_id: entity_id || "all", workflow_run_id: result.runId })
-    } catch (err: any) {
+    } catch (error: any) {
       logger.error(`[IntegrationSync] dispatching manual sync: ${err.message}`)
-      return handleApiError(res, error, "ADMIN-INTEGRATIONS-SYNC")
-    }
+      return handleApiError(res, error, "ADMIN-INTEGRATIONS-SYNC")}
   } catch (error: any) {
     logger.error(`[IntegrationSync] triggering sync: ${error.message}`)
-    return handleApiError(res, error, "ADMIN-INTEGRATIONS-SYNC")
-  }
+    return handleApiError(res, error, "ADMIN-INTEGRATIONS-SYNC")}
 }
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
@@ -91,6 +89,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     })
   } catch (error: any) {
     logger.error(`[IntegrationSync] fetching sync operations: ${error.message}`)
-    return handleApiError(res, error, "ADMIN-INTEGRATIONS-SYNC")
-  }
+    return handleApiError(res, error, "ADMIN-INTEGRATIONS-SYNC")}
 }
+

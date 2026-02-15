@@ -51,8 +51,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       offset: Number(offset),
     })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-TRADE-IN")
-  }
+    handleApiError(res, error, "STORE-TRADE-IN")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -118,6 +117,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
     res.status(201).json({ trade_in: tradeIn })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-TRADE-IN")
-  }
+    handleApiError(res, error, "STORE-TRADE-IN")}
 }
+

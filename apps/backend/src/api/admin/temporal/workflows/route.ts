@@ -29,10 +29,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     }
 
     return res.json({ workflows, count: workflows.length })
-  } catch (err: any) {
-    return res.status(503).json({
-      error: "Failed to list workflows",
-      message: err.message,
-    })
+  } catch (error: any) {
+    return handleApiError(res, error, "ADMIN-TEMPORAL-WORKFLOWS")
   }
 }
+

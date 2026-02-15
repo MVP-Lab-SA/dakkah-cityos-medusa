@@ -21,6 +21,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
     res.json({ listings, count: listings.length })
   } catch (error: any) {
-    handleApiError(res, error, "PLATFORM-VENDORS-ID-LISTINGS")
-  }
+    handleApiError(res, error, "PLATFORM-VENDORS-ID-LISTINGS")}
 }
+

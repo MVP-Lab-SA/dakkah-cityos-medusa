@@ -72,7 +72,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       message: `Plan changed to ${newPlan.name}`,
     })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin subscriptions id change-plan")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin subscriptions id change-plan")}
 }
+

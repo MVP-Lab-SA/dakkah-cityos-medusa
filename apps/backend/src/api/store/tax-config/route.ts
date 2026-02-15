@@ -33,6 +33,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       count: items.length,
     })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-TAX-CONFIG")
-  }
+    handleApiError(res, error, "STORE-TAX-CONFIG")}
 }
+

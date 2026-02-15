@@ -44,9 +44,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
             } else {
               logger.info("[Webhook:Payload] Missing PAYLOAD_CMS_URL_DEV or PAYLOAD_API_KEY, skipping sync")
             }
-          } catch (err) {
-            logger.error(`[Webhook:Payload] syncing product content: ${err instanceof Error ? err.message : err}`)
-          }
+          } catch (error: any) {
+            logger.error(`[Webhook:Payload] syncing product content: ${err instanceof Error ? err.message : err}`)}
         }
         break
       }
@@ -64,9 +63,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
               processed = true
               logger.info(`[Webhook:Payload] Page synced: ${pageId}`)
             }
-          } catch (err) {
-            logger.error(`[Webhook:Payload] syncing page: ${err instanceof Error ? err.message : err}`)
-          }
+          } catch (error: any) {
+            logger.error(`[Webhook:Payload] syncing page: ${err instanceof Error ? err.message : err}`)}
         }
         break
       }
@@ -110,9 +108,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
               processed = true
               logger.info(`[Webhook:Payload] Media synced: ${mediaId}`)
             }
-          } catch (err) {
-            logger.error(`[Webhook:Payload] syncing media: ${err instanceof Error ? err.message : err}`)
-          }
+          } catch (error: any) {
+            logger.error(`[Webhook:Payload] syncing media: ${err instanceof Error ? err.message : err}`)}
         }
         break
       }
@@ -137,8 +134,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     }
 
     return res.status(200).json({ received: true, event, processed })
-  } catch (error) {
+  } catch (error: any) {
     logger.error(`[Webhook:Payload] ${error instanceof Error ? error.message : error}`)
-    return handleApiError(res, error, "ADMIN-WEBHOOKS-PAYLOAD")
-  }
+    return handleApiError(res, error, "ADMIN-WEBHOOKS-PAYLOAD")}
 }
+

@@ -30,7 +30,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ subscription: updated });
 
-  } catch (error) {
-    handleApiError(res, error, "POST store subscriptions id cancel")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST store subscriptions id cancel")}
 }
+

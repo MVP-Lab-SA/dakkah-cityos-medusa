@@ -59,6 +59,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       message: "Order marked as shipped",
     })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "VENDOR-ORDERS-ORDERID-FULFILL")}
 }
+

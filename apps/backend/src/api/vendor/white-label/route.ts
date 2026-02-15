@@ -44,9 +44,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       offset: Number(offset),
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET vendor white-label")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET vendor white-label")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -70,7 +69,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
     return res.status(201).json({ item })
 
-  } catch (error) {
-    handleApiError(res, error, "POST vendor white-label")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST vendor white-label")}
 }
+

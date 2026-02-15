@@ -47,8 +47,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     })
   } catch (error: any) {
     logger.error(`[NodeHierarchySync] in hierarchy sync: ${error.message}`)
-    return handleApiError(res, error, "ADMIN-INTEGRATIONS-SYNC-NODE-HIERARCHY")
-  }
+    return handleApiError(res, error, "ADMIN-INTEGRATIONS-SYNC-NODE-HIERARCHY")}
 }
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
@@ -68,6 +67,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     })
   } catch (error: any) {
     logger.error(`[NodeHierarchySync] fetching hierarchy: ${error.message}`)
-    return handleApiError(res, error, "ADMIN-INTEGRATIONS-SYNC-NODE-HIERARCHY")
-  }
+    return handleApiError(res, error, "ADMIN-INTEGRATIONS-SYNC-NODE-HIERARCHY")}
 }
+

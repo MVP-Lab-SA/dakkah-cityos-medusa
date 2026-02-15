@@ -75,6 +75,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       })),
     })
   } catch (error: any) {
-    handleApiError(res, error, "PLATFORM-VENDORS-ID")
-  }
+    handleApiError(res, error, "PLATFORM-VENDORS-ID")}
 }
+

@@ -11,7 +11,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ invoice })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin invoices id send")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin invoices id send")}
 }
+

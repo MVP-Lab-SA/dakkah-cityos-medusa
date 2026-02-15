@@ -177,3 +177,4 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
   
   res.json({ id: exemption_id, deleted: true })
 }
+

@@ -1,6 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import {
 import { handleApiError } from "../../../lib/api-error-handler"
+import {
   DEFAULT_TENANT_SLUG,
   PLATFORM_CAPABILITIES,
   CONTEXT_HEADERS,
@@ -79,6 +79,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       },
     })
   } catch (error: any) {
-return handleApiError(res, error, "PLATFORM-CONTEXT")
-  }
+return handleApiError(res, error, "PLATFORM-CONTEXT")}
 }
+

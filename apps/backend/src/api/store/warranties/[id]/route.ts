@@ -8,8 +8,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     const [item] = await mod.listWarrantyPlans({ id }, { take: 1 })
     if (!item) return res.status(404).json({ message: "Not found" })
     return res.json({ item })
-  } catch (error) {
+  } catch (error: any) {
     const message = error instanceof Error ? error.message : "Failed to fetch warranty plan"
-    return handleApiError(res, error, "STORE-WARRANTIES-ID")
-  }
+    return handleApiError(res, error, "STORE-WARRANTIES-ID")}
 }
+

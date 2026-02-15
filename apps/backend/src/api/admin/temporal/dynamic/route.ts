@@ -1,7 +1,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { z } from "zod"
-import {
 import { handleApiError } from "../../../../lib/api-error-handler"
+import {
   startDynamicWorkflow,
   listDynamicWorkflows,
 } from "../../../../lib/dynamic-workflow-client"
@@ -32,11 +32,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       workflows,
       count: workflows.length,
     })
-  } catch (err: any) {
-    return res.status(503).json({
-      error: "Failed to list dynamic workflows",
-      message: err.message,
-    })
+  } catch (error: any) {
+    return handleApiError(res, error, "ADMIN-TEMPORAL-DYNAMIC")
   }
 }
 
@@ -62,10 +59,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     })
 
     return res.status(201).json(result)
-  } catch (err: any) {
-    return res.status(503).json({
-      error: "Failed to start dynamic workflow",
-      message: err.message,
-    })
+  } catch (error: any) {
+    return handleApiError(res, error, "ADMIN-TEMPORAL-DYNAMIC")
   }
 }
+

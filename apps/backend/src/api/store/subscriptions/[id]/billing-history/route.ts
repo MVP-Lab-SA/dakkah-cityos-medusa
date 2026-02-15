@@ -106,6 +106,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       })
     }
   } catch (error: any) {
-    handleApiError(res, error, "STORE-SUBSCRIPTIONS-ID-BILLING-HISTORY")
-  }
+    handleApiError(res, error, "STORE-SUBSCRIPTIONS-ID-BILLING-HISTORY")}
 }
+

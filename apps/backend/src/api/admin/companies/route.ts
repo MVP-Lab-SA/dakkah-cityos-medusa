@@ -67,3 +67,4 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
   res.json({ company: (result as any).company });
 }
+

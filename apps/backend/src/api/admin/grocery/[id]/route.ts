@@ -41,3 +41,4 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
   await mod.deleteFreshProducts([id])
   return res.status(204).send()
 }
+

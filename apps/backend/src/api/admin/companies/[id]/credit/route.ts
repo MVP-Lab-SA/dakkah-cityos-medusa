@@ -40,9 +40,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       tier: company.tier,
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin companies id credit")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin companies id credit")}
 }
 
 // Adjust credit limit
@@ -67,9 +66,8 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ company })
 
-  } catch (error) {
-    handleApiError(res, error, "PUT admin companies id credit")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "PUT admin companies id credit")}
 }
 
 // Manual credit adjustment (add/subtract from credit_used)
@@ -127,7 +125,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       reason,
     })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin companies id credit")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin companies id credit")}
 }
+

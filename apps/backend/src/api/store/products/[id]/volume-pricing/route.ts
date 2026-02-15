@@ -96,7 +96,7 @@ export async function GET(
       tiers: sortedTiers
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET store products id volume-pricing")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET store products id volume-pricing")}
 }
+

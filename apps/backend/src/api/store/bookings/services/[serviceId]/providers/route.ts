@@ -78,12 +78,12 @@ export async function GET(
       providers: serviceProviders,
       count: serviceProviders.length,
     })
-  } catch (error) {
+  } catch (error: any) {
     
     // Return empty list if providers entity doesn't exist yet
     res.json({
       providers: [],
-      count: 0,
-    })
+      count: 0,})
   }
 }
+

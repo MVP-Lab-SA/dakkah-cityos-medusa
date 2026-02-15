@@ -10,6 +10,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     const alerts = await service.listStockAlerts(filters)
     res.json({ alerts: Array.isArray(alerts) ? alerts : [alerts].filter(Boolean) })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "ADMIN-INVENTORY-EXT-STOCK-ALERTS")}
 }
+

@@ -58,6 +58,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     
     res.json({ subscription: updated })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-SUBSCRIPTIONS-ID-RESUME")
-  }
+    handleApiError(res, error, "STORE-SUBSCRIPTIONS-ID-RESUME")}
 }
+

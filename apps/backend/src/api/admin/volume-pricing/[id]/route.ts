@@ -30,9 +30,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ rule: { ...rule, tiers } })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin volume-pricing id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin volume-pricing id")}
 }
 
 // PUT /admin/volume-pricing/:id
@@ -133,9 +132,8 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ rule: { ...rule, tiers: updatedTiers } })
 
-  } catch (error) {
-    handleApiError(res, error, "PUT admin volume-pricing id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "PUT admin volume-pricing id")}
 }
 
 // DELETE /admin/volume-pricing/:id
@@ -161,7 +159,7 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ success: true })
 
-  } catch (error) {
-    handleApiError(res, error, "DELETE admin volume-pricing id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "DELETE admin volume-pricing id")}
 }
+

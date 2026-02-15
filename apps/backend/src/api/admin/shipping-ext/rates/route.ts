@@ -10,6 +10,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     const rates = await service.listShippingRates(filters)
     res.json({ rates: Array.isArray(rates) ? rates : [rates].filter(Boolean) })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "ADMIN-SHIPPING-EXT-RATES")}
 }
+

@@ -40,7 +40,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
     res.json({ company: updated });
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin companies id approve")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin companies id approve")}
 }
+

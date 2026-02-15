@@ -54,6 +54,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     
     res.json({ payout: updatedPayout })
   } catch (error: any) {
-    handleApiError(res, error, "ADMIN-PAYOUTS-ID-PROCESS")
-  }
+    handleApiError(res, error, "ADMIN-PAYOUTS-ID-PROCESS")}
 }
+

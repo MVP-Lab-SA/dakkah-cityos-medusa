@@ -60,7 +60,7 @@ export async function POST(
       reinstated_at: new Date()
     })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin vendors id reinstate")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin vendors id reinstate")}
 }
+

@@ -27,9 +27,8 @@ export async function POST(
       company_ids
     })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin pricing-tiers id companies")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin pricing-tiers id companies")}
 }
 
 // DELETE - Remove companies from pricing tier
@@ -57,7 +56,7 @@ export async function DELETE(
       company_ids
     })
 
-  } catch (error) {
-    handleApiError(res, error, "DELETE admin pricing-tiers id companies")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "DELETE admin pricing-tiers id companies")}
 }
+

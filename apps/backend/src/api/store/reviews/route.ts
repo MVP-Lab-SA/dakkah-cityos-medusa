@@ -64,6 +64,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
     res.status(201).json({ review })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "STORE-REVIEWS")}
 }
+

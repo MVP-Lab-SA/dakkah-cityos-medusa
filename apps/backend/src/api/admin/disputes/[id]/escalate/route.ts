@@ -7,6 +7,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     const dispute = await service.escalate(req.params.id, req.body?.reason)
     res.json({ dispute })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "ADMIN-DISPUTES-ID-ESCALATE")}
 }
+

@@ -71,8 +71,7 @@ async function checkSystemHealth(system: SystemHealthCheck): Promise<{
       name: system.name,
       status: "unhealthy",
       latency_ms,
-      error: error.message,
-    }
+      error: error.message,}
   }
 }
 
@@ -107,8 +106,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
           name: "temporal",
           status: "unhealthy",
           latency_ms: Date.now() - start,
-          error: error.message,
-        }
+          error: error.message,}
       }
     }
 
@@ -117,6 +115,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     return res.json({ systems: healthChecks })
   } catch (error: any) {
     logger.error(`[IntegrationHealth] checking health: ${error.message}`)
-    return handleApiError(res, error, "ADMIN-INTEGRATIONS-HEALTH")
-  }
+    return handleApiError(res, error, "ADMIN-INTEGRATIONS-HEALTH")}
 }
+

@@ -56,9 +56,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       limit: Number(limit),
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin bookings")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin bookings")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -69,7 +68,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   
     res.status(201).json({ booking })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin bookings")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin bookings")}
 }
+

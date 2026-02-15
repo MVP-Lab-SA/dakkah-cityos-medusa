@@ -54,3 +54,4 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
   await moduleService.deletePropertyListings([id])
   return res.status(204).send()
 }
+

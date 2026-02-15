@@ -24,9 +24,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   
     res.json({ availabilities })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin availability")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin availability")}
 }
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
@@ -71,7 +70,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
   
     res.status(201).json({ availability: availability[0] })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin availability")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin availability")}
 }
+

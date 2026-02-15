@@ -17,9 +17,8 @@ export async function GET(
 
     res.json({ tiers })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin commissions tiers")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin commissions tiers")}
 }
 
 // POST - Create commission tier
@@ -74,7 +73,7 @@ export async function POST(
 
     res.status(201).json({ tier })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin commissions tiers")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin commissions tiers")}
 }
+

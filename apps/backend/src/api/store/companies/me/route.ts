@@ -79,6 +79,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       stats,
     })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-COMPANIES-ME")
-  }
+    handleApiError(res, error, "STORE-COMPANIES-ME")}
 }
+

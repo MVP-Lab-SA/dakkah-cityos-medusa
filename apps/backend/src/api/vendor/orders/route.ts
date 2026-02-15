@@ -71,7 +71,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
     res.json({ orders, count: orders.length })
 
-  } catch (error) {
-    handleApiError(res, error, "GET vendor orders")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET vendor orders")}
 }
+

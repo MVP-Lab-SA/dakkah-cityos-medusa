@@ -174,3 +174,4 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
   return res.status(404).json({ message: "Event not found" })
 }
+

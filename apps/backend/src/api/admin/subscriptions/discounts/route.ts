@@ -42,9 +42,8 @@ export async function GET(
 
     res.json({ discounts })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin subscriptions discounts")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin subscriptions discounts")}
 }
 
 // POST - Create subscription discount code
@@ -114,7 +113,7 @@ export async function POST(
 
     res.status(201).json({ discount })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin subscriptions discounts")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin subscriptions discounts")}
 }
+

@@ -83,7 +83,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       offset: parseInt(offset),
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin commissions transactions")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin commissions transactions")}
 }
+

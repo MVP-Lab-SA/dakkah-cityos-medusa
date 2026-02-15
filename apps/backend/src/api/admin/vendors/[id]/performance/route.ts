@@ -134,7 +134,7 @@ export async function GET(
       }
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin vendors id performance")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin vendors id performance")}
 }
+

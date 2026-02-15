@@ -82,3 +82,4 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
   return res.status(201).json({ vendor: result.vendor })
 }
+

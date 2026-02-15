@@ -19,8 +19,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     
     res.json({ commission_rule: rules[0] })
   } catch (error: any) {
-    handleApiError(res, error, "ADMIN-COMMISSION-RULES-ID")
-  }
+    handleApiError(res, error, "ADMIN-COMMISSION-RULES-ID")}
 }
 
 export async function PUT(req: MedusaRequest, res: MedusaResponse) {
@@ -65,8 +64,7 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
     
     res.json({ commission_rule: rule })
   } catch (error: any) {
-    handleApiError(res, error, "ADMIN-COMMISSION-RULES-ID")
-  }
+    handleApiError(res, error, "ADMIN-COMMISSION-RULES-ID")}
 }
 
 export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
@@ -77,6 +75,6 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
     await commissionService.deleteCommissionRules(id)
     res.status(200).json({ id, deleted: true })
   } catch (error: any) {
-    handleApiError(res, error, "ADMIN-COMMISSION-RULES-ID")
-  }
+    handleApiError(res, error, "ADMIN-COMMISSION-RULES-ID")}
 }
+

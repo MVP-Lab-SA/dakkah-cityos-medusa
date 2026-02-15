@@ -12,7 +12,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       count: 3,
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET store newsletters")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET store newsletters")}
 }
+

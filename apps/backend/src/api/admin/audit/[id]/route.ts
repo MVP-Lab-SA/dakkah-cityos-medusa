@@ -9,7 +9,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     if (!item) return res.status(404).json({ message: "Not found" })
     return res.json({ item })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin audit id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin audit id")}
 }
+

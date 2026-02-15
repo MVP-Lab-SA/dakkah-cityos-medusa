@@ -11,8 +11,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     return res.json({ item: { ...item, reward_tiers } })
   } catch (error: any) {
     if (error.type === "not_found" || error.message?.includes("not found")) {
-      return res.status(404).json({ message: "Crowdfunding campaign not found" })
-    }
+      return handleApiError(res, error, "STORE-CROWDFUNDING-ID")}
     handleApiError(res, error, "STORE-CROWDFUNDING-ID")
   }
 }
+

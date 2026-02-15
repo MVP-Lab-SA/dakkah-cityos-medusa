@@ -114,6 +114,6 @@ export async function POST(
       session_id: session.id
     })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-SUBSCRIPTIONS-CHECKOUT")
-  }
+    handleApiError(res, error, "STORE-SUBSCRIPTIONS-CHECKOUT")}
 }
+

@@ -68,9 +68,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ rules: enrichedRules })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin volume-pricing")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin volume-pricing")}
 }
 
 // POST /admin/volume-pricing - Create a new volume pricing rule
@@ -144,7 +143,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   
     res.status(201).json({ rule: { ...rule, tiers: createdTiers } })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin volume-pricing")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin volume-pricing")}
 }
+

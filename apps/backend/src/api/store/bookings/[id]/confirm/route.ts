@@ -52,6 +52,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     
     res.json({ booking: updated })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-BOOKINGS-ID-CONFIRM")
-  }
+    handleApiError(res, error, "STORE-BOOKINGS-ID-CONFIRM")}
 }
+

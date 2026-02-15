@@ -49,9 +49,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       limit: Number(limit),
     });
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin subscriptions")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin subscriptions")}
 }
 
 // POST /admin/subscriptions - Create subscription
@@ -73,7 +72,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   
     res.status(201).json({ subscription: result.subscription });
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin subscriptions")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin subscriptions")}
 }
+

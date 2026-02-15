@@ -132,8 +132,7 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
 
     res.json({ success: true })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "VENDOR-PRODUCTS-PRODUCTID")}
 }
 
 // DELETE /vendor/products/:productId - Delete/deactivate vendor product
@@ -174,3 +173,4 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
 
   res.json({ success: true })
 }
+

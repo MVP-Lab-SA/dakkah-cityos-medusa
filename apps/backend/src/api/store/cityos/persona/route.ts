@@ -22,6 +22,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     const personas = await personaModule.getPersonasForTenant(tenantId)
     return res.json({ personas })
   } catch (error: any) {
-    return handleApiError(res, error, "STORE-CITYOS-PERSONA")
-  }
+    return handleApiError(res, error, "STORE-CITYOS-PERSONA")}
 }
+

@@ -45,7 +45,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
     res.json({ quote: updatedQuote });
 
-  } catch (error) {
-    handleApiError(res, error, "POST store quotes id accept")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST store quotes id accept")}
 }
+

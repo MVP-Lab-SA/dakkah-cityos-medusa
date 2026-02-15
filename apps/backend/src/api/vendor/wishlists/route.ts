@@ -26,7 +26,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       offset: Number(offset),
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET vendor wishlists")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET vendor wishlists")}
 }
+

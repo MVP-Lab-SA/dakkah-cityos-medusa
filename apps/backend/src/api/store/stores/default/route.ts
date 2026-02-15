@@ -19,6 +19,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     // Return the first store (or you could have an is_default flag)
     res.json({ store: stores[0] })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-STORES-DEFAULT")
-  }
+    handleApiError(res, error, "STORE-STORES-DEFAULT")}
 }
+

@@ -142,7 +142,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       })),
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET vendor analytics")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET vendor analytics")}
 }
+

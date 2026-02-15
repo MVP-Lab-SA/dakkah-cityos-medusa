@@ -44,9 +44,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       offset: Number(offset),
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET vendor advertising")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET vendor advertising")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -69,7 +68,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
     return res.status(201).json({ item })
 
-  } catch (error) {
-    handleApiError(res, error, "POST vendor advertising")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST vendor advertising")}
 }
+

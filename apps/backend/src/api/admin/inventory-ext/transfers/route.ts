@@ -9,6 +9,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     const transfers = await service.listWarehouseTransfers(filters)
     res.json({ transfers: Array.isArray(transfers) ? transfers : [transfers].filter(Boolean) })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "ADMIN-INVENTORY-EXT-TRANSFERS")}
 }
+

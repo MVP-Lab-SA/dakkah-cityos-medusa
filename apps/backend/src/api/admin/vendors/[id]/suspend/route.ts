@@ -25,6 +25,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     
     res.json({ vendor })
   } catch (error: any) {
-    handleApiError(res, error, "ADMIN-VENDORS-ID-SUSPEND")
-  }
+    handleApiError(res, error, "ADMIN-VENDORS-ID-SUSPEND")}
 }
+

@@ -80,3 +80,4 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
   return res.json({ item })
 }
+

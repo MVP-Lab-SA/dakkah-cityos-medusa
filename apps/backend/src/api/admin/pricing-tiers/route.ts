@@ -44,9 +44,8 @@ export async function GET(
       tiers: tiersWithCounts.sort((a, b) => (a.priority || 0) - (b.priority || 0))
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin pricing-tiers")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin pricing-tiers")}
 }
 
 // POST - Create B2B pricing tier
@@ -91,7 +90,7 @@ export async function POST(
 
     res.status(201).json({ tier })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin pricing-tiers")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin pricing-tiers")}
 }
+

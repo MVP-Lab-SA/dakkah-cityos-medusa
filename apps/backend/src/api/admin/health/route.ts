@@ -16,11 +16,10 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       pagination: { take: 1 },
     })
     checks.database = { status: "healthy" }
-  } catch (error) {
+  } catch (error: any) {
     checks.database = {
       status: "unhealthy",
-      error: error instanceof Error ? error.message : "Connection failed",
-    }
+      error: error instanceof Error ? error.message : "Connection failed",}
     overallStatus = "degraded"
   }
 
@@ -100,3 +99,4 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const statusCode = overallStatus === "healthy" ? 200 : 503
   return res.status(statusCode).json(health)
 }
+

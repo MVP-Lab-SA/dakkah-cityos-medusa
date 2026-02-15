@@ -18,9 +18,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     }
 
     res.json({ payment_term: term })
-  } catch (error) {
-    handleApiError(res, error, "ADMIN-PAYMENT-TERMS-ID")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "ADMIN-PAYMENT-TERMS-ID")}
 }
 
 /**
@@ -84,9 +83,8 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
     paymentTermsStore.set(id, updatedTerm)
 
     res.json({ payment_term: updatedTerm })
-  } catch (error) {
-    handleApiError(res, error, "ADMIN-PAYMENT-TERMS-ID")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "ADMIN-PAYMENT-TERMS-ID")}
 }
 
 /**
@@ -109,7 +107,7 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
     paymentTermsStore.delete(id)
 
     res.json({ success: true, deleted_id: id })
-  } catch (error) {
-    handleApiError(res, error, "ADMIN-PAYMENT-TERMS-ID")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "ADMIN-PAYMENT-TERMS-ID")}
 }
+

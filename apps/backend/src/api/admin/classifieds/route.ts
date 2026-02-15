@@ -38,3 +38,4 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const item = await mod.createClassifiedListings(validation.data)
   return res.status(201).json({ item })
 }
+

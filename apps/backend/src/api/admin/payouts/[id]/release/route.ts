@@ -32,7 +32,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       message: "Payout released and queued for processing" 
     })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin payouts id release")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin payouts id release")}
 }
+

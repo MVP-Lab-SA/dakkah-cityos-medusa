@@ -108,3 +108,4 @@ export async function GET(
     qr_code_data: `booking:${booking.id}:${booking.check_in_code || ""}` 
   })
 }
+

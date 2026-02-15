@@ -117,7 +117,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
             : "Standard payment terms apply"
       }
     })
-  } catch (error) {
-    handleApiError(res, error, "STORE-INVOICES-ID-EARLY-PAYMENT")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "STORE-INVOICES-ID-EARLY-PAYMENT")}
 }
+

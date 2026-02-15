@@ -67,3 +67,4 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     configured_count: endpoints.filter((e) => e.configured).length,
   })
 }
+

@@ -30,9 +30,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     // In production, fetch from database or store settings
     res.json({ config: bookingConfig })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin settings bookings")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin settings bookings")}
 }
 
 export async function PUT(req: MedusaRequest, res: MedusaResponse) {
@@ -53,7 +52,7 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ config: bookingConfig, message: "Configuration saved" })
 
-  } catch (error) {
-    handleApiError(res, error, "PUT admin settings bookings")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "PUT admin settings bookings")}
 }
+

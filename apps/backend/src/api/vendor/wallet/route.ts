@@ -48,7 +48,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       transactions,
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET vendor wallet")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET vendor wallet")}
 }
+

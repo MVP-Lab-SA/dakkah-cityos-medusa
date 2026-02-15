@@ -31,6 +31,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     })
   } catch (error: any) {
     logger.error(`[Integrations] fetching integration overview: ${error.message}`)
-    return handleApiError(res, error, "ADMIN-INTEGRATIONS")
-  }
+    return handleApiError(res, error, "ADMIN-INTEGRATIONS")}
 }
+

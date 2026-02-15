@@ -59,6 +59,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       offset: Number(offset),
     })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-FLASH-SALES")
-  }
+    handleApiError(res, error, "STORE-FLASH-SALES")}
 }
+

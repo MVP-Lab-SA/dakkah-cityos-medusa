@@ -109,7 +109,7 @@ export async function GET(
       top_reviewed_products: topProducts
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin reviews analytics")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin reviews analytics")}
 }
+

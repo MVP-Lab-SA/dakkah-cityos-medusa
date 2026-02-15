@@ -66,9 +66,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
               })
               logger.info(`[Webhook:Fleetbase] Order ${orderId} marked as delivered`)
             }
-          } catch (err) {
-            logger.error(`[Webhook:Fleetbase] updating order fulfillment: ${err instanceof Error ? err.message : err}`)
-          }
+          } catch (error: any) {
+            logger.error(`[Webhook:Fleetbase] updating order fulfillment: ${err instanceof Error ? err.message : err}`)}
         }
         processed = true
         break
@@ -99,9 +98,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
                 },
               })
             }
-          } catch (err) {
-            logger.error(`[Webhook:Fleetbase] updating driver assignment: ${err instanceof Error ? err.message : err}`)
-          }
+          } catch (error: any) {
+            logger.error(`[Webhook:Fleetbase] updating driver assignment: ${err instanceof Error ? err.message : err}`)}
         }
         processed = true
         break
@@ -134,9 +132,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
               })
               logger.info(`[Webhook:Fleetbase] Tracking updated for order ${orderId}`)
             }
-          } catch (err) {
-            logger.error(`[Webhook:Fleetbase] updating tracking: ${err instanceof Error ? err.message : err}`)
-          }
+          } catch (error: any) {
+            logger.error(`[Webhook:Fleetbase] updating tracking: ${err instanceof Error ? err.message : err}`)}
         }
         processed = true
         break
@@ -148,8 +145,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     }
 
     return res.status(200).json({ received: true, event, processed })
-  } catch (error) {
+  } catch (error: any) {
     logger.error(`[Webhook:Fleetbase] ${error instanceof Error ? error.message : error}`)
-    return handleApiError(res, error, "ADMIN-WEBHOOKS-FLEETBASE")
-  }
+    return handleApiError(res, error, "ADMIN-WEBHOOKS-FLEETBASE")}
 }
+

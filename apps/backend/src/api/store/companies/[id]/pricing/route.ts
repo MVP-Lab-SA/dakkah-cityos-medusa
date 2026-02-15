@@ -103,7 +103,7 @@ export async function GET(
       }
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET store companies id pricing")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET store companies id pricing")}
 }
+

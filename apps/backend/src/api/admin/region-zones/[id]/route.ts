@@ -33,3 +33,4 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
   await mod.deleteRegionZoneMappings([id])
   return res.status(204).send()
 }
+

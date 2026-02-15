@@ -7,8 +7,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     const item = await service.retrieveNotificationPreference(req.params.id)
     res.json({ item })
   } catch (error: any) {
-    res.status(404).json({ message: error.message })
-  }
+    return handleApiError(res, error, "STORE-NOTIFICATION-PREFERENCES-ID")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -17,8 +16,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     const item = await service.updateNotificationPreferences(req.params.id, req.body)
     res.json({ item })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "STORE-NOTIFICATION-PREFERENCES-ID")}
 }
 
 export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
@@ -27,6 +25,6 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
     await service.deleteNotificationPreferences(req.params.id)
     res.status(200).json({ id: req.params.id, deleted: true })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "STORE-NOTIFICATION-PREFERENCES-ID")}
 }
+

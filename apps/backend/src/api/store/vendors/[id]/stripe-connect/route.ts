@@ -108,6 +108,6 @@ export async function POST(
       stripe_account_id: stripeAccountId
     })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-VENDORS-ID-STRIPE-CONNECT")
-  }
+    handleApiError(res, error, "STORE-VENDORS-ID-STRIPE-CONNECT")}
 }
+

@@ -40,3 +40,4 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
   await moduleService.deleteGovernanceAuthoritys([id])
   return res.status(204).send()
 }
+

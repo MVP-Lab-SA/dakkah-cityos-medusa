@@ -50,9 +50,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       },
     })
   } catch (error: any) {
-    res.status(404).json({
-      message: "Booking not found",
-      error: error.message,
-    })
+    return handleApiError(res, error, "STORE-BOOKINGS-ID")
   }
 }
+

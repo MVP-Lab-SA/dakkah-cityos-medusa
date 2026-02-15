@@ -66,10 +66,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
         
         filters.tenant_id = vendorTenantIds
       } catch (error: any) {
-        return res.status(400).json({
-          message: "Failed to fetch marketplace vendors",
-          error: error.message || "Error retrieving marketplace information",
-        })
+        return handleApiError(res, error, "STORE-VENDORS")
       }
     } else if (tenant_id) {
       filters.tenant_id = tenant_id
@@ -107,6 +104,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       limit: Number(limit),
     })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-VENDORS")
-  }
+    handleApiError(res, error, "STORE-VENDORS")}
 }
+

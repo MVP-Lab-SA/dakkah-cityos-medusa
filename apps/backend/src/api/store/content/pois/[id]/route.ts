@@ -21,6 +21,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
     res.json({ poi: normalized })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-CONTENT-POIS-ID")
-  }
+    handleApiError(res, error, "STORE-CONTENT-POIS-ID")}
 }
+

@@ -82,9 +82,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       payment_terms: terms,
       count: terms.length
     })
-  } catch (error) {
-    handleApiError(res, error, "ADMIN-PAYMENT-TERMS")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "ADMIN-PAYMENT-TERMS")}
 }
 
 /**
@@ -153,7 +152,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     paymentTermsStore.set(id, newTerm)
 
     res.status(201).json({ payment_term: newTerm })
-  } catch (error) {
-    handleApiError(res, error, "ADMIN-PAYMENT-TERMS")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "ADMIN-PAYMENT-TERMS")}
 }
+

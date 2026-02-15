@@ -115,8 +115,7 @@ export async function POST(
 
       results.push({ invoice_id: invoice.id, status: "sent" })
     } catch (error: any) {
-      results.push({ invoice_id: invoice.id, status: "failed", error: error.message })
-    }
+      results.push({ invoice_id: invoice.id, status: "failed", error: error.message })}
   }
 
   res.json({
@@ -124,3 +123,4 @@ export async function POST(
     results
   })
 }
+

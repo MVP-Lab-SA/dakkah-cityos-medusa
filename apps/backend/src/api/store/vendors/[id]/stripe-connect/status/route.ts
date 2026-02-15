@@ -59,6 +59,6 @@ export async function GET(
       requirements: account.requirements
     })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-VENDORS-ID-STRIPE-CONNECT-STATUS")
-  }
+    handleApiError(res, error, "STORE-VENDORS-ID-STRIPE-CONNECT-STATUS")}
 }
+

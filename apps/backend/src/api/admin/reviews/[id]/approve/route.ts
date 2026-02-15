@@ -14,7 +14,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ review })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin reviews id approve")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin reviews id approve")}
 }
+

@@ -37,7 +37,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       message: "Subscription resumed",
     })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin subscriptions id resume")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin subscriptions id resume")}
 }
+

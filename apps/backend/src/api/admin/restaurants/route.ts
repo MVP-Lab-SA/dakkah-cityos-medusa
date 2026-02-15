@@ -40,3 +40,4 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const item = await moduleService.createRestaurants(validation.data)
   return res.status(201).json({ item })
 }
+

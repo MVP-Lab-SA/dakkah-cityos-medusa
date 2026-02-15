@@ -10,6 +10,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     const reservations = await service.listReservationHolds(filters)
     res.json({ reservations: Array.isArray(reservations) ? reservations : [reservations].filter(Boolean) })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "ADMIN-INVENTORY-EXT-RESERVATIONS")}
 }
+

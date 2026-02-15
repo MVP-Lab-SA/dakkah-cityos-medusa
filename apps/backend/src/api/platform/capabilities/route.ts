@@ -11,7 +11,7 @@ export async function GET(_req: MedusaRequest, res: MedusaResponse) {
       data: PLATFORM_CAPABILITIES,
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET platform capabilities")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET platform capabilities")}
 }
+

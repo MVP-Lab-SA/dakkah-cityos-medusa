@@ -17,6 +17,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
     res.json({ channels, count: channels.length })
   } catch (error: any) {
-    handleApiError(res, error, "PLATFORM-VENDORS-ID-CHANNELS")
-  }
+    handleApiError(res, error, "PLATFORM-VENDORS-ID-CHANNELS")}
 }
+

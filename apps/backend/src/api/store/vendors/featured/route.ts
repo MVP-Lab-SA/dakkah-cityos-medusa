@@ -44,6 +44,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       count: featuredVendors.length,
     })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-VENDORS-FEATURED")
-  }
+    handleApiError(res, error, "STORE-VENDORS-FEATURED")}
 }
+

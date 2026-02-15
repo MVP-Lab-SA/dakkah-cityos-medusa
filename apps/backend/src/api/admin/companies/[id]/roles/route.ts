@@ -76,9 +76,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       available_permissions: availablePermissions,
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin companies id roles")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin companies id roles")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -129,9 +128,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   
     res.status(201).json({ role: newRole })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin companies id roles")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin companies id roles")}
 }
 
 export async function PUT(req: MedusaRequest, res: MedusaResponse) {
@@ -186,9 +184,8 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ role: existingRoles[roleIndex] })
 
-  } catch (error) {
-    handleApiError(res, error, "PUT admin companies id roles")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "PUT admin companies id roles")}
 }
 
 export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
@@ -232,7 +229,7 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ id: role_id, deleted: true })
 
-  } catch (error) {
-    handleApiError(res, error, "DELETE admin companies id roles")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "DELETE admin companies id roles")}
 }
+

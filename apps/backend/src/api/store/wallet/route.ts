@@ -69,8 +69,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       },
     })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-WALLET")
-  }
+    handleApiError(res, error, "STORE-WALLET")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -122,6 +121,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       },
     })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-WALLET")
-  }
+    handleApiError(res, error, "STORE-WALLET")}
 }
+

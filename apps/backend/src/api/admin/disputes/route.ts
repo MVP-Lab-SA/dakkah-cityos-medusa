@@ -15,8 +15,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     const count = disputes.length
     res.json({ disputes, count, limit, offset })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "ADMIN-DISPUTES")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -25,6 +24,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     const dispute = await service.createDisputes(req.body)
     res.status(201).json({ dispute })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "ADMIN-DISPUTES")}
 }
+

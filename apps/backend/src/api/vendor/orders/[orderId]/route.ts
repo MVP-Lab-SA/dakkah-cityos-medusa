@@ -72,7 +72,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       }
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET vendor orders orderId")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET vendor orders orderId")}
 }
+

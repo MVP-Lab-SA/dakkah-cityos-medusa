@@ -81,8 +81,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         : "Purchase order submitted for approval",
     })
   } catch (error: any) {
-    res.status(400).json({
-      message: error.message || "Failed to submit purchase order",
-    })
+    return handleApiError(res, error, "STORE-PURCHASE-ORDERS-ID-SUBMIT")
   }
 }
+

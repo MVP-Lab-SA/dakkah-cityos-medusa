@@ -9,8 +9,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     const carriers = await service.listCarrierConfigs(filters)
     res.json({ carriers: Array.isArray(carriers) ? carriers : [carriers].filter(Boolean) })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "STORE-SHIPPING")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -24,6 +23,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     const rateList = Array.isArray(rates) ? rates : [rates].filter(Boolean)
     res.json({ rates: rateList, origin, destination, weight })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "STORE-SHIPPING")}
 }
+

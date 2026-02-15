@@ -43,9 +43,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ booking })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin bookings id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin bookings id")}
 }
 
 export async function PUT(req: MedusaRequest, res: MedusaResponse) {
@@ -58,7 +57,7 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ booking })
 
-  } catch (error) {
-    handleApiError(res, error, "PUT admin bookings id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "PUT admin bookings id")}
 }
+

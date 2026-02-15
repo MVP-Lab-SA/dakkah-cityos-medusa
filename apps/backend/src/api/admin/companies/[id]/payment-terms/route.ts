@@ -56,9 +56,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       payment_term: assignedTerm,
       is_custom: !!paymentTermId
     })
-  } catch (error) {
-    handleApiError(res, error, "ADMIN-COMPANIES-ID-PAYMENT-TERMS")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "ADMIN-COMPANIES-ID-PAYMENT-TERMS")}
 }
 
 /**
@@ -94,9 +93,8 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
       payment_term_id,
       message: `Payment terms ${payment_term_id} assigned to ${company.name}`
     })
-  } catch (error) {
-    handleApiError(res, error, "ADMIN-COMPANIES-ID-PAYMENT-TERMS")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "ADMIN-COMPANIES-ID-PAYMENT-TERMS")}
 }
 
 /**
@@ -127,7 +125,7 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
       company_id: id,
       message: `${company.name} reverted to default payment terms`
     })
-  } catch (error) {
-    handleApiError(res, error, "ADMIN-COMPANIES-ID-PAYMENT-TERMS")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "ADMIN-COMPANIES-ID-PAYMENT-TERMS")}
 }
+

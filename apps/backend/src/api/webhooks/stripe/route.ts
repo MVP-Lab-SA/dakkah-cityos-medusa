@@ -24,8 +24,7 @@ async function handlePaymentIntentSucceeded(data: any, correlationId: string, re
         correlationId,
         source: "stripe-webhook",
       })
-    } catch (err: any) {
-}
+    } catch (error: any) {}
   }
 }
 
@@ -74,10 +73,9 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "")
         const rawBody = typeof req.body === "string" ? req.body : JSON.stringify(req.body)
         stripeEvent = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret)
-      } catch (err: any) {
+      } catch (error: any) {
         logger.info(`[Webhook:Stripe] Signature verification failed (correlation: ${correlationId}): ${err.message}`)
-        return res.status(400).json({ error: "Invalid signature" })
-      }
+        return handleApiError(res, error, "WEBHOOKS-STRIPE")}
     } else {
       stripeEvent = {
         type: (req.body as any)?.type || "unknown",
@@ -115,7 +113,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
     return res.status(200).json({ received: true, type: stripeEvent.type, correlation_id: correlationId })
   } catch (error: any) {
-: ${error.message}`)
-    return handleApiError(res, error, "WEBHOOKS-STRIPE")
-  }
+    return handleApiError(res, error, "WEBHOOKS-STRIPE")}
 }
+

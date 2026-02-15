@@ -11,8 +11,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     if (utility_type) filters.utility_type = utility_type
     const items = await mod.listUtilityAccounts(filters, { skip: Number(offset), take: Number(limit) })
     return res.json({ items, count: Array.isArray(items) ? items.length : 0, limit: Number(limit), offset: Number(offset) })
-  } catch (error) {
+  } catch (error: any) {
     const message = error instanceof Error ? error.message : "Failed to fetch utility accounts"
-    return handleApiError(res, error, "STORE-UTILITIES")
-  }
+    return handleApiError(res, error, "STORE-UTILITIES")}
 }
+

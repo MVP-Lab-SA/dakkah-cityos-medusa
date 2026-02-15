@@ -53,6 +53,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     
     res.json({ subscription: updated })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-SUBSCRIPTIONS-ID-PAUSE")
-  }
+    handleApiError(res, error, "STORE-SUBSCRIPTIONS-ID-PAUSE")}
 }
+

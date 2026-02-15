@@ -34,9 +34,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       prevPage: page > 1 ? page - 1 : null,
       nextPage: page < totalPages ? page + 1 : null,
     })
-  } catch (error) {
-return res.status(500).json({
-      errors: [{ message: error instanceof Error ? error.message : "Internal server error" }],
-    })
+  } catch (error: any) {
+return handleApiError(res, error, "PLATFORM-CMS-VERTICALS")
   }
 }
+

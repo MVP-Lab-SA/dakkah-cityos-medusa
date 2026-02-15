@@ -10,6 +10,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     const accounts = await service.listLoyaltyAccounts(filters)
     res.json({ accounts: Array.isArray(accounts) ? accounts : [accounts].filter(Boolean) })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "ADMIN-LOYALTY-ACCOUNTS")}
 }
+

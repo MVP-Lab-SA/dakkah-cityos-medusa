@@ -42,6 +42,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       },
     })
   } catch (error: any) {
-    return handleApiError(res, error, "STORE-CITYOS-TENANT")
-  }
+    return handleApiError(res, error, "STORE-CITYOS-TENANT")}
 }
+

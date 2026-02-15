@@ -39,9 +39,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       offset: Number(offset),
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET vendor digital-products")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET vendor digital-products")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -64,7 +63,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
     return res.status(201).json({ item })
 
-  } catch (error) {
-    handleApiError(res, error, "POST vendor digital-products")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST vendor digital-products")}
 }
+

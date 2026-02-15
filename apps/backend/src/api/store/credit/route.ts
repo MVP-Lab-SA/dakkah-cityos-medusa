@@ -74,8 +74,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       },
     })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-CREDIT")
-  }
+    handleApiError(res, error, "STORE-CREDIT")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -122,6 +121,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       cart_id,
     })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-CREDIT")
-  }
+    handleApiError(res, error, "STORE-CREDIT")}
 }
+

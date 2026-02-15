@@ -56,8 +56,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       res.json({ payment_method: null })
     }
   } catch (error: any) {
-    handleApiError(res, error, "STORE-SUBSCRIPTIONS-ID-PAYMENT-METHOD")
-  }
+    handleApiError(res, error, "STORE-SUBSCRIPTIONS-ID-PAYMENT-METHOD")}
 }
 
 export async function PUT(req: MedusaRequest, res: MedusaResponse) {
@@ -111,7 +110,7 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
           return res.status(400).json({ message: "Payment method does not belong to customer" })
         }
       } catch (stripeError: any) {
-        return res.status(400).json({ message: "Invalid payment method" })
+        return handleApiError(res, stripeError, "STORE-SUBSCRIPTIONS-ID-PAYMENT-METHOD")
       }
     }
     
@@ -126,6 +125,6 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
     
     res.json({ subscription: updated })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-SUBSCRIPTIONS-ID-PAYMENT-METHOD")
-  }
+    handleApiError(res, error, "STORE-SUBSCRIPTIONS-ID-PAYMENT-METHOD")}
 }
+

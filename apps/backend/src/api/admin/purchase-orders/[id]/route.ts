@@ -41,9 +41,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ purchase_order })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin purchase-orders id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin purchase-orders id")}
 }
 
 export async function PUT(req: MedusaRequest, res: MedusaResponse) {
@@ -56,7 +55,7 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ purchase_order })
 
-  } catch (error) {
-    handleApiError(res, error, "PUT admin purchase-orders id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "PUT admin purchase-orders id")}
 }
+

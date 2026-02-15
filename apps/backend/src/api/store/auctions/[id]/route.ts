@@ -11,8 +11,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     return res.json({ item: { ...item, bids } })
   } catch (error: any) {
     if (error.type === "not_found" || error.message?.includes("not found")) {
-      return res.status(404).json({ message: "Auction listing not found" })
-    }
+      return handleApiError(res, error, "STORE-AUCTIONS-ID")}
     handleApiError(res, error, "STORE-AUCTIONS-ID")
   }
 }
+

@@ -48,7 +48,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ reviews: enrichedReviews })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin reviews")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin reviews")}
 }
+

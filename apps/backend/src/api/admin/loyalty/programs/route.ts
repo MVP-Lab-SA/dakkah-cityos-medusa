@@ -7,8 +7,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     const programs = await service.listLoyaltyPrograms({})
     res.json({ programs: Array.isArray(programs) ? programs : [programs].filter(Boolean) })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "ADMIN-LOYALTY-PROGRAMS")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -17,6 +16,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     const program = await service.createLoyaltyPrograms(req.body)
     res.status(201).json({ program })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "ADMIN-LOYALTY-PROGRAMS")}
 }
+

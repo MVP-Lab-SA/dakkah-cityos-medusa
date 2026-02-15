@@ -25,6 +25,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       effective_policies: effectivePolicies,
     })
   } catch (error: any) {
-    return handleApiError(res, error, "STORE-CITYOS-GOVERNANCE")
-  }
+    return handleApiError(res, error, "STORE-CITYOS-GOVERNANCE")}
 }
+

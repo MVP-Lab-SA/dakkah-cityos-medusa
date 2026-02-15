@@ -28,9 +28,8 @@ export async function GET(
 
     return res.json({ vendor })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin vendors id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin vendors id")}
 }
 
 export async function POST(
@@ -62,9 +61,8 @@ export async function POST(
 
     return res.json({ vendor })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin vendors id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin vendors id")}
 }
 
 export async function DELETE(
@@ -79,7 +77,7 @@ export async function DELETE(
 
     return res.status(204).send()
 
-  } catch (error) {
-    handleApiError(res, error, "DELETE admin vendors id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "DELETE admin vendors id")}
 }
+

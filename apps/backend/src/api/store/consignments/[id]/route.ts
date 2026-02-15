@@ -39,8 +39,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     })
   } catch (error: any) {
     if (error.type === "not_found" || error.message?.includes("not found")) {
-      return res.status(404).json({ message: "Consignment not found" })
-    }
+      return handleApiError(res, error, "STORE-CONSIGNMENTS-ID")}
     handleApiError(res, error, "STORE-CONSIGNMENTS-ID")
   }
 }
+

@@ -86,6 +86,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       message: "Your vendor application has been submitted. We'll review it within 2-3 business days.",
     })
   } catch (error: any) {
-    res.status(400).json({ message: error.message })
-  }
+    return handleApiError(res, error, "STORE-VENDORS-REGISTER")}
 }
+

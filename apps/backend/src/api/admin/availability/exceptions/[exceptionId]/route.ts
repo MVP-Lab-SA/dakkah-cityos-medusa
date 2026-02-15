@@ -40,9 +40,8 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
   
     res.json({ exception: exception[0] })
 
-  } catch (error) {
-    handleApiError(res, error, "PUT admin availability exceptions exceptionId")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "PUT admin availability exceptions exceptionId")}
 }
 
 export const DELETE = async (req: MedusaRequest, res: MedusaResponse) => {
@@ -54,7 +53,7 @@ export const DELETE = async (req: MedusaRequest, res: MedusaResponse) => {
   
     res.status(200).json({ id: exceptionId, deleted: true })
 
-  } catch (error) {
-    handleApiError(res, error, "DELETE admin availability exceptions exceptionId")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "DELETE admin availability exceptions exceptionId")}
 }
+

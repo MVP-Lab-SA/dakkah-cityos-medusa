@@ -37,6 +37,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       offset: Number(offset)
     })
   } catch (error: any) {
-    handleApiError(res, error, "ADMIN-PAYOUTS")
-  }
+    handleApiError(res, error, "ADMIN-PAYOUTS")}
 }
+

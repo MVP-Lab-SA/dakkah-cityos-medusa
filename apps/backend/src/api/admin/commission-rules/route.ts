@@ -67,10 +67,9 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       limit,
       offset
     })
-  } catch (error) {
+  } catch (error: any) {
     logger.error("Failed to fetch commission rules", error)
-    handleApiError(res, error, "ADMIN-COMMISSION-RULES")
-  }
+    handleApiError(res, error, "ADMIN-COMMISSION-RULES")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -89,8 +88,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     
     logger.info("Commission rule created", { ruleId: rule.id })
     res.status(201).json({ commission_rule: rule })
-  } catch (error) {
+  } catch (error: any) {
     logger.error("Failed to create commission rule", error)
-    handleApiError(res, error, "ADMIN-COMMISSION-RULES")
-  }
+    handleApiError(res, error, "ADMIN-COMMISSION-RULES")}
 }
+

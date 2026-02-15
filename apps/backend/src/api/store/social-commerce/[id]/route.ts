@@ -159,6 +159,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     if (!item) return res.status(404).json({ message: "Not found" })
     return res.json({ item })
   } catch (error: any) {
-    return res.status(404).json({ message: "Not found" })
-  }
+    return handleApiError(res, error, "STORE-SOCIAL-COMMERCE-ID")}
 }
+

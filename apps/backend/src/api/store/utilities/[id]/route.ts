@@ -8,8 +8,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     const [item] = await mod.listUtilityAccounts({ id }, { take: 1 })
     if (!item) return res.status(404).json({ message: "Not found" })
     return res.json({ item })
-  } catch (error) {
+  } catch (error: any) {
     const message = error instanceof Error ? error.message : "Failed to fetch utility account"
-    return handleApiError(res, error, "STORE-UTILITIES-ID")
-  }
+    return handleApiError(res, error, "STORE-UTILITIES-ID")}
 }
+

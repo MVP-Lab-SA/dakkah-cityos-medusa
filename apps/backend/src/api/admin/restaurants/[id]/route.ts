@@ -48,3 +48,4 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
   await moduleService.deleteRestaurants([id])
   return res.status(204).send()
 }
+

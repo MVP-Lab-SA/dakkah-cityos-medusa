@@ -42,9 +42,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       })),
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin companies id spending-limits")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin companies id spending-limits")}
 }
 
 // Update spending limit for a user
@@ -66,7 +65,7 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ user })
 
-  } catch (error) {
-    handleApiError(res, error, "PUT admin companies id spending-limits")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "PUT admin companies id spending-limits")}
 }
+

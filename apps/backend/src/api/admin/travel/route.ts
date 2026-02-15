@@ -43,3 +43,4 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const item = await mod.createTravelProperties(validation.data)
   return res.status(201).json({ item })
 }
+

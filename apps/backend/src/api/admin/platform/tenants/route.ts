@@ -46,8 +46,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       offset: Number(offset),
     })
   } catch (error: any) {
-    handleApiError(res, error, "ADMIN-PLATFORM-TENANTS")
-  }
+    handleApiError(res, error, "ADMIN-PLATFORM-TENANTS")}
 }
 
 /**
@@ -112,12 +111,10 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     res.status(201).json({ tenant })
   } catch (error: any) {
     if (error.name === "ZodError") {
-      return res.status(400).json({
-        error: "Validation Error",
-        message: error.errors,
-      })
+      return handleApiError(res, error, "ADMIN-PLATFORM-TENANTS")
     }
     
     handleApiError(res, error, "ADMIN-PLATFORM-TENANTS")
   }
 }
+

@@ -38,7 +38,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       services: [],
       count: 0,
       offset: Number(offset),
-      limit: Number(limit),
-    })
+      limit: Number(limit),})
   }
 }
+

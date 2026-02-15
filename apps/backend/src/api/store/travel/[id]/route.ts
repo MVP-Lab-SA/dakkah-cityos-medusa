@@ -9,8 +9,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     if (!item) return res.status(404).json({ message: "Not found" })
     const roomTypes = await mod.listRoomTypes({ property_id: id }, { take: 100 })
     return res.json({ item: { ...item, room_types: roomTypes } })
-  } catch (error) {
+  } catch (error: any) {
     const message = error instanceof Error ? error.message : "Failed to fetch travel property"
-    return handleApiError(res, error, "STORE-TRAVEL-ID")
-  }
+    return handleApiError(res, error, "STORE-TRAVEL-ID")}
 }
+

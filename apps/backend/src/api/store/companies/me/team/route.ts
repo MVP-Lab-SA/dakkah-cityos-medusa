@@ -96,6 +96,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       limit: Number(limit),
     })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-COMPANIES-ME-TEAM")
-  }
+    handleApiError(res, error, "STORE-COMPANIES-ME-TEAM")}
 }
+

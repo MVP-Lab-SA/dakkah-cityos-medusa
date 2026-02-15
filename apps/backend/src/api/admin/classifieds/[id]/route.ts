@@ -45,3 +45,4 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
   await mod.deleteClassifiedListings([id])
   return res.status(204).send()
 }
+

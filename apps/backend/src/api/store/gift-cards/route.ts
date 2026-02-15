@@ -29,8 +29,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       offset: Number(offset),
     })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-GIFT-CARDS")
-  }
+    handleApiError(res, error, "STORE-GIFT-CARDS")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -110,6 +109,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
     return res.status(400).json({ message: "Provide a code to redeem, or recipient_email, amount, and tenant_id to purchase" })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-GIFT-CARDS")
-  }
+    handleApiError(res, error, "STORE-GIFT-CARDS")}
 }
+

@@ -53,7 +53,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       recentPayouts: payouts,
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET vendor dashboard")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET vendor dashboard")}
 }
+

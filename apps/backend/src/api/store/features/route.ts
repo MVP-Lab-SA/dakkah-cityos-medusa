@@ -160,9 +160,8 @@ export async function GET(
   
     res.json({ features: publicFeatures })
 
-  } catch (error) {
-    handleApiError(res, error, "GET store features")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET store features")}
 }
 
 function getDefaultPublicFeatures() {
@@ -207,3 +206,4 @@ function getDefaultNavigation() {
     }
   }
 }
+

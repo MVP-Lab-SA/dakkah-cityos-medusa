@@ -40,9 +40,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       limit: Number(limit),
     })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin tenants")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin tenants")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -53,7 +52,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   
     res.status(201).json({ tenant })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin tenants")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin tenants")}
 }
+

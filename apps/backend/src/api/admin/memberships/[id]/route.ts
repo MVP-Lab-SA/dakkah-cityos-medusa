@@ -19,9 +19,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     if (!item) return res.status(404).json({ message: "Not found" })
     return res.json({ item })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin memberships id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin memberships id")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -33,9 +32,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     const item = await moduleService.updateMemberships({ id, ...validation.data })
     return res.json({ item })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin memberships id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin memberships id")}
 }
 
 export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
@@ -45,7 +43,7 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
     await moduleService.deleteMemberships([id])
     return res.status(204).send()
 
-  } catch (error) {
-    handleApiError(res, error, "DELETE admin memberships id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "DELETE admin memberships id")}
 }
+

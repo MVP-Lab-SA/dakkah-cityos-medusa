@@ -68,8 +68,7 @@ async function handleHierarchySync(collection: string, data: any, correlationId:
     const engine = createHierarchySyncEngine()
     const result = await engine.syncCollection(collection)
     logger.info(`[Webhook:PayloadCMS] Hierarchy sync completed for ${collection}: ${result.created} created, ${result.updated} updated, ${result.failed} failed, correlation: ${correlationId}`)
-  } catch (err: any) {
-}
+  } catch (error: any) {}
 }
 
 async function handleContentSync(collection: string, data: any, correlationId: string, req: MedusaRequest) {
@@ -87,8 +86,7 @@ async function handleContentSync(collection: string, data: any, correlationId: s
     } else {
       logger.info(`[Webhook:PayloadCMS] Skipping content sync — missing env vars or doc ID, correlation: ${correlationId}`)
     }
-  } catch (err: any) {
-}
+  } catch (error: any) {}
 }
 
 async function handleDelete(collection: string, data: any, correlationId: string) {
@@ -105,9 +103,8 @@ async function handleDelete(collection: string, data: any, correlationId: string
       tenant_id: data.tenantId || data.tenant || "system",
     })
     logger.info(`[Webhook:PayloadCMS] Deletion recorded for ${collection}/${docId}, correlation: ${correlationId}`)
-  } catch (err: any) {
-    logger.info(`[Webhook:PayloadCMS] Sync tracker not available for deletion recording: ${err.message}`)
-  }
+  } catch (error: any) {
+    logger.info(`[Webhook:PayloadCMS] Sync tracker not available for deletion recording: ${err.message}`)}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -155,7 +152,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
     return res.status(200).json({ received: true, event, collection, correlation_id: correlationId })
   } catch (error: any) {
-: ${error.message}`)
-    return handleApiError(res, error, "WEBHOOKS-PAYLOAD-CMS")
-  }
+    return handleApiError(res, error, "WEBHOOKS-PAYLOAD-CMS")}
 }
+

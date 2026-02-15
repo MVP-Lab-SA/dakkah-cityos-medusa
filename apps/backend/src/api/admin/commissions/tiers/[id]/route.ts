@@ -22,9 +22,8 @@ export async function GET(
 
     res.json({ tier: tiers[0] })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin commissions tiers id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin commissions tiers id")}
 }
 
 // PUT - Update commission tier
@@ -66,9 +65,8 @@ export async function PUT(
 
     res.json({ tier: tiers[0] })
 
-  } catch (error) {
-    handleApiError(res, error, "PUT admin commissions tiers id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "PUT admin commissions tiers id")}
 }
 
 // DELETE - Delete commission tier
@@ -84,7 +82,7 @@ export async function DELETE(
 
     res.json({ message: "Commission tier deleted", id })
 
-  } catch (error) {
-    handleApiError(res, error, "DELETE admin commissions tiers id")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "DELETE admin commissions tiers id")}
 }
+

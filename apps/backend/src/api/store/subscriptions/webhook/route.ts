@@ -25,9 +25,8 @@ export async function POST(
     } else {
       event = req.body
     }
-  } catch (err: any) {
-    return res.status(400).json({ message: `Webhook Error: ${err.message}` })
-  }
+  } catch (error: any) {
+    return handleApiError(res, error, "STORE-SUBSCRIPTIONS-WEBHOOK")}
 
   const subscriptionService = req.scope.resolve("subscriptionModuleService")
 
@@ -145,6 +144,6 @@ export async function POST(
 
     res.json({ received: true })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-SUBSCRIPTIONS-WEBHOOK")
-  }
+    handleApiError(res, error, "STORE-SUBSCRIPTIONS-WEBHOOK")}
 }
+

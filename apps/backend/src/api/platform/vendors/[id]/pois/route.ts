@@ -17,6 +17,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
     res.json({ pois, count: pois.length })
   } catch (error: any) {
-    handleApiError(res, error, "PLATFORM-VENDORS-ID-POIS")
-  }
+    handleApiError(res, error, "PLATFORM-VENDORS-ID-POIS")}
 }
+

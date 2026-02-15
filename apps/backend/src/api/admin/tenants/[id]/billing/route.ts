@@ -104,7 +104,7 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
     })
     
     res.json({ message: "Billing updated", billing: updateData })
-  } catch (error) {
-    handleApiError(res, error, "ADMIN-TENANTS-ID-BILLING")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "ADMIN-TENANTS-ID-BILLING")}
 }
+

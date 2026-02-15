@@ -19,6 +19,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     res.json({ store: stores[0] })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-STORES-BY-DOMAIN-DOMAIN")
-  }
+    handleApiError(res, error, "STORE-STORES-BY-DOMAIN-DOMAIN")}
 }
+

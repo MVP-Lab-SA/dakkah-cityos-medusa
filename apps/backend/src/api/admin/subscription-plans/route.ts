@@ -28,9 +28,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ plans })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin subscription-plans")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin subscription-plans")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -41,7 +40,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   
     res.status(201).json({ plan })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin subscription-plans")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin subscription-plans")}
 }
+

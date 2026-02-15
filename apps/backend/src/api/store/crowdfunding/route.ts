@@ -31,8 +31,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       offset: Number(offset),
     })
   } catch (error: any) {
-    handleApiError(res, error, "STORE-CROWDFUNDING")
-  }
+    handleApiError(res, error, "STORE-CROWDFUNDING")}
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -41,6 +40,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     const item = await mod.createCrowdfundCampaigns(req.body)
     res.status(201).json({ item })
   } catch (error: any) {
-    res.status(400).json({ message: error.message || "Failed to create crowdfunding campaign" })
-  }
+    return handleApiError(res, error, "STORE-CROWDFUNDING")}
 }
+

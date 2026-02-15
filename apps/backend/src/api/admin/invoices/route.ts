@@ -59,9 +59,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   
     res.json({ invoices: enrichedInvoices })
 
-  } catch (error) {
-    handleApiError(res, error, "GET admin invoices")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "GET admin invoices")}
 }
 
 // POST /admin/invoices - Create a new invoice
@@ -121,7 +120,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   
     res.status(201).json({ invoice: result.invoice, items: result.items })
 
-  } catch (error) {
-    handleApiError(res, error, "POST admin invoices")
-  }
+  } catch (error: any) {
+    handleApiError(res, error, "POST admin invoices")}
 }
+

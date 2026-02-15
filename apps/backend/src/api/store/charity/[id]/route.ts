@@ -12,15 +12,13 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       try {
         const result = await mod.listDonationCampaigns({ charity_org_id: id }, { take: 100 })
         campaigns = Array.isArray(result) ? result : result?.[0] || []
-      } catch (e: any) {
-      }
+      } catch (error: any) {}
       return res.json({ item: { ...charity, campaigns } })
     }
-  } catch (e: any) {
+  } catch (error: any) {
     const isNotFound = e?.type === "not_found" || e?.code === "NOT_FOUND" || e?.message?.includes("not found") || e?.message?.includes("does not exist")
     if (!isNotFound) {
-      return handleApiError(res, error, "STORE-CHARITY-ID")
-    }
+      return handleApiError(res, error, "STORE-CHARITY-ID")}
   }
 
   try {
@@ -29,15 +27,13 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       let org = null
       try {
         org = await mod.retrieveCharityOrg((campaign as any).charity_org_id)
-      } catch (e: any) {
-      }
+      } catch (error: any) {}
       return res.json({ item: { ...campaign, organization: org } })
     }
-  } catch (e: any) {
+  } catch (error: any) {
     const isNotFound = e?.type === "not_found" || e?.code === "NOT_FOUND" || e?.message?.includes("not found") || e?.message?.includes("does not exist")
     if (!isNotFound) {
-      return handleApiError(res, error, "STORE-CHARITY-ID")
-    }
+      return handleApiError(res, error, "STORE-CHARITY-ID")}
   }
 
   try {
@@ -49,13 +45,12 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       try {
         const result = await mod.listDonationCampaigns({ charity_org_id: match.id }, { take: 100 })
         campaigns = Array.isArray(result) ? result : result?.[0] || []
-      } catch (e: any) {
-      }
+      } catch (error: any) {}
       return res.json({ item: { ...match, campaigns } })
     }
-  } catch (e: any) {
-    return handleApiError(res, error, "STORE-CHARITY-ID")
-  }
+  } catch (error: any) {
+    return handleApiError(res, error, "STORE-CHARITY-ID")}
 
   return res.status(404).json({ message: "Charity or campaign not found" })
 }
+
