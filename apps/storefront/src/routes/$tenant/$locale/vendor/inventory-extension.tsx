@@ -104,36 +104,36 @@ function VendorInventoryExtensionRoute() {
           <table className="w-full border-collapse">
             <thead>
               <tr className="border-b text-left text-sm text-ds-muted-foreground">
-                <th className="pb-3 pr-4">Product</th>
-                <th className="pb-3 pr-4">SKU</th>
-                <th className="pb-3 pr-4">Warehouse</th>
-                <th className="pb-3 pr-4 text-right">Quantity</th>
-                <th className="pb-3 pr-4 text-right">Reserved</th>
-                <th className="pb-3 pr-4 text-right">Available</th>
-                <th className="pb-3 pr-4 text-right">Reorder Point</th>
-                <th className="pb-3 pr-4">Alert</th>
-                <th className="pb-3 pr-4">Status</th>
+                <th className="pb-3 pe-4">Product</th>
+                <th className="pb-3 pe-4">SKU</th>
+                <th className="pb-3 pe-4">Warehouse</th>
+                <th className="pb-3 pe-4 text-right">Quantity</th>
+                <th className="pb-3 pe-4 text-right">Reserved</th>
+                <th className="pb-3 pe-4 text-right">Available</th>
+                <th className="pb-3 pe-4 text-right">Reorder Point</th>
+                <th className="pb-3 pe-4">Alert</th>
+                <th className="pb-3 pe-4">Status</th>
                 <th className="pb-3">Actions</th>
               </tr>
             </thead>
             <tbody>
               {items.map((item) => (
                 <tr key={item.id} className="border-b hover:bg-ds-muted/50 transition">
-                  <td className="py-4 pr-4 font-medium">{item.product_name}</td>
-                  <td className="py-4 pr-4 text-sm text-ds-muted-foreground font-mono">{item.sku}</td>
-                  <td className="py-4 pr-4 text-sm text-ds-muted-foreground">{item.warehouse || "—"}</td>
-                  <td className="py-4 pr-4 text-right">{item.quantity}</td>
-                  <td className="py-4 pr-4 text-right">{item.reserved}</td>
-                  <td className="py-4 pr-4 text-right font-medium">{item.available}</td>
-                  <td className="py-4 pr-4 text-right">{item.reorder_point}</td>
-                  <td className="py-4 pr-4">
+                  <td className="py-4 pe-4 font-medium">{item.product_name}</td>
+                  <td className="py-4 pe-4 text-sm text-ds-muted-foreground font-mono">{item.sku}</td>
+                  <td className="py-4 pe-4 text-sm text-ds-muted-foreground">{item.warehouse || "—"}</td>
+                  <td className="py-4 pe-4 text-right">{item.quantity}</td>
+                  <td className="py-4 pe-4 text-right">{item.reserved}</td>
+                  <td className="py-4 pe-4 text-right font-medium">{item.available}</td>
+                  <td className="py-4 pe-4 text-right">{item.reorder_point}</td>
+                  <td className="py-4 pe-4">
                     {item.low_stock_alert ? (
                       <span className="px-2 py-0.5 text-xs rounded-full font-medium bg-ds-destructive/15 text-ds-destructive">Low Stock</span>
                     ) : (
                       <span className="text-sm text-ds-muted-foreground/70">—</span>
                     )}
                   </td>
-                  <td className="py-4 pr-4">
+                  <td className="py-4 pe-4">
                     <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[item.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {item.status?.replace(/_/g, " ")}
                     </span>

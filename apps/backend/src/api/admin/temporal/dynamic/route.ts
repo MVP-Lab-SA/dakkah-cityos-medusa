@@ -1,6 +1,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { z } from "zod"
 import {
+import { handleApiError } from "../../../../lib/api-error-handler"
   startDynamicWorkflow,
   listDynamicWorkflows,
 } from "../../../../lib/dynamic-workflow-client"

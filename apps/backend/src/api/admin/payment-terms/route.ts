@@ -1,5 +1,6 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 /**
  * Payment Terms with Early Payment Discounts
@@ -82,7 +83,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       count: terms.length
     })
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch payment terms" })
+    handleApiError(res, error, "ADMIN-PAYMENT-TERMS")
   }
 }
 
@@ -153,6 +154,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
     res.status(201).json({ payment_term: newTerm })
   } catch (error) {
-    res.status(500).json({ error: "Failed to create payment term" })
+    handleApiError(res, error, "ADMIN-PAYMENT-TERMS")
   }
 }

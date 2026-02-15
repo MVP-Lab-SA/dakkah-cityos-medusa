@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework"
+import { handleApiError } from "../../../../../lib/api-error-handler"
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const { id } = req.params
@@ -24,7 +25,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     
     res.json({ vendor })
   } catch (error: any) {
-    console.error("[Admin Vendor Suspend] Error:", error)
-    res.status(500).json({ message: error.message || "Failed to suspend vendor" })
+    handleApiError(res, error, "ADMIN-VENDORS-ID-SUSPEND")
   }
 }

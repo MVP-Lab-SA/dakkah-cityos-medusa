@@ -1,6 +1,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { checkTemporalHealth } from "../../../../lib/temporal-client"
 import { createLogger } from "../../../../lib/logger"
+import { handleApiError } from "../../../../lib/api-error-handler"
 const logger = createLogger("api:admin/integrations")
 
 interface SystemHealthCheck {
@@ -116,6 +117,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     return res.json({ systems: healthChecks })
   } catch (error: any) {
     logger.error(`[IntegrationHealth] checking health: ${error.message}`)
-    return res.status(500).json({ error: error.message })
+    return handleApiError(res, error, "ADMIN-INTEGRATIONS-HEALTH")
   }
 }

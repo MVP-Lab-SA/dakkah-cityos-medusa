@@ -72,7 +72,7 @@ export class CMSHierarchySyncEngine {
         results.push(result)
         logger.info(`[CMSHierarchySync] ${entry.collection}: ${result.created} created, ${result.updated} updated, ${result.failed} failed`)
       } catch (err: any) {
-        console.error(`[CMSHierarchySync] Fatal error syncing ${entry.collection}: ${err.message}`)
+        logger.error(`[CMSHierarchySync] Fatal error syncing ${entry.collection}: ${err.message}`)
         results.push({
           collection: entry.collection,
           total: 0,
@@ -135,7 +135,7 @@ export class CMSHierarchySyncEngine {
         result.failed++
         result.errors.push(`${doc.id}: ${err.message}`)
         await this.syncTracker.updateStatus(syncEntry.id, "failed", err.message)
-        console.error(`[CMSHierarchySync] Failed to sync ${collection} doc ${doc.id}: ${err.message}`)
+        logger.error(`[CMSHierarchySync] Failed to sync ${collection} doc ${doc.id}: ${err.message}`)
       }
     }
 
@@ -191,7 +191,7 @@ export class CMSHierarchySyncEngine {
       }
       return null
     } catch (err: any) {
-      console.error(`[CMSHierarchySync] Error finding ${doctype} by cms_ref ${cmsRefId}: ${err.message}`)
+      logger.error(`[CMSHierarchySync] Error finding ${doctype} by cms_ref ${cmsRefId}: ${err.message}`)
       return null
     }
   }

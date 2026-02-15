@@ -1,5 +1,6 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const { id } = req.params
@@ -18,8 +19,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     
     res.json({ commission_rule: rules[0] })
   } catch (error: any) {
-    console.error("[Admin Commission Rule GET] Error:", error)
-    res.status(500).json({ message: error.message || "Failed to fetch commission rule" })
+    handleApiError(res, error, "ADMIN-COMMISSION-RULES-ID")
   }
 }
 
@@ -65,8 +65,7 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
     
     res.json({ commission_rule: rule })
   } catch (error: any) {
-    console.error("[Admin Commission Rule PUT] Error:", error)
-    res.status(500).json({ message: error.message || "Failed to update commission rule" })
+    handleApiError(res, error, "ADMIN-COMMISSION-RULES-ID")
   }
 }
 
@@ -78,7 +77,6 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
     await commissionService.deleteCommissionRules(id)
     res.status(200).json({ id, deleted: true })
   } catch (error: any) {
-    console.error("[Admin Commission Rule DELETE] Error:", error)
-    res.status(500).json({ message: error.message || "Failed to delete commission rule" })
+    handleApiError(res, error, "ADMIN-COMMISSION-RULES-ID")
   }
 }

@@ -1,4 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../../../lib/api-error-handler"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const query = req.scope.resolve("query")
@@ -104,6 +105,6 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
     
     res.json({ message: "Billing updated", billing: updateData })
   } catch (error) {
-    res.status(500).json({ message: "Failed to update billing" })
+    handleApiError(res, error, "ADMIN-TENANTS-ID-BILLING")
   }
 }

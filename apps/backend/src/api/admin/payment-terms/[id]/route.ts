@@ -1,4 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 // Reference the same store (in production, use database)
 const paymentTermsStore: Map<string, any> = new Map()
@@ -18,7 +19,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
     res.json({ payment_term: term })
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch payment term" })
+    handleApiError(res, error, "ADMIN-PAYMENT-TERMS-ID")
   }
 }
 
@@ -84,7 +85,7 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
 
     res.json({ payment_term: updatedTerm })
   } catch (error) {
-    res.status(500).json({ error: "Failed to update payment term" })
+    handleApiError(res, error, "ADMIN-PAYMENT-TERMS-ID")
   }
 }
 
@@ -109,6 +110,6 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
 
     res.json({ success: true, deleted_id: id })
   } catch (error) {
-    res.status(500).json({ error: "Failed to delete payment term" })
+    handleApiError(res, error, "ADMIN-PAYMENT-TERMS-ID")
   }
 }

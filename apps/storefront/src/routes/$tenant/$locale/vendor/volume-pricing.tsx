@@ -102,28 +102,28 @@ function VendorVolumePricingRoute() {
           <table className="w-full border-collapse">
             <thead>
               <tr className="border-b text-left text-sm text-ds-muted-foreground">
-                <th className="pb-3 pr-4">Product</th>
-                <th className="pb-3 pr-4 text-right">Min Qty</th>
-                <th className="pb-3 pr-4 text-right">Max Qty</th>
-                <th className="pb-3 pr-4 text-right">Unit Price</th>
-                <th className="pb-3 pr-4 text-right">Discount %</th>
-                <th className="pb-3 pr-4">Status</th>
+                <th className="pb-3 pe-4">Product</th>
+                <th className="pb-3 pe-4 text-right">Min Qty</th>
+                <th className="pb-3 pe-4 text-right">Max Qty</th>
+                <th className="pb-3 pe-4 text-right">Unit Price</th>
+                <th className="pb-3 pe-4 text-right">Discount %</th>
+                <th className="pb-3 pe-4">Status</th>
                 <th className="pb-3">Actions</th>
               </tr>
             </thead>
             <tbody>
               {items.map((tier) => (
                 <tr key={tier.id} className="border-b hover:bg-ds-muted/50 transition">
-                  <td className="py-4 pr-4 font-medium">{tier.product_name}</td>
-                  <td className="py-4 pr-4 text-right">{tier.min_quantity}</td>
-                  <td className="py-4 pr-4 text-right">{tier.max_quantity ?? "∞"}</td>
-                  <td className="py-4 pr-4 text-right">
+                  <td className="py-4 pe-4 font-medium">{tier.product_name}</td>
+                  <td className="py-4 pe-4 text-right">{tier.min_quantity}</td>
+                  <td className="py-4 pe-4 text-right">{tier.max_quantity ?? "∞"}</td>
+                  <td className="py-4 pe-4 text-right">
                     {tier.currency_code?.toUpperCase()} {(tier.unit_price / 100).toFixed(2)}
                   </td>
-                  <td className="py-4 pr-4 text-right font-medium text-ds-success">
+                  <td className="py-4 pe-4 text-right font-medium text-ds-success">
                     {tier.discount_percentage}%
                   </td>
-                  <td className="py-4 pr-4">
+                  <td className="py-4 pe-4">
                     <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[tier.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {tier.status}
                     </span>

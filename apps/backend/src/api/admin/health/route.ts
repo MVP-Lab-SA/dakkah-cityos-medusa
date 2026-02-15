@@ -1,6 +1,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { getCache } from "../../../lib/cache/redis-cache"
 import { metrics } from "../../../lib/monitoring/metrics"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const startTime = Date.now()

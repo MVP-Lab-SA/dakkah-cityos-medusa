@@ -1,5 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { createLogger } from "../../../../lib/logger"
+import { handleApiError } from "../../../../lib/api-error-handler"
 const logger = createLogger("api:admin/webhooks")
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -208,6 +209,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     return res.status(200).json({ received: true, type: stripeEvent.type, processed })
   } catch (error) {
     logger.error(`[Webhook:Stripe] ${error instanceof Error ? error.message : error}`)
-    return res.status(500).json({ error: "Internal server error" })
+    return handleApiError(res, error, "ADMIN-WEBHOOKS-STRIPE")
   }
 }

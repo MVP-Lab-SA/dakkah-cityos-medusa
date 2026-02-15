@@ -1,5 +1,6 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
@@ -36,7 +37,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       offset: Number(offset)
     })
   } catch (error: any) {
-    console.error("[Admin Payouts GET] Error:", error)
-    res.status(500).json({ message: error.message || "Failed to fetch payouts" })
+    handleApiError(res, error, "ADMIN-PAYOUTS")
   }
 }

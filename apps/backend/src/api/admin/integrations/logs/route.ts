@@ -1,6 +1,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { createIntegrationOrchestrator } from "../../../../integrations/orchestrator/index"
 import { createLogger } from "../../../../lib/logger"
+import { handleApiError } from "../../../../lib/api-error-handler"
 const logger = createLogger("api:admin/integrations")
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
@@ -47,6 +48,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     })
   } catch (error: any) {
     logger.error(`[IntegrationLogs] fetching sync logs: ${error.message}`)
-    return res.status(500).json({ error: error.message })
+    return handleApiError(res, error, "ADMIN-INTEGRATIONS-LOGS")
   }
 }

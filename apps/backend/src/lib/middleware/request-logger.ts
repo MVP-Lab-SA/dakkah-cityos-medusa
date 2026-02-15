@@ -51,15 +51,15 @@ export function requestLoggerMiddleware(
 
       if (process.env.NODE_ENV === "production") {
         if (statusCode >= 500) {
-          console.error(JSON.stringify(logData))
+          logger.error(JSON.stringify(logData))
         } else if (statusCode >= 400) {
-          console.warn(JSON.stringify(logData))
+          logger.warn(JSON.stringify(logData))
         } else {
-          console.log(JSON.stringify(logData))
+          logger.info(JSON.stringify(logData))
         }
       } else {
         const levelStr = statusCode >= 500 ? "ERROR" : statusCode >= 400 ? "WARN" : "INFO"
-        console.log(
+        logger.info(
           `${logData.timestamp} ${levelStr} ${req.method} ${req.path} ${statusCode} ${duration}ms [${requestId.substring(0, 8)}]`
         )
       }

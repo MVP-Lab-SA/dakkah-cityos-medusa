@@ -2,6 +2,7 @@ import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { startWorkflow } from "../../../../lib/temporal-client"
 import { getWorkflowForEvent } from "../../../../lib/event-dispatcher"
 import { z } from "zod"
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 const triggerSchema = z.object({
   workflowId: z.string().min(1),

@@ -1,5 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { createLogger } from "../../../lib/logger"
+import { handleApiError } from "../../../lib/api-error-handler"
 const logger = createLogger("api:admin/integrations")
 
 const INTEGRATION_SYSTEMS = [
@@ -30,6 +31,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     })
   } catch (error: any) {
     logger.error(`[Integrations] fetching integration overview: ${error.message}`)
-    return res.status(500).json({ error: error.message })
+    return handleApiError(res, error, "ADMIN-INTEGRATIONS")
   }
 }

@@ -1,6 +1,7 @@
 // @ts-nocheck
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { createLogger } from "../../../../../lib/logger"
+import { handleApiError } from "../../../../../lib/api-error-handler"
 const logger = createLogger("api:admin/integrations")
 
 const VALID_COLLECTIONS = [
@@ -76,8 +77,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       results,
     })
   } catch (error: any) {
-    console.error(`[CMSSyncAPI] Error during CMS hierarchy sync: ${error.message}`)
-    return res.status(500).json({ error: error.message })
+    return handleApiError(res, error, "ADMIN-INTEGRATIONS-SYNC-CMS")
   }
 }
 
@@ -103,7 +103,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       job_name: "payload-cms-poll",
     })
   } catch (error: any) {
-    console.error(`[CMSSyncAPI] Error fetching sync status: ${error.message}`)
-    return res.status(500).json({ error: error.message })
+    return handleApiError(res, error, "ADMIN-INTEGRATIONS-SYNC-CMS")
   }
 }

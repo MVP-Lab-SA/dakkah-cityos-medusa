@@ -1,5 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { z } from "zod"
+import { handleApiError } from "../../../../../lib/api-error-handler"
 
 /**
  * Platform Admin: Get Tenant by ID
@@ -29,10 +30,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
     res.json({ tenant })
   } catch (error: any) {
-    res.status(500).json({
-      error: "Internal Server Error",
-      message: error.message,
-    })
+    handleApiError(res, error, "ADMIN-PLATFORM-TENANTS-ID")
   }
 }
 
@@ -88,10 +86,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       })
     }
     
-    res.status(500).json({
-      error: "Internal Server Error",
-      message: error.message,
-    })
+    handleApiError(res, error, "ADMIN-PLATFORM-TENANTS-ID")
   }
 }
 
@@ -116,9 +111,6 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
 
     res.status(204).send()
   } catch (error: any) {
-    res.status(500).json({
-      error: "Internal Server Error",
-      message: error.message,
-    })
+    handleApiError(res, error, "ADMIN-PLATFORM-TENANTS-ID")
   }
 }

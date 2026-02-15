@@ -103,32 +103,32 @@ function VendorDropshippingRoute() {
           <table className="w-full border-collapse">
             <thead>
               <tr className="border-b text-left text-sm text-ds-muted-foreground">
-                <th className="pb-3 pr-4">Product</th>
-                <th className="pb-3 pr-4">Supplier</th>
-                <th className="pb-3 pr-4 text-right">Cost</th>
-                <th className="pb-3 pr-4 text-right">Retail Price</th>
-                <th className="pb-3 pr-4 text-right">Margin %</th>
-                <th className="pb-3 pr-4 text-right">Orders</th>
-                <th className="pb-3 pr-4">Status</th>
+                <th className="pb-3 pe-4">Product</th>
+                <th className="pb-3 pe-4">Supplier</th>
+                <th className="pb-3 pe-4 text-right">Cost</th>
+                <th className="pb-3 pe-4 text-right">Retail Price</th>
+                <th className="pb-3 pe-4 text-right">Margin %</th>
+                <th className="pb-3 pe-4 text-right">Orders</th>
+                <th className="pb-3 pe-4">Status</th>
                 <th className="pb-3">Actions</th>
               </tr>
             </thead>
             <tbody>
               {items.map((product) => (
                 <tr key={product.id} className="border-b hover:bg-ds-muted/50 transition">
-                  <td className="py-4 pr-4 font-medium">{product.name}</td>
-                  <td className="py-4 pr-4 text-sm text-ds-muted-foreground">{product.supplier}</td>
-                  <td className="py-4 pr-4 text-right">
+                  <td className="py-4 pe-4 font-medium">{product.name}</td>
+                  <td className="py-4 pe-4 text-sm text-ds-muted-foreground">{product.supplier}</td>
+                  <td className="py-4 pe-4 text-right">
                     {product.currency_code?.toUpperCase()} {(product.cost / 100).toFixed(2)}
                   </td>
-                  <td className="py-4 pr-4 text-right">
+                  <td className="py-4 pe-4 text-right">
                     {product.currency_code?.toUpperCase()} {(product.retail_price / 100).toFixed(2)}
                   </td>
-                  <td className="py-4 pr-4 text-right font-medium text-ds-success">
+                  <td className="py-4 pe-4 text-right font-medium text-ds-success">
                     {product.margin_percentage}%
                   </td>
-                  <td className="py-4 pr-4 text-right">{product.orders}</td>
-                  <td className="py-4 pr-4">
+                  <td className="py-4 pe-4 text-right">{product.orders}</td>
+                  <td className="py-4 pe-4">
                     <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[product.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {product.status?.replace(/_/g, " ")}
                     </span>

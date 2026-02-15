@@ -1,6 +1,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { createHmac } from "crypto"
 import { createLogger } from "../../../../lib/logger"
+import { handleApiError } from "../../../../lib/api-error-handler"
 const logger = createLogger("api:admin/webhooks")
 
 function verifyFleetbaseSignature(payload: string, signature: string, secret: string): boolean {
@@ -149,6 +150,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     return res.status(200).json({ received: true, event, processed })
   } catch (error) {
     logger.error(`[Webhook:Fleetbase] ${error instanceof Error ? error.message : error}`)
-    return res.status(500).json({ error: "Internal server error" })
+    return handleApiError(res, error, "ADMIN-WEBHOOKS-FLEETBASE")
   }
 }

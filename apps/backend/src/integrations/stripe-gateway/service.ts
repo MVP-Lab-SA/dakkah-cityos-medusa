@@ -14,10 +14,10 @@ export class StripeGatewayService {
 
   constructor(config: StripeGatewayConfig) {
     if (!config.secretKey) {
-      console.warn("[StripeGateway] Missing secretKey configuration");
+      logger.warn("[StripeGateway] Missing secretKey configuration");
     }
     if (!config.webhookSecret) {
-      console.warn("[StripeGateway] Missing webhookSecret configuration");
+      logger.warn("[StripeGateway] Missing webhookSecret configuration");
     }
 
     this.config = config;

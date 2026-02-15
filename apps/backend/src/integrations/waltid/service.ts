@@ -17,7 +17,7 @@ export class WaltIdService {
 
   constructor(config: WaltIdConfig) {
     if (!config.apiUrl || !config.apiKey) {
-      console.warn("[WaltId] Missing apiUrl or apiKey configuration");
+      logger.warn("[WaltId] Missing apiUrl or apiKey configuration");
     }
 
     this.config = config;

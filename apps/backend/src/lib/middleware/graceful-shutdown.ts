@@ -20,7 +20,7 @@ async function gracefulShutdown(signal: string) {
   )
 
   const shutdownTimeout = setTimeout(() => {
-    console.error(
+    logger.error(
       JSON.stringify({
         timestamp: new Date().toISOString(),
         level: "error",
@@ -35,7 +35,7 @@ async function gracefulShutdown(signal: string) {
     try {
       await handler()
     } catch (error) {
-      console.error(
+      logger.error(
         JSON.stringify({
           timestamp: new Date().toISOString(),
           level: "error",
@@ -65,7 +65,7 @@ export function initGracefulShutdown() {
   process.on("SIGINT", () => gracefulShutdown("SIGINT"))
 
   process.on("uncaughtException", (error) => {
-    console.error(
+    logger.error(
       JSON.stringify({
         timestamp: new Date().toISOString(),
         level: "error",
@@ -78,7 +78,7 @@ export function initGracefulShutdown() {
   })
 
   process.on("unhandledRejection", (reason) => {
-    console.error(
+    logger.error(
       JSON.stringify({
         timestamp: new Date().toISOString(),
         level: "error",

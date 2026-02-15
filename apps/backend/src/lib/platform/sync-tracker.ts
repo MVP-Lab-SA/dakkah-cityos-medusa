@@ -63,7 +63,7 @@ export class DurableSyncTracker {
       this.initialized = true
       logger.info("[DurableSyncTracker] sync_tracking table initialized")
     } catch (err: any) {
-      console.error(`[DurableSyncTracker] Failed to initialize table: ${err.message}`)
+      logger.error(`[DurableSyncTracker] Failed to initialize table: ${err.message}`)
       throw err
     }
   }

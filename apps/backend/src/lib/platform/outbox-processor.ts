@@ -209,7 +209,7 @@ export class OutboxProcessor {
         channel: event.channel,
       })
     } catch (err: any) {
-      console.error(`[OutboxProcessor] Failed to dispatch to ${system}: ${err.message}`)
+      logger.error(`[OutboxProcessor] Failed to dispatch to ${system}: ${err.message}`)
       throw err
     }
   }

@@ -1,6 +1,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import crypto from "crypto"
 import { createLogger } from "../../../../lib/logger"
+import { handleApiError } from "../../../../lib/api-error-handler"
 const logger = createLogger("api:admin/webhooks")
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -125,6 +126,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     return res.status(200).json({ received: true, doctype, event, processed })
   } catch (error) {
     logger.error(`[Webhook:ERPNext] ${error instanceof Error ? error.message : error}`)
-    return res.status(500).json({ error: "Internal server error" })
+    return handleApiError(res, error, "ADMIN-WEBHOOKS-ERPNEXT")
   }
 }

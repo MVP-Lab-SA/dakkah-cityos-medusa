@@ -2,6 +2,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { z } from "zod"
 import { createVendorWorkflow } from "../../../workflows/vendor/create-vendor-workflow"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 const createVendorSchema = z.object({
   handle: z.string().min(2),

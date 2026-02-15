@@ -1,5 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { z } from "zod"
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 /**
  * Tenant Admin: List Stores in Current Tenant
@@ -37,10 +38,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       offset: Number(offset),
     })
   } catch (error: any) {
-    res.status(500).json({
-      error: "Internal Server Error",
-      message: error.message,
-    })
+    handleApiError(res, error, "ADMIN-TENANT-STORES")
   }
 }
 
@@ -115,9 +113,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       })
     }
     
-    res.status(500).json({
-      error: "Internal Server Error",
-      message: error.message,
-    })
+    handleApiError(res, error, "ADMIN-TENANT-STORES")
   }
 }

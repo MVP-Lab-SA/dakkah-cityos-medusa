@@ -62,7 +62,7 @@ export class CityOSCache {
         this.enabled = true
         logger.info("[CityOS Cache] Redis cache initialized")
       } catch (error) {
-        console.warn("[CityOS Cache] Redis connection failed, caching disabled:", error)
+        logger.warn("[CityOS Cache] Redis connection failed, caching disabled:", error)
         this.enabled = false
       }
     } else {
@@ -83,7 +83,7 @@ export class CityOSCache {
       }
       return null
     } catch (error) {
-      console.warn(`[CityOS Cache] Error getting ${key}:`, error)
+      logger.warn(`[CityOS Cache] Error getting ${key}:`, error)
       return null
     }
   }
@@ -102,7 +102,7 @@ export class CityOSCache {
         await this.redis.set(key, serialized)
       }
     } catch (error) {
-      console.warn(`[CityOS Cache] Error setting ${key}:`, error)
+      logger.warn(`[CityOS Cache] Error setting ${key}:`, error)
     }
   }
 
@@ -115,7 +115,7 @@ export class CityOSCache {
     try {
       await this.redis.del(key)
     } catch (error) {
-      console.warn(`[CityOS Cache] Error deleting ${key}:`, error)
+      logger.warn(`[CityOS Cache] Error deleting ${key}:`, error)
     }
   }
 
@@ -131,7 +131,7 @@ export class CityOSCache {
         await this.redis.del(...keys)
       }
     } catch (error) {
-      console.warn(`[CityOS Cache] Error deleting pattern ${pattern}:`, error)
+      logger.warn(`[CityOS Cache] Error deleting pattern ${pattern}:`, error)
     }
   }
 
@@ -203,7 +203,7 @@ export class CityOSCache {
       }
       logger.info(`[CityOS Cache] Cleared ${keys.length} keys`)
     } catch (error) {
-      console.warn("[CityOS Cache] Error clearing cache:", error)
+      logger.warn("[CityOS Cache] Error clearing cache:", error)
     }
   }
 

@@ -1,4 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../../../lib/api-error-handler"
 
 // Get tax exemptions for a company
 export async function GET(req: MedusaRequest, res: MedusaResponse) {

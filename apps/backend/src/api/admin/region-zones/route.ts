@@ -1,5 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { z } from "zod"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 const createSchema = z.object({
   residency_zone: z.enum(["GCC", "EU", "MENA", "APAC", "AMERICAS", "GLOBAL"]),

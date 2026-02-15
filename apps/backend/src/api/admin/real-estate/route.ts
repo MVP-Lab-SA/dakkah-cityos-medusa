@@ -1,5 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { z } from "zod"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 const createSchema = z.object({
   title: z.string().min(1),

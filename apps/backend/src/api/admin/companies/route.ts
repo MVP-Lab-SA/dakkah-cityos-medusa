@@ -1,5 +1,6 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework";
 import { z } from "zod";
+import { handleApiError } from "../../../lib/api-error-handler"
 
 // Validation schemas
 const createCompanySchema = z.object({

@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../../../lib/api-error-handler"
 
 // POST - Convert quote to order (admin)
 export async function POST(
@@ -96,6 +97,6 @@ export async function POST(
       cart_id: cart.id
     })
   } catch (error: any) {
-    res.status(500).json({ message: error.message })
+    handleApiError(res, error, "ADMIN-QUOTES-ID-CONVERT")
   }
 }

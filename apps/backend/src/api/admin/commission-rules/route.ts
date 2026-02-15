@@ -3,6 +3,7 @@ import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
 import { z } from "zod"
 import { apiLogger } from "../../../lib/logger"
 import { paginationSchema, formatZodErrors } from "../../../lib/validation"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 const logger = apiLogger
 
@@ -68,7 +69,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     })
   } catch (error) {
     logger.error("Failed to fetch commission rules", error)
-    res.status(500).json({ message: "Failed to fetch commission rules" })
+    handleApiError(res, error, "ADMIN-COMMISSION-RULES")
   }
 }
 
@@ -90,6 +91,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     res.status(201).json({ commission_rule: rule })
   } catch (error) {
     logger.error("Failed to create commission rule", error)
-    res.status(500).json({ message: "Failed to create commission rule" })
+    handleApiError(res, error, "ADMIN-COMMISSION-RULES")
   }
 }

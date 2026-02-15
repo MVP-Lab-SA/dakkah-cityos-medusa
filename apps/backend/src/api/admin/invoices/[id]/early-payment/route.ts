@@ -1,5 +1,6 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import { handleApiError } from "../../../../../lib/api-error-handler"
 
 /**
  * Early Payment Discount Calculator and Application
@@ -125,8 +126,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
     res.json({ early_payment: calculation })
   } catch (error) {
-    console.error("Early payment calculation error:", error)
-    res.status(500).json({ error: "Failed to calculate early payment discount" })
+    handleApiError(res, error, "ADMIN-INVOICES-ID-EARLY-PAYMENT")
   }
 }
 
@@ -186,8 +186,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       early_payment_discount: result
     })
   } catch (error) {
-    console.error("Apply early payment error:", error)
-    res.status(500).json({ error: "Failed to apply early payment discount" })
+    handleApiError(res, error, "ADMIN-INVOICES-ID-EARLY-PAYMENT")
   }
 }
 

@@ -1,6 +1,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { createIntegrationOrchestrator } from "../../../../integrations/orchestrator/index"
 import { createLogger } from "../../../../lib/logger"
+import { handleApiError } from "../../../../lib/api-error-handler"
 const logger = createLogger("api:admin/integrations")
 
 const VALID_SYSTEMS = ["payload", "erpnext", "fleetbase", "waltid", "stripe"]
@@ -56,11 +57,11 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       return res.json({ triggered: true, system, entity_type, entity_id: entity_id || "all", workflow_run_id: result.runId })
     } catch (err: any) {
       logger.error(`[IntegrationSync] dispatching manual sync: ${err.message}`)
-      return res.status(500).json({ error: `Failed to dispatch sync: ${err.message}` })
+      return handleApiError(res, error, "ADMIN-INTEGRATIONS-SYNC")
     }
   } catch (error: any) {
     logger.error(`[IntegrationSync] triggering sync: ${error.message}`)
-    return res.status(500).json({ error: error.message })
+    return handleApiError(res, error, "ADMIN-INTEGRATIONS-SYNC")
   }
 }
 
@@ -90,6 +91,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     })
   } catch (error: any) {
     logger.error(`[IntegrationSync] fetching sync operations: ${error.message}`)
-    return res.status(500).json({ error: error.message })
+    return handleApiError(res, error, "ADMIN-INTEGRATIONS-SYNC")
   }
 }

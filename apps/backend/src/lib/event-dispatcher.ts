@@ -96,7 +96,7 @@ export async function dispatchEventToTemporal(
     const result = await startWorkflow(mapping.workflowId, payload, nodeContext || {}, mapping.taskQueue)
     return { dispatched: true, runId: result.runId }
   } catch (err: any) {
-    console.warn(`[EventDispatcher] Failed to dispatch ${eventType} to Temporal:`, err.message)
+    logger.warn(`[EventDispatcher] Failed to dispatch ${eventType} to Temporal:`, err.message)
     return { dispatched: false, error: err.message }
   }
 }
@@ -166,7 +166,7 @@ export async function dispatchCrossSystemEvent(
       })
       return { temporal: false, integrations: ["outbox"] }
     } catch (err: any) {
-      console.warn(`[EventDispatcher] Outbox fallback failed for ${eventType}: ${err.message}`)
+      logger.warn(`[EventDispatcher] Outbox fallback failed for ${eventType}: ${err.message}`)
       return { temporal: false, integrations: [] }
     }
   }

@@ -1,5 +1,6 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import { handleApiError } from "../../../../../lib/api-error-handler"
 
 /**
  * Assign Payment Terms to a Company
@@ -56,8 +57,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       is_custom: !!paymentTermId
     })
   } catch (error) {
-    console.error("Get company payment terms error:", error)
-    res.status(500).json({ error: "Failed to fetch payment terms" })
+    handleApiError(res, error, "ADMIN-COMPANIES-ID-PAYMENT-TERMS")
   }
 }
 
@@ -95,8 +95,7 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
       message: `Payment terms ${payment_term_id} assigned to ${company.name}`
     })
   } catch (error) {
-    console.error("Assign payment terms error:", error)
-    res.status(500).json({ error: "Failed to assign payment terms" })
+    handleApiError(res, error, "ADMIN-COMPANIES-ID-PAYMENT-TERMS")
   }
 }
 
@@ -129,7 +128,6 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
       message: `${company.name} reverted to default payment terms`
     })
   } catch (error) {
-    console.error("Remove payment terms error:", error)
-    res.status(500).json({ error: "Failed to remove payment terms" })
+    handleApiError(res, error, "ADMIN-COMPANIES-ID-PAYMENT-TERMS")
   }
 }

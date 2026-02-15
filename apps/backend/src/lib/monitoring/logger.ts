@@ -95,16 +95,16 @@ class CityOSLogger {
 
     switch (level) {
       case "error":
-        console.error(formatted)
+        logger.error(formatted)
         break
       case "warn":
-        console.warn(formatted)
+        logger.warn(formatted)
         break
       case "debug":
         console.debug(formatted)
         break
       default:
-        console.log(formatted)
+        logger.info(formatted)
     }
 
     // Send to external logging service in production
