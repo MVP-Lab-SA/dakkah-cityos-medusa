@@ -153,7 +153,7 @@ export function ReturnRequestForm({
                   </div>
 
                   {isSelected && (
-                    <div className="mt-3 ps-8 space-y-2" onClick={(e) => e.stopPropagation()}>
+                    <div className="mt-3 ps-8 space-y-2" role="group" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
                       <div className="flex items-center gap-2">
                         <label className="text-xs text-ds-muted-foreground">{t(locale, "returns.quantity")}:</label>
                         <select

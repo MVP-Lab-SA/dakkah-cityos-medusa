@@ -53,7 +53,8 @@
       "nameAZ": "Name A-Z",
       "priceLowHigh": "Price: Low to High",
       "priceHighLow": "Price: High to Low"
-    }
+    },
+    "lightbox": "Image lightbox"
   },
   "nav": {
     "shop": "Shop",

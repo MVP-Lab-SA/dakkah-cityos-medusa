@@ -53,7 +53,8 @@
       "nameAZ": "Nom A-Z",
       "priceLowHigh": "Prix : croissant",
       "priceHighLow": "Prix : décroissant"
-    }
+    },
+    "lightbox": "Visionneuse d'images"
   },
   "nav": {
     "shop": "Boutique",
