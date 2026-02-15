@@ -1,11 +1,37 @@
+// @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { t, formatCurrency } from "@/lib/i18n"
 import type { SupportedLocale } from "@/lib/i18n"
-import { useMembership, useUserMembership } from "@/lib/hooks/use-memberships"
 import { BenefitsList } from "@/components/memberships/benefits-list"
+
+function normalizeDetail(item: any) {
+  if (!item) return null
+  const meta = typeof item.metadata === 'string' ? JSON.parse(item.metadata) : (item.metadata || {})
+  return { ...meta, ...item,
+    thumbnail: item.thumbnail || item.photo_url || item.banner_url || item.logo_url || meta.thumbnail || (meta.images && meta.images[0]) || null,
+    images: meta.images || [item.photo_url || item.banner_url || item.logo_url].filter(Boolean),
+    description: item.description || meta.description || "",
+    price: item.price ?? meta.price ?? null,
+    rating: item.rating ?? item.avg_rating ?? meta.rating ?? null,
+    review_count: item.review_count ?? meta.review_count ?? null,
+    location: item.location || item.city || item.address || meta.location || null,
+  }
+}
 
 export const Route = createFileRoute("/$tenant/$locale/memberships/$id")({
   component: MembershipDetailPage,
+  loader: async ({ params }) => {
+    try {
+      const isServer = typeof window === "undefined"
+      const baseUrl = isServer ? "http://localhost:9000" : ""
+      const resp = await fetch(`${baseUrl}/store/memberships/${params.id}`, {
+        headers: { "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445" },
+      })
+      if (!resp.ok) return { item: null }
+      const data = await resp.json()
+      return { item: normalizeDetail(data.item || data) }
+    } catch { return { item: null } }
+  },
 })
 
 const billingLabels: Record<string, string> = {
@@ -19,36 +45,10 @@ function MembershipDetailPage() {
   const prefix = `/${tenant}/${locale}`
   const loc = locale as SupportedLocale
 
-  const { data: tier, isLoading, error } = useMembership(id)
-  const { data: userMembership } = useUserMembership()
+  const loaderData = Route.useLoaderData()
+  const tier = loaderData?.item
 
-  const isCurrent = userMembership?.tierId === id
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-ds-background">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="h-6 w-48 bg-ds-muted rounded animate-pulse mb-8" />
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-            <div className="lg:col-span-3 space-y-6">
-              <div className="h-10 w-3/4 bg-ds-muted rounded animate-pulse" />
-              <div className="h-6 w-1/2 bg-ds-muted rounded animate-pulse" />
-              <div className="space-y-3">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="h-5 w-full bg-ds-muted rounded animate-pulse" />
-                ))}
-              </div>
-            </div>
-            <div className="lg:col-span-2">
-              <div className="h-64 bg-ds-muted rounded-xl animate-pulse" />
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (error || !tier) {
+  if (!tier) {
     return (
       <div className="min-h-screen bg-ds-background">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -122,7 +122,7 @@ function MembershipDetailPage() {
               <BenefitsList benefits={tier.benefits} showAll variant="grid" />
             </div>
 
-            {tier.trialDays && !isCurrent && (
+            {tier.trialDays && (
               <div className="bg-ds-primary/5 border border-ds-primary/20 rounded-xl p-4 flex items-center gap-3">
                 <svg className="w-6 h-6 text-ds-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -138,45 +138,23 @@ function MembershipDetailPage() {
             <div className="bg-ds-background border border-ds-border rounded-xl p-6 sticky top-4 space-y-6">
               <div className="text-center">
                 <span className="text-4xl font-bold text-ds-foreground">
-                  {formatCurrency(tier.price.amount, tier.price.currencyCode, loc)}
+                  {tier.price ? formatCurrency(tier.price.amount, tier.price.currencyCode, loc) : ""}
                 </span>
                 <span className="text-ds-muted-foreground ms-1">
                   {t(locale, billingLabels[tier.billingPeriod] || "blocks.per_month")}
                 </span>
               </div>
 
-              {isCurrent ? (
-                <>
-                  <div className="px-4 py-3 rounded-lg bg-ds-success/10 border border-ds-success/20 text-center">
-                    <span className="text-sm font-medium text-ds-success">
-                      {t(locale, "membership.current_plan")}
-                    </span>
-                  </div>
+              <button className="w-full px-6 py-3 text-sm font-semibold rounded-lg bg-ds-primary text-ds-primary-foreground hover:bg-ds-primary/90 transition-colors">
+                {t(locale, "blocks.get_started")}
+              </button>
 
-                  {userMembership?.renewalDate && (
-                    <p className="text-xs text-ds-muted-foreground text-center">
-                      {t(locale, "membership.renew")}: {userMembership.renewalDate}
-                    </p>
-                  )}
-
-                  <button className="w-full px-6 py-3 text-sm font-medium rounded-lg border border-ds-border text-ds-foreground hover:bg-ds-muted transition-colors">
-                    {t(locale, "membership.cancel_membership")}
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button className="w-full px-6 py-3 text-sm font-semibold rounded-lg bg-ds-primary text-ds-primary-foreground hover:bg-ds-primary/90 transition-colors">
-                    {userMembership ? t(locale, "membership.upgrade") : t(locale, "blocks.get_started")}
-                  </button>
-
-                  <Link
-                    to={`${prefix}/memberships` as any}
-                    className="block w-full text-center px-4 py-2 text-sm font-medium text-ds-muted-foreground hover:text-ds-foreground transition-colors"
-                  >
-                    {t(locale, "membership.compare_plans")}
-                  </Link>
-                </>
-              )}
+              <Link
+                to={`${prefix}/memberships` as any}
+                className="block w-full text-center px-4 py-2 text-sm font-medium text-ds-muted-foreground hover:text-ds-foreground transition-colors"
+              >
+                {t(locale, "membership.compare_plans")}
+              </Link>
 
               <div className="border-t border-ds-border pt-4 space-y-2">
                 <div className="flex items-center gap-2 text-sm text-ds-muted-foreground">

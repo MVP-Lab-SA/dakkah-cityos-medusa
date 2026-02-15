@@ -1,11 +1,34 @@
 // @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
-import { useQuery } from "@tanstack/react-query"
-import { sdk } from "@/lib/utils/sdk"
-import { normalizeItem } from "@/lib/utils/normalize-item"
 import { useState } from "react"
 
+function normalizeDetail(item: any) {
+  if (!item) return null
+  const meta = typeof item.metadata === 'string' ? JSON.parse(item.metadata) : (item.metadata || {})
+  return { ...meta, ...item,
+    thumbnail: item.thumbnail || item.photo_url || item.banner_url || item.logo_url || meta.thumbnail || (meta.images && meta.images[0]) || null,
+    images: meta.images || [item.photo_url || item.banner_url || item.logo_url].filter(Boolean),
+    description: item.description || meta.description || "",
+    price: item.price ?? meta.price ?? null,
+    rating: item.rating ?? item.avg_rating ?? meta.rating ?? null,
+    review_count: item.review_count ?? meta.review_count ?? null,
+    location: item.location || item.city || item.address || meta.location || null,
+  }
+}
+
 export const Route = createFileRoute("/$tenant/$locale/newsletter/$id")({
+  loader: async ({ params }) => {
+    try {
+      const isServer = typeof window === "undefined"
+      const baseUrl = isServer ? "http://localhost:9000" : ""
+      const resp = await fetch(`${baseUrl}/store/newsletters/${params.id}`, {
+        headers: { "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445" },
+      })
+      if (!resp.ok) return { item: null }
+      const data = await resp.json()
+      return { item: normalizeDetail(data.item || data) }
+    } catch { return { item: null } }
+  },
   component: NewsletterDetailPage,
 })
 
@@ -15,42 +38,10 @@ function NewsletterDetailPage() {
   const [email, setEmail] = useState("")
   const [subscribed, setSubscribed] = useState(false)
 
-  const { data: newsletter, isLoading, error } = useQuery({
-    queryKey: ["newsletter", id],
-    queryFn: async () => {
-      const response = await sdk.client.fetch<{ newsletter: any }>(
-        `/store/newsletters/${id}`,
-        { method: "GET", credentials: "include" }
-      )
-      return normalizeItem(response.newsletter || response)
-    },
-  })
+  const loaderData = Route.useLoaderData()
+  const newsletter = loaderData?.item
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-ds-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="h-6 w-48 bg-ds-muted rounded animate-pulse mb-8" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-6">
-              <div className="aspect-[16/9] bg-ds-muted rounded-xl animate-pulse" />
-              <div className="h-8 w-3/4 bg-ds-muted rounded animate-pulse" />
-              <div className="space-y-2">
-                <div className="h-4 w-full bg-ds-muted rounded animate-pulse" />
-                <div className="h-4 w-2/3 bg-ds-muted rounded animate-pulse" />
-              </div>
-            </div>
-            <div className="space-y-6">
-              <div className="h-64 bg-ds-muted rounded-xl animate-pulse" />
-              <div className="h-48 bg-ds-muted rounded-xl animate-pulse" />
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (error || !newsletter) {
+  if (!newsletter) {
     return (
       <div className="min-h-screen bg-ds-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -123,7 +114,7 @@ function NewsletterDetailPage() {
                 {newsletter.subscriber_count && (
                   <div className="flex items-center gap-1.5 text-sm text-ds-muted-foreground">
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-                    <span>{Number(newsletter.subscriber_count).toLocaleString()} subscribers</span>
+                    <span>{Number(newsletter.subscriber_count || 0).toLocaleString()} subscribers</span>
                   </div>
                 )}
                 {newsletter.author && (
@@ -195,7 +186,7 @@ function NewsletterDetailPage() {
                     {newsletter.price ? "Subscription" : "Free Newsletter"}
                   </p>
                   {newsletter.price ? (
-                    <p className="text-3xl font-bold text-ds-foreground">${Number(newsletter.price).toLocaleString()}<span className="text-base font-normal text-ds-muted-foreground">/{newsletter.billing_period || "month"}</span></p>
+                    <p className="text-3xl font-bold text-ds-foreground">${Number(newsletter.price || 0).toLocaleString()}<span className="text-base font-normal text-ds-muted-foreground">/{newsletter.billing_period || "month"}</span></p>
                   ) : (
                     <p className="text-3xl font-bold text-ds-success">Free</p>
                   )}
@@ -237,7 +228,7 @@ function NewsletterDetailPage() {
                   {newsletter.subscriber_count && (
                     <div className="flex justify-between">
                       <span className="text-ds-muted-foreground">Subscribers</span>
-                      <span className="text-ds-foreground font-medium">{Number(newsletter.subscriber_count).toLocaleString()}</span>
+                      <span className="text-ds-foreground font-medium">{Number(newsletter.subscriber_count || 0).toLocaleString()}</span>
                     </div>
                   )}
                   {newsletter.issues_count && (

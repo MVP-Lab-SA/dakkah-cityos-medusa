@@ -1,10 +1,33 @@
 // @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
-import { useQuery } from "@tanstack/react-query"
-import { sdk } from "@/lib/utils/sdk"
-import { normalizeItem } from "@/lib/utils/normalize-item"
+
+function normalizeDetail(item: any) {
+  if (!item) return null
+  const meta = typeof item.metadata === 'string' ? JSON.parse(item.metadata) : (item.metadata || {})
+  return { ...meta, ...item,
+    thumbnail: item.thumbnail || item.photo_url || item.banner_url || item.logo_url || meta.thumbnail || (meta.images && meta.images[0]) || null,
+    images: meta.images || [item.photo_url || item.banner_url || item.logo_url].filter(Boolean),
+    description: item.description || meta.description || "",
+    price: item.price ?? meta.price ?? null,
+    rating: item.rating ?? item.avg_rating ?? meta.rating ?? null,
+    review_count: item.review_count ?? meta.review_count ?? null,
+    location: item.location || item.city || item.address || meta.location || null,
+  }
+}
 
 export const Route = createFileRoute("/$tenant/$locale/real-estate/$id")({
+  loader: async ({ params }) => {
+    try {
+      const isServer = typeof window === "undefined"
+      const baseUrl = isServer ? "http://localhost:9000" : ""
+      const resp = await fetch(`${baseUrl}/store/real-estate/${params.id}`, {
+        headers: { "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445" },
+      })
+      if (!resp.ok) return { item: null }
+      const data = await resp.json()
+      return { item: normalizeDetail(data.item || data) }
+    } catch { return { item: null } }
+  },
   component: RealEstateDetailPage,
 })
 
@@ -12,41 +35,10 @@ function RealEstateDetailPage() {
   const { tenant, locale, id } = Route.useParams()
   const prefix = `/${tenant}/${locale}`
 
-  const { data: property, isLoading, error } = useQuery({
-    queryKey: ["real-estate", id],
-    queryFn: async () => {
-      const response = await sdk.client.fetch<{ item: any }>(
-        `/store/real-estate/${id}`,
-        { method: "GET", credentials: "include" }
-      )
-      return normalizeItem(response.item || response)
-    },
-  })
+  const loaderData = Route.useLoaderData()
+  const property = loaderData?.item
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-ds-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="h-6 w-48 bg-ds-muted rounded animate-pulse mb-8" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-6">
-              <div className="aspect-[16/9] bg-ds-muted rounded-xl animate-pulse" />
-              <div className="h-8 w-3/4 bg-ds-muted rounded animate-pulse" />
-              <div className="flex gap-4">
-                {[1, 2, 3].map((i) => (<div key={i} className="h-16 w-24 bg-ds-muted rounded-lg animate-pulse" />))}
-              </div>
-            </div>
-            <div className="space-y-6">
-              <div className="h-64 bg-ds-muted rounded-xl animate-pulse" />
-              <div className="h-48 bg-ds-muted rounded-xl animate-pulse" />
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (error || !property) {
+  if (!property) {
     return (
       <div className="min-h-screen bg-ds-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -68,7 +60,7 @@ function RealEstateDetailPage() {
   const highlights = [
     { label: "Bedrooms", value: property.bedrooms, icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
     { label: "Bathrooms", value: property.bathrooms, icon: "M4 6h16M4 10h16M4 14h16M4 18h16" },
-    { label: "Sq Ft", value: property.sqft ? Number(property.sqft).toLocaleString() : property.square_feet ? Number(property.square_feet).toLocaleString() : null, icon: "M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" },
+    { label: "Sq Ft", value: property.sqft ? Number(property.sqft || 0).toLocaleString() : property.square_feet ? Number(property.square_feet || 0).toLocaleString() : null, icon: "M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" },
     { label: "Type", value: property.property_type || property.propertyType, icon: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" },
   ].filter((h) => h.value)
 
@@ -115,7 +107,7 @@ function RealEstateDetailPage() {
                 </div>
               )}
               <p className="text-2xl font-bold text-ds-primary mt-3">
-                {property.price != null ? `$${Number(property.price).toLocaleString()}` : "Contact for price"}
+                {property.price != null ? `$${Number(property.price || 0).toLocaleString()}` : "Contact for price"}
                 {property.listing_type === "rent" && <span className="text-base font-normal text-ds-muted-foreground">/mo</span>}
               </p>
             </div>
@@ -158,7 +150,7 @@ function RealEstateDetailPage() {
             <div className="sticky top-4 space-y-6">
               <div className="bg-ds-background border border-ds-border rounded-xl p-6 space-y-4">
                 <p className="text-3xl font-bold text-ds-foreground text-center">
-                  {property.price != null ? `$${Number(property.price).toLocaleString()}` : "Contact for price"}
+                  {property.price != null ? `$${Number(property.price || 0).toLocaleString()}` : "Contact for price"}
                 </p>
 
                 <button className="w-full py-3 px-4 bg-ds-primary text-ds-primary-foreground rounded-lg font-medium hover:bg-ds-primary/90 transition-colors flex items-center justify-center gap-2">

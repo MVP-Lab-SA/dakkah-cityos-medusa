@@ -1,53 +1,58 @@
 // @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
-import { useQuery } from "@tanstack/react-query"
-import { sdk } from "@/lib/utils/sdk"
-import { normalizeItem } from "@/lib/utils/normalize-item"
+
+function normalizeDetail(item: any) {
+  if (!item) return null
+  const meta = typeof item.metadata === 'string' ? JSON.parse(item.metadata) : (item.metadata || {})
+  return {
+    ...meta,
+    ...item,
+    thumbnail: item.thumbnail || item.photo_url || item.banner_url || item.logo_url || meta.thumbnail || (meta.images && meta.images[0]) || null,
+    images: meta.images || [item.photo_url || item.banner_url || item.logo_url].filter(Boolean),
+    description: item.description || meta.description || "",
+    price: item.price ?? meta.price ?? null,
+    rating: item.rating ?? item.avg_rating ?? meta.rating ?? null,
+    review_count: item.review_count ?? meta.review_count ?? null,
+    location: item.location || item.city || item.address || meta.location || null,
+  }
+}
 
 export const Route = createFileRoute("/$tenant/$locale/pet-services/$id")({
+  loader: async ({ params }) => {
+    try {
+      const isServer = typeof window === "undefined"
+      const baseUrl = isServer ? "http://localhost:9000" : ""
+      const resp = await fetch(`${baseUrl}/store/pet-services/${params.id}`, {
+        headers: {
+          "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445",
+        },
+      })
+      if (!resp.ok) return { item: null }
+      const data = await resp.json()
+      return { item: normalizeDetail(data.item || data) }
+    } catch {
+      return { item: null }
+    }
+  },
   component: PetServiceDetailPage,
 })
 
 function PetServiceDetailPage() {
-  const { tenant, locale, id } = Route.useParams()
+  const { tenant, locale } = Route.useParams()
   const prefix = `/${tenant}/${locale}`
+  const loaderData = Route.useLoaderData()
+  const service = loaderData?.item
 
-  const { data: service, isLoading, error } = useQuery({
-    queryKey: ["pet-services", id],
-    queryFn: async () => {
-      const response = await sdk.client.fetch<{ item: any }>(
-        `/store/pet-services/${id}`,
-        { method: "GET", credentials: "include" }
-      )
-      return normalizeItem(response.item || response)
-    },
-  })
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-ds-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="h-6 w-48 bg-ds-muted rounded animate-pulse mb-8" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-6">
-              <div className="aspect-[16/9] bg-ds-muted rounded-xl animate-pulse" />
-              <div className="h-8 w-3/4 bg-ds-muted rounded animate-pulse" />
-              <div className="space-y-2">
-                <div className="h-4 w-full bg-ds-muted rounded animate-pulse" />
-                <div className="h-4 w-2/3 bg-ds-muted rounded animate-pulse" />
-              </div>
-            </div>
-            <div className="space-y-6">
-              <div className="h-64 bg-ds-muted rounded-xl animate-pulse" />
-              <div className="h-48 bg-ds-muted rounded-xl animate-pulse" />
-            </div>
-          </div>
-        </div>
-      </div>
-    )
+  const typeLabels: Record<string, string> = {
+    grooming: "Grooming",
+    boarding: "Boarding",
+    vet: "Veterinary",
+    training: "Training",
+    walking: "Dog Walking",
+    sitting: "Pet Sitting",
   }
 
-  if (error || !service) {
+  if (!service) {
     return (
       <div className="min-h-screen bg-ds-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -64,15 +69,6 @@ function PetServiceDetailPage() {
         </div>
       </div>
     )
-  }
-
-  const typeLabels: Record<string, string> = {
-    grooming: "Grooming",
-    boarding: "Boarding",
-    vet: "Veterinary",
-    training: "Training",
-    walking: "Dog Walking",
-    sitting: "Pet Sitting",
   }
 
   return (
@@ -93,8 +89,8 @@ function PetServiceDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
             <div className="relative aspect-[16/9] bg-ds-muted rounded-xl overflow-hidden">
-              {service.thumbnail || service.image ? (
-                <img src={service.thumbnail || service.image} alt={service.name || service.title} className="w-full h-full object-cover" />
+              {service.thumbnail ? (
+                <img src={service.thumbnail} alt={service.name || service.title} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
                   <svg className="w-16 h-16 text-ds-muted-foreground/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -110,10 +106,10 @@ function PetServiceDetailPage() {
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-ds-foreground">{service.name || service.title}</h1>
               <div className="flex flex-wrap items-center gap-4 mt-3">
-                {service.provider && (
+                {service.species && (
                   <div className="flex items-center gap-1.5 text-sm text-ds-muted-foreground">
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                    <span>{typeof service.provider === "string" ? service.provider : service.provider.name}</span>
+                    <span className="text-lg">{service.species === 'dog' ? '🐕' : service.species === 'cat' ? '🐱' : service.species === 'bird' ? '🦅' : '🐾'}</span>
+                    <span>{service.species} &middot; {service.breed}</span>
                   </div>
                 )}
                 {service.rating && (
@@ -134,10 +130,52 @@ function PetServiceDetailPage() {
 
             {service.description && (
               <div className="bg-ds-background border border-ds-border rounded-xl p-6">
-                <h2 className="font-semibold text-ds-foreground mb-3">About This Service</h2>
+                <h2 className="font-semibold text-ds-foreground mb-3">About</h2>
                 <p className="text-ds-muted-foreground text-sm leading-relaxed whitespace-pre-wrap">{service.description}</p>
               </div>
             )}
+
+            <div className="bg-ds-background border border-ds-border rounded-xl p-6">
+              <h2 className="font-semibold text-ds-foreground mb-4">Details</h2>
+              <div className="grid grid-cols-2 gap-4">
+                {service.species && (
+                  <div>
+                    <p className="text-xs text-ds-muted-foreground">Species</p>
+                    <p className="text-sm font-medium text-ds-foreground capitalize">{service.species}</p>
+                  </div>
+                )}
+                {service.breed && (
+                  <div>
+                    <p className="text-xs text-ds-muted-foreground">Breed</p>
+                    <p className="text-sm font-medium text-ds-foreground">{service.breed}</p>
+                  </div>
+                )}
+                {service.gender && (
+                  <div>
+                    <p className="text-xs text-ds-muted-foreground">Gender</p>
+                    <p className="text-sm font-medium text-ds-foreground capitalize">{service.gender}</p>
+                  </div>
+                )}
+                {service.color && (
+                  <div>
+                    <p className="text-xs text-ds-muted-foreground">Color</p>
+                    <p className="text-sm font-medium text-ds-foreground">{service.color}</p>
+                  </div>
+                )}
+                {service.weight_kg && (
+                  <div>
+                    <p className="text-xs text-ds-muted-foreground">Weight</p>
+                    <p className="text-sm font-medium text-ds-foreground">{service.weight_kg} kg</p>
+                  </div>
+                )}
+                {service.date_of_birth && (
+                  <div>
+                    <p className="text-xs text-ds-muted-foreground">Date of Birth</p>
+                    <p className="text-sm font-medium text-ds-foreground">{new Date(service.date_of_birth).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                  </div>
+                )}
+              </div>
+            </div>
 
             {service.packages && service.packages.length > 0 && (
               <div className="bg-ds-background border border-ds-border rounded-xl p-6">
@@ -149,52 +187,9 @@ function PetServiceDetailPage() {
                         <div>
                           <p className="font-medium text-ds-foreground">{typeof pkg === "string" ? pkg : pkg.name}</p>
                           {pkg.description && <p className="text-xs text-ds-muted-foreground mt-1">{pkg.description}</p>}
-                          {pkg.duration && <p className="text-xs text-ds-muted-foreground mt-0.5">Duration: {pkg.duration}</p>}
                         </div>
-                        {pkg.price != null && <p className="font-bold text-ds-primary">${Number(pkg.price).toLocaleString()}</p>}
+                        {pkg.price != null && <p className="font-bold text-ds-primary">${Number(pkg.price || 0).toLocaleString()}</p>}
                       </div>
-                      {pkg.includes && pkg.includes.length > 0 && (
-                        <div className="mt-3 space-y-1">
-                          {pkg.includes.map((item: string, i: number) => (
-                            <div key={i} className="flex items-center gap-2 text-xs text-ds-muted-foreground">
-                              <svg className="w-3 h-3 text-ds-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                              {item}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {service.pet_types && service.pet_types.length > 0 && (
-              <div className="bg-ds-background border border-ds-border rounded-xl p-6">
-                <h2 className="font-semibold text-ds-foreground mb-3">Accepted Pets</h2>
-                <div className="flex flex-wrap gap-2">
-                  {service.pet_types.map((pet: string, idx: number) => (
-                    <span key={idx} className="px-3 py-1 text-xs font-medium rounded-full bg-ds-muted text-ds-muted-foreground">{pet}</span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {service.reviews && service.reviews.length > 0 && (
-              <div className="bg-ds-background border border-ds-border rounded-xl p-6">
-                <h2 className="font-semibold text-ds-foreground mb-4">Reviews</h2>
-                <div className="space-y-4">
-                  {service.reviews.map((review: any, idx: number) => (
-                    <div key={idx} className="pb-4 border-b border-ds-border last:border-0">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="flex items-center gap-0.5">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <svg key={star} className={`w-4 h-4 ${star <= (review.rating || 0) ? "text-yellow-500" : "text-ds-muted"}`} fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-                          ))}
-                        </div>
-                        <span className="text-sm font-medium text-ds-foreground">{review.author}</span>
-                      </div>
-                      <p className="text-sm text-ds-muted-foreground">{review.comment || review.text}</p>
                     </div>
                   ))}
                 </div>
@@ -205,15 +200,9 @@ function PetServiceDetailPage() {
           <aside className="space-y-6">
             <div className="sticky top-4 space-y-6">
               <div className="bg-ds-background border border-ds-border rounded-xl p-6 space-y-4">
-                {service.price_range && (
+                {service.price != null && (
                   <div className="text-center">
-                    <p className="text-3xl font-bold text-ds-foreground">{service.price_range}</p>
-                    <p className="text-sm text-ds-muted-foreground">Price Range</p>
-                  </div>
-                )}
-                {service.price != null && !service.price_range && (
-                  <div className="text-center">
-                    <p className="text-3xl font-bold text-ds-foreground">${Number(service.price).toLocaleString()}</p>
+                    <p className="text-3xl font-bold text-ds-foreground">${Number(service.price || 0).toLocaleString()}</p>
                   </div>
                 )}
 
@@ -228,34 +217,22 @@ function PetServiceDetailPage() {
                 </button>
               </div>
 
-              {service.availability && (
+              {(service.is_neutered !== null || service.microchip_id || service.vaccinations) && (
                 <div className="bg-ds-background border border-ds-border rounded-xl p-6">
-                  <h3 className="font-semibold text-ds-foreground mb-3">Availability</h3>
-                  {Array.isArray(service.availability) ? (
-                    <div className="space-y-2">
-                      {service.availability.map((slot: any, idx: number) => (
-                        <div key={idx} className="flex items-center justify-between p-2 text-sm">
-                          <span className="text-ds-foreground">{typeof slot === "string" ? slot : slot.day}</span>
-                          {slot.hours && <span className="text-ds-muted-foreground">{slot.hours}</span>}
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-ds-muted-foreground">{service.availability}</p>
-                  )}
-                </div>
-              )}
-
-              {service.certifications && service.certifications.length > 0 && (
-                <div className="bg-ds-background border border-ds-border rounded-xl p-6">
-                  <h3 className="font-semibold text-ds-foreground mb-3">Certifications</h3>
+                  <h3 className="font-semibold text-ds-foreground mb-3">Health Info</h3>
                   <div className="space-y-2">
-                    {service.certifications.map((cert: any, idx: number) => (
-                      <div key={idx} className="flex items-center gap-2 text-sm text-ds-muted-foreground">
+                    {service.is_neutered !== null && (
+                      <div className="flex items-center gap-2 text-sm text-ds-muted-foreground">
                         <svg className="w-4 h-4 text-ds-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-                        {typeof cert === "string" ? cert : cert.name}
+                        Neutered: {service.is_neutered ? 'Yes' : 'No'}
                       </div>
-                    ))}
+                    )}
+                    {service.microchip_id && (
+                      <div className="flex items-center gap-2 text-sm text-ds-muted-foreground">
+                        <svg className="w-4 h-4 text-ds-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                        Microchip: {service.microchip_id}
+                      </div>
+                    )}
                   </div>
                 </div>
               )}

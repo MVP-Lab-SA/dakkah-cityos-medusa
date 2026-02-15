@@ -1,12 +1,35 @@
 // @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
-import { useQuery } from "@tanstack/react-query"
-import { sdk } from "@/lib/utils/sdk"
-import { normalizeItem } from "@/lib/utils/normalize-item"
 import { useState } from "react"
+
+function normalizeDetail(item: any) {
+  if (!item) return null
+  const meta = typeof item.metadata === 'string' ? JSON.parse(item.metadata) : (item.metadata || {})
+  return { ...meta, ...item,
+    thumbnail: item.thumbnail || item.photo_url || item.banner_url || item.logo_url || meta.thumbnail || (meta.images && meta.images[0]) || null,
+    images: meta.images || [item.photo_url || item.banner_url || item.logo_url].filter(Boolean),
+    description: item.description || meta.description || "",
+    price: item.price ?? meta.price ?? null,
+    rating: item.rating ?? item.avg_rating ?? meta.rating ?? null,
+    review_count: item.review_count ?? meta.review_count ?? null,
+    location: item.location || item.city || item.address || meta.location || null,
+  }
+}
 
 export const Route = createFileRoute("/$tenant/$locale/volume-deals/$id")({
   component: VolumeDealsDetailPage,
+  loader: async ({ params }) => {
+    try {
+      const isServer = typeof window === "undefined"
+      const baseUrl = isServer ? "http://localhost:9000" : ""
+      const resp = await fetch(`${baseUrl}/store/volume-deals/${params.id}`, {
+        headers: { "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445" },
+      })
+      if (!resp.ok) return { item: null }
+      const data = await resp.json()
+      return { item: normalizeDetail(data.item || data) }
+    } catch { return { item: null } }
+  },
 })
 
 function VolumeDealsDetailPage() {
@@ -14,42 +37,10 @@ function VolumeDealsDetailPage() {
   const prefix = `/${tenant}/${locale}`
   const [quantity, setQuantity] = useState(1)
 
-  const { data: item, isLoading, error } = useQuery({
-    queryKey: ["volume-pricing", id],
-    queryFn: async () => {
-      const response = await sdk.client.fetch<{ item: any }>(
-        `/store/volume-pricing/${id}`,
-        { method: "GET", credentials: "include" }
-      )
-      return normalizeItem(response.item || response)
-    },
-  })
+  const loaderData = Route.useLoaderData()
+  const item = loaderData?.item
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-ds-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="h-6 w-48 bg-ds-muted rounded animate-pulse mb-8" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-6">
-              <div className="aspect-[16/9] bg-ds-muted rounded-xl animate-pulse" />
-              <div className="h-8 w-3/4 bg-ds-muted rounded animate-pulse" />
-              <div className="space-y-2">
-                <div className="h-4 w-full bg-ds-muted rounded animate-pulse" />
-                <div className="h-4 w-2/3 bg-ds-muted rounded animate-pulse" />
-              </div>
-            </div>
-            <div className="space-y-6">
-              <div className="h-64 bg-ds-muted rounded-xl animate-pulse" />
-              <div className="h-48 bg-ds-muted rounded-xl animate-pulse" />
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (error || !item) {
+  if (!item) {
     return (
       <div className="min-h-screen bg-ds-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -119,7 +110,7 @@ function VolumeDealsDetailPage() {
               <h1 className="text-2xl sm:text-3xl font-bold text-ds-foreground">{item.title || item.name || item.product_name}</h1>
               <div className="flex flex-wrap items-center gap-4 mt-3">
                 {basePrice != null && (
-                  <span className="text-2xl font-bold text-ds-primary">${Number(basePrice).toLocaleString()}</span>
+                  <span className="text-2xl font-bold text-ds-primary">${Number(basePrice || 0).toLocaleString()}</span>
                 )}
                 <span className="text-sm text-ds-muted-foreground">base price per unit</span>
               </div>
@@ -154,7 +145,7 @@ function VolumeDealsDetailPage() {
                               {tier.min_quantity || tier.min || 0}{tier.max_quantity || tier.max ? `-${tier.max_quantity || tier.max}` : "+"} units
                               {isActive && <span className="ml-2 text-xs text-ds-primary font-medium">Current</span>}
                             </td>
-                            <td className="py-3 text-ds-foreground font-medium">${Number(tier.price).toLocaleString()}</td>
+                            <td className="py-3 text-ds-foreground font-medium">${Number(tier.price || 0).toLocaleString()}</td>
                             <td className="py-3 text-ds-success font-medium">{tierSavings > 0 ? `${tierSavings}% off` : "-"}</td>
                           </tr>
                         )
@@ -197,7 +188,7 @@ function VolumeDealsDetailPage() {
                 <div className="text-center pt-2">
                   <p className="text-sm text-ds-muted-foreground">Unit Price</p>
                   <p className="text-3xl font-bold text-ds-foreground">
-                    ${currentPrice != null ? Number(currentPrice).toLocaleString() : "—"}
+                    ${currentPrice != null ? Number(currentPrice || 0).toLocaleString() : "—"}
                   </p>
                   {Number(savings) > 0 && (
                     <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium rounded-full bg-green-100 text-green-800">
@@ -210,7 +201,7 @@ function VolumeDealsDetailPage() {
                   <div className="flex justify-between text-sm">
                     <span className="text-ds-muted-foreground">Total</span>
                     <span className="text-lg font-bold text-ds-foreground">
-                      ${currentPrice != null ? (Number(currentPrice) * quantity).toLocaleString() : "—"}
+                      ${currentPrice != null ? (Number(currentPrice || 0) * quantity).toLocaleString() : "—"}
                     </span>
                   </div>
                 </div>

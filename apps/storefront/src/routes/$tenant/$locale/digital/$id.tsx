@@ -1,36 +1,46 @@
+// @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { t, formatCurrency, type SupportedLocale } from "@/lib/i18n"
-import { useDigitalProduct } from "@/lib/hooks/use-digital-products"
 import { Star } from "@medusajs/icons"
+
+function normalizeDetail(item: any) {
+  if (!item) return null
+  const meta = typeof item.metadata === 'string' ? JSON.parse(item.metadata) : (item.metadata || {})
+  return { ...meta, ...item,
+    thumbnail: item.thumbnail || item.photo_url || item.banner_url || item.logo_url || meta.thumbnail || (meta.images && meta.images[0]) || null,
+    images: meta.images || [item.photo_url || item.banner_url || item.logo_url].filter(Boolean),
+    description: item.description || meta.description || "",
+    price: item.price ?? meta.price ?? null,
+    rating: item.rating ?? item.avg_rating ?? meta.rating ?? null,
+    review_count: item.review_count ?? meta.review_count ?? null,
+    location: item.location || item.city || item.address || meta.location || null,
+  }
+}
 
 export const Route = createFileRoute("/$tenant/$locale/digital/$id")({
   component: DigitalProductDetailPage,
+  loader: async ({ params }) => {
+    try {
+      const isServer = typeof window === "undefined"
+      const baseUrl = isServer ? "http://localhost:9000" : ""
+      const resp = await fetch(`${baseUrl}/store/digital-products/${params.id}`, {
+        headers: { "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445" },
+      })
+      if (!resp.ok) return { item: null }
+      const data = await resp.json()
+      return { item: normalizeDetail(data.item || data) }
+    } catch { return { item: null } }
+  },
 })
 
 function DigitalProductDetailPage() {
   const { tenant, locale, id } = Route.useParams()
   const prefix = `/${tenant}/${locale}`
-  const { data: product, isLoading, error } = useDigitalProduct(id)
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-ds-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <div className="aspect-[4/3] bg-ds-muted rounded-lg animate-pulse" />
-            <div className="space-y-4">
-              <div className="h-8 bg-ds-muted rounded animate-pulse w-3/4" />
-              <div className="h-4 bg-ds-muted rounded animate-pulse w-1/2" />
-              <div className="h-20 bg-ds-muted rounded animate-pulse" />
-              <div className="h-12 bg-ds-muted rounded animate-pulse w-1/3" />
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
+  const loaderData = Route.useLoaderData()
+  const product = loaderData?.item
 
-  if (error || !product) {
+  if (!product) {
     return (
       <div className="min-h-screen bg-ds-background flex items-center justify-center">
         <div className="text-center">

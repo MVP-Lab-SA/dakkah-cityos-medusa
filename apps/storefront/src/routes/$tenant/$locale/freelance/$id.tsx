@@ -1,12 +1,35 @@
 // @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
-import { useQuery } from "@tanstack/react-query"
-import { sdk } from "@/lib/utils/sdk"
-import { normalizeItem } from "@/lib/utils/normalize-item"
 import { useState } from "react"
+
+function normalizeDetail(item: any) {
+  if (!item) return null
+  const meta = typeof item.metadata === 'string' ? JSON.parse(item.metadata) : (item.metadata || {})
+  return { ...meta, ...item,
+    thumbnail: item.thumbnail || item.photo_url || item.banner_url || item.logo_url || meta.thumbnail || (meta.images && meta.images[0]) || null,
+    images: meta.images || [item.photo_url || item.banner_url || item.logo_url].filter(Boolean),
+    description: item.description || meta.description || "",
+    price: item.price ?? meta.price ?? null,
+    rating: item.rating ?? item.avg_rating ?? meta.rating ?? null,
+    review_count: item.review_count ?? meta.review_count ?? null,
+    location: item.location || item.city || item.address || meta.location || null,
+  }
+}
 
 export const Route = createFileRoute("/$tenant/$locale/freelance/$id")({
   component: FreelanceDetailPage,
+  loader: async ({ params }) => {
+    try {
+      const isServer = typeof window === "undefined"
+      const baseUrl = isServer ? "http://localhost:9000" : ""
+      const resp = await fetch(`${baseUrl}/store/freelance/${params.id}`, {
+        headers: { "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445" },
+      })
+      if (!resp.ok) return { item: null }
+      const data = await resp.json()
+      return { item: normalizeDetail(data.item || data) }
+    } catch { return { item: null } }
+  },
 })
 
 function FreelanceDetailPage() {
@@ -14,42 +37,10 @@ function FreelanceDetailPage() {
   const prefix = `/${tenant}/${locale}`
   const [selectedTier, setSelectedTier] = useState(0)
 
-  const { data: gig, isLoading, error } = useQuery({
-    queryKey: ["freelance", id],
-    queryFn: async () => {
-      const response = await sdk.client.fetch<{ item: any }>(
-        `/store/freelance/${id}`,
-        { method: "GET", credentials: "include" }
-      )
-      return normalizeItem(response.item || response)
-    },
-  })
+  const loaderData = Route.useLoaderData()
+  const gig = loaderData?.item
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-ds-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="h-6 w-48 bg-ds-muted rounded animate-pulse mb-8" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-6">
-              <div className="aspect-[16/9] bg-ds-muted rounded-xl animate-pulse" />
-              <div className="h-8 w-3/4 bg-ds-muted rounded animate-pulse" />
-              <div className="space-y-2">
-                <div className="h-4 w-full bg-ds-muted rounded animate-pulse" />
-                <div className="h-4 w-2/3 bg-ds-muted rounded animate-pulse" />
-              </div>
-            </div>
-            <div className="space-y-6">
-              <div className="h-64 bg-ds-muted rounded-xl animate-pulse" />
-              <div className="h-48 bg-ds-muted rounded-xl animate-pulse" />
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (error || !gig) {
+  if (!gig) {
     return (
       <div className="min-h-screen bg-ds-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -228,7 +219,7 @@ function FreelanceDetailPage() {
               ) : (
                 <div className="bg-ds-background border border-ds-border rounded-xl p-6 space-y-4">
                   <p className="text-3xl font-bold text-ds-foreground text-center">
-                    {gig.price != null ? `$${Number(gig.price).toLocaleString()}` : "Contact for price"}
+                    {gig.price != null ? `$${Number(gig.price || 0).toLocaleString()}` : "Contact for price"}
                   </p>
                   {gig.delivery_time && (
                     <div className="flex items-center justify-center gap-1.5 text-sm text-ds-muted-foreground">

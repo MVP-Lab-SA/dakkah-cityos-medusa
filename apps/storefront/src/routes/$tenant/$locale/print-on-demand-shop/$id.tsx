@@ -1,11 +1,34 @@
 // @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
-import { useQuery } from "@tanstack/react-query"
-import { sdk } from "@/lib/utils/sdk"
-import { normalizeItem } from "@/lib/utils/normalize-item"
 import { useState } from "react"
 
+function normalizeDetail(item: any) {
+  if (!item) return null
+  const meta = typeof item.metadata === 'string' ? JSON.parse(item.metadata) : (item.metadata || {})
+  return { ...meta, ...item,
+    thumbnail: item.thumbnail || item.photo_url || item.banner_url || item.logo_url || meta.thumbnail || (meta.images && meta.images[0]) || null,
+    images: meta.images || [item.photo_url || item.banner_url || item.logo_url].filter(Boolean),
+    description: item.description || meta.description || "",
+    price: item.price ?? meta.price ?? null,
+    rating: item.rating ?? item.avg_rating ?? meta.rating ?? null,
+    review_count: item.review_count ?? meta.review_count ?? null,
+    location: item.location || item.city || item.address || meta.location || null,
+  }
+}
+
 export const Route = createFileRoute("/$tenant/$locale/print-on-demand-shop/$id")({
+  loader: async ({ params }) => {
+    try {
+      const isServer = typeof window === "undefined"
+      const baseUrl = isServer ? "http://localhost:9000" : ""
+      const resp = await fetch(`${baseUrl}/store/print-on-demand/${params.id}`, {
+        headers: { "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445" },
+      })
+      if (!resp.ok) return { item: null }
+      const data = await resp.json()
+      return { item: normalizeDetail(data.item || data) }
+    } catch { return { item: null } }
+  },
   component: PrintOnDemandDetailPage,
 })
 
@@ -14,39 +37,10 @@ function PrintOnDemandDetailPage() {
   const prefix = `/${tenant}/${locale}`
   const [selectedVariant, setSelectedVariant] = useState<string | null>(null)
 
-  const { data: product, isLoading, error } = useQuery({
-    queryKey: ["pod-product", id],
-    queryFn: async () => {
-      const response = await sdk.client.fetch<{ item: any }>(
-        `/store/products/${id}`,
-        { method: "GET", credentials: "include" }
-      )
-      return normalizeItem(response.item || response)
-    },
-  })
+  const loaderData = Route.useLoaderData()
+  const product = loaderData?.item
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-ds-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="h-6 w-48 bg-ds-muted rounded animate-pulse mb-8" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-6">
-              <div className="aspect-square bg-ds-muted rounded-xl animate-pulse" />
-              <div className="h-8 w-3/4 bg-ds-muted rounded animate-pulse" />
-              <div className="h-32 bg-ds-muted rounded-xl animate-pulse" />
-            </div>
-            <div className="space-y-6">
-              <div className="h-64 bg-ds-muted rounded-xl animate-pulse" />
-              <div className="h-48 bg-ds-muted rounded-xl animate-pulse" />
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (error || !product) {
+  if (!product) {
     return (
       <div className="min-h-screen bg-ds-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -108,7 +102,7 @@ function PrintOnDemandDetailPage() {
                 <p className="text-sm text-ds-muted-foreground mt-1">{productType}</p>
               )}
               <p className="text-2xl font-bold text-ds-primary mt-3">
-                {product.price != null ? `$${Number(product.price).toLocaleString()}` : "Contact for price"}
+                {product.price != null ? `$${Number(product.price || 0).toLocaleString()}` : "Contact for price"}
               </p>
             </div>
 
@@ -133,7 +127,7 @@ function PrintOnDemandDetailPage() {
                         className={`py-3 px-4 rounded-lg font-medium text-sm border transition-colors text-center ${selectedVariant === variantId ? "bg-ds-primary/10 border-ds-primary text-ds-primary" : "border-ds-border text-ds-foreground hover:bg-ds-muted"}`}
                       >
                         {variantName}
-                        {variant.price && <span className="block text-xs mt-1">${Number(variant.price).toLocaleString()}</span>}
+                        {variant.price && <span className="block text-xs mt-1">${Number(variant.price || 0).toLocaleString()}</span>}
                       </button>
                     )
                   })}
@@ -172,7 +166,7 @@ function PrintOnDemandDetailPage() {
               <div className="bg-ds-background border border-ds-border rounded-xl p-6 space-y-4">
                 <div className="text-center">
                   <p className="text-3xl font-bold text-ds-foreground">
-                    {product.price != null ? `$${Number(product.price).toLocaleString()}` : "Contact for price"}
+                    {product.price != null ? `$${Number(product.price || 0).toLocaleString()}` : "Contact for price"}
                   </p>
                 </div>
 

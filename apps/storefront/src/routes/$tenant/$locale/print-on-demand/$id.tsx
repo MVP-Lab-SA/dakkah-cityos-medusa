@@ -1,11 +1,34 @@
 // @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
-import { useQuery } from "@tanstack/react-query"
-import { sdk } from "@/lib/utils/sdk"
-import { normalizeItem } from "@/lib/utils/normalize-item"
 import { useState } from "react"
 
+function normalizeDetail(item: any) {
+  if (!item) return null
+  const meta = typeof item.metadata === 'string' ? JSON.parse(item.metadata) : (item.metadata || {})
+  return { ...meta, ...item,
+    thumbnail: item.thumbnail || item.photo_url || item.banner_url || item.logo_url || meta.thumbnail || (meta.images && meta.images[0]) || null,
+    images: meta.images || [item.photo_url || item.banner_url || item.logo_url].filter(Boolean),
+    description: item.description || meta.description || "",
+    price: item.price ?? meta.price ?? null,
+    rating: item.rating ?? item.avg_rating ?? meta.rating ?? null,
+    review_count: item.review_count ?? meta.review_count ?? null,
+    location: item.location || item.city || item.address || meta.location || null,
+  }
+}
+
 export const Route = createFileRoute("/$tenant/$locale/print-on-demand/$id")({
+  loader: async ({ params }) => {
+    try {
+      const isServer = typeof window === "undefined"
+      const baseUrl = isServer ? "http://localhost:9000" : ""
+      const resp = await fetch(`${baseUrl}/store/print-on-demand/${params.id}`, {
+        headers: { "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445" },
+      })
+      if (!resp.ok) return { item: null }
+      const data = await resp.json()
+      return { item: normalizeDetail(data.item || data) }
+    } catch { return { item: null } }
+  },
   component: PrintOnDemandDetailPage,
 })
 
@@ -14,42 +37,10 @@ function PrintOnDemandDetailPage() {
   const prefix = `/${tenant}/${locale}`
   const [saved, setSaved] = useState(false)
 
-  const { data: product, isLoading, error } = useQuery({
-    queryKey: ["pod-product", id],
-    queryFn: async () => {
-      const response = await sdk.client.fetch<{ product: any }>(
-        `/store/print-on-demand/${id}`,
-        { method: "GET", credentials: "include" }
-      )
-      return normalizeItem(response.product || response)
-    },
-  })
+  const loaderData = Route.useLoaderData()
+  const product = loaderData?.item
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-ds-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="h-6 w-48 bg-ds-muted rounded animate-pulse mb-8" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-6">
-              <div className="aspect-[4/3] bg-ds-muted rounded-xl animate-pulse" />
-              <div className="h-8 w-3/4 bg-ds-muted rounded animate-pulse" />
-              <div className="space-y-2">
-                <div className="h-4 w-full bg-ds-muted rounded animate-pulse" />
-                <div className="h-4 w-2/3 bg-ds-muted rounded animate-pulse" />
-              </div>
-            </div>
-            <div className="space-y-6">
-              <div className="h-64 bg-ds-muted rounded-xl animate-pulse" />
-              <div className="h-48 bg-ds-muted rounded-xl animate-pulse" />
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (error || !product) {
+  if (!product) {
     return (
       <div className="min-h-screen bg-ds-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -106,7 +97,7 @@ function PrintOnDemandDetailPage() {
               <h1 className="text-2xl sm:text-3xl font-bold text-ds-foreground">{product.title || product.name}</h1>
               <div className="flex flex-wrap items-center gap-4 mt-3">
                 <span className="text-2xl font-bold text-ds-primary">
-                  {product.price != null ? `$${Number(product.price).toLocaleString()}` : "Custom pricing"}
+                  {product.price != null ? `$${Number(product.price || 0).toLocaleString()}` : "Custom pricing"}
                 </span>
                 {product.product_type && (
                   <span className="px-3 py-1 text-xs font-medium rounded-full bg-ds-muted text-ds-muted-foreground">
@@ -175,7 +166,7 @@ function PrintOnDemandDetailPage() {
               <div className="bg-ds-background border border-ds-border rounded-xl p-6 space-y-4">
                 <div className="text-center">
                   <p className="text-3xl font-bold text-ds-foreground">
-                    {product.price != null ? `$${Number(product.price).toLocaleString()}` : "Custom pricing"}
+                    {product.price != null ? `$${Number(product.price || 0).toLocaleString()}` : "Custom pricing"}
                   </p>
                   <p className="text-xs text-ds-muted-foreground mt-1">Per unit, printed on demand</p>
                 </div>

@@ -1,10 +1,33 @@
 // @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
-import { useQuery } from "@tanstack/react-query"
-import { sdk } from "@/lib/utils/sdk"
-import { normalizeItem } from "@/lib/utils/normalize-item"
+
+function normalizeDetail(item: any) {
+  if (!item) return null
+  const meta = typeof item.metadata === 'string' ? JSON.parse(item.metadata) : (item.metadata || {})
+  return { ...meta, ...item,
+    thumbnail: item.thumbnail || item.photo_url || item.banner_url || item.logo_url || meta.thumbnail || (meta.images && meta.images[0]) || null,
+    images: meta.images || [item.photo_url || item.banner_url || item.logo_url].filter(Boolean),
+    description: item.description || meta.description || "",
+    price: item.price ?? meta.price ?? null,
+    rating: item.rating ?? item.avg_rating ?? meta.rating ?? null,
+    review_count: item.review_count ?? meta.review_count ?? null,
+    location: item.location || item.city || item.address || meta.location || null,
+  }
+}
 
 export const Route = createFileRoute("/$tenant/$locale/b2b/$id")({
+  loader: async ({ params }) => {
+    try {
+      const isServer = typeof window === "undefined"
+      const baseUrl = isServer ? "http://localhost:9000" : ""
+      const resp = await fetch(`${baseUrl}/store/b2b/${params.id}`, {
+        headers: { "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445" },
+      })
+      if (!resp.ok) return { item: null }
+      const data = await resp.json()
+      return { item: normalizeDetail(data.item || data.booking || data.event || data.auction || data) }
+    } catch { return { item: null } }
+  },
   component: B2BDetailPage,
 })
 
@@ -12,42 +35,10 @@ function B2BDetailPage() {
   const { tenant, locale, id } = Route.useParams()
   const prefix = `/${tenant}/${locale}`
 
-  const { data: item, isLoading, error } = useQuery({
-    queryKey: ["b2b", id],
-    queryFn: async () => {
-      const response = await sdk.client.fetch<{ item: any }>(
-        `/store/b2b/${id}`,
-        { method: "GET", credentials: "include" }
-      )
-      return normalizeItem(response.item || response)
-    },
-  })
+  const loaderData = Route.useLoaderData()
+  const item = loaderData?.item
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-ds-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="h-6 w-48 bg-ds-muted rounded animate-pulse mb-8" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-6">
-              <div className="aspect-[16/9] bg-ds-muted rounded-xl animate-pulse" />
-              <div className="h-8 w-3/4 bg-ds-muted rounded animate-pulse" />
-              <div className="space-y-2">
-                <div className="h-4 w-full bg-ds-muted rounded animate-pulse" />
-                <div className="h-4 w-2/3 bg-ds-muted rounded animate-pulse" />
-              </div>
-            </div>
-            <div className="space-y-6">
-              <div className="h-64 bg-ds-muted rounded-xl animate-pulse" />
-              <div className="h-48 bg-ds-muted rounded-xl animate-pulse" />
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (error || !item) {
+  if (!item) {
     return (
       <div className="min-h-screen bg-ds-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -130,7 +121,7 @@ function B2BDetailPage() {
                   {item.products.map((product: any, idx: number) => (
                     <div key={idx} className="border border-ds-border rounded-lg p-4">
                       <h3 className="font-medium text-ds-foreground text-sm">{product.name || product.title}</h3>
-                      {product.price && <p className="text-ds-primary font-semibold mt-1">${Number(product.price).toLocaleString()}</p>}
+                      {product.price && <p className="text-ds-primary font-semibold mt-1">${Number(product.price || 0).toLocaleString()}</p>}
                       {product.moq && <p className="text-xs text-ds-muted-foreground mt-1">MOQ: {product.moq} units</p>}
                     </div>
                   ))}
@@ -154,7 +145,7 @@ function B2BDetailPage() {
                       {item.bulk_pricing.map((tier: any, idx: number) => (
                         <tr key={idx} className="border-b border-ds-border last:border-0">
                           <td className="py-2 text-ds-foreground">{tier.min_quantity}{tier.max_quantity ? `-${tier.max_quantity}` : "+"}</td>
-                          <td className="py-2 text-ds-foreground font-medium">${Number(tier.price).toLocaleString()}</td>
+                          <td className="py-2 text-ds-foreground font-medium">${Number(tier.price || 0).toLocaleString()}</td>
                           <td className="py-2 text-ds-success">{tier.discount || "-"}</td>
                         </tr>
                       ))}
@@ -191,7 +182,7 @@ function B2BDetailPage() {
                 {item.price && (
                   <div className="text-center">
                     <p className="text-sm text-ds-muted-foreground">Starting from</p>
-                    <p className="text-2xl font-bold text-ds-primary">${Number(item.price).toLocaleString()}</p>
+                    <p className="text-2xl font-bold text-ds-primary">${Number(item.price || 0).toLocaleString()}</p>
                     {item.price_unit && <p className="text-sm text-ds-muted-foreground">per {item.price_unit}</p>}
                   </div>
                 )}
