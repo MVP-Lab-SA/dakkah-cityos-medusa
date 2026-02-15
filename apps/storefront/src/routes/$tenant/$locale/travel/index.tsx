@@ -15,49 +15,83 @@ export const Route = createFileRoute("/$tenant/$locale/travel/")({
       })
       if (!resp.ok) return { items: [], count: 0 }
       const data = await resp.json()
-      return { items: data.items || data.listings || data.products || [], count: data.count || 0 }
+      const raw = data.items || data.listings || data.products || []
+      const items = raw.map((s: any) => {
+        const meta = s.metadata || {}
+        return {
+          id: s.id,
+          name: s.name || meta.name || "Untitled Stay",
+          description: s.description || meta.description || "",
+          thumbnail: meta.thumbnail || meta.images?.[0] || null,
+          images: meta.images || [],
+          property_type: s.property_type || meta.property_type || null,
+          star_rating: s.star_rating || meta.star_rating || null,
+          city: s.city || meta.city || null,
+          country_code: s.country_code || meta.country_code || null,
+          price: s.price || meta.price || null,
+          currency: s.currency || s.currency_code || meta.currency || "SAR",
+          amenities: s.amenities || meta.amenities || [],
+          rating: s.rating || meta.rating || null,
+          review_count: s.review_count || meta.review_count || 0,
+        }
+      })
+      return { items, count: data.count || items.length }
     } catch {
       return { items: [], count: 0 }
     }
   },
 })
 
-const destinations = ["all", "europe", "asia", "americas", "africa", "oceania", "middle-east"] as const
-const durations = ["all", "1-3", "4-7", "8-14", "15+"] as const
-const priceRanges = ["all", "budget", "mid-range", "luxury", "ultra-luxury"] as const
+const propertyTypeOptions = ["all", "hotel", "resort", "hostel", "apartment", "villa"] as const
+const starRatingOptions = ["all", "5", "4", "3", "2", "1"] as const
 
 function TravelPage() {
   const { tenant, locale } = Route.useParams()
   const prefix = `/${tenant}/${locale}`
   const [searchQuery, setSearchQuery] = useState("")
-  const [destination, setDestination] = useState("all")
-  const [duration, setDuration] = useState("all")
-  const [priceRange, setPriceRange] = useState("all")
-  const [page, setPage] = useState(1)
-  const limit = 12
+  const [propertyFilter, setPropertyFilter] = useState<string>("all")
+  const [starFilter, setStarFilter] = useState<string>("all")
 
   const loaderData = Route.useLoaderData()
-  const data = loaderData
-  const isLoading = false
-  const error = null
+  const items = loaderData?.items || []
 
-  const packages = data?.packages || []
-  const totalPages = Math.ceil((data?.count || 0) / limit)
-  const filtered = packages.filter((p: any) =>
-    searchQuery ? (p.destination || p.name || p.title || "").toLowerCase().includes(searchQuery.toLowerCase()) : true
-  )
+  const filteredItems = items.filter((item: any) => {
+    const matchesSearch = searchQuery
+      ? (item.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.description || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.city || "").toLowerCase().includes(searchQuery.toLowerCase())
+      : true
+    const matchesProperty = propertyFilter === "all" || item.property_type === propertyFilter
+    const matchesStar = starFilter === "all" || String(item.star_rating) === starFilter
+    return matchesSearch && matchesProperty && matchesStar
+  })
+
+  const formatPrice = (price: number | null, currency: string) => {
+    if (!price) return "Contact for pricing"
+    const amount = price >= 100 ? price / 100 : price
+    return `${amount.toLocaleString()} ${currency}`
+  }
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-ds-card border-b border-ds-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center gap-2 text-sm text-ds-muted-foreground mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-ds-foreground transition-colors">Home</Link>
+      <div className="bg-gradient-to-r from-sky-500 to-blue-600 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
-            <span className="text-ds-foreground">Travel</span>
+            <span className="text-white">Travel</span>
           </div>
-          <h1 className="text-3xl font-bold text-ds-foreground">Browse Travel Packages</h1>
-          <p className="mt-2 text-ds-muted-foreground">Discover your next adventure with curated travel experiences</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Travel & Stays</h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">
+            Book hotels, resorts, apartments, and unique stays for your next adventure.
+          </p>
+          <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
+            <span>{items.length} stays available</span>
+            <span>|</span>
+            <span>Best price guarantee</span>
+            <span>|</span>
+            <span>Free cancellation</span>
+          </div>
         </div>
       </div>
 
@@ -67,37 +101,49 @@ function TravelPage() {
             <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
               <div>
                 <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
-                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search destinations..." className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search stays or cities..."
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-sky-400"
+                />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Destination</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">Property Type</label>
                 <div className="space-y-1">
-                  {destinations.map((opt) => (
-                    <button key={opt} onClick={() => { setDestination(opt); setPage(1) }} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${destination === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}>
-                      {opt === "all" ? "All Destinations" : opt.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
+                  {propertyTypeOptions.map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => setPropertyFilter(opt)}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${propertyFilter === opt ? "bg-sky-500 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                    >
+                      {opt === "all" ? "All Types" : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
                   ))}
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Duration</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">Star Rating</label>
                 <div className="space-y-1">
-                  {durations.map((opt) => (
-                    <button key={opt} onClick={() => { setDuration(opt); setPage(1) }} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${duration === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}>
-                      {opt === "all" ? "Any Duration" : opt === "15+" ? "15+ days" : `${opt} days`}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Price Range</label>
-                <div className="space-y-1">
-                  {priceRanges.map((opt) => (
-                    <button key={opt} onClick={() => { setPriceRange(opt); setPage(1) }} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${priceRange === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}>
-                      {opt === "all" ? "All Prices" : opt.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
+                  {starRatingOptions.map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => setStarFilter(opt)}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${starFilter === opt ? "bg-sky-500 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                    >
+                      {opt === "all" ? "Any Rating" : (
+                        <span className="flex items-center gap-1">
+                          {Array.from({ length: Number(opt) }, (_, i) => (
+                            <svg key={i} className="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                          ))}
+                          <span className="ml-1">{opt} Star{Number(opt) > 1 ? "s" : ""}</span>
+                        </span>
+                      )}
                     </button>
                   ))}
                 </div>
@@ -106,79 +152,128 @@ function TravelPage() {
           </aside>
 
           <main className="flex-1">
-            {error ? (
-              <div className="bg-ds-destructive/10 border border-ds-destructive/20 rounded-xl p-8 text-center">
-                <svg className="w-12 h-12 text-ds-destructive mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                </svg>
-                <p className="text-ds-destructive font-medium">Something went wrong loading travel packages.</p>
-              </div>
-            ) : isLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="bg-ds-background border border-ds-border rounded-xl overflow-hidden">
-                    <div className="aspect-[4/3] bg-ds-muted animate-pulse" />
-                    <div className="p-4 space-y-3">
-                      <div className="h-5 w-3/4 bg-ds-muted rounded animate-pulse" />
-                      <div className="h-4 w-1/2 bg-ds-muted rounded animate-pulse" />
-                      <div className="h-4 w-2/3 bg-ds-muted rounded animate-pulse" />
-                      <div className="h-8 w-full bg-ds-muted rounded animate-pulse" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : !filtered || filtered.length === 0 ? (
+            {filteredItems.length === 0 ? (
               <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No travel packages found</h3>
-                <p className="text-ds-muted-foreground text-sm">Try adjusting your filters or check back later.</p>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No stays found</h3>
+                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {filtered.map((pkg: any) => (
-                    <a key={pkg.id} href={`${prefix}/travel/${pkg.id}`} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-primary/30 transition-all duration-200">
-                      <div className="aspect-[4/3] bg-ds-muted relative overflow-hidden">
-                        {((pkg.images && pkg.images[0]) || pkg.thumbnail) && <img src={(pkg.images && pkg.images[0]) || pkg.thumbnail} alt={pkg.destination || pkg.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />}
-                        {pkg.duration && <span className="absolute top-3 right-3 px-2 py-1 text-xs font-medium rounded-full bg-black/60 text-white">{pkg.duration} days</span>}
-                      </div>
-                      <div className="p-4 space-y-2">
-                        <h3 className="font-semibold text-ds-foreground group-hover:text-ds-primary transition-colors line-clamp-1">{pkg.destination || pkg.name || pkg.title || "Travel Package"}</h3>
-                        <div className="flex items-center gap-2 text-xs text-ds-muted-foreground">
-                          {pkg.rating && (
-                            <span className="flex items-center gap-1">
-                              <svg className="w-3.5 h-3.5 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-                              {pkg.rating}
-                            </span>
-                          )}
-                          {pkg.departure_date && <span>Departs: {new Date(pkg.departure_date).toLocaleDateString()}</span>}
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {filteredItems.map((item: any) => (
+                  <a
+                    key={item.id}
+                    href={`${prefix}/travel/${item.id}`}
+                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-sky-300 transition-all duration-200"
+                  >
+                    <div className="aspect-[4/3] bg-gradient-to-br from-sky-50 to-blue-100 relative overflow-hidden">
+                      {item.thumbnail ? (
+                        <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <svg className="w-16 h-16 text-sky-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
                         </div>
-                        {pkg.amenities && <div className="flex flex-wrap gap-1">{(Array.isArray(pkg.amenities) ? pkg.amenities.slice(0, 3) : []).map((a: string, i: number) => <span key={i} className="px-2 py-0.5 text-xs rounded-full bg-ds-muted text-ds-muted-foreground">{a}</span>)}</div>}
-                        <div className="flex items-center justify-between pt-2">
-                          <div>
-                            <span className="text-lg font-bold text-ds-foreground">{pkg.price ? `$${(pkg.price / 100).toFixed(2)}` : "Contact Us"}</span>
-                            {pkg.price && <span className="text-xs text-ds-muted-foreground ml-1">/person</span>}
+                      )}
+                      {item.property_type && (
+                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-sky-500 text-white rounded-md capitalize">{item.property_type}</span>
+                      )}
+                      {item.star_rating && (
+                        <div className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-white/90 text-gray-700 rounded-md flex items-center gap-0.5">
+                          {Array.from({ length: item.star_rating }, (_, i) => (
+                            <svg key={i} className="w-3 h-3 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                          ))}
+                        </div>
+                      )}
+                      {item.images && item.images.length > 1 && (
+                        <div className="absolute bottom-2 right-2 px-2 py-0.5 text-xs font-medium bg-black/50 text-white rounded-md flex items-center gap-1">
+                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                          {item.images.length}
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-sky-600 transition-colors line-clamp-1">{item.name}</h3>
+                      {item.description && (
+                        <p className="text-sm text-ds-muted-foreground mt-1.5 line-clamp-2">{item.description}</p>
+                      )}
+
+                      {item.rating && (
+                        <div className="flex items-center gap-1.5 mt-2">
+                          <div className="flex items-center">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <svg key={star} className={`w-3.5 h-3.5 ${star <= Math.round(item.rating) ? "text-amber-400" : "text-gray-200"}`} fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                              </svg>
+                            ))}
                           </div>
-                          <span className="text-sm font-medium text-ds-primary group-hover:underline">Book Now →</span>
+                          <span className="text-xs text-ds-muted-foreground">{item.rating} ({item.review_count})</span>
                         </div>
+                      )}
+
+                      {item.city && (
+                        <div className="flex items-center gap-1 mt-2 text-xs text-ds-muted-foreground">
+                          <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                          <span className="truncate">{[item.city, item.country_code].filter(Boolean).join(", ")}</span>
+                        </div>
+                      )}
+
+                      {item.amenities && Array.isArray(item.amenities) && item.amenities.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {item.amenities.slice(0, 3).map((a: string, i: number) => (
+                            <span key={i} className="px-2 py-0.5 text-xs rounded-full bg-sky-50 text-sky-700 border border-sky-200">{a}</span>
+                          ))}
+                          {item.amenities.length > 3 && (
+                            <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-500">+{item.amenities.length - 3}</span>
+                          )}
+                        </div>
+                      )}
+
+                      <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
+                        <div>
+                          <span className="font-bold text-sky-600 text-lg">
+                            {formatPrice(item.price, item.currency)}
+                          </span>
+                          {item.price && <span className="text-xs text-ds-muted-foreground"> /night</span>}
+                        </div>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-sky-500 rounded-lg group-hover:bg-sky-600 transition-colors">Book Stay</span>
                       </div>
-                    </a>
-                  ))}
-                </div>
-                {totalPages > 1 && (
-                  <div className="flex items-center justify-center gap-2 mt-8">
-                    <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="px-4 py-2 text-sm rounded-lg border border-ds-border text-ds-foreground hover:bg-ds-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors">Previous</button>
-                    <span className="px-4 py-2 text-sm text-ds-muted-foreground">Page {page} of {totalPages}</span>
-                    <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="px-4 py-2 text-sm rounded-lg border border-ds-border text-ds-foreground hover:bg-ds-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors">Next</button>
-                  </div>
-                )}
-              </>
+                    </div>
+                  </a>
+                ))}
+              </div>
             )}
           </main>
         </div>
       </div>
+
+      <section className="py-16 bg-ds-card border-t border-ds-border">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-sky-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Search Destinations</h3>
+              <p className="text-sm text-ds-muted-foreground">Browse hotels, resorts, and stays by location, type, or star rating.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-sky-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Compare & Book</h3>
+              <p className="text-sm text-ds-muted-foreground">Compare amenities, reviews, and prices to find your perfect stay.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-sky-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Enjoy Your Stay</h3>
+              <p className="text-sm text-ds-muted-foreground">Receive your booking confirmation and enjoy a wonderful experience.</p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

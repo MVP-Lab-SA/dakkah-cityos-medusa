@@ -1,61 +1,222 @@
+// @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
-import { t } from "@/lib/i18n"
-import { useBundles } from "@/lib/hooks/use-campaigns"
-import { BundleBuilder } from "@/components/campaigns/bundle-builder"
+import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/bundles/")({
   component: BundlesPage,
+  loader: async () => {
+    try {
+      const isServer = typeof window === "undefined"
+      const baseUrl = isServer ? "http://localhost:9000" : ""
+      const resp = await fetch(`${baseUrl}/store/bundles`, {
+        headers: {
+          "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445",
+        },
+      })
+      if (!resp.ok) return { items: [], count: 0 }
+      const data = await resp.json()
+      const raw = data.bundles || data.items || []
+      const items = raw.map((b: any) => {
+        const meta = b.metadata || {}
+        return {
+          id: b.id,
+          name: meta.name || b.name || b.title || "Untitled Bundle",
+          description: meta.description || b.description || "",
+          thumbnail: meta.thumbnail || meta.image || (meta.images && meta.images[0]) || b.thumbnail || null,
+          images: meta.images || b.images || [],
+          price: meta.price || b.price || null,
+          original_price: meta.original_price || b.original_price || null,
+          savings: meta.savings || b.savings || null,
+          currency: meta.currency || b.currency || "USD",
+          items_count: meta.items_count || (meta.items && meta.items.length) || b.items_count || 0,
+          items_list: meta.items || b.items || [],
+          category: meta.category || b.category || null,
+        }
+      })
+      return { items, count: data.count || items.length }
+    } catch {
+      return { items: [], count: 0 }
+    }
+  },
 })
+
+const categoryOptions = ["all", "electronics", "fashion", "home", "beauty", "food", "fitness", "office"] as const
 
 function BundlesPage() {
   const { tenant, locale } = Route.useParams()
   const prefix = `/${tenant}/${locale}`
-  const { data, isLoading, error } = useBundles()
+  const [searchQuery, setSearchQuery] = useState("")
+  const [categoryFilter, setCategoryFilter] = useState<string>("all")
+
+  const loaderData = Route.useLoaderData()
+  const items = loaderData?.items || []
+
+  const filteredItems = items.filter((item: any) => {
+    const matchesSearch = searchQuery
+      ? (item.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.description || "").toLowerCase().includes(searchQuery.toLowerCase())
+      : true
+    const matchesCategory = categoryFilter === "all" || item.category === categoryFilter
+    return matchesSearch && matchesCategory
+  })
+
+  const formatPrice = (price: number | null, currency: string) => {
+    if (!price) return "Contact for pricing"
+    const amount = price >= 100 ? price / 100 : price
+    return `${amount.toLocaleString()} ${currency}`
+  }
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-ds-card border-b border-ds-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center gap-2 text-sm text-ds-muted-foreground mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-ds-foreground transition-colors">
-              {t(locale, "common.home")}
-            </Link>
+      <div className="bg-gradient-to-r from-rose-500 to-pink-600 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
-            <span className="text-ds-foreground">Bundles</span>
+            <span className="text-white">Bundles</span>
           </div>
-          <h1 className="text-3xl font-bold text-ds-foreground">Product Bundles</h1>
-          <p className="mt-2 text-ds-muted-foreground">
-            Save more when you buy together — curated bundles at special prices
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Product Bundles</h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">
+            Save more when you buy together. Curated bundles at special prices.
           </p>
+          <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
+            <span>{items.length} bundles available</span>
+            <span>|</span>
+            <span>Great savings</span>
+            <span>|</span>
+            <span>Curated selections</span>
+          </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {error ? (
-          <div className="bg-ds-destructive/10 border border-ds-destructive/20 rounded-xl p-8 text-center">
-            <p className="text-ds-destructive">Failed to load bundles</p>
-          </div>
-        ) : isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="aspect-[3/4] bg-ds-muted rounded-lg animate-pulse" />
-            ))}
-          </div>
-        ) : !data?.bundles?.length ? (
-          <div className="bg-ds-background rounded-lg border border-ds-border p-12 text-center">
-            <svg className="w-12 h-12 text-ds-muted-foreground mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-            </svg>
-            <p className="text-ds-muted-foreground">No bundles available right now</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.bundles.map((bundle) => (
-              <BundleBuilder key={bundle.id} bundle={bundle} />
-            ))}
-          </div>
-        )}
+        <div className="flex flex-col lg:flex-row gap-8">
+          <aside className="w-full lg:w-72 flex-shrink-0">
+            <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
+              <div>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search bundles..."
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">Category</label>
+                <div className="space-y-1">
+                  {categoryOptions.map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => setCategoryFilter(opt)}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${categoryFilter === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}
+                    >
+                      {opt === "all" ? "All Categories" : opt.charAt(0).toUpperCase() + opt.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          <main className="flex-1">
+            {filteredItems.length === 0 ? (
+              <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
+                <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No bundles found</h3>
+                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {filteredItems.map((item: any) => (
+                  <div
+                    key={item.id}
+                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-rose-300 transition-all duration-200"
+                  >
+                    <div className="aspect-[4/3] bg-gradient-to-br from-rose-50 to-pink-100 relative overflow-hidden">
+                      {item.thumbnail ? (
+                        <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <svg className="w-16 h-16 text-rose-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+                        </div>
+                      )}
+                      {item.savings && (
+                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-bold bg-rose-500 text-white rounded-md">
+                          Save {typeof item.savings === "number" ? formatPrice(item.savings, item.currency) : item.savings}
+                        </span>
+                      )}
+                      {item.category && (
+                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-white/90 text-gray-700 rounded-md capitalize">{item.category}</span>
+                      )}
+                      {item.images && item.images.length > 1 && (
+                        <div className="absolute bottom-2 right-2 px-2 py-0.5 text-xs font-medium bg-black/50 text-white rounded-md flex items-center gap-1">
+                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                          {item.images.length}
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-rose-600 transition-colors line-clamp-1">{item.name}</h3>
+                      {item.description && (
+                        <p className="text-sm text-ds-muted-foreground mt-1.5 line-clamp-2">{item.description}</p>
+                      )}
+
+                      <div className="flex items-center gap-3 mt-3 text-xs text-ds-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+                          {item.items_count} items included
+                        </span>
+                      </div>
+
+                      <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
+                        <div>
+                          {item.original_price && (
+                            <span className="text-sm text-ds-muted-foreground line-through mr-2">
+                              {formatPrice(item.original_price, item.currency)}
+                            </span>
+                          )}
+                          <span className="font-bold text-rose-600 text-lg">
+                            {formatPrice(item.price, item.currency)}
+                          </span>
+                        </div>
+                        <button className="px-3 py-1.5 text-xs font-semibold text-white bg-rose-500 rounded-lg hover:bg-rose-600 transition-colors">Add Bundle</button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </main>
+        </div>
       </div>
+
+      <section className="py-16 bg-ds-card border-t border-ds-border">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">Why Buy Bundles?</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-rose-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">💰</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Save More</h3>
+              <p className="text-sm text-ds-muted-foreground">Get significant discounts when you buy items together as a bundle.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-rose-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">🎯</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Curated Selection</h3>
+              <p className="text-sm text-ds-muted-foreground">Each bundle is carefully curated with complementary products.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-rose-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">🚀</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">One-Click Add</h3>
+              <p className="text-sm text-ds-muted-foreground">Add the entire bundle to your cart with a single click.</p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

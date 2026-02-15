@@ -15,49 +15,93 @@ export const Route = createFileRoute("/$tenant/$locale/warranties/")({
       })
       if (!resp.ok) return { items: [], count: 0 }
       const data = await resp.json()
-      return { items: data.items || data.listings || data.products || [], count: data.count || 0 }
+      const raw = data.items || data.listings || data.products || data.services || data.warranties || data.plans || []
+      const items = raw.map((item: any) => {
+        const meta = item.metadata || {}
+        return {
+          id: item.id,
+          name: item.name || meta.name || "Warranty Plan",
+          description: item.description || meta.description || "",
+          plan_type: item.plan_type || meta.plan_type || null,
+          duration_months: item.duration_months || meta.duration_months || null,
+          currency_code: item.currency_code || meta.currency_code || "USD",
+          coverage: item.coverage || meta.coverage || null,
+          exclusions: item.exclusions || meta.exclusions || null,
+          is_active: item.is_active !== false,
+          thumbnail: meta.thumbnail || meta.images?.[0] || null,
+          images: meta.images || [],
+          price: meta.price || item.price || null,
+          rating: meta.rating || item.rating || null,
+        }
+      })
+      return { items, count: data.count || items.length }
     } catch {
       return { items: [], count: 0 }
     }
   },
 })
 
-const coverageTypes = ["all", "electronics", "appliances", "automotive", "home", "furniture", "jewelry"] as const
-const durationOptions = ["all", "1-year", "2-year", "3-year", "5-year", "lifetime"] as const
-const priceRanges = ["all", "under-50", "50-100", "100-200", "over-200"] as const
+const planTypeOptions = ["all", "basic", "standard", "premium", "extended"] as const
+
+const planTypeColors: Record<string, { badge: string; accent: string }> = {
+  basic: { badge: "bg-gray-100 text-gray-700", accent: "text-gray-600" },
+  standard: { badge: "bg-blue-100 text-blue-700", accent: "text-blue-600" },
+  premium: { badge: "bg-amber-100 text-amber-700", accent: "text-amber-600" },
+  extended: { badge: "bg-emerald-100 text-emerald-700", accent: "text-emerald-600" },
+}
 
 function WarrantiesPage() {
   const { tenant, locale } = Route.useParams()
   const prefix = `/${tenant}/${locale}`
-  const [searchQuery, setSearchQuery] = useState("")
-  const [coverageType, setCoverageType] = useState("all")
-  const [duration, setDuration] = useState("all")
-  const [priceRange, setPriceRange] = useState("all")
-  const [page, setPage] = useState(1)
-  const limit = 12
-
   const loaderData = Route.useLoaderData()
-  const data = loaderData
-  const isLoading = false
-  const error = null
+  const items = loaderData?.items || []
+  const [searchQuery, setSearchQuery] = useState("")
+  const [planTypeFilter, setPlanTypeFilter] = useState<string>("all")
 
-  const warranties = data?.warranties || []
-  const totalPages = Math.ceil((data?.count || 0) / limit)
-  const filtered = warranties.filter((w: any) =>
-    searchQuery ? (w.name || w.title || "").toLowerCase().includes(searchQuery.toLowerCase()) : true
-  )
+  const filteredItems = items.filter((item: any) => {
+    const matchesSearch = searchQuery
+      ? (item.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.description || "").toLowerCase().includes(searchQuery.toLowerCase())
+      : true
+    const matchesPlanType = planTypeFilter === "all" || item.plan_type?.toLowerCase() === planTypeFilter
+    return matchesSearch && matchesPlanType
+  })
+
+  const formatPrice = (price: number | null, currency: string) => {
+    if (!price) return "Get Quote"
+    const amount = price >= 100 ? price / 100 : price
+    return `${amount.toLocaleString()} ${currency}`
+  }
+
+  const formatDuration = (months: number | null) => {
+    if (!months) return null
+    if (months >= 12) {
+      const years = months / 12
+      return years === 1 ? "1 Year" : `${years} Years`
+    }
+    return months === 1 ? "1 Month" : `${months} Months`
+  }
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-ds-card border-b border-ds-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center gap-2 text-sm text-ds-muted-foreground mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-ds-foreground transition-colors">Home</Link>
+      <div className="bg-gradient-to-r from-emerald-500 to-green-600 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
-            <span className="text-ds-foreground">Warranties</span>
+            <span className="text-white">Warranties</span>
           </div>
-          <h1 className="text-3xl font-bold text-ds-foreground">Browse Warranty Plans</h1>
-          <p className="mt-2 text-ds-muted-foreground">Protect your purchases with extended warranty coverage</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Warranty Plans</h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">
+            Protect your purchases with comprehensive warranty coverage — peace of mind for everything you own.
+          </p>
+          <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
+            <span>{items.length} plans available</span>
+            <span>|</span>
+            <span>Full coverage</span>
+            <span>|</span>
+            <span>Easy claims</span>
+          </div>
         </div>
       </div>
 
@@ -67,37 +111,25 @@ function WarrantiesPage() {
             <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
               <div>
                 <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
-                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search warranties..." className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search warranties..."
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Coverage Type</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">Plan Type</label>
                 <div className="space-y-1">
-                  {coverageTypes.map((opt) => (
-                    <button key={opt} onClick={() => { setCoverageType(opt); setPage(1) }} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${coverageType === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}>
-                      {opt === "all" ? "All Types" : opt.charAt(0).toUpperCase() + opt.slice(1)}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Duration</label>
-                <div className="space-y-1">
-                  {durationOptions.map((opt) => (
-                    <button key={opt} onClick={() => { setDuration(opt); setPage(1) }} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${duration === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}>
-                      {opt === "all" ? "Any Duration" : opt.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Price Range</label>
-                <div className="space-y-1">
-                  {priceRanges.map((opt) => (
-                    <button key={opt} onClick={() => { setPriceRange(opt); setPage(1) }} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${priceRange === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}>
-                      {opt === "all" ? "All Prices" : opt === "under-50" ? "Under $50" : opt === "50-100" ? "$50 - $100" : opt === "100-200" ? "$100 - $200" : "Over $200"}
+                  {planTypeOptions.map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => setPlanTypeFilter(opt)}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${planTypeFilter === opt ? "bg-emerald-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                    >
+                      {opt === "all" ? "All Plans" : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
                   ))}
                 </div>
@@ -106,82 +138,113 @@ function WarrantiesPage() {
           </aside>
 
           <main className="flex-1">
-            {error ? (
-              <div className="bg-ds-destructive/10 border border-ds-destructive/20 rounded-xl p-8 text-center">
-                <svg className="w-12 h-12 text-ds-destructive mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                </svg>
-                <p className="text-ds-destructive font-medium">Something went wrong loading warranty plans.</p>
-              </div>
-            ) : isLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="bg-ds-background border border-ds-border rounded-xl p-6 space-y-3">
-                    <div className="h-10 w-10 bg-ds-muted rounded-lg animate-pulse" />
-                    <div className="h-5 w-3/4 bg-ds-muted rounded animate-pulse" />
-                    <div className="h-4 w-full bg-ds-muted rounded animate-pulse" />
-                    <div className="h-4 w-1/2 bg-ds-muted rounded animate-pulse" />
-                    <div className="h-8 w-full bg-ds-muted rounded animate-pulse" />
-                  </div>
-                ))}
-              </div>
-            ) : !filtered || filtered.length === 0 ? (
+            {filteredItems.length === 0 ? (
               <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
                 <h3 className="text-lg font-semibold text-ds-foreground mb-2">No warranty plans found</h3>
-                <p className="text-ds-muted-foreground text-sm">Try adjusting your filters or check back later.</p>
+                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {filtered.map((warranty: any) => (
-                    <a key={warranty.id} href={`${prefix}/warranties/${warranty.id}`} className="group bg-ds-background border border-ds-border rounded-xl p-6 hover:shadow-lg hover:border-ds-primary/30 transition-all duration-200">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 rounded-lg bg-ds-primary/10 flex items-center justify-center flex-shrink-0">
-                          <svg className="w-5 h-5 text-ds-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {filteredItems.map((item: any) => (
+                  <a
+                    key={item.id}
+                    href={`${prefix}/warranties/${item.id}`}
+                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-emerald-300 transition-all duration-200"
+                  >
+                    <div className="aspect-[4/3] bg-gradient-to-br from-emerald-50 to-green-100 relative overflow-hidden">
+                      {item.thumbnail ? (
+                        <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <svg className="w-16 h-16 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                           </svg>
                         </div>
-                        <div>
-                          <h3 className="font-semibold text-ds-foreground group-hover:text-ds-primary transition-colors line-clamp-1">{warranty.name || "Warranty Plan"}</h3>
-                          {warranty.coverage_type && <p className="text-xs text-ds-muted-foreground capitalize">{warranty.coverage_type}</p>}
-                        </div>
-                      </div>
-                      {warranty.duration && <span className="inline-block px-2 py-1 text-xs font-medium rounded-full bg-ds-muted text-ds-muted-foreground mb-3">{warranty.duration}</span>}
-                      {warranty.covered_items && (
-                        <div className="mb-4">
-                          <p className="text-xs font-medium text-ds-foreground mb-1">What's Covered:</p>
+                      )}
+                      {item.plan_type && (
+                        <span className={`absolute top-2 left-2 px-2.5 py-1 text-xs font-semibold rounded-md capitalize ${planTypeColors[item.plan_type?.toLowerCase()]?.badge || "bg-gray-100 text-gray-700"}`}>
+                          {item.plan_type}
+                        </span>
+                      )}
+                      {formatDuration(item.duration_months) && (
+                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-white/90 text-gray-700 rounded-md">
+                          {formatDuration(item.duration_months)}
+                        </span>
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-emerald-600 transition-colors line-clamp-1">{item.name}</h3>
+                      {item.description && (
+                        <p className="text-sm text-ds-muted-foreground mt-1.5 line-clamp-2">{item.description}</p>
+                      )}
+
+                      {item.coverage && (
+                        <div className="mt-3">
+                          <p className="text-xs font-medium text-ds-foreground mb-1">Coverage Highlights:</p>
                           <ul className="text-xs text-ds-muted-foreground space-y-1">
-                            {(Array.isArray(warranty.covered_items) ? warranty.covered_items.slice(0, 3) : [warranty.covered_items]).map((item: string, i: number) => (
+                            {(Array.isArray(item.coverage) ? item.coverage.slice(0, 3) : [item.coverage]).map((c: string, i: number) => (
                               <li key={i} className="flex items-center gap-1">
-                                <svg className="w-3 h-3 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                                {item}
+                                <svg className="w-3 h-3 text-emerald-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                                <span className="line-clamp-1">{c}</span>
                               </li>
                             ))}
                           </ul>
                         </div>
                       )}
-                      <div className="flex items-center justify-between pt-3 border-t border-ds-border">
-                        <span className="text-lg font-bold text-ds-foreground">{warranty.price ? `$${(warranty.price / 100).toFixed(2)}` : "Get Quote"}</span>
-                        <span className="text-sm font-medium text-ds-primary group-hover:underline">View Plan →</span>
+
+                      {item.rating && (
+                        <div className="flex items-center gap-1.5 mt-2">
+                          <div className="flex items-center">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <svg key={star} className={`w-3.5 h-3.5 ${star <= Math.round(item.rating) ? "text-amber-400" : "text-gray-200"}`} fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                              </svg>
+                            ))}
+                          </div>
+                          <span className="text-xs text-ds-muted-foreground">{item.rating}</span>
+                        </div>
+                      )}
+
+                      <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
+                        <span className="font-bold text-emerald-600 text-lg">
+                          {formatPrice(item.price, item.currency_code)}
+                        </span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-emerald-600 rounded-lg group-hover:bg-green-700 transition-colors">Get Protection</span>
                       </div>
-                    </a>
-                  ))}
-                </div>
-                {totalPages > 1 && (
-                  <div className="flex items-center justify-center gap-2 mt-8">
-                    <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="px-4 py-2 text-sm rounded-lg border border-ds-border text-ds-foreground hover:bg-ds-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors">Previous</button>
-                    <span className="px-4 py-2 text-sm text-ds-muted-foreground">Page {page} of {totalPages}</span>
-                    <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="px-4 py-2 text-sm rounded-lg border border-ds-border text-ds-foreground hover:bg-ds-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors">Next</button>
-                  </div>
-                )}
-              </>
+                    </div>
+                  </a>
+                ))}
+              </div>
             )}
           </main>
         </div>
       </div>
+
+      <section className="py-16 bg-ds-card border-t border-ds-border">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">Why Choose Our Warranties?</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Comprehensive Coverage</h3>
+              <p className="text-sm text-ds-muted-foreground">Choose from plans that cover mechanical failures, accidental damage, and more.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Easy Claims Process</h3>
+              <p className="text-sm text-ds-muted-foreground">File a claim online in minutes and get fast resolution from our team.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Peace of Mind</h3>
+              <p className="text-sm text-ds-muted-foreground">Rest easy knowing your valuable purchases are protected long-term.</p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

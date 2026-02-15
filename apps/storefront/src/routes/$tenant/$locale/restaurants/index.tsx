@@ -15,16 +15,36 @@ export const Route = createFileRoute("/$tenant/$locale/restaurants/")({
       })
       if (!resp.ok) return { items: [], count: 0 }
       const data = await resp.json()
-      return { items: data.items || data.listings || data.products || [], count: data.count || 0 }
+      const raw = data.items || data.restaurants || data.listings || data.products || []
+      const items = raw.map((s: any) => {
+        const meta = s.metadata || {}
+        return {
+          id: s.id,
+          name: s.name || meta.name || "Untitled Restaurant",
+          description: s.description || meta.description || "",
+          thumbnail: meta.thumbnail || meta.images?.[0] || meta.image_url || s.banner_url || s.logo_url || null,
+          images: meta.images || [],
+          cuisine_type: s.cuisine_type || s.cuisine_types || meta.cuisine_type || null,
+          city: s.city || meta.city || null,
+          phone: s.phone || meta.phone || null,
+          rating: s.rating || meta.rating || null,
+          review_count: s.review_count || meta.review_count || 0,
+          price_range: s.price_range || meta.price_range || null,
+          operating_hours: s.operating_hours || meta.operating_hours || null,
+          delivery_available: s.delivery_available || meta.delivery_available || false,
+          pickup_available: s.pickup_available || meta.pickup_available || false,
+          dine_in_available: s.dine_in_available || meta.dine_in_available || false,
+        }
+      })
+      return { items, count: data.count || items.length }
     } catch {
       return { items: [], count: 0 }
     }
   },
 })
 
-const cuisineOptions = ["all", "american", "italian", "mexican", "chinese", "japanese", "indian", "thai", "mediterranean", "french"] as const
+const cuisineOptions = ["all", "traditional_saudi", "najdi", "arabic", "international", "italian", "japanese", "indian", "chinese", "thai"] as const
 const priceRangeOptions = ["all", "$", "$$", "$$$", "$$$$"] as const
-const serviceOptions = ["all", "delivery", "pickup", "dine-in"] as const
 
 function RestaurantsPage() {
   const { tenant, locale } = Route.useParams()
@@ -32,41 +52,40 @@ function RestaurantsPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [cuisineFilter, setCuisineFilter] = useState<string>("all")
   const [priceFilter, setPriceFilter] = useState<string>("all")
-  const [serviceFilter, setServiceFilter] = useState<string>("all")
-  const [page, setPage] = useState(1)
-  const limit = 12
 
   const loaderData = Route.useLoaderData()
-  const data = loaderData
-  const isLoading = false
-  const error = null
-  const items = data?.items || []
-  const totalCount = data?.count || 0
-  const totalPages = Math.ceil(totalCount / limit)
+  const items = loaderData?.items || []
 
-  const filteredItems = items.filter((item) =>
-    searchQuery ? item.name?.toLowerCase().includes(searchQuery.toLowerCase()) : true
-  )
-
-  const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <svg key={i} className={`w-4 h-4 ${i < Math.round(rating) ? "text-yellow-400 fill-yellow-400" : "text-ds-muted"}`} viewBox="0 0 20 20" fill="currentColor">
-        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-      </svg>
-    ))
-  }
+  const filteredItems = items.filter((item: any) => {
+    const matchesSearch = searchQuery
+      ? (item.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.description || "").toLowerCase().includes(searchQuery.toLowerCase())
+      : true
+    const matchesCuisine = cuisineFilter === "all" || item.cuisine_type === cuisineFilter
+    const matchesPrice = priceFilter === "all" || item.price_range === priceFilter
+    return matchesSearch && matchesCuisine && matchesPrice
+  })
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-ds-card border-b border-ds-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center gap-2 text-sm text-ds-muted-foreground mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-ds-foreground transition-colors">Home</Link>
+      <div className="bg-gradient-to-r from-orange-500 to-red-600 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
-            <span className="text-ds-foreground">Restaurants</span>
+            <span className="text-white">Restaurants</span>
           </div>
-          <h1 className="text-3xl font-bold text-ds-foreground">Browse Restaurants</h1>
-          <p className="mt-2 text-ds-muted-foreground">Discover great restaurants near you</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Restaurants & Dining</h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">
+            Discover the finest dining experiences from traditional Saudi cuisine to international flavors.
+          </p>
+          <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
+            <span>{items.length} restaurants available</span>
+            <span>|</span>
+            <span>Verified reviews</span>
+            <span>|</span>
+            <span>All cuisines</span>
+          </div>
         </div>
       </div>
 
@@ -76,15 +95,25 @@ function RestaurantsPage() {
             <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
               <div>
                 <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
-                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search restaurants..." className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search restaurants..."
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-orange-400"
+                />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-ds-foreground mb-2">Cuisine Type</label>
                 <div className="space-y-1">
                   {cuisineOptions.map((opt) => (
-                    <button key={opt} onClick={() => { setCuisineFilter(opt); setPage(1) }} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${cuisineFilter === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}>
-                      {opt === "all" ? "All Cuisines" : opt.charAt(0).toUpperCase() + opt.slice(1)}
+                    <button
+                      key={opt}
+                      onClick={() => setCuisineFilter(opt)}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${cuisineFilter === opt ? "bg-orange-500 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                    >
+                      {opt === "all" ? "All Cuisines" : opt.split("_").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
                     </button>
                   ))}
                 </div>
@@ -94,19 +123,12 @@ function RestaurantsPage() {
                 <label className="block text-sm font-medium text-ds-foreground mb-2">Price Range</label>
                 <div className="space-y-1">
                   {priceRangeOptions.map((opt) => (
-                    <button key={opt} onClick={() => { setPriceFilter(opt); setPage(1) }} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${priceFilter === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}>
+                    <button
+                      key={opt}
+                      onClick={() => setPriceFilter(opt)}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${priceFilter === opt ? "bg-orange-500 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                    >
                       {opt === "all" ? "Any Price" : opt}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Service</label>
-                <div className="space-y-1">
-                  {serviceOptions.map((opt) => (
-                    <button key={opt} onClick={() => { setServiceFilter(opt); setPage(1) }} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${serviceFilter === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}>
-                      {opt === "all" ? "All Services" : opt.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
                     </button>
                   ))}
                 </div>
@@ -115,92 +137,124 @@ function RestaurantsPage() {
           </aside>
 
           <main className="flex-1">
-            {error ? (
-              <div className="bg-ds-destructive/10 border border-ds-destructive/20 rounded-xl p-8 text-center">
-                <svg className="w-12 h-12 text-ds-destructive mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                </svg>
-                <p className="text-ds-destructive font-medium">Something went wrong loading restaurants.</p>
-              </div>
-            ) : isLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="bg-ds-background border border-ds-border rounded-xl overflow-hidden">
-                    <div className="aspect-[4/3] bg-ds-muted animate-pulse" />
-                    <div className="p-4 space-y-3">
-                      <div className="h-5 w-3/4 bg-ds-muted rounded animate-pulse" />
-                      <div className="h-4 w-1/2 bg-ds-muted rounded animate-pulse" />
-                      <div className="h-4 w-1/3 bg-ds-muted rounded animate-pulse" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : filteredItems.length === 0 ? (
+            {filteredItems.length === 0 ? (
               <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1" />
                 </svg>
                 <h3 className="text-lg font-semibold text-ds-foreground mb-2">No restaurants found</h3>
-                <p className="text-ds-muted-foreground text-sm">Try adjusting your filters or check back later.</p>
+                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {filteredItems.map((item: any) => (
-                    <a key={item.id} href={`${prefix}/restaurants/${item.id}`} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-primary/30 transition-all duration-200">
-                      <div className="aspect-[4/3] bg-ds-muted relative overflow-hidden">
-                        {(item.banner_url || item.logo_url) ? (
-                          <img src={item.banner_url || item.logo_url} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-ds-muted-foreground">
-                            <svg className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1" /></svg>
-                          </div>
-                        )}
-                        {item.cuisine_type && (
-                          <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-ds-primary text-ds-primary-foreground rounded-md">{item.cuisine_type}</span>
-                        )}
-                        {item.price_range && (
-                          <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-ds-background/90 text-ds-foreground rounded-md">{item.price_range}</span>
-                        )}
-                      </div>
-                      <div className="p-4">
-                        <h3 className="font-semibold text-ds-foreground group-hover:text-ds-primary transition-colors line-clamp-1">{item.name}</h3>
-                        <div className="flex items-center gap-1 mt-1">
-                          {renderStars(item.rating || 0)}
-                          <span className="text-sm text-ds-muted-foreground ml-1">({item.review_count || 0})</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {filteredItems.map((item: any) => (
+                  <a
+                    key={item.id}
+                    href={`${prefix}/restaurants/${item.id}`}
+                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-orange-300 transition-all duration-200"
+                  >
+                    <div className="aspect-[4/3] bg-gradient-to-br from-orange-50 to-red-100 relative overflow-hidden">
+                      {item.thumbnail ? (
+                        <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <svg className="w-16 h-16 text-orange-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1" />
+                          </svg>
                         </div>
-                        <div className="flex items-center gap-2 mt-2 text-sm text-ds-muted-foreground">
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                          <span>{item.location || "Location TBD"}</span>
+                      )}
+                      {item.cuisine_type && (
+                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-orange-500 text-white rounded-md capitalize">
+                          {String(item.cuisine_type).split("_").join(" ")}
+                        </span>
+                      )}
+                      {item.price_range && (
+                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-white/90 text-gray-700 rounded-md">
+                          {item.price_range}
+                        </span>
+                      )}
+                      {item.images && item.images.length > 1 && (
+                        <div className="absolute bottom-2 right-2 px-2 py-0.5 text-xs font-medium bg-black/50 text-white rounded-md flex items-center gap-1">
+                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                          {item.images.length}
                         </div>
-                        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-ds-border">
-                          {item.delivery_available && (
-                            <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-md">Delivery</span>
-                          )}
-                          {item.pickup_available && (
-                            <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-md">Pickup</span>
-                          )}
-                          {item.dine_in_available && (
-                            <span className="px-2 py-1 text-xs font-medium bg-purple-100 text-purple-700 rounded-md">Dine-in</span>
-                          )}
-                        </div>
-                      </div>
-                    </a>
-                  ))}
-                </div>
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-orange-600 transition-colors line-clamp-1">{item.name}</h3>
+                      {item.description && (
+                        <p className="text-sm text-ds-muted-foreground mt-1.5 line-clamp-2">{item.description}</p>
+                      )}
 
-                {totalPages > 1 && (
-                  <div className="flex items-center justify-center gap-2 mt-8">
-                    <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="px-4 py-2 text-sm rounded-lg border border-ds-border text-ds-foreground hover:bg-ds-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors">Previous</button>
-                    <span className="text-sm text-ds-muted-foreground">Page {page} of {totalPages}</span>
-                    <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="px-4 py-2 text-sm rounded-lg border border-ds-border text-ds-foreground hover:bg-ds-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors">Next</button>
-                  </div>
-                )}
-              </>
+                      {item.rating && (
+                        <div className="flex items-center gap-1.5 mt-2">
+                          <div className="flex items-center">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <svg key={star} className={`w-3.5 h-3.5 ${star <= Math.round(item.rating) ? "text-amber-400" : "text-gray-200"}`} fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                              </svg>
+                            ))}
+                          </div>
+                          <span className="text-xs text-ds-muted-foreground">{item.rating} ({item.review_count})</span>
+                        </div>
+                      )}
+
+                      {item.city && (
+                        <div className="flex items-center gap-1 mt-2 text-xs text-ds-muted-foreground">
+                          <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                          <span className="truncate">{item.city}</span>
+                        </div>
+                      )}
+
+                      <div className="flex items-center gap-2 mt-2 text-xs text-ds-muted-foreground">
+                        {item.delivery_available && (
+                          <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-md font-medium">Delivery</span>
+                        )}
+                        {item.pickup_available && (
+                          <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-md font-medium">Pickup</span>
+                        )}
+                        {item.dine_in_available && (
+                          <span className="px-2 py-0.5 bg-purple-100 text-purple-700 rounded-md font-medium">Dine-in</span>
+                        )}
+                      </div>
+
+                      <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
+                        {item.phone && (
+                          <span className="text-xs text-ds-muted-foreground">{item.phone}</span>
+                        )}
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-orange-500 rounded-lg group-hover:bg-orange-600 transition-colors ml-auto">View Menu</span>
+                      </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
             )}
           </main>
         </div>
       </div>
+
+      <section className="py-16 bg-ds-card border-t border-ds-border">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-orange-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Browse Restaurants</h3>
+              <p className="text-sm text-ds-muted-foreground">Explore restaurants by cuisine, price range, or location to find your perfect meal.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-orange-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">View Menu & Reviews</h3>
+              <p className="text-sm text-ds-muted-foreground">Check the menu, read reviews from other diners, and see photos of the dishes.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-orange-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Order or Reserve</h3>
+              <p className="text-sm text-ds-muted-foreground">Place your order for delivery or pickup, or reserve a table for dine-in.</p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

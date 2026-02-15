@@ -15,48 +15,98 @@ export const Route = createFileRoute("/$tenant/$locale/classifieds/")({
       })
       if (!resp.ok) return { items: [], count: 0 }
       const data = await resp.json()
-      return { items: data.items || data.listings || data.products || [], count: data.count || 0 }
+      const raw = data.items || data.listings || data.products || []
+      const items = raw.map((s: any) => {
+        const meta = s.metadata || {}
+        return {
+          id: s.id,
+          title: s.title || meta.title || "Untitled Listing",
+          description: s.description || meta.description || "",
+          thumbnail: meta.thumbnail || meta.images?.[0] || null,
+          images: meta.images || [],
+          price: meta.price || null,
+          currency: s.currency_code || meta.currency || "SAR",
+          category_id: s.category_id || null,
+          listing_type: s.listing_type || null,
+          condition: s.condition || null,
+          is_negotiable: s.is_negotiable || false,
+          location_city: s.location_city || null,
+        }
+      })
+      return { items, count: data.count || items.length }
     } catch {
       return { items: [], count: 0 }
     }
   },
 })
 
-const categoryOptions = ["all", "electronics", "furniture", "vehicles", "clothing", "services", "real-estate", "other"] as const
-const priceRangeOptions = ["all", "0-50", "50-200", "200-500", "500-1000", "1000+"] as const
+const conditionOptions = ["all", "new", "like_new", "good", "fair", "for_parts"] as const
+const listingTypeOptions = ["all", "sale", "wanted", "trade"] as const
 
 function ClassifiedsPage() {
   const { tenant, locale } = Route.useParams()
   const prefix = `/${tenant}/${locale}`
   const [searchQuery, setSearchQuery] = useState("")
-  const [categoryFilter, setCategoryFilter] = useState<string>("all")
-  const [priceRange, setPriceRange] = useState<string>("all")
-  const [page, setPage] = useState(1)
-  const limit = 12
+  const [conditionFilter, setConditionFilter] = useState<string>("all")
+  const [listingTypeFilter, setListingTypeFilter] = useState<string>("all")
 
   const loaderData = Route.useLoaderData()
-  const data = loaderData
-  const isLoading = false
-  const error = null
-  const items = data?.items || []
-  const totalCount = data?.count || 0
-  const totalPages = Math.ceil(totalCount / limit)
+  const items = loaderData?.items || []
 
-  const filteredItems = items.filter((item) =>
-    searchQuery ? item.title?.toLowerCase().includes(searchQuery.toLowerCase()) : true
-  )
+  const filteredItems = items.filter((item: any) => {
+    const matchesSearch = searchQuery
+      ? (item.title || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.description || "").toLowerCase().includes(searchQuery.toLowerCase())
+      : true
+    const matchesCondition = conditionFilter === "all" || item.condition === conditionFilter
+    const matchesType = listingTypeFilter === "all" || item.listing_type === listingTypeFilter
+    return matchesSearch && matchesCondition && matchesType
+  })
+
+  const formatPrice = (price: number | null, currency: string) => {
+    if (!price) return "Contact for price"
+    const amount = price >= 100 ? price / 100 : price
+    return `${amount.toLocaleString()} ${currency}`
+  }
+
+  const conditionLabel = (c: string) => {
+    const map: Record<string, string> = { new: "New", like_new: "Like New", good: "Good", fair: "Fair", for_parts: "For Parts" }
+    return map[c] || c
+  }
+
+  const conditionColor = (c: string) => {
+    if (c === "new") return "bg-green-600 text-white"
+    if (c === "like_new") return "bg-emerald-500 text-white"
+    if (c === "good") return "bg-amber-500 text-white"
+    if (c === "fair") return "bg-orange-500 text-white"
+    return "bg-red-500 text-white"
+  }
+
+  const listingTypeLabel = (t: string) => {
+    const map: Record<string, string> = { sale: "For Sale", wanted: "Wanted", trade: "Trade" }
+    return map[t] || t
+  }
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-ds-card border-b border-ds-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center gap-2 text-sm text-ds-muted-foreground mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-ds-foreground transition-colors">Home</Link>
+      <div className="bg-gradient-to-r from-amber-500 to-yellow-600 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
-            <span className="text-ds-foreground">Classifieds</span>
+            <span className="text-white">Classifieds</span>
           </div>
-          <h1 className="text-3xl font-bold text-ds-foreground">Browse Classifieds</h1>
-          <p className="mt-2 text-ds-muted-foreground">Find great deals on items near you</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Classifieds</h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">
+            Buy, sell, and trade items in your local community. Find great deals on everything you need.
+          </p>
+          <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
+            <span>{items.length} listings available</span>
+            <span>|</span>
+            <span>Verified sellers</span>
+            <span>|</span>
+            <span>Secure transactions</span>
+          </div>
         </div>
       </div>
 
@@ -71,35 +121,35 @@ function ClassifiedsPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search classifieds..."
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Category</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">Condition</label>
                 <div className="space-y-1">
-                  {categoryOptions.map((opt) => (
+                  {conditionOptions.map((opt) => (
                     <button
                       key={opt}
-                      onClick={() => { setCategoryFilter(opt); setPage(1) }}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${categoryFilter === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      onClick={() => setConditionFilter(opt)}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${conditionFilter === opt ? "bg-amber-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
-                      {opt === "all" ? "All Categories" : opt.charAt(0).toUpperCase() + opt.slice(1).replace("-", " ")}
+                      {opt === "all" ? "All Conditions" : conditionLabel(opt)}
                     </button>
                   ))}
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Price Range</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">Listing Type</label>
                 <div className="space-y-1">
-                  {priceRangeOptions.map((opt) => (
+                  {listingTypeOptions.map((opt) => (
                     <button
                       key={opt}
-                      onClick={() => { setPriceRange(opt); setPage(1) }}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${priceRange === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      onClick={() => setListingTypeFilter(opt)}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${listingTypeFilter === opt ? "bg-amber-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
-                      {opt === "all" ? "Any Price" : opt === "1000+" ? "$1,000+" : `$${opt.replace("-", " – $")}`}
+                      {opt === "all" ? "All Types" : listingTypeLabel(opt)}
                     </button>
                   ))}
                 </div>
@@ -108,83 +158,100 @@ function ClassifiedsPage() {
           </aside>
 
           <main className="flex-1">
-            {error ? (
-              <div className="bg-ds-destructive/10 border border-ds-destructive/20 rounded-xl p-8 text-center">
-                <svg className="w-12 h-12 text-ds-destructive mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                </svg>
-                <p className="text-ds-destructive font-medium">Something went wrong loading classifieds.</p>
-              </div>
-            ) : isLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="bg-ds-background border border-ds-border rounded-xl overflow-hidden">
-                    <div className="aspect-[4/3] bg-ds-muted animate-pulse" />
-                    <div className="p-4 space-y-3">
-                      <div className="h-5 w-3/4 bg-ds-muted rounded animate-pulse" />
-                      <div className="h-4 w-1/2 bg-ds-muted rounded animate-pulse" />
-                      <div className="h-4 w-1/3 bg-ds-muted rounded animate-pulse" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : filteredItems.length === 0 ? (
+            {filteredItems.length === 0 ? (
               <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
                 <h3 className="text-lg font-semibold text-ds-foreground mb-2">No classifieds found</h3>
-                <p className="text-ds-muted-foreground text-sm">Try adjusting your filters or check back later.</p>
+                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {filteredItems.map((item: any) => (
-                    <a
-                      key={item.id}
-                      href={`${prefix}/classifieds/${item.id}`}
-                      className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-primary/30 transition-all duration-200"
-                    >
-                      <div className="aspect-[4/3] bg-ds-muted relative overflow-hidden">
-                        {(item.thumbnail || item.images?.[0]) ? (
-                          <img src={item.thumbnail || item.images?.[0]} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-ds-muted-foreground">
-                            <svg className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                          </div>
-                        )}
-                        {item.category && (
-                          <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-ds-primary text-ds-primary-foreground rounded-md">{item.category}</span>
-                        )}
-                      </div>
-                      <div className="p-4">
-                        <h3 className="font-semibold text-ds-foreground group-hover:text-ds-primary transition-colors line-clamp-1">{item.title}</h3>
-                        <p className="text-lg font-bold text-ds-primary mt-1">${item.price?.toLocaleString() || "Contact for price"}</p>
-                        <div className="flex items-center gap-2 mt-2 text-sm text-ds-muted-foreground">
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                          <span>{item.location || "Location not specified"}</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {filteredItems.map((item: any) => (
+                  <a
+                    key={item.id}
+                    href={`${prefix}/classifieds/${item.id}`}
+                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-amber-300 transition-all duration-200"
+                  >
+                    <div className="aspect-[4/3] bg-gradient-to-br from-amber-50 to-yellow-100 relative overflow-hidden">
+                      {item.thumbnail ? (
+                        <img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <svg className="w-16 h-16 text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                          </svg>
                         </div>
-                        <div className="flex items-center justify-between mt-3 pt-3 border-t border-ds-border">
-                          <span className="text-xs text-ds-muted-foreground">{item.created_at ? new Date(item.created_at).toLocaleDateString() : "Recently posted"}</span>
-                          <span className="text-xs text-ds-muted-foreground">{item.seller?.name || "Seller"}</span>
+                      )}
+                      {item.condition && (
+                        <span className={`absolute top-2 left-2 px-2 py-1 text-xs font-medium rounded-md ${conditionColor(item.condition)}`}>{conditionLabel(item.condition)}</span>
+                      )}
+                      {item.listing_type && (
+                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-white/90 text-gray-700 rounded-md">{listingTypeLabel(item.listing_type)}</span>
+                      )}
+                      {item.images && item.images.length > 1 && (
+                        <div className="absolute bottom-2 right-2 px-2 py-0.5 text-xs font-medium bg-black/50 text-white rounded-md flex items-center gap-1">
+                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                          {item.images.length}
                         </div>
-                      </div>
-                    </a>
-                  ))}
-                </div>
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-amber-600 transition-colors line-clamp-1">{item.title}</h3>
+                      {item.description && (
+                        <p className="text-sm text-ds-muted-foreground mt-1.5 line-clamp-2">{item.description}</p>
+                      )}
 
-                {totalPages > 1 && (
-                  <div className="flex items-center justify-center gap-2 mt-8">
-                    <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="px-4 py-2 text-sm rounded-lg border border-ds-border text-ds-foreground hover:bg-ds-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors">Previous</button>
-                    <span className="text-sm text-ds-muted-foreground">Page {page} of {totalPages}</span>
-                    <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="px-4 py-2 text-sm rounded-lg border border-ds-border text-ds-foreground hover:bg-ds-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors">Next</button>
-                  </div>
-                )}
-              </>
+                      <div className="flex items-center gap-2 mt-3">
+                        <span className="font-bold text-amber-600 text-lg">{formatPrice(item.price, item.currency)}</span>
+                        {item.is_negotiable && (
+                          <span className="px-2 py-0.5 text-xs font-medium bg-amber-100 text-amber-700 rounded-full">Negotiable</span>
+                        )}
+                      </div>
+
+                      {item.location_city && (
+                        <div className="flex items-center gap-1 mt-2 text-xs text-ds-muted-foreground">
+                          <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                          <span className="truncate">{item.location_city}</span>
+                        </div>
+                      )}
+
+                      <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
+                        <span className="text-xs text-ds-muted-foreground capitalize">{item.listing_type || "Listing"}</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-amber-600 rounded-lg group-hover:bg-amber-700 transition-colors">View Listing</span>
+                      </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
             )}
           </main>
         </div>
       </div>
+
+      <section className="py-16 bg-ds-card border-t border-ds-border">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-amber-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Browse Listings</h3>
+              <p className="text-sm text-ds-muted-foreground">Search through thousands of items listed by verified sellers in your area.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-amber-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Contact Seller</h3>
+              <p className="text-sm text-ds-muted-foreground">Reach out to the seller directly to negotiate and arrange a meeting.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-amber-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Complete the Deal</h3>
+              <p className="text-sm text-ds-muted-foreground">Meet safely, inspect the item, and complete your transaction securely.</p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

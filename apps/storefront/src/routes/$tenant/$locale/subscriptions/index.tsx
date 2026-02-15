@@ -1,134 +1,225 @@
-import { createFileRoute } from "@tanstack/react-router"
-import { useSubscriptionPlans } from "@/lib/hooks/use-subscriptions"
-import { PlanCard } from "@/components/subscriptions"
-import { UpgradePrompt } from "@/components/freemium/upgrade-prompt"
-import { Spinner } from "@medusajs/icons"
+// @ts-nocheck
+import { createFileRoute, Link } from "@tanstack/react-router"
+import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/subscriptions/")({
-  component: SubscriptionPlansPage,
+  component: SubscriptionsPage,
+  loader: async () => {
+    try {
+      const isServer = typeof window === "undefined"
+      const baseUrl = isServer ? "http://localhost:9000" : ""
+      const resp = await fetch(`${baseUrl}/store/subscriptions`, {
+        headers: {
+          "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445",
+        },
+      })
+      if (!resp.ok) return { items: [], count: 0 }
+      const data = await resp.json()
+      const raw = data.subscriptions || data.plans || data.items || []
+      const items = raw.map((s: any) => {
+        const meta = s.metadata || {}
+        return {
+          id: s.id,
+          name: meta.name || s.name || s.plan_name || s.title || "Untitled Plan",
+          description: meta.description || s.description || "",
+          price: meta.price || s.price || s.amount || null,
+          currency: meta.currency || s.currency || "USD",
+          billing_interval: meta.billing_interval || s.billing_interval || s.interval || "monthly",
+          features: meta.features || s.features || [],
+          thumbnail: meta.thumbnail || meta.image || s.thumbnail || null,
+          is_popular: meta.is_popular || s.is_popular || false,
+          trial_days: meta.trial_days || s.trial_days || 0,
+          status: s.status || "active",
+        }
+      })
+      return { items, count: data.count || items.length }
+    } catch {
+      return { items: [], count: 0 }
+    }
+  },
 })
 
-function SubscriptionPlansPage() {
+const intervalOptions = ["all", "monthly", "quarterly", "yearly"] as const
+
+function SubscriptionsPage() {
   const { tenant, locale } = Route.useParams()
-  const { data: plans, isLoading, error } = useSubscriptionPlans()
+  const prefix = `/${tenant}/${locale}`
+  const [searchQuery, setSearchQuery] = useState("")
+  const [intervalFilter, setIntervalFilter] = useState<string>("all")
+
+  const loaderData = Route.useLoaderData()
+  const items = loaderData?.items || []
+
+  const filteredItems = items.filter((item: any) => {
+    const matchesSearch = searchQuery
+      ? (item.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.description || "").toLowerCase().includes(searchQuery.toLowerCase())
+      : true
+    const matchesInterval = intervalFilter === "all" || item.billing_interval === intervalFilter
+    return matchesSearch && matchesInterval
+  })
+
+  const formatPrice = (price: number | null, currency: string, interval: string) => {
+    if (!price) return "Free"
+    const amount = price >= 100 ? price / 100 : price
+    return `${amount.toLocaleString()} ${currency}`
+  }
+
+  const intervalLabel = (interval: string) => {
+    switch (interval) {
+      case "monthly": return "/mo"
+      case "quarterly": return "/quarter"
+      case "yearly": return "/year"
+      default: return `/${interval}`
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-ds-muted">
-      {/* Hero Section */}
-      <section className="bg-ds-primary text-ds-primary-foreground py-20">
-        <div className="content-container text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Choose Your Plan
-          </h1>
-          <p className="text-lg text-ds-muted-foreground max-w-2xl mx-auto">
-            Select the perfect plan for your business. All plans include a 14-day
-            free trial with no credit card required.
+    <div className="min-h-screen bg-ds-background">
+      <div className="bg-gradient-to-r from-indigo-500 to-blue-600 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <span>/</span>
+            <span className="text-white">Subscriptions</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Subscriptions</h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">
+            Choose the perfect subscription plan for your needs. Flexible billing, cancel anytime.
           </p>
+          <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
+            <span>{items.length} plans available</span>
+            <span>|</span>
+            <span>Free trial included</span>
+            <span>|</span>
+            <span>Cancel anytime</span>
+          </div>
         </div>
-      </section>
+      </div>
 
-      {/* Pricing Section */}
-      <section className="py-16 -mt-10">
-        <div className="content-container">
-          {isLoading ? (
-            <div className="flex items-center justify-center py-20">
-              <Spinner className="w-8 h-8 text-ds-muted-foreground animate-spin" />
-            </div>
-          ) : error ? (
-            <div className="text-center py-20">
-              <p className="text-ds-destructive">Failed to load plans. Please try again.</p>
-            </div>
-          ) : plans && plans.length > 0 ? (
-            <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-              {plans.map((plan) => (
-                <PlanCard
-                  key={plan.id}
-                  plan={plan}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
+          <aside className="w-full lg:w-72 flex-shrink-0">
+            <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
+              <div>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search plans..."
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring"
                 />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-20">
-              <p className="text-ds-muted-foreground">No plans available at the moment.</p>
-            </div>
-          )}
-        </div>
-      </section>
+              </div>
 
-      {/* FAQ Section */}
-      <section className="py-16 bg-ds-background">
-        <div className="content-container max-w-3xl">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">
-            Frequently Asked Questions
-          </h2>
-          <div className="space-y-6">
-            <FaqItem
-              question="Can I change my plan later?"
-              answer="Yes, you can upgrade or downgrade your plan at any time. Changes will be prorated and reflected in your next billing cycle."
-            />
-            <FaqItem
-              question="What happens when my trial ends?"
-              answer="After your 14-day trial, you'll be automatically charged for your selected plan. You can cancel anytime before the trial ends."
-            />
-            <FaqItem
-              question="Can I cancel my subscription?"
-              answer="Absolutely. You can cancel your subscription at any time from your account settings. You'll continue to have access until the end of your billing period."
-            />
-            <FaqItem
-              question="Do you offer refunds?"
-              answer="We offer a 30-day money-back guarantee on all plans. If you're not satisfied, contact our support team for a full refund."
-            />
-            <FaqItem
-              question="Is there a setup fee?"
-              answer="No, there are no setup fees for our Starter and Professional plans. The Enterprise plan may include custom setup based on your requirements."
-            />
+              <div>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">Billing Interval</label>
+                <div className="space-y-1">
+                  {intervalOptions.map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => setIntervalFilter(opt)}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${intervalFilter === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}
+                    >
+                      {opt === "all" ? "All Intervals" : opt.charAt(0).toUpperCase() + opt.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          <main className="flex-1">
+            {filteredItems.length === 0 ? (
+              <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
+                <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No subscription plans found</h3>
+                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {filteredItems.map((item: any) => (
+                  <div
+                    key={item.id}
+                    className={`group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-indigo-300 transition-all duration-200 ${item.is_popular ? "ring-2 ring-indigo-400" : ""}`}
+                  >
+                    <div className="bg-gradient-to-br from-indigo-500 to-blue-600 p-6 text-white text-center relative">
+                      {item.is_popular && (
+                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-bold bg-white text-indigo-600 rounded-full">Popular</span>
+                      )}
+                      <div className="text-3xl mb-2">
+                        <svg className="w-10 h-10 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                      </div>
+                      <h3 className="text-xl font-bold">{item.name}</h3>
+                      <div className="mt-2">
+                        <span className="text-3xl font-extrabold">{formatPrice(item.price, item.currency, item.billing_interval)}</span>
+                        <span className="text-sm text-white/70">{intervalLabel(item.billing_interval)}</span>
+                      </div>
+                    </div>
+                    <div className="p-5">
+                      {item.description && (
+                        <p className="text-sm text-ds-muted-foreground mb-4 line-clamp-2">{item.description}</p>
+                      )}
+
+                      {item.trial_days > 0 && (
+                        <div className="flex items-center gap-2 mb-3 text-xs text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg">
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                          {item.trial_days}-day free trial
+                        </div>
+                      )}
+
+                      <div className="flex items-center gap-2 mb-3 px-3 py-1.5 text-xs bg-ds-muted rounded-lg text-ds-muted-foreground capitalize">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        Billed {item.billing_interval}
+                      </div>
+
+                      {item.features && item.features.length > 0 && (
+                        <ul className="space-y-2 mb-4">
+                          {item.features.slice(0, 6).map((f: string, i: number) => (
+                            <li key={i} className="flex items-start gap-2 text-sm text-ds-foreground">
+                              <svg className="w-4 h-4 text-indigo-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                              {f}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+
+                      <button className="w-full py-2.5 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors">
+                        Subscribe
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </main>
+        </div>
+      </div>
+
+      <section className="py-16 bg-ds-card border-t border-ds-border">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Choose a Plan</h3>
+              <p className="text-sm text-ds-muted-foreground">Select the subscription that fits your needs and budget.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Start Your Trial</h3>
+              <p className="text-sm text-ds-muted-foreground">Enjoy a free trial period to explore all the features.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Stay Flexible</h3>
+              <p className="text-sm text-ds-muted-foreground">Upgrade, downgrade, or cancel anytime from your dashboard.</p>
+            </div>
           </div>
         </div>
       </section>
-
-      <section className="py-12">
-        <div className="content-container max-w-3xl">
-          <UpgradePrompt
-            locale={locale}
-            featureName="Premium Features"
-            variant="banner"
-            benefits={[
-              "Unlimited product listings",
-              "Advanced analytics & reporting",
-              "Priority customer support",
-              "Custom branding options",
-            ]}
-            onUpgrade={() => {
-              window.scrollTo({ top: 0, behavior: "smooth" })
-            }}
-          />
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-ds-primary text-ds-primary-foreground">
-        <div className="content-container text-center">
-          <h2 className="text-3xl font-bold mb-4">Still have questions?</h2>
-          <p className="text-ds-muted-foreground mb-8">
-            Our team is here to help you find the perfect plan for your needs.
-          </p>
-          <a
-            href="mailto:support@dakkah.com"
-            className="btn-enterprise bg-ds-background text-ds-foreground hover:bg-ds-muted"
-          >
-            Contact Sales
-          </a>
-        </div>
-      </section>
-    </div>
-  )
-}
-
-function FaqItem({ question, answer }: { question: string; answer: string }) {
-  return (
-    <div className="border-b border-ds-border pb-6">
-      <h3 className="text-lg font-semibold text-ds-foreground mb-2">{question}</h3>
-      <p className="text-ds-muted-foreground">{answer}</p>
     </div>
   )
 }

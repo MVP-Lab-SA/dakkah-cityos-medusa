@@ -15,58 +15,85 @@ export const Route = createFileRoute("/$tenant/$locale/healthcare/")({
       })
       if (!resp.ok) return { items: [], count: 0 }
       const data = await resp.json()
-      return { items: data.items || data.listings || data.products || [], count: data.count || 0 }
+      const raw = data.items || data.listings || data.products || data.services || []
+      const items = raw.map((item: any) => {
+        const meta = item.metadata || {}
+        return {
+          id: item.id,
+          name: item.name || meta.name || "Doctor",
+          title: item.title || meta.title || null,
+          specialization: item.specialization || meta.specialization || null,
+          bio: item.bio || meta.bio || "",
+          education: item.education || meta.education || null,
+          experience_years: item.experience_years || meta.experience_years || 0,
+          languages: item.languages || meta.languages || [],
+          thumbnail: meta.thumbnail || meta.images?.[0] || null,
+          images: meta.images || [],
+          rating: meta.rating || item.rating || null,
+          consultation_fee: meta.consultation_fee || item.consultation_fee || null,
+          currency_code: item.currency_code || meta.currency_code || "USD",
+          location: item.location || meta.location || null,
+        }
+      })
+      return { items, count: data.count || items.length }
     } catch {
       return { items: [], count: 0 }
     }
   },
 })
 
-const specialtyOptions = ["all", "primary-care", "cardiology", "dermatology", "orthopedics", "pediatrics", "neurology", "psychiatry", "ophthalmology", "dentistry", "physical-therapy"] as const
-const availabilityOptions = ["all", "available-today", "this-week", "next-week"] as const
-const insuranceOptions = ["all", "accepts-insurance", "cash-only"] as const
+const specOptions = ["all", "general", "cardiology", "dermatology", "pediatrics", "orthopedics", "psychiatry", "dentistry"] as const
 
 function HealthcarePage() {
   const { tenant, locale } = Route.useParams()
   const prefix = `/${tenant}/${locale}`
   const [searchQuery, setSearchQuery] = useState("")
-  const [specialty, setSpecialty] = useState<string>("all")
-  const [availability, setAvailability] = useState<string>("all")
-  const [insurance, setInsurance] = useState<string>("all")
-  const [page, setPage] = useState(1)
-  const limit = 12
+  const [specFilter, setSpecFilter] = useState<string>("all")
 
   const loaderData = Route.useLoaderData()
-  const data = loaderData
-  const isLoading = false
-  const error = null
-  const items = data?.items || []
-  const totalCount = data?.count || 0
-  const totalPages = Math.ceil(totalCount / limit)
+  const items = loaderData?.items || []
 
-  const filteredItems = items.filter((item) =>
-    searchQuery ? item.provider_name?.toLowerCase().includes(searchQuery.toLowerCase()) || item.specialty?.toLowerCase().includes(searchQuery.toLowerCase()) : true
-  )
+  const filteredItems = items.filter((item: any) => {
+    const matchesSearch = searchQuery
+      ? (item.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.specialization || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.bio || "").toLowerCase().includes(searchQuery.toLowerCase())
+      : true
+    const matchesSpec = specFilter === "all" || item.specialization === specFilter
+    return matchesSearch && matchesSpec
+  })
 
-  const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <svg key={i} className={`w-4 h-4 ${i < Math.round(rating) ? "text-yellow-400 fill-yellow-400" : "text-ds-muted"}`} viewBox="0 0 20 20" fill="currentColor">
-        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-      </svg>
-    ))
+  const formatFee = (fee: number | null, currency: string) => {
+    if (!fee) return "Contact for pricing"
+    const amount = fee >= 100 ? fee / 100 : fee
+    return `${amount.toLocaleString()} ${currency.toUpperCase()}`
+  }
+
+  const specIcon = (spec: string) => {
+    const map: Record<string, string> = { general: "🩺", cardiology: "❤️", dermatology: "🧴", pediatrics: "👶", orthopedics: "🦴", psychiatry: "🧠", dentistry: "🦷" }
+    return map[spec] || "🏥"
   }
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-ds-card border-b border-ds-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center gap-2 text-sm text-ds-muted-foreground mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-ds-foreground transition-colors">Home</Link>
+      <div className="bg-gradient-to-r from-blue-500 to-sky-600 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
-            <span className="text-ds-foreground">Healthcare</span>
+            <span className="text-white">Healthcare</span>
           </div>
-          <h1 className="text-3xl font-bold text-ds-foreground">Browse Healthcare Providers</h1>
-          <p className="mt-2 text-ds-muted-foreground">Find trusted healthcare professionals near you</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Healthcare</h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">
+            Find trusted healthcare professionals and book appointments with top-rated doctors.
+          </p>
+          <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
+            <span>{items.length} providers</span>
+            <span>|</span>
+            <span>Verified credentials</span>
+            <span>|</span>
+            <span>Online booking</span>
+          </div>
         </div>
       </div>
 
@@ -76,37 +103,25 @@ function HealthcarePage() {
             <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
               <div>
                 <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
-                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search providers..." className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search doctors..."
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Specialty</label>
-                <div className="space-y-1 max-h-64 overflow-y-auto">
-                  {specialtyOptions.map((opt) => (
-                    <button key={opt} onClick={() => { setSpecialty(opt); setPage(1) }} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${specialty === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}>
-                      {opt === "all" ? "All Specialties" : opt.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Availability</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">Specialization</label>
                 <div className="space-y-1">
-                  {availabilityOptions.map((opt) => (
-                    <button key={opt} onClick={() => { setAvailability(opt); setPage(1) }} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${availability === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}>
-                      {opt === "all" ? "Any Availability" : opt.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Insurance</label>
-                <div className="space-y-1">
-                  {insuranceOptions.map((opt) => (
-                    <button key={opt} onClick={() => { setInsurance(opt); setPage(1) }} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${insurance === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}>
-                      {opt === "all" ? "All" : opt.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
+                  {specOptions.map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => setSpecFilter(opt)}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${specFilter === opt ? "bg-blue-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                    >
+                      {opt === "all" ? "All Specializations" : `${specIcon(opt)} ${opt.charAt(0).toUpperCase() + opt.slice(1)}`}
                     </button>
                   ))}
                 </div>
@@ -115,102 +130,129 @@ function HealthcarePage() {
           </aside>
 
           <main className="flex-1">
-            {error ? (
-              <div className="bg-ds-destructive/10 border border-ds-destructive/20 rounded-xl p-8 text-center">
-                <svg className="w-12 h-12 text-ds-destructive mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                </svg>
-                <p className="text-ds-destructive font-medium">Something went wrong loading healthcare providers.</p>
-              </div>
-            ) : isLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="bg-ds-background border border-ds-border rounded-xl overflow-hidden p-6">
-                    <div className="flex items-center gap-4">
-                      <div className="w-16 h-16 rounded-full bg-ds-muted animate-pulse" />
-                      <div className="flex-1 space-y-2">
-                        <div className="h-5 w-3/4 bg-ds-muted rounded animate-pulse" />
-                        <div className="h-4 w-1/2 bg-ds-muted rounded animate-pulse" />
-                      </div>
-                    </div>
-                    <div className="mt-4 space-y-2">
-                      <div className="h-4 w-full bg-ds-muted rounded animate-pulse" />
-                      <div className="h-4 w-2/3 bg-ds-muted rounded animate-pulse" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : filteredItems.length === 0 ? (
+            {filteredItems.length === 0 ? (
               <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
                 <h3 className="text-lg font-semibold text-ds-foreground mb-2">No healthcare providers found</h3>
-                <p className="text-ds-muted-foreground text-sm">Try adjusting your filters or check back later.</p>
+                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {filteredItems.map((item: any) => (
-                    <a key={item.id} href={`${prefix}/healthcare/${item.id}`} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-primary/30 transition-all duration-200 p-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {filteredItems.map((item: any) => {
+                  const langs = Array.isArray(item.languages) ? item.languages : (item.languages ? [item.languages] : [])
+                  return (
+                    <a
+                      key={item.id}
+                      href={`${prefix}/healthcare/${item.id}`}
+                      className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-blue-300 transition-all duration-200 p-5"
+                    >
                       <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 rounded-full bg-ds-muted overflow-hidden flex-shrink-0">
-                          {(item.photo_url || item.photo) ? (
-                            <img src={item.photo_url || item.photo} alt={item.provider_name} className="w-full h-full object-cover" />
+                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-100 to-sky-200 overflow-hidden flex-shrink-0">
+                          {item.thumbnail ? (
+                            <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover" />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-ds-muted-foreground text-xl font-bold">
-                              {(item.provider_name || "D").charAt(0)}
+                            <div className="w-full h-full flex items-center justify-center text-blue-600 text-xl font-bold">
+                              {(item.name || "D").charAt(0)}
                             </div>
                           )}
                         </div>
-                        <div>
-                          <h3 className="font-semibold text-ds-foreground group-hover:text-ds-primary transition-colors">{item.provider_name}</h3>
-                          {item.specialty && (
-                            <span className="text-sm text-ds-primary">{item.specialty.split("-").map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}</span>
+                        <div className="min-w-0">
+                          <h3 className="font-semibold text-ds-foreground group-hover:text-blue-600 transition-colors line-clamp-1">
+                            Dr. {item.name}
+                          </h3>
+                          {item.title && (
+                            <p className="text-xs text-ds-muted-foreground">{item.title}</p>
+                          )}
+                          {item.specialization && (
+                            <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-700 rounded-md capitalize">
+                              {specIcon(item.specialization)} {item.specialization}
+                            </span>
                           )}
                         </div>
                       </div>
-                      <div className="mt-4">
-                        <div className="flex items-center gap-1">
-                          {renderStars(item.rating || 0)}
-                          <span className="text-sm text-ds-muted-foreground ml-1">({item.review_count || 0})</span>
-                        </div>
-                        <div className="flex items-center gap-2 mt-2 text-sm text-ds-muted-foreground">
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                          <span>{item.location || "Location TBD"}</span>
-                        </div>
-                        <div className="flex flex-wrap gap-2 mt-3">
-                          {item.accepts_insurance && (
-                            <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-md">Accepts Insurance</span>
+
+                      {item.bio && (
+                        <p className="text-sm text-ds-muted-foreground mt-3 line-clamp-2">{item.bio}</p>
+                      )}
+
+                      <div className="flex items-center gap-3 mt-3 text-xs text-ds-muted-foreground flex-wrap">
+                        {item.experience_years > 0 && (
+                          <span className="flex items-center gap-1">
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            {item.experience_years}+ years
+                          </span>
+                        )}
+                        {item.education && (
+                          <span className="flex items-center gap-1">
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /></svg>
+                            <span className="truncate max-w-[120px]">{item.education}</span>
+                          </span>
+                        )}
+                      </div>
+
+                      {langs.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {langs.slice(0, 3).map((lang: string) => (
+                            <span key={lang} className="px-2 py-0.5 text-xs bg-sky-50 text-sky-700 rounded-md">{lang}</span>
+                          ))}
+                          {langs.length > 3 && (
+                            <span className="px-2 py-0.5 text-xs bg-sky-50 text-sky-500 rounded-md">+{langs.length - 3}</span>
                           )}
-                          {item.available_today && (
-                            <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-md">Available Today</span>
-                          )}
-                          {item.telehealth && (
-                            <span className="px-2 py-1 text-xs font-medium bg-purple-100 text-purple-700 rounded-md">Telehealth</span>
-                          )}
                         </div>
-                        <div className="flex items-center justify-between mt-4 pt-4 border-t border-ds-border">
-                          <span className="text-sm text-ds-muted-foreground">{item.next_available || "Contact for availability"}</span>
-                          <span className="text-sm text-ds-primary font-medium group-hover:underline">Book Now</span>
+                      )}
+
+                      {item.rating && (
+                        <div className="flex items-center gap-1.5 mt-2">
+                          <div className="flex items-center">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <svg key={star} className={`w-3.5 h-3.5 ${star <= Math.round(item.rating) ? "text-amber-400" : "text-gray-200"}`} fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                              </svg>
+                            ))}
+                          </div>
+                          <span className="text-xs text-ds-muted-foreground">{item.rating}</span>
                         </div>
+                      )}
+
+                      <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
+                        <span className="font-bold text-blue-600 text-lg">
+                          {formatFee(item.consultation_fee, item.currency_code)}
+                        </span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 rounded-lg group-hover:bg-blue-700 transition-colors">Book Appointment</span>
                       </div>
                     </a>
-                  ))}
-                </div>
-
-                {totalPages > 1 && (
-                  <div className="flex items-center justify-center gap-2 mt-8">
-                    <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="px-4 py-2 text-sm rounded-lg border border-ds-border text-ds-foreground hover:bg-ds-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors">Previous</button>
-                    <span className="text-sm text-ds-muted-foreground">Page {page} of {totalPages}</span>
-                    <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="px-4 py-2 text-sm rounded-lg border border-ds-border text-ds-foreground hover:bg-ds-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors">Next</button>
-                  </div>
-                )}
-              </>
+                  )
+                })}
+              </div>
             )}
           </main>
         </div>
       </div>
+
+      <section className="py-16 bg-ds-card border-t border-ds-border">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Find a Doctor</h3>
+              <p className="text-sm text-ds-muted-foreground">Search by specialization, experience, and patient reviews.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Book Appointment</h3>
+              <p className="text-sm text-ds-muted-foreground">Choose a convenient date and time for your consultation.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Get Care</h3>
+              <p className="text-sm text-ds-muted-foreground">Visit your doctor in-person or connect via telehealth.</p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

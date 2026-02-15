@@ -15,47 +15,95 @@ export const Route = createFileRoute("/$tenant/$locale/auctions/")({
       })
       if (!resp.ok) return { items: [], count: 0 }
       const data = await resp.json()
-      return { items: data.items || data.auctions || data.listings || [], count: data.count || 0 }
+      const raw = data.items || data.auctions || data.listings || data.products || []
+      const items = raw.map((s: any) => {
+        const meta = s.metadata || {}
+        return {
+          id: s.id,
+          title: s.title || meta.title || "Untitled Auction",
+          description: s.description || meta.description || "",
+          thumbnail: meta.thumbnail || meta.images?.[0] || null,
+          images: meta.images || [],
+          auction_type: s.auction_type || meta.auction_type || null,
+          status: s.status || meta.status || null,
+          starting_price: s.starting_price || meta.starting_price || null,
+          current_price: s.current_price || meta.current_price || null,
+          currency_code: s.currency_code || meta.currency_code || "SAR",
+          starts_at: s.starts_at || meta.starts_at || null,
+          ends_at: s.ends_at || meta.ends_at || null,
+          bid_count: s.bid_count || meta.bid_count || s.total_bids || 0,
+        }
+      })
+      return { items, count: data.count || items.length }
     } catch {
       return { items: [], count: 0 }
     }
   },
 })
 
-const statusOptions = ["all", "active", "scheduled", "ended"] as const
-const typeOptions = ["all", "english", "dutch", "sealed", "reserve"] as const
+const typeOptions = ["all", "english", "dutch", "sealed", "reverse"] as const
+const statusOptions = ["all", "active", "upcoming"] as const
 
 function AuctionsPage() {
   const { tenant, locale } = Route.useParams()
   const prefix = `/${tenant}/${locale}`
   const [searchQuery, setSearchQuery] = useState("")
-  const [statusFilter, setStatusFilter] = useState<string>("all")
   const [typeFilter, setTypeFilter] = useState<string>("all")
-  const [page, setPage] = useState(1)
-  const limit = 12
+  const [statusFilter, setStatusFilter] = useState<string>("all")
 
   const loaderData = Route.useLoaderData()
-  const data = loaderData
-  const isLoading = false
-  const error = null
-  const items = data?.items || []
-  const totalCount = data?.count || 0
+  const items = loaderData?.items || []
 
-  const filteredItems = items.filter((item: any) =>
-    searchQuery ? (item.title || item.name || "").toLowerCase().includes(searchQuery.toLowerCase()) : true
-  )
+  const filteredItems = items.filter((item: any) => {
+    const matchesSearch = searchQuery
+      ? (item.title || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.description || "").toLowerCase().includes(searchQuery.toLowerCase())
+      : true
+    const matchesType = typeFilter === "all" || item.auction_type === typeFilter
+    const matchesStatus = statusFilter === "all" || item.status === statusFilter
+    return matchesSearch && matchesType && matchesStatus
+  })
+
+  const formatPrice = (price: any, currency: string) => {
+    if (!price) return "—"
+    const amount = typeof price === "object" ? (price.amount || 0) / 100 : price >= 100 ? price / 100 : price
+    return `${Number(amount).toLocaleString()} ${currency}`
+  }
+
+  const getTimeRemaining = (endsAt: string | null) => {
+    if (!endsAt) return null
+    const now = new Date().getTime()
+    const end = new Date(endsAt).getTime()
+    const diff = end - now
+    if (diff <= 0) return "Ended"
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+    if (days > 0) return `${days}d ${hours}h left`
+    if (hours > 0) return `${hours}h ${mins}m left`
+    return `${mins}m left`
+  }
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-ds-card border-b border-ds-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center gap-2 text-sm text-ds-muted-foreground mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-ds-foreground transition-colors">Home</Link>
+      <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
-            <span className="text-ds-foreground">Auctions</span>
+            <span className="text-white">Auctions</span>
           </div>
-          <h1 className="text-3xl font-bold text-ds-foreground">Browse Auctions</h1>
-          <p className="mt-2 text-ds-muted-foreground">Bid on unique items and find great deals</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Live Auctions</h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">
+            Bid on unique items and discover incredible deals in real-time auctions.
+          </p>
+          <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
+            <span>{items.length} auctions available</span>
+            <span>|</span>
+            <span>Live bidding</span>
+            <span>|</span>
+            <span>Secure transactions</span>
+          </div>
         </div>
       </div>
 
@@ -70,23 +118,8 @@ function AuctionsPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search auctions..."
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-purple-400"
                 />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Status</label>
-                <div className="space-y-1">
-                  {statusOptions.map((opt) => (
-                    <button
-                      key={opt}
-                      onClick={() => { setStatusFilter(opt); setPage(1) }}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${statusFilter === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}
-                    >
-                      {opt === "all" ? "All Statuses" : opt.charAt(0).toUpperCase() + opt.slice(1)}
-                    </button>
-                  ))}
-                </div>
               </div>
 
               <div>
@@ -95,10 +128,25 @@ function AuctionsPage() {
                   {typeOptions.map((opt) => (
                     <button
                       key={opt}
-                      onClick={() => { setTypeFilter(opt); setPage(1) }}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${typeFilter === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      onClick={() => setTypeFilter(opt)}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${typeFilter === opt ? "bg-purple-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Types" : opt.charAt(0).toUpperCase() + opt.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">Status</label>
+                <div className="space-y-1">
+                  {statusOptions.map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => setStatusFilter(opt)}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${statusFilter === opt ? "bg-purple-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                    >
+                      {opt === "all" ? "All Statuses" : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
                   ))}
                 </div>
@@ -107,90 +155,117 @@ function AuctionsPage() {
           </aside>
 
           <main className="flex-1">
-            {error ? (
-              <div className="bg-ds-destructive/10 border border-ds-destructive/20 rounded-xl p-8 text-center">
-                <svg className="w-12 h-12 text-ds-destructive mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                </svg>
-                <p className="text-ds-destructive font-medium">Something went wrong loading auctions.</p>
-              </div>
-            ) : isLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="bg-ds-background border border-ds-border rounded-xl overflow-hidden">
-                    <div className="aspect-[4/3] bg-ds-muted animate-pulse" />
-                    <div className="p-4 space-y-3">
-                      <div className="h-5 w-3/4 bg-ds-muted rounded animate-pulse" />
-                      <div className="h-4 w-1/2 bg-ds-muted rounded animate-pulse" />
-                      <div className="h-8 w-full bg-ds-muted rounded animate-pulse" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : filteredItems.length === 0 ? (
+            {filteredItems.length === 0 ? (
               <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
                 <h3 className="text-lg font-semibold text-ds-foreground mb-2">No auctions found</h3>
-                <p className="text-ds-muted-foreground text-sm">Try adjusting your filters or check back later.</p>
+                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {filteredItems.map((item: any) => (
-                  <a
-                    key={item.id}
-                    href={`${prefix}/auctions/${item.id}`}
-                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-primary/30 transition-all duration-200"
-                  >
-                    <div className="aspect-[4/3] bg-ds-muted relative overflow-hidden">
-                      {item.thumbnail || item.image ? (
-                        <img src={item.thumbnail || item.image} alt={item.title || item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-ds-muted-foreground">
-                          <svg className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
-                        </div>
-                      )}
-                      {item.status && (
-                        <span className={`absolute top-2 right-2 px-2 py-1 text-xs font-medium rounded-md ${item.status === "active" ? "bg-green-500 text-white" : item.status === "scheduled" ? "bg-blue-500 text-white" : "bg-gray-500 text-white"}`}>
-                          {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
-                        </span>
-                      )}
-                      {item.auctionType && (
-                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-ds-primary text-ds-primary-foreground rounded-md">
-                          {item.auctionType.charAt(0).toUpperCase() + item.auctionType.slice(1)}
-                        </span>
-                      )}
-                    </div>
-                    <div className="p-4">
-                      <h3 className="font-semibold text-ds-foreground group-hover:text-ds-primary transition-colors line-clamp-1">{item.title || item.name}</h3>
-                      <div className="space-y-2 text-sm mt-2">
-                        <div className="flex justify-between">
-                          <span className="text-ds-muted-foreground">Current Bid</span>
-                          <span className="font-bold text-ds-primary">
-                            ${typeof item.currentPrice === "object" ? (item.currentPrice.amount / 100).toLocaleString() : Number(item.currentPrice || item.price || 0).toLocaleString()}
-                          </span>
-                        </div>
-                        {item.totalBids != null && (
-                          <div className="flex justify-between">
-                            <span className="text-ds-muted-foreground">Bids</span>
-                            <span className="text-ds-foreground">{item.totalBids}</span>
+                {filteredItems.map((item: any) => {
+                  const timeLeft = getTimeRemaining(item.ends_at)
+                  return (
+                    <a
+                      key={item.id}
+                      href={`${prefix}/auctions/${item.id}`}
+                      className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-purple-300 transition-all duration-200"
+                    >
+                      <div className="aspect-[4/3] bg-gradient-to-br from-purple-50 to-pink-100 relative overflow-hidden">
+                        {item.thumbnail ? (
+                          <img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <svg className="w-16 h-16 text-purple-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </svg>
                           </div>
                         )}
-                        {item.endsAt && (
-                          <div className="text-xs text-ds-muted-foreground mt-1">
-                            Ends: {new Date(item.endsAt).toLocaleDateString()}
+                        {item.auction_type && (
+                          <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-purple-600 text-white rounded-md capitalize">{item.auction_type}</span>
+                        )}
+                        {item.status && (
+                          <span className={`absolute top-2 right-2 px-2 py-1 text-xs font-medium rounded-md ${item.status === "active" ? "bg-green-500 text-white" : item.status === "upcoming" ? "bg-blue-500 text-white" : "bg-gray-500 text-white"}`}>
+                            {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+                          </span>
+                        )}
+                        {item.images && item.images.length > 1 && (
+                          <div className="absolute bottom-2 right-2 px-2 py-0.5 text-xs font-medium bg-black/50 text-white rounded-md flex items-center gap-1">
+                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                            {item.images.length}
                           </div>
                         )}
                       </div>
-                    </div>
-                  </a>
-                ))}
+                      <div className="p-4">
+                        <h3 className="font-semibold text-ds-foreground group-hover:text-purple-600 transition-colors line-clamp-1">{item.title}</h3>
+                        {item.description && (
+                          <p className="text-sm text-ds-muted-foreground mt-1.5 line-clamp-2">{item.description}</p>
+                        )}
+
+                        <div className="flex items-center justify-between mt-3 text-sm">
+                          <div>
+                            <span className="text-xs text-ds-muted-foreground">Current Bid</span>
+                            <p className="font-bold text-purple-600 text-lg">
+                              {formatPrice(item.current_price || item.starting_price, item.currency_code)}
+                            </p>
+                          </div>
+                          {item.bid_count > 0 && (
+                            <div className="text-right">
+                              <span className="text-xs text-ds-muted-foreground">Bids</span>
+                              <p className="font-semibold text-ds-foreground">{item.bid_count}</p>
+                            </div>
+                          )}
+                        </div>
+
+                        {timeLeft && (
+                          <div className="flex items-center gap-1 mt-2 text-xs">
+                            <svg className="w-3.5 h-3.5 text-ds-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <span className={`font-medium ${timeLeft === "Ended" ? "text-red-500" : "text-orange-500"}`}>{timeLeft}</span>
+                          </div>
+                        )}
+
+                        <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
+                          {item.starting_price && item.current_price && (
+                            <span className="text-xs text-ds-muted-foreground line-through">
+                              Start: {formatPrice(item.starting_price, item.currency_code)}
+                            </span>
+                          )}
+                          <span className="px-3 py-1.5 text-xs font-semibold text-white bg-purple-600 rounded-lg group-hover:bg-purple-700 transition-colors ml-auto">Place Bid</span>
+                        </div>
+                      </div>
+                    </a>
+                  )
+                })}
               </div>
             )}
           </main>
         </div>
       </div>
+
+      <section className="py-16 bg-ds-card border-t border-ds-border">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-purple-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Browse Auctions</h3>
+              <p className="text-sm text-ds-muted-foreground">Find items you love from active and upcoming auctions across all categories.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-purple-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Place Your Bid</h3>
+              <p className="text-sm text-ds-muted-foreground">Set your maximum bid and let the system bid on your behalf up to your limit.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-purple-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Win & Pay</h3>
+              <p className="text-sm text-ds-muted-foreground">If you win, complete your payment securely and receive your item.</p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

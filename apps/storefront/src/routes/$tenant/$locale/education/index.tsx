@@ -15,49 +15,98 @@ export const Route = createFileRoute("/$tenant/$locale/education/")({
       })
       if (!resp.ok) return { items: [], count: 0 }
       const data = await resp.json()
-      return { items: data.items || data.listings || data.products || [], count: data.count || 0 }
+      const raw = data.items || data.listings || data.products || data.services || data.warranties || data.plans || []
+      const items = raw.map((item: any) => {
+        const meta = item.metadata || {}
+        return {
+          id: item.id,
+          title: item.title || meta.title || "Untitled Course",
+          description: item.description || meta.description || "",
+          short_description: item.short_description || meta.short_description || "",
+          category: item.category || meta.category || null,
+          subcategory: item.subcategory || meta.subcategory || null,
+          level: item.level || meta.level || null,
+          format: item.format || meta.format || null,
+          language: item.language || meta.language || null,
+          currency_code: item.currency_code || meta.currency_code || "USD",
+          thumbnail: meta.thumbnail || meta.images?.[0] || null,
+          images: meta.images || [],
+          price: meta.price || item.price || null,
+          rating: meta.rating || item.rating || null,
+          instructor_name: meta.instructor_name || item.instructor_name || null,
+          enrolled_count: meta.enrolled_count || item.enrolled_count || 0,
+        }
+      })
+      return { items, count: data.count || items.length }
     } catch {
       return { items: [], count: 0 }
     }
   },
 })
 
-const categories = ["all", "technology", "business", "design", "marketing", "science", "language", "arts"] as const
-const levels = ["all", "beginner", "intermediate", "advanced", "expert"] as const
-const priceRanges = ["all", "free", "under-50", "50-100", "over-100"] as const
+const categoryOptions = ["all", "technology", "business", "language", "arts", "science", "health"] as const
+const levelOptions = ["all", "beginner", "intermediate", "advanced"] as const
+const formatOptions = ["all", "online", "in_person", "hybrid"] as const
+
+const levelColors: Record<string, string> = {
+  beginner: "bg-green-100 text-green-700",
+  intermediate: "bg-blue-100 text-blue-700",
+  advanced: "bg-purple-100 text-purple-700",
+}
+
+const formatLabels: Record<string, string> = {
+  online: "Online",
+  in_person: "In Person",
+  hybrid: "Hybrid",
+}
 
 function EducationPage() {
   const { tenant, locale } = Route.useParams()
   const prefix = `/${tenant}/${locale}`
-  const [searchQuery, setSearchQuery] = useState("")
-  const [category, setCategory] = useState("all")
-  const [level, setLevel] = useState("all")
-  const [priceRange, setPriceRange] = useState("all")
-  const [page, setPage] = useState(1)
-  const limit = 12
-
   const loaderData = Route.useLoaderData()
-  const data = loaderData
-  const isLoading = false
-  const error = null
+  const items = loaderData?.items || []
+  const [searchQuery, setSearchQuery] = useState("")
+  const [categoryFilter, setCategoryFilter] = useState<string>("all")
+  const [levelFilter, setLevelFilter] = useState<string>("all")
+  const [formatFilter, setFormatFilter] = useState<string>("all")
 
-  const courses = data?.courses || []
-  const totalPages = Math.ceil((data?.count || 0) / limit)
-  const filtered = courses.filter((c: any) =>
-    searchQuery ? (c.title || c.name || "").toLowerCase().includes(searchQuery.toLowerCase()) : true
-  )
+  const filteredItems = items.filter((item: any) => {
+    const matchesSearch = searchQuery
+      ? (item.title || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.short_description || "").toLowerCase().includes(searchQuery.toLowerCase())
+      : true
+    const matchesCategory = categoryFilter === "all" || item.category?.toLowerCase() === categoryFilter
+    const matchesLevel = levelFilter === "all" || item.level?.toLowerCase() === levelFilter
+    const matchesFormat = formatFilter === "all" || item.format?.toLowerCase() === formatFilter
+    return matchesSearch && matchesCategory && matchesLevel && matchesFormat
+  })
+
+  const formatPrice = (price: number | null, currency: string) => {
+    if (!price) return "Free"
+    const amount = price >= 100 ? price / 100 : price
+    return `${amount.toLocaleString()} ${currency}`
+  }
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-ds-card border-b border-ds-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center gap-2 text-sm text-ds-muted-foreground mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-ds-foreground transition-colors">Home</Link>
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
-            <span className="text-ds-foreground">Education</span>
+            <span className="text-white">Education</span>
           </div>
-          <h1 className="text-3xl font-bold text-ds-foreground">Browse Courses & Programs</h1>
-          <p className="mt-2 text-ds-muted-foreground">Expand your knowledge with expert-led courses</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Education & Learning</h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">
+            Expand your knowledge with expert-led courses, workshops, and programs across a wide range of topics.
+          </p>
+          <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
+            <span>{items.length} courses available</span>
+            <span>|</span>
+            <span>Expert instructors</span>
+            <span>|</span>
+            <span>Flexible learning</span>
+          </div>
         </div>
       </div>
 
@@ -67,14 +116,24 @@ function EducationPage() {
             <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
               <div>
                 <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
-                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search courses..." className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search courses..."
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-ds-foreground mb-2">Category</label>
                 <div className="space-y-1">
-                  {categories.map((opt) => (
-                    <button key={opt} onClick={() => { setCategory(opt); setPage(1) }} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${category === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}>
+                  {categoryOptions.map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => setCategoryFilter(opt)}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${categoryFilter === opt ? "bg-blue-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                    >
                       {opt === "all" ? "All Categories" : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
                   ))}
@@ -84,8 +143,12 @@ function EducationPage() {
               <div>
                 <label className="block text-sm font-medium text-ds-foreground mb-2">Level</label>
                 <div className="space-y-1">
-                  {levels.map((opt) => (
-                    <button key={opt} onClick={() => { setLevel(opt); setPage(1) }} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${level === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}>
+                  {levelOptions.map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => setLevelFilter(opt)}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${levelFilter === opt ? "bg-blue-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                    >
                       {opt === "all" ? "All Levels" : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
                   ))}
@@ -93,11 +156,15 @@ function EducationPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Price Range</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">Format</label>
                 <div className="space-y-1">
-                  {priceRanges.map((opt) => (
-                    <button key={opt} onClick={() => { setPriceRange(opt); setPage(1) }} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${priceRange === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}>
-                      {opt === "all" ? "All Prices" : opt === "free" ? "Free" : opt === "under-50" ? "Under $50" : opt === "50-100" ? "$50 - $100" : "Over $100"}
+                  {formatOptions.map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => setFormatFilter(opt)}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${formatFilter === opt ? "bg-blue-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                    >
+                      {opt === "all" ? "All Formats" : formatLabels[opt] || opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
                   ))}
                 </div>
@@ -106,77 +173,112 @@ function EducationPage() {
           </aside>
 
           <main className="flex-1">
-            {error ? (
-              <div className="bg-ds-destructive/10 border border-ds-destructive/20 rounded-xl p-8 text-center">
-                <svg className="w-12 h-12 text-ds-destructive mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                </svg>
-                <p className="text-ds-destructive font-medium">Something went wrong loading courses.</p>
-              </div>
-            ) : isLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="bg-ds-background border border-ds-border rounded-xl overflow-hidden">
-                    <div className="aspect-video bg-ds-muted animate-pulse" />
-                    <div className="p-4 space-y-3">
-                      <div className="h-5 w-3/4 bg-ds-muted rounded animate-pulse" />
-                      <div className="h-4 w-1/2 bg-ds-muted rounded animate-pulse" />
-                      <div className="h-4 w-2/3 bg-ds-muted rounded animate-pulse" />
-                      <div className="h-8 w-full bg-ds-muted rounded animate-pulse" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : !filtered || filtered.length === 0 ? (
+            {filteredItems.length === 0 ? (
               <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
                 <h3 className="text-lg font-semibold text-ds-foreground mb-2">No courses found</h3>
-                <p className="text-ds-muted-foreground text-sm">Try adjusting your filters or check back later.</p>
+                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {filtered.map((course: any) => (
-                    <a key={course.id} href={`${prefix}/education/${course.id}`} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-primary/30 transition-all duration-200">
-                      <div className="aspect-video bg-ds-muted relative overflow-hidden">
-                        {(course.thumbnail_url || course.thumbnail) && <img src={course.thumbnail_url || course.thumbnail} alt={course.title || course.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />}
-                        {course.level && <span className="absolute top-3 left-3 px-2 py-1 text-xs font-medium rounded-full bg-ds-primary text-ds-primary-foreground">{course.level}</span>}
-                      </div>
-                      <div className="p-4 space-y-2">
-                        <h3 className="font-semibold text-ds-foreground group-hover:text-ds-primary transition-colors line-clamp-2">{course.title || course.name || "Untitled Course"}</h3>
-                        {course.instructor && <p className="text-sm text-ds-muted-foreground">by {course.instructor}</p>}
-                        <div className="flex items-center gap-3 text-xs text-ds-muted-foreground">
-                          {course.duration && <span>{course.duration}</span>}
-                          {course.enrollment_count != null && <span>{course.enrollment_count} enrolled</span>}
-                          {course.rating && (
-                            <span className="flex items-center gap-1">
-                              <svg className="w-3.5 h-3.5 text-yellow-500 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-                              {course.rating}
-                            </span>
-                          )}
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {filteredItems.map((item: any) => (
+                  <a
+                    key={item.id}
+                    href={`${prefix}/education/${item.id}`}
+                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-blue-300 transition-all duration-200"
+                  >
+                    <div className="aspect-video bg-gradient-to-br from-blue-50 to-indigo-100 relative overflow-hidden">
+                      {item.thumbnail ? (
+                        <img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <svg className="w-16 h-16 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                          </svg>
                         </div>
-                        <div className="flex items-center justify-between pt-2">
-                          <span className="text-lg font-bold text-ds-foreground">{course.price ? `$${(course.price / 100).toFixed(2)}` : "Free"}</span>
-                          <span className="text-sm font-medium text-ds-primary group-hover:underline">Enroll Now →</span>
-                        </div>
+                      )}
+                      {item.level && (
+                        <span className={`absolute top-2 left-2 px-2 py-1 text-xs font-medium rounded-md capitalize ${levelColors[item.level?.toLowerCase()] || "bg-gray-100 text-gray-700"}`}>{item.level}</span>
+                      )}
+                      {item.format && (
+                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-white/90 text-gray-700 rounded-md">
+                          {formatLabels[item.format?.toLowerCase()] || item.format}
+                        </span>
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-blue-600 transition-colors line-clamp-2">{item.title}</h3>
+                      {item.instructor_name && (
+                        <p className="text-xs text-ds-muted-foreground mt-0.5">by {item.instructor_name}</p>
+                      )}
+                      {item.short_description && (
+                        <p className="text-sm text-ds-muted-foreground mt-1.5 line-clamp-2">{item.short_description}</p>
+                      )}
+
+                      <div className="flex items-center gap-3 mt-3 text-xs text-ds-muted-foreground">
+                        {item.enrolled_count > 0 && (
+                          <span className="flex items-center gap-1">
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                            {item.enrolled_count.toLocaleString()} enrolled
+                          </span>
+                        )}
+                        {item.category && (
+                          <span className="capitalize">{item.category}</span>
+                        )}
                       </div>
-                    </a>
-                  ))}
-                </div>
-                {totalPages > 1 && (
-                  <div className="flex items-center justify-center gap-2 mt-8">
-                    <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="px-4 py-2 text-sm rounded-lg border border-ds-border text-ds-foreground hover:bg-ds-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors">Previous</button>
-                    <span className="px-4 py-2 text-sm text-ds-muted-foreground">Page {page} of {totalPages}</span>
-                    <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="px-4 py-2 text-sm rounded-lg border border-ds-border text-ds-foreground hover:bg-ds-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors">Next</button>
-                  </div>
-                )}
-              </>
+
+                      {item.rating && (
+                        <div className="flex items-center gap-1.5 mt-2">
+                          <div className="flex items-center">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <svg key={star} className={`w-3.5 h-3.5 ${star <= Math.round(item.rating) ? "text-amber-400" : "text-gray-200"}`} fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                              </svg>
+                            ))}
+                          </div>
+                          <span className="text-xs text-ds-muted-foreground">{item.rating}</span>
+                        </div>
+                      )}
+
+                      <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
+                        <span className="font-bold text-blue-600 text-lg">
+                          {formatPrice(item.price, item.currency_code)}
+                        </span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 rounded-lg group-hover:bg-indigo-700 transition-colors">Enroll Now</span>
+                      </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
             )}
           </main>
         </div>
       </div>
+
+      <section className="py-16 bg-ds-card border-t border-ds-border">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Browse Courses</h3>
+              <p className="text-sm text-ds-muted-foreground">Explore our catalog of expert-led courses across multiple disciplines.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Enroll & Learn</h3>
+              <p className="text-sm text-ds-muted-foreground">Sign up for your chosen course and start learning at your own pace.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Get Certified</h3>
+              <p className="text-sm text-ds-muted-foreground">Complete the course and earn a certificate to showcase your skills.</p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

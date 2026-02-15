@@ -15,49 +15,87 @@ export const Route = createFileRoute("/$tenant/$locale/grocery/")({
       })
       if (!resp.ok) return { items: [], count: 0 }
       const data = await resp.json()
-      return { items: data.items || data.listings || data.products || [], count: data.count || 0 }
+      const raw = data.items || data.listings || data.products || []
+      const items = raw.map((s: any) => {
+        const meta = s.metadata || {}
+        return {
+          id: s.id,
+          name: meta.name || s.product_id || "Grocery Item",
+          description: meta.description || meta.short_description || "",
+          thumbnail: meta.thumbnail || meta.images?.[0] || null,
+          images: meta.images || [],
+          price: meta.price || null,
+          currency: meta.currency || "SAR",
+          category: meta.category || null,
+          organic: s.organic || false,
+          unit_type: s.unit_type || null,
+          storage_type: s.storage_type || null,
+          shelf_life_days: s.shelf_life_days || null,
+        }
+      })
+      return { items, count: data.count || items.length }
     } catch {
       return { items: [], count: 0 }
     }
   },
 })
 
-const categories = ["all", "fruits", "vegetables", "dairy", "meat", "bakery", "beverages", "snacks", "frozen", "pantry"] as const
-const dietaryOptions = ["all", "organic", "gluten-free", "vegan", "keto", "sugar-free"] as const
-const priceRanges = ["all", "under-5", "5-10", "10-20", "over-20"] as const
+const categoryOptions = ["all", "fruits", "vegetables", "dairy", "meat", "bakery", "beverages", "snacks", "household"] as const
+const organicOptions = ["all", "yes", "no"] as const
 
 function GroceryPage() {
   const { tenant, locale } = Route.useParams()
   const prefix = `/${tenant}/${locale}`
   const [searchQuery, setSearchQuery] = useState("")
-  const [category, setCategory] = useState("all")
-  const [dietary, setDietary] = useState("all")
-  const [priceRange, setPriceRange] = useState("all")
-  const [page, setPage] = useState(1)
-  const limit = 12
+  const [categoryFilter, setCategoryFilter] = useState<string>("all")
+  const [organicFilter, setOrganicFilter] = useState<string>("all")
 
   const loaderData = Route.useLoaderData()
-  const data = loaderData
-  const isLoading = false
-  const error = null
+  const items = loaderData?.items || []
 
-  const products = data?.products || []
-  const totalPages = Math.ceil((data?.count || 0) / limit)
-  const filtered = products.filter((p: any) =>
-    searchQuery ? (p.name || p.title || "").toLowerCase().includes(searchQuery.toLowerCase()) : true
-  )
+  const filteredItems = items.filter((item: any) => {
+    const matchesSearch = searchQuery
+      ? (item.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.description || "").toLowerCase().includes(searchQuery.toLowerCase())
+      : true
+    const matchesCategory = categoryFilter === "all" || item.category === categoryFilter
+    const matchesOrganic = organicFilter === "all" || (organicFilter === "yes" ? item.organic : !item.organic)
+    return matchesSearch && matchesCategory && matchesOrganic
+  })
+
+  const formatPrice = (price: number | null, currency: string, unit: string | null) => {
+    if (!price) return "Price TBD"
+    const amount = price >= 100 ? price / 100 : price
+    return `${amount.toLocaleString()} ${currency}${unit ? ` / ${unit}` : ""}`
+  }
+
+  const storageIcon = (type: string | null) => {
+    if (!type) return null
+    if (type === "frozen") return "❄️"
+    if (type === "refrigerated") return "🧊"
+    return "🏪"
+  }
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-ds-card border-b border-ds-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center gap-2 text-sm text-ds-muted-foreground mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-ds-foreground transition-colors">Home</Link>
+      <div className="bg-gradient-to-r from-green-500 to-lime-600 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
-            <span className="text-ds-foreground">Grocery</span>
+            <span className="text-white">Grocery</span>
           </div>
-          <h1 className="text-3xl font-bold text-ds-foreground">Browse Grocery Products</h1>
-          <p className="mt-2 text-ds-muted-foreground">Fresh groceries delivered to your doorstep</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Fresh Grocery</h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">
+            Shop fresh produce, dairy, bakery items, and household essentials delivered right to your door.
+          </p>
+          <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
+            <span>{items.length} products available</span>
+            <span>|</span>
+            <span>Fresh daily</span>
+            <span>|</span>
+            <span>Organic options</span>
+          </div>
         </div>
       </div>
 
@@ -67,14 +105,24 @@ function GroceryPage() {
             <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
               <div>
                 <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
-                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search groceries..." className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search groceries..."
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-ds-foreground mb-2">Category</label>
                 <div className="space-y-1">
-                  {categories.map((opt) => (
-                    <button key={opt} onClick={() => { setCategory(opt); setPage(1) }} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${category === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}>
+                  {categoryOptions.map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => setCategoryFilter(opt)}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${categoryFilter === opt ? "bg-green-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                    >
                       {opt === "all" ? "All Categories" : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
                   ))}
@@ -82,22 +130,15 @@ function GroceryPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Dietary</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">Organic</label>
                 <div className="space-y-1">
-                  {dietaryOptions.map((opt) => (
-                    <button key={opt} onClick={() => { setDietary(opt); setPage(1) }} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${dietary === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}>
-                      {opt === "all" ? "All" : opt.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Price Range</label>
-                <div className="space-y-1">
-                  {priceRanges.map((opt) => (
-                    <button key={opt} onClick={() => { setPriceRange(opt); setPage(1) }} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${priceRange === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}>
-                      {opt === "all" ? "All Prices" : opt === "under-5" ? "Under $5" : opt === "5-10" ? "$5 - $10" : opt === "10-20" ? "$10 - $20" : "Over $20"}
+                  {organicOptions.map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => setOrganicFilter(opt)}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${organicFilter === opt ? "bg-green-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                    >
+                      {opt === "all" ? "All Products" : opt === "yes" ? "Organic Only" : "Non-Organic"}
                     </button>
                   ))}
                 </div>
@@ -106,79 +147,102 @@ function GroceryPage() {
           </aside>
 
           <main className="flex-1">
-            {error ? (
-              <div className="bg-ds-destructive/10 border border-ds-destructive/20 rounded-xl p-8 text-center">
-                <svg className="w-12 h-12 text-ds-destructive mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                </svg>
-                <p className="text-ds-destructive font-medium">Something went wrong loading grocery products.</p>
-              </div>
-            ) : isLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="bg-ds-background border border-ds-border rounded-xl overflow-hidden">
-                    <div className="aspect-square bg-ds-muted animate-pulse" />
-                    <div className="p-4 space-y-3">
-                      <div className="h-5 w-3/4 bg-ds-muted rounded animate-pulse" />
-                      <div className="h-4 w-1/2 bg-ds-muted rounded animate-pulse" />
-                      <div className="h-8 w-full bg-ds-muted rounded animate-pulse" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : !filtered || filtered.length === 0 ? (
+            {filteredItems.length === 0 ? (
               <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
                 </svg>
                 <h3 className="text-lg font-semibold text-ds-foreground mb-2">No grocery products found</h3>
-                <p className="text-ds-muted-foreground text-sm">Try adjusting your filters or check back later.</p>
+                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {filtered.map((product: any) => (
-                    <a key={product.id} href={`${prefix}/grocery/${product.id}`} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-primary/30 transition-all duration-200">
-                      <div className="aspect-square bg-ds-muted relative overflow-hidden">
-                        {product.thumbnail && <img src={product.thumbnail} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />}
-                        <div className="absolute top-3 left-3 flex flex-wrap gap-1">
-                          {product.is_organic && <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-green-500 text-white">Organic</span>}
-                          {product.is_gluten_free && <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-yellow-500 text-white">Gluten Free</span>}
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {filteredItems.map((item: any) => (
+                  <a
+                    key={item.id}
+                    href={`${prefix}/grocery/${item.id}`}
+                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-green-300 transition-all duration-200"
+                  >
+                    <div className="aspect-[4/3] bg-gradient-to-br from-green-50 to-lime-100 relative overflow-hidden">
+                      {item.thumbnail ? (
+                        <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <svg className="w-16 h-16 text-green-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+                          </svg>
                         </div>
-                        {product.freshness && (
-                          <span className="absolute bottom-3 right-3 px-2 py-0.5 text-xs font-medium rounded-full bg-black/60 text-white capitalize">{product.freshness}</span>
+                      )}
+                      {item.organic && (
+                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-green-600 text-white rounded-md">🌿 Organic</span>
+                      )}
+                      {item.category && (
+                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-white/90 text-gray-700 rounded-md capitalize">{item.category}</span>
+                      )}
+                      {item.images && item.images.length > 1 && (
+                        <div className="absolute bottom-2 right-2 px-2 py-0.5 text-xs font-medium bg-black/50 text-white rounded-md flex items-center gap-1">
+                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                          {item.images.length}
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-green-600 transition-colors line-clamp-1">{item.name}</h3>
+                      {item.description && (
+                        <p className="text-sm text-ds-muted-foreground mt-1.5 line-clamp-2">{item.description}</p>
+                      )}
+
+                      <div className="flex items-center gap-3 mt-3 text-xs text-ds-muted-foreground">
+                        {item.shelf_life_days && (
+                          <span className="flex items-center gap-1">
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            {item.shelf_life_days}d shelf life
+                          </span>
+                        )}
+                        {item.storage_type && (
+                          <span className="flex items-center gap-1">
+                            {storageIcon(item.storage_type)} {item.storage_type}
+                          </span>
                         )}
                       </div>
-                      <div className="p-4 space-y-2">
-                        <h3 className="font-semibold text-ds-foreground group-hover:text-ds-primary transition-colors line-clamp-1">{product.name || "Grocery Item"}</h3>
-                        <div className="flex items-center gap-2 text-xs text-ds-muted-foreground">
-                          {product.category && <span className="capitalize">{product.category}</span>}
-                          {product.weight && <span>{product.weight}</span>}
-                          {product.unit && !product.weight && <span>per {product.unit}</span>}
-                        </div>
-                        <div className="flex items-center justify-between pt-2">
-                          <div>
-                            <span className="text-lg font-bold text-ds-foreground">{product.price ? `$${(product.price / 100).toFixed(2)}` : "Price TBD"}</span>
-                            {product.unit && <span className="text-xs text-ds-muted-foreground ml-1">/{product.unit}</span>}
-                          </div>
-                          <span className="text-sm font-medium text-ds-primary group-hover:underline">Add to Cart →</span>
-                        </div>
+
+                      <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
+                        <span className="font-bold text-green-600 text-lg">
+                          {formatPrice(item.price, item.currency, item.unit_type)}
+                        </span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-green-600 rounded-lg group-hover:bg-green-700 transition-colors">Add to Cart</span>
                       </div>
-                    </a>
-                  ))}
-                </div>
-                {totalPages > 1 && (
-                  <div className="flex items-center justify-center gap-2 mt-8">
-                    <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="px-4 py-2 text-sm rounded-lg border border-ds-border text-ds-foreground hover:bg-ds-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors">Previous</button>
-                    <span className="px-4 py-2 text-sm text-ds-muted-foreground">Page {page} of {totalPages}</span>
-                    <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="px-4 py-2 text-sm rounded-lg border border-ds-border text-ds-foreground hover:bg-ds-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors">Next</button>
-                  </div>
-                )}
-              </>
+                    </div>
+                  </a>
+                ))}
+              </div>
             )}
           </main>
         </div>
       </div>
+
+      <section className="py-16 bg-ds-card border-t border-ds-border">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">Why Shop With Us</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-green-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Farm Fresh</h3>
+              <p className="text-sm text-ds-muted-foreground">Sourced directly from local farms and trusted suppliers for maximum freshness.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-green-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Quick Delivery</h3>
+              <p className="text-sm text-ds-muted-foreground">Get your groceries delivered to your doorstep within hours of ordering.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-green-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Quality Guaranteed</h3>
+              <p className="text-sm text-ds-muted-foreground">Every product is quality-checked. Not satisfied? Get a full refund.</p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

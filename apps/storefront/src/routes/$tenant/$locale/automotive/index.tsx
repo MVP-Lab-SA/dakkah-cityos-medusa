@@ -15,52 +15,96 @@ export const Route = createFileRoute("/$tenant/$locale/automotive/")({
       })
       if (!resp.ok) return { items: [], count: 0 }
       const data = await resp.json()
-      return { items: data.items || data.listings || data.products || [], count: data.count || 0 }
+      const raw = data.items || data.listings || data.products || []
+      const items = raw.map((s: any) => {
+        const meta = s.metadata || {}
+        return {
+          id: s.id,
+          title: s.title || `${s.year || ""} ${s.make || ""} ${s.model_name || ""}`.trim() || "Vehicle Listing",
+          make: s.make || null,
+          model_name: s.model_name || null,
+          year: s.year || null,
+          mileage_km: s.mileage_km || null,
+          fuel_type: s.fuel_type || null,
+          transmission: s.transmission || null,
+          body_type: s.body_type || null,
+          listing_type: s.listing_type || null,
+          thumbnail: meta.thumbnail || meta.images?.[0] || null,
+          images: meta.images || [],
+          price: meta.price || null,
+          currency: meta.currency || "SAR",
+          location: meta.location || null,
+        }
+      })
+      return { items, count: data.count || items.length }
     } catch {
       return { items: [], count: 0 }
     }
   },
 })
 
-const makeOptions = ["all", "toyota", "honda", "ford", "chevrolet", "bmw", "mercedes", "audi", "tesla", "nissan", "hyundai"] as const
-const priceRangeOptions = ["all", "0-10000", "10000-25000", "25000-50000", "50000-100000", "100000+"] as const
-const yearOptions = ["all", "2024", "2023", "2022", "2021", "2020", "2015-2019", "2010-2014", "pre-2010"] as const
-const conditionOptions = ["all", "new", "used", "certified"] as const
+const bodyTypeOptions = ["all", "sedan", "suv", "truck", "coupe", "hatchback", "van"] as const
+const fuelTypeOptions = ["all", "petrol", "diesel", "electric", "hybrid"] as const
 
 function AutomotivePage() {
   const { tenant, locale } = Route.useParams()
   const prefix = `/${tenant}/${locale}`
   const [searchQuery, setSearchQuery] = useState("")
-  const [makeFilter, setMakeFilter] = useState<string>("all")
-  const [priceRange, setPriceRange] = useState<string>("all")
-  const [yearFilter, setYearFilter] = useState<string>("all")
-  const [conditionFilter, setConditionFilter] = useState<string>("all")
-  const [page, setPage] = useState(1)
-  const limit = 12
+  const [bodyTypeFilter, setBodyTypeFilter] = useState<string>("all")
+  const [fuelTypeFilter, setFuelTypeFilter] = useState<string>("all")
 
   const loaderData = Route.useLoaderData()
-  const data = loaderData
-  const isLoading = false
-  const error = null
-  const items = data?.items || []
-  const totalCount = data?.count || 0
-  const totalPages = Math.ceil(totalCount / limit)
+  const items = loaderData?.items || []
 
-  const filteredItems = items.filter((item) =>
-    searchQuery ? `${item.make} ${item.model} ${item.title}`.toLowerCase().includes(searchQuery.toLowerCase()) : true
-  )
+  const filteredItems = items.filter((item: any) => {
+    const matchesSearch = searchQuery
+      ? (item.title || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.make || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.model_name || "").toLowerCase().includes(searchQuery.toLowerCase())
+      : true
+    const matchesBody = bodyTypeFilter === "all" || item.body_type === bodyTypeFilter
+    const matchesFuel = fuelTypeFilter === "all" || item.fuel_type === fuelTypeFilter
+    return matchesSearch && matchesBody && matchesFuel
+  })
+
+  const formatPrice = (price: number | null, currency: string) => {
+    if (!price) return "Contact for price"
+    const amount = price >= 100 ? price / 100 : price
+    return `${amount.toLocaleString()} ${currency}`
+  }
+
+  const fuelIcon = (type: string | null) => {
+    if (type === "electric") return "⚡"
+    if (type === "hybrid") return "🔋"
+    if (type === "diesel") return "⛽"
+    return "⛽"
+  }
+
+  const listingTypeBadge = (type: string | null) => {
+    if (type === "lease") return { label: "Lease", color: "bg-blue-600 text-white" }
+    return { label: "For Sale", color: "bg-slate-700 text-white" }
+  }
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-ds-card border-b border-ds-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center gap-2 text-sm text-ds-muted-foreground mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-ds-foreground transition-colors">Home</Link>
+      <div className="bg-gradient-to-r from-slate-700 to-gray-900 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
             <span>/</span>
-            <span className="text-ds-foreground">Automotive</span>
+            <span className="text-white">Automotive</span>
           </div>
-          <h1 className="text-3xl font-bold text-ds-foreground">Browse Vehicles</h1>
-          <p className="mt-2 text-ds-muted-foreground">Find your perfect vehicle from our listings</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Automotive</h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">
+            Browse sedans, SUVs, trucks, and more. Find your perfect vehicle for sale or lease.
+          </p>
+          <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
+            <span>{items.length} vehicles listed</span>
+            <span>|</span>
+            <span>Verified dealers</span>
+            <span>|</span>
+            <span>Financing available</span>
+          </div>
         </div>
       </div>
 
@@ -70,48 +114,40 @@ function AutomotivePage() {
             <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
               <div>
                 <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
-                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search vehicles..." className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search make, model..."
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-slate-500"
+                />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Make</label>
-                <div className="space-y-1 max-h-48 overflow-y-auto">
-                  {makeOptions.map((opt) => (
-                    <button key={opt} onClick={() => { setMakeFilter(opt); setPage(1) }} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${makeFilter === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}>
-                      {opt === "all" ? "All Makes" : opt.charAt(0).toUpperCase() + opt.slice(1)}
+                <label className="block text-sm font-medium text-ds-foreground mb-2">Body Type</label>
+                <div className="space-y-1">
+                  {bodyTypeOptions.map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => setBodyTypeFilter(opt)}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${bodyTypeFilter === opt ? "bg-slate-700 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                    >
+                      {opt === "all" ? "All Body Types" : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
                   ))}
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Price Range</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">Fuel Type</label>
                 <div className="space-y-1">
-                  {priceRangeOptions.map((opt) => (
-                    <button key={opt} onClick={() => { setPriceRange(opt); setPage(1) }} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${priceRange === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}>
-                      {opt === "all" ? "Any Price" : opt === "100000+" ? "$100K+" : `$${(parseInt(opt.split("-")[0]) / 1000).toFixed(0)}K – $${(parseInt(opt.split("-")[1]) / 1000).toFixed(0)}K`}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Year</label>
-                <div className="space-y-1">
-                  {yearOptions.map((opt) => (
-                    <button key={opt} onClick={() => { setYearFilter(opt); setPage(1) }} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${yearFilter === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}>
-                      {opt === "all" ? "Any Year" : opt}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Condition</label>
-                <div className="space-y-1">
-                  {conditionOptions.map((opt) => (
-                    <button key={opt} onClick={() => { setConditionFilter(opt); setPage(1) }} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${conditionFilter === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}>
-                      {opt === "all" ? "Any Condition" : opt === "certified" ? "Certified Pre-Owned" : opt.charAt(0).toUpperCase() + opt.slice(1)}
+                  {fuelTypeOptions.map((opt) => (
+                    <button
+                      key={opt}
+                      onClick={() => setFuelTypeFilter(opt)}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${fuelTypeFilter === opt ? "bg-slate-700 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                    >
+                      {opt === "all" ? "All Fuel Types" : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
                   ))}
                 </div>
@@ -120,82 +156,112 @@ function AutomotivePage() {
           </aside>
 
           <main className="flex-1">
-            {error ? (
-              <div className="bg-ds-destructive/10 border border-ds-destructive/20 rounded-xl p-8 text-center">
-                <svg className="w-12 h-12 text-ds-destructive mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                </svg>
-                <p className="text-ds-destructive font-medium">Something went wrong loading vehicles.</p>
-              </div>
-            ) : isLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="bg-ds-background border border-ds-border rounded-xl overflow-hidden">
-                    <div className="aspect-[4/3] bg-ds-muted animate-pulse" />
-                    <div className="p-4 space-y-3">
-                      <div className="h-5 w-3/4 bg-ds-muted rounded animate-pulse" />
-                      <div className="h-6 w-1/2 bg-ds-muted rounded animate-pulse" />
-                      <div className="h-4 w-full bg-ds-muted rounded animate-pulse" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : filteredItems.length === 0 ? (
+            {filteredItems.length === 0 ? (
               <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                 </svg>
                 <h3 className="text-lg font-semibold text-ds-foreground mb-2">No vehicles found</h3>
-                <p className="text-ds-muted-foreground text-sm">Try adjusting your filters or check back later.</p>
+                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {filteredItems.map((item: any) => (
-                    <a key={item.id} href={`${prefix}/automotive/${item.id}`} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-primary/30 transition-all duration-200">
-                      <div className="aspect-[4/3] bg-ds-muted relative overflow-hidden">
-                        {((item.images && item.images[0]) || item.thumbnail) ? (
-                          <img src={(item.images && item.images[0]) || item.thumbnail} alt={`${item.year} ${item.make} ${item.model}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {filteredItems.map((item: any) => {
+                  const badge = listingTypeBadge(item.listing_type)
+                  return (
+                    <a
+                      key={item.id}
+                      href={`${prefix}/automotive/${item.id}`}
+                      className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-slate-400 transition-all duration-200"
+                    >
+                      <div className="aspect-[4/3] bg-gradient-to-br from-slate-100 to-gray-200 relative overflow-hidden">
+                        {item.thumbnail ? (
+                          <img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-ds-muted-foreground">
-                            <svg className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+                          <div className="w-full h-full flex items-center justify-center">
+                            <svg className="w-16 h-16 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                            </svg>
                           </div>
                         )}
-                        {item.condition && (
-                          <span className={`absolute top-2 left-2 px-2 py-1 text-xs font-medium rounded-md ${item.condition === "new" ? "bg-green-500 text-white" : item.condition === "certified" ? "bg-blue-500 text-white" : "bg-gray-500 text-white"}`}>{item.condition === "certified" ? "CPO" : item.condition.charAt(0).toUpperCase() + item.condition.slice(1)}</span>
+                        <span className={`absolute top-2 left-2 px-2 py-1 text-xs font-medium rounded-md ${badge.color}`}>{badge.label}</span>
+                        {item.images && item.images.length > 1 && (
+                          <div className="absolute bottom-2 right-2 px-2 py-0.5 text-xs font-medium bg-black/50 text-white rounded-md flex items-center gap-1">
+                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                            {item.images.length}
+                          </div>
                         )}
                       </div>
                       <div className="p-4">
-                        <h3 className="font-semibold text-ds-foreground group-hover:text-ds-primary transition-colors line-clamp-1">
-                          {item.year} {item.make} {item.model}
+                        <h3 className="font-semibold text-ds-foreground group-hover:text-slate-600 transition-colors line-clamp-1">
+                          {item.year && item.make && item.model_name
+                            ? `${item.year} ${item.make} ${item.model_name}`
+                            : item.title}
                         </h3>
-                        <p className="text-xl font-bold text-ds-primary mt-1">${(item.price || 0).toLocaleString()}</p>
-                        <div className="flex items-center gap-4 mt-2 text-sm text-ds-muted-foreground">
-                          <span>{(item.mileage || 0).toLocaleString()} mi</span>
-                          <span>{item.transmission || "Auto"}</span>
-                          <span>{item.fuel_type || "Gas"}</span>
+
+                        <div className="flex items-center gap-3 mt-2 text-xs text-ds-muted-foreground">
+                          {item.mileage_km != null && (
+                            <span className="flex items-center gap-1">
+                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                              {item.mileage_km.toLocaleString()} km
+                            </span>
+                          )}
+                          {item.transmission && (
+                            <span className="flex items-center gap-1">
+                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                              {item.transmission}
+                            </span>
+                          )}
+                          {item.fuel_type && (
+                            <span>{fuelIcon(item.fuel_type)} {item.fuel_type}</span>
+                          )}
                         </div>
-                        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-ds-border text-sm text-ds-muted-foreground">
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                          <span>{item.location || "Location TBD"}</span>
+
+                        {item.location && (
+                          <div className="flex items-center gap-1 mt-2 text-xs text-ds-muted-foreground">
+                            <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                            <span className="truncate">{item.location}</span>
+                          </div>
+                        )}
+
+                        <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
+                          <span className="font-bold text-slate-700 text-lg">
+                            {formatPrice(item.price, item.currency)}
+                          </span>
+                          <span className="px-3 py-1.5 text-xs font-semibold text-white bg-slate-700 rounded-lg group-hover:bg-slate-800 transition-colors">View Details</span>
                         </div>
                       </div>
                     </a>
-                  ))}
-                </div>
-
-                {totalPages > 1 && (
-                  <div className="flex items-center justify-center gap-2 mt-8">
-                    <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="px-4 py-2 text-sm rounded-lg border border-ds-border text-ds-foreground hover:bg-ds-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors">Previous</button>
-                    <span className="text-sm text-ds-muted-foreground">Page {page} of {totalPages}</span>
-                    <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="px-4 py-2 text-sm rounded-lg border border-ds-border text-ds-foreground hover:bg-ds-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors">Next</button>
-                  </div>
-                )}
-              </>
+                  )
+                })}
+              </div>
             )}
           </main>
         </div>
       </div>
+
+      <section className="py-16 bg-ds-card border-t border-ds-border">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">Why Choose Us</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-slate-700 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Wide Selection</h3>
+              <p className="text-sm text-ds-muted-foreground">Browse thousands of vehicles from trusted dealers and private sellers.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-slate-700 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Verified Listings</h3>
+              <p className="text-sm text-ds-muted-foreground">Every vehicle is inspected and verified for your peace of mind.</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-slate-700 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <h3 className="font-semibold text-ds-foreground mb-2">Easy Financing</h3>
+              <p className="text-sm text-ds-muted-foreground">Flexible financing options to make your dream car a reality.</p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }
