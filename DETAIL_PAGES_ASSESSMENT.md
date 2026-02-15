@@ -874,3 +874,246 @@ Three different patterns used across verticals:
 8. Create insurance detail endpoint — 16 lines
 9. Fix vendors to use handle parameter — 1 line in storefront loader
 10. Add breadcrumbs to 8 pages — simple template addition
+
+---
+
+## Section 7: Payload CMS Blocks System — Complete Structural Analysis
+
+### 7.1 Architecture Overview
+
+The platform has a **comprehensive, fully-structured Payload CMS blocks system** spanning 5 layers:
+
+```
+Layer 1: Type Definitions   → packages/cityos-design-system/src/blocks/BlockTypes.ts (870+ lines)
+                               57 TypeScript interfaces defining every block's shape, props, variants
+Layer 2: Block Registry     → apps/storefront/src/components/blocks/block-registry.ts (180 lines)
+                               77 block types registered as React components in BLOCK_REGISTRY map
+Layer 3: Block Renderer     → apps/storefront/src/components/blocks/block-renderer.tsx (44 lines)
+                               Generic <BlockRenderer blocks={[...]} /> component that maps
+                               blockType strings to registered React components
+Layer 4: CMS Page Registry  → apps/backend/src/lib/platform/cms-registry.ts (1043 lines)
+                               27 vertical-specific LIST page layouts with 3-5 blocks each
+                               ALL detail pages share the same generic 3-block layout
+                               7 additional pages (home, store, search, vendors, etc.)
+Layer 5: CMS Page Database  → apps/backend/src/modules/cms-content/models/cms-page.ts
+                               PostgreSQL model: cms_page table with layout JSON column
+                               7 seeded pages (home, about, contact, privacy, terms + 2 more)
+                               Database uses DIFFERENT block format than CMS registry!
+```
+
+### 7.2 Block Inventory (77 Components)
+
+| Category | Block Types | Count | Total Lines |
+|---|---|---|---|
+| **Commerce Core** | productDetail, cartSummary, checkoutSteps, orderConfirmation, wishlistGrid, recentlyViewed, products | 7 | ~800 |
+| **Content/Layout** | hero, content(richText), cta, features(featureGrid), stats, imageGallery, divider, bannerCarousel, videoEmbed, timeline, trustBadges, socialProof, blogPost | 13 | ~1,800 |
+| **Navigation/Discovery** | categoryGrid, collectionList, comparisonTable, contactForm, faq, pricing, newsletter, reviewList, map | 9 | ~1,500 |
+| **Vendor/Marketplace** | vendorProfile, vendorProducts, vendorShowcase, vendorRegisterForm, commissionDashboard, payoutHistory | 6 | ~850 |
+| **Booking/Services** | bookingCalendar, bookingCta, bookingConfirmation, serviceCardGrid, serviceList, appointmentSlots, providerSchedule, resourceAvailability | 8 | ~1,400 |
+| **Subscriptions/Loyalty** | subscriptionPlans, subscriptionManage, membershipTiers, loyaltyDashboard, loyaltyPointsDisplay, referralProgram | 6 | ~1,400 |
+| **Vertical-Specific** | auctionBidding, rentalCalendar, propertyListing, vehicleListing, menuDisplay, courseCurriculum, eventSchedule, eventList, healthcareProvider, fitnessClassSchedule, petProfileCard, classifiedAdCard, crowdfundingProgress, donationCampaign, freelancerProfile, parkingSpotFinder, flashSaleCountdown, giftCardDisplay | 18 | ~3,600 |
+| **B2B** | purchaseOrderForm, bulkPricingTable, companyDashboard, approvalWorkflow | 4 | ~900 |
+| **Admin/Manage** | manageStats, manageRecentOrders, manageActivity, promotionBanner | 4 | ~500 |
+| **TOTAL** | | **77** | **~12,750 lines** |
+
+### 7.3 The Critical Disconnect: Blocks Exist But Are NEVER Used
+
+**ZERO detail pages import or use `BlockRenderer` or any block component.**
+
+The `BlockRenderer` component is exported from `apps/storefront/src/components/blocks/index.ts` but is **imported by exactly zero route files**. A `grep -rn "BlockRenderer" apps/storefront/src/routes/` returns **zero matches**.
+
+Instead, every detail page uses hardcoded inline JSX that duplicates what the blocks already implement:
+
+| What Blocks Provide | What Detail Pages Do Instead |
+|---|---|
+| `<HeroBlock heading="..." image={{url: "..."}} />` | Inline `<div className="relative w-full min-h-[300px]...">` (40-60 lines per page) |
+| `<ReviewListBlock entityId={id} showSummary />` | Inline `reviews.map(r => ...)` with hardcoded fake reviews |
+| `<ImageGalleryBlock images={[...]} layout="carousel" />` | Single `<img>` tag or no images at all |
+| `<AuctionBiddingBlock auctionId={id} showCountdown />` | Nothing — auction page has no bid UI |
+| `<BookingCalendarBlock serviceId={id} />` | Nothing — no calendar on any page |
+| `<CrowdfundingProgressBlock campaignId={id} />` | Nothing — no progress bar |
+| `<MenuDisplayBlock categories={[...]} showPrices />` | Nothing — restaurant page has no menu |
+
+### 7.4 CMS Registry Layout Analysis
+
+The CMS registry defines **two types of page layouts**:
+
+#### LIST Page Layouts (27 verticals, well-differentiated)
+
+Each vertical has a custom block layout with 3-5 vertical-appropriate blocks. Examples:
+
+```
+restaurants:     hero → menuDisplay → serviceCardGrid → reviewList → map
+healthcare:      hero → healthcareProvider → bookingCalendar → faq
+education:       hero → courseCurriculum → subscriptionPlans → testimonial
+real-estate:     hero → propertyListing → map → contactForm
+automotive:      hero → vehicleListing → comparisonTable
+auctions:        hero → auctionBidding → productGrid
+fitness:         hero → fitnessClassSchedule → membershipTiers → testimonial
+crowdfunding:    hero → crowdfundingProgress → productGrid → faq
+```
+
+#### DETAIL Page Layouts (ALL 27 verticals share IDENTICAL generic layout)
+
+```
+ALL verticals:   hero → reviewList → recentlyViewed
+```
+
+Every single detail page in the CMS registry gets the exact same 3 generic blocks. There are **no vertical-specific detail layouts** — no `auctionBidding` on auction detail, no `bookingCalendar` on booking detail, no `menuDisplay` on restaurant detail, etc.
+
+### 7.5 Database vs Registry Block Format Mismatch
+
+The `cms_page` database table (7 seeded pages) uses a DIFFERENT block schema than the CMS registry:
+
+**Database format (cms_page.layout):**
+```json
+[{"type": "hero", "data": {"title": "...", "subtitle": "..."}}]
+```
+
+**CMS registry format (cms-registry.ts):**
+```json
+[{"blockType": "hero", "heading": "...", "subheading": "..."}]
+```
+
+Key differences:
+- Database uses `type` field; Registry uses `blockType`
+- Database wraps props in `data` object; Registry spreads props flat
+- Database uses `title/subtitle`; Registry uses `heading/subheading`
+- `BlockRenderer` component expects `blockType` format (registry format)
+
+This means the 7 database-seeded pages **cannot be rendered by BlockRenderer** without a format adapter.
+
+### 7.6 Block Data Flow Architecture
+
+Blocks are designed as **props-based presentational components**. Only 1 of 77 blocks (`products-block.tsx`) fetches its own data via `useQuery`. All other blocks expect data to be passed as props from a parent component.
+
+This means for blocks to work on detail pages, the **detail page route handler** must:
+1. Fetch the entity data via SSR loader (already happening)
+2. Transform the API response into block-compatible prop shapes
+3. Compose the appropriate blocks with the transformed data
+4. OR: Fetch the CMS page layout from the registry and pass data to `BlockRenderer`
+
+Currently, step 1 happens but the data never reaches any blocks.
+
+### 7.7 Vertical-Specific Block ↔ Detail Page Mapping
+
+These blocks exist and are ready to render vertical-specific UI, but none are used on their matching detail pages:
+
+| Block Component | Lines | Designed For | Detail Page Status |
+|---|---|---|---|
+| `auction-bidding-block` | 198 | Auction detail with bid UI, countdown, bid history | NOT USED — auction detail has no bid interface |
+| `booking-calendar-block` | 256 | Booking detail with date picker, time slots | NOT USED — no booking detail calendar |
+| `course-curriculum-block` | 245 | Education detail with lesson tree, progress | NOT USED — education page is generic |
+| `crowdfunding-progress-block` | 197 | Campaign detail with progress bar, backer count | NOT USED — crowdfunding page ignores all campaign data |
+| `donation-campaign-block` | 229 | Charity detail with donation form, impact metrics | NOT USED — charity page is generic |
+| `event-schedule-block` | 203 | Event detail with agenda, speakers | NOT USED — event page ignores event_type, dates |
+| `fitness-class-schedule-block` | 204 | Fitness detail with weekly schedule | NOT USED — fitness page is generic |
+| `freelancer-profile-block` | 247 | Freelancer detail with portfolio, skills | NOT USED — freelance page ignores skills, portfolio |
+| `healthcare-provider-block` | 160 | Provider detail with specialties, availability | NOT USED — healthcare page is generic |
+| `membership-tiers-block` | 220 | Membership comparison with tier cards | NOT USED — memberships serves wrong data |
+| `menu-display-block` | 161 | Restaurant detail with categorized menu | NOT USED — restaurant page has no menu |
+| `parking-spot-finder-block` | 220 | Parking detail with map, pricing grid | NOT USED — parking ignores rates, map |
+| `pet-profile-card-block` | 223 | Pet profile with services, vet info | NOT USED — pet page is generic |
+| `property-listing-block` | 158 | Property detail with specs, map | NOT USED — real-estate has no detail endpoint |
+| `rental-calendar-block` | 124 | Rental detail with availability calendar | NOT USED — rental page has no calendar |
+| `subscription-plans-block` | 238 | Subscription tier comparison | NOT USED — subscriptions serves wrong data |
+| `vehicle-listing-block` | 206 | Vehicle detail with specs comparison | NOT USED — automotive ignores make/model/specs |
+
+Total: **~3,600 lines of vertical-specific UI code** that exists but renders nowhere.
+
+### 7.8 Block Component Quality Assessment
+
+Most blocks contain **hardcoded placeholder data** rather than rendering from props. This means even if blocks were integrated into detail pages, many would need refactoring to accept and display real API data:
+
+| Quality Level | Count | Pattern |
+|---|---|---|
+| **Props-driven with real data support** | ~15 | hero, content, cta, features, faq, products, pricing, testimonial, review-list, etc. |
+| **Props-defined but renders hardcoded data** | ~45 | auction-bidding (hardcoded bid history), crowdfunding-progress (hardcoded $1,250 goal), event-schedule (hardcoded events), etc. |
+| **Fully hardcoded / placeholder-only** | ~17 | commission-dashboard, loyalty-dashboard, approval-workflow, etc. |
+
+### 7.9 What the Block System SHOULD Enable
+
+If properly connected, the block system would allow:
+
+1. **CMS-Driven Detail Pages** — Instead of 50 hardcoded route files, a single `GenericDetailPage` component could:
+   - Fetch the CMS page layout from the registry (already works for list pages)
+   - Fetch the entity data from the backend API
+   - Pass data to `<BlockRenderer blocks={layout} />` with entity data as context
+
+2. **Vertical-Specific Detail Layouts in CMS Registry** — Adding entries like:
+   ```typescript
+   "auctions-detail": [
+     { blockType: "hero", heading: "Auction Detail" },
+     { blockType: "imageGallery" },
+     { blockType: "auctionBidding", showCountdown: true, showHistory: true },
+     { blockType: "reviewList" },
+     { blockType: "recentlyViewed" }
+   ]
+   ```
+
+3. **Non-Developer Page Customization** — When migrated to actual Payload CMS, editors could rearrange, add, or remove blocks per vertical without code changes.
+
+### 7.10 Recommended Block Integration Strategy
+
+| Phase | Action | Impact | Effort |
+|---|---|---|---|
+| **Phase 0** | Fix database format mismatch (adapt `type`/`data` to `blockType`/flat props) | Enables DB-stored pages to render | 2 hours |
+| **Phase 1** | Create vertical-specific detail page layouts in `cms-registry.ts` `buildDetailPage()` | Defines what blocks each detail page shows | 4 hours |
+| **Phase 2** | Refactor ~45 blocks to accept real data from props instead of hardcoded data | Blocks render actual API data | 12 hours |
+| **Phase 3** | Create `GenericVerticalDetailPage` route that uses `BlockRenderer` | Replaces 50 hardcoded route files with 1 | 8 hours |
+| **Phase 4** | Add entity data context provider so blocks can access the loaded entity | Blocks auto-populate from SSR data | 4 hours |
+
+---
+
+## Section 8: CMS Integration Points Summary
+
+### What EXISTS and is structured:
+
+1. **77 React block components** (12,750+ lines) — fully implemented with TypeScript interfaces
+2. **57 block type definitions** in the design system — comprehensive prop types with variants
+3. **BlockRenderer component** — generic renderer that maps `blockType` → React component
+4. **CMS page registry** with 27 vertical-specific LIST layouts — well-differentiated per vertical
+5. **CMS resolve API endpoint** — `GET /platform/cms/resolve?path=...` returns page + layout
+6. **CMS page database model** — `cms_page` table with `layout` JSON column (7 seeded pages)
+7. **Payload CMS integration spec** — full contract document for webhook sync
+8. **CMS hooks** — `useCMSVerticals()`, `useCMSNavigation()` in storefront
+9. **Payload webhook handlers** — `POST /admin/webhooks/payload` and `POST /webhooks/payload-cms`
+10. **CMS-to-ERP sync engine** — `cms-hierarchy-sync/engine.ts` for 8-collection sync
+
+### What is MISSING / DISCONNECTED:
+
+1. **Zero detail pages use `BlockRenderer`** — all 50 pages use hardcoded inline JSX
+2. **No vertical-specific detail page layouts** in CMS registry — all get same 3 generic blocks
+3. **Database and registry use incompatible block formats** — `type`/`data` vs `blockType`/flat
+4. **Most blocks render placeholder data** — ~45 of 77 blocks don't use their props for rendering
+5. **No entity data context** — blocks can't access the SSR-loaded entity data automatically
+6. **No `useCMSPage()` hook** — storefront has `useCMSVerticals` and `useCMSNavigation` but no hook to fetch a specific page's block layout
+7. **No generic detail page route** — each vertical has its own hardcoded route file instead of a shared CMS-driven page
+
+---
+
+## Section 9: Architecture Decision — Hardcoded vs Block-Based Detail Pages
+
+### Option A: Keep Hardcoded Route Files (Current Approach)
+- **Pros:** Direct control per vertical, simpler to understand one page at a time
+- **Cons:** 50 files to maintain, cookie-cutter duplication, no CMS editability, 12,750 lines of block code wasted
+- **Effort to fix:** Customize each of 50 files individually (~16 hours)
+
+### Option B: Migrate to Block-Based Detail Pages (Recommended)
+- **Pros:** 
+  - Leverages 12,750 lines of existing block code
+  - Reduces 50 route files to 1 generic route + vertical layouts in CMS registry
+  - Enables CMS-driven page customization
+  - Consistent with the platform's stated architecture
+  - Blocks already have vertical-specific UI (auction bidding, booking calendar, etc.)
+- **Cons:** Requires upfront integration work, blocks need refactoring to use real data
+- **Effort to implement:** ~30 hours total across 4 phases
+
+### Option C: Hybrid — Custom Pages with Block Sections
+- **Pros:** Custom page structure + block components for complex sections
+- **Cons:** Still maintains 50 files, partial block utilization
+- **Effort:** ~20 hours
+
+### Recommendation
+
+**Option B (Block-Based)** is the architecturally correct choice. The block system was clearly built for this purpose — 18 vertical-specific blocks exist that exactly match the vertical detail pages. The CMS registry already has the infrastructure for page resolution and layout delivery. The main gap is connecting the dots between the existing layers.
