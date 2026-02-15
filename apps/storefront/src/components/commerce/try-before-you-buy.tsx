@@ -41,7 +41,7 @@ export function TryBeforeYouBuy({
         <div className="flex items-start gap-4">
           {thumbnail && (
             <div className="w-14 h-14 rounded-lg overflow-hidden bg-ds-muted flex-shrink-0">
-              <img src={thumbnail} alt={productTitle} className="w-full h-full object-cover" />
+              <img loading="lazy" src={thumbnail} alt={productTitle} className="w-full h-full object-cover" />
             </div>
           )}
           <div className="flex-1 min-w-0">

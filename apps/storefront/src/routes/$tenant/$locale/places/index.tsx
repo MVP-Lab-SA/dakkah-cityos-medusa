@@ -4,6 +4,12 @@ import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/places/")({
   component: PlacesPage,
+  head: () => ({
+    meta: [
+      { title: "Places | Dakkah CityOS" },
+      { name: "description", content: "Discover places on Dakkah CityOS" },
+    ],
+  }),
   loader: async () => {
     try {
       const places = [
@@ -79,7 +85,7 @@ function PlacesPage() {
             {filtered.map((place: any) => (
               <div key={place.id} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-success/40 transition-all duration-200">
                 <div className="aspect-[4/3] relative overflow-hidden">
-                  <img src={place.image} alt={place.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <img loading="lazy" src={place.image} alt={place.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-ds-success text-white rounded-md">{place.category}</span>
                 </div>
                 <div className="p-4">

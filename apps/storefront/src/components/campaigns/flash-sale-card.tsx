@@ -19,7 +19,7 @@ export function FlashSaleCard({ sale }: FlashSaleCardProps) {
     <div className="bg-ds-background rounded-lg border border-ds-border overflow-hidden hover:shadow-md transition-all">
       <div className="aspect-square bg-ds-muted relative overflow-hidden">
         {sale.thumbnail ? (
-          <img src={sale.thumbnail} alt={sale.title} className="w-full h-full object-cover" />
+          <img loading="lazy" src={sale.thumbnail} alt={sale.title} className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <svg className="w-12 h-12 text-ds-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">

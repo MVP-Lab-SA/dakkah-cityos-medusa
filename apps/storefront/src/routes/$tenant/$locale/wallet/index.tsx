@@ -4,6 +4,12 @@ import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/wallet/")({
   component: WalletPage,
+  head: () => ({
+    meta: [
+      { title: "Wallet | Dakkah CityOS" },
+      { name: "description", content: "Manage your wallet on Dakkah CityOS" },
+    ],
+  }),
   loader: async () => {
     try {
       const features = [

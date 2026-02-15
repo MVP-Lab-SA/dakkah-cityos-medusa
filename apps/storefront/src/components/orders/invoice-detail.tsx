@@ -90,7 +90,7 @@ export function InvoiceDetail({ invoiceId }: InvoiceDetailProps) {
           {invoice.items.map((item: InvoiceItem) => (
             <div key={item.id} className="p-4 flex items-center gap-4">
               {item.thumbnail && (
-                <img src={item.thumbnail} alt={item.title} className="w-12 h-12 object-cover rounded" />
+                <img loading="lazy" src={item.thumbnail} alt={item.title} className="w-12 h-12 object-cover rounded" />
               )}
               <div className="flex-1">
                 <p className="font-medium">{item.title}</p>

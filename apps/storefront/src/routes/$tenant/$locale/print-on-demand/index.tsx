@@ -4,6 +4,12 @@ import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/print-on-demand/")({
   component: PrintOnDemandPage,
+  head: () => ({
+    meta: [
+      { title: "Print on Demand | Dakkah CityOS" },
+      { name: "description", content: "Browse print on demand products on Dakkah CityOS" },
+    ],
+  }),
   loader: async () => {
     try {
       const products = [
@@ -84,7 +90,7 @@ function PrintOnDemandPage() {
             {filtered.map((p: any) => (
               <div key={p.id} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-destructive/40 transition-all duration-200">
                 <div className="aspect-[4/3] relative overflow-hidden">
-                  <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <img loading="lazy" src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   <div className="absolute bottom-3 left-3">
                     <span className="px-2 py-1 text-xs font-medium bg-ds-card/90 text-ds-foreground rounded-md">From {p.startingAt}</span>
                   </div>

@@ -9,6 +9,12 @@ import { t, type SupportedLocale } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/business/catalog")({
   component: BusinessCatalogPage,
+  head: () => ({
+    meta: [
+      { title: "Business Catalog | Dakkah CityOS" },
+      { name: "description", content: "Browse business catalog on Dakkah CityOS" },
+    ],
+  }),
 })
 
 const demoProducts = [

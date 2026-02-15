@@ -10,6 +10,12 @@ const TradeInItemCard = lazy(() => import("@/components/recommerce/trade-in-item
 
 export const Route = createFileRoute("/$tenant/$locale/trade-in")({
   component: TradeInPage,
+  head: () => ({
+    meta: [
+      { title: "Trade-In | Dakkah CityOS" },
+      { name: "description", content: "Trade in your items on Dakkah CityOS" },
+    ],
+  }),
 })
 
 const conditionMultipliers: Record<string, number> = {

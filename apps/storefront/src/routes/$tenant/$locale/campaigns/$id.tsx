@@ -33,6 +33,12 @@ export const Route = createFileRoute("/$tenant/$locale/campaigns/$id")({
     } catch { return { item: null } }
   },
   component: CampaignDetailPage,
+  head: ({ loaderData }) => ({
+    meta: [
+      { title: `${loaderData?.title || loaderData?.name || "Campaign Details"} | Dakkah CityOS` },
+      { name: "description", content: loaderData?.description || loaderData?.excerpt || "" },
+    ],
+  }),
 })
 
 function CampaignDetailPage() {
@@ -59,7 +65,7 @@ function CampaignDetailPage() {
     <div className="min-h-screen bg-ds-background">
       <div className="relative h-64 md:h-80 bg-ds-muted overflow-hidden">
         {campaign.thumbnail ? (
-          <img src={campaign.thumbnail} alt={campaign.title} className="w-full h-full object-cover" />
+          <img loading="lazy" src={campaign.thumbnail} alt={campaign.title} className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-ds-primary/20 to-ds-muted">
             <svg className="w-24 h-24 text-ds-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">

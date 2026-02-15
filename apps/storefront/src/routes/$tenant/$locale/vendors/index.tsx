@@ -5,6 +5,12 @@ import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/vendors/")({
   component: VendorsPage,
+  head: () => ({
+    meta: [
+      { title: "Vendors | Dakkah CityOS" },
+      { name: "description", content: "Browse vendors on Dakkah CityOS" },
+    ],
+  }),
   loader: async () => {
     try {
       const baseUrl = getServerBaseUrl()
@@ -155,7 +161,7 @@ function VendorsPage() {
                   >
                     <div className="aspect-[3/1] bg-gradient-to-br from-ds-primary/15 to-ds-primary/30 relative overflow-hidden">
                       {item.banner_url ? (
-                        <img src={item.banner_url} alt={item.business_name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                        <img loading="lazy" src={item.banner_url} alt={item.business_name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
                           <svg className="w-12 h-12 text-ds-primary/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
@@ -172,7 +178,7 @@ function VendorsPage() {
                       <div className="flex items-start gap-3">
                         <div className="w-12 h-12 rounded-full bg-ds-primary/15 border-2 border-white shadow-sm flex items-center justify-center overflow-hidden flex-shrink-0 -mt-8">
                           {item.logo_url ? (
-                            <img src={item.logo_url} alt={item.business_name} className="w-full h-full object-cover" />
+                            <img loading="lazy" src={item.logo_url} alt={item.business_name} className="w-full h-full object-cover" />
                           ) : (
                             <span className="text-lg font-bold text-ds-primary">{(item.business_name || "V").charAt(0)}</span>
                           )}

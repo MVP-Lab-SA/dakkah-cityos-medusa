@@ -8,6 +8,12 @@ import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/track")({
   component: TrackPage,
+  head: () => ({
+    meta: [
+      { title: "Track Order | Dakkah CityOS" },
+      { name: "description", content: "Track your order on Dakkah CityOS" },
+    ],
+  }),
 })
 
 const demoEvents = [

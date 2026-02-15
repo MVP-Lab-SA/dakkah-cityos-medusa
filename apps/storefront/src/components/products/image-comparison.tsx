@@ -67,7 +67,7 @@ export function ImageComparison({
       aria-valuemax={100}
       aria-valuenow={Math.round(position)}
     >
-      <img src={afterImage} alt={`${alt} - ${aLabel}`} className="absolute inset-0 w-full h-full object-cover" />
+      <img loading="lazy" src={afterImage} alt={`${alt} - ${aLabel}`} className="absolute inset-0 w-full h-full object-cover" />
 
       <div className="absolute inset-0 overflow-hidden" style={{ width: `${position}%` }}>
         <img

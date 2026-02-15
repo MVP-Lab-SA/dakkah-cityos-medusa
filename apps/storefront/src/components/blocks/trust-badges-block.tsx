@@ -28,7 +28,7 @@ export const TrustBadgesBlock: React.FC<TrustBadgesBlockProps> = ({
           className="flex flex-col items-center text-center p-6 rounded-lg border border-ds-border bg-ds-card"
         >
           {badge.image ? (
-            <img src={badge.image} alt={badge.title} className="w-12 h-12 object-contain mb-3" />
+            <img loading="lazy" src={badge.image} alt={badge.title} className="w-12 h-12 object-contain mb-3" />
           ) : badge.icon ? (
             <span className="text-3xl mb-3">{badge.icon}</span>
           ) : null}
@@ -44,7 +44,7 @@ export const TrustBadgesBlock: React.FC<TrustBadgesBlockProps> = ({
       return (
         <div key={index} className="flex items-center gap-2">
           {badge.image ? (
-            <img src={badge.image} alt={badge.title} className="w-5 h-5 object-contain" />
+            <img loading="lazy" src={badge.image} alt={badge.title} className="w-5 h-5 object-contain" />
           ) : badge.icon ? (
             <span className="text-sm">{badge.icon}</span>
           ) : null}
@@ -56,7 +56,7 @@ export const TrustBadgesBlock: React.FC<TrustBadgesBlockProps> = ({
     return (
       <div key={index} className="flex flex-col items-center text-center p-4">
         {badge.image ? (
-          <img src={badge.image} alt={badge.title} className="w-10 h-10 object-contain mb-2" />
+          <img loading="lazy" src={badge.image} alt={badge.title} className="w-10 h-10 object-contain mb-2" />
         ) : badge.icon ? (
           <span className="text-2xl mb-2">{badge.icon}</span>
         ) : null}

@@ -96,7 +96,7 @@ export function WholesaleCatalog({ locale: localeProp, products, onAddToOrder }:
                       <div className="flex items-center gap-3">
                         {product.image && (
                           <div className="w-10 h-10 rounded bg-ds-muted overflow-hidden flex-shrink-0">
-                            <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                            <img loading="lazy" src={product.image} alt={product.name} className="w-full h-full object-cover" />
                           </div>
                         )}
                         <span className="text-sm font-medium text-ds-foreground">{product.name}</span>

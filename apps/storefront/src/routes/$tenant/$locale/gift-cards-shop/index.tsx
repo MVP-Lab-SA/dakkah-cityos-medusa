@@ -14,6 +14,12 @@ const fallbackItems = [
 
 export const Route = createFileRoute("/$tenant/$locale/gift-cards-shop/")({
   component: GiftCardsShopPage,
+  head: () => ({
+    meta: [
+      { title: "Gift Cards | Dakkah CityOS" },
+      { name: "description", content: "Browse gift cards on Dakkah CityOS" },
+    ],
+  }),
   loader: async () => {
     try {
       const baseUrl = getServerBaseUrl()
@@ -129,7 +135,7 @@ function GiftCardsShopPage() {
                   >
                     <div className="aspect-[16/10] bg-gradient-to-br from-ds-destructive/10 to-ds-primary/10 relative overflow-hidden">
                       {item.thumbnail ? (
-                        <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                        <img loading="lazy" src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
                           <svg className="w-16 h-16 text-ds-destructive/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">

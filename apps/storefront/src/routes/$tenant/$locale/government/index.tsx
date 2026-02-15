@@ -23,6 +23,12 @@ const iconMap: Record<string, JSX.Element> = {
 
 export const Route = createFileRoute("/$tenant/$locale/government/")({
   component: GovernmentPage,
+  head: () => ({
+    meta: [
+      { title: "Government Services | Dakkah CityOS" },
+      { name: "description", content: "Browse government services on Dakkah CityOS" },
+    ],
+  }),
   loader: async () => {
     try {
       const baseUrl = getServerBaseUrl()

@@ -5,6 +5,12 @@ import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/legal/")({
   component: LegalServicesPage,
+  head: () => ({
+    meta: [
+      { title: "Legal Services | Dakkah CityOS" },
+      { name: "description", content: "Browse legal services on Dakkah CityOS" },
+    ],
+  }),
   loader: async () => {
     try {
       const baseUrl = getServerBaseUrl()
@@ -148,7 +154,7 @@ function LegalServicesPage() {
                       <div className="flex items-center gap-4">
                         <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gray-200 to-slate-300 overflow-hidden flex-shrink-0">
                           {item.thumbnail ? (
-                            <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover" />
+                            <img loading="lazy" src={item.thumbnail} alt={item.name} className="w-full h-full object-cover" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-slate-600 text-xl font-bold">
                               {(item.name || "A").charAt(0)}

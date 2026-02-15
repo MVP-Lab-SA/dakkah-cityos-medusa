@@ -46,7 +46,7 @@ export function ExchangeSelector({
         <p className="text-xs text-ds-muted-foreground mb-2">{t(locale, "returns.original_item")}</p>
         <div className="flex items-center gap-3">
           {originalItem.thumbnail && (
-            <img src={originalItem.thumbnail} alt={originalItem.title} className="w-10 h-10 rounded object-cover flex-shrink-0" />
+            <img loading="lazy" src={originalItem.thumbnail} alt={originalItem.title} className="w-10 h-10 rounded object-cover flex-shrink-0" />
           )}
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-ds-foreground truncate">{originalItem.title}</p>
@@ -84,7 +84,7 @@ export function ExchangeSelector({
               >
                 <div className="flex items-center gap-3">
                   {option.thumbnail && (
-                    <img src={option.thumbnail} alt={option.title} className="w-10 h-10 rounded object-cover flex-shrink-0" />
+                    <img loading="lazy" src={option.thumbnail} alt={option.title} className="w-10 h-10 rounded object-cover flex-shrink-0" />
                   )}
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-ds-foreground">{option.title}</p>

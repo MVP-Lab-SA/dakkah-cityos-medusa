@@ -19,6 +19,12 @@ function normalizeDetail(item: any) {
 
 export const Route = createFileRoute("/$tenant/$locale/vendors/$id")({
   component: VendorDetailPage,
+  head: ({ loaderData }) => ({
+    meta: [
+      { title: `${loaderData?.title || loaderData?.name || "Vendor Details"} | Dakkah CityOS` },
+      { name: "description", content: loaderData?.description || loaderData?.excerpt || "" },
+    ],
+  }),
   loader: async ({ params }) => {
     try {
       const baseUrl = getServerBaseUrl()
@@ -101,7 +107,7 @@ function VendorDetailPage() {
               <div className="flex items-start gap-4">
                 <div className="w-20 h-20 bg-ds-primary/10 rounded-full flex items-center justify-center text-ds-primary text-2xl font-bold flex-shrink-0">
                   {vendor.logo ? (
-                    <img src={vendor.logo} alt={vendor.name} className="w-full h-full rounded-full object-cover" />
+                    <img loading="lazy" src={vendor.logo} alt={vendor.name} className="w-full h-full rounded-full object-cover" />
                   ) : (
                     (vendor.name || "V").charAt(0).toUpperCase()
                   )}
@@ -155,7 +161,7 @@ function VendorDetailPage() {
                     >
                       <div className="aspect-square bg-ds-muted overflow-hidden">
                         {product.thumbnail ? (
-                          <img src={product.thumbnail} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                          <img loading="lazy" src={product.thumbnail} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
                             <svg className="w-10 h-10 text-ds-muted-foreground/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">

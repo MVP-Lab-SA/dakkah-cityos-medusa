@@ -59,7 +59,7 @@ export function ExchangeSelector({
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-lg bg-ds-muted overflow-hidden flex-shrink-0">
             {originalItem.thumbnail ? (
-              <img src={originalItem.thumbnail} alt={originalItem.title} className="w-full h-full object-cover" />
+              <img loading="lazy" src={originalItem.thumbnail} alt={originalItem.title} className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-ds-muted-foreground text-xs">
                 No img
@@ -100,7 +100,7 @@ export function ExchangeSelector({
                 <div className="flex items-start gap-3">
                   <div className="w-14 h-14 rounded-lg bg-ds-muted overflow-hidden flex-shrink-0">
                     {option.thumbnail ? (
-                      <img src={option.thumbnail} alt={option.title} className="w-full h-full object-cover" />
+                      <img loading="lazy" src={option.thumbnail} alt={option.title} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-ds-muted-foreground text-xs">
                         No img

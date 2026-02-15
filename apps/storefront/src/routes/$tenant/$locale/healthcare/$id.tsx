@@ -18,6 +18,12 @@ function normalizeDetail(item: any) {
 
 export const Route = createFileRoute("/$tenant/$locale/healthcare/$id")({
   component: HealthcareDetailPage,
+  head: ({ loaderData }) => ({
+    meta: [
+      { title: `${loaderData?.title || loaderData?.name || "Healthcare Details"} | Dakkah CityOS` },
+      { name: "description", content: loaderData?.description || loaderData?.excerpt || "" },
+    ],
+  }),
   loader: async ({ params }) => {
     try {
       const baseUrl = getServerBaseUrl()
@@ -78,7 +84,7 @@ function HealthcareDetailPage() {
               <div className="flex items-start gap-4">
                 <div className="w-20 h-20 bg-ds-primary/10 rounded-xl flex items-center justify-center text-ds-primary flex-shrink-0">
                   {provider.thumbnail || provider.image ? (
-                    <img src={provider.thumbnail || provider.image} alt={provider.name} className="w-full h-full object-cover rounded-xl" />
+                    <img loading="lazy" src={provider.thumbnail || provider.image} alt={provider.name} className="w-full h-full object-cover rounded-xl" />
                   ) : (
                     <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                   )}

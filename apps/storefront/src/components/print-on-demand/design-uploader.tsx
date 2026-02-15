@@ -28,7 +28,7 @@ export function DesignUploader({
 
       {previewUrl ? (
         <div className="relative bg-ds-muted rounded-xl overflow-hidden">
-          <img src={previewUrl} alt="Design preview" className="w-full aspect-square object-contain p-4" />
+          <img loading="lazy" src={previewUrl} alt="Design preview" className="w-full aspect-square object-contain p-4" />
           <button
             type="button"
             onClick={onRemove}

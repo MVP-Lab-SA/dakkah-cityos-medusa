@@ -87,6 +87,12 @@ const hardcodedPosts = [
 
 export const Route = createFileRoute("/$tenant/$locale/blog/")({
   component: BlogPage,
+  head: () => ({
+    meta: [
+      { title: "Blog | Dakkah CityOS" },
+      { name: "description", content: "Read the latest articles on Dakkah CityOS" },
+    ],
+  }),
   loader: async () => {
     try {
       return { items: hardcodedPosts, count: hardcodedPosts.length }
@@ -198,7 +204,7 @@ function BlogPage() {
                   >
                     <div className="aspect-[16/10] bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
                       {item.image ? (
-                        <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                        <img loading="lazy" src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
                           <svg className="w-16 h-16 text-ds-muted-foreground/50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>

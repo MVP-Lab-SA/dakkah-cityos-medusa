@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
+import { sanitizeHtml } from "@/lib/utils/sanitize-html"
 import { useState } from "react"
 import { useHelpArticle } from "@/lib/hooks/use-content"
 import { FAQAccordion } from "@/components/help/faq-accordion"
@@ -7,6 +8,12 @@ import { t, formatDate } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/help/$slug")({
   component: HelpArticlePage,
+  head: ({ loaderData }) => ({
+    meta: [
+      { title: `${loaderData?.title || loaderData?.name || "Help Article"} | Dakkah CityOS` },
+      { name: "description", content: loaderData?.description || loaderData?.excerpt || "" },
+    ],
+  }),
 })
 
 function HelpArticlePage() {
@@ -106,7 +113,7 @@ function HelpArticlePage() {
 
               <div
                 className="prose prose-sm md:prose-base max-w-none text-ds-foreground [&_h2]:text-ds-foreground [&_h3]:text-ds-foreground [&_a]:text-ds-primary [&_ul]:list-disc [&_ol]:list-decimal"
-                dangerouslySetInnerHTML={{ __html: article.content || article.excerpt || "" }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(article.content || article.excerpt || "") }}
               />
 
               <div className="mt-8 pt-6 border-t border-ds-border">

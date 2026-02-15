@@ -31,7 +31,7 @@ export function ConsignmentItemCard({
     <div className="bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:border-ds-ring transition-colors">
       <div className="relative aspect-[4/3] bg-ds-muted overflow-hidden">
         {item.thumbnail ? (
-          <img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover" />
+          <img loading="lazy" src={item.thumbnail} alt={item.title} className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <svg className="w-12 h-12 text-ds-muted-foreground/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -4,6 +4,12 @@ import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/returns/")({
   component: ReturnsPage,
+  head: () => ({
+    meta: [
+      { title: "Returns | Dakkah CityOS" },
+      { name: "description", content: "Manage returns on Dakkah CityOS" },
+    ],
+  }),
   loader: async () => {
     try {
       const steps = [

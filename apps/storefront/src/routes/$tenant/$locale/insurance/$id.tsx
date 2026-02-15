@@ -18,6 +18,12 @@ function normalizeDetail(item: any) {
 
 export const Route = createFileRoute("/$tenant/$locale/insurance/$id")({
   component: InsuranceDetailPage,
+  head: ({ loaderData }) => ({
+    meta: [
+      { title: `${loaderData?.title || loaderData?.name || "Insurance Details"} | Dakkah CityOS` },
+      { name: "description", content: loaderData?.description || loaderData?.excerpt || "" },
+    ],
+  }),
   loader: async ({ params }) => {
     try {
       const baseUrl = getServerBaseUrl()

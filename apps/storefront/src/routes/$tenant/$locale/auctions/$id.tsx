@@ -35,6 +35,12 @@ export const Route = createFileRoute("/$tenant/$locale/auctions/$id")({
     } catch { return { item: null } }
   },
   component: AuctionDetailPage,
+  head: ({ loaderData }) => ({
+    meta: [
+      { title: `${loaderData?.title || loaderData?.name || "Auction Details"} | Dakkah CityOS` },
+      { name: "description", content: loaderData?.description || loaderData?.excerpt || "" },
+    ],
+  }),
 })
 
 const statusStyles: Record<string, string> = {

@@ -6,6 +6,12 @@ import { Link } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/$tenant/$locale/register")({
   component: RegisterPage,
+  head: () => ({
+    meta: [
+      { title: "Register | Dakkah CityOS" },
+      { name: "description", content: "Create your account on Dakkah CityOS" },
+    ],
+  }),
 })
 
 function RegisterPage() {

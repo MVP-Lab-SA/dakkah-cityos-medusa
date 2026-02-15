@@ -8,6 +8,12 @@ import { getBackendUrl } from "@/lib/utils/env"
 
 export const Route = createFileRoute("/$tenant/$locale/business/approvals")({
   component: ApprovalsPage,
+  head: () => ({
+    meta: [
+      { title: "Business Approvals | Dakkah CityOS" },
+      { name: "description", content: "Manage business approvals on Dakkah CityOS" },
+    ],
+  }),
 })
 
 function ApprovalsPage() {

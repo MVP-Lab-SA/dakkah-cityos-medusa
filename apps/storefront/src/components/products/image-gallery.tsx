@@ -79,7 +79,7 @@ export function ImageGallery({ locale: localeProp, images }: ImageGalleryProps) 
                 }`}
                 aria-label={`${t(locale, "blocks.go_to_slide")} ${i + 1}`}
               >
-                <img src={img.thumbnail || img.src} alt={img.alt} className="w-full h-full object-cover" />
+                <img loading="lazy" src={img.thumbnail || img.src} alt={img.alt} className="w-full h-full object-cover" />
               </button>
             ))}
           </div>

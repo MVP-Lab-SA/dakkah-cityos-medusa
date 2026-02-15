@@ -29,6 +29,12 @@ export const Route = createFileRoute("/$tenant/$locale/automotive/$id")({
     } catch { return { item: null } }
   },
   component: AutomotiveDetailPage,
+  head: ({ loaderData }) => ({
+    meta: [
+      { title: `${loaderData?.title || loaderData?.name || "Automotive Details"} | Dakkah CityOS` },
+      { name: "description", content: loaderData?.description || loaderData?.excerpt || "" },
+    ],
+  }),
 })
 
 function AutomotiveDetailPage() {
@@ -93,7 +99,7 @@ function AutomotiveDetailPage() {
           <div className="lg:col-span-2 space-y-6">
             <div className="relative aspect-[16/9] bg-ds-muted rounded-xl overflow-hidden">
               {vehicle.thumbnail || vehicle.image ? (
-                <img src={vehicle.thumbnail || vehicle.image} alt={vehicleTitle} className="w-full h-full object-cover" />
+                <img loading="lazy" src={vehicle.thumbnail || vehicle.image} alt={vehicleTitle} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
                   <svg className="w-16 h-16 text-ds-muted-foreground/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">

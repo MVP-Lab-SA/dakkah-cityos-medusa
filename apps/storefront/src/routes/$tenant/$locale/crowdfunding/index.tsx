@@ -6,4 +6,10 @@ export const Route = createFileRoute("/$tenant/$locale/crowdfunding/")({
     throw redirect({ to: "/$tenant/$locale/campaigns", params })
   },
   component: () => null,
+  head: () => ({
+    meta: [
+      { title: "Crowdfunding | Dakkah CityOS" },
+      { name: "description", content: "Browse crowdfunding campaigns on Dakkah CityOS" },
+    ],
+  }),
 })

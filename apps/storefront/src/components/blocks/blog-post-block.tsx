@@ -1,4 +1,5 @@
 import React from 'react'
+import { sanitizeHtml } from '@/lib/utils/sanitize-html'
 
 interface BlogPostBlockProps {
   heading?: string
@@ -83,7 +84,7 @@ export const BlogPostBlock: React.FC<BlogPostBlockProps> = ({
           <div className="flex items-center gap-4 pb-6 mb-8 border-b border-ds-border">
             <div className="w-10 h-10 rounded-full bg-ds-primary/10 flex items-center justify-center shrink-0">
               {author?.avatar ? (
-                <img src={author.avatar} alt={author.name} className="w-10 h-10 rounded-full object-cover" />
+                <img loading="lazy" src={author.avatar} alt={author.name} className="w-10 h-10 rounded-full object-cover" />
               ) : (
                 <span className="text-sm font-semibold text-ds-primary">
                   {author?.name?.split(' ').map(n => n[0]).join('') || 'A'}
@@ -107,7 +108,7 @@ export const BlogPostBlock: React.FC<BlogPostBlockProps> = ({
               [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-4 [&_ul]:space-y-1
               [&_li]:text-ds-foreground [&_li]:text-sm [&_li]:md:text-base
               [&_blockquote]:border-l-4 [&_blockquote]:border-ds-primary [&_blockquote]:pl-4 [&_blockquote]:py-2 [&_blockquote]:my-6 [&_blockquote]:italic [&_blockquote]:text-ds-muted-foreground [&_blockquote]:bg-ds-muted/30 [&_blockquote]:rounded-r-md [&_blockquote]:pr-4"
-            dangerouslySetInnerHTML={{ __html: content || '' }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(content || '') }}
           />
 
           {tags && tags.length > 0 && (

@@ -79,7 +79,7 @@ export function TestimonialCarousel({
 
           <div className="mt-4 flex items-center justify-center gap-3">
             {current.avatar ? (
-              <img src={current.avatar} alt={current.author} className="w-10 h-10 rounded-full object-cover" />
+              <img loading="lazy" src={current.avatar} alt={current.author} className="w-10 h-10 rounded-full object-cover" />
             ) : (
               <div className="w-10 h-10 rounded-full bg-ds-primary/10 flex items-center justify-center text-ds-primary font-semibold text-sm">
                 {current.author.charAt(0).toUpperCase()}

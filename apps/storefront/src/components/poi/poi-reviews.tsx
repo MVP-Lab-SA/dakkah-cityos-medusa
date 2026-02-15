@@ -60,7 +60,7 @@ export function POIReviews({ reviews, averageRating, totalCount, locale: localeP
             <div key={review.id} className="pb-4 border-b border-ds-border last:border-0 last:pb-0">
               <div className="flex items-start gap-3">
                 {review.avatar ? (
-                  <img src={review.avatar} alt={review.author} className="w-8 h-8 rounded-full flex-shrink-0" />
+                  <img loading="lazy" src={review.avatar} alt={review.author} className="w-8 h-8 rounded-full flex-shrink-0" />
                 ) : (
                   <div className="w-8 h-8 rounded-full bg-ds-muted flex items-center justify-center flex-shrink-0">
                     <span className="text-xs font-medium text-ds-muted-foreground">

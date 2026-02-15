@@ -31,4 +31,10 @@ export const Route = createFileRoute("/$tenant/$locale/order/$orderId/confirmed"
     }
   },
   component: OrderConfirmationPage,
+  head: () => ({
+    meta: [
+      { title: "Order Confirmed | Dakkah CityOS" },
+      { name: "description", content: "Your order has been confirmed on Dakkah CityOS" },
+    ],
+  }),
 })

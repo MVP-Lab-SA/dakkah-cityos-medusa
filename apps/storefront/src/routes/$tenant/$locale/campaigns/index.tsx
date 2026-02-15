@@ -73,6 +73,12 @@ const hardcodedCampaigns = [
 
 export const Route = createFileRoute("/$tenant/$locale/campaigns/")({
   component: CampaignsPage,
+  head: () => ({
+    meta: [
+      { title: "Campaigns | Dakkah CityOS" },
+      { name: "description", content: "Browse campaigns on Dakkah CityOS" },
+    ],
+  }),
   loader: async () => {
     try {
       return { items: hardcodedCampaigns, count: hardcodedCampaigns.length }
@@ -182,7 +188,7 @@ function CampaignsPage() {
                   >
                     <div className="aspect-[16/10] bg-gradient-to-br from-ds-destructive/10 to-ds-warning/15 relative overflow-hidden">
                       {item.image ? (
-                        <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                        <img loading="lazy" src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
                           <svg className="w-16 h-16 text-ds-destructive/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>

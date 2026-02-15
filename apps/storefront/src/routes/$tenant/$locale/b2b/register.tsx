@@ -3,6 +3,12 @@ import { CompanyRegistrationForm } from "@/components/b2b/company-registration-f
 
 export const Route = createFileRoute("/$tenant/$locale/b2b/register")({
   component: CompanyRegistrationPage,
+  head: () => ({
+    meta: [
+      { title: "B2B Registration | Dakkah CityOS" },
+      { name: "description", content: "Register your business on Dakkah CityOS" },
+    ],
+  }),
 });
 
 function CompanyRegistrationPage() {

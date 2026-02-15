@@ -6,6 +6,12 @@ import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/store-pickup")({
   component: StorePickupPage,
+  head: () => ({
+    meta: [
+      { title: "Store Pickup | Dakkah CityOS" },
+      { name: "description", content: "Schedule store pickup on Dakkah CityOS" },
+    ],
+  }),
 })
 
 const demoStores = [

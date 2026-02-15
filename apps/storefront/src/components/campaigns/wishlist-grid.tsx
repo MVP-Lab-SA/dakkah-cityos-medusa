@@ -51,7 +51,7 @@ export function WishlistGrid({ items, onRemove, onMoveToCart, loading }: Wishlis
           <Link to={`${prefix}/products/${item.product_id}` as any}>
             <div className="aspect-square bg-ds-muted relative overflow-hidden">
               {item.thumbnail ? (
-                <img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                <img loading="lazy" src={item.thumbnail} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-ds-muted-foreground">
                   <svg className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">

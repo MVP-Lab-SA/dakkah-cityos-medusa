@@ -1,4 +1,5 @@
 import React from 'react'
+import { sanitizeHtml } from '@/lib/utils/sanitize-html'
 
 interface ContentBlockProps {
   content?: any
@@ -19,7 +20,7 @@ export const ContentBlock: React.FC<ContentBlockProps> = ({
       <div className={`container mx-auto px-4 md:px-6 ${layout === 'two-column' ? 'grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12' : 'max-w-4xl'}`}>
         <div
           className="prose prose-base md:prose-lg max-w-none text-ds-foreground"
-          dangerouslySetInnerHTML={{ __html: content }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(content) }}
         />
       </div>
     </section>

@@ -26,7 +26,7 @@ export function DriverInfo({
     <div className={clsx("bg-ds-card border border-ds-border rounded-xl p-4 flex items-center gap-4", className)}>
       <div className="w-12 h-12 rounded-full bg-ds-muted flex items-center justify-center flex-shrink-0 overflow-hidden">
         {photo ? (
-          <img src={photo} alt={name} className="w-full h-full object-cover" />
+          <img loading="lazy" src={photo} alt={name} className="w-full h-full object-cover" />
         ) : (
           <span className="text-xl">🚗</span>
         )}

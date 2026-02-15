@@ -4,6 +4,12 @@ import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/affiliate/")({
   component: AffiliatePage,
+  head: () => ({
+    meta: [
+      { title: "Affiliate Programs | Dakkah CityOS" },
+      { name: "description", content: "Browse affiliate programs on Dakkah CityOS" },
+    ],
+  }),
   loader: async () => {
     try {
       const tiers = [

@@ -44,4 +44,10 @@ export const Route = createFileRoute("/$tenant/$locale/checkout")({
     }
   },
   component: Checkout,
+  head: () => ({
+    meta: [
+      { title: "Checkout | Dakkah CityOS" },
+      { name: "description", content: "Complete your purchase on Dakkah CityOS" },
+    ],
+  }),
 })

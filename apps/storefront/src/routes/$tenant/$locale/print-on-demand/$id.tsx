@@ -30,6 +30,12 @@ export const Route = createFileRoute("/$tenant/$locale/print-on-demand/$id")({
     } catch { return { item: null } }
   },
   component: PrintOnDemandDetailPage,
+  head: ({ loaderData }) => ({
+    meta: [
+      { title: `${loaderData?.title || loaderData?.name || "Print on Demand Details"} | Dakkah CityOS` },
+      { name: "description", content: loaderData?.description || loaderData?.excerpt || "" },
+    ],
+  }),
 })
 
 function PrintOnDemandDetailPage() {
@@ -78,7 +84,7 @@ function PrintOnDemandDetailPage() {
           <div className="lg:col-span-2 space-y-6">
             <div className="relative aspect-[4/3] bg-ds-muted rounded-xl overflow-hidden">
               {product.thumbnail || product.image || product.mockup_url ? (
-                <img src={product.thumbnail || product.image || product.mockup_url} alt={product.title || product.name} className="w-full h-full object-cover" />
+                <img loading="lazy" src={product.thumbnail || product.image || product.mockup_url} alt={product.title || product.name} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
                   <svg className="w-16 h-16 text-ds-muted-foreground/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -29,6 +29,12 @@ export const Route = createFileRoute("/$tenant/$locale/parking/$id")({
     } catch { return { item: null } }
   },
   component: ParkingDetailPage,
+  head: ({ loaderData }) => ({
+    meta: [
+      { title: `${loaderData?.title || loaderData?.name || "Parking Details"} | Dakkah CityOS` },
+      { name: "description", content: loaderData?.description || loaderData?.excerpt || "" },
+    ],
+  }),
 })
 
 function ParkingDetailPage() {
@@ -83,7 +89,7 @@ function ParkingDetailPage() {
           <div className="lg:col-span-2 space-y-6">
             <div className="relative aspect-[16/9] bg-ds-muted rounded-xl overflow-hidden">
               {spot.thumbnail || spot.image ? (
-                <img src={spot.thumbnail || spot.image} alt={spot.name || spot.title} className="w-full h-full object-cover" />
+                <img loading="lazy" src={spot.thumbnail || spot.image} alt={spot.name || spot.title} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-ds-muted">
                   <svg className="w-16 h-16 text-ds-muted-foreground/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">

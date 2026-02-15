@@ -6,6 +6,12 @@ import { CountdownTimer } from "@/components/campaigns/countdown-timer"
 
 export const Route = createFileRoute("/$tenant/$locale/flash-sales")({
   component: FlashSalesPage,
+  head: () => ({
+    meta: [
+      { title: "Flash Sales | Dakkah CityOS" },
+      { name: "description", content: "Browse flash sales on Dakkah CityOS" },
+    ],
+  }),
 })
 
 function FlashSalesPage() {

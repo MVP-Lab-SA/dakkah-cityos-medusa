@@ -61,7 +61,7 @@ export function TrialOrderCard({
         {order.items.map((item) => (
           <div key={item.id} className="flex items-center gap-3">
             {item.thumbnail ? (
-              <img src={item.thumbnail} alt={item.title} className="w-12 h-12 rounded object-cover flex-shrink-0" />
+              <img loading="lazy" src={item.thumbnail} alt={item.title} className="w-12 h-12 rounded object-cover flex-shrink-0" />
             ) : (
               <div className="w-12 h-12 rounded bg-ds-muted flex-shrink-0" />
             )}

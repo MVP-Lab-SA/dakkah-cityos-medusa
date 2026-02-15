@@ -5,6 +5,12 @@ import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/social-commerce/")({
   component: SocialCommercePage,
+  head: () => ({
+    meta: [
+      { title: "Social Commerce | Dakkah CityOS" },
+      { name: "description", content: "Browse social commerce on Dakkah CityOS" },
+    ],
+  }),
   loader: async () => {
     try {
       const baseUrl = getServerBaseUrl()
@@ -170,7 +176,7 @@ function SocialCommercePage() {
                   >
                     <div className="aspect-[4/3] bg-gradient-to-br from-ds-destructive/10 to-fuchsia-100 relative overflow-hidden">
                       {item.thumbnail ? (
-                        <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                        <img loading="lazy" src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
                           <svg className="w-16 h-16 text-ds-destructive/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">

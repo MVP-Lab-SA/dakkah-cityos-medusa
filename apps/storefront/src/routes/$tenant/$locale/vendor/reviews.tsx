@@ -63,7 +63,7 @@ function VendorReviewsRoute() {
       setReplyingTo(null)
       setReplyText("")
       refetch()
-    } catch (e) {}
+    } catch (e) { console.error("Failed to submit review reply:", e) }
   }
 
   function renderStars(rating: number) {

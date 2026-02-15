@@ -14,6 +14,12 @@ const fallbackItems = [
 
 export const Route = createFileRoute("/$tenant/$locale/try-before-you-buy/")({
   component: TryBeforeYouBuyPage,
+  head: () => ({
+    meta: [
+      { title: "Try Before You Buy | Dakkah CityOS" },
+      { name: "description", content: "Try products before you buy on Dakkah CityOS" },
+    ],
+  }),
   loader: async () => {
     try {
       const baseUrl = getServerBaseUrl()
@@ -117,7 +123,7 @@ function TryBeforeYouBuyPage() {
                   <div key={item.id} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-success/40 transition-all duration-200">
                     <div className="aspect-[4/3] bg-gradient-to-br from-ds-success/10 to-ds-success/10 relative overflow-hidden">
                       {item.thumbnail ? (
-                        <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                        <img loading="lazy" src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center"><svg className="w-16 h-16 text-ds-success/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5" /></svg></div>
                       )}

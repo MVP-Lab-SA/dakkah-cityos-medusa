@@ -30,6 +30,12 @@ export const Route = createFileRoute("/$tenant/$locale/newsletter/$id")({
     } catch { return { item: null } }
   },
   component: NewsletterDetailPage,
+  head: ({ loaderData }) => ({
+    meta: [
+      { title: `${loaderData?.title || loaderData?.name || "Newsletter Details"} | Dakkah CityOS` },
+      { name: "description", content: loaderData?.description || loaderData?.excerpt || "" },
+    ],
+  }),
 })
 
 function NewsletterDetailPage() {
@@ -87,7 +93,7 @@ function NewsletterDetailPage() {
           <div className="lg:col-span-2 space-y-6">
             <div className="relative aspect-[16/9] bg-ds-muted rounded-xl overflow-hidden">
               {newsletter.thumbnail || newsletter.image || newsletter.cover ? (
-                <img src={newsletter.thumbnail || newsletter.image || newsletter.cover} alt={newsletter.title || newsletter.name} className="w-full h-full object-cover" />
+                <img loading="lazy" src={newsletter.thumbnail || newsletter.image || newsletter.cover} alt={newsletter.title || newsletter.name} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-ds-primary/10 to-ds-info/15">
                   <svg className="w-16 h-16 text-ds-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">

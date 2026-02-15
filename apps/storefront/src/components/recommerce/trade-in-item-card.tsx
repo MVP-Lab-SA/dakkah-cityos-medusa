@@ -40,7 +40,7 @@ export function TradeInItemCard({
       <div className="flex gap-4 p-4">
         <div className="w-20 h-20 rounded-lg bg-ds-muted overflow-hidden flex-shrink-0">
           {item.thumbnail ? (
-            <img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover" />
+            <img loading="lazy" src={item.thumbnail} alt={item.title} className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
               <svg className="w-8 h-8 text-ds-muted-foreground/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">

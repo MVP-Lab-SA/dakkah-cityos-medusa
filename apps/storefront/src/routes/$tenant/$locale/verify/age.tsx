@@ -7,6 +7,12 @@ import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/verify/age")({
   component: AgeVerificationPage,
+  head: () => ({
+    meta: [
+      { title: "Age Verification | Dakkah CityOS" },
+      { name: "description", content: "Verify your age on Dakkah CityOS" },
+    ],
+  }),
 })
 
 function AgeVerificationPage() {

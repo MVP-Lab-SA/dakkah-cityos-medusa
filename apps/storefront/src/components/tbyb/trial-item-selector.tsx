@@ -57,7 +57,7 @@ export function TrialItemSelector({
             >
               <div className="aspect-square bg-ds-muted overflow-hidden">
                 {item.thumbnail ? (
-                  <img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover" />
+                  <img loading="lazy" src={item.thumbnail} alt={item.title} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <svg className="w-10 h-10 text-ds-muted-foreground/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">

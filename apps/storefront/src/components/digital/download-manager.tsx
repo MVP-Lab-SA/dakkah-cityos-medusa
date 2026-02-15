@@ -54,7 +54,7 @@ function DownloadRow({ item, locale }: { item: DownloadItem; locale: string }) {
       <div className="flex items-start gap-4">
         <div className="w-16 h-16 rounded-lg bg-ds-muted overflow-hidden flex-shrink-0">
           {item.thumbnail ? (
-            <img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover" />
+            <img loading="lazy" src={item.thumbnail} alt={item.title} className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
               <svg className="w-8 h-8 text-ds-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">

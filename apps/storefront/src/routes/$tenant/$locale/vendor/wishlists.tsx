@@ -99,7 +99,7 @@ function VendorWishlistsRoute() {
                   <td className="py-4 px-4">
                     <div className="flex items-center gap-3">
                       {item.thumbnail && (
-                        <img src={item.thumbnail} alt={item.product_name} className="w-10 h-10 rounded object-cover" />
+                        <img loading="lazy" src={item.thumbnail} alt={item.product_name} className="w-10 h-10 rounded object-cover" />
                       )}
                       <span className="font-medium">{item.product_name}</span>
                     </div>

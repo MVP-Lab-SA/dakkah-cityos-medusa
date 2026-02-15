@@ -6,4 +6,10 @@ export const Route = createFileRoute("/$tenant/$locale/dropshipping-marketplace/
     throw redirect({ to: "/$tenant/$locale/dropshipping/$id", params })
   },
   component: () => null,
+  head: ({ loaderData }) => ({
+    meta: [
+      { title: `${loaderData?.title || loaderData?.name || "Dropshipping Details"} | Dakkah CityOS` },
+      { name: "description", content: loaderData?.description || loaderData?.excerpt || "" },
+    ],
+  }),
 })

@@ -7,6 +7,12 @@ import { useState, useEffect } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/blog/$slug")({
   component: BlogPostPage,
+  head: ({ loaderData }) => ({
+    meta: [
+      { title: `${loaderData?.title || loaderData?.name || "Blog Post"} | Dakkah CityOS` },
+      { name: "description", content: loaderData?.description || loaderData?.excerpt || "" },
+    ],
+  }),
 })
 
 function BlogPostPage() {

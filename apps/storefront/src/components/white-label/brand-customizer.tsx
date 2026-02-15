@@ -52,7 +52,7 @@ export function BrandCustomizer({
           </label>
           <div className="border-2 border-dashed border-ds-border rounded-lg p-6 text-center hover:border-ds-ring transition-colors">
             {config.logoUrl ? (
-              <img src={config.logoUrl} alt="Logo" className="mx-auto h-16 object-contain" />
+              <img loading="lazy" src={config.logoUrl} alt="Logo" className="mx-auto h-16 object-contain" />
             ) : (
               <div className="space-y-2">
                 <svg className="w-10 h-10 text-ds-muted-foreground/40 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -5,6 +5,12 @@ import { WishlistGrid } from "@/components/campaigns/wishlist-grid"
 
 export const Route = createFileRoute("/$tenant/$locale/wishlist")({
   component: WishlistPage,
+  head: () => ({
+    meta: [
+      { title: "Wishlist | Dakkah CityOS" },
+      { name: "description", content: "Your wishlist on Dakkah CityOS" },
+    ],
+  }),
 })
 
 function WishlistPage() {

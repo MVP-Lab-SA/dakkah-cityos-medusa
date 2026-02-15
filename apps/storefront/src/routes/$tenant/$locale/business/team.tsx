@@ -8,6 +8,12 @@ import { useToast } from "@/components/ui/toast"
 
 export const Route = createFileRoute("/$tenant/$locale/business/team")({
   component: TeamPage,
+  head: () => ({
+    meta: [
+      { title: "Business Team | Dakkah CityOS" },
+      { name: "description", content: "Manage your business team on Dakkah CityOS" },
+    ],
+  }),
 })
 
 function TeamPage() {

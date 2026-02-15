@@ -7,6 +7,12 @@ export const Route = createFileRoute("/$tenant/$locale/subscriptions/success")({
     plan: (search.plan as string) || "",
   }),
   component: SubscriptionSuccessPage,
+  head: () => ({
+    meta: [
+      { title: "Subscription Success | Dakkah CityOS" },
+      { name: "description", content: "Your subscription is confirmed on Dakkah CityOS" },
+    ],
+  }),
 })
 
 function SubscriptionSuccessPage() {

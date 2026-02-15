@@ -11,6 +11,12 @@ export const Route = createFileRoute("/$tenant/$locale/subscriptions/checkout")(
     plan: (search.plan as string) || "",
   }),
   component: SubscriptionCheckoutPage,
+  head: () => ({
+    meta: [
+      { title: "Subscription Checkout | Dakkah CityOS" },
+      { name: "description", content: "Complete your subscription on Dakkah CityOS" },
+    ],
+  }),
 })
 
 function SubscriptionCheckoutPage() {

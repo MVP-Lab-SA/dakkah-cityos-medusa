@@ -8,6 +8,12 @@ export const Route = createFileRoute("/$tenant/$locale/bookings/confirmation")({
     id: (search.id as string) || "",
   }),
   component: BookingConfirmationPage,
+  head: () => ({
+    meta: [
+      { title: "Booking Confirmation | Dakkah CityOS" },
+      { name: "description", content: "Your booking confirmation on Dakkah CityOS" },
+    ],
+  }),
 })
 
 function BookingConfirmationPage() {

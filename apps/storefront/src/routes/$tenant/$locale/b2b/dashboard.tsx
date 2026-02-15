@@ -4,6 +4,12 @@ import { AuthGuard } from "@/components/auth/auth-guard";
 
 export const Route = createFileRoute("/$tenant/$locale/b2b/dashboard")({
   component: B2BDashboardPage,
+  head: () => ({
+    meta: [
+      { title: "B2B Dashboard | Dakkah CityOS" },
+      { name: "description", content: "Manage your B2B account on Dakkah CityOS" },
+    ],
+  }),
 });
 
 function B2BDashboardPage() {

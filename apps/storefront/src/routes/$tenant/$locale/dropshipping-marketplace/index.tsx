@@ -6,4 +6,10 @@ export const Route = createFileRoute("/$tenant/$locale/dropshipping-marketplace/
     throw redirect({ to: "/$tenant/$locale/dropshipping", params })
   },
   component: () => null,
+  head: () => ({
+    meta: [
+      { title: "Dropshipping | Dakkah CityOS" },
+      { name: "description", content: "Browse the dropshipping marketplace on Dakkah CityOS" },
+    ],
+  }),
 })

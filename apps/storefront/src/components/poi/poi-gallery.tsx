@@ -49,7 +49,7 @@ export function POIGallery({ images, name, locale: localeProp }: POIGalleryProps
               i === selectedIndex ? "border-ds-primary" : "border-transparent hover:border-ds-border"
             }`}
           >
-            <img src={img.url} alt={img.alt || ""} className="w-full h-full object-cover" />
+            <img loading="lazy" src={img.url} alt={img.alt || ""} className="w-full h-full object-cover" />
           </button>
         ))}
       </div>

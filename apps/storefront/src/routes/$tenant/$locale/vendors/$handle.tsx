@@ -7,6 +7,12 @@ import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/vendors/$handle")({
   component: VendorStorefrontPage,
+  head: ({ loaderData }) => ({
+    meta: [
+      { title: `${loaderData?.title || loaderData?.name || loaderData?.handle || "Vendor Details"} | Dakkah CityOS` },
+      { name: "description", content: loaderData?.description || loaderData?.excerpt || "" },
+    ],
+  }),
 })
 
 function VendorStorefrontPage() {

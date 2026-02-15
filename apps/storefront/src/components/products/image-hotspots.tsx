@@ -27,7 +27,7 @@ export function ImageHotspots({ locale: localeProp, image, alt, hotspots, onHots
 
   return (
     <div className="relative aspect-video bg-ds-accent rounded-lg overflow-hidden">
-      <img src={image} alt={alt} className="w-full h-full object-cover" />
+      <img loading="lazy" src={image} alt={alt} className="w-full h-full object-cover" />
 
       {hotspots.map((spot) => (
         <div key={spot.id} className="absolute" style={{ left: `${spot.x}%`, top: `${spot.y}%` }}>

@@ -3,6 +3,12 @@ import { QuoteRequestForm } from "@/components/quotes/quote-request-form";
 
 export const Route = createFileRoute("/$tenant/$locale/quotes/request")({
   component: QuoteRequestPage,
+  head: () => ({
+    meta: [
+      { title: "Request a Quote | Dakkah CityOS" },
+      { name: "description", content: "Submit a quote request on Dakkah CityOS" },
+    ],
+  }),
 });
 
 function QuoteRequestPage() {

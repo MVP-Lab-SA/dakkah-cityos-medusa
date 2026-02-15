@@ -37,7 +37,7 @@ export function FlashSaleProductCard({
     <div className="bg-ds-card rounded-lg border border-ds-border overflow-hidden group">
       <div className="relative aspect-square bg-ds-muted">
         {image && (
-          <img src={image} alt={name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+          <img loading="lazy" src={image} alt={name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
         )}
         <div className="absolute top-2 start-2">
           <span className="bg-ds-destructive text-white text-xs font-bold px-2 py-1 rounded-full">

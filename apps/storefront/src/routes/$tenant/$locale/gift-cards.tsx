@@ -12,6 +12,12 @@ import { useState, useEffect } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/gift-cards")({
   component: GiftCardsPage,
+  head: () => ({
+    meta: [
+      { title: "Gift Cards | Dakkah CityOS" },
+      { name: "description", content: "Browse gift cards on Dakkah CityOS" },
+    ],
+  }),
 })
 
 const defaultAmounts = [25, 50, 100, 150, 200, 500]

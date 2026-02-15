@@ -92,14 +92,14 @@ function VendorRestaurantsRoute() {
             <div key={restaurant.id} className="border rounded-lg overflow-hidden hover:shadow-md transition">
               {restaurant.banner_url && (
                 <div className="h-40 bg-ds-border overflow-hidden">
-                  <img src={restaurant.banner_url} alt={`${restaurant.name} banner`} className="w-full h-full object-cover" />
+                  <img loading="lazy" src={restaurant.banner_url} alt={`${restaurant.name} banner`} className="w-full h-full object-cover" />
                 </div>
               )}
               <div className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-4">
                     {restaurant.logo_url && (
-                      <img src={restaurant.logo_url} alt={`${restaurant.name} logo`} className="w-14 h-14 rounded-full object-cover border" />
+                      <img loading="lazy" src={restaurant.logo_url} alt={`${restaurant.name} logo`} className="w-14 h-14 rounded-full object-cover border" />
                     )}
                     <div>
                       <div className="flex items-center gap-3">

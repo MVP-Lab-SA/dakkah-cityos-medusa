@@ -45,7 +45,7 @@ export function VendorSpotlight({ locale: localeProp, vendor }: VendorSpotlightP
     <div className="bg-ds-card rounded-xl border border-ds-border overflow-hidden">
       <div className="relative h-32 bg-gradient-to-r from-ds-primary/20 to-ds-accent/20">
         {vendor.banner && (
-          <img src={vendor.banner} alt={`${vendor.name} banner`} className="w-full h-full object-cover" />
+          <img loading="lazy" src={vendor.banner} alt={`${vendor.name} banner`} className="w-full h-full object-cover" />
         )}
         <div className="absolute top-3 start-3">
           <span className="bg-ds-warning text-ds-warning-foreground text-xs font-bold px-2.5 py-1 rounded-full">
@@ -58,7 +58,7 @@ export function VendorSpotlight({ locale: localeProp, vendor }: VendorSpotlightP
         <div className="flex items-start gap-3 -mt-10 relative">
           <div className="w-16 h-16 rounded-lg bg-ds-card border-2 border-ds-border shadow-md overflow-hidden flex-shrink-0">
             {vendor.logo ? (
-              <img src={vendor.logo} alt={vendor.name} className="w-full h-full object-cover" />
+              <img loading="lazy" src={vendor.logo} alt={vendor.name} className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full bg-ds-muted flex items-center justify-center text-xl font-bold text-ds-muted-foreground">
                 {vendor.name.charAt(0)}
@@ -101,7 +101,7 @@ export function VendorSpotlight({ locale: localeProp, vendor }: VendorSpotlightP
                 <div key={product.id} className="rounded-lg border border-ds-border overflow-hidden bg-ds-background">
                   <div className="aspect-square bg-ds-muted">
                     {product.image && (
-                      <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                      <img loading="lazy" src={product.image} alt={product.name} className="w-full h-full object-cover" />
                     )}
                   </div>
                   <div className="p-2">

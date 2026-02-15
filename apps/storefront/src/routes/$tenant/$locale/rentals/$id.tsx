@@ -34,6 +34,12 @@ export const Route = createFileRoute("/$tenant/$locale/rentals/$id")({
     } catch { return { item: null } }
   },
   component: RentalDetailPage,
+  head: ({ loaderData }) => ({
+    meta: [
+      { title: `${loaderData?.title || loaderData?.name || "Rental Details"} | Dakkah CityOS` },
+      { name: "description", content: loaderData?.description || loaderData?.excerpt || "" },
+    ],
+  }),
 })
 
 const conditionStyles: Record<string, string> = {
@@ -140,7 +146,7 @@ function RentalDetailPage() {
                           i === activeImage ? "border-ds-primary" : "border-ds-border"
                         }`}
                       >
-                        <img src={img} alt={`Rental image ${i + 1}`} className="w-full h-full object-cover" />
+                        <img loading="lazy" src={img} alt={`Rental image ${i + 1}`} className="w-full h-full object-cover" />
                       </button>
                     ))}
                   </div>

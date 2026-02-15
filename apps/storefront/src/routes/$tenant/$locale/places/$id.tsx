@@ -31,6 +31,12 @@ export const Route = createFileRoute("/$tenant/$locale/places/$id")({
     } catch { return { item: null } }
   },
   component: PlaceDetailPage,
+  head: ({ loaderData }) => ({
+    meta: [
+      { title: `${loaderData?.title || loaderData?.name || "Place Details"} | Dakkah CityOS` },
+      { name: "description", content: loaderData?.description || loaderData?.excerpt || "" },
+    ],
+  }),
 })
 
 function PlaceDetailPage() {

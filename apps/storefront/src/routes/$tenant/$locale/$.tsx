@@ -33,7 +33,7 @@ export const Route = createFileRoute("/$tenant/$locale/$")({
     if (splatPath) {
       try {
         page = await resolvePageFromServer(tenantId, splatPath, locale)
-      } catch {}
+      } catch (e) { console.error("Failed to resolve CMS page:", e) }
     }
     return { page, tenantSlug: tenant, locale, splatPath }
   },

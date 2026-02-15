@@ -78,7 +78,7 @@ export function VendorComparison({ locale: localeProp, vendors, onRemoveVendor }
                   <div className="flex flex-col items-center gap-2">
                     <div className="w-12 h-12 rounded-full bg-ds-muted overflow-hidden">
                       {vendor.logo ? (
-                        <img src={vendor.logo} alt={vendor.name} className="w-full h-full object-cover" />
+                        <img loading="lazy" src={vendor.logo} alt={vendor.name} className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-lg font-bold text-ds-muted-foreground">
                           {vendor.name.charAt(0)}

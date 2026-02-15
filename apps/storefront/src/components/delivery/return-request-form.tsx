@@ -139,7 +139,7 @@ export function ReturnRequestForm({
 
                 <div className="w-16 h-16 rounded-lg bg-ds-muted overflow-hidden flex-shrink-0">
                   {item.thumbnail ? (
-                    <img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover" />
+                    <img loading="lazy" src={item.thumbnail} alt={item.title} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-ds-muted-foreground text-xs">
                       No img

@@ -5,6 +5,12 @@ import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/subscriptions/")({
   component: SubscriptionsPage,
+  head: () => ({
+    meta: [
+      { title: "Subscriptions | Dakkah CityOS" },
+      { name: "description", content: "Browse subscription plans on Dakkah CityOS" },
+    ],
+  }),
   loader: async () => {
     try {
       const baseUrl = getServerBaseUrl()

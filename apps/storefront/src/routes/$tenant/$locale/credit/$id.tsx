@@ -19,6 +19,12 @@ function normalizeDetail(item: any) {
 
 export const Route = createFileRoute("/$tenant/$locale/credit/$id")({
   component: CreditDetailPage,
+  head: ({ loaderData }) => ({
+    meta: [
+      { title: `${loaderData?.title || loaderData?.name || "Credit Details"} | Dakkah CityOS` },
+      { name: "description", content: loaderData?.description || loaderData?.excerpt || "" },
+    ],
+  }),
   loader: async ({ params }) => {
     try {
       const baseUrl = getServerBaseUrl()
@@ -90,7 +96,7 @@ function CreditDetailPage() {
           <div className="lg:col-span-2 space-y-6">
             <div className="relative aspect-[16/9] bg-ds-muted rounded-xl overflow-hidden">
               {product.thumbnail || product.image ? (
-                <img src={product.thumbnail || product.image} alt={product.title || product.name} className="w-full h-full object-cover" />
+                <img loading="lazy" src={product.thumbnail || product.image} alt={product.title || product.name} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-ds-success/10 to-ds-success/15">
                   <svg className="w-16 h-16 text-ds-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">

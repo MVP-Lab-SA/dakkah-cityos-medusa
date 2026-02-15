@@ -4,6 +4,12 @@ import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/dropshipping/")({
   component: DropshippingPage,
+  head: () => ({
+    meta: [
+      { title: "Dropshipping | Dakkah CityOS" },
+      { name: "description", content: "Browse dropshipping products on Dakkah CityOS" },
+    ],
+  }),
   loader: async () => {
     try {
       const features = [

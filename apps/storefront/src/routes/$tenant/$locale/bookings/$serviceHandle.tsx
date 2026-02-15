@@ -22,6 +22,12 @@ import { useToast } from "@/components/ui/toast"
 
 export const Route = createFileRoute("/$tenant/$locale/bookings/$serviceHandle")({
   component: ServiceBookingPage,
+  head: ({ loaderData }) => ({
+    meta: [
+      { title: `${loaderData?.title || loaderData?.name || "Booking Service"} | Dakkah CityOS` },
+      { name: "description", content: loaderData?.description || loaderData?.excerpt || "" },
+    ],
+  }),
 })
 
 const MAX_NOTES_LENGTH = 500

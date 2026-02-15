@@ -6,4 +6,10 @@ export const Route = createFileRoute("/$tenant/$locale/white-label-shop/")({
     throw redirect({ to: "/$tenant/$locale/white-label", params })
   },
   component: () => null,
+  head: () => ({
+    meta: [
+      { title: "White Label | Dakkah CityOS" },
+      { name: "description", content: "Browse white label shop on Dakkah CityOS" },
+    ],
+  }),
 })

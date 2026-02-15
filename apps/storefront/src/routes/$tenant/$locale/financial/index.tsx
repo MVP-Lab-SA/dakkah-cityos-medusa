@@ -4,6 +4,12 @@ import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/financial/")({
   component: FinancialPage,
+  head: () => ({
+    meta: [
+      { title: "Financial Products | Dakkah CityOS" },
+      { name: "description", content: "Browse financial products on Dakkah CityOS" },
+    ],
+  }),
   loader: async () => {
     try {
       const services = [
@@ -74,7 +80,7 @@ function FinancialPage() {
             {filtered.map((s: any) => (
               <div key={s.id} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-slate-300 transition-all duration-200">
                 <div className="aspect-[4/3] relative overflow-hidden">
-                  <img src={s.image} alt={s.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <img loading="lazy" src={s.image} alt={s.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-3 left-3">
                     <span className="px-2 py-1 text-xs font-medium bg-ds-card/90 text-ds-foreground rounded-md">{s.rate}</span>

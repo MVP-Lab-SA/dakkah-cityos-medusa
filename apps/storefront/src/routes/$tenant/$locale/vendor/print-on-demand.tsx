@@ -104,7 +104,7 @@ function VendorPrintOnDemandRoute() {
             <div key={design.id} className="border rounded-lg p-6 hover:shadow-md transition">
               {design.thumbnail_url && (
                 <div className="w-full h-40 bg-ds-muted rounded-lg mb-4 overflow-hidden">
-                  <img src={design.thumbnail_url} alt={design.design_name} className="w-full h-full object-cover" />
+                  <img loading="lazy" src={design.thumbnail_url} alt={design.design_name} className="w-full h-full object-cover" />
                 </div>
               )}
               <div className="flex items-center gap-3 mb-2">

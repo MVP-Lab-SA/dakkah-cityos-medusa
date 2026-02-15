@@ -58,6 +58,12 @@ export const Route = createFileRoute("/$tenant/$locale/quotes/$id")({
     } catch { return { item: null } }
   },
   component: QuoteDetailPage,
+  head: ({ loaderData }) => ({
+    meta: [
+      { title: `${loaderData?.title || loaderData?.name || "Quote Details"} | Dakkah CityOS` },
+      { name: "description", content: loaderData?.description || loaderData?.excerpt || "" },
+    ],
+  }),
 });
 
 function QuoteDetailPage() {

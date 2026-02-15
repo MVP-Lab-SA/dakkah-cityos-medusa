@@ -4,6 +4,12 @@ import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/consignment/")({
   component: ConsignmentPage,
+  head: () => ({
+    meta: [
+      { title: "Consignment | Dakkah CityOS" },
+      { name: "description", content: "Browse consignment items on Dakkah CityOS" },
+    ],
+  }),
   loader: async () => {
     try {
       const tiers = [

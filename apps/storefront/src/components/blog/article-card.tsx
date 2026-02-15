@@ -24,7 +24,7 @@ export function ArticleCard({ post, variant = "default", locale: localeProp }: A
       >
         {post.thumbnail && (
           <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-ds-muted">
-            <img src={post.thumbnail} alt={post.title} className="w-full h-full object-cover" />
+            <img loading="lazy" src={post.thumbnail} alt={post.title} className="w-full h-full object-cover" />
           </div>
         )}
         <div className="min-w-0 flex-1">
@@ -67,7 +67,7 @@ export function ArticleCard({ post, variant = "default", locale: localeProp }: A
             {post.author && (
               <div className="flex items-center gap-2">
                 {post.author.avatar && (
-                  <img src={post.author.avatar} alt={post.author.name} className="w-6 h-6 rounded-full" />
+                  <img loading="lazy" src={post.author.avatar} alt={post.author.name} className="w-6 h-6 rounded-full" />
                 )}
                 <span>{post.author.name}</span>
               </div>
@@ -94,7 +94,7 @@ export function ArticleCard({ post, variant = "default", locale: localeProp }: A
       >
         {post.thumbnail && (
           <div className="sm:w-48 h-48 sm:h-auto flex-shrink-0 bg-ds-muted">
-            <img src={post.thumbnail} alt={post.title} className="w-full h-full object-cover" />
+            <img loading="lazy" src={post.thumbnail} alt={post.title} className="w-full h-full object-cover" />
           </div>
         )}
         <div className="flex-1 p-4">
@@ -113,7 +113,7 @@ export function ArticleCard({ post, variant = "default", locale: localeProp }: A
             {post.author && (
               <div className="flex items-center gap-1.5">
                 {post.author.avatar && (
-                  <img src={post.author.avatar} alt={post.author.name} className="w-5 h-5 rounded-full" />
+                  <img loading="lazy" src={post.author.avatar} alt={post.author.name} className="w-5 h-5 rounded-full" />
                 )}
                 <span>{post.author.name}</span>
               </div>
@@ -159,7 +159,7 @@ export function ArticleCard({ post, variant = "default", locale: localeProp }: A
             {post.author && (
               <>
                 {post.author.avatar && (
-                  <img src={post.author.avatar} alt={post.author.name} className="w-5 h-5 rounded-full" />
+                  <img loading="lazy" src={post.author.avatar} alt={post.author.name} className="w-5 h-5 rounded-full" />
                 )}
                 <span>{post.author.name}</span>
               </>

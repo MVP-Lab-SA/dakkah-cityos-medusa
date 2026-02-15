@@ -14,6 +14,12 @@ const fallbackItems = [
 
 export const Route = createFileRoute("/$tenant/$locale/newsletter/")({
   component: NewsletterPage,
+  head: () => ({
+    meta: [
+      { title: "Newsletter | Dakkah CityOS" },
+      { name: "description", content: "Subscribe to the Dakkah CityOS newsletter" },
+    ],
+  }),
   loader: async () => {
     try {
       const baseUrl = getServerBaseUrl()
@@ -124,7 +130,7 @@ function NewsletterPage() {
                   >
                     <div className="aspect-[4/3] bg-gradient-to-br from-ds-primary/10 to-ds-primary/10 relative overflow-hidden">
                       {item.thumbnail ? (
-                        <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                        <img loading="lazy" src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
                           <svg className="w-16 h-16 text-ds-primary/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">

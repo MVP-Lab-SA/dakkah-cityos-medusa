@@ -174,7 +174,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
             <div key={file.id} className="group relative bg-ds-card border border-ds-border rounded-lg overflow-hidden">
               {isImage(file.name) ? (
                 <div className="aspect-square">
-                  <img src={file.url} alt={file.name} className="w-full h-full object-cover" />
+                  <img loading="lazy" src={file.url} alt={file.name} className="w-full h-full object-cover" />
                 </div>
               ) : (
                 <div className="aspect-square flex items-center justify-center bg-ds-muted/30">

@@ -1,4 +1,5 @@
 import { useTenant } from "@/lib/context/tenant-context"
+import { sanitizeHtml } from "@/lib/utils/sanitize-html"
 import { t, formatDate } from "@/lib/i18n"
 import type { BlogPost } from "@/lib/hooks/use-content"
 import { AuthorCard } from "./author-card"
@@ -30,7 +31,7 @@ export function ArticleDetail({ post, shareUrl, locale: localeProp }: ArticleDet
         {post.author && (
           <div className="flex items-center gap-2">
             {post.author.avatar && (
-              <img src={post.author.avatar} alt={post.author.name} className="w-8 h-8 rounded-full" />
+              <img loading="lazy" src={post.author.avatar} alt={post.author.name} className="w-8 h-8 rounded-full" />
             )}
             <span className="font-medium text-ds-foreground">
               {t(locale, "blog.by_author")} {post.author.name}
@@ -45,7 +46,7 @@ export function ArticleDetail({ post, shareUrl, locale: localeProp }: ArticleDet
 
       <div
         className="prose prose-sm md:prose-base max-w-none text-ds-foreground [&_h2]:text-ds-foreground [&_h3]:text-ds-foreground [&_a]:text-ds-primary [&_blockquote]:border-ds-border [&_blockquote]:text-ds-muted-foreground"
-        dangerouslySetInnerHTML={{ __html: post.content || "" }}
+        dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content || "") }}
       />
 
       {post.tags && post.tags.length > 0 && (

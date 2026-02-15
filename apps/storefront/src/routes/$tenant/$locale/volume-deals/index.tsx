@@ -14,6 +14,12 @@ const fallbackItems = [
 
 export const Route = createFileRoute("/$tenant/$locale/volume-deals/")({
   component: VolumeDealsPage,
+  head: () => ({
+    meta: [
+      { title: "Volume Deals | Dakkah CityOS" },
+      { name: "description", content: "Browse volume deals on Dakkah CityOS" },
+    ],
+  }),
   loader: async () => {
     try {
       const baseUrl = getServerBaseUrl()
@@ -115,7 +121,7 @@ function VolumeDealsPage() {
                   <div key={item.id} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-primary/40 transition-all duration-200">
                     <div className="aspect-[4/3] bg-gradient-to-br from-ds-primary/10 to-ds-info/10 relative overflow-hidden">
                       {item.thumbnail ? (
-                        <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                        <img loading="lazy" src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center"><svg className="w-16 h-16 text-ds-primary/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg></div>
                       )}

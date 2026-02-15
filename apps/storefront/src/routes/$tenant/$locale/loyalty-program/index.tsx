@@ -28,6 +28,12 @@ const fallbackItems = [
 
 export const Route = createFileRoute("/$tenant/$locale/loyalty-program/")({
   component: LoyaltyProgramPage,
+  head: () => ({
+    meta: [
+      { title: "Loyalty Program | Dakkah CityOS" },
+      { name: "description", content: "Join the loyalty program on Dakkah CityOS" },
+    ],
+  }),
   loader: async () => {
     try {
       const baseUrl = getServerBaseUrl()

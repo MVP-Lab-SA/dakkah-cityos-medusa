@@ -34,7 +34,7 @@ export function ZoomLens({ locale: localeProp, src, alt, zoomLevel = 2.5 }: Zoom
       onMouseLeave={() => setIsZooming(false)}
       onMouseMove={handleMouseMove}
     >
-      <img src={src} alt={alt} className="w-full h-full object-contain" />
+      <img loading="lazy" src={src} alt={alt} className="w-full h-full object-contain" />
 
       {isZooming && (
         <div

@@ -5,6 +5,12 @@ import { Thumbnail } from "@/components/ui/thumbnail"
 
 export const Route = createFileRoute("/$tenant/$locale/compare")({
   component: ComparePage,
+  head: () => ({
+    meta: [
+      { title: "Compare Products | Dakkah CityOS" },
+      { name: "description", content: "Compare products on Dakkah CityOS" },
+    ],
+  }),
 })
 
 interface CompareProduct {

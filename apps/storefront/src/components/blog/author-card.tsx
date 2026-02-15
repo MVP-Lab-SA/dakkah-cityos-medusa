@@ -27,7 +27,7 @@ export function AuthorCard({
     return (
       <div className="flex items-center gap-2">
         {avatar && (
-          <img src={avatar} alt={name} className="w-8 h-8 rounded-full" />
+          <img loading="lazy" src={avatar} alt={name} className="w-8 h-8 rounded-full" />
         )}
         <div>
           <span className="text-sm font-medium text-ds-foreground">{name}</span>
@@ -44,7 +44,7 @@ export function AuthorCard({
   return (
     <div className="flex items-start gap-4 p-4 bg-ds-muted rounded-lg">
       {avatar && (
-        <img src={avatar} alt={name} className="w-12 h-12 rounded-full flex-shrink-0" />
+        <img loading="lazy" src={avatar} alt={name} className="w-12 h-12 rounded-full flex-shrink-0" />
       )}
       <div className="flex-1 min-w-0">
         <p className="text-sm font-semibold text-ds-foreground">{name}</p>

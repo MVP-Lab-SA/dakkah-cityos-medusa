@@ -86,14 +86,14 @@ export const Route = createFileRoute('/$tenant/$locale/$slug')({
       let storeData = { region: null, products: [] as any[], count: 0 }
       try {
         storeData = await fetchStoreData(locale)
-      } catch {}
+      } catch (e) { console.error("Failed to fetch store data:", e) }
       return { page: null, tenantSlug: tenant, locale, slug, isBuiltIn: true, storeData }
     }
     const tenantId = TENANT_SLUG_TO_ID[tenant] || DEFAULT_TENANT_ID
     let page: CMSPage | null = null
     try {
       page = await resolvePageFromServer(tenantId, slug, locale)
-    } catch {}
+    } catch (e) { console.error("Failed to resolve CMS slug page:", e) }
     return { page, tenantSlug: tenant, locale, slug, isBuiltIn: false, storeData: null }
   },
   component: CMSSlugPageComponent,

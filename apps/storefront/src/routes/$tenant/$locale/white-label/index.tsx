@@ -4,6 +4,12 @@ import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/white-label/")({
   component: WhiteLabelPage,
+  head: () => ({
+    meta: [
+      { title: "White Label | Dakkah CityOS" },
+      { name: "description", content: "Browse white label products on Dakkah CityOS" },
+    ],
+  }),
   loader: async () => {
     try {
       const packages = [

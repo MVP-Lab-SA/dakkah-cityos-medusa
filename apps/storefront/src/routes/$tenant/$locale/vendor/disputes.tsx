@@ -70,7 +70,7 @@ function VendorDisputesRoute() {
       setSelectedDispute(null)
       setResponse("")
       refetch()
-    } catch (e) {}
+    } catch (e) { console.error("Failed to submit dispute response:", e) }
   }
 
   if (isLoading) {

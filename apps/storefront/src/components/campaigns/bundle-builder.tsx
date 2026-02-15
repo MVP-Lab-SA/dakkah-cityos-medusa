@@ -37,7 +37,7 @@ export function BundleBuilder({ bundle, onAddToCart }: BundleBuilderProps) {
     <div className="bg-ds-background rounded-lg border border-ds-border overflow-hidden">
       {bundle.thumbnail && (
         <div className="aspect-video bg-ds-muted overflow-hidden">
-          <img src={bundle.thumbnail} alt={bundle.title} className="w-full h-full object-cover" />
+          <img loading="lazy" src={bundle.thumbnail} alt={bundle.title} className="w-full h-full object-cover" />
         </div>
       )}
 
@@ -120,7 +120,7 @@ function BundleItemRow({
       />
       <div className="w-10 h-10 rounded bg-ds-muted overflow-hidden flex-shrink-0">
         {item.thumbnail ? (
-          <img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover" />
+          <img loading="lazy" src={item.thumbnail} alt={item.title} className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-xs text-ds-muted-foreground">
             {item.title.charAt(0)}

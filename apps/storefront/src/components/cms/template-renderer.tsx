@@ -252,7 +252,7 @@ function VerticalCard({ item, verticalSlug, tenant, locale, cardLayout }: {
       <a href={detailUrl} className="group flex bg-ds-background rounded-xl shadow-sm border border-ds-border overflow-hidden hover:shadow-lg hover:border-ds-ring transition-all duration-200">
         <div className={`w-48 h-40 flex-shrink-0 relative overflow-hidden`}>
           {image ? (
-            <img src={image} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+            <img loading="lazy" src={image} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
           ) : (
             <div className={`w-full h-full bg-gradient-to-br ${gradientClass} flex items-center justify-center`}>
               <svg className="w-12 h-12 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -281,7 +281,7 @@ function VerticalCard({ item, verticalSlug, tenant, locale, cardLayout }: {
     <a href={detailUrl} className="group bg-ds-background rounded-xl shadow-sm border border-ds-border overflow-hidden hover:shadow-lg hover:border-ds-ring transition-all duration-200 flex flex-col">
       <div className="aspect-[4/3] relative overflow-hidden">
         {image ? (
-          <img src={image} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+          <img loading="lazy" src={image} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
         ) : (
           <div className={`w-full h-full bg-gradient-to-br ${gradientClass} flex items-center justify-center`}>
             <svg className="w-16 h-16 text-white/80" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -406,7 +406,7 @@ function VerticalDetailTemplate({ page, tenant, locale }: { page: CMSPage; tenan
           <div className="lg:col-span-2">
             {image && (
               <div className="rounded-lg overflow-hidden mb-6">
-                <img src={image} alt={title} className="w-full h-auto max-h-96 object-cover" />
+                <img loading="lazy" src={image} alt={title} className="w-full h-auto max-h-96 object-cover" />
               </div>
             )}
 

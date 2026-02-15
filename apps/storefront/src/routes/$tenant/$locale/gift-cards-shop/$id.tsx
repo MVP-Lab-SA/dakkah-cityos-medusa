@@ -19,6 +19,12 @@ function normalizeDetail(item: any) {
 
 export const Route = createFileRoute("/$tenant/$locale/gift-cards-shop/$id")({
   component: GiftCardDetailPage,
+  head: ({ loaderData }) => ({
+    meta: [
+      { title: `${loaderData?.title || loaderData?.name || "Gift Card Details"} | Dakkah CityOS` },
+      { name: "description", content: loaderData?.description || loaderData?.excerpt || "" },
+    ],
+  }),
   loader: async ({ params }) => {
     try {
       const baseUrl = getServerBaseUrl()
@@ -80,7 +86,7 @@ function GiftCardDetailPage() {
           <div className="lg:col-span-2 space-y-6">
             <div className="relative aspect-[16/9] bg-ds-muted rounded-xl overflow-hidden">
               {card.thumbnail || card.image || card.design ? (
-                <img src={card.thumbnail || card.image || card.design} alt={card.name || card.title} className="w-full h-full object-cover" />
+                <img loading="lazy" src={card.thumbnail || card.image || card.design} alt={card.name || card.title} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-ds-primary/20 to-ds-primary/5">
                   <svg className="w-20 h-20 text-ds-primary/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">

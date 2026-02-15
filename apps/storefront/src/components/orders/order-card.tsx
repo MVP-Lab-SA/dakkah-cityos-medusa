@@ -81,7 +81,7 @@ export function OrderCard({
               className="w-12 h-12 rounded-lg bg-ds-muted border-2 border-white overflow-hidden"
             >
               {item.thumbnail ? (
-                <img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover" />
+                <img loading="lazy" src={item.thumbnail} alt={item.title} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-ds-muted-foreground text-xs">
                   No img

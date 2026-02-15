@@ -29,6 +29,12 @@ export const Route = createFileRoute("/$tenant/$locale/b2b/$id")({
     } catch { return { item: null } }
   },
   component: B2BDetailPage,
+  head: ({ loaderData }) => ({
+    meta: [
+      { title: `${loaderData?.title || loaderData?.name || "B2B Details"} | Dakkah CityOS` },
+      { name: "description", content: loaderData?.description || loaderData?.excerpt || "" },
+    ],
+  }),
 })
 
 function B2BDetailPage() {
@@ -76,7 +82,7 @@ function B2BDetailPage() {
           <div className="lg:col-span-2 space-y-6">
             <div className="relative aspect-[16/9] bg-ds-muted rounded-xl overflow-hidden">
               {item.thumbnail || item.image || item.logo ? (
-                <img src={item.thumbnail || item.image || item.logo} alt={item.company_name || item.title} className="w-full h-full object-cover" />
+                <img loading="lazy" src={item.thumbnail || item.image || item.logo} alt={item.company_name || item.title} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
                   <svg className="w-16 h-16 text-ds-muted-foreground/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">

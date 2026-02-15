@@ -6,6 +6,12 @@ import { Link } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/$tenant/$locale/login")({
   component: LoginPage,
+  head: () => ({
+    meta: [
+      { title: "Login | Dakkah CityOS" },
+      { name: "description", content: "Sign in to your Dakkah CityOS account" },
+    ],
+  }),
 })
 
 function LoginPage() {

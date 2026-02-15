@@ -58,7 +58,7 @@ export function POICard({ poi, variant = "default" }: POICardProps) {
       <div className="flex items-center gap-3 p-3 bg-ds-background rounded-lg border border-ds-border">
         {poi.thumbnail && (
           <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-ds-muted">
-            <img src={poi.thumbnail} alt={poi.name} className="w-full h-full object-cover" />
+            <img loading="lazy" src={poi.thumbnail} alt={poi.name} className="w-full h-full object-cover" />
           </div>
         )}
         <div className="min-w-0 flex-1">

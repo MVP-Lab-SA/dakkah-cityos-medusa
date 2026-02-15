@@ -49,7 +49,7 @@ export function ProductVideoGallery({ locale: localeProp, videos }: ProductVideo
               }`}
             >
               <div className="aspect-video relative">
-                <img src={video.thumbnail} alt={video.title} className="w-full h-full object-cover" />
+                <img loading="lazy" src={video.thumbnail} alt={video.title} className="w-full h-full object-cover" />
                 <div className="absolute inset-0 flex items-center justify-center bg-black/30">
                   <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z" />

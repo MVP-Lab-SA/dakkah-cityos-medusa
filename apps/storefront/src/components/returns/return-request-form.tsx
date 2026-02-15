@@ -142,7 +142,7 @@ export function ReturnRequestForm({
                       )}
                     </div>
                     {item.thumbnail && (
-                      <img src={item.thumbnail} alt={item.title} className="w-12 h-12 rounded object-cover flex-shrink-0" />
+                      <img loading="lazy" src={item.thumbnail} alt={item.title} className="w-12 h-12 rounded object-cover flex-shrink-0" />
                     )}
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-ds-foreground">{item.title}</p>

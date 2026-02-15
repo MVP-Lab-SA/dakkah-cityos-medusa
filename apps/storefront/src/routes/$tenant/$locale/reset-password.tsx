@@ -9,6 +9,12 @@ import { Spinner, CheckCircleSolid } from "@medusajs/icons"
 
 export const Route = createFileRoute("/$tenant/$locale/reset-password")({
   component: ResetPasswordPage,
+  head: () => ({
+    meta: [
+      { title: "Reset Password | Dakkah CityOS" },
+      { name: "description", content: "Reset your password on Dakkah CityOS" },
+    ],
+  }),
 })
 
 function ResetPasswordPage() {

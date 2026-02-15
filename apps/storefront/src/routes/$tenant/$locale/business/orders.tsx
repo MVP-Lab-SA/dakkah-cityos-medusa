@@ -5,6 +5,12 @@ import { useCompanyOrders } from "@/lib/hooks/use-companies"
 
 export const Route = createFileRoute("/$tenant/$locale/business/orders")({
   component: CompanyOrdersPage,
+  head: () => ({
+    meta: [
+      { title: "Business Orders | Dakkah CityOS" },
+      { name: "description", content: "Manage business orders on Dakkah CityOS" },
+    ],
+  }),
 })
 
 function CompanyOrdersPage() {

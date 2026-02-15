@@ -116,7 +116,7 @@ export function WishlistGrid({ locale: localeProp, items, onRemoveItem, onMoveTo
             <div key={item.id} className="bg-ds-card rounded-lg border border-ds-border overflow-hidden group">
               <div className="relative aspect-square bg-ds-muted">
                 {item.image && (
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                  <img loading="lazy" src={item.image} alt={item.name} className="w-full h-full object-cover" />
                 )}
                 <div className="absolute top-2 end-2">
                   <AddToWishlistButton
@@ -172,7 +172,7 @@ export function WishlistGrid({ locale: localeProp, items, onRemoveItem, onMoveTo
             <div key={item.id} className="flex items-center gap-4 bg-ds-card rounded-lg border border-ds-border p-3">
               <div className="relative w-20 h-20 rounded-lg bg-ds-muted overflow-hidden flex-shrink-0">
                 {item.image && (
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                  <img loading="lazy" src={item.image} alt={item.name} className="w-full h-full object-cover" />
                 )}
               </div>
               <div className="flex-1 min-w-0">
