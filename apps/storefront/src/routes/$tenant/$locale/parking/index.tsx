@@ -27,10 +27,10 @@ export const Route = createFileRoute("/$tenant/$locale/parking/")({
           price_per_hour: meta.price_per_hour || null,
           currency: s.currency_code || meta.currency || "SAR",
           zone_type: s.zone_type || null,
-          address: s.address || meta.address || null,
+          address: typeof (s.address || meta.address) === 'string' ? (s.address || meta.address) : (s.address || meta.address) ? [s.address?.line1 || meta.address?.line1, s.address?.city || meta.address?.city, s.address?.country || meta.address?.country].filter(Boolean).join(', ') : null,
           total_spots: s.total_spots || null,
           available_spots: s.available_spots || null,
-          operating_hours: s.operating_hours || null,
+          operating_hours: typeof (s.operating_hours || meta.operating_hours) === 'string' ? (s.operating_hours || meta.operating_hours) : (s.operating_hours || meta.operating_hours) ? JSON.stringify(s.operating_hours || meta.operating_hours).replace(/[{}"]/g, '').replace(/,/g, ', ') : null,
         }
       })
       return { items, count: data.count || items.length }
