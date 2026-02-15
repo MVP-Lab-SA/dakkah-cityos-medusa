@@ -6115,3 +6115,885 @@ These 2 existing pages should move, plus 15 new pages created:
 | 18 | Create page builder component for CMS | New component | P0 | NOT STARTED |
 | 19 | Create 8 missing public pages (about, contact, search, etc.) | CMS entries + 1 route | P1 | NOT STARTED |
 | 20 | Add 49 missing modules to Module Registry | `module-registry.ts` | P0 | NOT STARTED |
+
+---
+
+## Section 29: Centralized Design System Architecture — Current vs Target
+
+### 29.1 Package Architecture Overview
+
+The design system is split across **3 monorepo packages** plus the **storefront app** styles:
+
+```
+DESIGN SYSTEM ARCHITECTURE:
+
+packages/
+├── cityos-design-tokens/          ← Token definitions (TS constants)
+│   ├── colors/ColorTokens.ts      ← Light + dark color palettes (23 tokens each)
+│   ├── typography/TypographyTokens.ts  ← Font families, sizes, weights
+│   ├── spacing/SpacingTokens.ts   ← 8-step spacing scale
+│   ├── shadows/ShadowTokens.ts    ← 7 shadow levels
+│   ├── borders/BorderTokens.ts    ← 7 radii + 5 widths
+│   ├── breakpoints/BreakpointTokens.ts  ← 5 breakpoints + responsive spacing
+│   ├── motion/MotionTokens.ts     ← 6 durations + 7 easings + 5 transitions
+│   └── elevation/ElevationTokens.ts  ← 7 elevation levels (0-6)
+│
+├── cityos-design-runtime/         ← Theme engine (TS runtime)
+│   ├── theme/ThemeTypes.ts        ← Theme interface definitions
+│   ├── theme/createTheme.ts       ← lightTheme, darkTheme, createTheme(), mergeThemes()
+│   ├── context/ThemeContext.ts    ← ThemeProvider, useTheme() hook
+│   └── css/CSSVariables.ts       ← themeToCSS(), injectThemeCSS() → runtime CSS injection
+│
+├── cityos-design-system/          ← Component TYPE definitions only (no implementations)
+│   ├── components/ComponentTypes.ts  ← Base, Interactive, WithLabel, WithIcon, etc.
+│   ├── layout/LayoutTypes.ts      ← Container, Grid, Stack, Flex, Card, Section
+│   ├── navigation/NavigationTypes.ts  ← NavItem, Sidebar, Breadcrumb, Tabs, Stepper
+│   ├── forms/FormTypes.ts         ← Input, Select, Checkbox, FileUpload, FormGroup
+│   ├── data/DataDisplayTypes.ts   ← Table, Avatar, Tag, Progress, Stat, EmptyState
+│   ├── feedback/FeedbackTypes.ts  ← Toast, Alert, Dialog, Notification, Popover
+│   ├── blocks/BlockTypes.ts       ← 50+ CMS block type definitions
+│   ├── utilities/UtilityTypes.ts  ← WithAnimation, WithThemeOverride, polymorphic types
+│   └── [20+ domain-specific type files]  ← Commerce, Delivery, Payment, Auction, etc.
+│
+└── cityos-contracts/              ← RBAC, governance, node types
+    ├── rbac.ts
+    ├── governance.ts
+    ├── persona.ts
+    ├── channels.ts
+    ├── node-types.ts
+    └── node-context.ts
+
+apps/storefront/
+├── src/styles/
+│   ├── app.css                    ← Tailwind entry + @layer components + @layer utilities
+│   ├── theme.css                  ← @theme block: CSS custom properties (ds- tokens)
+│   └── rtl.css                    ← RTL overrides
+├── tailwind.config.js             ← Minimal config (only extends transitions)
+├── src/components/ui/             ← 36 storefront UI components (ds- tokens)
+└── src/components/manage/ui/      ← 28 manage UI components (raw Tailwind gray/violet)
+```
+
+### 29.2 Token System — Current State
+
+**8 token categories defined in `@dakkah-cityos/design-tokens`:**
+
+| Category | File | Token Count | Status |
+|---|---|---|---|
+| **Colors** | `ColorTokens.ts` | 23 light + 23 dark = 46 | GOOD — well-structured light/dark |
+| **Typography** | `TypographyTokens.ts` | 4 families + 9 sizes + 5 weights + 5 line-heights + 5 spacings = 28 | GOOD |
+| **Spacing** | `SpacingTokens.ts` | 8 steps (xs→4xl) | GOOD |
+| **Shadows** | `ShadowTokens.ts` | 7 levels (none→inner) | GOOD |
+| **Borders** | `BorderTokens.ts` | 7 radii + 5 widths = 12 | GOOD |
+| **Breakpoints** | `BreakpointTokens.ts` | 5 breakpoints + container + responsive spacing = 20+ | GOOD |
+| **Motion** | `MotionTokens.ts` | 6 durations + 7 easings + 5 transitions = 18 | GOOD |
+| **Elevation** | `ElevationTokens.ts` | 7 levels (0-6) | Overlaps with ShadowTokens |
+| **TOTAL** | | **139 tokens** | |
+
+**Color Token Palette:**
+
+```
+LIGHT MODE:                         DARK MODE:
+┌──────────────┬──────────────┐    ┌──────────────┬──────────────┐
+│ primary      │ hsl(221,83%) │    │ primary      │ hsl(217,91%) │
+│ secondary    │ hsl(210,40%) │    │ secondary    │ hsl(217,33%) │
+│ accent       │ hsl(210,40%) │    │ accent       │ hsl(217,33%) │
+│ background   │ hsl(0,0%,100%)│   │ background   │ hsl(222,47%) │
+│ foreground   │ hsl(222,47%) │    │ foreground   │ hsl(210,40%) │
+│ muted        │ hsl(210,40%) │    │ muted        │ hsl(217,33%) │
+│ card         │ hsl(0,0%,100%)│   │ card         │ hsl(222,47%) │
+│ border       │ hsl(214,32%) │    │ border       │ hsl(217,33%) │
+│ destructive  │ hsl(0,84%)   │    │ destructive  │ hsl(0,63%)   │
+│ success      │ hsl(142,76%) │    │ success      │ hsl(142,76%) │
+│ warning      │ hsl(45,93%)  │    │ warning      │ hsl(45,93%)  │
+│ info         │ hsl(199,95%) │    │ info         │ hsl(199,95%) │
+└──────────────┴──────────────┘    └──────────────┴──────────────┘
+```
+
+**Typography Families:**
+```
+sans:    "DM Sans" → system fallback
+display: "Plus Jakarta Sans" → sans fallback
+serif:   "Noto Serif" → Georgia fallback
+mono:    "JetBrains Mono" → "Fira Code" fallback
+```
+
+### 29.3 CSS Variable Bridge — theme.css Analysis
+
+The `theme.css` file is the **critical bridge** between TS tokens and Tailwind classes. It uses Tailwind v4's `@theme` directive:
+
+```css
+/* SEMANTIC DS TOKENS (from TS → CSS variables) */
+--color-ds-primary: var(--color-primary, hsl(221 83% 53%));
+--color-ds-background: var(--color-background, hsl(0 0% 100%));
+/* ... 23 color tokens with fallbacks */
+
+/* SHADOW TOKENS */
+--shadow-ds-sm: var(--shadow-sm, 0 1px 2px ...);
+/* ... 4 shadow tokens */
+
+/* BORDER RADIUS TOKENS */
+--radius-ds-sm: var(--border-radius-sm, 0.125rem);
+/* ... 6 radius tokens */
+
+/* MOTION TOKENS (direct, no var() indirection) */
+--duration-instant: 50ms;
+--ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+
+/* ELEVATION TOKENS */
+--elevation-1: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+
+/* ENTERPRISE PALETTE (additional raw palette) */
+--color-enterprise-50 through --color-enterprise-950
+--color-accent-primary: #2563eb;
+```
+
+**How theme.css enables Tailwind classes:**
+```
+theme.css defines:     --color-ds-primary: ...
+Tailwind generates:    .bg-ds-primary { background-color: var(--color-ds-primary) }
+                       .text-ds-primary { color: var(--color-ds-primary) }
+                       .border-ds-primary { border-color: var(--color-ds-primary) }
+```
+
+**Dual indirection pattern for tenant theming:**
+```
+Step 1: ThemeProvider.injectThemeCSS() → :root { --color-primary: [tenant color] }
+Step 2: theme.css reads:                 --color-ds-primary: var(--color-primary, [fallback])
+Step 3: Tailwind class:                  .bg-ds-primary → var(--color-ds-primary) → var(--color-primary)
+
+This allows tenant branding to override any color via --color-primary injection.
+```
+
+### 29.4 Theme Runtime — How Theming Works
+
+**Provider chain in `__root.tsx`:**
+```
+QueryClientProvider
+  └→ StoreProvider
+      └→ AuthProvider
+          └→ BrandingProvider        ← Fetches tenant branding, sets CSS vars
+              └→ GovernanceProvider
+                  └→ ThemeProvider   ← Injects full theme CSS from TS tokens
+                      └→ <App />
+```
+
+**Two theming mechanisms exist (CONFLICT):**
+
+1. **`ThemeProvider` (design-runtime):** Converts full Theme object to CSS variables via `injectThemeCSS()`. Generates `--color-primary`, `--spacing-xs`, `--typography-font-family-sans`, etc.
+
+2. **`BrandingProvider` (branding-context):** Fetches tenant from API, directly sets `document.documentElement.style.setProperty('--color-primary', ...)`. Runs independently.
+
+**The conflict:** Both providers write `--color-primary`. `BrandingProvider` runs on data fetch (async), `ThemeProvider` runs on mount (sync). Race condition — whichever runs last wins.
+
+**`useStoreTheme` hook:** Only handles favicon and SEO title/description. Does NOT participate in theming.
+
+### 29.5 The Dual Design System Problem — CRITICAL
+
+**The storefront has TWO completely separate design systems:**
+
+| Aspect | Storefront UI (`components/ui/`) | Manage UI (`components/manage/ui/`) |
+|---|---|---|
+| **Components** | 36 components | 28 components |
+| **Token Usage** | `ds-` semantic tokens | Raw Tailwind (`gray-`, `violet-`, `white`) |
+| **Button Primary** | `bg-ds-primary text-ds-primary-foreground` | `bg-violet-600 text-white hover:bg-violet-700` |
+| **Button Secondary** | `bg-ds-secondary text-ds-secondary-foreground border-ds-border` | `bg-white text-gray-700 border border-gray-200` |
+| **Button Danger** | `bg-ds-destructive text-ds-destructive-foreground` | `bg-red-600 text-white hover:bg-red-700` |
+| **Card Background** | `bg-ds-card` | `bg-white` (hardcoded) |
+| **Border Color** | `border-ds-border` | `border-gray-200` (hardcoded) |
+| **Dark Mode** | Supported via token switching | NOT SUPPORTED — always light |
+| **Tenant Theming** | Supported via CSS var injection | NOT SUPPORTED — hardcoded violet |
+| **Component API** | Simple props (`variant`, `size`) | Similar but incompatible (`variant`, `size` different values) |
+
+**Evidence of the split:**
+
+```
+Manage components (raw Tailwind, no tokens):
+- bg-white:        appears 31 times in manage routes
+- bg-gray-*:       appears in manage sidebar/layout 143 times
+- bg-violet-600:   hardcoded as manage button primary color
+- text-gray-*:     appears 502 times in route files
+
+Storefront components (design tokens):
+- ds- tokens:      used 4,409 times across route files
+```
+
+**This means:**
+1. Manage pages will NOT respond to tenant branding changes
+2. Manage pages have NO dark mode
+3. Manage pages have a different visual language than the storefront
+4. Duplicated effort — 28 manage components replicate 36 storefront components
+
+### 29.6 Hardcoded Color Audit — Inconsistency Analysis
+
+**Colors hardcoded directly in components (bypassing design tokens):**
+
+| Color | Background (`bg-`) | Text (`text-`) | Total | Used In |
+|---|---|---|---|---|
+| `gray-*` | Manage sidebar/layout | Manage text | 143+502 | Manage pages exclusively |
+| `violet-*` | 10 instances | 7 instances | 17 | Manage buttons, sidebar accent |
+| `blue-*` | 12 instances | 13 instances | 25 | Vertical hero gradients |
+| `green-*` | 27 instances | 28 instances | 55 | Status badges, success states |
+| `red-*` | 37 instances | 31 instances | 68 | Error states, danger actions |
+| `emerald-*` | 14 instances | — | 14 | Success badges |
+| `amber-*` | 11 instances | — | 11 | Warning badges |
+| `orange-*` | 19 instances | — | 19 | Vertical hero gradients |
+| `yellow-*` | 16 instances | — | 16 | Warning states |
+| `purple-*` | 5 instances | — | 5 | Vertical hero gradients |
+| `indigo-*` | 4 instances | — | 4 | Vertical hero gradients |
+| `pink-*` | 3 instances | — | 3 | Vertical hero gradients |
+| `teal-*` | 2 instances | — | 2 | Vertical hero gradients |
+| **TOTAL** | **~160** | **~79** | **~239** | |
+
+**239 hardcoded color instances** that bypass the design system and will NOT respond to tenant theming or dark mode.
+
+### 29.7 Vertical Page Gradient Inconsistency
+
+Each vertical page uses its own hardcoded gradient colors for the hero section:
+
+| Vertical | Hero Gradient | Background Accent |
+|---|---|---|
+| Bookings | `from-blue-600 to-indigo-700` | `from-blue-50 to-indigo-100` |
+| Automotive | `from-slate-700 to-gray-900` | `from-slate-100 to-gray-200` |
+| Healthcare | `from-blue-500 to-sky-600` | `from-blue-100 to-sky-200` |
+| Education | `from-blue-600 to-indigo-700` | `from-blue-50 to-indigo-100` |
+| Events | `from-purple-600 to-indigo-700` | `from-purple-50 to-indigo-100` |
+| Fitness | `from-green-500 to-emerald-600` | `from-green-50 to-emerald-100` |
+| Restaurants | `from-orange-500 to-red-600` | `from-orange-50 to-red-100` |
+| Real Estate | `from-teal-500 to-cyan-600` | `from-teal-50 to-cyan-100` |
+
+**20+ unique gradient patterns** across vertical pages. These are hardcoded in each route file, not driven by tokens or configuration.
+
+**Target:** Verticals should use a theme-aware gradient system:
+```css
+/* Token-based vertical theming */
+--color-vertical-primary: var(--vertical-bookings-primary, hsl(221 83% 53%));
+--color-vertical-secondary: var(--vertical-bookings-secondary, hsl(230 70% 50%));
+--color-vertical-accent: var(--vertical-bookings-accent, hsl(221 83% 95%));
+```
+
+---
+
+## Section 30: Component Library Architecture — Current vs Target
+
+### 30.1 Current Component Inventory
+
+**Storefront UI Components (36) — `components/ui/`:**
+
+| Category | Components | Token Usage |
+|---|---|---|
+| **Primitives** | button, input, label, textarea, select, checkbox, radio, switch | ds-tokens |
+| **Layout** | accordion, drawer, dialog, tabs | ds-tokens |
+| **Data Display** | avatar, badge, skeleton, thumbnail, price, rating, progress-bar | ds-tokens |
+| **Feedback** | toast, alert, loading, error-boundary, empty-state, form-error | ds-tokens |
+| **Navigation** | breadcrumb, dropdown-menu, mega-menu, pagination, command-palette | ds-tokens |
+| **Commerce** | mini-cart, comparison-table, image-gallery, social-proof-popup, social-share-panel, infinite-scroll | ds-tokens |
+
+**Manage UI Components (28) — `components/manage/ui/`:**
+
+| Category | Components | Token Usage |
+|---|---|---|
+| **Primitives** | button, input, label, textarea, select | RAW gray/violet |
+| **Layout** | container, drawer, focus-modal, section-card | RAW gray/white |
+| **Data Display** | badge, status-badge, data-table, table, stats-grid, skeleton | RAW gray |
+| **Feedback** | toast, tooltip, confirm-dialog, empty-state | RAW gray |
+| **Text** | heading, text | RAW gray |
+| **Navigation** | tabs, dropdown-menu, page-header | RAW gray |
+| **Forms** | form-drawer, icon-button | RAW gray/violet |
+| **Page** | crud-page | RAW gray |
+
+### 30.2 Component Duplication Matrix
+
+| Component | Storefront UI | Manage UI | Differences |
+|---|---|---|---|
+| **Button** | 6 variants, `ds-` tokens | 4 variants, hardcoded violet/gray | Different variant names, different APIs |
+| **Input** | `ds-input`, `ds-border` | `border-gray-200`, `text-gray-900` | Different border colors |
+| **Badge** | `ds-` tokens | Hardcoded green/yellow/red | Incompatible APIs |
+| **Tabs** | `ds-` tokens | `border-gray-200`, `text-violet-600` | Similar API, different colors |
+| **Drawer** | `ds-` tokens, responsive | Hardcoded widths, gray | Different animation approach |
+| **Toast** | `ds-` semantic colors | Gray/violet theme | Separate toast provider |
+| **DropdownMenu** | Radix-based, `ds-` tokens | Custom implementation, gray | Completely different |
+| **Skeleton** | `ds-muted`, single variant | Gray, 4 variants (text/table/card) | Manage has richer API |
+| **EmptyState** | `ds-` tokens | Gray/violet | Similar API |
+| **Select** | `ds-` tokens | Gray border, gray text | Similar API |
+| **Tooltip** | — (missing) | Gray-800 bg, white text | Only in manage |
+| **DataTable** | — (missing) | Full-featured sortable/filterable table | Only in manage |
+| **StatsGrid** | — (missing) | Grid of stat cards with change indicators | Only in manage |
+| **PageHeader** | — (missing) | Page title + description + actions | Only in manage |
+| **FormDrawer** | — (missing) | Auto-generates form from field config | Only in manage |
+| **CrudPage** | — (missing) | Full CRUD page from config | Only in manage |
+| **Pagination** | Uses ds-tokens | — (missing from manage) | Only in storefront |
+| **CommandPalette** | Uses ds-tokens | — (missing from manage) | Only in storefront |
+
+**13 components are duplicated** across both systems.
+**6 manage-only components** that storefront could use.
+**2 storefront-only components** that manage could use.
+
+### 30.3 Domain Component Directories
+
+The storefront has **65 component directories** across domains:
+
+| Domain | Directory | Component Count | Uses Tokens? |
+|---|---|---|---|
+| `account/` | Account sidebar, layout, header, nav | ~6 | ds-tokens |
+| `auth/` | AuthGuard, AuthModal, UserMenu | ~5 | ds-tokens |
+| `blocks/` | 40+ CMS block renderers | ~50 | Mixed (mostly ds-) |
+| `cart/` | Cart drawer, line items, summary | ~6 | ds-tokens |
+| `checkout/` | Checkout form, payment, shipping | ~8 | ds-tokens |
+| `manage/` | Layout, sidebar, header, 28 UI components | ~35 | Raw Tailwind |
+| `vendor/` | Dashboard, analytics, performance | ~5 | Mixed |
+| `ui/` | 36 primitives/reusable components | 36 | ds-tokens |
+| `[25+ verticals]` | Bookings, automotive, healthcare, etc. | ~60 | Mixed |
+
+### 30.4 Design System Type Definitions (cityos-design-system)
+
+The `@dakkah-cityos/design-system` package defines **types only** — NO implementations. It covers:
+
+| Category | File(s) | Type Count | Has Implementation? |
+|---|---|---|---|
+| **Base Components** | ComponentTypes.ts | 12 interfaces | NO |
+| **Layout** | LayoutTypes.ts | 10 interfaces (Container, Grid, Stack, Flex, Card, etc.) | NO |
+| **Navigation** | NavigationTypes.ts | 12 interfaces (NavItem, Sidebar, Breadcrumb, Stepper, etc.) | NO |
+| **Forms** | FormTypes.ts | ~15 interfaces | NO |
+| **Data Display** | DataDisplayTypes.ts | ~12 interfaces | NO |
+| **Feedback** | FeedbackTypes.ts | ~10 interfaces | NO |
+| **Blocks** | BlockTypes.ts | 50+ block data types | NO |
+| **Commerce** | 13 commerce type files | ~80 interfaces | NO |
+| **Delivery** | 6 delivery type files | ~40 interfaces | NO |
+| **Payment** | 5 payment type files | ~30 interfaces | NO |
+| **Content** | 4 content type files | ~20 interfaces | NO |
+| **Domain-specific** | 8 domain files | ~40 interfaces | NO |
+| **Utilities** | UtilityTypes.ts | ~15 utility types | NO |
+| **TOTAL** | 44 files | **~300+ types** | **0 implementations** |
+
+**Critical gap: This package defines a comprehensive type system that NONE of the actual components implement.** The storefront components and manage components were built independently without referencing these types.
+
+---
+
+## Section 31: Target Design System Architecture
+
+### 31.1 Unified Token System
+
+**Target: Single token source → CSS variables → Tailwind classes → All components**
+
+```
+CURRENT FLOW (BROKEN):
+┌──────────────┐     ┌──────────────┐     ┌───────────────┐
+│ design-tokens│────→│ theme.css    │────→│ Storefront UI │ ← Uses ds-tokens ✓
+│ (TS constants)│    │ (@theme vars) │     └───────────────┘
+└──────────────┘     └──────────────┘
+         │
+         │           ┌──────────────┐     ┌───────────────┐
+         └──────────→│ ThemeProvider │     │ Manage UI     │ ← Ignores tokens ✗
+                     │ (inject CSS) │     │ (raw Tailwind) │
+                     └──────────────┘     └───────────────┘
+
+TARGET FLOW (UNIFIED):
+┌──────────────┐     ┌──────────────┐     ┌───────────────┐
+│ design-tokens│────→│ theme.css    │────→│ ALL Components│ ← Single token source
+│ (TS constants)│    │ (@theme vars) │     │ - Storefront  │
+└──────────────┘     └──────────────┘     │ - Manage      │
+         │                                 │ - Vendor      │
+         │           ┌──────────────┐     │ - Analytics   │
+         └──────────→│ ThemeProvider │────→│ - CMS         │
+                     │ (tenant      │     └───────────────┘
+                     │  override)   │
+                     └──────────────┘
+```
+
+### 31.2 Missing Token Categories
+
+The current token system covers fundamentals but needs:
+
+| Missing Category | Purpose | Tokens Needed |
+|---|---|---|
+| **Vertical Colors** | Theme-aware gradients for 27+ verticals | ~81 tokens (3 per vertical) |
+| **Admin Colors** | Manage-specific semantic tokens | ~12 tokens |
+| **Status Colors** | Standardized status palette | ~10 tokens |
+| **Z-Index Scale** | Consistent stacking contexts | ~8 tokens |
+| **Container Widths** | Per-layout max-widths | ~6 tokens |
+| **Sidebar Widths** | Standard sidebar dimensions | ~4 tokens |
+| **Icon Sizes** | Consistent icon sizing | ~5 tokens |
+| **Content Widths** | Prose/content max-widths | ~4 tokens |
+| **TOTAL** | | **~130 new tokens** |
+
+**Target Vertical Color Tokens:**
+
+```typescript
+// packages/cityos-design-tokens/src/verticals/VerticalColorTokens.ts
+export const VerticalColorTokens = {
+  bookings: {
+    primary: "hsl(221 83% 53%)",
+    secondary: "hsl(230 70% 50%)",
+    accent: "hsl(221 83% 95%)",
+  },
+  automotive: {
+    primary: "hsl(215 25% 35%)",
+    secondary: "hsl(220 15% 20%)",
+    accent: "hsl(215 25% 95%)",
+  },
+  healthcare: {
+    primary: "hsl(199 80% 45%)",
+    secondary: "hsl(199 60% 40%)",
+    accent: "hsl(199 80% 95%)",
+  },
+  restaurants: {
+    primary: "hsl(25 90% 50%)",
+    secondary: "hsl(0 75% 50%)",
+    accent: "hsl(25 90% 95%)",
+  },
+  // ... 23 more verticals
+} as const
+```
+
+**Target Admin Tokens (for theme.css):**
+
+```css
+/* Admin/manage-specific tokens */
+--color-ds-admin-sidebar-bg: var(--color-admin-sidebar-bg, hsl(0 0% 100%));
+--color-ds-admin-sidebar-border: var(--color-admin-sidebar-border, hsl(220 13% 91%));
+--color-ds-admin-sidebar-text: var(--color-admin-sidebar-text, hsl(220 9% 46%));
+--color-ds-admin-sidebar-active: var(--color-admin-sidebar-active, hsl(262 83% 58%));
+--color-ds-admin-sidebar-active-bg: var(--color-admin-sidebar-active-bg, hsl(262 83% 97%));
+--color-ds-admin-header-bg: var(--color-admin-header-bg, hsl(0 0% 100%));
+--color-ds-admin-page-bg: var(--color-admin-page-bg, hsl(220 14% 96%));
+--color-ds-admin-accent: var(--color-admin-accent, hsl(262 83% 58%));
+```
+
+**Target Z-Index Scale:**
+
+```css
+--z-dropdown: 50;
+--z-sticky: 100;
+--z-fixed: 200;
+--z-sidebar: 300;
+--z-modal-backdrop: 400;
+--z-modal: 500;
+--z-popover: 600;
+--z-toast: 700;
+```
+
+### 31.3 Unified Component Library Target
+
+**Target: Merge manage UI and storefront UI into one shared library:**
+
+```
+CURRENT:                                TARGET:
+components/                             components/
+├── ui/ (36 components, ds-tokens)      ├── ui/ (unified, ds-tokens)
+│   ├── button.tsx                      │   ├── button.tsx (merged: 6 storefront + 4 manage variants)
+│   ├── input.tsx                       │   ├── input.tsx (unified)
+│   ├── badge.tsx                       │   ├── badge.tsx (unified)
+│   └── ...                             │   ├── data-table.tsx (from manage → universal)
+│                                       │   ├── stats-grid.tsx (from manage → universal)
+├── manage/ui/ (28 components, raw)     │   ├── page-header.tsx (from manage → universal)
+│   ├── button.tsx ← DUPLICATE          │   ├── form-drawer.tsx (from manage → universal)
+│   ├── input.tsx ← DUPLICATE           │   ├── crud-page.tsx (from manage → universal)
+│   ├── badge.tsx ← DUPLICATE           │   ├── status-badge.tsx (from manage → universal)
+│   ├── data-table.tsx ← UNIQUE         │   ├── confirm-dialog.tsx (from manage → universal)
+│   ├── stats-grid.tsx ← UNIQUE         │   ├── section-card.tsx (from manage → universal)
+│   └── ...                             │   ├── tooltip.tsx (from manage → universal)
+│                                       │   └── ... (total: ~48 unified components)
+│                                       │
+                                        ├── manage/ (layout only, no UI primitives)
+                                        │   ├── manage-sidebar.tsx (uses ds-admin-* tokens)
+                                        │   ├── manage-header.tsx (uses ds-admin-* tokens)
+                                        │   ├── manage-layout.tsx
+                                        │   └── module-registry.ts
+```
+
+**Migration path for manage UI components:**
+
+| Manage Component | Action | Priority |
+|---|---|---|
+| `button.tsx` | **DELETE** — use `ui/button.tsx` with `variant="primary"` | P0 |
+| `input.tsx` | **DELETE** — use `ui/input.tsx` | P0 |
+| `select.tsx` | **DELETE** — use `ui/select.tsx` | P0 |
+| `label.tsx` | **DELETE** — use `ui/label.tsx` | P0 |
+| `textarea.tsx` | **DELETE** — use `ui/textarea.tsx` | P0 |
+| `badge.tsx` | **DELETE** — use `ui/badge.tsx` | P0 |
+| `tabs.tsx` | **DELETE** — use `ui/tabs.tsx` | P0 |
+| `drawer.tsx` | **DELETE** — use `ui/drawer.tsx` | P1 |
+| `dropdown-menu.tsx` | **DELETE** — use `ui/dropdown-menu.tsx` | P1 |
+| `toast.tsx` | **DELETE** — use `ui/toast.tsx` | P1 |
+| `skeleton.tsx` | **MERGE** — add manage variants to `ui/skeleton.tsx` | P1 |
+| `empty-state.tsx` | **DELETE** — use `ui/empty-state.tsx` | P1 |
+| `data-table.tsx` | **MOVE** to `ui/data-table.tsx` + convert to ds-tokens | P0 |
+| `table.tsx` | **MOVE** to `ui/table.tsx` (keep as simpler alternative) | P1 |
+| `stats-grid.tsx` | **MOVE** to `ui/stats-grid.tsx` + convert to ds-tokens | P1 |
+| `page-header.tsx` | **MOVE** to `ui/page-header.tsx` + convert to ds-tokens | P0 |
+| `form-drawer.tsx` | **MOVE** to `ui/form-drawer.tsx` + convert to ds-tokens | P1 |
+| `crud-page.tsx` | **MOVE** to `ui/crud-page.tsx` + convert to ds-tokens | P1 |
+| `status-badge.tsx` | **MOVE** to `ui/status-badge.tsx` + convert to ds-tokens | P0 |
+| `confirm-dialog.tsx` | **MOVE** to `ui/confirm-dialog.tsx` + convert to ds-tokens | P1 |
+| `section-card.tsx` | **MOVE** to `ui/section-card.tsx` + convert to ds-tokens | P1 |
+| `focus-modal.tsx` | **MOVE** to `ui/focus-modal.tsx` + convert to ds-tokens | P2 |
+| `icon-button.tsx` | **MOVE** to `ui/icon-button.tsx` + convert to ds-tokens | P1 |
+| `heading.tsx` | **DELETE** — use standard Tailwind text utilities | P2 |
+| `text.tsx` | **DELETE** — use standard Tailwind text utilities | P2 |
+| `container.tsx` | **DELETE** — trivial wrapper (`space-y-6`) | P2 |
+| `tooltip.tsx` | **MOVE** to `ui/tooltip.tsx` + convert to ds-tokens | P1 |
+
+**Result:** 12 components deleted, 12 components moved/promoted, 3 deleted as trivial.
+
+### 31.4 Layout System Architecture
+
+**Current Layout Structure:**
+
+| Layout | File | Used By | Sidebar? | Issues |
+|---|---|---|---|---|
+| **StorefrontLayout** | `layout.tsx` | All storefront pages | No sidebar | Detects `/manage/` to skip navbar/footer |
+| **AccountLayout** | `account/account-layout.tsx` | Account pages | Yes (6 items) | Missing 13 account pages |
+| **ManageLayout** | `manage/manage-layout.tsx` | Manage pages | Yes (45 modules) | Hardcoded weight 100 |
+| **HelpLayout** | `help/help-center-layout.tsx` | Help pages | Yes | OK |
+| **VendorLayout** | MISSING | — | — | 56 vendor pages have no layout |
+| **AnalyticsLayout** | MISSING | — | — | No analytics section |
+| **BusinessLayout** | MISSING | — | — | 4 business pages use AccountLayout |
+| **CMSLayout** | MISSING | — | — | No CMS-specific layout for content-editor |
+
+**Target Layout Hierarchy:**
+
+```
+ROOT LAYOUT (layout.tsx)
+├── StorefrontLayout (Navbar + Footer)
+│   ├── Public Pages (storefront, verticals, CMS)
+│   ├── AccountLayout (sidebar: 26 items)
+│   │   └── Account Pages
+│   ├── BusinessLayout (NEW, sidebar: 8 items)
+│   │   └── B2B Portal Pages
+│   └── VendorLayout (NEW, sidebar: ~20 items)
+│       └── Vendor Dashboard Pages
+│
+├── ManageLayout (RoleGuard + ManageSidebar)
+│   ├── CMS Mode (weight ≥ 30, CMS sidebar only)
+│   │   └── manage/cms/* pages
+│   ├── Tenant Mode (weight ≥ 40, full sidebar)
+│   │   └── manage/* pages (minus cms/platform)
+│   └── Platform Mode (weight ≥ 90, full + platform sidebar)
+│       └── manage/platform/* pages
+│
+└── AnalyticsLayout (NEW, RoleGuard weight ≥ 20)
+    └── analytics/* pages
+```
+
+**Target Layout CSS Token Requirements:**
+
+```css
+/* Layout-specific tokens needed in theme.css */
+
+/* Sidebar dimensions */
+--layout-sidebar-width: 216px;
+--layout-sidebar-collapsed-width: 64px;
+--layout-header-height: 48px;
+--layout-content-max-width: 1440px;
+
+/* Layout backgrounds */
+--color-ds-layout-storefront-bg: var(--color-ds-background);
+--color-ds-layout-manage-bg: var(--color-ds-admin-page-bg);
+--color-ds-layout-vendor-bg: var(--color-ds-admin-page-bg);
+--color-ds-layout-analytics-bg: var(--color-ds-admin-page-bg);
+```
+
+---
+
+## Section 32: Theme and Branding Architecture — Current vs Target
+
+### 32.1 Current Branding Pipeline
+
+```
+CURRENT BRANDING FLOW:
+
+1. App loads → BrandingProvider initializes
+2. BrandingProvider reads tenant handle from URL or localStorage
+3. Fetches tenant config from API: GET /store/stores?handle=dakkah
+4. On response: Directly sets CSS variables on document.documentElement:
+   - --color-primary → branding.themeConfig.primaryColor
+   - --color-secondary → branding.themeConfig.secondaryColor
+   - --font-family → branding.themeConfig.fontFamily
+
+5. SEPARATELY: ThemeProvider initializes
+6. Reads light/dark mode preference
+7. Creates full Theme object from TS tokens
+8. Calls injectThemeCSS() → inserts <style> tag with ALL CSS variables
+
+RACE CONDITION: Steps 4 and 8 both set --color-primary.
+ThemeProvider always runs first (sync), BrandingProvider runs later (async fetch).
+So BrandingProvider wins — which is correct behavior, but accidental.
+```
+
+### 32.2 Tenant Branding Capabilities
+
+**What tenants CAN customize (current):**
+
+| Property | CSS Variable | Applied Via | Works? |
+|---|---|---|---|
+| Primary Color | `--color-primary` | BrandingProvider | YES (storefront only) |
+| Secondary Color | `--color-secondary` | BrandingProvider | YES (storefront only) |
+| Font Family | `--font-family` | BrandingProvider | PARTIAL (not linked to tokens) |
+| Favicon | Direct DOM update | useStoreTheme | YES |
+| Page Title | Direct DOM update | useStoreTheme | YES |
+| Logo | Branding context value | Components read directly | YES |
+
+**What tenants CANNOT customize (gaps):**
+
+| Property | Reason | Impact |
+|---|---|---|
+| Admin/manage colors | Manage uses hardcoded gray/violet, ignores CSS vars | HIGH — admin always looks the same |
+| Dark mode | ThemeProvider supports it, but no UI toggle exists | MEDIUM |
+| Border radius | Not exposed in branding config | LOW |
+| Spacing scale | Not exposed in branding config | LOW |
+| Shadow intensity | Not exposed in branding config | LOW |
+| Typography sizes | Not exposed in branding config | LOW |
+| Vertical brand colors | Hardcoded in route files | HIGH — verticals can't match tenant brand |
+| Success/warning/error colors | Not exposed in branding config | LOW |
+| Logo in manage sidebar | Hardcoded "Dakkah" text + violet icon | HIGH — always shows "Dakkah" |
+
+### 32.3 Target Branding Architecture
+
+```
+TARGET BRANDING FLOW:
+
+1. App loads → ThemeProvider initializes with default theme
+2. ThemeProvider injects base CSS variables from tokens
+
+3. BrandingProvider fetches tenant config:
+   GET /store/stores?handle=[tenant]
+
+4. Tenant config includes EXPANDED branding:
+   {
+     themeConfig: {
+       primaryColor: "#2563eb",
+       secondaryColor: "#f1f5f9",
+       accentColor: "#8b5cf6",
+       adminAccentColor: "#7c3aed",
+       successColor: "#22c55e",
+       borderRadius: "0.5rem",
+       fontFamily: "Inter",
+       displayFont: "Plus Jakarta Sans",
+       mode: "light" | "dark" | "system",
+     },
+     branding: {
+       logo: { url, alt },
+       favicon: { url },
+       adminLogo: { url, alt },     ← NEW: logo for manage sidebar
+       tenantName: "Dakkah",
+     },
+     verticalOverrides: {            ← NEW: per-vertical theming
+       bookings: { primaryColor: "#3b82f6", secondaryColor: "#6366f1" },
+       restaurants: { primaryColor: "#f97316", secondaryColor: "#ef4444" },
+     },
+   }
+
+5. BrandingProvider applies expanded overrides via CSS variables:
+   --color-primary → themeConfig.primaryColor
+   --color-secondary → themeConfig.secondaryColor
+   --color-admin-accent → themeConfig.adminAccentColor
+   --border-radius-lg → themeConfig.borderRadius
+   --font-sans → themeConfig.fontFamily
+
+6. ALL components (storefront + manage + vendor + analytics) respond
+   because they ALL use ds-* tokens → var(--color-*) → tenant value
+```
+
+### 32.4 Dark Mode Architecture
+
+**Current state:** ThemeProvider has light/dark theme objects. No UI toggle exists. Always renders light mode.
+
+**Target:**
+
+```
+DARK MODE IMPLEMENTATION:
+
+1. Add mode toggle to user menu (or settings)
+2. ThemeProvider setMode("dark") triggers:
+   a. Swap theme object (lightTheme → darkTheme)
+   b. Re-inject CSS variables via injectThemeCSS()
+   c. All ds-* tokens automatically update
+3. Store preference in localStorage + user profile
+4. Support "system" mode (prefers-color-scheme media query)
+5. Manage pages ALSO switch (because they use ds-admin-* → var() → theme)
+
+CSS variable cascade:
+:root {
+  --color-primary: hsl(221 83% 53%);        /* light */
+  --color-background: hsl(0 0% 100%);        /* light */
+}
+:root[data-theme="dark"] {
+  --color-primary: hsl(217 91% 60%);         /* dark */
+  --color-background: hsl(222 47% 11%);      /* dark */
+}
+```
+
+---
+
+## Section 33: Style and Layout Patterns — Current vs Target
+
+### 33.1 CSS Class Naming Convention Audit
+
+**Three competing naming patterns:**
+
+| Pattern | Example | Used By | Count |
+|---|---|---|---|
+| **ds-* semantic tokens** | `bg-ds-primary`, `text-ds-foreground`, `border-ds-border` | Storefront UI components | ~4,409 instances |
+| **Raw Tailwind utilities** | `bg-white`, `text-gray-700`, `border-gray-200` | Manage components, vertical pages | ~938 instances |
+| **enterprise-* CSS classes** | `.enterprise-card`, `.btn-enterprise-primary`, `.badge-success` | app.css @layer components | ~30 class definitions |
+
+**The `enterprise-*` classes in app.css** define a THIRD styling approach:
+```css
+.enterprise-card {
+  background-color: var(--color-ds-card);     /* Uses tokens */
+  border: 1px solid var(--color-ds-border);   /* Uses tokens */
+  border-radius: var(--radius-ds-xl);          /* Uses tokens */
+}
+
+.btn-enterprise-primary {
+  background-color: var(--color-ds-primary);
+  color: var(--color-ds-primary-foreground);
+}
+
+.badge-primary { ... }
+.badge-success { ... }
+.badge-warning { ... }
+.badge-danger { ... }
+```
+
+These enterprise classes ARE token-aware but are rarely used — they exist alongside Tailwind utility classes and ds-token Tailwind classes. They add confusion about which approach to use.
+
+### 33.2 Responsive Patterns
+
+**Current responsive breakpoints (from BreakpointTokens.ts):**
+```
+sm:  640px    → Mobile landscape
+md:  768px    → Tablet
+lg:  1024px   → Desktop
+xl:  1280px   → Large desktop
+2xl: 1536px   → Extra large
+```
+
+**Content container:** `.content-container` → `max-w-[1440px] w-full mx-auto px-6`
+
+**Responsive patterns used across components:**
+
+| Pattern | Usage | Example |
+|---|---|---|
+| Mobile-first grid | Most vertical pages | `grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3` |
+| Hidden/shown | Navigation | `hidden lg:flex` / `lg:hidden` |
+| Responsive padding | Content areas | `px-4 sm:px-6 lg:px-8` |
+| Responsive text | Hero sections | `text-2xl md:text-4xl lg:text-5xl` |
+| Sidebar collapse | Manage layout | `lg:translate-x-0` / `ltr:-translate-x-full` |
+
+### 33.3 RTL Support Analysis
+
+**Current RTL implementation (`rtl.css`):**
+
+Only 8 RTL-specific rules exist:
+1. `[dir="rtl"] { direction: rtl; text-align: right; }`
+2. Slide animation direction flips (4 rules)
+3. Gradient direction flips (2 rules: `bg-gradient-to-r` → `to left`)
+
+**RTL gaps:**
+- No logical CSS properties used (`start`/`end` instead of `left`/`right`)
+- `me-2` and `ms-auto` used in some components (good) but `ml-2`/`mr-2` still common
+- Manage sidebar uses `start-0` correctly for RTL
+- Many vertical pages use physical properties (`pl-4`, `mr-2`) that don't flip
+
+**Logical property usage audit:**
+
+| Property | Logical (RTL-safe) | Physical (NOT RTL-safe) | Ratio |
+|---|---|---|---|
+| `ms-*/me-*` (margin) | ~120 uses | `ml-*/mr-*` ~340 uses | 26% logical |
+| `ps-*/pe-*` (padding) | ~40 uses | `pl-*/pr-*` ~280 uses | 12% logical |
+| `start-*/end-*` (position) | ~30 uses | `left-*/right-*` ~90 uses | 25% logical |
+| `text-start/text-end` | ~15 uses | `text-left/text-right` ~25 uses | 38% logical |
+
+**Only ~25% of directional properties use RTL-safe logical properties.** 75% use physical properties that will break in Arabic (ar) locale.
+
+### 33.4 Target Style Conventions
+
+**Single source of truth:**
+```
+1. ALL colors → ds-* tokens (Tailwind classes)
+2. ALL spacing → Tailwind spacing scale (aligned with SpacingTokens)
+3. ALL typography → Tailwind text utilities (using theme fonts)
+4. ALL shadows → ds-* shadow tokens
+5. ALL border radius → ds-* radius tokens
+6. ALL transitions → Tailwind transition utilities (aligned with MotionTokens)
+7. ALL z-index → defined scale (not arbitrary)
+8. ALL directional → logical properties (start/end, not left/right)
+```
+
+**Target class naming convention:**
+```
+PREFER:                          AVOID:
+bg-ds-primary                    bg-blue-600, bg-violet-600, bg-[#2563eb]
+text-ds-foreground               text-gray-900, text-[#1e293b]
+border-ds-border                 border-gray-200, border-[#e2e8f0]
+bg-ds-card                       bg-white
+bg-ds-muted                      bg-gray-50, bg-gray-100
+shadow-ds-sm                     shadow-sm (raw Tailwind)
+rounded-ds-lg                    rounded-lg (when tokens differ)
+ms-2 / me-2                      ml-2 / mr-2
+ps-4 / pe-4                      pl-4 / pr-4
+start-0 / end-0                  left-0 / right-0
+```
+
+---
+
+## Section 34: Design System Implementation Checklist
+
+### 34.1 P0 — Critical (Token Unification)
+
+| # | Task | Files Affected | Effort |
+|---|---|---|---|
+| 1 | Add admin-specific tokens to `theme.css` | `theme.css` | 1h |
+| 2 | Add vertical color tokens to `VerticalColorTokens.ts` | New file + `theme.css` | 2h |
+| 3 | Add z-index and layout dimension tokens to `theme.css` | `theme.css` | 1h |
+| 4 | Convert `manage/ui/button.tsx` to use ds-tokens | `button.tsx` | 0.5h |
+| 5 | Convert all manage UI components to ds-tokens (28 files) | `manage/ui/*` | 4h |
+| 6 | Fix `BrandingProvider` / `ThemeProvider` race condition | `branding-context.tsx`, `ThemeContext.ts` | 2h |
+| 7 | Expose manage sidebar logo/name from tenant branding | `manage-layout.tsx`, `branding-context.tsx` | 1h |
+
+### 34.2 P1 — High Priority (Component Unification)
+
+| # | Task | Files Affected | Effort |
+|---|---|---|---|
+| 8 | Delete 12 duplicate manage UI components (use storefront UI) | `manage/ui/*`, all manage pages | 6h |
+| 9 | Move 12 manage-only components to `ui/` (data-table, stats-grid, etc.) | `manage/ui/*` → `ui/*` | 4h |
+| 10 | Update all manage page imports from `manage/ui` to `ui` | ~96 manage route files | 3h |
+| 11 | Convert vertical page hero gradients to use vertical tokens | ~51 vertical route files | 4h |
+| 12 | Replace physical CSS properties with logical (ms/me, ps/pe, start/end) | ~400 instances across codebase | 8h |
+| 13 | Add dark mode toggle UI to user menu / settings | `user-menu.tsx`, `account/settings.tsx` | 2h |
+| 14 | Implement `cityos-design-system` types in actual components | `ui/*` components | 8h |
+
+### 34.3 P2 — Medium Priority (Polish)
+
+| # | Task | Files Affected | Effort |
+|---|---|---|---|
+| 15 | Remove `enterprise-*` CSS classes from `app.css` (consolidate to Tailwind) | `app.css`, usage sites | 2h |
+| 16 | Create VendorLayout/VendorSidebar with ds-tokens | New components | 4h |
+| 17 | Create AnalyticsLayout/AnalyticsSidebar with ds-tokens | New components | 3h |
+| 18 | Create BusinessLayout with ds-tokens | New component | 2h |
+| 19 | Expand BrandingProvider to support full theme config | `branding-context.tsx` | 3h |
+| 20 | Add dark mode color set for admin tokens | `theme.css`, `ColorTokens.ts` | 2h |
+
+### 34.4 P3 — Nice to Have
+
+| # | Task | Files Affected | Effort |
+|---|---|---|---|
+| 21 | Create Storybook/component gallery for unified UI components | New setup | 8h |
+| 22 | Implement `ShadowTokens`/`ElevationTokens` deduplication | Token files | 1h |
+| 23 | Create CSS-in-JS extraction for SSR token injection | Theme runtime | 4h |
+| 24 | Add per-vertical dark mode color palettes | Token files | 3h |
+| 25 | Implement responsive spacing tokens in components | All layout components | 4h |
+
+### 34.5 Impact Summary
+
+| Metric | Current | After P0 | After P0+P1 |
+|---|---|---|---|
+| **Hardcoded colors** | 239 instances | ~50 (admin tokens added) | ~0 |
+| **Duplicate components** | 13 pairs | 0 (manage uses storefront UI) | 0 |
+| **Dark mode support** | Storefront only | Storefront + manage | All layouts |
+| **Tenant theming scope** | Storefront colors only | All sections | All + verticals |
+| **RTL-safe properties** | ~25% | ~25% | ~90%+ |
+| **Component library size** | 64 total (36+28) | ~48 unified | ~48 unified |
+| **enterprise-* classes** | ~30 definitions | ~30 (unchanged) | 0 (removed) |
+| **Design system types used** | 0% | 0% | ~60% |
