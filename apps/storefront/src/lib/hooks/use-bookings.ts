@@ -42,18 +42,22 @@ export function useServices() {
 }
 
 export function useService(serviceId: string) {
-  const { data: services } = useServices()
+  const { data: services, isLoading: servicesLoading } = useServices()
   
-  return useQuery({
+  const query = useQuery({
     queryKey: bookingKeys.service(serviceId),
     queryFn: async () => {
-      // Service details come from the list
       return services?.find(
         (s) => s.id === serviceId || s.handle === serviceId
-      )
+      ) || null
     },
     enabled: !!serviceId && !!services,
   })
+
+  return {
+    ...query,
+    isLoading: servicesLoading || query.isLoading,
+  }
 }
 
 // Hooks - Availability

@@ -183,7 +183,7 @@ The complete cross-reference of all 48 verticals across public storefront, store
 | 17 | Financial Products | YES `/financial/` | YES `/financial/{id}` | YES `/store/financial-products` | YES `/store/financial-products/[id]` | YES `/admin/financial-products` | YES `/admin/financial-products/[id]` | YES `/vendor/financial-product` | YES `/manage/financial-products` | YES | YES | Vendor uses singular path (`financial-product`) |
 | 18 | Fitness | YES `/fitness/` | YES `/fitness/{id}` | YES `/store/fitness` | YES `/store/fitness/[id]` | YES `/admin/fitness` | YES `/admin/fitness/[id]` | YES `/vendor/fitness` | YES `/manage/fitness` | YES | YES | Complete |
 | 19 | Flash Deals | YES `/flash-deals/` | YES `/flash-deals/{id}` | YES `/store/flash-sales` | YES `/store/flash-sales/[id]` | YES `/admin/flash-deals` | YES `/admin/flash-deals/[id]` | YES `/vendor/flash-deals` | YES `/manage/flash-deals` | YES | YES | Complete. Name note: public=flash-deals, store=flash-sales |
-| 20 | Flash Sales | YES `/flash-sales/` | NO | YES `/store/flash-sales` | YES `/store/flash-sales/[id]` | YES `/admin/flash-sales` | YES `/admin/flash-sales/[id]` | YES `/vendor/flash-sales` | YES `/manage/flash-sales` | YES | YES | Complete. No public detail page (by design) |
+| 20 | Flash Sales | NO (by design) | NO | YES `/store/flash-sales` | YES `/store/flash-sales/[id]` | YES `/admin/flash-sales` | YES `/admin/flash-sales/[id]` | YES `/vendor/flash-sales` | YES `/manage/flash-sales` | YES | YES | Complete. No public listing/detail pages (admin/vendor/manage only — public-facing flash deals are covered by Flash Deals vertical #19) |
 | 21 | Freelance | YES `/freelance/` | YES `/freelance/{id}` | YES `/store/freelance` | YES `/store/freelance/[id]` | YES `/admin/freelance` | YES `/admin/freelance/[id]` | YES `/vendor/freelance` | YES `/manage/freelance` | YES | YES | Complete |
 | 22 | Gift Cards | YES `/gift-cards/` | NO | YES `/store/gift-cards` | YES `/store/gift-cards/[id]` | YES `/admin/gift-cards` | YES `/admin/gift-cards/[id]` | YES `/vendor/gift-cards` | YES `/manage/gift-cards` | YES | YES | Complete. No public detail page (by design) |
 | 23 | Gift Cards Shop | YES `/gift-cards-shop/` | YES `/gift-cards-shop/{id}` | YES `/store/gift-cards` | YES `/store/gift-cards/[id]` | — | — | — | — | — | — | Shares backend with Gift Cards. No dedicated admin/vendor/manage |
@@ -665,4 +665,4 @@ Campaigns/Crowdfunding, Charity, Classifieds, Financial Products, Loyalty Progra
 
 ### By-Design Exceptions (4)
 
-Flash Sales (no public detail), Gift Cards Shop (shared backend), Places/POI (content-driven), Volume Pricing (admin/vendor-only)
+Flash Sales (no public pages — admin/vendor/manage only, public flash deals served by Flash Deals vertical), Gift Cards Shop (shared backend), Places/POI (content-driven), Volume Pricing (admin/vendor-only)
