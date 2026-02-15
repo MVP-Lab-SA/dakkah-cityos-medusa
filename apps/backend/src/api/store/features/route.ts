@@ -1,4 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../lib/api-error-handler"
 
 /**
  * GET /store/features
@@ -83,80 +84,85 @@ export async function GET(
   req: MedusaRequest,
   res: MedusaResponse
 ) {
-  // In production, fetch from database based on store/tenant ID
-  // For now, return a sensible default that can be overridden
+  try {
+    // In production, fetch from database based on store/tenant ID
+    // For now, return a sensible default that can be overridden
   
-  // Simulating fetching from admin settings
-  const adminFeaturesResponse = await fetch(
-    `${process.env.BACKEND_URL || 'http://localhost:9000'}/admin/settings/features`,
-    {
-      headers: {
-        'Authorization': req.headers.authorization || ''
+    // Simulating fetching from admin settings
+    const adminFeaturesResponse = await fetch(
+      `${process.env.BACKEND_URL || 'http://localhost:9000'}/admin/settings/features`,
+      {
+        headers: {
+          'Authorization': req.headers.authorization || ''
+        }
       }
+    ).catch(() => null)
+  
+    let features: any = null
+    if (adminFeaturesResponse?.ok) {
+      const data = await adminFeaturesResponse.json()
+      features = data.features
     }
-  ).catch(() => null)
   
-  let features: any = null
-  if (adminFeaturesResponse?.ok) {
-    const data = await adminFeaturesResponse.json()
-    features = data.features
-  }
+    // If we can't fetch admin features, use defaults
+    if (!features) {
+      features = getDefaultPublicFeatures()
+    }
   
-  // If we can't fetch admin features, use defaults
-  if (!features) {
-    features = getDefaultPublicFeatures()
-  }
-  
-  // Transform admin features to public feature flags
-  const publicFeatures: PublicFeatureFlags = {
-    marketplace: features.modules?.marketplace?.enabled || false,
-    b2b: features.modules?.b2b?.enabled || false,
-    subscriptions: features.modules?.subscriptions?.enabled || false,
-    bookings: features.modules?.bookings?.enabled || false,
-    reviews: features.modules?.reviews?.enabled || true,
-    volumePricing: features.modules?.volumePricing?.enabled || false,
-    wishlists: features.modules?.wishlists?.enabled || true,
-    giftCards: features.modules?.giftCards?.enabled || false,
-    quotes: features.modules?.b2b?.enabled && features.modules?.b2b?.config?.enableQuotes || false,
-    invoices: features.modules?.b2b?.enabled && features.modules?.b2b?.config?.enableInvoices || false,
+    // Transform admin features to public feature flags
+    const publicFeatures: PublicFeatureFlags = {
+      marketplace: features.modules?.marketplace?.enabled || false,
+      b2b: features.modules?.b2b?.enabled || false,
+      subscriptions: features.modules?.subscriptions?.enabled || false,
+      bookings: features.modules?.bookings?.enabled || false,
+      reviews: features.modules?.reviews?.enabled || true,
+      volumePricing: features.modules?.volumePricing?.enabled || false,
+      wishlists: features.modules?.wishlists?.enabled || true,
+      giftCards: features.modules?.giftCards?.enabled || false,
+      quotes: features.modules?.b2b?.enabled && features.modules?.b2b?.config?.enableQuotes || false,
+      invoices: features.modules?.b2b?.enabled && features.modules?.b2b?.config?.enableInvoices || false,
     
-    config: {
-      marketplace: features.modules?.marketplace?.enabled ? {
-        allowRegistration: features.modules.marketplace.config.allowVendorRegistration,
-        showVendorPages: features.modules.marketplace.config.showVendorPages
-      } : undefined,
+      config: {
+        marketplace: features.modules?.marketplace?.enabled ? {
+          allowRegistration: features.modules.marketplace.config.allowVendorRegistration,
+          showVendorPages: features.modules.marketplace.config.showVendorPages
+        } : undefined,
       
-      b2b: features.modules?.b2b?.enabled ? {
-        allowRegistration: features.modules.b2b.config.allowCompanyRegistration,
-        enableQuotes: features.modules.b2b.config.enableQuotes
-      } : undefined,
+        b2b: features.modules?.b2b?.enabled ? {
+          allowRegistration: features.modules.b2b.config.allowCompanyRegistration,
+          enableQuotes: features.modules.b2b.config.enableQuotes
+        } : undefined,
       
-      subscriptions: features.modules?.subscriptions?.enabled ? {
-        showOnProducts: features.modules.subscriptions.config.showOnProductPages,
-        trialEnabled: features.modules.subscriptions.config.trialEnabled,
-        trialDays: features.modules.subscriptions.config.trialDays
-      } : undefined,
+        subscriptions: features.modules?.subscriptions?.enabled ? {
+          showOnProducts: features.modules.subscriptions.config.showOnProductPages,
+          trialEnabled: features.modules.subscriptions.config.trialEnabled,
+          trialDays: features.modules.subscriptions.config.trialDays
+        } : undefined,
       
-      bookings: features.modules?.bookings?.enabled ? {
-        showOnHomepage: features.modules.bookings.config.showOnHomepage
-      } : undefined,
+        bookings: features.modules?.bookings?.enabled ? {
+          showOnHomepage: features.modules.bookings.config.showOnHomepage
+        } : undefined,
       
-      reviews: features.modules?.reviews?.enabled ? {
-        showOnProducts: features.modules.reviews.config.showOnProductPages,
-        allowPhotos: features.modules.reviews.config.allowPhotos
-      } : undefined,
+        reviews: features.modules?.reviews?.enabled ? {
+          showOnProducts: features.modules.reviews.config.showOnProductPages,
+          allowPhotos: features.modules.reviews.config.allowPhotos
+        } : undefined,
       
-      volumePricing: features.modules?.volumePricing?.enabled ? {
-        showOnProducts: features.modules.volumePricing.config.showOnProductPages,
-        showSavings: features.modules.volumePricing.config.showSavingsPercentage
-      } : undefined
-    },
+        volumePricing: features.modules?.volumePricing?.enabled ? {
+          showOnProducts: features.modules.volumePricing.config.showOnProductPages,
+          showSavings: features.modules.volumePricing.config.showSavingsPercentage
+        } : undefined
+      },
     
-    homepage: features.homepage || { sections: [] },
-    navigation: features.navigation || getDefaultNavigation()
-  }
+      homepage: features.homepage || { sections: [] },
+      navigation: features.navigation || getDefaultNavigation()
+    }
   
-  res.json({ features: publicFeatures })
+    res.json({ features: publicFeatures })
+
+  } catch (error) {
+    handleApiError(res, error, "GET store features")
+  }
 }
 
 function getDefaultPublicFeatures() {

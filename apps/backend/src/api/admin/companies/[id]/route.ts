@@ -1,58 +1,74 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const query = req.scope.resolve("query")
-  const { id } = req.params
+  try {
+    const query = req.scope.resolve("query")
+    const { id } = req.params
   
-  const { data: [company] } = await query.graph({
-    entity: "company",
-    fields: [
-      "id",
-      "name",
-      "email",
-      "phone",
-      "tax_id",
-      "status",
-      "tier",
-      "credit_limit",
-      "available_credit",
-      "payment_terms_days",
-      "requires_po",
-      "auto_approve_under",
-      "billing_address",
-      "shipping_address",
-      "metadata",
-      "created_at",
-      "updated_at",
-      "users.*",
-      "payment_terms.*",
-      "tax_exemptions.*",
-    ],
-    filters: { id },
-  })
+    const { data: [company] } = await query.graph({
+      entity: "company",
+      fields: [
+        "id",
+        "name",
+        "email",
+        "phone",
+        "tax_id",
+        "status",
+        "tier",
+        "credit_limit",
+        "available_credit",
+        "payment_terms_days",
+        "requires_po",
+        "auto_approve_under",
+        "billing_address",
+        "shipping_address",
+        "metadata",
+        "created_at",
+        "updated_at",
+        "users.*",
+        "payment_terms.*",
+        "tax_exemptions.*",
+      ],
+      filters: { id },
+    })
   
-  if (!company) {
-    return res.status(404).json({ message: "Company not found" })
+    if (!company) {
+      return res.status(404).json({ message: "Company not found" })
+    }
+  
+    res.json({ company })
+
+  } catch (error) {
+    handleApiError(res, error, "GET admin companies id")
   }
-  
-  res.json({ company })
 }
 
 export async function PUT(req: MedusaRequest, res: MedusaResponse) {
-  const companyModuleService = req.scope.resolve("companyModuleService") as any
-  const { id } = req.params
-  const body = req.body as Record<string, unknown>
+  try {
+    const companyModuleService = req.scope.resolve("companyModuleService") as any
+    const { id } = req.params
+    const body = req.body as Record<string, unknown>
   
-  const company = await companyModuleService.updateCompanies({ id, ...body })
+    const company = await companyModuleService.updateCompanies({ id, ...body })
   
-  res.json({ company })
+    res.json({ company })
+
+  } catch (error) {
+    handleApiError(res, error, "PUT admin companies id")
+  }
 }
 
 export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
-  const companyModuleService = req.scope.resolve("companyModuleService") as any
-  const { id } = req.params
+  try {
+    const companyModuleService = req.scope.resolve("companyModuleService") as any
+    const { id } = req.params
   
-  await companyModuleService.deleteCompanies(id)
+    await companyModuleService.deleteCompanies(id)
   
-  res.status(200).json({ id, deleted: true })
+    res.status(200).json({ id, deleted: true })
+
+  } catch (error) {
+    handleApiError(res, error, "DELETE admin companies id")
+  }
 }

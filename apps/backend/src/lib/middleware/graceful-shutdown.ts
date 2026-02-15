@@ -1,3 +1,5 @@
+import { createLogger } from "../../lib/logger"
+const logger = createLogger("lib:middleware")
 const shutdownHandlers: Array<() => Promise<void>> = []
 let isShuttingDown = false
 
@@ -9,9 +11,8 @@ async function gracefulShutdown(signal: string) {
   if (isShuttingDown) return
   isShuttingDown = true
 
-  console.log(
-    JSON.stringify({
-      timestamp: new Date().toISOString(),
+  logger.info(String(JSON.stringify({
+      timestamp: new Date()).toISOString(),
       level: "info",
       message: `Received ${signal}. Starting graceful shutdown...`,
       type: "lifecycle",
@@ -48,9 +49,8 @@ async function gracefulShutdown(signal: string) {
 
   clearTimeout(shutdownTimeout)
 
-  console.log(
-    JSON.stringify({
-      timestamp: new Date().toISOString(),
+  logger.info(String(JSON.stringify({
+      timestamp: new Date()).toISOString(),
       level: "info",
       message: "Graceful shutdown complete.",
       type: "lifecycle",

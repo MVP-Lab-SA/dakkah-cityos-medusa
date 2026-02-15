@@ -1,5 +1,7 @@
 import { MedusaContainer } from "@medusajs/framework/types"
 import crypto from "crypto"
+import { createLogger } from "../../lib/logger"
+const logger = createLogger("integration:orchestrator")
 
 export type SyncSystem = "payload" | "erpnext" | "fleetbase" | "waltid" | "stripe" | "temporal"
 export type SyncDirection = "inbound" | "outbound"
@@ -74,16 +76,14 @@ export class SyncTracker {
     }
 
     this.entries.set(entry.id, entry)
-    console.log(
-      `[IntegrationOrchestrator] Sync entry created: ${entry.id} | ${entry.system} | ${entry.entity_type}:${entry.entity_id} | ${entry.direction}`
-    )
+    logger.info("[IntegrationOrchestrator] Sync entry created: ${entry.id} | ${entry.system} | ${entry.entity_type}:${entry.entity_id} | ${entry.direction}")
     return entry
   }
 
   updateSyncStatus(id: string, status: SyncStatus, errorMessage?: string): ISyncEntry | null {
     const entry = this.entries.get(id)
     if (!entry) {
-      console.log(`[IntegrationOrchestrator] Sync entry not found: ${id}`)
+      logger.info("[IntegrationOrchestrator] Sync entry not found: ${id}")
       return null
     }
 
@@ -110,9 +110,7 @@ export class SyncTracker {
     entry.error_message = null
 
     this.entries.set(id, entry)
-    console.log(
-      `[IntegrationOrchestrator] Sync success: ${entry.id} | ${entry.system} | ${entry.entity_type}:${entry.entity_id}`
-    )
+    logger.info("[IntegrationOrchestrator] Sync success: ${entry.id} | ${entry.system} | ${entry.entity_type}:${entry.entity_id}")
     return entry
   }
 
@@ -126,9 +124,7 @@ export class SyncTracker {
     entry.completed_at = new Date()
 
     this.entries.set(id, entry)
-    console.log(
-      `[IntegrationOrchestrator] Sync failed: ${entry.id} | ${entry.system} | ${entry.entity_type}:${entry.entity_id} | ${errorMessage}`
-    )
+    logger.info("[IntegrationOrchestrator] Sync failed: ${entry.id} | ${entry.system} | ${entry.entity_type}:${entry.entity_id} | ${errorMessage}")
     return entry
   }
 

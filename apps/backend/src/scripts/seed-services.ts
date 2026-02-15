@@ -1,4 +1,6 @@
 import { ExecArgs } from "@medusajs/framework/types"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("scripts:seed-services")
 
 const services = [
   {
@@ -182,20 +184,20 @@ export default async function seedServices({ container }: ExecArgs) {
     const list = Array.isArray(tenants) ? tenants : [tenants].filter(Boolean)
     if (list.length > 0 && list[0]?.id) {
       tenantId = list[0].id
-      console.log(`Using Dakkah tenant: ${tenantId}`)
+      logger.info(`Using Dakkah tenant: ${tenantId}`)
     } else {
       const allTenants = await tenantService.listTenants()
       const allList = Array.isArray(allTenants) ? allTenants : [allTenants].filter(Boolean)
       if (allList.length > 0 && allList[0]?.id) {
         tenantId = allList[0].id
-        console.log(`Dakkah not found, using first tenant: ${tenantId}`)
+        logger.info(`Dakkah not found, using first tenant: ${tenantId}`)
       }
     }
   } catch (err: any) {
-    console.log(`Could not fetch tenants: ${err.message}. Using placeholder: ${tenantId}`)
+    logger.info(`Could not fetch tenants: ${err.message}. Using placeholder: ${tenantId}`)
   }
 
-  console.log("Seeding services...")
+  logger.info("Seeding services...")
 
   for (const serviceData of services) {
     try {
@@ -203,19 +205,19 @@ export default async function seedServices({ container }: ExecArgs) {
       const existingList = Array.isArray(existing) ? existing : [existing].filter(Boolean)
 
       if (existingList.length > 0) {
-        console.log(`  - Service ${serviceData.handle} already exists, skipping`)
+        logger.info(`  - Service ${serviceData.handle} already exists, skipping`)
         continue
       }
 
       await bookingModule.createServiceProducts({ ...serviceData, tenant_id: tenantId })
-      console.log(`  - Created service: ${serviceData.name}`)
+      logger.info(`  - Created service: ${serviceData.name}`)
     } catch (error: any) {
       console.error(`  - Failed to create service ${serviceData.handle}: ${error.message}`)
     }
   }
 
   // Create availability for services
-  console.log("Creating service availability...")
+  logger.info("Creating service availability...")
 
   const weeklySchedule = {
     monday: [{ start: "09:00", end: "18:00" }],
@@ -251,11 +253,11 @@ export default async function seedServices({ container }: ExecArgs) {
         timezone: "Asia/Riyadh",
         is_active: true,
       })
-      console.log(`  - Created availability for: ${service.name}`)
+      logger.info(`  - Created availability for: ${service.name}`)
     } catch (error: any) {
       console.error(`  - Failed to create availability for ${service.name}: ${error.message}`)
     }
   }
 
-  console.log(`Seeded ${services.length} services with availability`)
+  logger.info(`Seeded ${services.length} services with availability`)
 }

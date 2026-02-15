@@ -1,5 +1,6 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework";
 import { z } from "zod";
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 const approveCompanySchema = z.object({
   credit_limit: z.string().optional(),
@@ -11,30 +12,35 @@ const approveCompanySchema = z.object({
  * Approve a pending company application
  */
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const companyService = req.scope.resolve("companyModuleService") as any;
-  const { id } = req.params;
-  const adminUserId = req.auth_context?.actor_id;
+  try {
+    const companyService = req.scope.resolve("companyModuleService") as any;
+    const { id } = req.params;
+    const adminUserId = req.auth_context?.actor_id;
 
-  const parsed = approveCompanySchema.parse(req.body);
+    const parsed = approveCompanySchema.parse(req.body);
 
-  // Get company
-  const company = await companyService.retrieveCompany(id);
+    // Get company
+    const company = await companyService.retrieveCompany(id);
 
-  if (company.status !== "pending") {
-    return res.status(400).json({
-      error: "Company must be in pending status to approve",
+    if (company.status !== "pending") {
+      return res.status(400).json({
+        error: "Company must be in pending status to approve",
+      });
+    }
+
+    // Approve company
+    const updated = await companyService.updateCompanies({
+      id,
+      status: "active",
+      approved_at: new Date(),
+      approved_by: adminUserId,
+      credit_limit: parsed.credit_limit || company.credit_limit,
+      payment_terms_days: parsed.payment_terms_days || company.payment_terms_days,
     });
+
+    res.json({ company: updated });
+
+  } catch (error) {
+    handleApiError(res, error, "POST admin companies id approve")
   }
-
-  // Approve company
-  const updated = await companyService.updateCompanies({
-    id,
-    status: "active",
-    approved_at: new Date(),
-    approved_by: adminUserId,
-    credit_limit: parsed.credit_limit || company.credit_limit,
-    payment_terms_days: parsed.payment_terms_days || company.payment_terms_days,
-  });
-
-  res.json({ company: updated });
 }

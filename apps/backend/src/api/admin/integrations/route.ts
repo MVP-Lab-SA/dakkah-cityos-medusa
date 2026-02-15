@@ -1,4 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { createLogger } from "../../../lib/logger"
+const logger = createLogger("api:admin/integrations")
 
 const INTEGRATION_SYSTEMS = [
   { name: "payload", envVar: "PAYLOAD_CMS_URL_DEV" },
@@ -27,7 +29,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       configured_count: systems.filter((s) => s.configured).length,
     })
   } catch (error: any) {
-    console.log(`[Integrations] Error fetching integration overview: ${error.message}`)
+    logger.error("[Integrations] fetching integration overview: ${error.message}")
     return res.status(500).json({ error: error.message })
   }
 }

@@ -1,11 +1,13 @@
 // @ts-nocheck
 import { MedusaContainer } from "@medusajs/framework/types"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("jobs:subscription-renewal-reminder")
 
 export default async function subscriptionRenewalReminderJob(container: MedusaContainer) {
   const query = container.resolve("query")
   const eventBus = container.resolve("event_bus")
   
-  console.log("[Renewal Reminder] Checking for upcoming renewals...")
+  logger.info("[Renewal Reminder] Checking for upcoming renewals...")
   
   try {
     const now = new Date()
@@ -47,11 +49,11 @@ export default async function subscriptionRenewalReminderJob(container: MedusaCo
         })
         
         totalReminders++
-        console.log(`[Renewal Reminder] ${days}-day reminder sent for subscription ${subscription.id}`)
+        logger.info("[Renewal Reminder] ${days}-day reminder sent for subscription ${subscription.id}")
       }
     }
     
-    console.log(`[Renewal Reminder] Sent ${totalReminders} reminders`)
+    logger.info("[Renewal Reminder] Sent ${totalReminders} reminders")
   } catch (error) {
     console.error("[Renewal Reminder] Job failed:", error)
   }

@@ -1,4 +1,6 @@
 import { ExecArgs } from "@medusajs/framework/types"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("scripts:seed-vendors")
 
 const vendors = [
   {
@@ -113,20 +115,20 @@ export default async function seedVendors({ container }: ExecArgs) {
     const list = Array.isArray(tenants) ? tenants : [tenants].filter(Boolean)
     if (list.length > 0 && list[0]?.id) {
       tenantId = list[0].id
-      console.log(`Using Dakkah tenant: ${tenantId}`)
+      logger.info(`Using Dakkah tenant: ${tenantId}`)
     } else {
       const allTenants = await tenantService.listTenants()
       const allList = Array.isArray(allTenants) ? allTenants : [allTenants].filter(Boolean)
       if (allList.length > 0 && allList[0]?.id) {
         tenantId = allList[0].id
-        console.log(`Dakkah not found, using first tenant: ${tenantId}`)
+        logger.info(`Dakkah not found, using first tenant: ${tenantId}`)
       }
     }
   } catch (err: any) {
-    console.log(`Could not fetch tenants: ${err.message}. Using placeholder: ${tenantId}`)
+    logger.info(`Could not fetch tenants: ${err.message}. Using placeholder: ${tenantId}`)
   }
 
-  console.log("Seeding vendors...")
+  logger.info("Seeding vendors...")
 
   for (const vendorData of vendors) {
     try {
@@ -134,16 +136,16 @@ export default async function seedVendors({ container }: ExecArgs) {
       const existingList = Array.isArray(existing) ? existing : [existing].filter(Boolean)
 
       if (existingList.length > 0) {
-        console.log(`  - Vendor ${vendorData.handle} already exists, skipping`)
+        logger.info(`  - Vendor ${vendorData.handle} already exists, skipping`)
         continue
       }
 
       await vendorModule.createVendors({ ...vendorData, tenant_id: tenantId })
-      console.log(`  - Created vendor: ${vendorData.business_name}`)
+      logger.info(`  - Created vendor: ${vendorData.business_name}`)
     } catch (error: any) {
       console.error(`  - Failed to create vendor ${vendorData.handle}: ${error.message}`)
     }
   }
 
-  console.log(`Seeded ${vendors.length} vendors`)
+  logger.info(`Seeded ${vendors.length} vendors`)
 }

@@ -1,11 +1,13 @@
 // @ts-nocheck
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import crypto from "crypto"
+import { createLogger } from "../../../lib/logger"
+const logger = createLogger("api:webhooks/stripe")
 
 async function handlePaymentIntentSucceeded(data: any, correlationId: string, req: MedusaRequest) {
   const paymentIntent = data
   const orderId = paymentIntent.metadata?.medusa_order_id || paymentIntent.metadata?.orderId
-  console.log(`[Webhook:Stripe] payment_intent.succeeded: ${paymentIntent.id}, order: ${orderId || "N/A"}, correlation: ${correlationId}`)
+  logger.info("[Webhook:Stripe] payment_intent.succeeded: ${paymentIntent.id}, order: ${orderId || "N/A"}, correlation: ${correlationId}")
 
   if (orderId) {
     try {
@@ -29,28 +31,28 @@ async function handlePaymentIntentSucceeded(data: any, correlationId: string, re
 
 async function handlePaymentIntentFailed(data: any, correlationId: string) {
   const paymentIntent = data
-  console.log(`[Webhook:Stripe] payment_intent.failed: ${paymentIntent.id}, correlation: ${correlationId}`)
-  console.log(`[Webhook:Stripe] Failure reason: ${paymentIntent.last_payment_error?.message || "Unknown"}`)
+  logger.info("[Webhook:Stripe] payment_intent.failed: ${paymentIntent.id}, correlation: ${correlationId}")
+  logger.info("[Webhook:Stripe] Failure reason: ${paymentIntent.last_payment_error?.message || "Unknown"}")
 }
 
 async function handleChargeRefunded(data: any, correlationId: string) {
   const charge = data
-  console.log(`[Webhook:Stripe] charge.refunded: ${charge.id}, amount_refunded: ${charge.amount_refunded}, correlation: ${correlationId}`)
+  logger.info("[Webhook:Stripe] charge.refunded: ${charge.id}, amount_refunded: ${charge.amount_refunded}, correlation: ${correlationId}")
 }
 
 async function handleCheckoutSessionCompleted(data: any, correlationId: string) {
   const session = data
-  console.log(`[Webhook:Stripe] checkout.session.completed: ${session.id}, payment_status: ${session.payment_status}, correlation: ${correlationId}`)
+  logger.info("[Webhook:Stripe] checkout.session.completed: ${session.id}, payment_status: ${session.payment_status}, correlation: ${correlationId}")
 }
 
 async function handleInvoicePaid(data: any, correlationId: string) {
   const invoice = data
-  console.log(`[Webhook:Stripe] invoice.paid: ${invoice.id}, amount_paid: ${invoice.amount_paid}, correlation: ${correlationId}`)
+  logger.info("[Webhook:Stripe] invoice.paid: ${invoice.id}, amount_paid: ${invoice.amount_paid}, correlation: ${correlationId}")
 }
 
 async function handleInvoicePaymentFailed(data: any, correlationId: string) {
   const invoice = data
-  console.log(`[Webhook:Stripe] invoice.payment_failed: ${invoice.id}, correlation: ${correlationId}`)
+  logger.info("[Webhook:Stripe] invoice.payment_failed: ${invoice.id}, correlation: ${correlationId}")
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -63,7 +65,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     if (webhookSecret) {
       const signature = req.headers["stripe-signature"] as string
       if (!signature) {
-        console.log(`[Webhook:Stripe] Missing stripe-signature header (correlation: ${correlationId})`)
+        logger.info("[Webhook:Stripe] Missing stripe-signature header (correlation: ${correlationId})")
         return res.status(400).json({ error: "Missing signature" })
       }
 
@@ -73,7 +75,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         const rawBody = typeof req.body === "string" ? req.body : JSON.stringify(req.body)
         stripeEvent = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret)
       } catch (err: any) {
-        console.log(`[Webhook:Stripe] Signature verification failed (correlation: ${correlationId}): ${err.message}`)
+        logger.info("[Webhook:Stripe] Signature verification failed (correlation: ${correlationId}): ${err.message}")
         return res.status(400).json({ error: "Invalid signature" })
       }
     } else {
@@ -83,7 +85,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       }
     }
 
-    console.log(`[Webhook:Stripe] Received event: ${stripeEvent.type} (correlation: ${correlationId})`)
+    logger.info("[Webhook:Stripe] Received event: ${stripeEvent.type} (correlation: ${correlationId})")
 
     const eventData = stripeEvent.data?.object || stripeEvent.data || {}
 
@@ -107,7 +109,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         await handleInvoicePaymentFailed(eventData, correlationId)
         break
       default:
-        console.log(`[Webhook:Stripe] Unhandled event type: ${stripeEvent.type} (correlation: ${correlationId})`)
+        logger.info("[Webhook:Stripe] Unhandled event type: ${stripeEvent.type} (correlation: ${correlationId})")
         break
     }
 

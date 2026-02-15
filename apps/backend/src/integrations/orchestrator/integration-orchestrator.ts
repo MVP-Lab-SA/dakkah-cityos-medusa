@@ -3,6 +3,8 @@ import crypto from "crypto"
 import { SyncTracker, SyncSystem, ISyncEntry } from "./sync-tracker"
 import { IntegrationRegistry, createDefaultAdapters, IntegrationHealthStatus } from "./integration-registry"
 import { DurableSyncTracker, durableSyncTracker } from "../../lib/platform/sync-tracker"
+import { createLogger } from "../../lib/logger"
+const logger = createLogger("integration:orchestrator")
 
 export interface SyncOptions {
   correlation_id?: string
@@ -63,7 +65,7 @@ export class IntegrationOrchestrator {
       payload_hash: payloadHash,
       correlation_id: options.correlation_id || entry.correlation_id,
       tenant_id: options.tenant_id || "default",
-    }).catch((err) => console.log(`[IntegrationOrchestrator] Durable tracking record error: ${err.message}`))
+    }).catch((err) => logger.info("[IntegrationOrchestrator] Durable tracking record error: ${err.message}"))
 
     const adapter = this.registry.getAdapter(system)
     if (!adapter) {
@@ -72,7 +74,7 @@ export class IntegrationOrchestrator {
     }
 
     if (!adapter.isConfigured()) {
-      console.log(`[IntegrationOrchestrator] System ${system} not configured, skipping sync`)
+      logger.info("[IntegrationOrchestrator] System ${system} not configured, skipping sync")
       this.tracker.markFailed(entry.id, `System ${system} not configured (missing env vars)`)
       return this.tracker.getRecentSyncs(1)[0] || entry
     }
@@ -81,15 +83,15 @@ export class IntegrationOrchestrator {
       const result = await adapter.syncEntity(entityType, entityId, data)
       if (result.success) {
         this.tracker.markSuccess(entry.id)
-        this.durableTracker.updateStatus(entry.id, "completed").catch((err) => console.log(`[IntegrationOrchestrator] Durable status update error: ${err.message}`))
+        this.durableTracker.updateStatus(entry.id, "completed").catch((err) => logger.info("[IntegrationOrchestrator] Durable status update error: ${err.message}"))
       } else {
         this.tracker.markFailed(entry.id, result.error || "Unknown sync error")
-        this.durableTracker.updateStatus(entry.id, "failed", result.error || "Unknown sync error").catch((err) => console.log(`[IntegrationOrchestrator] Durable status update error: ${err.message}`))
+        this.durableTracker.updateStatus(entry.id, "failed", result.error || "Unknown sync error").catch((err) => logger.info("[IntegrationOrchestrator] Durable status update error: ${err.message}"))
       }
     } catch (error: any) {
-      console.log(`[IntegrationOrchestrator] Sync error for ${system}/${entityType}/${entityId}: ${error.message}`)
+      logger.info("[IntegrationOrchestrator] Sync error for ${system}/${entityType}/${entityId}: ${error.message}")
       this.tracker.markFailed(entry.id, error.message)
-      this.durableTracker.updateStatus(entry.id, "failed", error.message).catch((err) => console.log(`[IntegrationOrchestrator] Durable status update error: ${err.message}`))
+      this.durableTracker.updateStatus(entry.id, "failed", error.message).catch((err) => logger.info("[IntegrationOrchestrator] Durable status update error: ${err.message}"))
     }
 
     return this.entries_get(entry.id) || entry
@@ -106,7 +108,7 @@ export class IntegrationOrchestrator {
 
     for (const adapter of adapters) {
       if (!adapter.isConfigured()) {
-        console.log(`[IntegrationOrchestrator] Skipping ${adapter.name} (not configured)`)
+        logger.info("[IntegrationOrchestrator] Skipping ${adapter.name} (not configured)")
         continue
       }
 
@@ -120,7 +122,7 @@ export class IntegrationOrchestrator {
         )
         results.push(entry)
       } catch (error: any) {
-        console.log(`[IntegrationOrchestrator] Fan-out error for ${adapter.name}: ${error.message}`)
+        logger.info("[IntegrationOrchestrator] Fan-out error for ${adapter.name}: ${error.message}")
       }
     }
 
@@ -136,7 +138,7 @@ export class IntegrationOrchestrator {
     let failed = 0
     const errors: string[] = []
 
-    console.log(`[IntegrationOrchestrator] Syncing node hierarchy for tenant: ${tenantId}`)
+    logger.info("[IntegrationOrchestrator] Syncing node hierarchy for tenant: ${tenantId}")
 
     try {
       const query = this.container.resolve("query") as any
@@ -148,7 +150,7 @@ export class IntegrationOrchestrator {
       })
 
       if (!nodes || nodes.length === 0) {
-        console.log(`[IntegrationOrchestrator] No nodes found for tenant: ${tenantId}`)
+        logger.info("[IntegrationOrchestrator] No nodes found for tenant: ${tenantId}")
         return { synced: 0, failed: 0, errors: [] }
       }
 
@@ -165,13 +167,11 @@ export class IntegrationOrchestrator {
         }
       }
     } catch (error: any) {
-      console.log(`[IntegrationOrchestrator] Node hierarchy sync error: ${error.message}`)
+      logger.info("[IntegrationOrchestrator] Node hierarchy sync error: ${error.message}")
       errors.push(`Hierarchy sync error: ${error.message}`)
     }
 
-    console.log(
-      `[IntegrationOrchestrator] Node hierarchy sync complete: ${synced} synced, ${failed} failed`
-    )
+    logger.info("[IntegrationOrchestrator] Node hierarchy sync complete: ${synced} synced, ${failed} failed")
     return { synced, failed, errors }
   }
 
@@ -197,7 +197,7 @@ export class IntegrationOrchestrator {
       direction: "inbound",
       correlation_id: payload?.correlation_id || entry.correlation_id,
       tenant_id: payload?.tenant_id || "default",
-    }).catch((err) => console.log(`[IntegrationOrchestrator] Durable tracking record error: ${err.message}`))
+    }).catch((err) => logger.info("[IntegrationOrchestrator] Durable tracking record error: ${err.message}"))
 
     const adapter = this.registry.getAdapter(system)
     if (!adapter) {
@@ -218,7 +218,7 @@ export class IntegrationOrchestrator {
         error: result.error,
       }
     } catch (error: any) {
-      console.log(`[IntegrationOrchestrator] Webhook error from ${system}: ${error.message}`)
+      logger.info("[IntegrationOrchestrator] Webhook error from ${system}: ${error.message}")
       this.tracker.markFailed(entry.id, error.message)
       return { processed: false, syncEntry: this.entries_get(entry.id) || entry, error: error.message }
     }
@@ -236,7 +236,7 @@ export class IntegrationOrchestrator {
     let failedCount = 0
     const errors: string[] = []
 
-    console.log(`[IntegrationOrchestrator] Retrying ${failedSyncs.length} failed syncs`)
+    logger.info("[IntegrationOrchestrator] Retrying ${failedSyncs.length} failed syncs")
 
     for (const entry of failedSyncs) {
       retried++
@@ -267,9 +267,7 @@ export class IntegrationOrchestrator {
       }
     }
 
-    console.log(
-      `[IntegrationOrchestrator] Retry complete: ${succeeded} succeeded, ${failedCount} failed out of ${retried} retried`
-    )
+    logger.info("[IntegrationOrchestrator] Retry complete: ${succeeded} succeeded, ${failedCount} failed out of ${retried} retried")
     return { retried, succeeded, failed: failedCount, errors }
   }
 
@@ -302,6 +300,6 @@ export function createIntegrationOrchestrator(container: MedusaContainer): Integ
     registry.registerAdapter(adapter)
   }
 
-  console.log("[IntegrationOrchestrator] Orchestrator initialized with default adapters and durable sync tracking")
+  logger.info("[IntegrationOrchestrator] Orchestrator initialized with default adapters and durable sync tracking")
   return new IntegrationOrchestrator(container, tracker, registry, durableSyncTracker)
 }

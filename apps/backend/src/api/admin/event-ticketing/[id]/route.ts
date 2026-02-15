@@ -1,5 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { z } from "zod"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 const updateSchema = z.object({
   title: z.string().min(1).optional(),
@@ -25,25 +26,40 @@ const updateSchema = z.object({
 })
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const moduleService = req.scope.resolve("eventTicketing") as any
-  const { id } = req.params
-  const [item] = await moduleService.listEvents({ id }, { take: 1 })
-  if (!item) return res.status(404).json({ message: "Not found" })
-  return res.json({ item })
+  try {
+    const moduleService = req.scope.resolve("eventTicketing") as any
+    const { id } = req.params
+    const [item] = await moduleService.listEvents({ id }, { take: 1 })
+    if (!item) return res.status(404).json({ message: "Not found" })
+    return res.json({ item })
+
+  } catch (error) {
+    handleApiError(res, error, "GET admin event-ticketing id")
+  }
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const moduleService = req.scope.resolve("eventTicketing") as any
-  const { id } = req.params
-  const validation = updateSchema.safeParse(req.body)
-  if (!validation.success) return res.status(400).json({ message: "Validation failed", errors: validation.error.issues })
-  const item = await moduleService.updateEvents({ id, ...validation.data })
-  return res.json({ item })
+  try {
+    const moduleService = req.scope.resolve("eventTicketing") as any
+    const { id } = req.params
+    const validation = updateSchema.safeParse(req.body)
+    if (!validation.success) return res.status(400).json({ message: "Validation failed", errors: validation.error.issues })
+    const item = await moduleService.updateEvents({ id, ...validation.data })
+    return res.json({ item })
+
+  } catch (error) {
+    handleApiError(res, error, "POST admin event-ticketing id")
+  }
 }
 
 export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
-  const moduleService = req.scope.resolve("eventTicketing") as any
-  const { id } = req.params
-  await moduleService.deleteEvents([id])
-  return res.status(204).send()
+  try {
+    const moduleService = req.scope.resolve("eventTicketing") as any
+    const { id } = req.params
+    await moduleService.deleteEvents([id])
+    return res.status(204).send()
+
+  } catch (error) {
+    handleApiError(res, error, "DELETE admin event-ticketing id")
+  }
 }

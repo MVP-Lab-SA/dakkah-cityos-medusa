@@ -1,4 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { createLogger } from "../../../../lib/logger"
+const logger = createLogger("api:admin/webhooks")
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
   try {
@@ -11,7 +13,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       const signature = req.headers["stripe-signature"] as string
 
       if (!signature) {
-        console.log("[Webhook:Stripe] Missing stripe-signature header")
+        logger.info("[Webhook:Stripe] Missing stripe-signature header")
         return res.status(401).json({ error: "Missing signature" })
       }
 
@@ -19,7 +21,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         const rawBody = typeof req.body === "string" ? req.body : JSON.stringify(req.body)
         stripeEvent = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret)
       } catch (err) {
-        console.log(`[Webhook:Stripe] Signature verification failed: ${err instanceof Error ? err.message : err}`)
+        logger.info("[Webhook:Stripe] Signature verification failed: ${err instanceof Error ? err.message : err}")
         return res.status(401).json({ error: "Invalid signature" })
       }
     } else {
@@ -29,7 +31,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       }
     }
 
-    console.log(`[Webhook:Stripe] Received event: ${stripeEvent.type}`)
+    logger.info("[Webhook:Stripe] Received event: ${stripeEvent.type}")
 
     let processed = false
 
@@ -37,7 +39,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       case "payment_intent.succeeded": {
         const paymentIntent = stripeEvent.data.object
         const orderId = paymentIntent.metadata?.medusa_order_id || paymentIntent.metadata?.orderId
-        console.log(`[Webhook:Stripe] Payment succeeded: ${paymentIntent.id}, order: ${orderId || "N/A"}`)
+        logger.info("[Webhook:Stripe] Payment succeeded: ${paymentIntent.id}, order: ${orderId || "N/A"}")
 
         if (orderId) {
           try {
@@ -61,7 +63,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
               })
             }
           } catch (err) {
-            console.log(`[Webhook:Stripe] Error updating order payment status: ${err instanceof Error ? err.message : err}`)
+            logger.error("[Webhook:Stripe] updating order payment status: ${err instanceof Error ? err.message : err}")
           }
 
           try {
@@ -76,9 +78,9 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
               tenantId: paymentIntent.metadata?.tenantId,
               source: "stripe-webhook",
             })
-            console.log(`[Webhook:Stripe] Dispatched invoice creation to Temporal for order ${orderId}`)
+            logger.info("[Webhook:Stripe] Dispatched invoice creation to Temporal for order ${orderId}")
           } catch (err) {
-            console.log(`[Webhook:Stripe] Error dispatching invoice creation: ${err instanceof Error ? err.message : err}`)
+            logger.error("[Webhook:Stripe] dispatching invoice creation: ${err instanceof Error ? err.message : err}")
           }
         }
         processed = true
@@ -88,7 +90,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       case "payment_intent.payment_failed": {
         const paymentIntent = stripeEvent.data.object
         const orderId = paymentIntent.metadata?.medusa_order_id || paymentIntent.metadata?.orderId
-        console.log(`[Webhook:Stripe] Payment failed: ${paymentIntent.id}, order: ${orderId || "N/A"}`)
+        logger.info("[Webhook:Stripe] Payment failed: ${paymentIntent.id}, order: ${orderId || "N/A"}")
 
         if (orderId) {
           try {
@@ -112,7 +114,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
               })
             }
           } catch (err) {
-            console.log(`[Webhook:Stripe] Error updating failed payment status: ${err instanceof Error ? err.message : err}`)
+            logger.error("[Webhook:Stripe] updating failed payment status: ${err instanceof Error ? err.message : err}")
           }
         }
         processed = true
@@ -122,7 +124,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       case "charge.refunded": {
         const charge = stripeEvent.data.object
         const orderId = charge.metadata?.medusa_order_id || charge.metadata?.orderId
-        console.log(`[Webhook:Stripe] Charge refunded: ${charge.id}, order: ${orderId || "N/A"}`)
+        logger.info("[Webhook:Stripe] Charge refunded: ${charge.id}, order: ${orderId || "N/A"}")
 
         if (orderId) {
           try {
@@ -146,7 +148,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
               })
             }
           } catch (err) {
-            console.log(`[Webhook:Stripe] Error updating refund status: ${err instanceof Error ? err.message : err}`)
+            logger.error("[Webhook:Stripe] updating refund status: ${err instanceof Error ? err.message : err}")
           }
         }
         processed = true
@@ -156,8 +158,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       case "account.updated": {
         const account = stripeEvent.data.object
         const tenantId = account.metadata?.tenantId
-        console.log(`[Webhook:Stripe] Connect account updated: ${account.id}, tenant: ${tenantId || "N/A"}`)
-        console.log(`[Webhook:Stripe] Account charges_enabled: ${account.charges_enabled}, payouts_enabled: ${account.payouts_enabled}`)
+        logger.info("[Webhook:Stripe] Connect account updated: ${account.id}, tenant: ${tenantId || "N/A"}")
+        logger.info("[Webhook:Stripe] Account charges_enabled: ${account.charges_enabled}, payouts_enabled: ${account.payouts_enabled}")
 
         if (tenantId) {
           try {
@@ -181,10 +183,10 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
                   stripe_account_updated_at: new Date().toISOString(),
                 },
               })
-              console.log(`[Webhook:Stripe] Vendor ${vendors[0].id} Stripe account status updated`)
+              logger.info("[Webhook:Stripe] Vendor ${vendors[0].id} Stripe account status updated")
             }
           } catch (err) {
-            console.log(`[Webhook:Stripe] Error updating vendor Stripe status: ${err instanceof Error ? err.message : err}`)
+            logger.error("[Webhook:Stripe] updating vendor Stripe status: ${err instanceof Error ? err.message : err}")
           }
         }
         processed = true
@@ -193,19 +195,19 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
       case "checkout.session.completed": {
         const session = stripeEvent.data.object
-        console.log(`[Webhook:Stripe] Checkout session completed: ${session.id}, payment_status: ${session.payment_status}`)
+        logger.info("[Webhook:Stripe] Checkout session completed: ${session.id}, payment_status: ${session.payment_status}")
         processed = true
         break
       }
 
       default:
-        console.log(`[Webhook:Stripe] Unhandled event type: ${stripeEvent.type}`)
+        logger.info("[Webhook:Stripe] Unhandled event type: ${stripeEvent.type}")
         break
     }
 
     return res.status(200).json({ received: true, type: stripeEvent.type, processed })
   } catch (error) {
-    console.log(`[Webhook:Stripe] Error: ${error instanceof Error ? error.message : error}`)
+    logger.error("[Webhook:Stripe] ${error instanceof Error ? error.message : error}")
     return res.status(500).json({ error: "Internal server error" })
   }
 }

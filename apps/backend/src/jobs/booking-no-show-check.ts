@@ -1,12 +1,14 @@
 // @ts-nocheck
 import { MedusaContainer } from "@medusajs/framework/types"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("jobs:booking-no-show-check")
 
 export default async function bookingNoShowCheckJob(container: MedusaContainer) {
   const query = container.resolve("query")
   const bookingService = container.resolve("booking")
   const eventBus = container.resolve("event_bus")
   
-  console.log("[No-Show Check] Checking for no-shows...")
+  logger.info("[No-Show Check] Checking for no-shows...")
   
   try {
     // Check bookings that should have started 30+ minutes ago but weren't checked in
@@ -22,7 +24,7 @@ export default async function bookingNoShowCheckJob(container: MedusaContainer) 
     })
     
     if (!missedBookings || missedBookings.length === 0) {
-      console.log("[No-Show Check] No missed bookings found")
+      logger.info("[No-Show Check] No missed bookings found")
       return
     }
     
@@ -46,13 +48,13 @@ export default async function bookingNoShowCheckJob(container: MedusaContainer) 
         })
         
         noShowCount++
-        console.log(`[No-Show Check] Marked booking ${booking.id} as no-show`)
+        logger.info("[No-Show Check] Marked booking ${booking.id} as no-show")
       } catch (error) {
         console.error(`[No-Show Check] Failed to mark booking ${booking.id}:`, error)
       }
     }
     
-    console.log(`[No-Show Check] Marked ${noShowCount} bookings as no-show`)
+    logger.info("[No-Show Check] Marked ${noShowCount} bookings as no-show")
   } catch (error) {
     console.error("[No-Show Check] Job failed:", error)
   }

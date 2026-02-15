@@ -7,6 +7,8 @@ import {
   createSalesChannelsWorkflow,
   createStoresWorkflow,
 } from "@medusajs/medusa/core-flows"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("scripts:seed-saudi-data")
 
 /**
  * Comprehensive Saudi Arabia Data Seeding Script
@@ -20,12 +22,12 @@ import {
  */
 
 export default async function ({ container }: ExecArgs) {
-  console.log("🇸🇦 Starting Saudi Arabia data seeding...")
+  logger.info("🇸🇦 Starting Saudi Arabia data seeding...")
 
   const query = container.resolve("query")
   
   // Step 1: Create Saudi Regions
-  console.log("\n📍 Step 1: Creating Saudi Arabia regions...")
+  logger.info("\n📍 Step 1: Creating Saudi Arabia regions...")
   
   const { result: regions } = await createRegionsWorkflow(container).run({
     input: {
@@ -46,10 +48,10 @@ export default async function ({ container }: ExecArgs) {
     },
   })
   
-  console.log(`✅ Created ${regions.length} regions`)
+  logger.info(`✅ Created ${regions.length} regions`)
 
   // Step 2: Create Sales Channels
-  console.log("\n📺 Step 2: Creating sales channels...")
+  logger.info("\n📺 Step 2: Creating sales channels...")
   
   const { result: salesChannels } = await createSalesChannelsWorkflow(container).run({
     input: {
@@ -74,10 +76,10 @@ export default async function ({ container }: ExecArgs) {
     },
   })
   
-  console.log(`✅ Created ${salesChannels.length} sales channels`)
+  logger.info(`✅ Created ${salesChannels.length} sales channels`)
 
   // Step 3: Create Product Categories
-  console.log("\n📦 Step 3: Creating product categories...")
+  logger.info("\n📦 Step 3: Creating product categories...")
   
   const { result: categories } = await createProductCategoriesWorkflow(container).run({
     input: {
@@ -173,7 +175,7 @@ export default async function ({ container }: ExecArgs) {
     },
   })
   
-  console.log(`✅ Created ${categories.length} product categories`)
+  logger.info(`✅ Created ${categories.length} product categories`)
 
   // Get category IDs for products
   const { data: allCategories } = await query.graph({
@@ -187,7 +189,7 @@ export default async function ({ container }: ExecArgs) {
   }
 
   // Step 4: Create Products
-  console.log("\n🛍️  Step 4: Creating Saudi products...")
+  logger.info("\n🛍️  Step 4: Creating Saudi products...")
   
   const productsToCreate = [
     // Men's Thobes
@@ -635,25 +637,25 @@ export default async function ({ container }: ExecArgs) {
         input: { products: [product as any] },
       })
       createdProducts++
-      console.log(`  ✅ Created product: ${product.title}`)
+      logger.info(`  ✅ Created product: ${product.title}`)
     } catch (error) {
-      console.log(`  ⚠️  Error creating ${product.title}:`, error.message)
+      logger.info(String(`  ⚠️  Error creating ${product.title}:`, error.message))
     }
   }
   
-  console.log(`\n✅ Created ${createdProducts} products`)
+  logger.info(`\n✅ Created ${createdProducts} products`)
 
   // Step 5: Summary
-  console.log("\n📊 Seeding Summary:")
-  console.log(`  - Regions: ${regions.length}`)
-  console.log(`  - Sales Channels: ${salesChannels.length}`)
-  console.log(`  - Categories: ${categories.length}`)
-  console.log(`  - Products: ${createdProducts}`)
+  logger.info("\n📊 Seeding Summary:")
+  logger.info(`  - Regions: ${regions.length}`)
+  logger.info(`  - Sales Channels: ${salesChannels.length}`)
+  logger.info(`  - Categories: ${categories.length}`)
+  logger.info(`  - Products: ${createdProducts}`)
   
-  console.log("\n✨ Saudi Arabia data seeding completed successfully!")
-  console.log("\n📝 Next steps:")
-  console.log("  1. Add environment variables for SendGrid, Stripe, and Meilisearch")
-  console.log("  2. Enable Stripe payment in regions via Admin dashboard")
-  console.log("  3. Generate product images")
-  console.log("  4. Index products to Meilisearch")
+  logger.info("\n✨ Saudi Arabia data seeding completed successfully!")
+  logger.info("\n📝 Next steps:")
+  logger.info("  1. Add environment variables for SendGrid, Stripe, and Meilisearch")
+  logger.info("  2. Enable Stripe payment in regions via Admin dashboard")
+  logger.info("  3. Generate product images")
+  logger.info("  4. Index products to Meilisearch")
 }

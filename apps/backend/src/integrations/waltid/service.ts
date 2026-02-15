@@ -1,6 +1,8 @@
 // @ts-nocheck
 import axios, { AxiosInstance } from "axios";
 import { MedusaError } from "@medusajs/framework/utils";
+import { createLogger } from "../../lib/logger"
+const logger = createLogger("integration:waltid")
 
 export interface WaltIdConfig {
   apiUrl: string;
@@ -33,7 +35,7 @@ export class WaltIdService {
     document: Record<string, any>;
   }> {
     try {
-      console.log(`[WaltId] Creating DID with method: did:${method}`);
+      logger.info("[WaltId] Creating DID with method: did:${method}");
       const response = await this.client.post("/v1/did/create", {
         method,
       });
@@ -55,7 +57,7 @@ export class WaltIdService {
     document: Record<string, any>;
   }> {
     try {
-      console.log(`[WaltId] Resolving DID: ${did}`);
+      logger.info("[WaltId] Resolving DID: ${did}");
       const response = await this.client.post("/v1/did/resolve", {
         did,
       });
@@ -83,7 +85,7 @@ export class WaltIdService {
     credentialId: string;
   }> {
     try {
-      console.log(`[WaltId] Issuing credential of type: ${data.credentialType}`);
+      logger.info("[WaltId] Issuing credential of type: ${data.credentialType}");
       const payload: Record<string, any> = {
         issuerDid: data.issuerDid,
         subjectDid: data.subjectDid,
@@ -124,7 +126,7 @@ export class WaltIdService {
     errors: string[];
   }> {
     try {
-      console.log("[WaltId] Verifying credential");
+      logger.info("[WaltId] Verifying credential");
       const response = await this.client.post("/v1/credentials/verify", {
         credential: typeof credential === "string" ? credential : JSON.stringify(credential),
       });
@@ -144,7 +146,7 @@ export class WaltIdService {
 
   async listCredentials(holderDid: string): Promise<Array<Record<string, any>>> {
     try {
-      console.log(`[WaltId] Listing credentials for holder: ${holderDid}`);
+      logger.info("[WaltId] Listing credentials for holder: ${holderDid}");
       const response = await this.client.get("/v1/credentials", {
         params: { holderDid },
       });
@@ -160,7 +162,7 @@ export class WaltIdService {
 
   async revokeCredential(credentialId: string): Promise<{ success: boolean }> {
     try {
-      console.log(`[WaltId] Revoking credential: ${credentialId}`);
+      logger.info("[WaltId] Revoking credential: ${credentialId}");
       await this.client.post("/v1/credentials/revoke", {
         credentialId,
       });
@@ -193,7 +195,7 @@ export class WaltIdService {
       );
     }
 
-    console.log(`[WaltId] Issuing KYC credential for: ${data.customerEmail}`);
+    logger.info("[WaltId] Issuing KYC credential for: ${data.customerEmail}");
     return this.issueCredential({
       issuerDid,
       subjectDid: data.subjectDid,
@@ -226,7 +228,7 @@ export class WaltIdService {
       );
     }
 
-    console.log(`[WaltId] Issuing vendor credential for: ${data.vendorName}`);
+    logger.info("[WaltId] Issuing vendor credential for: ${data.vendorName}");
     return this.issueCredential({
       issuerDid,
       subjectDid: data.subjectDid,
@@ -259,7 +261,7 @@ export class WaltIdService {
       );
     }
 
-    console.log(`[WaltId] Issuing membership credential for: ${data.memberName}`);
+    logger.info("[WaltId] Issuing membership credential for: ${data.memberName}");
     return this.issueCredential({
       issuerDid,
       subjectDid: data.subjectDid,
@@ -295,7 +297,7 @@ export class WaltIdService {
       );
     }
 
-    console.log(`[WaltId] Issuing tenant operator credential for: ${data.tenantName}`);
+    logger.info("[WaltId] Issuing tenant operator credential for: ${data.tenantName}");
     return this.issueCredential({
       issuerDid,
       subjectDid: data.did,
@@ -330,7 +332,7 @@ export class WaltIdService {
       );
     }
 
-    console.log(`[WaltId] Issuing POI verification credential for: ${data.poiName}`);
+    logger.info("[WaltId] Issuing POI verification credential for: ${data.poiName}");
     return this.issueCredential({
       issuerDid,
       subjectDid: data.did,
@@ -365,7 +367,7 @@ export class WaltIdService {
       );
     }
 
-    console.log(`[WaltId] Issuing marketplace seller credential for: ${data.vendorName}`);
+    logger.info("[WaltId] Issuing marketplace seller credential for: ${data.vendorName}");
     return this.issueCredential({
       issuerDid,
       subjectDid: data.did,
@@ -393,7 +395,7 @@ export class WaltIdService {
     let credentials: Array<Record<string, any>> = [];
 
     try {
-      console.log(`[WaltId] Verifying identity for DID: ${did}`);
+      logger.info("[WaltId] Verifying identity for DID: ${did}");
 
       const resolved = await this.resolveDID(did);
       document = resolved.document;

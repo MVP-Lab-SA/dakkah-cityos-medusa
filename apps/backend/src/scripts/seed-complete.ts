@@ -18,6 +18,8 @@ import {
   linkSalesChannelsToStockLocationWorkflow,
   updateStoresWorkflow,
 } from "@medusajs/medusa/core-flows"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("scripts:seed-complete")
 
 export default async function seedComplete({ container }: ExecArgs) {
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER)
@@ -27,14 +29,14 @@ export default async function seedComplete({ container }: ExecArgs) {
   const salesChannelModuleService = container.resolve(Modules.SALES_CHANNEL)
   const storeModuleService = container.resolve(Modules.STORE)
 
-  console.log("========================================")
-  console.log("Starting Complete Data Seed")
-  console.log("========================================\n")
+  logger.info("========================================")
+  logger.info("Starting Complete Data Seed")
+  logger.info("========================================\n")
 
   // ============================================================
   // STEP 1: Admin User
   // ============================================================
-  console.log("Step 1: Creating admin user...")
+  logger.info("Step 1: Creating admin user...")
   try {
     const { data: existingUsers } = await query.graph({
       entity: "user",
@@ -71,24 +73,24 @@ export default async function seedComplete({ container }: ExecArgs) {
         },
       })
 
-      console.log("  Created admin user: admin@dakkah.sa")
+      logger.info("  Created admin user: admin@dakkah.sa")
     } else {
-      console.log("  Admin user already exists")
+      logger.info("  Admin user already exists")
     }
   } catch (error: any) {
-    console.log(`  Admin user step skipped: ${error.message}`)
+    logger.error(`  Admin user step skipped: ${error.message}`)
   }
 
   // ============================================================
   // STEP 2: Store Settings
   // ============================================================
-  console.log("\nStep 2: Setting up store...")
+  logger.info("\nStep 2: Setting up store...")
   const [store] = await storeModuleService.listStores()
 
   // ============================================================
   // STEP 3: Sales Channels
   // ============================================================
-  console.log("\nStep 3: Creating sales channels...")
+  logger.info("\nStep 3: Creating sales channels...")
   const channelConfigs = [
     { name: "Default Sales Channel", description: "Default sales channel" },
     { name: "Web Store", description: "Online web storefront" },
@@ -103,9 +105,9 @@ export default async function seedComplete({ container }: ExecArgs) {
         input: { salesChannelsData: [cfg] },
       })
       existing = result
-      console.log(`  Created: ${cfg.name}`)
+      logger.info(`  Created: ${cfg.name}`)
     } else {
-      console.log(`  Exists: ${cfg.name}`)
+      logger.info(`  Exists: ${cfg.name}`)
     }
     allChannels.push(existing[0])
   }
@@ -115,7 +117,7 @@ export default async function seedComplete({ container }: ExecArgs) {
   // ============================================================
   // STEP 4: Update Store
   // ============================================================
-  console.log("\nStep 4: Updating store settings...")
+  logger.info("\nStep 4: Updating store settings...")
   const { data: pricePreferences } = await query.graph({
     entity: "price_preference",
     fields: ["id"],
@@ -137,12 +139,12 @@ export default async function seedComplete({ container }: ExecArgs) {
       },
     },
   })
-  console.log("  Store updated with SAR default currency")
+  logger.info("  Store updated with SAR default currency")
 
   // ============================================================
   // STEP 5: Regions
   // ============================================================
-  console.log("\nStep 5: Creating regions...")
+  logger.info("\nStep 5: Creating regions...")
   let menaRegion: any = null
   let intlRegion: any = null
 
@@ -176,27 +178,27 @@ export default async function seedComplete({ container }: ExecArgs) {
     })
     menaRegion = regionResult[0]
     intlRegion = regionResult[1]
-    console.log(`  Created ${regionResult.length} regions`)
+    logger.info(`  Created ${regionResult.length} regions`)
   } else {
     const foundMena = existingRegions.find((r: any) => r.name === "MENA")
     const foundIntl = existingRegions.find((r: any) => r.name === "International")
     if (foundMena) {
       menaRegion = foundMena
-      console.log(`  MENA region found (${foundMena.id})`)
+      logger.info(`  MENA region found (${foundMena.id})`)
     } else {
       menaRegion = existingRegions[0]
-      console.log(`  MENA region not found, using fallback: ${existingRegions[0].name} (${existingRegions[0].id})`)
+      logger.info(`  MENA region not found, using fallback: ${existingRegions[0].name} (${existingRegions[0].id})`)
     }
     if (foundIntl) {
       intlRegion = foundIntl
     }
-    console.log(`  Regions already exist (${existingRegions.length})`)
+    logger.info(`  Regions already exist (${existingRegions.length})`)
   }
 
   // ============================================================
   // STEP 6: Stock Location
   // ============================================================
-  console.log("\nStep 6: Creating stock location...")
+  logger.info("\nStep 6: Creating stock location...")
   const stockLocationModule = container.resolve(Modules.STOCK_LOCATION)
   const existingLocations = await stockLocationModule.listStockLocations({ name: "Riyadh Warehouse" })
   let stockLocation: any
@@ -217,7 +219,7 @@ export default async function seedComplete({ container }: ExecArgs) {
       },
     })
     stockLocation = stockLocationResult[0]
-    console.log("  Created Riyadh Warehouse")
+    logger.info("  Created Riyadh Warehouse")
 
     try {
       await link.create({
@@ -225,17 +227,17 @@ export default async function seedComplete({ container }: ExecArgs) {
         [Modules.FULFILLMENT]: { fulfillment_provider_id: "manual_manual" },
       })
     } catch (linkError: any) {
-      console.log(`  Fulfillment provider link already exists or failed: ${linkError.message}`)
+      logger.error(`  Fulfillment provider link already exists or failed: ${linkError.message}`)
     }
   } else {
     stockLocation = existingLocations[0]
-    console.log("  Riyadh Warehouse already exists")
+    logger.info("  Riyadh Warehouse already exists")
   }
 
   // ============================================================
   // STEP 7: Fulfillment
   // ============================================================
-  console.log("\nStep 7: Setting up fulfillment...")
+  logger.info("\nStep 7: Setting up fulfillment...")
   const shippingProfiles = await fulfillmentModuleService.listShippingProfiles({ type: "default" })
   let shippingProfile = shippingProfiles.length ? shippingProfiles[0] : null
 
@@ -270,7 +272,7 @@ export default async function seedComplete({ container }: ExecArgs) {
         [Modules.FULFILLMENT]: { fulfillment_set_id: fulfillmentSet.id },
       })
     } catch (linkError: any) {
-      console.log(`  Fulfillment set link already exists or failed: ${linkError.message}`)
+      logger.error(`  Fulfillment set link already exists or failed: ${linkError.message}`)
     }
 
     await createShippingOptionsWorkflow(container).run({
@@ -309,29 +311,29 @@ export default async function seedComplete({ container }: ExecArgs) {
         },
       ],
     })
-    console.log("  Fulfillment and shipping options created")
+    logger.info("  Fulfillment and shipping options created")
   } else {
     fulfillmentSet = existingFulfillmentSets[0]
-    console.log("  Fulfillment set already exists")
+    logger.info("  Fulfillment set already exists")
   }
 
   // ============================================================
   // STEP 8: Link Sales Channels
   // ============================================================
-  console.log("\nStep 8: Linking sales channels to stock location...")
+  logger.info("\nStep 8: Linking sales channels to stock location...")
   try {
     await linkSalesChannelsToStockLocationWorkflow(container).run({
       input: { id: stockLocation.id, add: allChannelIds },
     })
-    console.log("  Sales channels linked")
+    logger.info("  Sales channels linked")
   } catch (linkError: any) {
-    console.log(`  Sales channel linking skipped (may already be linked): ${linkError.message}`)
+    logger.error(`  Sales channel linking skipped (may already be linked): ${linkError.message}`)
   }
 
   // ============================================================
   // STEP 9: Publishable API Key
   // ============================================================
-  console.log("\nStep 9: Creating publishable API key...")
+  logger.info("\nStep 9: Creating publishable API key...")
   let publishableApiKey: any = null
 
   try {
@@ -343,10 +345,10 @@ export default async function seedComplete({ container }: ExecArgs) {
 
     if (existingApiKeys && existingApiKeys.length > 0) {
       publishableApiKey = existingApiKeys[0]
-      console.log(`  Publishable API key already exists`)
+      logger.info(`  Publishable API key already exists`)
     }
   } catch (checkError: any) {
-    console.log(`  Could not check existing API keys: ${checkError.message}`)
+    logger.error(`  Could not check existing API keys: ${checkError.message}`)
   }
 
   if (!publishableApiKey) {
@@ -356,7 +358,7 @@ export default async function seedComplete({ container }: ExecArgs) {
       },
     })
     publishableApiKey = apiKeyResult[0]
-    console.log(`  API Key created successfully`)
+    logger.info(`  API Key created successfully`)
   }
 
   try {
@@ -364,13 +366,13 @@ export default async function seedComplete({ container }: ExecArgs) {
       input: { id: publishableApiKey.id, add: allChannelIds },
     })
   } catch (linkError: any) {
-    console.log(`  Sales channel to API key linking skipped: ${linkError.message}`)
+    logger.error(`  Sales channel to API key linking skipped: ${linkError.message}`)
   }
 
   // ============================================================
   // STEP 10: Tenant (Dakkah)
   // ============================================================
-  console.log("\nStep 10: Creating default tenant...")
+  logger.info("\nStep 10: Creating default tenant...")
   let tenantId: string | null = null
   try {
     const tenantService = container.resolve("tenant") as any
@@ -406,19 +408,19 @@ export default async function seedComplete({ container }: ExecArgs) {
         metadata: { seeded: true },
       })
       tenantId = tenant.id
-      console.log(`  Created tenant: Dakkah (${tenantId})`)
+      logger.info(`  Created tenant: Dakkah (${tenantId})`)
     } else {
       tenantId = tenantList[0].id
-      console.log(`  Tenant already exists: ${tenantId}`)
+      logger.info(`  Tenant already exists: ${tenantId}`)
     }
   } catch (error: any) {
-    console.log(`  Tenant creation skipped: ${error.message}`)
+    logger.error(`  Tenant creation skipped: ${error.message}`)
   }
 
   // ============================================================
   // STEP 10b: Update Store Name with Tenant Info
   // ============================================================
-  console.log("\nStep 10b: Updating store name to Dakkah CityOS...")
+  logger.info("\nStep 10b: Updating store name to Dakkah CityOS...")
   try {
     await updateStoresWorkflow(container).run({
       input: {
@@ -429,15 +431,15 @@ export default async function seedComplete({ container }: ExecArgs) {
         },
       },
     })
-    console.log("  Store name updated to Dakkah CityOS")
+    logger.info("  Store name updated to Dakkah CityOS")
   } catch (error: any) {
-    console.log(`  Store name update skipped: ${error.message}`)
+    logger.error(`  Store name update skipped: ${error.message}`)
   }
 
   // ============================================================
   // STEP 11: Governance Authority
   // ============================================================
-  console.log("\nStep 11: Creating governance authority...")
+  logger.info("\nStep 11: Creating governance authority...")
   try {
     const governanceService = container.resolve("governance") as any
 
@@ -477,18 +479,18 @@ export default async function seedComplete({ container }: ExecArgs) {
         },
         status: "active",
       })
-      console.log("  Created MENA Governance Authority")
+      logger.info("  Created MENA Governance Authority")
     } else {
-      console.log("  Governance authority already exists")
+      logger.info("  Governance authority already exists")
     }
   } catch (error: any) {
-    console.log(`  Governance creation note: ${error.message}`)
+    logger.error(`  Governance creation note: ${error.message}`)
   }
 
   // ============================================================
   // STEP 12: Node Hierarchy
   // ============================================================
-  console.log("\nStep 12: Creating node hierarchy...")
+  logger.info("\nStep 12: Creating node hierarchy...")
   if (tenantId) {
     try {
       const nodeService = container.resolve("node") as any
@@ -506,7 +508,7 @@ export default async function seedComplete({ container }: ExecArgs) {
           location: { lat: 24.7136, lng: 46.6753 },
           status: "active",
         })
-        console.log(`  Created CITY: Riyadh (${city.id})`)
+        logger.info(`  Created CITY: Riyadh (${city.id})`)
 
         const district = await nodeService.createNodeWithValidation({
           tenant_id: tenantId,
@@ -518,7 +520,7 @@ export default async function seedComplete({ container }: ExecArgs) {
           location: { lat: 24.6911, lng: 46.6853 },
           status: "active",
         })
-        console.log(`  Created DISTRICT: Al Olaya (${district.id})`)
+        logger.info(`  Created DISTRICT: Al Olaya (${district.id})`)
 
         const zone = await nodeService.createNodeWithValidation({
           tenant_id: tenantId,
@@ -530,7 +532,7 @@ export default async function seedComplete({ container }: ExecArgs) {
           location: { lat: 24.6900, lng: 46.6850 },
           status: "active",
         })
-        console.log(`  Created ZONE: King Fahad Zone (${zone.id})`)
+        logger.info(`  Created ZONE: King Fahad Zone (${zone.id})`)
 
         const facility = await nodeService.createNodeWithValidation({
           tenant_id: tenantId,
@@ -542,7 +544,7 @@ export default async function seedComplete({ container }: ExecArgs) {
           location: { lat: 24.6895, lng: 46.6845 },
           status: "active",
         })
-        console.log(`  Created FACILITY: Main Mall (${facility.id})`)
+        logger.info(`  Created FACILITY: Main Mall (${facility.id})`)
 
         const asset = await nodeService.createNodeWithValidation({
           tenant_id: tenantId,
@@ -554,21 +556,21 @@ export default async function seedComplete({ container }: ExecArgs) {
           location: { lat: 24.6895, lng: 46.6845, floor: 1, unit: "101" },
           status: "active",
         })
-        console.log(`  Created ASSET: Shop 101 (${asset.id})`)
+        logger.info(`  Created ASSET: Shop 101 (${asset.id})`)
       } else {
-        console.log("  Node hierarchy already exists")
+        logger.info("  Node hierarchy already exists")
       }
     } catch (error: any) {
-      console.log(`  Node hierarchy creation error: ${error.message}`)
+      logger.error(`  Node hierarchy creation error: ${error.message}`)
     }
   } else {
-    console.log("  Skipped (no tenant)")
+    logger.info("  Skipped (no tenant)")
   }
 
   // ============================================================
   // STEP 13: Product Categories
   // ============================================================
-  console.log("\nStep 13: Creating product categories...")
+  logger.info("\nStep 13: Creating product categories...")
   const categoryHandles = ["electronics", "fashion", "food-beverages", "services", "real-estate"]
   try {
     const { data: existingCategories } = await query.graph({
@@ -589,18 +591,18 @@ export default async function seedComplete({ container }: ExecArgs) {
       const { result: catResult } = await createProductCategoriesWorkflow(container).run({
         input: { product_categories: categoriesToCreate },
       })
-      console.log(`  Created ${catResult.length} categories`)
+      logger.info(`  Created ${catResult.length} categories`)
     } else {
-      console.log("  Categories already exist")
+      logger.info("  Categories already exist")
     }
   } catch (error: any) {
-    console.log(`  Category creation error: ${error.message}`)
+    logger.error(`  Category creation error: ${error.message}`)
   }
 
   // ============================================================
   // STEP 14: Products
   // ============================================================
-  console.log("\nStep 14: Creating sample products...")
+  logger.info("\nStep 14: Creating sample products...")
 
   const { data: allCategories } = await query.graph({
     entity: "product_category",
@@ -1152,20 +1154,20 @@ export default async function seedComplete({ container }: ExecArgs) {
           input: { products: [product as any] },
         })
         productCount++
-        console.log(`  Created: ${product.title}`)
+        logger.info(`  Created: ${product.title}`)
       } else {
-        console.log(`  Exists: ${product.title}`)
+        logger.info(`  Exists: ${product.title}`)
       }
     } catch (error: any) {
-      console.log(`  Error creating ${product.title}: ${error.message}`)
+      logger.error(`  Error creating ${product.title}: ${error.message}`)
     }
   }
-  console.log(`  Total products created: ${productCount}`)
+  logger.info(`  Total products created: ${productCount}`)
 
   // ============================================================
   // STEP 15: Customers
   // ============================================================
-  console.log("\nStep 15: Creating sample customers...")
+  logger.info("\nStep 15: Creating sample customers...")
   const customers = [
     {
       first_name: "Mohammed",
@@ -1198,20 +1200,20 @@ export default async function seedComplete({ container }: ExecArgs) {
           input: { customersData: [customer] },
         })
         customerCount++
-        console.log(`  Created: ${customer.first_name} ${customer.last_name}`)
+        logger.info(`  Created: ${customer.first_name} ${customer.last_name}`)
       } else {
-        console.log(`  Exists: ${customer.first_name} ${customer.last_name}`)
+        logger.info(`  Exists: ${customer.first_name} ${customer.last_name}`)
       }
     } catch (error: any) {
-      console.log(`  Error creating ${customer.email}: ${error.message}`)
+      logger.error(`  Error creating ${customer.email}: ${error.message}`)
     }
   }
-  console.log(`  Total customers created: ${customerCount}`)
+  logger.info(`  Total customers created: ${customerCount}`)
 
   // ============================================================
   // STEP 16: Vendors
   // ============================================================
-  console.log("\nStep 16: Seeding vendors...")
+  logger.info("\nStep 16: Seeding vendors...")
   let vendorCount = 0
   try {
     const vendorService = container.resolve("vendor") as any
@@ -1275,22 +1277,22 @@ export default async function seedComplete({ container }: ExecArgs) {
         if (existingVendor.length === 0) {
           await vendorService.createVendors(vendor)
           vendorCount++
-          console.log(`  Created vendor: ${vendor.business_name}`)
+          logger.info(`  Created vendor: ${vendor.business_name}`)
         } else {
-          console.log(`  Exists: ${vendor.business_name}`)
+          logger.info(`  Exists: ${vendor.business_name}`)
         }
       } catch (error: any) {
-        console.log(`  Error: ${vendor.business_name}: ${error.message}`)
+        logger.error(`  Error: ${vendor.business_name}: ${error.message}`)
       }
     }
   } catch (error: any) {
-    console.log(`  Vendor service not available: ${error.message}`)
+    logger.error(`  Vendor service not available: ${error.message}`)
   }
 
   // ============================================================
   // STEP 17: Vendor-Product Linking
   // ============================================================
-  console.log("\nStep 17: Linking products to vendors...")
+  logger.info("\nStep 17: Linking products to vendors...")
   let vpCount = 0
   try {
     const vendorService = container.resolve("vendor") as any
@@ -1326,19 +1328,19 @@ export default async function seedComplete({ container }: ExecArgs) {
             vpCount++
           }
         } catch (e: any) {
-          console.log(`  VP link error for ${product.handle}: ${e.message}`)
+          logger.error(`  VP link error for ${product.handle}: ${e.message}`)
         }
       }
-      console.log(`  Linked ${vpCount} products to vendors`)
+      logger.info(`  Linked ${vpCount} products to vendors`)
     }
   } catch (error: any) {
-    console.log(`  Vendor-product linking skipped: ${error.message}`)
+    logger.error(`  Vendor-product linking skipped: ${error.message}`)
   }
 
   // ============================================================
   // STEP 18: Citizen Profiles
   // ============================================================
-  console.log("\nStep 18: Creating citizen profiles for customers...")
+  logger.info("\nStep 18: Creating citizen profiles for customers...")
   let cpCount = 0
   try {
     const citizenService = container.resolve("citizenProfile") as any
@@ -1364,21 +1366,21 @@ export default async function seedComplete({ container }: ExecArgs) {
           cpCount++
         }
       } catch (e: any) {
-        console.log(`  Citizen profile error for ${customer.email}: ${e.message}`)
+        logger.error(`  Citizen profile error for ${customer.email}: ${e.message}`)
       }
     }
-    console.log(`  Created ${cpCount} citizen profiles`)
+    logger.info(`  Created ${cpCount} citizen profiles`)
   } catch (error: any) {
-    console.log(`  Citizen profiles skipped: ${error.message}`)
+    logger.error(`  Citizen profiles skipped: ${error.message}`)
   }
 
   // ============================================================
   // SUMMARY
   // ============================================================
-  console.log("\n========================================")
-  console.log("Complete Seed Finished!")
-  console.log("========================================")
-  console.log(`
+  logger.info("\n========================================")
+  logger.info("Complete Seed Finished!")
+  logger.info("========================================")
+  logger.info(`
 Summary:
   - Admin User: admin@dakkah.sa
   - Publishable API Key: [REDACTED - retrieve from admin panel]

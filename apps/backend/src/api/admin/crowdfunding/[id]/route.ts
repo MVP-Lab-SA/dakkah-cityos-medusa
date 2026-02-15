@@ -1,5 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { z } from "zod"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 const updateSchema = z.object({
   title: z.string().optional(),
@@ -20,25 +21,40 @@ const updateSchema = z.object({
 })
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const mod = req.scope.resolve("crowdfunding") as any
-  const { id } = req.params
-  const [item] = await mod.listCrowdfundCampaigns({ id }, { take: 1 })
-  if (!item) return res.status(404).json({ message: "Not found" })
-  return res.json({ item })
+  try {
+    const mod = req.scope.resolve("crowdfunding") as any
+    const { id } = req.params
+    const [item] = await mod.listCrowdfundCampaigns({ id }, { take: 1 })
+    if (!item) return res.status(404).json({ message: "Not found" })
+    return res.json({ item })
+
+  } catch (error) {
+    handleApiError(res, error, "GET admin crowdfunding id")
+  }
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const mod = req.scope.resolve("crowdfunding") as any
-  const { id } = req.params
-  const validation = updateSchema.safeParse(req.body)
-  if (!validation.success) return res.status(400).json({ message: "Validation failed", errors: validation.error.issues })
-  const item = await mod.updateCrowdfundCampaigns({ id, ...validation.data })
-  return res.json({ item })
+  try {
+    const mod = req.scope.resolve("crowdfunding") as any
+    const { id } = req.params
+    const validation = updateSchema.safeParse(req.body)
+    if (!validation.success) return res.status(400).json({ message: "Validation failed", errors: validation.error.issues })
+    const item = await mod.updateCrowdfundCampaigns({ id, ...validation.data })
+    return res.json({ item })
+
+  } catch (error) {
+    handleApiError(res, error, "POST admin crowdfunding id")
+  }
 }
 
 export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
-  const mod = req.scope.resolve("crowdfunding") as any
-  const { id } = req.params
-  await mod.deleteCrowdfundCampaigns([id])
-  return res.status(204).send()
+  try {
+    const mod = req.scope.resolve("crowdfunding") as any
+    const { id } = req.params
+    await mod.deleteCrowdfundCampaigns([id])
+    return res.status(204).send()
+
+  } catch (error) {
+    handleApiError(res, error, "DELETE admin crowdfunding id")
+  }
 }

@@ -1,10 +1,12 @@
 // @ts-nocheck
 import { ExecArgs } from "@medusajs/framework/types"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("scripts:seed-verticals-4")
 
 export default async function seedVerticals4({ container }: ExecArgs) {
-  console.log("========================================")
-  console.log("Seeding Vertical Modules - Batch 4")
-  console.log("========================================\n")
+  logger.info("========================================")
+  logger.info("Seeding Vertical Modules - Batch 4")
+  logger.info("========================================\n")
 
   const dataSource = container.resolve("__pg_connection__")
 
@@ -15,10 +17,10 @@ export default async function seedVerticals4({ container }: ExecArgs) {
     const tenantList = Array.isArray(tenants) ? tenants : [tenants].filter(Boolean)
     if (tenantList.length > 0 && tenantList[0]?.id) {
       tenantId = tenantList[0].id
-      console.log(`Using Dakkah tenant: ${tenantId}`)
+      logger.info(`Using Dakkah tenant: ${tenantId}`)
     }
   } catch (e: any) {
-    console.log(`Using fallback tenant ID: ${tenantId}`)
+    logger.info(`Using fallback tenant ID: ${tenantId}`)
   }
   const storeId = "store_01KGX5ERB6T6XX9Z8N1PXD1P69"
   const customerIds = [
@@ -110,7 +112,7 @@ export default async function seedVerticals4({ container }: ExecArgs) {
   // ============================================================
   // 1. AD_ACCOUNT (2 rows)
   // ============================================================
-  console.log("1/41 Seeding ad_account...")
+  logger.info("1/41 Seeding ad_account...")
   try {
     await dataSource.raw(`
       INSERT INTO ad_account (id, tenant_id, advertiser_id, account_name, balance, currency_code, total_spent, total_deposited, status, auto_recharge, auto_recharge_amount, auto_recharge_threshold, metadata, created_at, updated_at)
@@ -119,15 +121,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_ad_account_2', '${tenantId}', '${vendorIds[1]}', 'حساب تسويق المدينة الذكية', 7500, 'sar', 12000, 19500, 'active', false, null, null, '{"company":"CityOS Marketing"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ ad_account seeded")
+    logger.info("  ✓ ad_account seeded")
   } catch (err: any) {
-    console.log(`  ✗ ad_account error: ${err.message}`)
+    logger.error(`  ✗ ad_account error: ${err.message}`)
   }
 
   // ============================================================
   // 2. AD_CREATIVE (3 rows)
   // ============================================================
-  console.log("2/41 Seeding ad_creative...")
+  logger.info("2/41 Seeding ad_creative...")
   try {
     await dataSource.raw(`
       INSERT INTO ad_creative (id, tenant_id, campaign_id, placement_id, creative_type, title, body_text, image_url, video_url, click_url, cta_text, product_ids, is_approved, approved_by, approved_at, metadata, created_at, updated_at)
@@ -137,15 +139,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_ad_creative_3', '${tenantId}', '${campaignIds[1]}', '${placementIds[0]}', 'product_card', 'أفضل الإلكترونيات', 'تشكيلة واسعة من الأجهزة الإلكترونية بأسعار منافسة', 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=800', null, 'https://cityos.sa/electronics', 'اطلب الآن', '["prod_01","prod_02"]', false, null, null, '{"category":"electronics"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ ad_creative seeded")
+    logger.info("  ✓ ad_creative seeded")
   } catch (err: any) {
-    console.log(`  ✗ ad_creative error: ${err.message}`)
+    logger.error(`  ✗ ad_creative error: ${err.message}`)
   }
 
   // ============================================================
   // 3. CLICK_TRACKING (3 rows)
   // ============================================================
-  console.log("3/41 Seeding click_tracking...")
+  logger.info("3/41 Seeding click_tracking...")
   try {
     await dataSource.raw(`
       INSERT INTO click_tracking (id, tenant_id, link_id, affiliate_id, ip_address, user_agent, referrer, landed_at, converted, conversion_order_id, conversion_amount, metadata, created_at, updated_at)
@@ -155,15 +157,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_click_tracking_3', '${tenantId}', '${referralLinkIds[2]}', '${affiliateIds[1]}', '176.44.23.89', 'Mozilla/5.0 (Macintosh; Intel Mac OS X)', 'https://google.com', '${past1}', true, 'order_seed4_002', 520, '{"campaign":"eid_offers"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ click_tracking seeded")
+    logger.info("  ✓ click_tracking seeded")
   } catch (err: any) {
-    console.log(`  ✗ click_tracking error: ${err.message}`)
+    logger.error(`  ✗ click_tracking error: ${err.message}`)
   }
 
   // ============================================================
   // 4. IMPRESSION_LOG (3 rows)
   // ============================================================
-  console.log("4/41 Seeding impression_log...")
+  logger.info("4/41 Seeding impression_log...")
   try {
     await dataSource.raw(`
       INSERT INTO impression_log (id, tenant_id, campaign_id, creative_id, placement_id, viewer_id, impression_type, ip_address, user_agent, referrer, revenue, currency_code, occurred_at, metadata, created_at, updated_at)
@@ -173,15 +175,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_impression_log_3', '${tenantId}', '${campaignIds[1]}', 'seed4_ad_creative_3', '${placementIds[0]}', '${customerIds[2]}', 'conversion', '176.44.23.89', 'Mozilla/5.0 (Mac)', 'https://cityos.sa/checkout', 25.00, 'sar', '${past1}', '{"order_id":"order_seed4_003"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ impression_log seeded")
+    logger.info("  ✓ impression_log seeded")
   } catch (err: any) {
-    console.log(`  ✗ impression_log error: ${err.message}`)
+    logger.error(`  ✗ impression_log error: ${err.message}`)
   }
 
   // ============================================================
   // 5. COMMISSION_RULE (2 rows)
   // ============================================================
-  console.log("5/41 Seeding commission_rule...")
+  logger.info("5/41 Seeding commission_rule...")
   try {
     await dataSource.raw(`
       INSERT INTO commission_rule (id, tenant_id, store_id, vendor_id, priority, name, description, commission_type, commission_percentage, commission_flat_amount, tiers, conditions, valid_from, valid_to, status, applies_to, metadata, created_at, updated_at)
@@ -190,15 +192,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_commission_rule_2', '${tenantId}', '${storeId}', null, 5, 'عمولة عامة للمنصة', 'عمولة 8% على جميع المنتجات لجميع البائعين', 'percentage', 8, null, null, null, '${past3}', null, 'active', 'all_products', '{"default_rule":true}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ commission_rule seeded")
+    logger.info("  ✓ commission_rule seeded")
   } catch (err: any) {
-    console.log(`  ✗ commission_rule error: ${err.message}`)
+    logger.error(`  ✗ commission_rule error: ${err.message}`)
   }
 
   // ============================================================
   // 6. COMMISSION_TRANSACTION (3 rows)
   // ============================================================
-  console.log("6/41 Seeding commission_transaction...")
+  logger.info("6/41 Seeding commission_transaction...")
   try {
     await dataSource.raw(`
       INSERT INTO commission_transaction (id, tenant_id, store_id, vendor_id, order_id, line_item_id, commission_rule_id, payout_id, transaction_type, order_subtotal, order_tax, order_shipping, order_total, commission_rate, commission_flat, commission_amount, platform_fee_rate, platform_fee_amount, net_amount, status, payout_status, transaction_date, approved_at, paid_at, notes, metadata, created_at, updated_at)
@@ -208,15 +210,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_comm_txn_3', '${tenantId}', '${storeId}', '${vendorIds[1]}', 'order_seed4_003', 'li_003', 'seed4_commission_rule_2', null, 'sale', 2200, 330, 0, 2530, 8, null, 202.4, 2, 50.6, 2277, 'paid', 'paid', '${past3}', '${past2}', '${past1}', 'بيع عطور فاخرة', '{"product":"Oud Collection"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ commission_transaction seeded")
+    logger.info("  ✓ commission_transaction seeded")
   } catch (err: any) {
-    console.log(`  ✗ commission_transaction error: ${err.message}`)
+    logger.error(`  ✗ commission_transaction error: ${err.message}`)
   }
 
   // ============================================================
   // 7. REFERRAL (2 rows)
   // ============================================================
-  console.log("7/41 Seeding referral...")
+  logger.info("7/41 Seeding referral...")
   try {
     await dataSource.raw(`
       INSERT INTO referral (id, tenant_id, referrer_customer_id, referred_customer_id, referral_code, status, reward_type, reward_value, reward_given, expires_at, completed_at, metadata, created_at, updated_at)
@@ -225,15 +227,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_referral_2', '${tenantId}', '${customerIds[1]}', '${customerIds[3]}', 'REF-FATIMA-2026', 'pending', 'discount', 10, false, '${future2}', null, '{"source":"email"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ referral seeded")
+    logger.info("  ✓ referral seeded")
   } catch (err: any) {
-    console.log(`  ✗ referral error: ${err.message}`)
+    logger.error(`  ✗ referral error: ${err.message}`)
   }
 
   // ============================================================
   // 8. AFFILIATE_COMMISSION (2 rows)
   // ============================================================
-  console.log("8/41 Seeding affiliate_commission...")
+  logger.info("8/41 Seeding affiliate_commission...")
   try {
     await dataSource.raw(`
       INSERT INTO affiliate_commission (id, tenant_id, affiliate_id, order_id, click_id, order_amount, commission_amount, currency_code, status, approved_at, paid_at, payout_id, metadata, created_at, updated_at)
@@ -242,15 +244,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_aff_comm_2', '${tenantId}', '${affiliateIds[1]}', 'order_seed4_002', 'seed4_click_tracking_3', 520, 52, 'sar', 'paid', '${past2}', '${past1}', 'payout_seed4_001', '{"campaign":"eid_offers"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ affiliate_commission seeded")
+    logger.info("  ✓ affiliate_commission seeded")
   } catch (err: any) {
-    console.log(`  ✗ affiliate_commission error: ${err.message}`)
+    logger.error(`  ✗ affiliate_commission error: ${err.message}`)
   }
 
   // ============================================================
   // 9. BID (4 rows)
   // ============================================================
-  console.log("9/41 Seeding bid...")
+  logger.info("9/41 Seeding bid...")
   try {
     await dataSource.raw(`
       INSERT INTO bid (id, tenant_id, auction_id, customer_id, amount, is_auto_bid, max_auto_bid, status, placed_at, metadata, created_at, updated_at)
@@ -261,15 +263,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_bid_4', '${tenantId}', '${auctionListingIds[2]}', '${customerIds[3]}', 3200, false, null, 'won', '${past1}', '{"device":"mobile"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ bid seeded")
+    logger.info("  ✓ bid seeded")
   } catch (err: any) {
-    console.log(`  ✗ bid error: ${err.message}`)
+    logger.error(`  ✗ bid error: ${err.message}`)
   }
 
   // ============================================================
   // 10. AUCTION_RESULT (2 rows)
   // ============================================================
-  console.log("10/41 Seeding auction_result...")
+  logger.info("10/41 Seeding auction_result...")
   try {
     await dataSource.raw(`
       INSERT INTO auction_result (id, tenant_id, auction_id, winner_customer_id, winning_bid_id, final_price, currency_code, order_id, payment_status, settled_at, metadata, created_at, updated_at)
@@ -278,15 +280,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_auction_result_2', '${tenantId}', '${auctionListingIds[2]}', '${customerIds[3]}', 'seed4_bid_4', 3200, 'sar', 'order_auction_002', 'pending', null, '{"item":"ساعة رولكس كلاسيكية"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ auction_result seeded")
+    logger.info("  ✓ auction_result seeded")
   } catch (err: any) {
-    console.log(`  ✗ auction_result error: ${err.message}`)
+    logger.error(`  ✗ auction_result error: ${err.message}`)
   }
 
   // ============================================================
   // 11. AUCTION_ESCROW (2 rows)
   // ============================================================
-  console.log("11/41 Seeding auction_escrow...")
+  logger.info("11/41 Seeding auction_escrow...")
   try {
     await dataSource.raw(`
       INSERT INTO auction_escrow (id, tenant_id, auction_id, customer_id, amount, currency_code, status, payment_reference, held_at, released_at, metadata, created_at, updated_at)
@@ -295,15 +297,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_auction_escrow_2', '${tenantId}', '${auctionListingIds[2]}', '${customerIds[3]}', 3200, 'sar', 'held', 'PAY-ESC-002-SA', '${past1}', null, '{"bank":"الأهلي"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ auction_escrow seeded")
+    logger.info("  ✓ auction_escrow seeded")
   } catch (err: any) {
-    console.log(`  ✗ auction_escrow error: ${err.message}`)
+    logger.error(`  ✗ auction_escrow error: ${err.message}`)
   }
 
   // ============================================================
   // 12. AUTO_BID_RULE (2 rows)
   // ============================================================
-  console.log("12/41 Seeding auto_bid_rule...")
+  logger.info("12/41 Seeding auto_bid_rule...")
   try {
     await dataSource.raw(`
       INSERT INTO auto_bid_rule (id, tenant_id, auction_id, customer_id, max_amount, increment_amount, is_active, total_bids_placed, metadata, created_at, updated_at)
@@ -312,15 +314,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_auto_bid_2', '${tenantId}', '${auctionListingIds[2]}', '${customerIds[0]}', 5000, 200, false, 1, '{"strategy":"conservative"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ auto_bid_rule seeded")
+    logger.info("  ✓ auto_bid_rule seeded")
   } catch (err: any) {
-    console.log(`  ✗ auto_bid_rule error: ${err.message}`)
+    logger.error(`  ✗ auto_bid_rule error: ${err.message}`)
   }
 
   // ============================================================
   // 13. SERVICE_CENTER (2 rows)
   // ============================================================
-  console.log("13/41 Seeding service_center...")
+  logger.info("13/41 Seeding service_center...")
   try {
     await dataSource.raw(`
       INSERT INTO service_center (id, tenant_id, name, address_line1, address_line2, city, state, postal_code, country_code, phone, email, specializations, is_active, capacity_per_day, current_load, metadata, created_at, updated_at)
@@ -329,15 +331,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_svc_center_2', '${tenantId}', 'مركز النخبة للصيانة المتقدمة', 'شارع التخصصي، حي الملقا', null, 'Riyadh', 'Riyadh', '13524', 'sa', '+966115556677', 'info@elite-auto.sa', '["engine","transmission","electrical","hybrid","ev"]', true, 15, 5, '{"rating":4.9,"premium":true}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ service_center seeded")
+    logger.info("  ✓ service_center seeded")
   } catch (err: any) {
-    console.log(`  ✗ service_center error: ${err.message}`)
+    logger.error(`  ✗ service_center error: ${err.message}`)
   }
 
   // ============================================================
   // 14. PART_CATALOG (3 rows)
   // ============================================================
-  console.log("14/41 Seeding part_catalog...")
+  logger.info("14/41 Seeding part_catalog...")
   try {
     await dataSource.raw(`
       INSERT INTO part_catalog (id, tenant_id, name, part_number, oem_number, description, category, compatible_makes, compatible_models, compatible_years, price, currency_code, stock_quantity, condition, weight_kg, dimensions, supplier, is_active, metadata, created_at, updated_at)
@@ -347,15 +349,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_part_catalog_3', '${tenantId}', 'بطارية بوش AGM 80Ah', 'PC-BAT-BSH-001', 'OEM-0092S50110', 'بطارية بوش AGM عالية الأداء للسيارات الحديثة', 'electrical', '["Toyota","Hyundai","Nissan","Honda"]', '["Camry","Accord","Altima","Sonata"]', '[2018,2019,2020,2021,2022,2023,2024]', 850, 'sar', 30, 'new', 22.5, '{"length_cm":31,"width_cm":17,"height_cm":19}', 'بوش السعودية', true, '{"warranty_months":36}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ part_catalog seeded")
+    logger.info("  ✓ part_catalog seeded")
   } catch (err: any) {
-    console.log(`  ✗ part_catalog error: ${err.message}`)
+    logger.error(`  ✗ part_catalog error: ${err.message}`)
   }
 
   // ============================================================
   // 15. SPARE_PART (3 rows)
   // ============================================================
-  console.log("15/41 Seeding spare_part...")
+  logger.info("15/41 Seeding spare_part...")
   try {
     await dataSource.raw(`
       INSERT INTO spare_part (id, tenant_id, name, sku, description, compatible_products, price, raw_price, currency_code, stock_quantity, reorder_level, supplier, is_active, metadata, created_at, updated_at)
@@ -365,15 +367,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_spare_part_3', '${tenantId}', 'فلتر هواء مكيف بوش', 'SP-ACF-BSH-001', 'فلتر هواء مكيف بالكربون النشط لتنقية الهواء', '["Toyota","Lexus","Hyundai"]', 65, '${rawNum(65)}', 'sar', 300, 75, 'بوش السعودية', true, '{"carbon_activated":true}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ spare_part seeded")
+    logger.info("  ✓ spare_part seeded")
   } catch (err: any) {
-    console.log(`  ✗ spare_part error: ${err.message}`)
+    logger.error(`  ✗ spare_part error: ${err.message}`)
   }
 
   // ============================================================
   // 16. REPAIR_ORDER (2 rows)
   // ============================================================
-  console.log("16/41 Seeding repair_order...")
+  logger.info("16/41 Seeding repair_order...")
   try {
     await dataSource.raw(`
       INSERT INTO repair_order (id, tenant_id, claim_id, service_center_id, status, diagnosis, repair_notes, parts_used, estimated_cost, actual_cost, currency_code, estimated_completion, completed_at, tracking_number, metadata, raw_estimated_cost, raw_actual_cost, created_at, updated_at)
@@ -382,15 +384,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_repair_order_2', '${tenantId}', 'claim_auto_002', 'seed4_svc_center_2', 'completed', 'خلل في نظام التبريد', 'تم تغيير ثرموستات ومبرد المحرك وإعادة تعبئة سائل التبريد', '["seed4_spare_part_2"]', 950, 880, 'sar', '${past1}', '${past1}', 'RO-2026-00452', '{"vehicle":"Hyundai Tucson 2022"}', '${rawNum(950)}', '${rawNum(880)}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ repair_order seeded")
+    logger.info("  ✓ repair_order seeded")
   } catch (err: any) {
-    console.log(`  ✗ repair_order error: ${err.message}`)
+    logger.error(`  ✗ repair_order error: ${err.message}`)
   }
 
   // ============================================================
   // 17. TRADE_IN (2 rows)
   // ============================================================
-  console.log("17/41 Seeding trade_in...")
+  logger.info("17/41 Seeding trade_in...")
   try {
     await dataSource.raw(`
       INSERT INTO trade_in (id, tenant_id, customer_id, listing_id, make, model_name, year, mileage_km, condition, vin, description, photos, estimated_value, offered_value, accepted_value, currency_code, status, appraised_by, appraised_at, metadata, created_at, updated_at)
@@ -399,15 +401,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_trade_in_2', '${tenantId}', '${customerIds[1]}', '${vehicleListingIds[1]}', 'Hyundai', 'Tucson', 2022, 28000, 'excellent', 'KMHJ3812MNU123456', 'سيارة ممتازة، فل كامل مع بانوراما وملاحة، ضمان ساري', '["https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=400"]', 95000, null, null, 'sar', 'appraising', null, null, '{"color":"رمادي فلكي"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ trade_in seeded")
+    logger.info("  ✓ trade_in seeded")
   } catch (err: any) {
-    console.log(`  ✗ trade_in error: ${err.message}`)
+    logger.error(`  ✗ trade_in error: ${err.message}`)
   }
 
   // ============================================================
   // 18. VEHICLE_SERVICE (2 rows)
   // ============================================================
-  console.log("18/41 Seeding vehicle_service...")
+  logger.info("18/41 Seeding vehicle_service...")
   try {
     await dataSource.raw(`
       INSERT INTO vehicle_service (id, tenant_id, vehicle_listing_id, customer_id, service_type, status, description, scheduled_at, completed_at, estimated_cost, actual_cost, currency_code, service_center, technician, parts_used, notes, metadata, created_at, updated_at)
@@ -416,15 +418,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_veh_svc_2', '${tenantId}', '${vehicleListingIds[1]}', '${customerIds[1]}', 'inspection', 'scheduled', 'فحص شامل قبل البيع - 200 نقطة فحص', '${future1}', null, 350, null, 'sar', 'مركز النخبة للصيانة المتقدمة', null, null, 'فحص شامل معتمد للبيع', '{"inspection_type":"pre_sale"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ vehicle_service seeded")
+    logger.info("  ✓ vehicle_service seeded")
   } catch (err: any) {
-    console.log(`  ✗ vehicle_service error: ${err.message}`)
+    logger.error(`  ✗ vehicle_service error: ${err.message}`)
   }
 
   // ============================================================
   // 19. BOOKING (3 rows)
   // ============================================================
-  console.log("19/41 Seeding booking...")
+  logger.info("19/41 Seeding booking...")
   try {
     const bookingStart1 = new Date(Date.now() + 3 * 86400000).toISOString()
     const bookingEnd1 = new Date(Date.now() + 3 * 86400000 + 3600000).toISOString()
@@ -441,15 +443,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_booking_3', 'BK-2026-00103', '${tenantId}', '${customerIds[2]}', 'أحمد القحطاني', 'ahmed@dakkah.sa', '+966503334455', 'svc_prod_seed4_3', null, '${bookingStart3}', '${bookingEnd3}', 'Asia/Riyadh', 'confirmed', 1, 'in_person', 'sar', 500, 0, 75, 575, 'deposit_paid', '{"service":"صيانة سيارة شاملة"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ booking seeded")
+    logger.info("  ✓ booking seeded")
   } catch (err: any) {
-    console.log(`  ✗ booking error: ${err.message}`)
+    logger.error(`  ✗ booking error: ${err.message}`)
   }
 
   // ============================================================
   // 20. BOOKING_ITEM (3 rows)
   // ============================================================
-  console.log("20/41 Seeding booking_item...")
+  logger.info("20/41 Seeding booking_item...")
   try {
     await dataSource.raw(`
       INSERT INTO booking_item (id, booking_id, service_product_id, title, description, duration_minutes, quantity, unit_price, subtotal, discount_amount, tax_amount, total, provider_id, metadata, created_at, updated_at)
@@ -459,15 +461,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_bk_item_3', 'seed4_booking_3', 'svc_prod_seed4_3', 'صيانة سيارة 50,000 كم', 'صيانة شاملة تشمل تغيير الزيت والفلاتر وفحص شامل', 120, 1, 500, 500, 0, 75, 575, null, '{"mileage":50000}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ booking_item seeded")
+    logger.info("  ✓ booking_item seeded")
   } catch (err: any) {
-    console.log(`  ✗ booking_item error: ${err.message}`)
+    logger.error(`  ✗ booking_item error: ${err.message}`)
   }
 
   // ============================================================
   // 21. AVAILABILITY (2 rows)
   // ============================================================
-  console.log("21/41 Seeding availability...")
+  logger.info("21/41 Seeding availability...")
   try {
     const weeklySchedule = JSON.stringify({
       sunday: [{ start: "09:00", end: "17:00" }],
@@ -495,15 +497,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_availability_2', '${tenantId}', 'service', 'svc_prod_seed4_2', 'weekly_recurring', '${weeklySchedule2.replace(/'/g, "''")}', 'Asia/Riyadh', '${past3}', '${future3}', 30, 30, true, '{"service_name":"حصص اللياقة البدنية"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ availability seeded")
+    logger.info("  ✓ availability seeded")
   } catch (err: any) {
-    console.log(`  ✗ availability error: ${err.message}`)
+    logger.error(`  ✗ availability error: ${err.message}`)
   }
 
   // ============================================================
   // 22. AVAILABILITY_EXCEPTION (2 rows)
   // ============================================================
-  console.log("22/41 Seeding availability_exception...")
+  logger.info("22/41 Seeding availability_exception...")
   try {
     const eidStart = new Date(2026, 5, 6).toISOString()
     const eidEnd = new Date(2026, 5, 10).toISOString()
@@ -517,15 +519,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_avail_exc_2', 'seed4_availability_2', '${tenantId}', 'special_hours', '${nationalDay}', '${nationalDayEnd}', false, '[{"start":"16:00","end":"20:00"}]', 'اليوم الوطني السعودي', 'ساعات عمل مخفضة بمناسبة اليوم الوطني', true, 'FREQ=YEARLY', '{"holiday":"saudi_national_day"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ availability_exception seeded")
+    logger.info("  ✓ availability_exception seeded")
   } catch (err: any) {
-    console.log(`  ✗ availability_exception error: ${err.message}`)
+    logger.error(`  ✗ availability_exception error: ${err.message}`)
   }
 
   // ============================================================
   // 23. BOOKING_REMINDER (2 rows)
   // ============================================================
-  console.log("23/41 Seeding booking_reminder...")
+  logger.info("23/41 Seeding booking_reminder...")
   try {
     const reminder1Time = new Date(Date.now() + 2 * 86400000).toISOString()
     const reminder2Time = new Date(Date.now() + 4 * 86400000).toISOString()
@@ -537,15 +539,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_bk_reminder_2', 'seed4_booking_2', '${tenantId}', 'sms', 60, '${reminder2Time}', 'scheduled', null, null, null, null, 0, 'fatima@dakkah.sa', '+966502223344', 'تذكير بحصة اليوغا', 'مرحباً فاطمة، حصة اليوغا بعد ساعة. رابط الاجتماع: https://meet.dakkah.sa/yoga', '{"template":"booking_reminder_1h"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ booking_reminder seeded")
+    logger.info("  ✓ booking_reminder seeded")
   } catch (err: any) {
-    console.log(`  ✗ booking_reminder error: ${err.message}`)
+    logger.error(`  ✗ booking_reminder error: ${err.message}`)
   }
 
   // ============================================================
   // 24. LISTING_CATEGORY (5 rows)
   // ============================================================
-  console.log("24/41 Seeding listing_category...")
+  logger.info("24/41 Seeding listing_category...")
   try {
     await dataSource.raw(`
       INSERT INTO listing_category (id, tenant_id, name, handle, parent_id, description, icon, display_order, is_active, metadata, created_at, updated_at)
@@ -557,15 +559,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_list_cat_5', '${tenantId}', 'أزياء', 'fashion', null, 'ملابس وأحذية وإكسسوارات', 'shirt', 5, true, '{"ar_name":"أزياء","en_name":"Fashion"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ listing_category seeded")
+    logger.info("  ✓ listing_category seeded")
   } catch (err: any) {
-    console.log(`  ✗ listing_category error: ${err.message}`)
+    logger.error(`  ✗ listing_category error: ${err.message}`)
   }
 
   // ============================================================
   // 25. LISTING_IMAGE (4 rows)
   // ============================================================
-  console.log("25/41 Seeding listing_image...")
+  logger.info("25/41 Seeding listing_image...")
   try {
     await dataSource.raw(`
       INSERT INTO listing_image (id, listing_id, url, alt_text, display_order, is_primary, metadata, created_at, updated_at)
@@ -576,15 +578,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_list_img_4', '${classifiedListingIds[2]}', 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800', 'تويوتا كامري 2023 - منظر أمامي', 1, true, '{"size":"800x600"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ listing_image seeded")
+    logger.info("  ✓ listing_image seeded")
   } catch (err: any) {
-    console.log(`  ✗ listing_image error: ${err.message}`)
+    logger.error(`  ✗ listing_image error: ${err.message}`)
   }
 
   // ============================================================
   // 26. LISTING_OFFER (3 rows)
   // ============================================================
-  console.log("26/41 Seeding listing_offer...")
+  logger.info("26/41 Seeding listing_offer...")
   try {
     await dataSource.raw(`
       INSERT INTO listing_offer (id, tenant_id, listing_id, buyer_id, amount, currency_code, message, status, counter_amount, responded_at, expires_at, metadata, created_at, updated_at)
@@ -594,15 +596,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_list_offer_3', '${tenantId}', '${classifiedListingIds[2]}', '${customerIds[0]}', 110000, 'sar', 'هل ممكن نتفاوض على سعر الكامري؟', 'accepted', 112000, '${past1}', '${future1}', '{"agreed_price":112000}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ listing_offer seeded")
+    logger.info("  ✓ listing_offer seeded")
   } catch (err: any) {
-    console.log(`  ✗ listing_offer error: ${err.message}`)
+    logger.error(`  ✗ listing_offer error: ${err.message}`)
   }
 
   // ============================================================
   // 27. LISTING_FLAG (2 rows)
   // ============================================================
-  console.log("27/41 Seeding listing_flag...")
+  logger.info("27/41 Seeding listing_flag...")
   try {
     await dataSource.raw(`
       INSERT INTO listing_flag (id, tenant_id, listing_id, reporter_id, reason, description, status, reviewed_by, reviewed_at, action_taken, metadata, created_at, updated_at)
@@ -611,15 +613,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_list_flag_2', '${tenantId}', '${classifiedListingIds[0]}', '${customerIds[2]}', 'duplicate', 'نفس الإعلان منشور مرتين بصور مختلفة', 'pending', null, null, null, null, '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ listing_flag seeded")
+    logger.info("  ✓ listing_flag seeded")
   } catch (err: any) {
-    console.log(`  ✗ listing_flag error: ${err.message}`)
+    logger.error(`  ✗ listing_flag error: ${err.message}`)
   }
 
   // ============================================================
   // 28. CAMPAIGN_UPDATE (3 rows)
   // ============================================================
-  console.log("28/41 Seeding campaign_update...")
+  logger.info("28/41 Seeding campaign_update...")
   try {
     await dataSource.raw(`
       INSERT INTO campaign_update (id, tenant_id, campaign_id, title, content, update_type, is_public, media_urls, metadata, created_at, updated_at)
@@ -629,15 +631,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_camp_update_3', '${tenantId}', '${crowdfundCampaignIds[1]}', 'تأخير بسيط في التسليم', 'نود إعلامكم بتأخير أسبوعين في التسليم بسبب تأخر بعض المواد الخام. نعتذر عن ذلك.', 'delay', true, null, '{"new_eta":"2026-04-15"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ campaign_update seeded")
+    logger.info("  ✓ campaign_update seeded")
   } catch (err: any) {
-    console.log(`  ✗ campaign_update error: ${err.message}`)
+    logger.error(`  ✗ campaign_update error: ${err.message}`)
   }
 
   // ============================================================
   // 29. MILESTONE (3 rows) - freelance milestones
   // ============================================================
-  console.log("29/41 Seeding milestone...")
+  logger.info("29/41 Seeding milestone...")
   try {
     await dataSource.raw(`
       INSERT INTO milestone (id, tenant_id, contract_id, title, description, amount, currency_code, due_date, status, deliverables, submitted_at, approved_at, paid_at, revision_notes, metadata, raw_amount, created_at, updated_at)
@@ -647,15 +649,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_milestone_3', '${tenantId}', 'contract_seed4_1', 'اختبار وتسليم نهائي', 'اختبار شامل وإصلاح الأخطاء والتسليم النهائي', 3000, 'sar', '${future3}', 'pending', '["تقرير الاختبار","النسخة النهائية"]', null, null, null, null, null, '${rawNum(3000)}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ milestone seeded")
+    logger.info("  ✓ milestone seeded")
   } catch (err: any) {
-    console.log(`  ✗ milestone error: ${err.message}`)
+    logger.error(`  ✗ milestone error: ${err.message}`)
   }
 
   // ============================================================
   // 30. BACKER (3 rows)
   // ============================================================
-  console.log("30/41 Seeding backer...")
+  logger.info("30/41 Seeding backer...")
   try {
     await dataSource.raw(`
       INSERT INTO backer (id, tenant_id, campaign_id, customer_id, total_pledged, currency_code, pledge_count, is_repeat_backer, first_backed_at, metadata, created_at, updated_at)
@@ -665,15 +667,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_backer_3', '${tenantId}', '${crowdfundCampaignIds[1]}', '${customerIds[2]}', 500, 'sar', 1, false, '${past1}', '{"name":"أحمد القحطاني"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ backer seeded")
+    logger.info("  ✓ backer seeded")
   } catch (err: any) {
-    console.log(`  ✗ backer error: ${err.message}`)
+    logger.error(`  ✗ backer error: ${err.message}`)
   }
 
   // ============================================================
   // 31. PLEDGE (3 rows)
   // ============================================================
-  console.log("31/41 Seeding pledge...")
+  logger.info("31/41 Seeding pledge...")
   try {
     await dataSource.raw(`
       INSERT INTO pledge (id, tenant_id, campaign_id, backer_id, reward_tier_id, amount, currency_code, status, payment_reference, anonymous, message, fulfilled_at, refunded_at, metadata, created_at, updated_at)
@@ -683,15 +685,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_pledge_3', '${tenantId}', '${crowdfundCampaignIds[1]}', 'seed4_backer_3', null, 500, 'sar', 'pending', 'PAY-PLG-003', true, null, null, null, null, '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ pledge seeded")
+    logger.info("  ✓ pledge seeded")
   } catch (err: any) {
-    console.log(`  ✗ pledge error: ${err.message}`)
+    logger.error(`  ✗ pledge error: ${err.message}`)
   }
 
   // ============================================================
   // 32. DOWNLOAD_LICENSE (3 rows)
   // ============================================================
-  console.log("32/41 Seeding download_license...")
+  logger.info("32/41 Seeding download_license...")
   try {
     await dataSource.raw(`
       INSERT INTO download_license (id, tenant_id, asset_id, customer_id, order_id, license_key, status, download_count, max_downloads, first_downloaded_at, last_downloaded_at, expires_at, revoked_at, revoke_reason, metadata, created_at, updated_at)
@@ -701,15 +703,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_dl_license_3', '${tenantId}', '${digitalAssetIds[2]}', '${customerIds[2]}', 'order_seed4_dl_003', 'LIC-SOFT-2026-ZR3Q8', 'active', 0, 2, null, null, '${future2}', null, null, '{"product":"SmartStock Pro"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ download_license seeded")
+    logger.info("  ✓ download_license seeded")
   } catch (err: any) {
-    console.log(`  ✗ download_license error: ${err.message}`)
+    logger.error(`  ✗ download_license error: ${err.message}`)
   }
 
   // ============================================================
   // 33. ASSIGNMENT (3 rows)
   // ============================================================
-  console.log("33/41 Seeding assignment...")
+  logger.info("33/41 Seeding assignment...")
   try {
     await dataSource.raw(`
       INSERT INTO assignment (id, tenant_id, course_id, lesson_id, student_id, title, instructions, submission_url, submission_text, submitted_at, status, grade, max_grade, feedback, graded_by, graded_at, due_date, metadata, created_at, updated_at)
@@ -719,15 +721,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_assignment_3', '${tenantId}', '${courseIds[1]}', null, '${customerIds[2]}', 'تقرير بحثي عن الذكاء الاصطناعي', 'اكتب تقريراً من 3000 كلمة عن تطبيقات الذكاء الاصطناعي في المملكة العربية السعودية', null, null, null, 'pending', null, 100, null, null, null, '${future1}', '{"type":"research","min_words":3000}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ assignment seeded")
+    logger.info("  ✓ assignment seeded")
   } catch (err: any) {
-    console.log(`  ✗ assignment error: ${err.message}`)
+    logger.error(`  ✗ assignment error: ${err.message}`)
   }
 
   // ============================================================
   // 34. CLASS_BOOKING (2 rows)
   // ============================================================
-  console.log("34/41 Seeding class_booking...")
+  logger.info("34/41 Seeding class_booking...")
   try {
     await dataSource.raw(`
       INSERT INTO class_booking (id, tenant_id, schedule_id, customer_id, status, booked_at, checked_in_at, cancelled_at, cancellation_reason, waitlist_position, metadata, created_at, updated_at)
@@ -736,15 +738,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_class_bk_2', '${tenantId}', '${classScheduleIds[1]}', '${customerIds[1]}', 'checked_in', '${past2}', '${past1}', null, null, null, '{"course_name":"أساسيات الذكاء الاصطناعي"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ class_booking seeded")
+    logger.info("  ✓ class_booking seeded")
   } catch (err: any) {
-    console.log(`  ✗ class_booking error: ${err.message}`)
+    logger.error(`  ✗ class_booking error: ${err.message}`)
   }
 
   // ============================================================
   // 35. ACCOUNT_HOLDER (3 rows)
   // ============================================================
-  console.log("35/41 Seeding account_holder...")
+  logger.info("35/41 Seeding account_holder...")
   try {
     await dataSource.raw(`
       INSERT INTO account_holder (id, provider_id, external_id, email, data, metadata, created_at, updated_at)
@@ -754,15 +756,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_acct_holder_3', 'pp_system_default', '${customerIds[2]}', 'ahmed@dakkah.sa', '{"name":"أحمد القحطاني","national_id":"1076543210","bank":"الإنماء","iban":"SA5505000068201234567890"}', '{"kyc_verified":false}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ account_holder seeded")
+    logger.info("  ✓ account_holder seeded")
   } catch (err: any) {
-    console.log(`  ✗ account_holder error: ${err.message}`)
+    logger.error(`  ✗ account_holder error: ${err.message}`)
   }
 
   // ============================================================
   // 36. INVESTMENT_PLAN (2 rows)
   // ============================================================
-  console.log("36/41 Seeding investment_plan...")
+  logger.info("36/41 Seeding investment_plan...")
   try {
     await dataSource.raw(`
       INSERT INTO investment_plan (id, tenant_id, name, description, plan_type, min_investment, currency_code, expected_return_pct, risk_level, lock_in_months, is_shariah_compliant, features, terms, is_active, metadata, created_at, updated_at)
@@ -771,15 +773,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_invest_plan_2', '${tenantId}', 'محفظة الأسهم السعودية المتنوعة', 'محفظة استثمارية متنوعة في الأسهم السعودية المتوافقة مع الشريعة في قطاعات متعددة', 'mutual_fund', 10000, 'sar', 12.5, 'moderate', 6, true, '["تنويع في 30+ شركة","إدارة احترافية","تقارير ربع سنوية"]', '["الحد الأدنى 10,000 ريال","رسوم إدارة 1.5% سنوياً"]', true, '{"provider":"الراجحي المالية"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ investment_plan seeded")
+    logger.info("  ✓ investment_plan seeded")
   } catch (err: any) {
-    console.log(`  ✗ investment_plan error: ${err.message}`)
+    logger.error(`  ✗ investment_plan error: ${err.message}`)
   }
 
   // ============================================================
   // 37. INSURANCE_POLICY (2 rows)
   // ============================================================
-  console.log("37/41 Seeding insurance_policy...")
+  logger.info("37/41 Seeding insurance_policy...")
   try {
     await dataSource.raw(`
       INSERT INTO insurance_policy (id, tenant_id, product_id, holder_id, policy_number, status, premium_amount, currency_code, payment_frequency, coverage_amount, deductible, start_date, end_date, beneficiaries, documents, auto_renew, last_payment_at, next_payment_at, metadata, created_at, updated_at)
@@ -788,15 +790,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_ins_policy_2', '${tenantId}', '${insuranceProductIds[1]}', '${customerIds[1]}', 'POL-AUTO-2026-00201', 'active', 3500, 'sar', 'annually', 200000, 1000, '${past3}', '${future3}', null, '["contract.pdf","vehicle_reg.pdf"]', true, '${past3}', '${future3}', '{"type":"comprehensive_auto","vehicle":"Toyota Camry 2023"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ insurance_policy seeded")
+    logger.info("  ✓ insurance_policy seeded")
   } catch (err: any) {
-    console.log(`  ✗ insurance_policy error: ${err.message}`)
+    logger.error(`  ✗ insurance_policy error: ${err.message}`)
   }
 
   // ============================================================
   // 38. INSURANCE_CLAIM (2 rows) - healthcare insurance claims
   // ============================================================
-  console.log("38/41 Seeding insurance_claim...")
+  logger.info("38/41 Seeding insurance_claim...")
   try {
     await dataSource.raw(`
       INSERT INTO insurance_claim (id, tenant_id, patient_id, appointment_id, claim_number, insurance_provider, policy_number, claim_amount, approved_amount, currency_code, status, diagnosis_codes, procedure_codes, submitted_at, reviewed_at, denial_reason, paid_at, metadata, raw_claim_amount, raw_approved_amount, created_at, updated_at)
@@ -805,15 +807,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_ins_claim_2', '${tenantId}', '${customerIds[1]}', 'appt_seed4_002', 'CLM-2026-SA-00102', 'التعاونية للتأمين', 'POL-AUTO-2026-00201', 8500, null, 'sar', 'submitted', '["S52.5"]', '["27235","29881"]', '${past1}', null, null, null, '{"hospital":"مستشفى الحبيب"}', '${rawNum(8500)}', null, '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ insurance_claim seeded")
+    logger.info("  ✓ insurance_claim seeded")
   } catch (err: any) {
-    console.log(`  ✗ insurance_claim error: ${err.message}`)
+    logger.error(`  ✗ insurance_claim error: ${err.message}`)
   }
 
   // ============================================================
   // 39. LOAN_APPLICATION (2 rows)
   // ============================================================
-  console.log("39/41 Seeding loan_application...")
+  logger.info("39/41 Seeding loan_application...")
   try {
     await dataSource.raw(`
       INSERT INTO loan_application (id, tenant_id, loan_product_id, applicant_id, application_number, requested_amount, approved_amount, currency_code, term_months, interest_rate, monthly_payment, status, purpose, income_details, documents, credit_score, submitted_at, approved_at, approved_by, disbursed_at, rejection_reason, metadata, created_at, updated_at)
@@ -822,15 +824,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_loan_app_2', '${tenantId}', '${loanProductIds[1]}', '${customerIds[2]}', 'LOAN-2026-SA-00102', 500000, null, 'sar', 240, null, null, 'under_review', 'تمويل عقاري لشراء شقة', '{"monthly_salary":22000,"employer":"STC","employment_years":8}', '["salary_cert.pdf","id_copy.pdf","property_deed.pdf"]', 720, '${past1}', null, null, null, null, '{"product":"تمويل عقاري","shariah_compliant":true}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ loan_application seeded")
+    logger.info("  ✓ loan_application seeded")
   } catch (err: any) {
-    console.log(`  ✗ loan_application error: ${err.message}`)
+    logger.error(`  ✗ loan_application error: ${err.message}`)
   }
 
   // ============================================================
   // 40. CREDIT_LINE (2 rows) - cart credit lines
   // ============================================================
-  console.log("40/41 Seeding credit_line...")
+  logger.info("40/41 Seeding credit_line...")
   try {
     await dataSource.raw(`
       INSERT INTO credit_line (id, cart_id, reference, reference_id, amount, raw_amount, metadata, created_at, updated_at)
@@ -839,15 +841,15 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_credit_line_2', 'cart_seed4_002', 'loyalty_points', '${customerIds[1]}', 250, '${rawNum(250)}', '{"source":"points_redemption","description":"استبدال نقاط الولاء"}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ credit_line seeded")
+    logger.info("  ✓ credit_line seeded")
   } catch (err: any) {
-    console.log(`  ✗ credit_line error: ${err.message}`)
+    logger.error(`  ✗ credit_line error: ${err.message}`)
   }
 
   // ============================================================
   // 41. POINTS_LEDGER (3 rows)
   // ============================================================
-  console.log("41/41 Seeding points_ledger...")
+  logger.info("41/41 Seeding points_ledger...")
   try {
     await dataSource.raw(`
       INSERT INTO points_ledger (id, tenant_id, membership_id, transaction_type, points, balance_after, source, reference_type, reference_id, description, expires_at, metadata, created_at, updated_at)
@@ -857,12 +859,12 @@ export default async function seedVerticals4({ container }: ExecArgs) {
         ('seed4_points_3', '${tenantId}', 'membership_seed4_1', 'redeem', -200, 550, 'redemption', 'order', 'order_seed4_003', 'استبدال نقاط للحصول على خصم', null, '{"discount_applied":200}', '${now}', '${now}')
       ON CONFLICT (id) DO NOTHING
     `)
-    console.log("  ✓ points_ledger seeded")
+    logger.info("  ✓ points_ledger seeded")
   } catch (err: any) {
-    console.log(`  ✗ points_ledger error: ${err.message}`)
+    logger.error(`  ✗ points_ledger error: ${err.message}`)
   }
 
-  console.log("\n========================================")
-  console.log("Seed Verticals Batch 4 Complete!")
-  console.log("========================================")
+  logger.info("\n========================================")
+  logger.info("Seed Verticals Batch 4 Complete!")
+  logger.info("========================================")
 }

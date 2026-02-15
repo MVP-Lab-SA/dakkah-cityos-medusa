@@ -1,5 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { z } from "zod"
+import { handleApiError } from "../../lib/api-error-handler"
 
 const createSchema = z.object({
   name: z.string().min(1),
@@ -14,20 +15,30 @@ const createSchema = z.object({
 })
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const moduleService = req.scope.resolve("node") as any
-  const { limit = "20", offset = "0", tenant_id, type, parent_id } = req.query as Record<string, string | undefined>
-  const filters: Record<string, any> = {}
-  if (tenant_id) filters.tenant_id = tenant_id
-  if (type) filters.type = type
-  if (parent_id) filters.parent_id = parent_id
-  const items = await moduleService.listNodes(filters, { skip: Number(offset), take: Number(limit) })
-  return res.json({ items, count: Array.isArray(items) ? items.length : 0, limit: Number(limit), offset: Number(offset) })
+  try {
+    const moduleService = req.scope.resolve("node") as any
+    const { limit = "20", offset = "0", tenant_id, type, parent_id } = req.query as Record<string, string | undefined>
+    const filters: Record<string, any> = {}
+    if (tenant_id) filters.tenant_id = tenant_id
+    if (type) filters.type = type
+    if (parent_id) filters.parent_id = parent_id
+    const items = await moduleService.listNodes(filters, { skip: Number(offset), take: Number(limit) })
+    return res.json({ items, count: Array.isArray(items) ? items.length : 0, limit: Number(limit), offset: Number(offset) })
+
+  } catch (error) {
+    handleApiError(res, error, "GET admin nodes")
+  }
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const moduleService = req.scope.resolve("node") as any
-  const validation = createSchema.safeParse(req.body)
-  if (!validation.success) return res.status(400).json({ message: "Validation failed", errors: validation.error.issues })
-  const item = await moduleService.createNodeWithValidation(validation.data)
-  return res.status(201).json({ item })
+  try {
+    const moduleService = req.scope.resolve("node") as any
+    const validation = createSchema.safeParse(req.body)
+    if (!validation.success) return res.status(400).json({ message: "Validation failed", errors: validation.error.issues })
+    const item = await moduleService.createNodeWithValidation(validation.data)
+    return res.status(201).json({ item })
+
+  } catch (error) {
+    handleApiError(res, error, "POST admin nodes")
+  }
 }

@@ -1,5 +1,7 @@
 // @ts-nocheck
 import crypto from "crypto"
+import { createLogger } from "../../lib/logger"
+const logger = createLogger("lib:platform")
 
 type CircuitBreakerState = "closed" | "open" | "half_open"
 
@@ -149,7 +151,7 @@ export class OutboxProcessor {
     }
 
     if (processed > 0 || failed > 0) {
-      console.log(`[OutboxProcessor] Processed: ${processed}, Failed: ${failed}, Skipped: ${skipped}`)
+      logger.info("[OutboxProcessor] Processed: ${processed}, Failed: ${failed}, Skipped: ${skipped}")
     }
 
     return { processed, failed, skipped, errors }
@@ -158,7 +160,7 @@ export class OutboxProcessor {
   async processEvent(event: any, container: any): Promise<void> {
     const system = this.routeEventToSystem(event.event_type)
     if (!system) {
-      console.log(`[OutboxProcessor] No system mapping for event type: ${event.event_type}`)
+      logger.info("[OutboxProcessor] No system mapping for event type: ${event.event_type}")
       return
     }
 
@@ -196,7 +198,7 @@ export class OutboxProcessor {
 
   private async dispatchToSystem(system: ManagedSystem, event: any, container: any): Promise<void> {
     const correlationId = event.correlation_id || crypto.randomUUID()
-    console.log(`[OutboxProcessor] Dispatching ${event.event_type} to ${system} (correlation: ${correlationId})`)
+    logger.info("[OutboxProcessor] Dispatching ${event.event_type} to ${system} (correlation: ${correlationId})")
 
     try {
       const { dispatchEventToTemporal } = await import("../../lib/event-dispatcher.js")

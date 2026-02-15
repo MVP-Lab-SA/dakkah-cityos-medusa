@@ -1,5 +1,7 @@
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
 import { dispatchEventToTemporal, getWorkflowForEvent } from "../lib/event-dispatcher"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("subscribers:temporal-event-bridge")
 
 export default async function temporalEventBridge({
   event,
@@ -26,9 +28,7 @@ export default async function temporalEventBridge({
     const result = await dispatchEventToTemporal(eventName, event.data, nodeContext)
 
     if (result.dispatched) {
-      console.log(
-        `[TemporalBridge] Dispatched ${eventName} → runId: ${result.runId}`
-      )
+      logger.info("[TemporalBridge] Dispatched ${eventName} → runId: ${result.runId}")
     }
   } catch (err: any) {
     console.warn(

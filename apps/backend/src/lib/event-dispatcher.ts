@@ -1,4 +1,6 @@
 import { startWorkflow } from "./temporal-client"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("lib:event-dispatcher")
 
 const EVENT_WORKFLOW_MAP: Record<string, { workflowId: string; taskQueue: string }> = {
   "order.placed": { workflowId: "xsystem.unified-order-orchestrator", taskQueue: "commerce-queue" },
@@ -150,7 +152,7 @@ export async function dispatchCrossSystemEvent(
   const temporalResult = await dispatchEventToTemporal(eventType, payload, nodeContext)
 
   if (!temporalResult.dispatched) {
-    console.log(`[EventDispatcher] No Temporal workflow for ${eventType}, attempting outbox fallback`)
+    logger.info("[EventDispatcher] No Temporal workflow for ${eventType}, attempting outbox fallback")
     try {
       const eventOutboxService = container.resolve("eventOutbox") as any
       await eventOutboxService.createEvent({
@@ -169,6 +171,6 @@ export async function dispatchCrossSystemEvent(
     }
   }
 
-  console.log(`[EventDispatcher] Dispatched ${eventType} to Temporal: runId=${temporalResult.runId}`)
+  logger.info("[EventDispatcher] Dispatched ${eventType} to Temporal: runId=${temporalResult.runId}")
   return { temporal: true, integrations: ["temporal"] }
 }

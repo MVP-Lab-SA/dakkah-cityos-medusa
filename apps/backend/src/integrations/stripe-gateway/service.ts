@@ -1,4 +1,6 @@
 import { MedusaError } from "@medusajs/framework/utils";
+import { createLogger } from "../../lib/logger"
+const logger = createLogger("integration:stripe-gateway")
 
 export interface StripeGatewayConfig {
   secretKey: string;
@@ -42,7 +44,7 @@ export class StripeGatewayService {
     status: string;
   }> {
     try {
-      console.log(`[StripeGateway] Creating payment intent for tenant: ${data.tenantId}`);
+      logger.info("[StripeGateway] Creating payment intent for tenant: ${data.tenantId}");
       const stripe = await this.getStripe();
 
       const params: Record<string, any> = {
@@ -79,7 +81,7 @@ export class StripeGatewayService {
     status: string;
   }> {
     try {
-      console.log(`[StripeGateway] Confirming payment intent: ${paymentIntentId}`);
+      logger.info("[StripeGateway] Confirming payment intent: ${paymentIntentId}");
       const stripe = await this.getStripe();
 
       const paymentIntent = await stripe.paymentIntents.confirm(paymentIntentId);
@@ -106,7 +108,7 @@ export class StripeGatewayService {
     amount: number;
   }> {
     try {
-      console.log(`[StripeGateway] Creating refund for payment: ${data.paymentIntentId}`);
+      logger.info("[StripeGateway] Creating refund for payment: ${data.paymentIntentId}");
       const stripe = await this.getStripe();
 
       const params: Record<string, any> = {
@@ -145,7 +147,7 @@ export class StripeGatewayService {
     name: string;
   }> {
     try {
-      console.log(`[StripeGateway] Creating customer: ${data.email}`);
+      logger.info("[StripeGateway] Creating customer: ${data.email}");
       const stripe = await this.getStripe();
 
       const customer = await stripe.customers.create({
@@ -177,7 +179,7 @@ export class StripeGatewayService {
     onboardingUrl?: string;
   }> {
     try {
-      console.log(`[StripeGateway] Creating Connect account for vendor: ${data.vendorName}`);
+      logger.info("[StripeGateway] Creating Connect account for vendor: ${data.vendorName}");
       const stripe = await this.getStripe();
 
       const account = await stripe.accounts.create({
@@ -222,7 +224,7 @@ export class StripeGatewayService {
     status: string;
   }> {
     try {
-      console.log(`[StripeGateway] Creating transfer to: ${data.destinationAccountId}`);
+      logger.info("[StripeGateway] Creating transfer to: ${data.destinationAccountId}");
       const stripe = await this.getStripe();
 
       const params: Record<string, any> = {
@@ -260,7 +262,7 @@ export class StripeGatewayService {
     status: string;
   }> {
     try {
-      console.log(`[StripeGateway] Creating payout for account: ${data.stripeAccountId}`);
+      logger.info("[StripeGateway] Creating payout for account: ${data.stripeAccountId}");
       const stripe = await this.getStripe();
 
       const payout = await stripe.payouts.create(
@@ -288,7 +290,7 @@ export class StripeGatewayService {
 
   async constructWebhookEvent(body: string, signature: string): Promise<any> {
     try {
-      console.log("[StripeGateway] Constructing webhook event");
+      logger.info("[StripeGateway] Constructing webhook event");
       const stripe = await this.getStripe();
 
       const event = stripe.webhooks.constructEvent(
@@ -319,7 +321,7 @@ export class StripeGatewayService {
     }>
   > {
     try {
-      console.log(`[StripeGateway] Getting payment methods for customer: ${customerId}`);
+      logger.info("[StripeGateway] Getting payment methods for customer: ${customerId}");
       const stripe = await this.getStripe();
 
       const paymentMethods = await stripe.paymentMethods.list({
@@ -352,7 +354,7 @@ export class StripeGatewayService {
     pending: Array<{ amount: number; currency: string }>;
   }> {
     try {
-      console.log(`[StripeGateway] Getting account balance${stripeAccountId ? ` for: ${stripeAccountId}` : ""}`);
+      logger.info(String(`[StripeGateway] Getting account balance${stripeAccountId ? ` for: ${stripeAccountId}` : ""}`));
       const stripe = await this.getStripe();
 
       const options: Record<string, any> = {};
@@ -390,7 +392,7 @@ export class StripeGatewayService {
     currentPeriodEnd: number;
   }> {
     try {
-      console.log(`[StripeGateway] Creating subscription for customer: ${data.customerId}`);
+      logger.info("[StripeGateway] Creating subscription for customer: ${data.customerId}");
       const stripe = await this.getStripe();
 
       const subscription = await stripe.subscriptions.create({
@@ -417,7 +419,7 @@ export class StripeGatewayService {
     status: string;
   }> {
     try {
-      console.log(`[StripeGateway] Cancelling subscription: ${subscriptionId}`);
+      logger.info("[StripeGateway] Cancelling subscription: ${subscriptionId}");
       const stripe = await this.getStripe();
 
       const subscription = await stripe.subscriptions.cancel(subscriptionId);

@@ -1,11 +1,13 @@
 // @ts-nocheck
 import { MedusaContainer } from "@medusajs/framework/types"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("jobs:stale-quote-cleanup")
 
 export default async function staleQuoteCleanupJob(container: MedusaContainer) {
   const query = container.resolve("query")
   const quoteService = container.resolve("quote")
   
-  console.log("[Quote Cleanup] Checking for stale quotes...")
+  logger.info("[Quote Cleanup] Checking for stale quotes...")
   
   try {
     const thirtyDaysAgo = new Date()
@@ -21,7 +23,7 @@ export default async function staleQuoteCleanupJob(container: MedusaContainer) {
     })
     
     if (!staleQuotes || staleQuotes.length === 0) {
-      console.log("[Quote Cleanup] No stale quotes found")
+      logger.info("[Quote Cleanup] No stale quotes found")
       return
     }
     
@@ -49,7 +51,7 @@ export default async function staleQuoteCleanupJob(container: MedusaContainer) {
       }
     }
     
-    console.log(`[Quote Cleanup] Expired ${expiredCount} quotes`)
+    logger.info("[Quote Cleanup] Expired ${expiredCount} quotes")
   } catch (error) {
     console.error("[Quote Cleanup] Job failed:", error)
   }

@@ -4,6 +4,8 @@ import {
   ContainerRegistrationKeys,
   Modules,
 } from "@medusajs/framework/utils"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("scripts:db-verify")
 
 interface VerificationResult {
   name: string
@@ -26,14 +28,14 @@ export default async function verifyDatabase({ container }: ExecArgs) {
   const results: VerificationResult[] = []
   const duplicates: DuplicateInfo[] = []
 
-  console.log("\n" + "=".repeat(60))
-  console.log("DATABASE VERIFICATION SCRIPT")
-  console.log("=".repeat(60) + "\n")
+  logger.info(`\n${String("=".repeat(60)}`))
+  logger.info("DATABASE VERIFICATION SCRIPT")
+  logger.info(String("=".repeat(60)) + "\n")
 
   // ============================================================
   // 1. ADMIN USER
   // ============================================================
-  console.log("[1/13] Checking Admin User...")
+  logger.info("[1/13] Checking Admin User...")
   try {
     const { data: adminUsers } = await query.graph({
       entity: "user",
@@ -69,7 +71,7 @@ export default async function verifyDatabase({ container }: ExecArgs) {
   // ============================================================
   // 2. STORE
   // ============================================================
-  console.log("[2/13] Checking Store...")
+  logger.info("[2/13] Checking Store...")
   try {
     const storeModule = container.resolve(Modules.STORE)
     const stores = await storeModule.listStores()
@@ -111,7 +113,7 @@ export default async function verifyDatabase({ container }: ExecArgs) {
   // ============================================================
   // 3. SALES CHANNELS
   // ============================================================
-  console.log("[3/13] Checking Sales Channels...")
+  logger.info("[3/13] Checking Sales Channels...")
   try {
     const salesChannelModule = container.resolve(Modules.SALES_CHANNEL)
     const allChannels = await salesChannelModule.listSalesChannels()
@@ -144,7 +146,7 @@ export default async function verifyDatabase({ container }: ExecArgs) {
   // ============================================================
   // 4. REGIONS
   // ============================================================
-  console.log("[4/13] Checking Regions...")
+  logger.info("[4/13] Checking Regions...")
   try {
     const { data: regions } = await query.graph({
       entity: "region",
@@ -179,7 +181,7 @@ export default async function verifyDatabase({ container }: ExecArgs) {
   // ============================================================
   // 5. STOCK LOCATIONS
   // ============================================================
-  console.log("[5/13] Checking Stock Locations...")
+  logger.info("[5/13] Checking Stock Locations...")
   try {
     const stockLocationModule = container.resolve(Modules.STOCK_LOCATION)
     const stockLocations = await stockLocationModule.listStockLocations()
@@ -214,7 +216,7 @@ export default async function verifyDatabase({ container }: ExecArgs) {
   // ============================================================
   // 6. FULFILLMENT SETS & SHIPPING OPTIONS
   // ============================================================
-  console.log("[6/13] Checking Fulfillment & Shipping...")
+  logger.info("[6/13] Checking Fulfillment & Shipping...")
   try {
     const fulfillmentModule = container.resolve(Modules.FULFILLMENT)
     const fulfillmentSets = await fulfillmentModule.listFulfillmentSets()
@@ -254,7 +256,7 @@ export default async function verifyDatabase({ container }: ExecArgs) {
   // ============================================================
   // 7. API KEYS
   // ============================================================
-  console.log("[7/13] Checking API Keys...")
+  logger.info("[7/13] Checking API Keys...")
   try {
     const { data: apiKeys } = await query.graph({
       entity: "api_key",
@@ -293,7 +295,7 @@ export default async function verifyDatabase({ container }: ExecArgs) {
   // ============================================================
   // 8. PRODUCT CATEGORIES
   // ============================================================
-  console.log("[8/13] Checking Product Categories...")
+  logger.info("[8/13] Checking Product Categories...")
   try {
     const { data: categories } = await query.graph({
       entity: "product_category",
@@ -321,7 +323,7 @@ export default async function verifyDatabase({ container }: ExecArgs) {
   // ============================================================
   // 9. PRODUCTS, VARIANTS & PRICES
   // ============================================================
-  console.log("[9/13] Checking Products...")
+  logger.info("[9/13] Checking Products...")
   try {
     const { data: products } = await query.graph({
       entity: "product",
@@ -355,7 +357,7 @@ export default async function verifyDatabase({ container }: ExecArgs) {
   // ============================================================
   // 10. TENANT (DAKKAH)
   // ============================================================
-  console.log("[10/13] Checking Tenant...")
+  logger.info("[10/13] Checking Tenant...")
   try {
     const tenantService = container.resolve("tenant") as any
 
@@ -386,7 +388,7 @@ export default async function verifyDatabase({ container }: ExecArgs) {
   // ============================================================
   // 11. NODE HIERARCHY
   // ============================================================
-  console.log("[11/13] Checking Node Hierarchy...")
+  logger.info("[11/13] Checking Node Hierarchy...")
   try {
     const nodeService = container.resolve("node") as any
 
@@ -427,7 +429,7 @@ export default async function verifyDatabase({ container }: ExecArgs) {
   // ============================================================
   // 12. GOVERNANCE AUTHORITY
   // ============================================================
-  console.log("[12/13] Checking Governance Authority...")
+  logger.info("[12/13] Checking Governance Authority...")
   try {
     const governanceService = container.resolve("governance") as any
 
@@ -463,7 +465,7 @@ export default async function verifyDatabase({ container }: ExecArgs) {
   // ============================================================
   // 13. CUSTOMERS & VENDORS
   // ============================================================
-  console.log("[13/13] Checking Customers & Vendors...")
+  logger.info("[13/13] Checking Customers & Vendors...")
   try {
     const { data: customers } = await query.graph({
       entity: "customer",
@@ -519,9 +521,9 @@ export default async function verifyDatabase({ container }: ExecArgs) {
   // ============================================================
   // PRINT SUMMARY REPORT
   // ============================================================
-  console.log("\n" + "=".repeat(60))
-  console.log("VERIFICATION SUMMARY REPORT")
-  console.log("=".repeat(60) + "\n")
+  logger.info(`\n${String("=".repeat(60)}`))
+  logger.info("VERIFICATION SUMMARY REPORT")
+  logger.info(String("=".repeat(60)) + "\n")
 
   const statusCounts = {
     OK: results.filter((r) => r.status === "OK").length,
@@ -537,38 +539,36 @@ export default async function verifyDatabase({ container }: ExecArgs) {
       ERROR: "✗",
     }[result.status]
 
-    console.log(`${statusSymbol} ${result.name.padEnd(30)} | Count: ${String(result.count).padEnd(3)} | ${result.status}`)
+    logger.info(`${statusSymbol} ${result.name.padEnd(30)} | Count: ${String(result.count).padEnd(3)} | ${result.status}`)
     if (result.details && result.details.length > 0) {
       result.details.slice(0, 3).forEach((detail) => {
-        console.log(`  └─ ${detail}`)
+        logger.info(`  └─ ${detail}`)
       })
       if (result.details.length > 3) {
-        console.log(`  └─ ... and ${result.details.length - 3} more`)
+        logger.info(`  └─ ... and ${result.details.length - 3} more`)
       }
     }
-    console.log()
+    logger.info("")
   })
 
   // Print status summary
-  console.log("-".repeat(60))
-  console.log(
-    `Status Summary: ${statusCounts.OK} OK | ${statusCounts.WARN} WARNING(S) | ${statusCounts.ERROR} ERROR(S)`
-  )
-  console.log("-".repeat(60) + "\n")
+  logger.info(String("-".repeat(60)))
+  logger.error(`Status Summary: ${statusCounts.OK} OK | ${statusCounts.WARN} WARNING(S) | ${statusCounts.ERROR} ERROR(S)`)
+  logger.info(String("-".repeat(60)) + "\n")
 
   // ============================================================
   // DUPLICATES REPORT
   // ============================================================
   if (duplicates.length > 0) {
-    console.log("=".repeat(60))
-    console.log("DUPLICATES FOUND")
-    console.log("=".repeat(60) + "\n")
+    logger.info(String("=".repeat(60)))
+    logger.info("DUPLICATES FOUND")
+    logger.info(String("=".repeat(60)) + "\n")
 
     duplicates.forEach((dup, idx) => {
-      console.log(`${idx + 1}. ${dup.type}`)
-      console.log(`   Found: ${dup.items.length} duplicate(s)`)
-      console.log(`   Recommendation: ${dup.recommendation}`)
-      console.log()
+      logger.info(`${idx + 1}. ${dup.type}`)
+      logger.info(`   Found: ${dup.items.length} duplicate(s)`)
+      logger.info(`   Recommendation: ${dup.recommendation}`)
+      logger.info("")
 
       dup.items.forEach((item, itemIdx) => {
         const label = itemIdx === 0 ? "KEEP" : "REMOVE"
@@ -576,71 +576,61 @@ export default async function verifyDatabase({ container }: ExecArgs) {
         const title = item.title || item.name || id
         const createdAt = item.created_at ? new Date(item.created_at).toLocaleString() : "N/A"
 
-        console.log(`   [${label}] ${title} (ID: ${id})`)
+        logger.info(`   [${label}] ${title} (ID: ${id})`)
         if (createdAt !== "N/A") {
-          console.log(`         Created: ${createdAt}`)
+          logger.info(`         Created: ${createdAt}`)
         }
       })
-      console.log()
+      logger.info("")
     })
 
-    console.log("=".repeat(60))
-    console.log("CLEANUP OPERATIONS (Simulation Mode)")
-    console.log("=".repeat(60) + "\n")
+    logger.info(String("=".repeat(60)))
+    logger.info("CLEANUP OPERATIONS (Simulation Mode)")
+    logger.info(String("=".repeat(60)) + "\n")
 
     // Simulate cleanup for API Keys
     const apiKeyDups = duplicates.find((d) => d.type.includes("API Keys"))
     if (apiKeyDups) {
-      console.log("API Key Cleanup (Simulation):")
+      logger.info("API Key Cleanup (Simulation):")
       const sorted = [...apiKeyDups.items].sort(
         (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
       )
       const toKeep = sorted[0]
       const toRemove = sorted.slice(1)
 
-      console.log(`  Keeping: ${toKeep.title} (ID: ${toKeep.id}, Created: ${new Date(toKeep.created_at).toLocaleString()})`)
-      console.log(`  Removing: ${toRemove.length} duplicate(s)`)
+      logger.info(`  Keeping: ${toKeep.title} (ID: ${toKeep.id}, Created: ${new Date(toKeep.created_at).toLocaleString()})`)
+      logger.info(`  Removing: ${toRemove.length} duplicate(s)`)
 
       toRemove.forEach((item) => {
-        console.log(
-          `    // TODO: uncomment to enable cleanup`
-        )
-        console.log(
-          `    // await container.resolve(Modules.API_KEY).deleteApiKeys([${JSON.stringify(item.id)}])`
-        )
+        logger.info(`    // TODO: uncomment to enable cleanup`)
+        logger.info(`    // await container.resolve(Modules.API_KEY).deleteApiKeys([${JSON.stringify(item.id)}])`)
       })
-      console.log()
+      logger.info("")
     }
 
     // Simulate cleanup for Stock Locations
     const stockLocDups = duplicates.find((d) => d.type.includes("Stock Locations"))
     if (stockLocDups) {
-      console.log("Stock Location Cleanup (Simulation):")
+      logger.info("Stock Location Cleanup (Simulation):")
       const toKeep = stockLocDups.items[0]
       const toRemove = stockLocDups.items.slice(1)
 
-      console.log(`  Keeping: ${toKeep.name} (ID: ${toKeep.id})`)
-      console.log(`  Removing: ${toRemove.length} duplicate(s)`)
+      logger.info(`  Keeping: ${toKeep.name} (ID: ${toKeep.id})`)
+      logger.info(`  Removing: ${toRemove.length} duplicate(s)`)
 
       toRemove.forEach((item) => {
-        console.log(
-          `    // TODO: uncomment to enable cleanup`
-        )
-        console.log(
-          `    // const stockLocModule = container.resolve(Modules.STOCK_LOCATION)`
-        )
-        console.log(
-          `    // await stockLocModule.deleteStockLocations([${JSON.stringify(item.id)}])`
-        )
+        logger.info(`    // TODO: uncomment to enable cleanup`)
+        logger.info(`    // const stockLocModule = container.resolve(Modules.STOCK_LOCATION)`)
+        logger.info(`    // await stockLocModule.deleteStockLocations([${JSON.stringify(item.id)}])`)
       })
-      console.log()
+      logger.info("")
     }
 
-    console.log("To enable cleanup, uncomment the TODO lines above and run this script again.\n")
+    logger.info("To enable cleanup, uncomment the TODO lines above and run this script again.\n")
   } else {
-    console.log("=".repeat(60))
-    console.log("✓ No duplicates found")
-    console.log("=".repeat(60) + "\n")
+    logger.info(String("=".repeat(60)))
+    logger.info("✓ No duplicates found")
+    logger.info(String("=".repeat(60)) + "\n")
   }
 
   // ============================================================
@@ -649,15 +639,15 @@ export default async function verifyDatabase({ container }: ExecArgs) {
   const hasErrors = statusCounts.ERROR > 0
   const hasWarnings = statusCounts.WARN > 0
 
-  console.log("=".repeat(60))
+  logger.info(String("=".repeat(60)))
   if (hasErrors) {
-    console.log("STATUS: ✗ VERIFICATION FAILED - Errors detected")
+    logger.error("STATUS: ✗ VERIFICATION FAILED - Errors detected")
   } else if (hasWarnings) {
-    console.log("STATUS: ⚠ VERIFICATION PASSED WITH WARNINGS")
+    logger.info("STATUS: ⚠ VERIFICATION PASSED WITH WARNINGS")
   } else {
-    console.log("STATUS: ✓ VERIFICATION SUCCESSFUL - All checks passed")
+    logger.info("STATUS: ✓ VERIFICATION SUCCESSFUL - All checks passed")
   }
-  console.log("=".repeat(60) + "\n")
+  logger.info(String("=".repeat(60)) + "\n")
 
   logger.info("Database verification complete")
 }

@@ -1,13 +1,19 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const companyModuleService = req.scope.resolve("companyModuleService") as any
-  const { id } = req.params
-  const body = req.body as { reason?: string }
-  const reason = body.reason || "No reason provided"
-  const userId = (req as any).auth_context?.actor_id || "system"
+  try {
+    const companyModuleService = req.scope.resolve("companyModuleService") as any
+    const { id } = req.params
+    const body = req.body as { reason?: string }
+    const reason = body.reason || "No reason provided"
+    const userId = (req as any).auth_context?.actor_id || "system"
   
-  const purchase_order = await companyModuleService.rejectPurchaseOrder(id, userId, reason)
+    const purchase_order = await companyModuleService.rejectPurchaseOrder(id, userId, reason)
   
-  res.json({ purchase_order })
+    res.json({ purchase_order })
+
+  } catch (error) {
+    handleApiError(res, error, "POST admin purchase-orders id reject")
+  }
 }

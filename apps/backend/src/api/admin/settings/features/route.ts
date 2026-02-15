@@ -1,4 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 /**
  * Feature Configuration System
@@ -275,9 +276,14 @@ export async function GET(
   req: MedusaRequest,
   res: MedusaResponse
 ) {
-  res.json({
-    features: storeFeatures
-  })
+  try {
+    res.json({
+      features: storeFeatures
+    })
+
+  } catch (error) {
+    handleApiError(res, error, "GET admin settings features")
+  }
 }
 
 /**
@@ -288,39 +294,44 @@ export async function PUT(
   req: MedusaRequest,
   res: MedusaResponse
 ) {
-  const updates = req.body as Partial<StoreFeatures>
+  try {
+    const updates = req.body as Partial<StoreFeatures>
   
-  // Deep merge updates
-  storeFeatures = deepMerge(storeFeatures, updates)
+    // Deep merge updates
+    storeFeatures = deepMerge(storeFeatures, updates)
   
-  // Auto-enable related homepage sections when modules are enabled
-  if (updates.modules) {
-    if (updates.modules.marketplace?.enabled) {
-      const vendorSection = storeFeatures.homepage.sections.find(s => s.type === 'vendors')
-      if (vendorSection) vendorSection.enabled = true
-      storeFeatures.navigation.header.showVendors = true
-    }
+    // Auto-enable related homepage sections when modules are enabled
+    if (updates.modules) {
+      if (updates.modules.marketplace?.enabled) {
+        const vendorSection = storeFeatures.homepage.sections.find(s => s.type === 'vendors')
+        if (vendorSection) vendorSection.enabled = true
+        storeFeatures.navigation.header.showVendors = true
+      }
     
-    if (updates.modules.bookings?.enabled) {
-      const servicesSection = storeFeatures.homepage.sections.find(s => s.type === 'services')
-      if (servicesSection) servicesSection.enabled = true
-      storeFeatures.navigation.header.showServices = true
-    }
+      if (updates.modules.bookings?.enabled) {
+        const servicesSection = storeFeatures.homepage.sections.find(s => s.type === 'services')
+        if (servicesSection) servicesSection.enabled = true
+        storeFeatures.navigation.header.showServices = true
+      }
     
-    if (updates.modules.b2b?.enabled) {
-      storeFeatures.navigation.header.showB2BPortal = true
-    }
+      if (updates.modules.b2b?.enabled) {
+        storeFeatures.navigation.header.showB2BPortal = true
+      }
     
-    if (updates.modules.subscriptions?.enabled) {
-      const subSection = storeFeatures.homepage.sections.find(s => s.type === 'subscriptions')
-      if (subSection) subSection.enabled = true
+      if (updates.modules.subscriptions?.enabled) {
+        const subSection = storeFeatures.homepage.sections.find(s => s.type === 'subscriptions')
+        if (subSection) subSection.enabled = true
+      }
     }
+  
+    res.json({
+      features: storeFeatures,
+      message: "Features updated successfully"
+    })
+
+  } catch (error) {
+    handleApiError(res, error, "PUT admin settings features")
   }
-  
-  res.json({
-    features: storeFeatures,
-    message: "Features updated successfully"
-  })
 }
 
 /**
@@ -331,12 +342,17 @@ export async function POST(
   req: MedusaRequest,
   res: MedusaResponse
 ) {
-  storeFeatures = { ...DEFAULT_FEATURES }
+  try {
+    storeFeatures = { ...DEFAULT_FEATURES }
   
-  res.json({
-    features: storeFeatures,
-    message: "Features reset to defaults"
-  })
+    res.json({
+      features: storeFeatures,
+      message: "Features reset to defaults"
+    })
+
+  } catch (error) {
+    handleApiError(res, error, "POST admin settings features")
+  }
 }
 
 // Helper function for deep merge

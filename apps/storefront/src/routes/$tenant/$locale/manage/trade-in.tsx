@@ -124,11 +124,11 @@ function ManageTradeInPage() {
       render: (_: unknown, row: any) => (
         <DropdownMenu
           items={[
-            { label: "Edit", onClick: () => handleEdit(row) },
-            { label: "Approve", onClick: () => handleEdit({ ...row, status: "approved" }) },
-            { label: "Reject", onClick: () => handleEdit({ ...row, status: "rejected" }) },
+            { label: t(locale, "common.actions.edit", "Edit"), onClick: () => handleEdit(row) },
+            { label: t(locale, "common.actions.approve", "Approve"), onClick: () => handleEdit({ ...row, status: "approved" }) },
+            { label: t(locale, "common.actions.reject", "Reject"), onClick: () => handleEdit({ ...row, status: "rejected" }) },
             { type: "separator" as const },
-            { label: "Delete", onClick: () => setDeleteId(row.id), variant: "danger" as const },
+            { label: t(locale, "common.actions.delete", "Delete"), onClick: () => setDeleteId(row.id), variant: "danger" as const },
           ]}
         />
       ),
@@ -175,7 +175,7 @@ function ManageTradeInPage() {
         onChange={handleFormChange}
         onSubmit={handleSubmit}
         loading={updateMutation.isPending}
-        submitLabel="Save changes"
+        submitLabel={t(locale, "common.actions.saveChanges", "Save changes")}
       />
 
       <ConfirmDialog

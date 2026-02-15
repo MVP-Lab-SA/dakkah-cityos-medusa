@@ -2,6 +2,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
 import { z } from "zod";
 import { createSubscriptionWorkflow } from "../../../workflows/subscription/create-subscription-workflow";
+import { handleApiError } from "../../lib/api-error-handler"
 
 const createSubscriptionSchema = z.object({
   customer_id: z.string(),
@@ -23,46 +24,56 @@ const createSubscriptionSchema = z.object({
 
 // GET /admin/subscriptions - List subscriptions
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const subscriptionModule = req.scope.resolve("subscription") as any;
-  const extReq = req as any;
-  const tenantId = extReq.tenant?.id || "";
+  try {
+    const subscriptionModule = req.scope.resolve("subscription") as any;
+    const extReq = req as any;
+    const tenantId = extReq.tenant?.id || "";
   
-  const { offset = 0, limit = 20, status, customer_id } = req.query as Record<string, string | undefined>;
+    const { offset = 0, limit = 20, status, customer_id } = req.query as Record<string, string | undefined>;
   
-  const filters: Record<string, unknown> = {};
-  if (tenantId) filters.tenant_id = tenantId;
-  if (status) filters.status = status;
-  if (customer_id) filters.customer_id = customer_id;
+    const filters: Record<string, unknown> = {};
+    if (tenantId) filters.tenant_id = tenantId;
+    if (status) filters.status = status;
+    if (customer_id) filters.customer_id = customer_id;
   
-  const subscriptions = await subscriptionModule.listSubscriptions(filters, {
-    skip: Number(offset),
-    take: Number(limit),
-    order: { created_at: "DESC" },
-  });
+    const subscriptions = await subscriptionModule.listSubscriptions(filters, {
+      skip: Number(offset),
+      take: Number(limit),
+      order: { created_at: "DESC" },
+    });
   
-  res.json({
-    subscriptions,
-    count: Array.isArray(subscriptions) ? subscriptions.length : 0,
-    offset: Number(offset),
-    limit: Number(limit),
-  });
+    res.json({
+      subscriptions,
+      count: Array.isArray(subscriptions) ? subscriptions.length : 0,
+      offset: Number(offset),
+      limit: Number(limit),
+    });
+
+  } catch (error) {
+    handleApiError(res, error, "GET admin subscriptions")
+  }
 }
 
 // POST /admin/subscriptions - Create subscription
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const extReq = req as any;
-  const tenantId = extReq.tenant?.id;
-  const storeId = extReq.store?.id;
+  try {
+    const extReq = req as any;
+    const tenantId = extReq.tenant?.id;
+    const storeId = extReq.store?.id;
   
-  const validatedData = createSubscriptionSchema.parse(req.body);
+    const validatedData = createSubscriptionSchema.parse(req.body);
   
-  const { result } = await createSubscriptionWorkflow(req.scope).run({
-    input: {
-      ...validatedData,
-      tenant_id: tenantId || "",
-      store_id: storeId,
-    },
-  });
+    const { result } = await createSubscriptionWorkflow(req.scope).run({
+      input: {
+        ...validatedData,
+        tenant_id: tenantId || "",
+        store_id: storeId,
+      },
+    });
   
-  res.status(201).json({ subscription: result.subscription });
+    res.status(201).json({ subscription: result.subscription });
+
+  } catch (error) {
+    handleApiError(res, error, "POST admin subscriptions")
+  }
 }

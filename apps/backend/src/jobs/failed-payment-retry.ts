@@ -1,12 +1,14 @@
 // @ts-nocheck
 import { MedusaContainer } from "@medusajs/framework/types"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("jobs:failed-payment-retry")
 
 export default async function failedPaymentRetryJob(container: MedusaContainer) {
   const query = container.resolve("query")
   const subscriptionService = container.resolve("subscription")
   const eventBus = container.resolve("event_bus")
   
-  console.log("[Payment Retry] Starting retry job...")
+  logger.info("[Payment Retry] Starting retry job...")
   
   try {
     const { data: failedSubscriptions } = await query.graph({
@@ -18,7 +20,7 @@ export default async function failedPaymentRetryJob(container: MedusaContainer) 
     })
     
     if (!failedSubscriptions || failedSubscriptions.length === 0) {
-      console.log("[Payment Retry] No failed payments to retry")
+      logger.info("[Payment Retry] No failed payments to retry")
       return
     }
     
@@ -46,7 +48,7 @@ export default async function failedPaymentRetryJob(container: MedusaContainer) 
         })
         
         cancelledCount++
-        console.log(`[Payment Retry] Cancelled subscription ${subscription.id} - max retries exceeded`)
+        logger.info("[Payment Retry] Cancelled subscription ${subscription.id} - max retries exceeded")
         continue
       }
       
@@ -77,7 +79,7 @@ export default async function failedPaymentRetryJob(container: MedusaContainer) 
             }
           })
           successCount++
-          console.log(`[Payment Retry] Dispatched to Temporal for subscription ${subscription.id}, runId: ${result.runId}`)
+          logger.info("[Payment Retry] Dispatched to Temporal for subscription ${subscription.id}, runId: ${result.runId}")
           continue
         }
 
@@ -101,11 +103,11 @@ export default async function failedPaymentRetryJob(container: MedusaContainer) 
         })
         
         failCount++
-        console.log(`[Payment Retry] Failed for subscription ${subscription.id}: ${error.message}`)
+        logger.info("[Payment Retry] Failed for subscription ${subscription.id}: ${error.message}")
       }
     }
     
-    console.log(`[Payment Retry] Completed - Success: ${successCount}, Failed: ${failCount}, Cancelled: ${cancelledCount}`)
+    logger.info("[Payment Retry] Completed - Success: ${successCount}, Failed: ${failCount}, Cancelled: ${cancelledCount}")
   } catch (error) {
     console.error("[Payment Retry] Job failed:", error)
   }

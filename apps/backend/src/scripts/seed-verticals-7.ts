@@ -1,11 +1,13 @@
 // @ts-nocheck
 import { ExecArgs } from "@medusajs/framework/types"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("scripts:seed-verticals-7")
 
 export default async function seedVerticals7({ container }: ExecArgs) {
-  console.log("========================================")
-  console.log("Seeding Vertical Modules – Batch 7")
-  console.log("Tenant/Governance & System Tables")
-  console.log("========================================\n")
+  logger.info("========================================")
+  logger.info("Seeding Vertical Modules – Batch 7")
+  logger.info("Tenant/Governance & System Tables")
+  logger.info("========================================\n")
 
   const dataSource = container.resolve("__pg_connection__")
 
@@ -16,10 +18,10 @@ export default async function seedVerticals7({ container }: ExecArgs) {
     const tenantList = Array.isArray(tenants) ? tenants : [tenants].filter(Boolean)
     if (tenantList.length > 0 && tenantList[0]?.id) {
       TENANT_ID = tenantList[0].id
-      console.log(`Using Dakkah tenant: ${TENANT_ID}`)
+      logger.info(`Using Dakkah tenant: ${TENANT_ID}`)
     }
   } catch (e: any) {
-    console.log(`Using fallback tenant ID: ${TENANT_ID}`)
+    logger.info(`Using fallback tenant ID: ${TENANT_ID}`)
   }
   const CUSTOMER_MOHAMMED = "cus_01KGZ2JS53BEYQAQ28YYZEMPKC"
   const CUSTOMER_FATIMA = "cus_01KGZ2JS5P4S10CEF14VAYEZZ7"
@@ -49,9 +51,9 @@ export default async function seedVerticals7({ container }: ExecArgs) {
       if (t === "facility" && !nodeIds.facility) nodeIds.facility = n.id
       if (t === "asset" && !nodeIds.asset) nodeIds.asset = n.id
     }
-    console.log("Resolved node IDs:", JSON.stringify(nodeIds))
+    logger.info(String("Resolved node IDs:", JSON.stringify(nodeIds)))
   } catch (e: any) {
-    console.log(`Could not resolve node IDs: ${e.message}`)
+    logger.info(`Could not resolve node IDs: ${e.message}`)
   }
 
   const now = new Date().toISOString()
@@ -59,7 +61,7 @@ export default async function seedVerticals7({ container }: ExecArgs) {
   // ============================================================
   // 1. PERSONA (5 rows)
   // ============================================================
-  console.log("\n--- 1. Seeding persona (5 rows) ---")
+  logger.info("\n--- 1. Seeding persona (5 rows) ---")
   try {
     await dataSource.raw(`
       INSERT INTO persona (id, tenant_id, name, slug, category, axes, constraints, allowed_workflows, allowed_tools, allowed_surfaces, feature_overrides, priority, status, metadata, created_at, updated_at)
@@ -115,15 +117,15 @@ export default async function seedVerticals7({ container }: ExecArgs) {
          $2, $2)
       ON CONFLICT (id) DO NOTHING
     `, [TENANT_ID, now])
-    console.log("  ✓ persona: 5 rows inserted")
+    logger.info("  ✓ persona: 5 rows inserted")
   } catch (e: any) {
-    console.log(`  ✗ persona error: ${e.message}`)
+    logger.error(`  ✗ persona error: ${e.message}`)
   }
 
   // ============================================================
   // 2. PERSONA_ASSIGNMENT (4 rows)
   // ============================================================
-  console.log("\n--- 2. Seeding persona_assignment (4 rows) ---")
+  logger.info("\n--- 2. Seeding persona_assignment (4 rows) ---")
   try {
     await dataSource.raw(`
       INSERT INTO persona_assignment (id, tenant_id, persona_id, user_id, scope, scope_reference, priority, status, starts_at, ends_at, metadata, created_at, updated_at)
@@ -137,15 +139,15 @@ export default async function seedVerticals7({ container }: ExecArgs) {
         JSON.stringify({customer_id: CUSTOMER_MOHAMMED, name: "Mohammed"}),
         JSON.stringify({customer_id: CUSTOMER_FATIMA, name: "Fatima"}),
         JSON.stringify({customer_id: CUSTOMER_AHMED, name: "Ahmed"})])
-    console.log("  ✓ persona_assignment: 4 rows inserted")
+    logger.info("  ✓ persona_assignment: 4 rows inserted")
   } catch (e: any) {
-    console.log(`  ✗ persona_assignment error: ${e.message}`)
+    logger.error(`  ✗ persona_assignment error: ${e.message}`)
   }
 
   // ============================================================
   // 3. CITYOS_STORE (2 rows)
   // ============================================================
-  console.log("\n--- 3. Seeding cityos_store (2 rows) ---")
+  logger.info("\n--- 3. Seeding cityos_store (2 rows) ---")
   try {
     await dataSource.raw(`
       INSERT INTO cityos_store (id, tenant_id, handle, name, sales_channel_id, default_region_id, supported_currency_codes, storefront_url, subdomain, custom_domain, theme_config, logo_url, favicon_url, brand_colors, store_type, status, seo_title, seo_description, seo_keywords, cms_site_id, settings, metadata, created_at, updated_at)
@@ -183,15 +185,15 @@ export default async function seedVerticals7({ container }: ExecArgs) {
          $6, $6)
       ON CONFLICT (id) DO NOTHING
     `, [TENANT_ID, SC_1, SC_2, REG_1, REG_2, now])
-    console.log("  ✓ cityos_store: 2 rows inserted")
+    logger.info("  ✓ cityos_store: 2 rows inserted")
   } catch (e: any) {
-    console.log(`  ✗ cityos_store error: ${e.message}`)
+    logger.error(`  ✗ cityos_store error: ${e.message}`)
   }
 
   // ============================================================
   // 4. TENANT_SETTINGS (1 row)
   // ============================================================
-  console.log("\n--- 4. Seeding tenant_settings (1 row) ---")
+  logger.info("\n--- 4. Seeding tenant_settings (1 row) ---")
   try {
     await dataSource.raw(`
       INSERT INTO tenant_settings (id, tenant_id, timezone, date_format, time_format, default_locale, supported_locales, default_currency, supported_currencies, primary_color, secondary_color, accent_color, font_family, custom_css, email_from_name, email_from_address, email_reply_to, smtp_host, smtp_port, smtp_user, smtp_password, guest_checkout_enabled, require_phone, require_company, min_order_value, max_order_value, track_inventory, allow_backorders, low_stock_threshold, order_number_prefix, order_number_start, auto_archive_days, accepted_payment_methods, payment_capture_method, free_shipping_threshold, default_weight_unit, default_dimension_unit, tax_inclusive_pricing, tax_provider, notify_on_new_order, notify_on_low_stock, notification_emails, google_analytics_id, facebook_pixel_id, google_tag_manager_id, api_rate_limit, webhook_secret, metadata, created_at, updated_at)
@@ -221,15 +223,15 @@ export default async function seedVerticals7({ container }: ExecArgs) {
       )
       ON CONFLICT (id) DO NOTHING
     `, [TENANT_ID, now])
-    console.log("  ✓ tenant_settings: 1 row inserted")
+    logger.info("  ✓ tenant_settings: 1 row inserted")
   } catch (e: any) {
-    console.log(`  ✗ tenant_settings error: ${e.message}`)
+    logger.error(`  ✗ tenant_settings error: ${e.message}`)
   }
 
   // ============================================================
   // 5. TENANT_USER (3 rows)
   // ============================================================
-  console.log("\n--- 5. Seeding tenant_user (3 rows) ---")
+  logger.info("\n--- 5. Seeding tenant_user (3 rows) ---")
   try {
     await dataSource.raw(`
       INSERT INTO tenant_user (id, tenant_id, user_id, role, role_level, assigned_nodes, assigned_node_ids, permissions, status, invitation_token, invitation_sent_at, invitation_accepted_at, invited_by_id, last_active_at, metadata, created_at, updated_at)
@@ -260,15 +262,15 @@ export default async function seedVerticals7({ container }: ExecArgs) {
       nodeIds.zone ? JSON.stringify([{ id: nodeIds.zone, type: "ZONE" }]) : null,
       nodeIds.zone ? JSON.stringify([nodeIds.zone]) : null
     ])
-    console.log("  ✓ tenant_user: 3 rows inserted")
+    logger.info("  ✓ tenant_user: 3 rows inserted")
   } catch (e: any) {
-    console.log(`  ✗ tenant_user error: ${e.message}`)
+    logger.error(`  ✗ tenant_user error: ${e.message}`)
   }
 
   // ============================================================
   // 6. TENANT_BILLING (1 row)
   // ============================================================
-  console.log("\n--- 6. Seeding tenant_billing (1 row) ---")
+  logger.info("\n--- 6. Seeding tenant_billing (1 row) ---")
   const billingId = "seed7_billing_main"
   try {
     const periodStart = new Date()
@@ -293,15 +295,15 @@ export default async function seedVerticals7({ container }: ExecArgs) {
       )
       ON CONFLICT (id) DO NOTHING
     `, [billingId, TENANT_ID, periodStart.toISOString(), periodEnd.toISOString(), new Date(Date.now() - 30 * 86400000).toISOString(), now])
-    console.log("  ✓ tenant_billing: 1 row inserted")
+    logger.info("  ✓ tenant_billing: 1 row inserted")
   } catch (e: any) {
-    console.log(`  ✗ tenant_billing error: ${e.message}`)
+    logger.error(`  ✗ tenant_billing error: ${e.message}`)
   }
 
   // ============================================================
   // 7. TENANT_INVOICE (2 rows)
   // ============================================================
-  console.log("\n--- 7. Seeding tenant_invoice (2 rows) ---")
+  logger.info("\n--- 7. Seeding tenant_invoice (2 rows) ---")
   try {
     const lastMonth = new Date()
     lastMonth.setMonth(lastMonth.getMonth() - 1)
@@ -345,15 +347,15 @@ export default async function seedVerticals7({ container }: ExecArgs) {
       now,
       new Date(Date.now() + 15 * 86400000).toISOString()
     ])
-    console.log("  ✓ tenant_invoice: 2 rows inserted")
+    logger.info("  ✓ tenant_invoice: 2 rows inserted")
   } catch (e: any) {
-    console.log(`  ✗ tenant_invoice error: ${e.message}`)
+    logger.error(`  ✗ tenant_invoice error: ${e.message}`)
   }
 
   // ============================================================
   // 8. TENANT_USAGE_RECORD (3 rows)
   // ============================================================
-  console.log("\n--- 8. Seeding tenant_usage_record (3 rows) ---")
+  logger.info("\n--- 8. Seeding tenant_usage_record (3 rows) ---")
   try {
     const periodStart = new Date()
     periodStart.setDate(1)
@@ -379,15 +381,15 @@ export default async function seedVerticals7({ container }: ExecArgs) {
          $3, $3)
       ON CONFLICT (id) DO NOTHING
     `, [TENANT_ID, billingId, now, periodStart.toISOString(), periodEnd.toISOString()])
-    console.log("  ✓ tenant_usage_record: 3 rows inserted")
+    logger.info("  ✓ tenant_usage_record: 3 rows inserted")
   } catch (e: any) {
-    console.log(`  ✗ tenant_usage_record error: ${e.message}`)
+    logger.error(`  ✗ tenant_usage_record error: ${e.message}`)
   }
 
   // ============================================================
   // 9. TRANSLATION (10 rows)
   // ============================================================
-  console.log("\n--- 9. Seeding translation (10 rows) ---")
+  logger.info("\n--- 9. Seeding translation (10 rows) ---")
   try {
     await dataSource.raw(`
       INSERT INTO translation (id, tenant_id, locale, namespace, key, value, context, status, metadata, created_at, updated_at)
@@ -404,15 +406,15 @@ export default async function seedVerticals7({ container }: ExecArgs) {
         ('seed7_tr_10', $1, 'en', 'common', 'search_placeholder', 'Search products, stores, services...', 'Search bar placeholder', 'published', null, $2, $2)
       ON CONFLICT (id) DO NOTHING
     `, [TENANT_ID, now])
-    console.log("  ✓ translation: 10 rows inserted")
+    logger.info("  ✓ translation: 10 rows inserted")
   } catch (e: any) {
-    console.log(`  ✗ translation error: ${e.message}`)
+    logger.error(`  ✗ translation error: ${e.message}`)
   }
 
   // ============================================================
   // 10. AUDIT_LOG (5 rows)
   // ============================================================
-  console.log("\n--- 10. Seeding audit_log (5 rows) ---")
+  logger.info("\n--- 10. Seeding audit_log (5 rows) ---")
   try {
     await dataSource.raw(`
       INSERT INTO audit_log (id, tenant_id, action, resource_type, resource_id, actor_id, actor_role, actor_email, node_id, changes, previous_values, new_values, ip_address, user_agent, data_classification, metadata, created_at, updated_at)
@@ -460,15 +462,15 @@ export default async function seedVerticals7({ container }: ExecArgs) {
     `, [TENANT_ID, USER_1, USER_2, now, nodeIds.city || null, billingId, SEEDED_GOV_AUTHORITY_ID,
         JSON.stringify({user_id: CUSTOMER_AHMED, role: "zone-operator"}),
         JSON.stringify({authority_id: SEEDED_GOV_AUTHORITY_ID, tenant_id: TENANT_ID})])
-    console.log("  ✓ audit_log: 5 rows inserted")
+    logger.info("  ✓ audit_log: 5 rows inserted")
   } catch (e: any) {
-    console.log(`  ✗ audit_log error: ${e.message}`)
+    logger.error(`  ✗ audit_log error: ${e.message}`)
   }
 
   // ============================================================
   // 11. EVENT_OUTBOX (3 rows)
   // ============================================================
-  console.log("\n--- 11. Seeding event_outbox (3 rows) ---")
+  logger.info("\n--- 11. Seeding event_outbox (3 rows) ---")
   try {
     await dataSource.raw(`
       INSERT INTO event_outbox (id, tenant_id, event_type, aggregate_type, aggregate_id, payload, metadata, source, correlation_id, causation_id, actor_id, actor_role, node_id, channel, status, published_at, error, retry_count, created_at, updated_at)
@@ -497,15 +499,15 @@ export default async function seedVerticals7({ container }: ExecArgs) {
     `, [TENANT_ID, USER_1, now, nodeIds.city || null,
         JSON.stringify({store_id: "seed7_store_main", name: "سوق الرياض الإلكتروني", store_type: "marketplace", tenant_id: TENANT_ID}),
         JSON.stringify({tenant_id: TENANT_ID, changes: {timezone: "Asia/Riyadh", locale: "ar", currencies: ["sar", "usd"]}})])
-    console.log("  ✓ event_outbox: 3 rows inserted")
+    logger.info("  ✓ event_outbox: 3 rows inserted")
   } catch (e: any) {
-    console.log(`  ✗ event_outbox error: ${e.message}`)
+    logger.error(`  ✗ event_outbox error: ${e.message}`)
   }
 
   // ============================================================
   // 12. VIEW_CONFIGURATION (2 rows)
   // ============================================================
-  console.log("\n--- 12. Seeding view_configuration (2 rows) ---")
+  logger.info("\n--- 12. Seeding view_configuration (2 rows) ---")
   try {
     await dataSource.raw(`
       INSERT INTO view_configuration (id, entity, name, user_id, is_system_default, configuration, created_at, updated_at)
@@ -519,15 +521,15 @@ export default async function seedVerticals7({ container }: ExecArgs) {
          $3, $3)
       ON CONFLICT (id) DO NOTHING
     `, [USER_1, USER_2, now])
-    console.log("  ✓ view_configuration: 2 rows inserted")
+    logger.info("  ✓ view_configuration: 2 rows inserted")
   } catch (e: any) {
-    console.log(`  ✗ view_configuration error: ${e.message}`)
+    logger.error(`  ✗ view_configuration error: ${e.message}`)
   }
 
   // ============================================================
   // 13. USER_PREFERENCE (2 rows)
   // ============================================================
-  console.log("\n--- 13. Seeding user_preference (2 rows) ---")
+  logger.info("\n--- 13. Seeding user_preference (2 rows) ---")
   try {
     await dataSource.raw(`
       INSERT INTO user_preference (id, user_id, key, value, created_at, updated_at)
@@ -541,15 +543,15 @@ export default async function seedVerticals7({ container }: ExecArgs) {
          $3, $3)
       ON CONFLICT (id) DO NOTHING
     `, [USER_1, USER_2, now])
-    console.log("  ✓ user_preference: 2 rows inserted")
+    logger.info("  ✓ user_preference: 2 rows inserted")
   } catch (e: any) {
-    console.log(`  ✗ user_preference error: ${e.message}`)
+    logger.error(`  ✗ user_preference error: ${e.message}`)
   }
 
   // ============================================================
   // 14. SALES_CHANNEL_MAPPING (3 rows)
   // ============================================================
-  console.log("\n--- 14. Seeding sales_channel_mapping (3 rows) ---")
+  logger.info("\n--- 14. Seeding sales_channel_mapping (3 rows) ---")
   try {
     await dataSource.raw(`
       INSERT INTO sales_channel_mapping (id, tenant_id, channel_type, medusa_sales_channel_id, name, description, node_id, config, is_active, metadata, created_at, updated_at)
@@ -573,15 +575,15 @@ export default async function seedVerticals7({ container }: ExecArgs) {
          true, '{"priority":3}', $7, $7)
       ON CONFLICT (id) DO NOTHING
     `, [TENANT_ID, SC_1, SC_2, SC_3, nodeIds.city || null, null, now])
-    console.log("  ✓ sales_channel_mapping: 3 rows inserted")
+    logger.info("  ✓ sales_channel_mapping: 3 rows inserted")
   } catch (e: any) {
-    console.log(`  ✗ sales_channel_mapping error: ${e.message}`)
+    logger.error(`  ✗ sales_channel_mapping error: ${e.message}`)
   }
 
   // ============================================================
   // 15. REGION_ZONE_MAPPING (3 rows)
   // ============================================================
-  console.log("\n--- 15. Seeding region_zone_mapping (3 rows) ---")
+  logger.info("\n--- 15. Seeding region_zone_mapping (3 rows) ---")
   try {
     await dataSource.raw(`
       INSERT INTO region_zone_mapping (id, residency_zone, medusa_region_id, country_codes, policies_override, metadata, created_at, updated_at)
@@ -605,12 +607,12 @@ export default async function seedVerticals7({ container }: ExecArgs) {
          $4, $4)
       ON CONFLICT (id) DO NOTHING
     `, [REG_1, REG_2, REG_3, now])
-    console.log("  ✓ region_zone_mapping: 3 rows inserted")
+    logger.info("  ✓ region_zone_mapping: 3 rows inserted")
   } catch (e: any) {
-    console.log(`  ✗ region_zone_mapping error: ${e.message}`)
+    logger.error(`  ✗ region_zone_mapping error: ${e.message}`)
   }
 
-  console.log("\n========================================")
-  console.log("Seed Verticals 7 – Complete!")
-  console.log("========================================")
+  logger.info("\n========================================")
+  logger.info("Seed Verticals 7 – Complete!")
+  logger.info("========================================")
 }

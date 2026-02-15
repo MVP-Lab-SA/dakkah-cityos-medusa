@@ -1,5 +1,7 @@
 // @ts-nocheck
 import { MedusaContainer } from "@medusajs/framework/types"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("jobs:sync-scheduler-init")
 
 // NOTE: In-memory singleton flag. This works fine for single-process dev servers,
 // but would NOT be safe for multi-process/distributed deployments (PM2 clusters, K8s, etc).
@@ -16,8 +18,8 @@ export default async function syncSchedulerInitJob(container: MedusaContainer) {
     try {
       scheduler.start()
       schedulerStarted = true
-      console.log("[SyncSchedulerInit] Integration sync scheduler started successfully")
-      console.log("[SyncSchedulerInit] Schedules: product sync (hourly), retry failed (30min), hierarchy reconciliation (6hr), cleanup (daily)")
+      logger.info("[SyncSchedulerInit] Integration sync scheduler started successfully")
+      logger.info("[SyncSchedulerInit] Schedules: product sync (hourly), retry failed (30min), hierarchy reconciliation (6hr), cleanup (daily)")
     } catch (startError: any) {
       console.warn(`[SyncSchedulerInit] Failed to start scheduler instance: ${startError.message}`)
       throw startError

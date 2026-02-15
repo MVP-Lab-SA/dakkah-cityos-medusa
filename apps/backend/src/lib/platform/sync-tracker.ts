@@ -1,5 +1,7 @@
 // @ts-nocheck
 import crypto from "crypto"
+import { createLogger } from "../../lib/logger"
+const logger = createLogger("lib:platform")
 
 export interface SyncEntry {
   id: string
@@ -59,7 +61,7 @@ export class DurableSyncTracker {
       const pool = await this.getPool()
       await pool.query(CREATE_TABLE_SQL)
       this.initialized = true
-      console.log("[DurableSyncTracker] sync_tracking table initialized")
+      logger.info("[DurableSyncTracker] sync_tracking table initialized")
     } catch (err: any) {
       console.error(`[DurableSyncTracker] Failed to initialize table: ${err.message}`)
       throw err
@@ -88,7 +90,7 @@ export class DurableSyncTracker {
       [id, data.system, data.entity_type, data.entity_id, data.direction, data.payload_hash || null, correlationId, data.tenant_id, now]
     )
 
-    console.log(`[DurableSyncTracker] Recorded sync: ${id} | ${data.system} | ${data.entity_type}:${data.entity_id} | ${data.direction}`)
+    logger.info("[DurableSyncTracker] Recorded sync: ${id} | ${data.system} | ${data.entity_type}:${data.entity_id} | ${data.direction}")
     return result.rows[0]
   }
 
@@ -102,7 +104,7 @@ export class DurableSyncTracker {
     )
 
     if (result.rows.length === 0) {
-      console.log(`[DurableSyncTracker] Sync entry not found: ${id}`)
+      logger.info("[DurableSyncTracker] Sync entry not found: ${id}")
       return null
     }
 
@@ -139,11 +141,11 @@ export class DurableSyncTracker {
     )
 
     if (result.rows.length === 0) {
-      console.log(`[DurableSyncTracker] Cannot retry sync entry: ${id} (not found or not failed)`)
+      logger.info("[DurableSyncTracker] Cannot retry sync entry: ${id} (not found or not failed)")
       return null
     }
 
-    console.log(`[DurableSyncTracker] Retrying sync: ${id} (attempt ${result.rows[0].retry_count})`)
+    logger.info("[DurableSyncTracker] Retrying sync: ${id} (attempt ${result.rows[0].retry_count})")
     return result.rows[0]
   }
 
@@ -209,7 +211,7 @@ export class DurableSyncTracker {
     )
 
     const deleted = result.rowCount || 0
-    console.log(`[DurableSyncTracker] Cleaned up ${deleted} old completed entries (older than ${olderThanDays} days)`)
+    logger.info("[DurableSyncTracker] Cleaned up ${deleted} old completed entries (older than ${olderThanDays} days)")
     return deleted
   }
 }

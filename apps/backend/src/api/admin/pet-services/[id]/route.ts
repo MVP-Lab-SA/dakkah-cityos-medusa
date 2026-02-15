@@ -1,5 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { z } from "zod"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 const updateSchema = z.object({
   name: z.string().optional(),
@@ -19,25 +20,40 @@ const updateSchema = z.object({
 })
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const mod = req.scope.resolve("petService") as any
-  const { id } = req.params
-  const [item] = await mod.listPetProfiles({ id }, { take: 1 })
-  if (!item) return res.status(404).json({ message: "Not found" })
-  return res.json({ item })
+  try {
+    const mod = req.scope.resolve("petService") as any
+    const { id } = req.params
+    const [item] = await mod.listPetProfiles({ id }, { take: 1 })
+    if (!item) return res.status(404).json({ message: "Not found" })
+    return res.json({ item })
+
+  } catch (error) {
+    handleApiError(res, error, "GET admin pet-services id")
+  }
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const mod = req.scope.resolve("petService") as any
-  const { id } = req.params
-  const validation = updateSchema.safeParse(req.body)
-  if (!validation.success) return res.status(400).json({ message: "Validation failed", errors: validation.error.issues })
-  const item = await mod.updatePetProfiles({ id, ...validation.data })
-  return res.json({ item })
+  try {
+    const mod = req.scope.resolve("petService") as any
+    const { id } = req.params
+    const validation = updateSchema.safeParse(req.body)
+    if (!validation.success) return res.status(400).json({ message: "Validation failed", errors: validation.error.issues })
+    const item = await mod.updatePetProfiles({ id, ...validation.data })
+    return res.json({ item })
+
+  } catch (error) {
+    handleApiError(res, error, "POST admin pet-services id")
+  }
 }
 
 export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
-  const mod = req.scope.resolve("petService") as any
-  const { id } = req.params
-  await mod.deletePetProfiles([id])
-  return res.status(204).send()
+  try {
+    const mod = req.scope.resolve("petService") as any
+    const { id } = req.params
+    await mod.deletePetProfiles([id])
+    return res.status(204).send()
+
+  } catch (error) {
+    handleApiError(res, error, "DELETE admin pet-services id")
+  }
 }

@@ -1,5 +1,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import crypto from "crypto"
+import { createLogger } from "../../../../lib/logger"
+const logger = createLogger("api:admin/webhooks")
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
   try {
@@ -8,7 +10,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       const signature = req.headers["x-payload-signature"] as string
       const expectedSig = crypto.createHmac("sha256", secret).update(JSON.stringify(req.body)).digest("hex")
       if (signature !== expectedSig) {
-        console.log("[Webhook:Payload] Invalid signature")
+        logger.info("[Webhook:Payload] Invalid signature")
         return res.status(401).json({ error: "Invalid signature" })
       }
     }
@@ -16,7 +18,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     const body = req.body as Record<string, any>
     const event = body.event || (body.collection && body.operation ? `${body.collection}.${body.operation}` : "unknown")
 
-    console.log(`[Webhook:Payload] Received event: ${event}`)
+    logger.info("[Webhook:Payload] Received event: ${event}")
 
     let processed = false
 
@@ -37,12 +39,12 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
               const sync = new PayloadToMedusaSync(req.scope, { payloadUrl, payloadApiKey })
               await sync.syncProductContent(contentId)
               processed = true
-              console.log(`[Webhook:Payload] Product content synced: ${contentId}`)
+              logger.info("[Webhook:Payload] Product content synced: ${contentId}")
             } else {
-              console.log("[Webhook:Payload] Missing PAYLOAD_CMS_URL_DEV or PAYLOAD_API_KEY, skipping sync")
+              logger.info("[Webhook:Payload] Missing PAYLOAD_CMS_URL_DEV or PAYLOAD_API_KEY, skipping sync")
             }
           } catch (err) {
-            console.log(`[Webhook:Payload] Error syncing product content: ${err instanceof Error ? err.message : err}`)
+            logger.error("[Webhook:Payload] syncing product content: ${err instanceof Error ? err.message : err}")
           }
         }
         break
@@ -59,10 +61,10 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
               const sync = new PayloadToMedusaSync(req.scope, { payloadUrl, payloadApiKey })
               await sync.syncPage(pageId)
               processed = true
-              console.log(`[Webhook:Payload] Page synced: ${pageId}`)
+              logger.info("[Webhook:Payload] Page synced: ${pageId}")
             }
           } catch (err) {
-            console.log(`[Webhook:Payload] Error syncing page: ${err instanceof Error ? err.message : err}`)
+            logger.error("[Webhook:Payload] syncing page: ${err instanceof Error ? err.message : err}")
           }
         }
         break
@@ -71,7 +73,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       case "navigation.create":
       case "navigation.update": {
         const navId = body.data?.id || body.doc?.id
-        console.log(`[Webhook:Payload] Navigation updated: ${navId}`)
+        logger.info("[Webhook:Payload] Navigation updated: ${navId}")
         processed = true
         break
       }
@@ -79,7 +81,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       case "vertical.create":
       case "vertical.update": {
         const verticalId = body.data?.id || body.doc?.id
-        console.log(`[Webhook:Payload] Vertical updated: ${verticalId}`)
+        logger.info("[Webhook:Payload] Vertical updated: ${verticalId}")
         processed = true
         break
       }
@@ -89,7 +91,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       case "page.delete": {
         const pageId = body.data?.id || body.doc?.id
         const pagePath = body.data?.path || body.doc?.path
-        console.log(`[Webhook:Payload] Page ${event}: ${pageId} (path: ${pagePath || "unknown"})`)
+        logger.info("[Webhook:Payload] Page ${event}: ${pageId} (path: ${pagePath || "unknown"})")
         processed = true
         break
       }
@@ -105,10 +107,10 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
               const sync = new PayloadToMedusaSync(req.scope, { payloadUrl, payloadApiKey })
               await sync.syncMedia(mediaId)
               processed = true
-              console.log(`[Webhook:Payload] Media synced: ${mediaId}`)
+              logger.info("[Webhook:Payload] Media synced: ${mediaId}")
             }
           } catch (err) {
-            console.log(`[Webhook:Payload] Error syncing media: ${err instanceof Error ? err.message : err}`)
+            logger.error("[Webhook:Payload] syncing media: ${err instanceof Error ? err.message : err}")
           }
         }
         break
@@ -116,26 +118,26 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
       case "tenant.updated": {
         const tenantId = body.data?.medusaTenantId || body.doc?.medusaTenantId
-        console.log(`[Webhook:Payload] Tenant updated notification received: ${tenantId || "unknown"}`)
+        logger.info("[Webhook:Payload] Tenant updated notification received: ${tenantId || "unknown"}")
         processed = true
         break
       }
 
       case "store.updated": {
         const storeId = body.data?.medusaStoreId || body.doc?.medusaStoreId
-        console.log(`[Webhook:Payload] Store updated notification received: ${storeId || "unknown"}`)
+        logger.info("[Webhook:Payload] Store updated notification received: ${storeId || "unknown"}")
         processed = true
         break
       }
 
       default:
-        console.log(`[Webhook:Payload] Unhandled event: ${event}`)
+        logger.info("[Webhook:Payload] Unhandled event: ${event}")
         break
     }
 
     return res.status(200).json({ received: true, event, processed })
   } catch (error) {
-    console.log(`[Webhook:Payload] Error: ${error instanceof Error ? error.message : error}`)
+    logger.error("[Webhook:Payload] ${error instanceof Error ? error.message : error}")
     return res.status(500).json({ error: "Internal server error" })
   }
 }

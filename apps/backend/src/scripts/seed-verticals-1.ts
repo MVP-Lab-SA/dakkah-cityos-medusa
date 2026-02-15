@@ -1,10 +1,12 @@
 // @ts-nocheck
 import { ExecArgs } from "@medusajs/framework/types"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("scripts:seed-verticals-1")
 
 export default async function seedVerticals1({ container }: ExecArgs) {
-  console.log("========================================")
-  console.log("Seeding Vertical Modules - Batch 1")
-  console.log("========================================\n")
+  logger.info("========================================")
+  logger.info("Seeding Vertical Modules - Batch 1")
+  logger.info("========================================\n")
 
   const tenantService = container.resolve("tenant") as any
 
@@ -14,25 +16,25 @@ export default async function seedVerticals1({ container }: ExecArgs) {
     const list = Array.isArray(tenants) ? tenants : [tenants].filter(Boolean)
     if (list.length > 0 && list[0]?.id) {
       tenantId = list[0].id
-      console.log(`Using Dakkah tenant: ${tenantId}`)
+      logger.info(`Using Dakkah tenant: ${tenantId}`)
     } else {
       const allTenants = await tenantService.listTenants({}, { take: 1 })
       const allList = Array.isArray(allTenants) ? allTenants : [allTenants].filter(Boolean)
       if (allList.length > 0 && allList[0]?.id) {
         tenantId = allList[0].id
-        console.log(`Dakkah not found, using first tenant: ${tenantId}`)
+        logger.info(`Dakkah not found, using first tenant: ${tenantId}`)
       } else {
-        console.log(`No tenants found, using placeholder: ${tenantId}`)
+        logger.info(`No tenants found, using placeholder: ${tenantId}`)
       }
     }
   } catch (err: any) {
-    console.log(`Could not fetch tenants: ${err.message}. Using placeholder: ${tenantId}`)
+    logger.info(`Could not fetch tenants: ${err.message}. Using placeholder: ${tenantId}`)
   }
 
   // ============================================================
   // 1. RESTAURANT
   // ============================================================
-  console.log("\n--- 1. Seeding Restaurant Module ---")
+  logger.info("\n--- 1. Seeding Restaurant Module ---")
   try {
     const restaurantService = container.resolve("restaurant")
 
@@ -40,7 +42,7 @@ export default async function seedVerticals1({ container }: ExecArgs) {
     const existingList = Array.isArray(existingRestaurants) ? existingRestaurants : [existingRestaurants].filter(Boolean)
 
     if (existingList.length > 0) {
-      console.log("  Restaurants already seeded, skipping...")
+      logger.info("  Restaurants already seeded, skipping...")
     } else {
       const restaurant1 = await restaurantService.createRestaurants({
         tenant_id: tenantId,
@@ -116,7 +118,7 @@ export default async function seedVerticals1({ container }: ExecArgs) {
         metadata: { featured: true },
       })
 
-      console.log(`  Created restaurants: ${restaurant1.id}, ${restaurant2.id}`)
+      logger.info(`  Created restaurants: ${restaurant1.id}, ${restaurant2.id}`)
 
       const menu1 = await restaurantService.createMenus({
         tenant_id: tenantId,
@@ -138,7 +140,7 @@ export default async function seedVerticals1({ container }: ExecArgs) {
         display_order: 1,
       })
 
-      console.log(`  Created menus: ${menu1.id}, ${menu2.id}`)
+      logger.info(`  Created menus: ${menu1.id}, ${menu2.id}`)
 
       const menuItems = await Promise.all([
         restaurantService.createMenuItems({
@@ -211,7 +213,7 @@ export default async function seedVerticals1({ container }: ExecArgs) {
         }),
       ])
 
-      console.log(`  Created ${menuItems.length} menu items`)
+      logger.info(`  Created ${menuItems.length} menu items`)
 
       const modifierGroup = await restaurantService.createModifierGroups({
         tenant_id: tenantId,
@@ -225,16 +227,16 @@ export default async function seedVerticals1({ container }: ExecArgs) {
         display_order: 1,
       })
 
-      console.log(`  Created modifier group: ${modifierGroup.id}`)
+      logger.info(`  Created modifier group: ${modifierGroup.id}`)
     }
   } catch (err: any) {
-    console.log(`  Error seeding restaurants: ${err.message}`)
+    logger.error(`  Error seeding restaurants: ${err.message}`)
   }
 
   // ============================================================
   // 2. HEALTHCARE
   // ============================================================
-  console.log("\n--- 2. Seeding Healthcare Module ---")
+  logger.info("\n--- 2. Seeding Healthcare Module ---")
   try {
     const healthcareService = container.resolve("healthcare")
 
@@ -242,7 +244,7 @@ export default async function seedVerticals1({ container }: ExecArgs) {
     const existingPractList = Array.isArray(existingPractitioners) ? existingPractitioners : [existingPractitioners].filter(Boolean)
 
     if (existingPractList.length > 0) {
-      console.log("  Healthcare data already seeded, skipping...")
+      logger.info("  Healthcare data already seeded, skipping...")
     } else {
       const practitioners = await Promise.all([
         healthcareService.createPractitioners({
@@ -308,7 +310,7 @@ export default async function seedVerticals1({ container }: ExecArgs) {
         }),
       ])
 
-      console.log(`  Created ${practitioners.length} practitioners`)
+      logger.info(`  Created ${practitioners.length} practitioners`)
 
       const pharmacyProducts = await Promise.all([
         healthcareService.createPharmacyProducts({
@@ -364,16 +366,16 @@ export default async function seedVerticals1({ container }: ExecArgs) {
         }),
       ])
 
-      console.log(`  Created ${pharmacyProducts.length} pharmacy products`)
+      logger.info(`  Created ${pharmacyProducts.length} pharmacy products`)
     }
   } catch (err: any) {
-    console.log(`  Error seeding healthcare: ${err.message}`)
+    logger.error(`  Error seeding healthcare: ${err.message}`)
   }
 
   // ============================================================
   // 3. EDUCATION
   // ============================================================
-  console.log("\n--- 3. Seeding Education Module ---")
+  logger.info("\n--- 3. Seeding Education Module ---")
   try {
     const educationService = container.resolve("education")
 
@@ -381,7 +383,7 @@ export default async function seedVerticals1({ container }: ExecArgs) {
     const existingCourseList = Array.isArray(existingCourses) ? existingCourses : [existingCourses].filter(Boolean)
 
     if (existingCourseList.length > 0) {
-      console.log("  Education data already seeded, skipping...")
+      logger.info("  Education data already seeded, skipping...")
     } else {
       const course1 = await educationService.createCourses({
         tenant_id: tenantId,
@@ -449,7 +451,7 @@ export default async function seedVerticals1({ container }: ExecArgs) {
         metadata: { featured: true },
       })
 
-      console.log(`  Created courses: ${course1.id}, ${course2.id}`)
+      logger.info(`  Created courses: ${course1.id}, ${course2.id}`)
 
       const lessons = await Promise.all([
         educationService.createLessons({
@@ -526,7 +528,7 @@ export default async function seedVerticals1({ container }: ExecArgs) {
         }),
       ])
 
-      console.log(`  Created ${lessons.length} lessons`)
+      logger.info(`  Created ${lessons.length} lessons`)
 
       const quiz = await educationService.createQuizs({
         tenant_id: tenantId,
@@ -564,16 +566,16 @@ export default async function seedVerticals1({ container }: ExecArgs) {
         is_active: true,
       })
 
-      console.log(`  Created quiz: ${quiz.id}`)
+      logger.info(`  Created quiz: ${quiz.id}`)
     }
   } catch (err: any) {
-    console.log(`  Error seeding education: ${err.message}`)
+    logger.error(`  Error seeding education: ${err.message}`)
   }
 
   // ============================================================
   // 4. REAL ESTATE
   // ============================================================
-  console.log("\n--- 4. Seeding Real Estate Module ---")
+  logger.info("\n--- 4. Seeding Real Estate Module ---")
   try {
     const realEstateService = container.resolve("realEstate")
 
@@ -581,7 +583,7 @@ export default async function seedVerticals1({ container }: ExecArgs) {
     const existingListingList = Array.isArray(existingListings) ? existingListings : [existingListings].filter(Boolean)
 
     if (existingListingList.length > 0) {
-      console.log("  Real estate data already seeded, skipping...")
+      logger.info("  Real estate data already seeded, skipping...")
     } else {
       const listings = await Promise.all([
         realEstateService.createPropertyListings({
@@ -677,16 +679,16 @@ export default async function seedVerticals1({ container }: ExecArgs) {
         }),
       ])
 
-      console.log(`  Created ${listings.length} property listings`)
+      logger.info(`  Created ${listings.length} property listings`)
     }
   } catch (err: any) {
-    console.log(`  Error seeding real estate: ${err.message}`)
+    logger.error(`  Error seeding real estate: ${err.message}`)
   }
 
   // ============================================================
   // 5. EVENT TICKETING
   // ============================================================
-  console.log("\n--- 5. Seeding Event Ticketing Module ---")
+  logger.info("\n--- 5. Seeding Event Ticketing Module ---")
   try {
     const eventTicketingService = container.resolve("eventTicketing")
 
@@ -694,7 +696,7 @@ export default async function seedVerticals1({ container }: ExecArgs) {
     const existingEventList = Array.isArray(existingEvents) ? existingEvents : [existingEvents].filter(Boolean)
 
     if (existingEventList.length > 0) {
-      console.log("  Event ticketing data already seeded, skipping...")
+      logger.info("  Event ticketing data already seeded, skipping...")
     } else {
       const venue1 = await eventTicketingService.createVenues({
         tenant_id: tenantId,
@@ -734,7 +736,7 @@ export default async function seedVerticals1({ container }: ExecArgs) {
         image_url: "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=600",
       })
 
-      console.log(`  Created venues: ${venue1.id}, ${venue2.id}`)
+      logger.info(`  Created venues: ${venue1.id}, ${venue2.id}`)
 
       const futureDate1 = new Date()
       futureDate1.setMonth(futureDate1.getMonth() + 2)
@@ -800,7 +802,7 @@ export default async function seedVerticals1({ container }: ExecArgs) {
         metadata: { featured: true },
       })
 
-      console.log(`  Created events: ${event1.id}, ${event2.id}`)
+      logger.info(`  Created events: ${event1.id}, ${event2.id}`)
 
       const ticketTypes = await Promise.all([
         eventTicketingService.createTicketTypes({
@@ -857,16 +859,16 @@ export default async function seedVerticals1({ container }: ExecArgs) {
         }),
       ])
 
-      console.log(`  Created ${ticketTypes.length} ticket types`)
+      logger.info(`  Created ${ticketTypes.length} ticket types`)
     }
   } catch (err: any) {
-    console.log(`  Error seeding event ticketing: ${err.message}`)
+    logger.error(`  Error seeding event ticketing: ${err.message}`)
   }
 
   // ============================================================
   // 6. AUCTION
   // ============================================================
-  console.log("\n--- 6. Seeding Auction Module ---")
+  logger.info("\n--- 6. Seeding Auction Module ---")
   try {
     const auctionService = container.resolve("auction")
 
@@ -874,7 +876,7 @@ export default async function seedVerticals1({ container }: ExecArgs) {
     const existingAuctionList = Array.isArray(existingAuctions) ? existingAuctions : [existingAuctions].filter(Boolean)
 
     if (existingAuctionList.length > 0) {
-      console.log("  Auction data already seeded, skipping...")
+      logger.info("  Auction data already seeded, skipping...")
     } else {
       const auctionStart = new Date()
       const auctionEnd1 = new Date()
@@ -946,16 +948,16 @@ export default async function seedVerticals1({ container }: ExecArgs) {
         }),
       ])
 
-      console.log(`  Created ${auctions.length} auction listings`)
+      logger.info(`  Created ${auctions.length} auction listings`)
     }
   } catch (err: any) {
-    console.log(`  Error seeding auctions: ${err.message}`)
+    logger.error(`  Error seeding auctions: ${err.message}`)
   }
 
   // ============================================================
   // 7. RENTAL
   // ============================================================
-  console.log("\n--- 7. Seeding Rental Module ---")
+  logger.info("\n--- 7. Seeding Rental Module ---")
   try {
     const rentalService = container.resolve("rental")
 
@@ -963,7 +965,7 @@ export default async function seedVerticals1({ container }: ExecArgs) {
     const existingRentalList = Array.isArray(existingRentals) ? existingRentals : [existingRentals].filter(Boolean)
 
     if (existingRentalList.length > 0) {
-      console.log("  Rental data already seeded, skipping...")
+      logger.info("  Rental data already seeded, skipping...")
     } else {
       const rentals = await Promise.all([
         rentalService.createRentalProducts({
@@ -1028,13 +1030,13 @@ export default async function seedVerticals1({ container }: ExecArgs) {
         }),
       ])
 
-      console.log(`  Created ${rentals.length} rental products`)
+      logger.info(`  Created ${rentals.length} rental products`)
     }
   } catch (err: any) {
-    console.log(`  Error seeding rentals: ${err.message}`)
+    logger.error(`  Error seeding rentals: ${err.message}`)
   }
 
-  console.log("\n========================================")
-  console.log("Vertical Modules Batch 1 Seeding Complete!")
-  console.log("========================================")
+  logger.info("\n========================================")
+  logger.info("Vertical Modules Batch 1 Seeding Complete!")
+  logger.info("========================================")
 }

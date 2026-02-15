@@ -1,6 +1,8 @@
 import { ExecArgs } from "@medusajs/framework/types";
 import { Modules } from "@medusajs/framework/utils";
 import { linkProductsToSalesChannelWorkflow } from "@medusajs/medusa/core-flows";
+import { createLogger } from "../lib/logger"
+const logger = createLogger("scripts:seed-multi-tenant")
 
 /**
  * Seed script for multi-tenant multi-store setup
@@ -11,7 +13,7 @@ import { linkProductsToSalesChannelWorkflow } from "@medusajs/medusa/core-flows"
  * - Links products to stores via sales channels
  */
 export default async function({ container }: ExecArgs) {
-  console.log("Starting multi-tenant seed...\n");
+  logger.info("Starting multi-tenant seed...\n");
   
   const tenantModuleService = container.resolve("tenant") as any;
   const storeModuleService = container.resolve("cityosStore") as any;
@@ -19,56 +21,56 @@ export default async function({ container }: ExecArgs) {
   const query = container.resolve("query");
   
   // Step 1: Retrieve Dakkah Tenant
-  console.log("=== STEP 1: Retrieving Dakkah Tenant ===");
+  logger.info("=== STEP 1: Retrieving Dakkah Tenant ===");
   let tenant;
   try {
     const tenants = await tenantModuleService.listTenants({ handle: "dakkah" });
     const list = Array.isArray(tenants) ? tenants : [tenants].filter(Boolean);
     if (list.length > 0 && list[0]?.id) {
       tenant = list[0];
-      console.log(`Using Dakkah tenant: ${tenant.name} (ID: ${tenant.id})`);
+      logger.info(`Using Dakkah tenant: ${tenant.name} (ID: ${tenant.id})`);
     } else {
       const allTenants = await tenantModuleService.listTenants();
       const allList = Array.isArray(allTenants) ? allTenants : [allTenants].filter(Boolean);
       if (allList.length > 0 && allList[0]?.id) {
         tenant = allList[0];
-        console.log(`Dakkah not found, using first tenant: ${tenant.name} (ID: ${tenant.id})`);
+        logger.info(`Dakkah not found, using first tenant: ${tenant.name} (ID: ${tenant.id})`);
       } else {
-        console.log("No tenants found. Run seed-complete first.");
+        logger.info("No tenants found. Run seed-complete first.");
         return;
       }
     }
   } catch (err: any) {
-    console.log(`Could not fetch tenants: ${err.message}. Aborting.`);
+    logger.info(`Could not fetch tenants: ${err.message}. Aborting.`);
     return;
   }
   
   // Step 2: Create Sales Channels for each store
-  console.log("\n=== STEP 2: Creating Sales Channels ===");
+  logger.info("\n=== STEP 2: Creating Sales Channels ===");
   
   const saudiChannel = await salesChannelModule.createSalesChannels({
     name: "Saudi Traditional Store",
     description: "Saudi Traditional Wear & Cultural Products",
     is_disabled: false
   });
-  console.log(`Created sales channel: ${saudiChannel.name}`);
+  logger.info(`Created sales channel: ${saudiChannel.name}`);
   
   const modernChannel = await salesChannelModule.createSalesChannels({
     name: "Modern Fashion Store",
     description: "Contemporary Fashion & Accessories",
     is_disabled: false
   });
-  console.log(`Created sales channel: ${modernChannel.name}`);
+  logger.info(`Created sales channel: ${modernChannel.name}`);
   
   const homeChannel = await salesChannelModule.createSalesChannels({
     name: "Home Decor Store",
     description: "Home Decor & Living Essentials",
     is_disabled: false
   });
-  console.log(`Created sales channel: ${homeChannel.name}`);
+  logger.info(`Created sales channel: ${homeChannel.name}`);
   
   // Step 3: Create Stores
-  console.log("\n=== STEP 3: Creating Stores ===");
+  logger.info("\n=== STEP 3: Creating Stores ===");
   
   const saudiStore = await storeModuleService.createStores({
     tenant_id: tenant.id,
@@ -87,7 +89,7 @@ export default async function({ container }: ExecArgs) {
     seo_description: "Discover authentic Saudi traditional wear, abayas, thobes, and cultural fashion",
     storefront_url: "https://saudi.dakkah.sa"
   });
-  console.log(`Created store: ${saudiStore.name} (subdomain: ${saudiStore.subdomain})`);
+  logger.info(`Created store: ${saudiStore.name} (subdomain: ${saudiStore.subdomain})`);
   
   const modernStore = await storeModuleService.createStores({
     tenant_id: tenant.id,
@@ -106,7 +108,7 @@ export default async function({ container }: ExecArgs) {
     seo_description: "Shop the latest in contemporary fashion and accessories",
     storefront_url: "https://modern.dakkah.sa"
   });
-  console.log(`Created store: ${modernStore.name} (subdomain: ${modernStore.subdomain})`);
+  logger.info(`Created store: ${modernStore.name} (subdomain: ${modernStore.subdomain})`);
   
   const homeStore = await storeModuleService.createStores({
     tenant_id: tenant.id,
@@ -125,10 +127,10 @@ export default async function({ container }: ExecArgs) {
     seo_description: "Beautiful home decor and living essentials for your space",
     storefront_url: "https://home.dakkah.sa"
   });
-  console.log(`Created store: ${homeStore.name} (subdomain: ${homeStore.subdomain})`);
+  logger.info(`Created store: ${homeStore.name} (subdomain: ${homeStore.subdomain})`);
   
   // Step 4: Link Products to Stores via Sales Channels
-  console.log("\n=== STEP 4: Linking Products to Stores ===");
+  logger.info("\n=== STEP 4: Linking Products to Stores ===");
   
   // Get products by category/collection
   const products = await query.graph({
@@ -136,7 +138,7 @@ export default async function({ container }: ExecArgs) {
     fields: ["id", "title", "collection_id", "tags.*"],
   });
   
-  console.log(`Found ${products.data.length} products to distribute`);
+  logger.info(`Found ${products.data.length} products to distribute`);
   
   // Collect products for each channel
   const saudiProducts: string[] = [];
@@ -156,7 +158,7 @@ export default async function({ container }: ExecArgs) {
       productTitle.includes("traditional")
     ) {
       saudiProducts.push(product.id);
-      console.log(`  - Will link "${product.title}" to Saudi Traditional Store`);
+      logger.info(`  - Will link "${product.title}" to Saudi Traditional Store`);
     }
     
     // Modern Fashion Store: contemporary fashion
@@ -167,7 +169,7 @@ export default async function({ container }: ExecArgs) {
       productTitle.includes("casual")
     ) {
       modernProducts.push(product.id);
-      console.log(`  - Will link "${product.title}" to Modern Fashion Store`);
+      logger.info(`  - Will link "${product.title}" to Modern Fashion Store`);
     }
     
     // Home Decor Store: home items, decor
@@ -179,7 +181,7 @@ export default async function({ container }: ExecArgs) {
       productTitle.includes("decor")
     ) {
       homeProducts.push(product.id);
-      console.log(`  - Will link "${product.title}" to Home Decor Store`);
+      logger.info(`  - Will link "${product.title}" to Home Decor Store`);
     }
   }
 
@@ -188,30 +190,30 @@ export default async function({ container }: ExecArgs) {
     await linkProductsToSalesChannelWorkflow(container).run({
       input: { id: saudiChannel.id, add: saudiProducts }
     });
-    console.log(`Linked ${saudiProducts.length} products to Saudi Traditional Store`);
+    logger.info(`Linked ${saudiProducts.length} products to Saudi Traditional Store`);
   }
 
   if (modernProducts.length > 0) {
     await linkProductsToSalesChannelWorkflow(container).run({
       input: { id: modernChannel.id, add: modernProducts }
     });
-    console.log(`Linked ${modernProducts.length} products to Modern Fashion Store`);
+    logger.info(`Linked ${modernProducts.length} products to Modern Fashion Store`);
   }
 
   if (homeProducts.length > 0) {
     await linkProductsToSalesChannelWorkflow(container).run({
       input: { id: homeChannel.id, add: homeProducts }
     });
-    console.log(`Linked ${homeProducts.length} products to Home Decor Store`);
+    logger.info(`Linked ${homeProducts.length} products to Home Decor Store`);
   }
   
   // Summary
-  console.log("\n=== SEED COMPLETE ===");
-  console.log(`Tenant: ${tenant.name}`);
-  console.log(`Stores: 3`);
-  console.log(`  - Saudi Traditional (${saudiStore.subdomain}.dakkah.sa)`);
-  console.log(`  - Modern Fashion (${modernStore.subdomain}.dakkah.sa)`);
-  console.log(`  - Home Decor (${homeStore.subdomain}.dakkah.sa)`);
-  console.log(`Sales Channels: 3`);
-  console.log(`Products distributed across stores based on categories`);
+  logger.info("\n=== SEED COMPLETE ===");
+  logger.info(`Tenant: ${tenant.name}`);
+  logger.info(`Stores: 3`);
+  logger.info(`  - Saudi Traditional (${saudiStore.subdomain}.dakkah.sa)`);
+  logger.info(`  - Modern Fashion (${modernStore.subdomain}.dakkah.sa)`);
+  logger.info(`  - Home Decor (${homeStore.subdomain}.dakkah.sa)`);
+  logger.info(`Sales Channels: 3`);
+  logger.info(`Products distributed across stores based on categories`);
 }

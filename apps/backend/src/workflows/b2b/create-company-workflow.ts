@@ -4,6 +4,8 @@ import {
   createStep,
   StepResponse,
 } from "@medusajs/framework/workflows-sdk";
+import { createLogger } from "../../lib/logger"
+const logger = createLogger("workflows:b2b")
 
 interface CreateCompanyInput {
   name: string;
@@ -73,7 +75,7 @@ const addCompanyAdminStep = createStep(
 const logCompanyCreationStep = createStep(
   "log-company-creation",
   async ({ company }: { company: Record<string, unknown> }, { container }) => {
-    console.log(`Company created: ${company.name} (${company.id}) - Status: pending approval`);
+    logger.info(`Company created: ${company.name} (${company.id}) - Status: pending approval`);
     return new StepResponse({ logged: true });
   }
 );

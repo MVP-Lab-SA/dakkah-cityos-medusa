@@ -1,12 +1,14 @@
 // @ts-nocheck
 import { MedusaContainer } from "@medusajs/framework/types"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("jobs:inactive-vendor-check")
 
 export default async function inactiveVendorCheckJob(container: MedusaContainer) {
   const query = container.resolve("query")
   const vendorService = container.resolve("vendor")
   const eventBus = container.resolve("event_bus")
   
-  console.log("[Inactive Vendor Check] Checking for inactive vendors...")
+  logger.info("[Inactive Vendor Check] Checking for inactive vendors...")
   
   try {
     const ninetyDaysAgo = new Date()
@@ -21,7 +23,7 @@ export default async function inactiveVendorCheckJob(container: MedusaContainer)
     })
     
     if (!activeVendors || activeVendors.length === 0) {
-      console.log("[Inactive Vendor Check] No active vendors found")
+      logger.info("[Inactive Vendor Check] No active vendors found")
       return
     }
     
@@ -61,7 +63,7 @@ export default async function inactiveVendorCheckJob(container: MedusaContainer)
         })
         
         deactivatedCount++
-        console.log(`[Inactive Vendor Check] Deactivated vendor: ${vendor.business_name}`)
+        logger.info("[Inactive Vendor Check] Deactivated vendor: ${vendor.business_name}")
       } else {
         await vendorService.updateVendors({
           id: vendor.id,
@@ -78,11 +80,11 @@ export default async function inactiveVendorCheckJob(container: MedusaContainer)
         })
         
         warningCount++
-        console.log(`[Inactive Vendor Check] Warning ${warningsSent + 1} sent to: ${vendor.business_name}`)
+        logger.info("[Inactive Vendor Check] Warning ${warningsSent + 1} sent to: ${vendor.business_name}")
       }
     }
     
-    console.log(`[Inactive Vendor Check] Completed - Warnings: ${warningCount}, Deactivated: ${deactivatedCount}`)
+    logger.info("[Inactive Vendor Check] Completed - Warnings: ${warningCount}, Deactivated: ${deactivatedCount}")
   } catch (error) {
     console.error("[Inactive Vendor Check] Job failed:", error)
   }

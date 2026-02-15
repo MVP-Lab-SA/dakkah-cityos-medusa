@@ -4,6 +4,7 @@ import { AccountLayout, AddressCard, AddressForm } from "@/components/account"
 import { Button } from "@/components/ui/button"
 import { Plus, MapPin } from "@medusajs/icons"
 import { sdk } from "@/lib/utils/sdk"
+import { t } from "@/lib/i18n"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 
 export const Route = createFileRoute("/$tenant/$locale/account/addresses")({
@@ -90,7 +91,7 @@ function AddressesPage() {
                 await updateAddressMutation.mutateAsync({ id: editingAddress.id, data })
               }}
               onCancel={() => setEditingAddress(null)}
-              submitLabel="Update address"
+              submitLabel={t(locale, "common.actions.update", "Update")}
             />
           </div>
         )}

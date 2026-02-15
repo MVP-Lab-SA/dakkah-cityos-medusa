@@ -2,6 +2,8 @@
 import { MedusaService } from "@medusajs/framework/utils"
 import Payout from "./models/payout"
 import PayoutTransactionLink from "./models/payout-transaction-link"
+import { createLogger } from "../../lib/logger"
+const logger = createLogger("module:payout")
 
 class PayoutModuleService extends MedusaService({
   Payout,
@@ -132,7 +134,7 @@ class PayoutModuleService extends MedusaService({
         processing_completed_at: new Date(),
       })
 
-      console.log(`[Payout] Completed transfer ${transfer.id} for payout ${payoutId}`)
+      logger.info("[Payout] Completed transfer ${transfer.id} for payout ${payoutId}")
       
       return updatedPayout
     } catch (error: any) {
@@ -173,7 +175,7 @@ class PayoutModuleService extends MedusaService({
         }
       })
 
-      console.log(`[Stripe Connect] Created account ${account.id} for vendor ${vendorId}`)
+      logger.info("[Stripe Connect] Created account ${account.id} for vendor ${vendorId}")
       
       return account
     } catch (error: any) {

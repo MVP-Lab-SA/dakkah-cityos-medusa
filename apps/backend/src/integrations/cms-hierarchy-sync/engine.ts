@@ -1,6 +1,8 @@
 // @ts-nocheck
 import axios, { AxiosInstance } from "axios"
 import { DurableSyncTracker, durableSyncTracker } from "../../lib/platform/sync-tracker"
+import { createLogger } from "../../lib/logger"
+const logger = createLogger("integration:cms-hierarchy-sync")
 
 export interface CMSSyncConfig {
   payloadUrl: string
@@ -61,16 +63,14 @@ export class CMSHierarchySyncEngine {
   }
 
   async syncAll(): Promise<SyncResult[]> {
-    console.log("[CMSHierarchySync] Starting full hierarchy sync...")
+    logger.info("[CMSHierarchySync] Starting full hierarchy sync...")
     const results: SyncResult[] = []
 
     for (const entry of COLLECTION_ORDER) {
       try {
         const result = await this.syncCollection(entry.collection)
         results.push(result)
-        console.log(
-          `[CMSHierarchySync] ${entry.collection}: ${result.created} created, ${result.updated} updated, ${result.failed} failed`
-        )
+        logger.info("[CMSHierarchySync] ${entry.collection}: ${result.created} created, ${result.updated} updated, ${result.failed} failed")
       } catch (err: any) {
         console.error(`[CMSHierarchySync] Fatal error syncing ${entry.collection}: ${err.message}`)
         results.push({
@@ -84,7 +84,7 @@ export class CMSHierarchySyncEngine {
       }
     }
 
-    console.log("[CMSHierarchySync] Full hierarchy sync complete.")
+    logger.info("[CMSHierarchySync] Full hierarchy sync complete.")
     return results
   }
 
@@ -94,7 +94,7 @@ export class CMSHierarchySyncEngine {
       throw new Error(`[CMSHierarchySync] Unknown collection: ${collection}`)
     }
 
-    console.log(`[CMSHierarchySync] Syncing collection: ${collection} → ${entry.doctype}`)
+    logger.info("[CMSHierarchySync] Syncing collection: ${collection} → ${entry.doctype}")
 
     const docs = await this.fetchPayloadDocs(collection)
     const result: SyncResult = {
@@ -130,9 +130,7 @@ export class CMSHierarchySyncEngine {
         }
 
         await this.syncTracker.updateStatus(syncEntry.id, "completed")
-        console.log(
-          `[CMSHierarchySync] ${created ? "Created" : "Updated"} ${entry.doctype} "${name}" (cms_ref: ${doc.id})`
-        )
+        logger.info("[CMSHierarchySync] ${created ? "Created" : "Updated"} ${entry.doctype} "${name}" (cms_ref: ${doc.id})")
       } catch (err: any) {
         result.failed++
         result.errors.push(`${doc.id}: ${err.message}`)
@@ -173,7 +171,7 @@ export class CMSHierarchySyncEngine {
       page++
     }
 
-    console.log(`[CMSHierarchySync] Fetched ${allDocs.length} docs from Payload collection "${collection}"`)
+    logger.info("[CMSHierarchySync] Fetched ${allDocs.length} docs from Payload collection "${collection}"")
     return allDocs
   }
 

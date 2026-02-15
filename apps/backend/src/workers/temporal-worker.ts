@@ -5,6 +5,8 @@ import { FleetbaseService } from "../integrations/fleetbase/service.js"
 import { WaltIdService } from "../integrations/waltid/service.js"
 import { durableSyncTracker } from "../lib/platform/sync-tracker.js"
 import axios from "axios"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("workers:temporal-worker")
 
 let workerInstance: any = null
 let isShuttingDown = false
@@ -61,7 +63,7 @@ function createPayloadClient() {
 
 const activityImplementations = {
   async syncProductToPayload(input: any) {
-    console.log(`[TemporalWorker] Executing syncProductToPayload: ${input.productId}`)
+    logger.info("[TemporalWorker] Executing syncProductToPayload: ${input.productId}")
     try {
       const client = createPayloadClient()
       const existing = await client.get("/api/product-content", {
@@ -95,7 +97,7 @@ const activityImplementations = {
   },
 
   async deleteProductFromPayload(input: any) {
-    console.log(`[TemporalWorker] Executing deleteProductFromPayload: ${input.productId}`)
+    logger.info("[TemporalWorker] Executing deleteProductFromPayload: ${input.productId}")
     try {
       const client = createPayloadClient()
       const existing = await client.get("/api/product-content", {
@@ -114,7 +116,7 @@ const activityImplementations = {
   },
 
   async syncGovernanceToPayload(input: any) {
-    console.log(`[TemporalWorker] Executing syncGovernanceToPayload: tenant=${input.tenantId}`)
+    logger.info("[TemporalWorker] Executing syncGovernanceToPayload: tenant=${input.tenantId}")
     try {
       const client = createPayloadClient()
       const policyData = {
@@ -142,7 +144,7 @@ const activityImplementations = {
   },
 
   async createERPNextInvoice(input: any) {
-    console.log(`[TemporalWorker] Executing createERPNextInvoice: order=${input.orderId}`)
+    logger.info("[TemporalWorker] Executing createERPNextInvoice: order=${input.orderId}")
     try {
       const service = createERPNextService()
       const result = await service.createInvoice({
@@ -165,7 +167,7 @@ const activityImplementations = {
   },
 
   async syncCustomerToERPNext(input: any) {
-    console.log(`[TemporalWorker] Executing syncCustomerToERPNext: ${input.customerId}`)
+    logger.info("[TemporalWorker] Executing syncCustomerToERPNext: ${input.customerId}")
     try {
       const service = createERPNextService()
       const result = await service.syncCustomer({
@@ -184,7 +186,7 @@ const activityImplementations = {
   },
 
   async syncProductToERPNext(input: any) {
-    console.log(`[TemporalWorker] Executing syncProductToERPNext: ${input.productId}`)
+    logger.info("[TemporalWorker] Executing syncProductToERPNext: ${input.productId}")
     try {
       const service = createERPNextService()
       const result = await service.syncProduct({
@@ -204,7 +206,7 @@ const activityImplementations = {
   },
 
   async syncVendorAsSupplier(input: any) {
-    console.log(`[TemporalWorker] Executing syncVendorAsSupplier: ${input.vendorId}`)
+    logger.info("[TemporalWorker] Executing syncVendorAsSupplier: ${input.vendorId}")
     try {
       const service = createERPNextService()
       const result = await service.syncCustomer({
@@ -223,7 +225,7 @@ const activityImplementations = {
   },
 
   async recordPaymentInERPNext(input: any) {
-    console.log(`[TemporalWorker] Executing recordPaymentInERPNext: order=${input.orderId}`)
+    logger.info("[TemporalWorker] Executing recordPaymentInERPNext: order=${input.orderId}")
     try {
       const service = createERPNextService()
       const result = await service.recordPayment({
@@ -245,7 +247,7 @@ const activityImplementations = {
   },
 
   async createFleetbaseShipment(input: any) {
-    console.log(`[TemporalWorker] Executing createFleetbaseShipment: order=${input.orderId}`)
+    logger.info("[TemporalWorker] Executing createFleetbaseShipment: order=${input.orderId}")
     try {
       const service = createFleetbaseService()
       const result = await service.createShipment({
@@ -264,7 +266,7 @@ const activityImplementations = {
   },
 
   async syncPOIToFleetbase(input: any) {
-    console.log(`[TemporalWorker] Executing syncPOIToFleetbase: ${input.poiId}`)
+    logger.info("[TemporalWorker] Executing syncPOIToFleetbase: ${input.poiId}")
     try {
       const service = createFleetbaseService()
       const result = await service.estimateDelivery({
@@ -280,7 +282,7 @@ const activityImplementations = {
   },
 
   async createDID(input: any) {
-    console.log(`[TemporalWorker] Executing createDID: method=${input.method}`)
+    logger.info("[TemporalWorker] Executing createDID: method=${input.method}")
     try {
       const service = createWaltIdService()
       const result = await service.createDID(input.method || "key")
@@ -292,7 +294,7 @@ const activityImplementations = {
   },
 
   async issueVendorCredential(input: any) {
-    console.log(`[TemporalWorker] Executing issueVendorCredential: ${input.vendorName}`)
+    logger.info("[TemporalWorker] Executing issueVendorCredential: ${input.vendorName}")
     try {
       const service = createWaltIdService()
       const result = await service.issueVendorCredential({
@@ -309,7 +311,7 @@ const activityImplementations = {
   },
 
   async issueKYCCredential(input: any) {
-    console.log(`[TemporalWorker] Executing issueKYCCredential: ${input.customerName}`)
+    logger.info("[TemporalWorker] Executing issueKYCCredential: ${input.customerName}")
     try {
       const service = createWaltIdService()
       const result = await service.issueKYCCredential({
@@ -328,7 +330,7 @@ const activityImplementations = {
   },
 
   async issueMembershipCredential(input: any) {
-    console.log(`[TemporalWorker] Executing issueMembershipCredential: ${input.memberName}`)
+    logger.info("[TemporalWorker] Executing issueMembershipCredential: ${input.memberName}")
     try {
       const service = createWaltIdService()
       const result = await service.issueMembershipCredential({
@@ -347,7 +349,7 @@ const activityImplementations = {
   },
 
   async syncNodeToAllSystems(input: any) {
-    console.log(`[TemporalWorker] Executing syncNodeToAllSystems: ${input.nodeId}`)
+    logger.info("[TemporalWorker] Executing syncNodeToAllSystems: ${input.nodeId}")
     const syncedSystems: string[] = []
     const errors: string[] = []
 
@@ -396,7 +398,7 @@ const activityImplementations = {
   },
 
   async deleteNodeFromAllSystems(input: any) {
-    console.log(`[TemporalWorker] Executing deleteNodeFromAllSystems: ${input.nodeId}`)
+    logger.info("[TemporalWorker] Executing deleteNodeFromAllSystems: ${input.nodeId}")
     const deletedFrom: string[] = []
     const errors: string[] = []
 
@@ -430,7 +432,7 @@ const activityImplementations = {
   },
 
   async scheduledProductSync(input: any) {
-    console.log(`[TemporalWorker] Executing scheduledProductSync: ${input.timestamp}`)
+    logger.info("[TemporalWorker] Executing scheduledProductSync: ${input.timestamp}")
     try {
       const payloadClient = createPayloadClient()
       const medusaUrl = process.env.MEDUSA_BACKEND_URL || "http://localhost:9000"
@@ -479,7 +481,7 @@ const activityImplementations = {
   },
 
   async retryFailedSyncs(input: any) {
-    console.log(`[TemporalWorker] Executing retryFailedSyncs: ${input.timestamp}`)
+    logger.info("[TemporalWorker] Executing retryFailedSyncs: ${input.timestamp}")
     try {
       const failedSyncs = await durableSyncTracker.getFailedSyncs(undefined, input.limit || 50)
       let retried = 0
@@ -508,7 +510,7 @@ const activityImplementations = {
   },
 
   async hierarchyReconciliation(input: any) {
-    console.log(`[TemporalWorker] Executing hierarchyReconciliation: ${input.timestamp}`)
+    logger.info("[TemporalWorker] Executing hierarchyReconciliation: ${input.timestamp}")
     try {
       const payloadClient = createPayloadClient()
       const tenantsResponse = await payloadClient.get("/api/tenants", {
@@ -561,9 +563,9 @@ export async function startWorker(): Promise<void> {
   const taskQueue = "cityos-workflow-queue"
 
   try {
-    console.log(`[TemporalWorker] Connecting to Temporal Cloud at ${endpoint}...`)
-    console.log(`[TemporalWorker] Namespace: ${namespace}`)
-    console.log(`[TemporalWorker] Task Queue: ${taskQueue}`)
+    logger.info("[TemporalWorker] Connecting to Temporal Cloud at ${endpoint}...")
+    logger.info("[TemporalWorker] Namespace: ${namespace}")
+    logger.info("[TemporalWorker] Task Queue: ${taskQueue}")
 
     const { NativeConnection } = workerSDK
     const connection = await NativeConnection.connect({
@@ -572,10 +574,10 @@ export async function startWorker(): Promise<void> {
       apiKey: process.env.TEMPORAL_API_KEY,
     })
 
-    console.log("[TemporalWorker] Connected to Temporal Cloud successfully")
+    logger.info("[TemporalWorker] Connected to Temporal Cloud successfully")
 
     const activityNames = Object.keys(activityImplementations)
-    console.log(`[TemporalWorker] Registering ${activityNames.length} activities: ${activityNames.join(", ")}`)
+    logger.info("[TemporalWorker] Registering ${activityNames.length} activities: ${activityNames.join(", ")}")
 
     const { Worker } = workerSDK
     workerInstance = await Worker.create({
@@ -585,16 +587,16 @@ export async function startWorker(): Promise<void> {
       activities: activityImplementations,
     })
 
-    console.log(`[TemporalWorker] Worker created and polling on task queue: ${taskQueue}`)
-    console.log(`[TemporalWorker] Activity definitions registered: ${Object.keys(ACTIVITY_DEFINITIONS).length}`)
+    logger.info("[TemporalWorker] Worker created and polling on task queue: ${taskQueue}")
+    logger.info("[TemporalWorker] Activity definitions registered: ${Object.keys(ACTIVITY_DEFINITIONS).length}")
 
     const shutdownHandler = async () => {
       if (isShuttingDown) return
       isShuttingDown = true
-      console.log("[TemporalWorker] Received shutdown signal — draining worker...")
+      logger.info("[TemporalWorker] Received shutdown signal — draining worker...")
       if (workerInstance) {
         workerInstance.shutdown()
-        console.log("[TemporalWorker] Worker shutdown complete")
+        logger.info("[TemporalWorker] Worker shutdown complete")
       }
     }
 
@@ -602,7 +604,7 @@ export async function startWorker(): Promise<void> {
     process.on("SIGTERM", shutdownHandler)
 
     await workerInstance.run()
-    console.log("[TemporalWorker] Worker stopped")
+    logger.info("[TemporalWorker] Worker stopped")
   } catch (err: any) {
     console.error(`[TemporalWorker] Failed to start worker: ${err.message}`)
     throw err

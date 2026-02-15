@@ -1,5 +1,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { createHmac } from "crypto"
+import { createLogger } from "../../../../lib/logger"
+const logger = createLogger("api:admin/webhooks")
 
 function verifyFleetbaseSignature(payload: string, signature: string, secret: string): boolean {
   const computed = createHmac("sha256", secret).update(payload).digest("hex")
@@ -12,12 +14,12 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     if (secret) {
       const signature = req.headers["x-fleetbase-signature"] as string
       if (!signature) {
-        console.log("[Webhook:Fleetbase] Missing signature header")
+        logger.info("[Webhook:Fleetbase] Missing signature header")
         return res.status(401).json({ error: "Missing signature" })
       }
       const rawBody = typeof req.body === "string" ? req.body : JSON.stringify(req.body)
       if (!verifyFleetbaseSignature(rawBody, signature, secret)) {
-        console.log("[Webhook:Fleetbase] Invalid signature")
+        logger.info("[Webhook:Fleetbase] Invalid signature")
         return res.status(401).json({ error: "Invalid signature" })
       }
     }
@@ -26,7 +28,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     const event = body.event || "unknown"
     const data = body.data || {}
 
-    console.log(`[Webhook:Fleetbase] Received event: ${event}`)
+    logger.info("[Webhook:Fleetbase] Received event: ${event}")
 
     let processed = false
 
@@ -34,7 +36,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       case "order.status_changed": {
         const orderId = data.meta?.order_id || data.order_id
         const newStatus = data.status
-        console.log(`[Webhook:Fleetbase] Order status changed: ${orderId || "unknown"} -> ${newStatus}`)
+        logger.info("[Webhook:Fleetbase] Order status changed: ${orderId || "unknown"} -> ${newStatus}")
         processed = true
         break
       }
@@ -61,10 +63,10 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
                   fleetbase_shipment_id: data.id,
                 },
               })
-              console.log(`[Webhook:Fleetbase] Order ${orderId} marked as delivered`)
+              logger.info("[Webhook:Fleetbase] Order ${orderId} marked as delivered")
             }
           } catch (err) {
-            console.log(`[Webhook:Fleetbase] Error updating order fulfillment: ${err instanceof Error ? err.message : err}`)
+            logger.error("[Webhook:Fleetbase] updating order fulfillment: ${err instanceof Error ? err.message : err}")
           }
         }
         processed = true
@@ -74,7 +76,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       case "order.driver_assigned": {
         const orderId = data.meta?.order_id || data.order_id
         const driverName = data.driver_assigned?.name || data.driver_name
-        console.log(`[Webhook:Fleetbase] Driver assigned to order ${orderId || "unknown"}: ${driverName || "unknown"}`)
+        logger.info("[Webhook:Fleetbase] Driver assigned to order ${orderId || "unknown"}: ${driverName || "unknown"}")
         if (orderId) {
           try {
             const query = req.scope.resolve("query")
@@ -97,7 +99,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
               })
             }
           } catch (err) {
-            console.log(`[Webhook:Fleetbase] Error updating driver assignment: ${err instanceof Error ? err.message : err}`)
+            logger.error("[Webhook:Fleetbase] updating driver assignment: ${err instanceof Error ? err.message : err}")
           }
         }
         processed = true
@@ -129,10 +131,10 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
                   },
                 },
               })
-              console.log(`[Webhook:Fleetbase] Tracking updated for order ${orderId}`)
+              logger.info("[Webhook:Fleetbase] Tracking updated for order ${orderId}")
             }
           } catch (err) {
-            console.log(`[Webhook:Fleetbase] Error updating tracking: ${err instanceof Error ? err.message : err}`)
+            logger.error("[Webhook:Fleetbase] updating tracking: ${err instanceof Error ? err.message : err}")
           }
         }
         processed = true
@@ -140,13 +142,13 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       }
 
       default:
-        console.log(`[Webhook:Fleetbase] Unhandled event: ${event}`)
+        logger.info("[Webhook:Fleetbase] Unhandled event: ${event}")
         break
     }
 
     return res.status(200).json({ received: true, event, processed })
   } catch (error) {
-    console.log(`[Webhook:Fleetbase] Error: ${error instanceof Error ? error.message : error}`)
+    logger.error("[Webhook:Fleetbase] ${error instanceof Error ? error.message : error}")
     return res.status(500).json({ error: "Internal server error" })
   }
 }

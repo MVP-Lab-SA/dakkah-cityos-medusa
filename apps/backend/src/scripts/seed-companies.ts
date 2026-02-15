@@ -1,4 +1,6 @@
 import { ExecArgs } from "@medusajs/framework/types"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("scripts:seed-companies")
 
 const companies = [
   {
@@ -139,20 +141,20 @@ export default async function seedCompanies({ container }: ExecArgs) {
     const list = Array.isArray(tenants) ? tenants : [tenants].filter(Boolean)
     if (list.length > 0 && list[0]?.id) {
       tenantId = list[0].id
-      console.log(`Using Dakkah tenant: ${tenantId}`)
+      logger.info(`Using Dakkah tenant: ${tenantId}`)
     } else {
       const allTenants = await tenantService.listTenants()
       const allList = Array.isArray(allTenants) ? allTenants : [allTenants].filter(Boolean)
       if (allList.length > 0 && allList[0]?.id) {
         tenantId = allList[0].id
-        console.log(`Dakkah not found, using first tenant: ${tenantId}`)
+        logger.info(`Dakkah not found, using first tenant: ${tenantId}`)
       }
     }
   } catch (err: any) {
-    console.log(`Could not fetch tenants: ${err.message}. Using placeholder: ${tenantId}`)
+    logger.info(`Could not fetch tenants: ${err.message}. Using placeholder: ${tenantId}`)
   }
 
-  console.log("Seeding B2B companies...")
+  logger.info("Seeding B2B companies...")
 
   for (const companyData of companies) {
     try {
@@ -160,16 +162,16 @@ export default async function seedCompanies({ container }: ExecArgs) {
       const existingList = Array.isArray(existing) ? existing : [existing].filter(Boolean)
 
       if (existingList.length > 0) {
-        console.log(`  - Company ${companyData.name} already exists, skipping`)
+        logger.info(`  - Company ${companyData.name} already exists, skipping`)
         continue
       }
 
       await companyModule.createCompanies({ ...companyData, tenant_id: tenantId })
-      console.log(`  - Created company: ${companyData.name}`)
+      logger.info(`  - Created company: ${companyData.name}`)
     } catch (error: any) {
       console.error(`  - Failed to create company ${companyData.name}: ${error.message}`)
     }
   }
 
-  console.log(`Seeded ${companies.length} B2B companies`)
+  logger.info(`Seeded ${companies.length} B2B companies`)
 }

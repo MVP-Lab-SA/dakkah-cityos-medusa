@@ -1,5 +1,7 @@
 // @ts-nocheck
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { createLogger } from "../../../../../lib/logger"
+const logger = createLogger("api:admin/integrations")
 
 const VALID_COLLECTIONS = [
   "countries",
@@ -49,11 +51,11 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
     let results
     if (collection) {
-      console.log(`[CMSSyncAPI] Manual sync triggered for collection: ${collection} (force: ${!!force})`)
+      logger.info("[CMSSyncAPI] Manual sync triggered for collection: ${collection} (force: ${!!force})")
       const result = await engine.syncCollection(collection)
       results = [result]
     } else {
-      console.log(`[CMSSyncAPI] Manual sync triggered for all collections (force: ${!!force})`)
+      logger.info("[CMSSyncAPI] Manual sync triggered for all collections (force: ${!!force})")
       results = await engine.syncAll()
     }
 

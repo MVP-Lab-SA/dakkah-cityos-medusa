@@ -1,6 +1,8 @@
 // @ts-nocheck
 import { ExecArgs } from "@medusajs/framework/types"
 import { Modules } from "@medusajs/framework/utils"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("scripts:update-product-images")
 
 const productImageData: Record<string, { thumbnail: string; images: { url: string }[] }> = {
   "samsung-galaxy-s24": {
@@ -67,9 +69,9 @@ const productImageData: Record<string, { thumbnail: string; images: { url: strin
 export default async function updateProductImages({ container }: ExecArgs) {
   const productModuleService = container.resolve(Modules.PRODUCT)
 
-  console.log("========================================")
-  console.log("Updating Product Images")
-  console.log("========================================\n")
+  logger.info("========================================")
+  logger.info("Updating Product Images")
+  logger.info("========================================\n")
 
   const handles = Object.keys(productImageData)
   let updatedCount = 0
@@ -79,7 +81,7 @@ export default async function updateProductImages({ container }: ExecArgs) {
       const products = await productModuleService.listProducts({ handle })
 
       if (!products || products.length === 0) {
-        console.log(`  Product not found: ${handle}`)
+        logger.info(`  Product not found: ${handle}`)
         continue
       }
 
@@ -92,13 +94,13 @@ export default async function updateProductImages({ container }: ExecArgs) {
       })
 
       updatedCount++
-      console.log(`  Updated: ${product.title} (${handle}) - ${imageInfo.images.length} images`)
+      logger.info(`  Updated: ${product.title} (${handle}) - ${imageInfo.images.length} images`)
     } catch (error: any) {
-      console.log(`  Error updating ${handle}: ${error.message}`)
+      logger.error(`  Error updating ${handle}: ${error.message}`)
     }
   }
 
-  console.log(`\n========================================`)
-  console.log(`Updated ${updatedCount}/${handles.length} products with images`)
-  console.log(`========================================`)
+  logger.info(`\n========================================`)
+  logger.info(`Updated ${updatedCount}/${handles.length} products with images`)
+  logger.info(`========================================`)
 }

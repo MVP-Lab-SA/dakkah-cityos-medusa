@@ -1,4 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 // In a real implementation, this would be stored in the database
 // For now, we'll use a simple in-memory store or metadata on a system entity
@@ -25,24 +26,34 @@ const DEFAULT_CONFIG = {
 let bookingConfig = { ...DEFAULT_CONFIG }
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  // In production, fetch from database or store settings
-  res.json({ config: bookingConfig })
+  try {
+    // In production, fetch from database or store settings
+    res.json({ config: bookingConfig })
+
+  } catch (error) {
+    handleApiError(res, error, "GET admin settings bookings")
+  }
 }
 
 export async function PUT(req: MedusaRequest, res: MedusaResponse) {
-  const { config } = req.body as { config: typeof DEFAULT_CONFIG }
+  try {
+    const { config } = req.body as { config: typeof DEFAULT_CONFIG }
   
-  if (!config) {
-    return res.status(400).json({ message: "Config is required" })
+    if (!config) {
+      return res.status(400).json({ message: "Config is required" })
+    }
+  
+    // Validate and merge with defaults
+    bookingConfig = {
+      ...DEFAULT_CONFIG,
+      ...config,
+    }
+  
+    // In production, save to database
+  
+    res.json({ config: bookingConfig, message: "Configuration saved" })
+
+  } catch (error) {
+    handleApiError(res, error, "PUT admin settings bookings")
   }
-  
-  // Validate and merge with defaults
-  bookingConfig = {
-    ...DEFAULT_CONFIG,
-    ...config,
-  }
-  
-  // In production, save to database
-  
-  res.json({ config: bookingConfig, message: "Configuration saved" })
 }

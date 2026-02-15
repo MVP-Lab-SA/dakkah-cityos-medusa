@@ -1,12 +1,14 @@
 import { ExecArgs } from "@medusajs/framework/types";
 import { createCustomerGroupsWorkflow } from "@medusajs/medusa/core-flows";
 import { createSalesChannelsWorkflow } from "@medusajs/medusa/core-flows";
+import { createLogger } from "../lib/logger"
+const logger = createLogger("scripts:setup-defaults")
 
 export default async function({ container }: ExecArgs) {
-  console.log("Setting up default configurations...\n");
+  logger.info("Setting up default configurations...\n");
 
   // Create Customer Groups
-  console.log("Creating customer groups...");
+  logger.info("Creating customer groups...");
   try {
     const { result: customerGroups } = await createCustomerGroupsWorkflow(container).run({
       input: {
@@ -32,13 +34,13 @@ export default async function({ container }: ExecArgs) {
         ]
       }
     });
-    console.log(`✓ Created ${customerGroups.length} customer groups`);
+    logger.info(`✓ Created ${customerGroups.length} customer groups`);
   } catch (error) {
-    console.log("Customer groups may already exist or error occurred:", error.message);
+    logger.info(String("Customer groups may already exist or error occurred:", error.message));
   }
 
   // Create Additional Sales Channels
-  console.log("\nCreating additional sales channels...");
+  logger.info("\nCreating additional sales channels...");
   try {
     const { result: salesChannels } = await createSalesChannelsWorkflow(container).run({
       input: {
@@ -61,15 +63,15 @@ export default async function({ container }: ExecArgs) {
         ]
       }
     });
-    console.log(`✓ Created ${salesChannels.length} sales channels`);
+    logger.info(`✓ Created ${salesChannels.length} sales channels`);
   } catch (error) {
-    console.log("Sales channels may already exist or error occurred:", error.message);
+    logger.info(String("Sales channels may already exist or error occurred:", error.message));
   }
 
-  console.log("\n✓ Default setup complete!");
-  console.log("\nYou can now:");
-  console.log("1. Go to Admin → Settings → Customer Groups to manage groups");
-  console.log("2. Go to Admin → Settings → Sales Channels to manage channels");
-  console.log("3. Assign products to specific sales channels");
-  console.log("4. Create promotions targeting specific customer groups");
+  logger.info("\n✓ Default setup complete!");
+  logger.info("\nYou can now:");
+  logger.info("1. Go to Admin → Settings → Customer Groups to manage groups");
+  logger.info("2. Go to Admin → Settings → Sales Channels to manage channels");
+  logger.info("3. Assign products to specific sales channels");
+  logger.info("4. Create promotions targeting specific customer groups");
 }

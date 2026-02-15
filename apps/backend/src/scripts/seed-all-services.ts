@@ -1,19 +1,21 @@
 // @ts-nocheck
 import { ExecArgs } from "@medusajs/framework/types"
 import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("scripts:seed-all-services")
 
 export default async function seedAllServices({ container }: ExecArgs) {
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER)
   const TENANT_ID = "dakkah"
 
   const log = (msg: string) => {
-    console.log(msg)
+    logger.info(String(msg))
     logger.info(msg)
   }
 
   const logError = (section: string, err: any) => {
     const msg = `  ❌ ${section} failed: ${err.message}`
-    console.log(msg)
+    logger.info(String(msg))
     logger.warn(msg)
   }
 

@@ -1,10 +1,12 @@
 // @ts-nocheck
 import { ExecArgs } from "@medusajs/framework/types"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("scripts:seed-verticals-3")
 
 export default async function seedVerticals3({ container }: ExecArgs) {
-  console.log("========================================")
-  console.log("Seeding Vertical Modules - Batch 3")
-  console.log("========================================\n")
+  logger.info("========================================")
+  logger.info("Seeding Vertical Modules - Batch 3")
+  logger.info("========================================\n")
 
   const tenantService = container.resolve("tenant") as any
 
@@ -14,25 +16,25 @@ export default async function seedVerticals3({ container }: ExecArgs) {
     const list = Array.isArray(tenants) ? tenants : [tenants].filter(Boolean)
     if (list.length > 0 && list[0]?.id) {
       tenantId = list[0].id
-      console.log(`Using Dakkah tenant: ${tenantId}`)
+      logger.info(`Using Dakkah tenant: ${tenantId}`)
     } else {
       const allTenants = await tenantService.listTenants({}, { take: 1 })
       const allList = Array.isArray(allTenants) ? allTenants : [allTenants].filter(Boolean)
       if (allList.length > 0 && allList[0]?.id) {
         tenantId = allList[0].id
-        console.log(`Dakkah not found, using first tenant: ${tenantId}`)
+        logger.info(`Dakkah not found, using first tenant: ${tenantId}`)
       } else {
-        console.log(`No tenants found, using placeholder: ${tenantId}`)
+        logger.info(`No tenants found, using placeholder: ${tenantId}`)
       }
     }
   } catch (err: any) {
-    console.log(`Could not fetch tenants: ${err.message}. Using placeholder: ${tenantId}`)
+    logger.info(`Could not fetch tenants: ${err.message}. Using placeholder: ${tenantId}`)
   }
 
   // ============================================================
   // 1. GOVERNMENT
   // ============================================================
-  console.log("\n--- 1. Seeding Government Module ---")
+  logger.info("\n--- 1. Seeding Government Module ---")
   try {
     const governmentService = container.resolve("government")
 
@@ -40,7 +42,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
     const existingReqList = Array.isArray(existingRequests) ? existingRequests : [existingRequests].filter(Boolean)
 
     if (existingReqList.length > 0) {
-      console.log("  Government data already seeded, skipping...")
+      logger.info("  Government data already seeded, skipping...")
     } else {
       const req1 = await governmentService.createServiceRequests({
         tenant_id: tenantId,
@@ -72,7 +74,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
         metadata: { affected_households: 45 },
       })
 
-      console.log(`  Created 2 service requests`)
+      logger.info(`  Created 2 service requests`)
 
       const permit1 = await governmentService.createPermits({
         tenant_id: tenantId,
@@ -105,16 +107,16 @@ export default async function seedVerticals3({ container }: ExecArgs) {
         conditions: ["Noise restrictions after 10 PM", "Maximum capacity 5000 attendees"],
       })
 
-      console.log(`  Created 2 permits`)
+      logger.info(`  Created 2 permits`)
     }
   } catch (error: any) {
-    console.log(`  Government seeding failed: ${error.message}`)
+    logger.error(`  Government seeding failed: ${error.message}`)
   }
 
   // ============================================================
   // 2. PARKING
   // ============================================================
-  console.log("\n--- 2. Seeding Parking Module ---")
+  logger.info("\n--- 2. Seeding Parking Module ---")
   try {
     const parkingService = container.resolve("parking")
 
@@ -122,7 +124,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
     const existingZoneList = Array.isArray(existingZones) ? existingZones : [existingZones].filter(Boolean)
 
     if (existingZoneList.length > 0) {
-      console.log("  Parking data already seeded, skipping...")
+      logger.info("  Parking data already seeded, skipping...")
     } else {
       await Promise.all([
         parkingService.createParkingZones({
@@ -182,16 +184,16 @@ export default async function seedVerticals3({ container }: ExecArgs) {
           has_disabled_spots: true,
         }),
       ])
-      console.log(`  Created 3 parking zones`)
+      logger.info(`  Created 3 parking zones`)
     }
   } catch (error: any) {
-    console.log(`  Parking seeding failed: ${error.message}`)
+    logger.error(`  Parking seeding failed: ${error.message}`)
   }
 
   // ============================================================
   // 3. UTILITIES
   // ============================================================
-  console.log("\n--- 3. Seeding Utilities Module ---")
+  logger.info("\n--- 3. Seeding Utilities Module ---")
   try {
     const utilitiesService = container.resolve("utilities")
 
@@ -199,7 +201,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
     const existingAcctList = Array.isArray(existingAccounts) ? existingAccounts : [existingAccounts].filter(Boolean)
 
     if (existingAcctList.length > 0) {
-      console.log("  Utilities data already seeded, skipping...")
+      logger.info("  Utilities data already seeded, skipping...")
     } else {
       const elecAccount = await utilitiesService.createUtilityAccounts({
         tenant_id: tenantId,
@@ -225,7 +227,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
         auto_pay: false,
       })
 
-      console.log(`  Created 2 utility accounts`)
+      logger.info(`  Created 2 utility accounts`)
 
       await Promise.all([
         utilitiesService.createUtilityBills({
@@ -258,16 +260,16 @@ export default async function seedVerticals3({ container }: ExecArgs) {
         }),
       ])
 
-      console.log(`  Created 2 utility bills`)
+      logger.info(`  Created 2 utility bills`)
     }
   } catch (error: any) {
-    console.log(`  Utilities seeding failed: ${error.message}`)
+    logger.error(`  Utilities seeding failed: ${error.message}`)
   }
 
   // ============================================================
   // 4. PET SERVICE
   // ============================================================
-  console.log("\n--- 4. Seeding Pet Service Module ---")
+  logger.info("\n--- 4. Seeding Pet Service Module ---")
   try {
     const petService = container.resolve("petService")
 
@@ -275,7 +277,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
     const existingPetList = Array.isArray(existingPets) ? existingPets : [existingPets].filter(Boolean)
 
     if (existingPetList.length > 0) {
-      console.log("  Pet service data already seeded, skipping...")
+      logger.info("  Pet service data already seeded, skipping...")
     } else {
       const pet1 = await petService.createPetProfiles({
         tenant_id: tenantId,
@@ -318,7 +320,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
         ],
       })
 
-      console.log(`  Created 2 pet profiles`)
+      logger.info(`  Created 2 pet profiles`)
 
       await Promise.all([
         petService.createGroomingBookings({
@@ -347,16 +349,16 @@ export default async function seedVerticals3({ container }: ExecArgs) {
         }),
       ])
 
-      console.log(`  Created 2 grooming bookings`)
+      logger.info(`  Created 2 grooming bookings`)
     }
   } catch (error: any) {
-    console.log(`  Pet service seeding failed: ${error.message}`)
+    logger.error(`  Pet service seeding failed: ${error.message}`)
   }
 
   // ============================================================
   // 5. FINANCIAL PRODUCT
   // ============================================================
-  console.log("\n--- 5. Seeding Financial Product Module ---")
+  logger.info("\n--- 5. Seeding Financial Product Module ---")
   try {
     const financialService = container.resolve("financialProduct")
 
@@ -364,7 +366,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
     const existingLoanList = Array.isArray(existingLoans) ? existingLoans : [existingLoans].filter(Boolean)
 
     if (existingLoanList.length > 0) {
-      console.log("  Financial product data already seeded, skipping...")
+      logger.info("  Financial product data already seeded, skipping...")
     } else {
       await Promise.all([
         financialService.createLoanProducts({
@@ -403,7 +405,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
         }),
       ])
 
-      console.log(`  Created 2 loan products`)
+      logger.info(`  Created 2 loan products`)
 
       await Promise.all([
         financialService.createInsuranceProducts({
@@ -452,16 +454,16 @@ export default async function seedVerticals3({ container }: ExecArgs) {
         }),
       ])
 
-      console.log(`  Created 2 insurance products`)
+      logger.info(`  Created 2 insurance products`)
     }
   } catch (error: any) {
-    console.log(`  Financial product seeding failed: ${error.message}`)
+    logger.error(`  Financial product seeding failed: ${error.message}`)
   }
 
   // ============================================================
   // 6. CROWDFUNDING
   // ============================================================
-  console.log("\n--- 6. Seeding Crowdfunding Module ---")
+  logger.info("\n--- 6. Seeding Crowdfunding Module ---")
   try {
     const crowdfundingService = container.resolve("crowdfunding")
 
@@ -469,7 +471,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
     const existingCampList = Array.isArray(existingCampaigns) ? existingCampaigns : [existingCampaigns].filter(Boolean)
 
     if (existingCampList.length > 0) {
-      console.log("  Crowdfunding data already seeded, skipping...")
+      logger.info("  Crowdfunding data already seeded, skipping...")
     } else {
       const campaign1 = await crowdfundingService.createCrowdfundCampaigns({
         tenant_id: tenantId,
@@ -509,7 +511,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
         risks_and_challenges: "Weather conditions and municipality permits may affect timeline. We have pre-approval from the local council.",
       })
 
-      console.log(`  Created 2 campaigns`)
+      logger.info(`  Created 2 campaigns`)
 
       await Promise.all([
         crowdfundingService.createRewardTiers({
@@ -556,16 +558,16 @@ export default async function seedVerticals3({ container }: ExecArgs) {
         }),
       ])
 
-      console.log(`  Created 3 reward tiers`)
+      logger.info(`  Created 3 reward tiers`)
     }
   } catch (error: any) {
-    console.log(`  Crowdfunding seeding failed: ${error.message}`)
+    logger.error(`  Crowdfunding seeding failed: ${error.message}`)
   }
 
   // ============================================================
   // 7. SOCIAL COMMERCE
   // ============================================================
-  console.log("\n--- 7. Seeding Social Commerce Module ---")
+  logger.info("\n--- 7. Seeding Social Commerce Module ---")
   try {
     const socialCommerceService = container.resolve("socialCommerce")
 
@@ -573,7 +575,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
     const existingStreamList = Array.isArray(existingStreams) ? existingStreams : [existingStreams].filter(Boolean)
 
     if (existingStreamList.length > 0) {
-      console.log("  Social commerce data already seeded, skipping...")
+      logger.info("  Social commerce data already seeded, skipping...")
     } else {
       await Promise.all([
         socialCommerceService.createLiveStreams({
@@ -608,7 +610,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
         }),
       ])
 
-      console.log(`  Created 2 live streams`)
+      logger.info(`  Created 2 live streams`)
 
       await socialCommerceService.createGroupBuys({
         tenant_id: tenantId,
@@ -628,16 +630,16 @@ export default async function seedVerticals3({ container }: ExecArgs) {
         ends_at: new Date("2026-02-28"),
       })
 
-      console.log(`  Created 1 group buy`)
+      logger.info(`  Created 1 group buy`)
     }
   } catch (error: any) {
-    console.log(`  Social commerce seeding failed: ${error.message}`)
+    logger.error(`  Social commerce seeding failed: ${error.message}`)
   }
 
   // ============================================================
   // 8. GROCERY
   // ============================================================
-  console.log("\n--- 8. Seeding Grocery Module ---")
+  logger.info("\n--- 8. Seeding Grocery Module ---")
   try {
     const groceryService = container.resolve("grocery")
 
@@ -645,7 +647,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
     const existingFreshList = Array.isArray(existingFresh) ? existingFresh : [existingFresh].filter(Boolean)
 
     if (existingFreshList.length > 0) {
-      console.log("  Grocery data already seeded, skipping...")
+      logger.info("  Grocery data already seeded, skipping...")
     } else {
       const fresh1 = await groceryService.createFreshProducts({
         tenant_id: tenantId,
@@ -692,7 +694,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
         nutrition_info: { calories_per_100g: 210, protein: 20, fat: 12, omega3: "1.5g" },
       })
 
-      console.log(`  Created 3 fresh products`)
+      logger.info(`  Created 3 fresh products`)
 
       await Promise.all([
         groceryService.createBatchTrackings({
@@ -739,16 +741,16 @@ export default async function seedVerticals3({ container }: ExecArgs) {
         }),
       ])
 
-      console.log(`  Created 3 batch tracking records`)
+      logger.info(`  Created 3 batch tracking records`)
     }
   } catch (error: any) {
-    console.log(`  Grocery seeding failed: ${error.message}`)
+    logger.error(`  Grocery seeding failed: ${error.message}`)
   }
 
   // ============================================================
   // 9. AUTOMOTIVE
   // ============================================================
-  console.log("\n--- 9. Seeding Automotive Module ---")
+  logger.info("\n--- 9. Seeding Automotive Module ---")
   try {
     const automotiveService = container.resolve("automotive")
 
@@ -756,7 +758,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
     const existingVehicleList = Array.isArray(existingVehicles) ? existingVehicles : [existingVehicles].filter(Boolean)
 
     if (existingVehicleList.length > 0) {
-      console.log("  Automotive data already seeded, skipping...")
+      logger.info("  Automotive data already seeded, skipping...")
     } else {
       await Promise.all([
         automotiveService.createVehicleListings({
@@ -831,16 +833,16 @@ export default async function seedVerticals3({ container }: ExecArgs) {
           view_count: 167,
         }),
       ])
-      console.log(`  Created 3 vehicle listings`)
+      logger.info(`  Created 3 vehicle listings`)
     }
   } catch (error: any) {
-    console.log(`  Automotive seeding failed: ${error.message}`)
+    logger.error(`  Automotive seeding failed: ${error.message}`)
   }
 
   // ============================================================
   // 10. MEMBERSHIP
   // ============================================================
-  console.log("\n--- 10. Seeding Membership Module ---")
+  logger.info("\n--- 10. Seeding Membership Module ---")
   try {
     const membershipService = container.resolve("membership")
 
@@ -848,7 +850,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
     const existingTierList = Array.isArray(existingTiers) ? existingTiers : [existingTiers].filter(Boolean)
 
     if (existingTierList.length > 0) {
-      console.log("  Membership data already seeded, skipping...")
+      logger.info("  Membership data already seeded, skipping...")
     } else {
       await Promise.all([
         membershipService.createMembershipTiers({
@@ -916,16 +918,16 @@ export default async function seedVerticals3({ container }: ExecArgs) {
           is_active: true,
         }),
       ])
-      console.log(`  Created 3 membership tiers`)
+      logger.info(`  Created 3 membership tiers`)
     }
   } catch (error: any) {
-    console.log(`  Membership seeding failed: ${error.message}`)
+    logger.error(`  Membership seeding failed: ${error.message}`)
   }
 
   // ============================================================
   // 11. WARRANTY
   // ============================================================
-  console.log("\n--- 11. Seeding Warranty Module ---")
+  logger.info("\n--- 11. Seeding Warranty Module ---")
   try {
     const warrantyService = container.resolve("warranty")
 
@@ -933,7 +935,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
     const existingPlanList = Array.isArray(existingPlans) ? existingPlans : [existingPlans].filter(Boolean)
 
     if (existingPlanList.length > 0) {
-      console.log("  Warranty data already seeded, skipping...")
+      logger.info("  Warranty data already seeded, skipping...")
     } else {
       await Promise.all([
         warrantyService.createWarrantyPlans({
@@ -975,16 +977,16 @@ export default async function seedVerticals3({ container }: ExecArgs) {
           is_active: true,
         }),
       ])
-      console.log(`  Created 2 warranty plans`)
+      logger.info(`  Created 2 warranty plans`)
     }
   } catch (error: any) {
-    console.log(`  Warranty seeding failed: ${error.message}`)
+    logger.error(`  Warranty seeding failed: ${error.message}`)
   }
 
   // ============================================================
   // 12. ADVERTISING
   // ============================================================
-  console.log("\n--- 12. Seeding Advertising Module ---")
+  logger.info("\n--- 12. Seeding Advertising Module ---")
   try {
     const advertisingService = container.resolve("advertising")
 
@@ -992,7 +994,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
     const existingAdList = Array.isArray(existingCampaigns) ? existingCampaigns : [existingCampaigns].filter(Boolean)
 
     if (existingAdList.length > 0) {
-      console.log("  Advertising data already seeded, skipping...")
+      logger.info("  Advertising data already seeded, skipping...")
     } else {
       await Promise.all([
         advertisingService.createAdCampaigns({
@@ -1037,7 +1039,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
         }),
       ])
 
-      console.log(`  Created 2 ad campaigns`)
+      logger.info(`  Created 2 ad campaigns`)
 
       await Promise.all([
         advertisingService.createAdPlacements({
@@ -1072,16 +1074,16 @@ export default async function seedVerticals3({ container }: ExecArgs) {
         }),
       ])
 
-      console.log(`  Created 3 ad placements`)
+      logger.info(`  Created 3 ad placements`)
     }
   } catch (error: any) {
-    console.log(`  Advertising seeding failed: ${error.message}`)
+    logger.error(`  Advertising seeding failed: ${error.message}`)
   }
 
   // ============================================================
   // 13. AFFILIATE
   // ============================================================
-  console.log("\n--- 13. Seeding Affiliate Module ---")
+  logger.info("\n--- 13. Seeding Affiliate Module ---")
   try {
     const affiliateService = container.resolve("affiliate")
 
@@ -1089,7 +1091,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
     const existingAffList = Array.isArray(existingAffiliates) ? existingAffiliates : [existingAffiliates].filter(Boolean)
 
     if (existingAffList.length > 0) {
-      console.log("  Affiliate data already seeded, skipping...")
+      logger.info("  Affiliate data already seeded, skipping...")
     } else {
       const affiliate1 = await affiliateService.createAffiliates({
         tenant_id: tenantId,
@@ -1129,7 +1131,7 @@ export default async function seedVerticals3({ container }: ExecArgs) {
         social_links: { instagram: "@fit_mohammed", website: "fitnessarabia.com" },
       })
 
-      console.log(`  Created 2 affiliates`)
+      logger.info(`  Created 2 affiliates`)
 
       await Promise.all([
         affiliateService.createReferralLinks({
@@ -1167,13 +1169,13 @@ export default async function seedVerticals3({ container }: ExecArgs) {
         }),
       ])
 
-      console.log(`  Created 3 referral links`)
+      logger.info(`  Created 3 referral links`)
     }
   } catch (error: any) {
-    console.log(`  Affiliate seeding failed: ${error.message}`)
+    logger.error(`  Affiliate seeding failed: ${error.message}`)
   }
 
-  console.log("\n========================================")
-  console.log("Vertical Modules Batch 3 Seeding Complete!")
-  console.log("========================================\n")
+  logger.info("\n========================================")
+  logger.info("Vertical Modules Batch 3 Seeding Complete!")
+  logger.info("========================================\n")
 }

@@ -1,5 +1,7 @@
 import { MedusaContainer } from "@medusajs/framework/types";
 import axios from "axios";
+import { createLogger } from "../../lib/logger"
+const logger = createLogger("integration:payload-sync")
 
 export interface PayloadToMedusaSyncConfig {
   payloadUrl: string;
@@ -112,7 +114,7 @@ export class PayloadToMedusaSync {
 
     // Store endpoint config in Medusa
     // This could be used for dynamic API routing or configuration
-    console.log("Processing integration endpoint:", endpoint);
+    logger.info(String("Processing integration endpoint:", endpoint));
 
     // Example: Store in a configuration service
     // const configService = this.container.resolve("configService");

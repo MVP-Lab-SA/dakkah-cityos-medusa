@@ -1,5 +1,7 @@
 import { MedusaContainer } from "@medusajs/framework/types";
 import axios from "axios";
+import { createLogger } from "../../lib/logger"
+const logger = createLogger("integration:payload-sync")
 
 export interface PayloadSyncConfig {
   payloadUrl: string;
@@ -297,7 +299,7 @@ export class MedusaToPayloadSync {
         await this.client.post("/api/governance-policies", policyData);
       }
     } catch (err: any) {
-      console.log(`[PayloadSync] Failed to sync governance policies for tenant ${tenantId}: ${err.message}`);
+      logger.info("[PayloadSync] Failed to sync governance policies for tenant ${tenantId}: ${err.message}");
       throw err;
     }
   }

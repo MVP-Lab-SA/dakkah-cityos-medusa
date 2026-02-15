@@ -1,33 +1,44 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../lib/api-error-handler"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const query = req.scope.resolve("query")
+  try {
+    const query = req.scope.resolve("query")
   
-  const { data: providers } = await query.graph({
-    entity: "service_provider",
-    fields: [
-      "id",
-      "name",
-      "email",
-      "phone",
-      "bio",
-      "avatar_url",
-      "is_active",
-      "color",
-      "timezone",
-      "metadata",
-      "created_at",
-      "availabilities.*",
-    ],
-  })
+    const { data: providers } = await query.graph({
+      entity: "service_provider",
+      fields: [
+        "id",
+        "name",
+        "email",
+        "phone",
+        "bio",
+        "avatar_url",
+        "is_active",
+        "color",
+        "timezone",
+        "metadata",
+        "created_at",
+        "availabilities.*",
+      ],
+    })
   
-  res.json({ providers })
+    res.json({ providers })
+
+  } catch (error) {
+    handleApiError(res, error, "GET admin service-providers")
+  }
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const bookingModuleService = req.scope.resolve("bookingModuleService") as any
+  try {
+    const bookingModuleService = req.scope.resolve("bookingModuleService") as any
   
-  const provider = await bookingModuleService.createServiceProviders(req.body)
+    const provider = await bookingModuleService.createServiceProviders(req.body)
   
-  res.status(201).json({ provider })
+    res.status(201).json({ provider })
+
+  } catch (error) {
+    handleApiError(res, error, "POST admin service-providers")
+  }
 }

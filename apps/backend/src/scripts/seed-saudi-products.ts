@@ -1,6 +1,8 @@
 import { ExecArgs } from "@medusajs/framework/types"
 import { ProductStatus } from "@medusajs/framework/utils"
 import { createProductsWorkflow, linkProductsToSalesChannelWorkflow } from "@medusajs/medusa/core-flows"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("scripts:seed-saudi-products")
 
 /**
  * Seed Saudi Arabian Products with Images
@@ -8,7 +10,7 @@ import { createProductsWorkflow, linkProductsToSalesChannelWorkflow } from "@med
  */
 
 export default async function ({ container }: ExecArgs) {
-  console.log("Starting Saudi product seeding with images...")
+  logger.info("Starting Saudi product seeding with images...")
 
   const query = container.resolve("query")
   
@@ -32,13 +34,13 @@ export default async function ({ container }: ExecArgs) {
   const defaultChannel = salesChannels.find((sc: any) => sc.name === "Default Sales Channel")
   
   if (!saudiRegion) {
-    console.log("No Saudi region found. Please create one first.")
+    logger.info("No Saudi region found. Please create one first.")
     return
   }
   
-  console.log(`Found Saudi region: ${saudiRegion.name}`)
-  console.log(`Found ${categories.length} categories`)
-  console.log(`Found ${salesChannels.length} sales channels`)
+  logger.info(`Found Saudi region: ${saudiRegion.name}`)
+  logger.info(`Found ${categories.length} categories`)
+  logger.info(`Found ${salesChannels.length} sales channels`)
   
   const getCategoryId = (handle: string): string | undefined => {
     const category = categories.find((c: any) => c.handle === handle)
@@ -271,7 +273,7 @@ export default async function ({ container }: ExecArgs) {
   ]
   
   // Create products
-  console.log(`\nCreating ${saudiProducts.length} Saudi products...`)
+  logger.info(`\nCreating ${saudiProducts.length} Saudi products...`)
   let createdCount = 0
   const createdProductIds: string[] = []
   
@@ -284,12 +286,12 @@ export default async function ({ container }: ExecArgs) {
       if (result[0]?.id) {
         createdProductIds.push(result[0].id)
       }
-      console.log(`  Created: ${product.title}`)
+      logger.info(`  Created: ${product.title}`)
     } catch (error: any) {
       if (error.message?.includes("already exists")) {
-        console.log(`  Skipped (exists): ${product.title}`)
+        logger.info(`  Skipped (exists): ${product.title}`)
       } else {
-        console.log(`  Error creating ${product.title}:`, error.message)
+        logger.info(String(`  Error creating ${product.title}:`, error.message))
       }
     }
   }
@@ -303,15 +305,15 @@ export default async function ({ container }: ExecArgs) {
           add: createdProductIds,
         },
       })
-      console.log(`Linked ${createdProductIds.length} products to ${defaultChannel.name}`)
+      logger.info(`Linked ${createdProductIds.length} products to ${defaultChannel.name}`)
     } catch (error: any) {
-      console.log(`Error linking products to sales channel:`, error.message)
+      logger.info(String(`Error linking products to sales channel:`, error.message))
     }
   }
   
-  console.log(`\nSaudi product seeding completed!`)
-  console.log(`Summary:`)
-  console.log(`  - Products created: ${createdCount}`)
-  console.log(`  - All products have professional images`)
-  console.log(`  - Prices in SAR (Saudi Riyal)`)
+  logger.info(`\nSaudi product seeding completed!`)
+  logger.info(`Summary:`)
+  logger.info(`  - Products created: ${createdCount}`)
+  logger.info(`  - All products have professional images`)
+  logger.info(`  - Prices in SAR (Saudi Riyal)`)
 }

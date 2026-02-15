@@ -167,7 +167,7 @@ function ManageOrdersPage() {
         onChange={handleFormChange}
         onSubmit={handleSubmit}
         loading={updateMutation.isPending}
-        submitLabel="Update"
+        submitLabel={t(locale, "common.actions.update", "Update")}
       />
     </ManageLayout>
   )

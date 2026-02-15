@@ -179,7 +179,7 @@ function ManageCustomersPage() {
         onChange={handleFormChange}
         onSubmit={handleSubmit}
         loading={createMutation.isPending || updateMutation.isPending}
-        submitLabel={editingItem ? "Update" : "Create"}
+        submitLabel={editingItem ? t(locale, "common.actions.update", "Update") : t(locale, "common.actions.create", "Create")}
       />
 
       <ConfirmDialog

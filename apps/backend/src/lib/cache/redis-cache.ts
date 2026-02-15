@@ -9,6 +9,8 @@
  */
 
 import { Redis } from "ioredis"
+import { createLogger } from "../../lib/logger"
+const logger = createLogger("lib:cache")
 
 // Cache key prefixes for different entity types
 export const CACHE_KEYS = {
@@ -58,13 +60,13 @@ export class CityOSCache {
           : new Redis(process.env.REDIS_URL!)
 
         this.enabled = true
-        console.log("[CityOS Cache] Redis cache initialized")
+        logger.info("[CityOS Cache] Redis cache initialized")
       } catch (error) {
         console.warn("[CityOS Cache] Redis connection failed, caching disabled:", error)
         this.enabled = false
       }
     } else {
-      console.log("[CityOS Cache] No Redis config, caching disabled")
+      logger.info("[CityOS Cache] No Redis config, caching disabled")
     }
   }
 
@@ -199,7 +201,7 @@ export class CityOSCache {
       if (keys.length > 0) {
         await this.redis.del(...keys)
       }
-      console.log(`[CityOS Cache] Cleared ${keys.length} keys`)
+      logger.info("[CityOS Cache] Cleared ${keys.length} keys")
     } catch (error) {
       console.warn("[CityOS Cache] Error clearing cache:", error)
     }

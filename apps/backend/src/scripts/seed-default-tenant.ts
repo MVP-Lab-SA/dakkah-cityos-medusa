@@ -1,6 +1,8 @@
 import { ExecArgs } from "@medusajs/framework/types"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
 import { createRegionsWorkflow } from "@medusajs/medusa/core-flows"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("scripts:seed-default-tenant")
 
 export default async function seedDefaultTenant({ container }: ExecArgs) {
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER)
@@ -9,22 +11,22 @@ export default async function seedDefaultTenant({ container }: ExecArgs) {
   const governanceModuleService = container.resolve("governance") as any
   const nodeModuleService = container.resolve("node") as any
 
-  console.log("========================================")
-  console.log("  Seed Default Tenant (Dakkah)")
-  console.log("========================================\n")
+  logger.info("========================================")
+  logger.info("  Seed Default Tenant (Dakkah)")
+  logger.info("========================================\n")
 
   // ============================================================
   // STEP 1: Update Tenant Record
   // ============================================================
-  console.log("Step 1: Updating tenant record...")
+  logger.info("Step 1: Updating tenant record...")
   try {
     const tenant = await tenantModuleService.retrieveTenantByHandle("dakkah")
     if (!tenant) {
-      console.log("  ✗ Tenant with handle 'dakkah' not found. Aborting.")
+      logger.info("  ✗ Tenant with handle 'dakkah' not found. Aborting.")
       return
     }
 
-    console.log(`  Found tenant: ${tenant.name} (${tenant.id})`)
+    logger.info(`  Found tenant: ${tenant.name} (${tenant.id})`)
 
     const existingSettings = tenant.settings || {}
     const updatedSettings = {
@@ -51,15 +53,15 @@ export default async function seedDefaultTenant({ container }: ExecArgs) {
       settings: updatedSettings,
     })
 
-    console.log("  ✓ Tenant updated: supported_locales, residency_zone, country_id, settings")
+    logger.info("  ✓ Tenant updated: supported_locales, residency_zone, country_id, settings")
   } catch (error: any) {
-    console.log(`  ✗ Tenant update failed: ${error.message}`)
+    logger.error(`  ✗ Tenant update failed: ${error.message}`)
   }
 
   // ============================================================
   // STEP 2: Update Governance Authority Policies
   // ============================================================
-  console.log("\nStep 2: Updating governance authority policies...")
+  logger.info("\nStep 2: Updating governance authority policies...")
   try {
     const tenant = await tenantModuleService.retrieveTenantByHandle("dakkah")
     const authorities = await governanceModuleService.listGovernanceAuthorities({
@@ -68,10 +70,10 @@ export default async function seedDefaultTenant({ container }: ExecArgs) {
     const authorityList = Array.isArray(authorities) ? authorities : [authorities].filter(Boolean)
 
     if (authorityList.length === 0) {
-      console.log("  ✗ No governance authority found for tenant. Skipping.")
+      logger.info("  ✗ No governance authority found for tenant. Skipping.")
     } else {
       const authority = authorityList[0]
-      console.log(`  Found authority: ${authority.name} (${authority.id})`)
+      logger.info(`  Found authority: ${authority.name} (${authority.id})`)
 
       const comprehensivePolicies = {
         data: {
@@ -118,16 +120,16 @@ export default async function seedDefaultTenant({ container }: ExecArgs) {
         policies: comprehensivePolicies,
       })
 
-      console.log("  ✓ Governance authority policies updated with all verticals")
+      logger.info("  ✓ Governance authority policies updated with all verticals")
     }
   } catch (error: any) {
-    console.log(`  ✗ Governance update failed: ${error.message}`)
+    logger.error(`  ✗ Governance update failed: ${error.message}`)
   }
 
   // ============================================================
   // STEP 3: Create SAR Region (if not exists)
   // ============================================================
-  console.log("\nStep 3: Ensuring SAR region exists...")
+  logger.info("\nStep 3: Ensuring SAR region exists...")
   try {
     const { data: existingRegions } = await query.graph({
       entity: "region",
@@ -136,7 +138,7 @@ export default async function seedDefaultTenant({ container }: ExecArgs) {
     })
 
     if (existingRegions.length > 0) {
-      console.log(`  ✓ SAR region already exists: ${existingRegions[0].name} (${existingRegions[0].id})`)
+      logger.info(`  ✓ SAR region already exists: ${existingRegions[0].name} (${existingRegions[0].id})`)
     } else {
       const { result: regions } = await createRegionsWorkflow(container).run({
         input: {
@@ -151,16 +153,16 @@ export default async function seedDefaultTenant({ container }: ExecArgs) {
           ],
         },
       })
-      console.log(`  ✓ Created SAR region: ${regions[0].name} (${regions[0].id})`)
+      logger.info(`  ✓ Created SAR region: ${regions[0].name} (${regions[0].id})`)
     }
   } catch (error: any) {
-    console.log(`  ✗ SAR region creation failed: ${error.message}`)
+    logger.error(`  ✗ SAR region creation failed: ${error.message}`)
   }
 
   // ============================================================
   // STEP 4: Ensure Node Hierarchy
   // ============================================================
-  console.log("\nStep 4: Ensuring node hierarchy...")
+  logger.info("\nStep 4: Ensuring node hierarchy...")
   try {
     const tenant = await tenantModuleService.retrieveTenantByHandle("dakkah")
     const existingNodes = await nodeModuleService.listNodesByTenant(tenant.id)
@@ -169,20 +171,20 @@ export default async function seedDefaultTenant({ container }: ExecArgs) {
       const types = existingNodes.map((n: any) => n.type)
       const hasAll = ["CITY", "DISTRICT", "ZONE", "FACILITY", "ASSET"].every((t) => types.includes(t))
       if (hasAll) {
-        console.log(`  ✓ Node hierarchy already exists (${existingNodes.length} nodes)`)
-        console.log("    Hierarchy:")
+        logger.info(`  ✓ Node hierarchy already exists (${existingNodes.length} nodes)`)
+        logger.info("    Hierarchy:")
         const sorted = existingNodes.sort((a: any, b: any) => a.depth - b.depth)
         for (const node of sorted) {
           const indent = "  ".repeat(node.depth + 2)
-          console.log(`${indent}${node.type}: ${node.name} (${node.id})`)
+          logger.info(`${indent}${node.type}: ${node.name} (${node.id})`)
         }
       } else {
-        console.log(`  ⚠ Found ${existingNodes.length} nodes but missing some types. Skipping to avoid duplicates.`)
+        logger.info(`  ⚠ Found ${existingNodes.length} nodes but missing some types. Skipping to avoid duplicates.`)
       }
     } else if (existingNodes.length > 0) {
-      console.log(`  ⚠ Found ${existingNodes.length} nodes (incomplete hierarchy). Skipping to avoid duplicates.`)
+      logger.info(`  ⚠ Found ${existingNodes.length} nodes (incomplete hierarchy). Skipping to avoid duplicates.`)
     } else {
-      console.log("  Creating 5-level node hierarchy...")
+      logger.info("  Creating 5-level node hierarchy...")
 
       const city = await nodeModuleService.createNodeWithValidation({
         tenant_id: tenant.id,
@@ -193,7 +195,7 @@ export default async function seedDefaultTenant({ container }: ExecArgs) {
         parent_id: null,
         location: { lat: 24.7136, lng: 46.6753 },
       })
-      console.log(`    ✓ CITY: Riyadh (${city.id})`)
+      logger.info(`    ✓ CITY: Riyadh (${city.id})`)
 
       const district = await nodeModuleService.createNodeWithValidation({
         tenant_id: tenant.id,
@@ -203,7 +205,7 @@ export default async function seedDefaultTenant({ container }: ExecArgs) {
         type: "DISTRICT",
         parent_id: city.id,
       })
-      console.log(`    ✓ DISTRICT: Al Olaya (${district.id})`)
+      logger.info(`    ✓ DISTRICT: Al Olaya (${district.id})`)
 
       const zone = await nodeModuleService.createNodeWithValidation({
         tenant_id: tenant.id,
@@ -213,7 +215,7 @@ export default async function seedDefaultTenant({ container }: ExecArgs) {
         type: "ZONE",
         parent_id: district.id,
       })
-      console.log(`    ✓ ZONE: King Fahad Zone (${zone.id})`)
+      logger.info(`    ✓ ZONE: King Fahad Zone (${zone.id})`)
 
       const facility = await nodeModuleService.createNodeWithValidation({
         tenant_id: tenant.id,
@@ -223,7 +225,7 @@ export default async function seedDefaultTenant({ container }: ExecArgs) {
         type: "FACILITY",
         parent_id: zone.id,
       })
-      console.log(`    ✓ FACILITY: Main Mall (${facility.id})`)
+      logger.info(`    ✓ FACILITY: Main Mall (${facility.id})`)
 
       const asset = await nodeModuleService.createNodeWithValidation({
         tenant_id: tenant.id,
@@ -233,15 +235,15 @@ export default async function seedDefaultTenant({ container }: ExecArgs) {
         type: "ASSET",
         parent_id: facility.id,
       })
-      console.log(`    ✓ ASSET: Shop 101 (${asset.id})`)
+      logger.info(`    ✓ ASSET: Shop 101 (${asset.id})`)
 
-      console.log("  ✓ Node hierarchy created successfully")
+      logger.info("  ✓ Node hierarchy created successfully")
     }
   } catch (error: any) {
-    console.log(`  ✗ Node hierarchy creation failed: ${error.message}`)
+    logger.error(`  ✗ Node hierarchy creation failed: ${error.message}`)
   }
 
-  console.log("\n========================================")
-  console.log("  Default Tenant Seed Complete")
-  console.log("========================================\n")
+  logger.info("\n========================================")
+  logger.info("  Default Tenant Seed Complete")
+  logger.info("========================================\n")
 }

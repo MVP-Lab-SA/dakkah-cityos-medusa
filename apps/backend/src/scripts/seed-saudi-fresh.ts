@@ -8,9 +8,11 @@ import {
   linkProductsToSalesChannelWorkflow,
   updateInventoryLevelsWorkflow,
 } from "@medusajs/medusa/core-flows"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("scripts:seed-saudi-fresh")
 
 export default async function ({ container }: ExecArgs) {
-  console.log("Starting Saudi Arabia fresh data seeding...")
+  logger.info("Starting Saudi Arabia fresh data seeding...")
 
   const query = container.resolve("query")
 
@@ -21,10 +23,10 @@ export default async function ({ container }: ExecArgs) {
     filters: {},
   })
   const defaultChannel = salesChannels[0]
-  console.log(`\n1. Using sales channel: ${defaultChannel.name}`)
+  logger.info(`\n1. Using sales channel: ${defaultChannel.name}`)
 
   // 2. Create Product Categories
-  console.log("\n2. Creating Product Categories...")
+  logger.info("\n2. Creating Product Categories...")
   
   const { result: parentCategories } = await createProductCategoriesWorkflow(container).run({
     input: {
@@ -52,10 +54,10 @@ export default async function ({ container }: ExecArgs) {
   const fragrancesId = parentCategories.find((c) => c.handle === "fragrances")?.id
   const homeDecorId = parentCategories.find((c) => c.handle === "home-decor-sa")?.id
 
-  console.log(`✓ Created ${parentCategories.length} categories`)
+  logger.info(`✓ Created ${parentCategories.length} categories`)
 
   // 3. Create Collections
-  console.log("\n3. Creating Collections...")
+  logger.info("\n3. Creating Collections...")
   const { result: collections } = await createCollectionsWorkflow(container).run({
     input: {
       collections: [
@@ -72,10 +74,10 @@ export default async function ({ container }: ExecArgs) {
   })
   const ramadanCollectionId = collections.find((c) => c.handle === "ramadan-essentials")?.id
   const eidCollectionId = collections.find((c) => c.handle === "eid-collection-sa")?.id
-  console.log(`✓ Created ${collections.length} collections`)
+  logger.info(`✓ Created ${collections.length} collections`)
 
   // 4. Create Product Tags
-  console.log("\n4. Creating Product Tags...")
+  logger.info("\n4. Creating Product Tags...")
   const { result: tags } = await createProductTagsWorkflow(container).run({
     input: {
       product_tags: [
@@ -86,10 +88,10 @@ export default async function ({ container }: ExecArgs) {
   })
   const bestsellerTagId = tags.find((t) => t.value === "bestseller")?.id
   const newArrivalTagId = tags.find((t) => t.value === "new-arrival")?.id
-  console.log(`✓ Created ${tags.length} tags`)
+  logger.info(`✓ Created ${tags.length} tags`)
 
   // 5. Create Products
-  console.log("\n5. Creating Products...")
+  logger.info("\n5. Creating Products...")
 
   const { result: products } = await createProductsWorkflow(container).run({
     input: {
@@ -319,24 +321,24 @@ export default async function ({ container }: ExecArgs) {
     },
   })
 
-  console.log(`✓ Created ${products.length} products`)
+  logger.info(`✓ Created ${products.length} products`)
 
   // 6. Link products to sales channel
-  console.log("\n6. Linking products to sales channel...")
+  logger.info("\n6. Linking products to sales channel...")
   await linkProductsToSalesChannelWorkflow(container).run({
     input: {
       id: defaultChannel.id,
       add: products.map((p) => p.id),
     },
   })
-  console.log(`✓ Linked ${products.length} products`)
+  logger.info(`✓ Linked ${products.length} products`)
 
-  console.log("\n7. Inventory is managed automatically for products")
+  logger.info("\n7. Inventory is managed automatically for products")
 
-  console.log("\n" + "=".repeat(60))
-  console.log("✓ SEEDING COMPLETE!")
-  console.log("=".repeat(60))
-  console.log(`
+  logger.info(`\n${String("=".repeat(60)}`))
+  logger.info("✓ SEEDING COMPLETE!")
+  logger.info(String("=".repeat(60)))
+  logger.info(`
 Categories: ${parentCategories.length}
 Collections: ${collections.length}
 Products: ${products.length}

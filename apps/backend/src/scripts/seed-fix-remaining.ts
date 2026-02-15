@@ -1,6 +1,8 @@
 // @ts-nocheck
 import { ExecArgs } from "@medusajs/framework/types"
 import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("scripts:seed-fix-remaining")
 
 export default async function seedFixRemaining({ container }: ExecArgs) {
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER)
@@ -24,13 +26,13 @@ export default async function seedFixRemaining({ container }: ExecArgs) {
   logger.info(`Using tenant ID: ${TENANT_ID}`)
 
   const log = (msg: string) => {
-    console.log(msg)
+    logger.info(String(msg))
     logger.info(msg)
   }
 
   const logError = (section: string, err: any) => {
     const msg = `  ❌ ${section} failed: ${err.message}`
-    console.log(msg)
+    logger.info(String(msg))
     logger.warn(msg)
   }
 

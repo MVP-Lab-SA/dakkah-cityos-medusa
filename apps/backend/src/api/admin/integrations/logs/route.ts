@@ -1,5 +1,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { createIntegrationOrchestrator } from "../../../../integrations/orchestrator/index"
+import { createLogger } from "../../../../lib/logger"
+const logger = createLogger("api:admin/integrations")
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   try {
@@ -44,7 +46,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       has_more: offset + limit < total,
     })
   } catch (error: any) {
-    console.log(`[IntegrationLogs] Error fetching sync logs: ${error.message}`)
+    logger.error("[IntegrationLogs] fetching sync logs: ${error.message}")
     return res.status(500).json({ error: error.message })
   }
 }

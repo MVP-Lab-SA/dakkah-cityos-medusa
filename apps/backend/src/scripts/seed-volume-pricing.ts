@@ -1,4 +1,6 @@
 import { ExecArgs } from "@medusajs/framework/types"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("scripts:seed-volume-pricing")
 
 export default async function seedVolumePricing({ container }: ExecArgs) {
   const volumePricingModule = container.resolve("volumePricing") as any
@@ -11,20 +13,20 @@ export default async function seedVolumePricing({ container }: ExecArgs) {
     const list = Array.isArray(tenants) ? tenants : [tenants].filter(Boolean)
     if (list.length > 0 && list[0]?.id) {
       tenantId = list[0].id
-      console.log(`Using Dakkah tenant: ${tenantId}`)
+      logger.info(`Using Dakkah tenant: ${tenantId}`)
     } else {
       const allTenants = await tenantService.listTenants()
       const allList = Array.isArray(allTenants) ? allTenants : [allTenants].filter(Boolean)
       if (allList.length > 0 && allList[0]?.id) {
         tenantId = allList[0].id
-        console.log(`Dakkah not found, using first tenant: ${tenantId}`)
+        logger.info(`Dakkah not found, using first tenant: ${tenantId}`)
       }
     }
   } catch (err: any) {
-    console.log(`Could not fetch tenants: ${err.message}. Using placeholder: ${tenantId}`)
+    logger.info(`Could not fetch tenants: ${err.message}. Using placeholder: ${tenantId}`)
   }
 
-  console.log("Seeding volume pricing tiers...")
+  logger.info("Seeding volume pricing tiers...")
 
   const { data: products } = await query.graph({
     entity: "product",
@@ -33,7 +35,7 @@ export default async function seedVolumePricing({ container }: ExecArgs) {
   })
 
   if (!products || products.length === 0) {
-    console.log("  - No products found, skipping volume pricing")
+    logger.info("  - No products found, skipping volume pricing")
     return
   }
 
@@ -52,7 +54,7 @@ export default async function seedVolumePricing({ container }: ExecArgs) {
       const existingList = Array.isArray(existing) ? existing : [existing].filter(Boolean)
 
       if (existingList.length > 0) {
-        console.log(`  - Volume pricing for ${product.handle} already exists, skipping`)
+        logger.info(`  - Volume pricing for ${product.handle} already exists, skipping`)
         continue
       }
 
@@ -75,11 +77,11 @@ export default async function seedVolumePricing({ container }: ExecArgs) {
         })
       }
 
-      console.log(`  - Created volume pricing for: ${product.title}`)
+      logger.info(`  - Created volume pricing for: ${product.title}`)
     } catch (error: any) {
       console.error(`  - Failed to create volume pricing for ${product.handle}: ${error.message}`)
     }
   }
 
-  console.log(`Seeded volume pricing for ${productsToPrice.length} products`)
+  logger.info(`Seeded volume pricing for ${productsToPrice.length} products`)
 }

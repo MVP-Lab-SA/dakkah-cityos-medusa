@@ -11,14 +11,16 @@ import {
   linkProductsToSalesChannelWorkflow,
   updateInventoryLevelsWorkflow,
 } from "@medusajs/medusa/core-flows"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("scripts:seed-saudi-arabia")
 
 export default async function ({ container }: ExecArgs) {
-  console.log("Starting Saudi Arabia data seeding...")
+  logger.info("Starting Saudi Arabia data seeding...")
 
   const query = container.resolve("query")
 
   // 1. Check for or create Saudi Arabia Region
-  console.log("\n1. Setting up Saudi Arabia Region...")
+  logger.info("\n1. Setting up Saudi Arabia Region...")
   const { data: existingRegions } = await query.graph({
     entity: "region",
     fields: ["id", "name", "currency_code"],
@@ -28,7 +30,7 @@ export default async function ({ container }: ExecArgs) {
   let saudiRegion
   if (existingRegions.length > 0) {
     saudiRegion = existingRegions[0]
-    console.log(`✓ Found existing region: ${saudiRegion.name} (${saudiRegion.id})`)
+    logger.info(`✓ Found existing region: ${saudiRegion.name} (${saudiRegion.id})`)
   } else {
     const { result: regions } = await createRegionsWorkflow(container).run({
       input: {
@@ -44,11 +46,11 @@ export default async function ({ container }: ExecArgs) {
       },
     })
     saudiRegion = regions[0]
-    console.log(`✓ Created region: ${saudiRegion.name} (${saudiRegion.id})`)
+    logger.info(`✓ Created region: ${saudiRegion.name} (${saudiRegion.id})`)
   }
 
   // 2. Check for or create Tax Region
-  console.log("\n2. Setting up Tax Region...")
+  logger.info("\n2. Setting up Tax Region...")
   const { data: existingTaxRegions } = await query.graph({
     entity: "tax_region",
     fields: ["id", "country_code"],
@@ -56,7 +58,7 @@ export default async function ({ container }: ExecArgs) {
   })
 
   if (existingTaxRegions.length > 0) {
-    console.log(`✓ Found existing tax region for Saudi Arabia`)
+    logger.info(`✓ Found existing tax region for Saudi Arabia`)
   } else {
     const { result: taxRegions } = await createTaxRegionsWorkflow(container).run({
       input: [
@@ -70,7 +72,7 @@ export default async function ({ container }: ExecArgs) {
         },
       ],
     })
-    console.log(`✓ Created tax region with 15% VAT for Saudi Arabia`)
+    logger.info(`✓ Created tax region with 15% VAT for Saudi Arabia`)
   }
 
   // 3. Get default sales channel
@@ -80,10 +82,10 @@ export default async function ({ container }: ExecArgs) {
     filters: {},
   })
   const defaultChannel = salesChannels[0]
-  console.log(`\n3. Using sales channel: ${defaultChannel.name} (${defaultChannel.id})`)
+  logger.info(`\n3. Using sales channel: ${defaultChannel.name} (${defaultChannel.id})`)
 
   // 4. Create Product Categories (relevant to Saudi market)
-  console.log("\n4. Creating Product Categories...")
+  logger.info("\n4. Creating Product Categories...")
   
   // Create parent categories first
   const { result: parentCategories } = await createProductCategoriesWorkflow(container).run({
@@ -128,7 +130,7 @@ export default async function ({ container }: ExecArgs) {
   const homeDecorId = parentCategories.find((c) => c.handle === "home-decor")?.id
   const fragrancesId = parentCategories.find((c) => c.handle === "fragrances-oud")?.id
 
-  console.log(`✓ Created ${parentCategories.length} parent categories`)
+  logger.info(`✓ Created ${parentCategories.length} parent categories`)
 
   // Create child categories
   const { result: childCategories } = await createProductCategoriesWorkflow(container).run({
@@ -196,7 +198,7 @@ export default async function ({ container }: ExecArgs) {
     },
   })
 
-  console.log(`✓ Created ${childCategories.length} child categories`)
+  logger.info(`✓ Created ${childCategories.length} child categories`)
 
   // Get category IDs for products
   const mensThobeCategoryId = childCategories.find((c) => c.handle === "mens-thobes")?.id
@@ -208,7 +210,7 @@ export default async function ({ container }: ExecArgs) {
   const prayerItemsCategoryId = childCategories.find((c) => c.handle === "prayer-items")?.id
 
   // 5. Create Collections
-  console.log("\n5. Creating Collections...")
+  logger.info("\n5. Creating Collections...")
   const { result: collections } = await createCollectionsWorkflow(container).run({
     input: {
       collections: [
@@ -231,14 +233,14 @@ export default async function ({ container }: ExecArgs) {
       ],
     },
   })
-  console.log(`✓ Created ${collections.length} collections`)
+  logger.info(`✓ Created ${collections.length} collections`)
 
   const ramadanCollectionId = collections.find((c) => c.handle === "ramadan-collection")?.id
   const eidCollectionId = collections.find((c) => c.handle === "eid-special")?.id
   const premiumCollectionId = collections.find((c) => c.handle === "premium-selection")?.id
 
   // 6. Create Product Tags
-  console.log("\n6. Creating Product Tags...")
+  logger.info("\n6. Creating Product Tags...")
   const { result: tags } = await createProductTagsWorkflow(container).run({
     input: {
       product_tags: [
@@ -247,13 +249,13 @@ export default async function ({ container }: ExecArgs) {
       ],
     },
   })
-  console.log(`✓ Created ${tags.length} tags`)
+  logger.info(`✓ Created ${tags.length} tags`)
   
   const featuredTagId = tags.find((t) => t.value === "featured")?.id
   const premiumTagId = tags.find((t) => t.value === "premium")?.id
 
   // 7. Create Products
-  console.log("\n7. Creating Products...")
+  logger.info("\n7. Creating Products...")
 
   const { result: products } = await createProductsWorkflow(container).run({
     input: {
@@ -686,10 +688,10 @@ export default async function ({ container }: ExecArgs) {
     },
   })
 
-  console.log(`✓ Created ${products.length} products with variants`)
+  logger.info(`✓ Created ${products.length} products with variants`)
 
   // 8. Link products to sales channel
-  console.log("\n8. Linking products to sales channel...")
+  logger.info("\n8. Linking products to sales channel...")
   const productIds = products.map((p) => p.id)
   
   await linkProductsToSalesChannelWorkflow(container).run({
@@ -698,10 +700,10 @@ export default async function ({ container }: ExecArgs) {
       add: productIds,
     },
   })
-  console.log(`✓ Linked ${products.length} products to ${defaultChannel.name}`)
+  logger.info(`✓ Linked ${products.length} products to ${defaultChannel.name}`)
 
   // 9. Set inventory levels
-  console.log("\n9. Setting inventory levels...")
+  logger.info("\n9. Setting inventory levels...")
   
   // Get all inventory items
   const { data: inventoryItems } = await query.graph({
@@ -733,13 +735,13 @@ export default async function ({ container }: ExecArgs) {
     })
   }
 
-  console.log(`✓ Set inventory levels for ${inventoryItems.length} items`)
+  logger.info(`✓ Set inventory levels for ${inventoryItems.length} items`)
 
   // Summary
-  console.log("\n" + "=".repeat(60))
-  console.log("✓ SEEDING COMPLETE!")
-  console.log("=".repeat(60))
-  console.log(`
+  logger.info(`\n${String("=".repeat(60)}`))
+  logger.info("✓ SEEDING COMPLETE!")
+  logger.info(String("=".repeat(60)))
+  logger.info(`
 Region: ${saudiRegion.name} (${saudiRegion.currency_code.toUpperCase()})
 Tax: 15% VAT
 Categories: ${parentCategories.length + childCategories.length} total

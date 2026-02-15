@@ -1,10 +1,12 @@
 // @ts-nocheck
 import { ExecArgs } from "@medusajs/framework/types"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("scripts:seed-verticals-2")
 
 export default async function seedVerticals2({ container }: ExecArgs) {
-  console.log("========================================")
-  console.log("Seeding Vertical Modules – Batch 2")
-  console.log("========================================\n")
+  logger.info("========================================")
+  logger.info("Seeding Vertical Modules – Batch 2")
+  logger.info("========================================\n")
 
   const tenantService = container.resolve("tenant") as any
   let tenantId = "ten_default"
@@ -13,32 +15,32 @@ export default async function seedVerticals2({ container }: ExecArgs) {
     const list = Array.isArray(tenants) ? tenants : [tenants].filter(Boolean)
     if (list.length > 0 && list[0]?.id) {
       tenantId = list[0].id
-      console.log(`Using Dakkah tenant: ${tenantId}`)
+      logger.info(`Using Dakkah tenant: ${tenantId}`)
     } else {
       const allTenants = await tenantService.listTenants()
       const allList = Array.isArray(allTenants) ? allTenants : [allTenants].filter(Boolean)
       if (allList.length > 0 && allList[0]?.id) {
         tenantId = allList[0].id
-        console.log(`Dakkah not found, using first tenant: ${tenantId}`)
+        logger.info(`Dakkah not found, using first tenant: ${tenantId}`)
       } else {
-        console.log(`No tenants found, using placeholder: ${tenantId}`)
+        logger.info(`No tenants found, using placeholder: ${tenantId}`)
       }
     }
   } catch (err: any) {
-    console.log(`Could not fetch tenants: ${err.message}. Using placeholder: ${tenantId}`)
+    logger.info(`Could not fetch tenants: ${err.message}. Using placeholder: ${tenantId}`)
   }
 
   // ============================================================
   // 1. CLASSIFIED – 3 listings
   // ============================================================
-  console.log("Step 1: Seeding Classified Listings...")
+  logger.info("Step 1: Seeding Classified Listings...")
   try {
     const classifiedService = container.resolve("classified") as any
     const existingListings = await classifiedService.listClassifiedListings()
     const listings = Array.isArray(existingListings) ? existingListings : [existingListings].filter(Boolean)
 
     if (listings.length > 0) {
-      console.log(`  Skipped – ${listings.length} classified listings already exist`)
+      logger.info(`  Skipped – ${listings.length} classified listings already exist`)
     } else {
       await classifiedService.createClassifiedListings([
         {
@@ -103,23 +105,23 @@ export default async function seedVerticals2({ container }: ExecArgs) {
           },
         },
       ])
-      console.log("  Created 3 classified listings (furniture, electronics, vehicle)")
+      logger.info("  Created 3 classified listings (furniture, electronics, vehicle)")
     }
   } catch (error: any) {
-    console.log(`  Classified seed error: ${error.message}`)
+    logger.error(`  Classified seed error: ${error.message}`)
   }
 
   // ============================================================
   // 2. DIGITAL PRODUCT – 3 digital assets
   // ============================================================
-  console.log("\nStep 2: Seeding Digital Assets...")
+  logger.info("\nStep 2: Seeding Digital Assets...")
   try {
     const digitalProductService = container.resolve("digitalProduct") as any
     const existingAssets = await digitalProductService.listDigitalAssets()
     const assets = Array.isArray(existingAssets) ? existingAssets : [existingAssets].filter(Boolean)
 
     if (assets.length > 0) {
-      console.log(`  Skipped – ${assets.length} digital assets already exist`)
+      logger.info(`  Skipped – ${assets.length} digital assets already exist`)
     } else {
       await digitalProductService.createDigitalAssets([
         {
@@ -179,23 +181,23 @@ export default async function seedVerticals2({ container }: ExecArgs) {
           },
         },
       ])
-      console.log("  Created 3 digital assets (ebook, course video, software license)")
+      logger.info("  Created 3 digital assets (ebook, course video, software license)")
     }
   } catch (error: any) {
-    console.log(`  Digital product seed error: ${error.message}`)
+    logger.error(`  Digital product seed error: ${error.message}`)
   }
 
   // ============================================================
   // 3. FREELANCE – 3 gig listings
   // ============================================================
-  console.log("\nStep 3: Seeding Freelance Gig Listings...")
+  logger.info("\nStep 3: Seeding Freelance Gig Listings...")
   try {
     const freelanceService = container.resolve("freelance") as any
     const existingGigs = await freelanceService.listGigListings()
     const gigs = Array.isArray(existingGigs) ? existingGigs : [existingGigs].filter(Boolean)
 
     if (gigs.length > 0) {
-      console.log(`  Skipped – ${gigs.length} gig listings already exist`)
+      logger.info(`  Skipped – ${gigs.length} gig listings already exist`)
     } else {
       await freelanceService.createGigListings([
         {
@@ -262,23 +264,23 @@ export default async function seedVerticals2({ container }: ExecArgs) {
           metadata: { languages: ["ar"], equipment: "Canon EOS R5" },
         },
       ])
-      console.log("  Created 3 gig listings (web design, translation, photography)")
+      logger.info("  Created 3 gig listings (web design, translation, photography)")
     }
   } catch (error: any) {
-    console.log(`  Freelance seed error: ${error.message}`)
+    logger.error(`  Freelance seed error: ${error.message}`)
   }
 
   // ============================================================
   // 4. TRAVEL – 2 properties with room types & rate plans
   // ============================================================
-  console.log("\nStep 4: Seeding Travel Properties...")
+  logger.info("\nStep 4: Seeding Travel Properties...")
   try {
     const travelService = container.resolve("travel") as any
     const existingProperties = await travelService.listTravelProperties()
     const properties = Array.isArray(existingProperties) ? existingProperties : [existingProperties].filter(Boolean)
 
     if (properties.length > 0) {
-      console.log(`  Skipped – ${properties.length} travel properties already exist`)
+      logger.info(`  Skipped – ${properties.length} travel properties already exist`)
     } else {
       const prop1 = await travelService.createTravelProperties({
         tenant_id: tenantId,
@@ -337,7 +339,7 @@ export default async function seedVerticals2({ container }: ExecArgs) {
         total_reviews: 215,
       })
 
-      console.log("  Created 2 travel properties")
+      logger.info("  Created 2 travel properties")
 
       const rt1 = await travelService.createRoomTypes({
         tenant_id: tenantId,
@@ -371,7 +373,7 @@ export default async function seedVerticals2({ container }: ExecArgs) {
         is_active: true,
       })
 
-      console.log("  Created 2 room types")
+      logger.info("  Created 2 room types")
 
       const validFrom = new Date()
       const validTo = new Date()
@@ -412,16 +414,16 @@ export default async function seedVerticals2({ container }: ExecArgs) {
         },
       ])
 
-      console.log("  Created 2 rate plans")
+      logger.info("  Created 2 rate plans")
     }
   } catch (error: any) {
-    console.log(`  Travel seed error: ${error.message}`)
+    logger.error(`  Travel seed error: ${error.message}`)
   }
 
   // ============================================================
   // 5. FITNESS – 2 class schedules, 2 trainers, 1 membership
   // ============================================================
-  console.log("\nStep 5: Seeding Fitness Data...")
+  logger.info("\nStep 5: Seeding Fitness Data...")
   try {
     const fitnessService = container.resolve("fitness") as any
 
@@ -429,7 +431,7 @@ export default async function seedVerticals2({ container }: ExecArgs) {
     const schedules = Array.isArray(existingSchedules) ? existingSchedules : [existingSchedules].filter(Boolean)
 
     if (schedules.length > 0) {
-      console.log(`  Skipped – ${schedules.length} class schedules already exist`)
+      logger.info(`  Skipped – ${schedules.length} class schedules already exist`)
     } else {
       await fitnessService.createClassSchedules([
         {
@@ -465,7 +467,7 @@ export default async function seedVerticals2({ container }: ExecArgs) {
           is_active: true,
         },
       ])
-      console.log("  Created 2 class schedules (yoga, HIIT)")
+      logger.info("  Created 2 class schedules (yoga, HIIT)")
 
       await fitnessService.createTrainerProfiles([
         {
@@ -499,7 +501,7 @@ export default async function seedVerticals2({ container }: ExecArgs) {
           availability: { days: ["sunday", "tuesday", "thursday"], hours: "07:00-20:00" },
         },
       ])
-      console.log("  Created 2 trainer profiles")
+      logger.info("  Created 2 trainer profiles")
 
       await fitnessService.createGymMemberships({
         tenant_id: tenantId,
@@ -516,23 +518,23 @@ export default async function seedVerticals2({ container }: ExecArgs) {
         access_hours: { weekdays: "05:00-23:00", weekends: "07:00-22:00" },
         includes: ["pool", "sauna", "group_classes", "towel_service", "locker"],
       })
-      console.log("  Created 1 gym membership tier (premium)")
+      logger.info("  Created 1 gym membership tier (premium)")
     }
   } catch (error: any) {
-    console.log(`  Fitness seed error: ${error.message}`)
+    logger.error(`  Fitness seed error: ${error.message}`)
   }
 
   // ============================================================
   // 6. LEGAL – 2 attorney profiles
   // ============================================================
-  console.log("\nStep 6: Seeding Legal Attorney Profiles...")
+  logger.info("\nStep 6: Seeding Legal Attorney Profiles...")
   try {
     const legalService = container.resolve("legal") as any
     const existingAttorneys = await legalService.listAttorneyProfiles()
     const attorneys = Array.isArray(existingAttorneys) ? existingAttorneys : [existingAttorneys].filter(Boolean)
 
     if (attorneys.length > 0) {
-      console.log(`  Skipped – ${attorneys.length} attorney profiles already exist`)
+      logger.info(`  Skipped – ${attorneys.length} attorney profiles already exist`)
     } else {
       await legalService.createAttorneyProfiles([
         {
@@ -576,23 +578,23 @@ export default async function seedVerticals2({ container }: ExecArgs) {
           languages: ["ar", "en", "fr"],
         },
       ])
-      console.log("  Created 2 attorney profiles")
+      logger.info("  Created 2 attorney profiles")
     }
   } catch (error: any) {
-    console.log(`  Legal seed error: ${error.message}`)
+    logger.error(`  Legal seed error: ${error.message}`)
   }
 
   // ============================================================
   // 7. CHARITY – 2 orgs with donation campaigns
   // ============================================================
-  console.log("\nStep 7: Seeding Charity Organizations & Campaigns...")
+  logger.info("\nStep 7: Seeding Charity Organizations & Campaigns...")
   try {
     const charityService = container.resolve("charity") as any
     const existingOrgs = await charityService.listCharityOrgs()
     const orgs = Array.isArray(existingOrgs) ? existingOrgs : [existingOrgs].filter(Boolean)
 
     if (orgs.length > 0) {
-      console.log(`  Skipped – ${orgs.length} charity organizations already exist`)
+      logger.info(`  Skipped – ${orgs.length} charity organizations already exist`)
     } else {
       const org1 = await charityService.createCharityOrgs({
         tenant_id: tenantId,
@@ -632,7 +634,7 @@ export default async function seedVerticals2({ container }: ExecArgs) {
         is_active: true,
       })
 
-      console.log("  Created 2 charity organizations")
+      logger.info("  Created 2 charity organizations")
 
       const campaignStart = new Date()
       const campaignEnd = new Date()
@@ -672,13 +674,13 @@ export default async function seedVerticals2({ container }: ExecArgs) {
           is_featured: true,
         },
       ])
-      console.log("  Created 2 donation campaigns")
+      logger.info("  Created 2 donation campaigns")
     }
   } catch (error: any) {
-    console.log(`  Charity seed error: ${error.message}`)
+    logger.error(`  Charity seed error: ${error.message}`)
   }
 
-  console.log("\n========================================")
-  console.log("Vertical Modules Batch 2 Seed Complete!")
-  console.log("========================================")
+  logger.info("\n========================================")
+  logger.info("Vertical Modules Batch 2 Seed Complete!")
+  logger.info("========================================")
 }

@@ -4,6 +4,8 @@ import seedServices from "./seed-services.js"
 import seedSubscriptions from "./seed-subscriptions.js"
 import seedCompanies from "./seed-companies.js"
 import seedVolumePricing from "./seed-volume-pricing.js"
+import { createLogger } from "../lib/logger"
+const logger = createLogger("scripts:seed-all")
 
 /**
  * Master seed script - seeds all custom data
@@ -11,39 +13,39 @@ import seedVolumePricing from "./seed-volume-pricing.js"
  * Run with: npx medusa exec src/scripts/seed-all.ts
  */
 export default async function seedAll(args: ExecArgs) {
-  console.log("========================================")
-  console.log("Starting comprehensive data seeding...")
-  console.log("========================================\n")
+  logger.info("========================================")
+  logger.info("Starting comprehensive data seeding...")
+  logger.info("========================================\n")
 
   try {
     // Seed vendors (marketplace)
-    console.log("\n[1/5] VENDORS")
-    console.log("----------------------------------------")
+    logger.info("\n[1/5] VENDORS")
+    logger.info("----------------------------------------")
     await seedVendors(args)
 
     // Seed bookable services
-    console.log("\n[2/5] BOOKABLE SERVICES")
-    console.log("----------------------------------------")
+    logger.info("\n[2/5] BOOKABLE SERVICES")
+    logger.info("----------------------------------------")
     await seedServices(args)
 
     // Seed subscription plans
-    console.log("\n[3/5] SUBSCRIPTION PLANS")
-    console.log("----------------------------------------")
+    logger.info("\n[3/5] SUBSCRIPTION PLANS")
+    logger.info("----------------------------------------")
     await seedSubscriptions(args)
 
     // Seed B2B companies
-    console.log("\n[4/5] B2B COMPANIES")
-    console.log("----------------------------------------")
+    logger.info("\n[4/5] B2B COMPANIES")
+    logger.info("----------------------------------------")
     await seedCompanies(args)
 
     // Seed volume pricing
-    console.log("\n[5/5] VOLUME PRICING")
-    console.log("----------------------------------------")
+    logger.info("\n[5/5] VOLUME PRICING")
+    logger.info("----------------------------------------")
     await seedVolumePricing(args)
 
-    console.log("\n========================================")
-    console.log("Data seeding completed successfully!")
-    console.log("========================================")
+    logger.info("\n========================================")
+    logger.info("Data seeding completed successfully!")
+    logger.info("========================================")
   } catch (error: any) {
     console.error("\n========================================")
     console.error("Data seeding failed!")

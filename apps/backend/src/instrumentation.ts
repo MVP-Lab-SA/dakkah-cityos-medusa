@@ -1,4 +1,6 @@
 import { initGracefulShutdown } from "./lib/middleware/graceful-shutdown"
+import { createLogger } from "lib/logger"
+const logger = createLogger("instrumentation")
 
 initGracefulShutdown()
 
@@ -11,7 +13,7 @@ const startupLog = {
 }
 
 if (process.env.NODE_ENV === "production") {
-  console.log(JSON.stringify(startupLog))
+  logger.info(String(JSON.stringify(startupLog)))
 } else {
-  console.log(`${startupLog.timestamp} INFO ${startupLog.message}`)
+  logger.info(`${startupLog.timestamp} INFO ${startupLog.message}`)
 }

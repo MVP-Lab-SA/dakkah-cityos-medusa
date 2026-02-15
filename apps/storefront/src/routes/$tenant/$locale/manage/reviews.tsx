@@ -145,7 +145,7 @@ function ManageReviewsPage() {
       align: "end" as const,
       render: (_: unknown, row: any) => (
         <DropdownMenu items={[
-          { label: "Edit", onClick: () => handleEdit(row) },
+          { label: t(locale, "common.actions.edit", "Edit"), onClick: () => handleEdit(row) },
         ]} />
       ),
     },
@@ -195,7 +195,7 @@ function ManageReviewsPage() {
         onChange={handleFormChange}
         onSubmit={handleSubmit}
         loading={createMutation.isPending || updateMutation.isPending}
-        submitLabel={editingItem ? "Save changes" : "Create"}
+        submitLabel={editingItem ? t(locale, "common.actions.saveChanges", "Save changes") : t(locale, "common.actions.create", "Create")}
       />
       <ConfirmDialog
         open={!!deleteId}
