@@ -47,11 +47,19 @@ export const MODULE_REGISTRY: ModuleDefinition[] = [
   { key: "disputes", icon: "ChatBubble", section: "commerce", scope: "tenant", minWeight: 40, path: "/disputes" },
   { key: "inventory", icon: "ShoppingBag", section: "commerce", scope: "tenant", minWeight: 40, path: "/inventory" },
   { key: "shipping", icon: "TruckFast", section: "commerce", scope: "tenant", minWeight: 40, path: "/shipping-extensions" },
+  { key: "cart-extensions", icon: "ShoppingBag", section: "commerce", scope: "tenant", minWeight: 40, path: "/cart-extensions" },
+  { key: "purchase-orders", icon: "DocumentText", section: "commerce", scope: "tenant", minWeight: 40, path: "/purchase-orders" },
+  { key: "subscription-plans", icon: "ArrowPath", section: "commerce", scope: "tenant", minWeight: 40, path: "/subscription-plans" },
+  { key: "payment-terms", icon: "Cash", section: "commerce", scope: "tenant", minWeight: 40, path: "/payment-terms" },
+  { key: "service-providers", icon: "Users", section: "commerce", scope: "tenant", minWeight: 40, path: "/service-providers" },
+  { key: "inventory-extension", icon: "ShoppingBag", section: "commerce", scope: "tenant", minWeight: 40, path: "/inventory-extension" },
+  { key: "pricing-tiers", icon: "Cash", section: "commerce", scope: "tenant", minWeight: 40, path: "/pricing-tiers" },
 
   { key: "vendors", icon: "BuildingStorefront", section: "marketplace", scope: "shared", minWeight: 40, path: "/vendors" },
   { key: "commissions", icon: "ArrowUpDown", section: "marketplace", scope: "shared", minWeight: 40, path: "/commissions" },
   { key: "payouts", icon: "Cash", section: "marketplace", scope: "shared", minWeight: 40, path: "/payouts" },
   { key: "affiliates", icon: "Sparkles", section: "marketplace", scope: "tenant", minWeight: 40, path: "/affiliates" },
+  { key: "commission-rules", icon: "ArrowUpDown", section: "marketplace", scope: "shared", minWeight: 40, path: "/commission-rules" },
 
   { key: "auctions", icon: "Bolt", section: "verticals", scope: "tenant", minWeight: 40, path: "/auctions" },
   { key: "bookings", icon: "Calendar", section: "verticals", scope: "tenant", minWeight: 40, path: "/bookings" },
@@ -87,6 +95,9 @@ export const MODULE_REGISTRY: ModuleDefinition[] = [
   { key: "bundles", icon: "ShoppingBag", section: "verticals", scope: "tenant", minWeight: 40, path: "/bundles" },
   { key: "wallet", icon: "Cash", section: "verticals", scope: "tenant", minWeight: 40, path: "/wallet" },
   { key: "wishlists", icon: "Star", section: "verticals", scope: "tenant", minWeight: 40, path: "/wishlists" },
+  { key: "events", icon: "Calendar", section: "verticals", scope: "tenant", minWeight: 40, path: "/events" },
+  { key: "availability", icon: "Calendar", section: "verticals", scope: "tenant", minWeight: 40, path: "/availability" },
+  { key: "print-on-demand", icon: "RocketLaunch", section: "verticals", scope: "tenant", minWeight: 40, path: "/print-on-demand" },
 
   { key: "advertising", icon: "Target", section: "marketing", scope: "tenant", minWeight: 40, path: "/advertising" },
   { key: "promotions", icon: "Bolt", section: "marketing", scope: "tenant", minWeight: 40, path: "/promotions" },
@@ -94,7 +105,8 @@ export const MODULE_REGISTRY: ModuleDefinition[] = [
   { key: "classifieds", icon: "Tag", section: "marketing", scope: "tenant", minWeight: 40, path: "/classifieds" },
   { key: "crowdfunding", icon: "Trophy", section: "marketing", scope: "tenant", minWeight: 40, path: "/crowdfunding" },
   { key: "charity", icon: "Heart", section: "marketing", scope: "tenant", minWeight: 40, path: "/charity" },
-  { key: "newsletter", icon: "DocumentText", section: "marketing", scope: "tenant", minWeight: 40, path: "/newsletter" },
+  { key: "newsletters", icon: "DocumentText", section: "marketing", scope: "tenant", minWeight: 40, path: "/newsletters" },
+  { key: "promotion-extensions", icon: "Bolt", section: "marketing", scope: "tenant", minWeight: 40, path: "/promotion-extensions" },
 
   { key: "cms-pages", icon: "DocumentText", section: "cms", scope: "tenant", minWeight: 30, path: "/cms" },
   { key: "cms-content", icon: "Bookmarks", section: "cms", scope: "tenant", minWeight: 30, path: "/cms-content" },
@@ -106,6 +118,7 @@ export const MODULE_REGISTRY: ModuleDefinition[] = [
   { key: "stores", icon: "BuildingStorefront", section: "organization", scope: "tenant", minWeight: 40, path: "/stores" },
   { key: "legal", icon: "Book", section: "organization", scope: "tenant", minWeight: 40, path: "/legal" },
   { key: "utilities", icon: "Beaker", section: "organization", scope: "tenant", minWeight: 40, path: "/utilities" },
+  { key: "companies-admin", icon: "Buildings", section: "organization", scope: "tenant", minWeight: 40, path: "/companies-admin" },
 
   { key: "tenants-admin", icon: "Buildings", section: "platform", scope: "platform", minWeight: 90, path: "/tenants-admin" },
   { key: "governance", icon: "Book", section: "platform", scope: "platform", minWeight: 90, path: "/governance" },
@@ -114,9 +127,16 @@ export const MODULE_REGISTRY: ModuleDefinition[] = [
   { key: "integrations", icon: "RocketLaunch", section: "platform", scope: "platform", minWeight: 90, path: "/integrations" },
   { key: "temporal", icon: "ArrowPath", section: "platform", scope: "platform", minWeight: 90, path: "/temporal" },
   { key: "audit", icon: "Book", section: "platform", scope: "platform", minWeight: 90, path: "/audit" },
+  { key: "nodes", icon: "SquaresPlus", section: "platform", scope: "platform", minWeight: 90, path: "/nodes" },
+  { key: "personas", icon: "Users", section: "platform", scope: "platform", minWeight: 90, path: "/personas" },
+  { key: "channels", icon: "RocketLaunch", section: "platform", scope: "platform", minWeight: 90, path: "/channels" },
+  { key: "i18n", icon: "Sparkles", section: "platform", scope: "platform", minWeight: 90, path: "/i18n" },
 
   { key: "analytics", icon: "ChartBar", section: "system", scope: "tenant", minWeight: 40, path: "/analytics" },
   { key: "settings", icon: "CogSixTooth", section: "system", scope: "tenant", minWeight: 40, path: "/settings" },
+  { key: "metrics", icon: "ChartBar", section: "system", scope: "tenant", minWeight: 40, path: "/metrics" },
+  { key: "notification-preferences", icon: "CogSixTooth", section: "system", scope: "tenant", minWeight: 40, path: "/notification-preferences" },
+  { key: "tax-config", icon: "Cash", section: "system", scope: "tenant", minWeight: 40, path: "/tax-config" },
 ]
 
 export function getModulesBySection(maxWeight: number = 100): Record<NavSection, ModuleDefinition[]> {

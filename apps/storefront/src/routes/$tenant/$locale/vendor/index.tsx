@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { VendorDashboard } from "@/components/vendor/vendor-dashboard"
 import VendorPerformanceCard from "@/components/vendor/vendor-performance-card"
 import VendorAnalyticsDashboard from "@/components/vendor/vendor-analytics-dashboard"
+import { VendorLayout } from "@/components/vendor/vendor-layout"
 import { useAuth } from "@/lib/context/auth-context"
 import { useMemo } from "react"
 
@@ -22,7 +23,7 @@ function VendorDashboardRoute() {
   }, [auth])
 
   return (
-    <div className="container mx-auto py-12">
+    <VendorLayout>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
           <VendorDashboard />
@@ -32,6 +33,6 @@ function VendorDashboardRoute() {
           <VendorPerformanceCard vendorId={vendorId} locale={locale} />
         </aside>
       </div>
-    </div>
+    </VendorLayout>
   )
 }

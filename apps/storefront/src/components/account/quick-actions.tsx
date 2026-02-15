@@ -15,7 +15,7 @@ export function QuickActions() {
     {
       label: "Browse Products",
       description: "Continue shopping",
-      href: `${prefix}/store`,
+      href: `${prefix}/`,
       icon: ShoppingBag,
       color: "bg-ds-info text-ds-info hover:bg-ds-info",
     },
@@ -36,7 +36,7 @@ export function QuickActions() {
     {
       label: "Get Support",
       description: "Contact our team",
-      href: `${prefix}/contact`,
+      href: `${prefix}/help`,
       icon: ChatBubbleLeftRight,
       color: "bg-ds-warning/10 text-ds-warning hover:bg-ds-warning/15",
     },

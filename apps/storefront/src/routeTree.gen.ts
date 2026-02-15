@@ -225,8 +225,10 @@ import { Route as TenantLocaleManageOrdersRouteImport } from './routes/$tenant/$
 import { Route as TenantLocaleManageNotificationPreferencesRouteImport } from './routes/$tenant/$locale/manage/notification-preferences'
 import { Route as TenantLocaleManageNodesRouteImport } from './routes/$tenant/$locale/manage/nodes'
 import { Route as TenantLocaleManageNewslettersRouteImport } from './routes/$tenant/$locale/manage/newsletters'
+import { Route as TenantLocaleManageNavigationRouteImport } from './routes/$tenant/$locale/manage/navigation'
 import { Route as TenantLocaleManageMetricsRouteImport } from './routes/$tenant/$locale/manage/metrics'
 import { Route as TenantLocaleManageMembershipsRouteImport } from './routes/$tenant/$locale/manage/memberships'
+import { Route as TenantLocaleManageMediaRouteImport } from './routes/$tenant/$locale/manage/media'
 import { Route as TenantLocaleManageLoyaltyRouteImport } from './routes/$tenant/$locale/manage/loyalty'
 import { Route as TenantLocaleManageLegalRouteImport } from './routes/$tenant/$locale/manage/legal'
 import { Route as TenantLocaleManageInvoicesRouteImport } from './routes/$tenant/$locale/manage/invoices'
@@ -320,9 +322,13 @@ import { Route as TenantLocaleAccountWalletRouteImport } from './routes/$tenant/
 import { Route as TenantLocaleAccountVerificationRouteImport } from './routes/$tenant/$locale/account/verification'
 import { Route as TenantLocaleAccountStoreCreditsRouteImport } from './routes/$tenant/$locale/account/store-credits'
 import { Route as TenantLocaleAccountSettingsRouteImport } from './routes/$tenant/$locale/account/settings'
+import { Route as TenantLocaleAccountReviewsRouteImport } from './routes/$tenant/$locale/account/reviews'
 import { Route as TenantLocaleAccountReferralsRouteImport } from './routes/$tenant/$locale/account/referrals'
+import { Route as TenantLocaleAccountQuotesRouteImport } from './routes/$tenant/$locale/account/quotes'
 import { Route as TenantLocaleAccountProfileRouteImport } from './routes/$tenant/$locale/account/profile'
+import { Route as TenantLocaleAccountPaymentMethodsRouteImport } from './routes/$tenant/$locale/account/payment-methods'
 import { Route as TenantLocaleAccountLoyaltyRouteImport } from './routes/$tenant/$locale/account/loyalty'
+import { Route as TenantLocaleAccountInvoicesRouteImport } from './routes/$tenant/$locale/account/invoices'
 import { Route as TenantLocaleAccountInstallmentsRouteImport } from './routes/$tenant/$locale/account/installments'
 import { Route as TenantLocaleAccountDownloadsRouteImport } from './routes/$tenant/$locale/account/downloads'
 import { Route as TenantLocaleAccountDisputesRouteImport } from './routes/$tenant/$locale/account/disputes'
@@ -1576,6 +1582,12 @@ const TenantLocaleManageNewslettersRoute =
     path: '/manage/newsletters',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
+const TenantLocaleManageNavigationRoute =
+  TenantLocaleManageNavigationRouteImport.update({
+    id: '/manage/navigation',
+    path: '/manage/navigation',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
 const TenantLocaleManageMetricsRoute =
   TenantLocaleManageMetricsRouteImport.update({
     id: '/manage/metrics',
@@ -1588,6 +1600,11 @@ const TenantLocaleManageMembershipsRoute =
     path: '/manage/memberships',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
+const TenantLocaleManageMediaRoute = TenantLocaleManageMediaRouteImport.update({
+  id: '/manage/media',
+  path: '/manage/media',
+  getParentRoute: () => TenantLocaleRoute,
+} as any)
 const TenantLocaleManageLoyaltyRoute =
   TenantLocaleManageLoyaltyRouteImport.update({
     id: '/manage/loyalty',
@@ -2122,10 +2139,22 @@ const TenantLocaleAccountSettingsRoute =
     path: '/account/settings',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
+const TenantLocaleAccountReviewsRoute =
+  TenantLocaleAccountReviewsRouteImport.update({
+    id: '/account/reviews',
+    path: '/account/reviews',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
 const TenantLocaleAccountReferralsRoute =
   TenantLocaleAccountReferralsRouteImport.update({
     id: '/account/referrals',
     path: '/account/referrals',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
+const TenantLocaleAccountQuotesRoute =
+  TenantLocaleAccountQuotesRouteImport.update({
+    id: '/account/quotes',
+    path: '/account/quotes',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
 const TenantLocaleAccountProfileRoute =
@@ -2134,10 +2163,22 @@ const TenantLocaleAccountProfileRoute =
     path: '/account/profile',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
+const TenantLocaleAccountPaymentMethodsRoute =
+  TenantLocaleAccountPaymentMethodsRouteImport.update({
+    id: '/account/payment-methods',
+    path: '/account/payment-methods',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
 const TenantLocaleAccountLoyaltyRoute =
   TenantLocaleAccountLoyaltyRouteImport.update({
     id: '/account/loyalty',
     path: '/account/loyalty',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
+const TenantLocaleAccountInvoicesRoute =
+  TenantLocaleAccountInvoicesRouteImport.update({
+    id: '/account/invoices',
+    path: '/account/invoices',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
 const TenantLocaleAccountInstallmentsRoute =
@@ -2326,9 +2367,13 @@ export interface FileRoutesByFullPath {
   '/$tenant/$locale/account/disputes': typeof TenantLocaleAccountDisputesRoute
   '/$tenant/$locale/account/downloads': typeof TenantLocaleAccountDownloadsRoute
   '/$tenant/$locale/account/installments': typeof TenantLocaleAccountInstallmentsRoute
+  '/$tenant/$locale/account/invoices': typeof TenantLocaleAccountInvoicesRoute
   '/$tenant/$locale/account/loyalty': typeof TenantLocaleAccountLoyaltyRoute
+  '/$tenant/$locale/account/payment-methods': typeof TenantLocaleAccountPaymentMethodsRoute
   '/$tenant/$locale/account/profile': typeof TenantLocaleAccountProfileRoute
+  '/$tenant/$locale/account/quotes': typeof TenantLocaleAccountQuotesRoute
   '/$tenant/$locale/account/referrals': typeof TenantLocaleAccountReferralsRoute
+  '/$tenant/$locale/account/reviews': typeof TenantLocaleAccountReviewsRoute
   '/$tenant/$locale/account/settings': typeof TenantLocaleAccountSettingsRoute
   '/$tenant/$locale/account/store-credits': typeof TenantLocaleAccountStoreCreditsRoute
   '/$tenant/$locale/account/verification': typeof TenantLocaleAccountVerificationRoute
@@ -2422,8 +2467,10 @@ export interface FileRoutesByFullPath {
   '/$tenant/$locale/manage/invoices': typeof TenantLocaleManageInvoicesRoute
   '/$tenant/$locale/manage/legal': typeof TenantLocaleManageLegalRoute
   '/$tenant/$locale/manage/loyalty': typeof TenantLocaleManageLoyaltyRoute
+  '/$tenant/$locale/manage/media': typeof TenantLocaleManageMediaRoute
   '/$tenant/$locale/manage/memberships': typeof TenantLocaleManageMembershipsRoute
   '/$tenant/$locale/manage/metrics': typeof TenantLocaleManageMetricsRoute
+  '/$tenant/$locale/manage/navigation': typeof TenantLocaleManageNavigationRoute
   '/$tenant/$locale/manage/newsletters': typeof TenantLocaleManageNewslettersRoute
   '/$tenant/$locale/manage/nodes': typeof TenantLocaleManageNodesRoute
   '/$tenant/$locale/manage/notification-preferences': typeof TenantLocaleManageNotificationPreferencesRoute
@@ -2661,9 +2708,13 @@ export interface FileRoutesByTo {
   '/$tenant/$locale/account/disputes': typeof TenantLocaleAccountDisputesRoute
   '/$tenant/$locale/account/downloads': typeof TenantLocaleAccountDownloadsRoute
   '/$tenant/$locale/account/installments': typeof TenantLocaleAccountInstallmentsRoute
+  '/$tenant/$locale/account/invoices': typeof TenantLocaleAccountInvoicesRoute
   '/$tenant/$locale/account/loyalty': typeof TenantLocaleAccountLoyaltyRoute
+  '/$tenant/$locale/account/payment-methods': typeof TenantLocaleAccountPaymentMethodsRoute
   '/$tenant/$locale/account/profile': typeof TenantLocaleAccountProfileRoute
+  '/$tenant/$locale/account/quotes': typeof TenantLocaleAccountQuotesRoute
   '/$tenant/$locale/account/referrals': typeof TenantLocaleAccountReferralsRoute
+  '/$tenant/$locale/account/reviews': typeof TenantLocaleAccountReviewsRoute
   '/$tenant/$locale/account/settings': typeof TenantLocaleAccountSettingsRoute
   '/$tenant/$locale/account/store-credits': typeof TenantLocaleAccountStoreCreditsRoute
   '/$tenant/$locale/account/verification': typeof TenantLocaleAccountVerificationRoute
@@ -2757,8 +2808,10 @@ export interface FileRoutesByTo {
   '/$tenant/$locale/manage/invoices': typeof TenantLocaleManageInvoicesRoute
   '/$tenant/$locale/manage/legal': typeof TenantLocaleManageLegalRoute
   '/$tenant/$locale/manage/loyalty': typeof TenantLocaleManageLoyaltyRoute
+  '/$tenant/$locale/manage/media': typeof TenantLocaleManageMediaRoute
   '/$tenant/$locale/manage/memberships': typeof TenantLocaleManageMembershipsRoute
   '/$tenant/$locale/manage/metrics': typeof TenantLocaleManageMetricsRoute
+  '/$tenant/$locale/manage/navigation': typeof TenantLocaleManageNavigationRoute
   '/$tenant/$locale/manage/newsletters': typeof TenantLocaleManageNewslettersRoute
   '/$tenant/$locale/manage/nodes': typeof TenantLocaleManageNodesRoute
   '/$tenant/$locale/manage/notification-preferences': typeof TenantLocaleManageNotificationPreferencesRoute
@@ -2998,9 +3051,13 @@ export interface FileRoutesById {
   '/$tenant/$locale/account/disputes': typeof TenantLocaleAccountDisputesRoute
   '/$tenant/$locale/account/downloads': typeof TenantLocaleAccountDownloadsRoute
   '/$tenant/$locale/account/installments': typeof TenantLocaleAccountInstallmentsRoute
+  '/$tenant/$locale/account/invoices': typeof TenantLocaleAccountInvoicesRoute
   '/$tenant/$locale/account/loyalty': typeof TenantLocaleAccountLoyaltyRoute
+  '/$tenant/$locale/account/payment-methods': typeof TenantLocaleAccountPaymentMethodsRoute
   '/$tenant/$locale/account/profile': typeof TenantLocaleAccountProfileRoute
+  '/$tenant/$locale/account/quotes': typeof TenantLocaleAccountQuotesRoute
   '/$tenant/$locale/account/referrals': typeof TenantLocaleAccountReferralsRoute
+  '/$tenant/$locale/account/reviews': typeof TenantLocaleAccountReviewsRoute
   '/$tenant/$locale/account/settings': typeof TenantLocaleAccountSettingsRoute
   '/$tenant/$locale/account/store-credits': typeof TenantLocaleAccountStoreCreditsRoute
   '/$tenant/$locale/account/verification': typeof TenantLocaleAccountVerificationRoute
@@ -3094,8 +3151,10 @@ export interface FileRoutesById {
   '/$tenant/$locale/manage/invoices': typeof TenantLocaleManageInvoicesRoute
   '/$tenant/$locale/manage/legal': typeof TenantLocaleManageLegalRoute
   '/$tenant/$locale/manage/loyalty': typeof TenantLocaleManageLoyaltyRoute
+  '/$tenant/$locale/manage/media': typeof TenantLocaleManageMediaRoute
   '/$tenant/$locale/manage/memberships': typeof TenantLocaleManageMembershipsRoute
   '/$tenant/$locale/manage/metrics': typeof TenantLocaleManageMetricsRoute
+  '/$tenant/$locale/manage/navigation': typeof TenantLocaleManageNavigationRoute
   '/$tenant/$locale/manage/newsletters': typeof TenantLocaleManageNewslettersRoute
   '/$tenant/$locale/manage/nodes': typeof TenantLocaleManageNodesRoute
   '/$tenant/$locale/manage/notification-preferences': typeof TenantLocaleManageNotificationPreferencesRoute
@@ -3337,9 +3396,13 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/account/disputes'
     | '/$tenant/$locale/account/downloads'
     | '/$tenant/$locale/account/installments'
+    | '/$tenant/$locale/account/invoices'
     | '/$tenant/$locale/account/loyalty'
+    | '/$tenant/$locale/account/payment-methods'
     | '/$tenant/$locale/account/profile'
+    | '/$tenant/$locale/account/quotes'
     | '/$tenant/$locale/account/referrals'
+    | '/$tenant/$locale/account/reviews'
     | '/$tenant/$locale/account/settings'
     | '/$tenant/$locale/account/store-credits'
     | '/$tenant/$locale/account/verification'
@@ -3433,8 +3496,10 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/manage/invoices'
     | '/$tenant/$locale/manage/legal'
     | '/$tenant/$locale/manage/loyalty'
+    | '/$tenant/$locale/manage/media'
     | '/$tenant/$locale/manage/memberships'
     | '/$tenant/$locale/manage/metrics'
+    | '/$tenant/$locale/manage/navigation'
     | '/$tenant/$locale/manage/newsletters'
     | '/$tenant/$locale/manage/nodes'
     | '/$tenant/$locale/manage/notification-preferences'
@@ -3672,9 +3737,13 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/account/disputes'
     | '/$tenant/$locale/account/downloads'
     | '/$tenant/$locale/account/installments'
+    | '/$tenant/$locale/account/invoices'
     | '/$tenant/$locale/account/loyalty'
+    | '/$tenant/$locale/account/payment-methods'
     | '/$tenant/$locale/account/profile'
+    | '/$tenant/$locale/account/quotes'
     | '/$tenant/$locale/account/referrals'
+    | '/$tenant/$locale/account/reviews'
     | '/$tenant/$locale/account/settings'
     | '/$tenant/$locale/account/store-credits'
     | '/$tenant/$locale/account/verification'
@@ -3768,8 +3837,10 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/manage/invoices'
     | '/$tenant/$locale/manage/legal'
     | '/$tenant/$locale/manage/loyalty'
+    | '/$tenant/$locale/manage/media'
     | '/$tenant/$locale/manage/memberships'
     | '/$tenant/$locale/manage/metrics'
+    | '/$tenant/$locale/manage/navigation'
     | '/$tenant/$locale/manage/newsletters'
     | '/$tenant/$locale/manage/nodes'
     | '/$tenant/$locale/manage/notification-preferences'
@@ -4008,9 +4079,13 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/account/disputes'
     | '/$tenant/$locale/account/downloads'
     | '/$tenant/$locale/account/installments'
+    | '/$tenant/$locale/account/invoices'
     | '/$tenant/$locale/account/loyalty'
+    | '/$tenant/$locale/account/payment-methods'
     | '/$tenant/$locale/account/profile'
+    | '/$tenant/$locale/account/quotes'
     | '/$tenant/$locale/account/referrals'
+    | '/$tenant/$locale/account/reviews'
     | '/$tenant/$locale/account/settings'
     | '/$tenant/$locale/account/store-credits'
     | '/$tenant/$locale/account/verification'
@@ -4104,8 +4179,10 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/manage/invoices'
     | '/$tenant/$locale/manage/legal'
     | '/$tenant/$locale/manage/loyalty'
+    | '/$tenant/$locale/manage/media'
     | '/$tenant/$locale/manage/memberships'
     | '/$tenant/$locale/manage/metrics'
+    | '/$tenant/$locale/manage/navigation'
     | '/$tenant/$locale/manage/newsletters'
     | '/$tenant/$locale/manage/nodes'
     | '/$tenant/$locale/manage/notification-preferences'
@@ -5828,6 +5905,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleManageNewslettersRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
+    '/$tenant/$locale/manage/navigation': {
+      id: '/$tenant/$locale/manage/navigation'
+      path: '/manage/navigation'
+      fullPath: '/$tenant/$locale/manage/navigation'
+      preLoaderRoute: typeof TenantLocaleManageNavigationRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
     '/$tenant/$locale/manage/metrics': {
       id: '/$tenant/$locale/manage/metrics'
       path: '/manage/metrics'
@@ -5840,6 +5924,13 @@ declare module '@tanstack/react-router' {
       path: '/manage/memberships'
       fullPath: '/$tenant/$locale/manage/memberships'
       preLoaderRoute: typeof TenantLocaleManageMembershipsRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/manage/media': {
+      id: '/$tenant/$locale/manage/media'
+      path: '/manage/media'
+      fullPath: '/$tenant/$locale/manage/media'
+      preLoaderRoute: typeof TenantLocaleManageMediaRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$tenant/$locale/manage/loyalty': {
@@ -6493,11 +6584,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleAccountSettingsRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
+    '/$tenant/$locale/account/reviews': {
+      id: '/$tenant/$locale/account/reviews'
+      path: '/account/reviews'
+      fullPath: '/$tenant/$locale/account/reviews'
+      preLoaderRoute: typeof TenantLocaleAccountReviewsRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
     '/$tenant/$locale/account/referrals': {
       id: '/$tenant/$locale/account/referrals'
       path: '/account/referrals'
       fullPath: '/$tenant/$locale/account/referrals'
       preLoaderRoute: typeof TenantLocaleAccountReferralsRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/account/quotes': {
+      id: '/$tenant/$locale/account/quotes'
+      path: '/account/quotes'
+      fullPath: '/$tenant/$locale/account/quotes'
+      preLoaderRoute: typeof TenantLocaleAccountQuotesRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$tenant/$locale/account/profile': {
@@ -6507,11 +6612,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleAccountProfileRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
+    '/$tenant/$locale/account/payment-methods': {
+      id: '/$tenant/$locale/account/payment-methods'
+      path: '/account/payment-methods'
+      fullPath: '/$tenant/$locale/account/payment-methods'
+      preLoaderRoute: typeof TenantLocaleAccountPaymentMethodsRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
     '/$tenant/$locale/account/loyalty': {
       id: '/$tenant/$locale/account/loyalty'
       path: '/account/loyalty'
       fullPath: '/$tenant/$locale/account/loyalty'
       preLoaderRoute: typeof TenantLocaleAccountLoyaltyRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/account/invoices': {
+      id: '/$tenant/$locale/account/invoices'
+      path: '/account/invoices'
+      fullPath: '/$tenant/$locale/account/invoices'
+      preLoaderRoute: typeof TenantLocaleAccountInvoicesRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$tenant/$locale/account/installments': {
@@ -6791,9 +6910,13 @@ interface TenantLocaleRouteChildren {
   TenantLocaleAccountDisputesRoute: typeof TenantLocaleAccountDisputesRoute
   TenantLocaleAccountDownloadsRoute: typeof TenantLocaleAccountDownloadsRoute
   TenantLocaleAccountInstallmentsRoute: typeof TenantLocaleAccountInstallmentsRoute
+  TenantLocaleAccountInvoicesRoute: typeof TenantLocaleAccountInvoicesRoute
   TenantLocaleAccountLoyaltyRoute: typeof TenantLocaleAccountLoyaltyRoute
+  TenantLocaleAccountPaymentMethodsRoute: typeof TenantLocaleAccountPaymentMethodsRoute
   TenantLocaleAccountProfileRoute: typeof TenantLocaleAccountProfileRoute
+  TenantLocaleAccountQuotesRoute: typeof TenantLocaleAccountQuotesRoute
   TenantLocaleAccountReferralsRoute: typeof TenantLocaleAccountReferralsRoute
+  TenantLocaleAccountReviewsRoute: typeof TenantLocaleAccountReviewsRoute
   TenantLocaleAccountSettingsRoute: typeof TenantLocaleAccountSettingsRoute
   TenantLocaleAccountStoreCreditsRoute: typeof TenantLocaleAccountStoreCreditsRoute
   TenantLocaleAccountVerificationRoute: typeof TenantLocaleAccountVerificationRoute
@@ -6887,8 +7010,10 @@ interface TenantLocaleRouteChildren {
   TenantLocaleManageInvoicesRoute: typeof TenantLocaleManageInvoicesRoute
   TenantLocaleManageLegalRoute: typeof TenantLocaleManageLegalRoute
   TenantLocaleManageLoyaltyRoute: typeof TenantLocaleManageLoyaltyRoute
+  TenantLocaleManageMediaRoute: typeof TenantLocaleManageMediaRoute
   TenantLocaleManageMembershipsRoute: typeof TenantLocaleManageMembershipsRoute
   TenantLocaleManageMetricsRoute: typeof TenantLocaleManageMetricsRoute
+  TenantLocaleManageNavigationRoute: typeof TenantLocaleManageNavigationRoute
   TenantLocaleManageNewslettersRoute: typeof TenantLocaleManageNewslettersRoute
   TenantLocaleManageNodesRoute: typeof TenantLocaleManageNodesRoute
   TenantLocaleManageNotificationPreferencesRoute: typeof TenantLocaleManageNotificationPreferencesRoute
@@ -7120,9 +7245,14 @@ const TenantLocaleRouteChildren: TenantLocaleRouteChildren = {
   TenantLocaleAccountDisputesRoute: TenantLocaleAccountDisputesRoute,
   TenantLocaleAccountDownloadsRoute: TenantLocaleAccountDownloadsRoute,
   TenantLocaleAccountInstallmentsRoute: TenantLocaleAccountInstallmentsRoute,
+  TenantLocaleAccountInvoicesRoute: TenantLocaleAccountInvoicesRoute,
   TenantLocaleAccountLoyaltyRoute: TenantLocaleAccountLoyaltyRoute,
+  TenantLocaleAccountPaymentMethodsRoute:
+    TenantLocaleAccountPaymentMethodsRoute,
   TenantLocaleAccountProfileRoute: TenantLocaleAccountProfileRoute,
+  TenantLocaleAccountQuotesRoute: TenantLocaleAccountQuotesRoute,
   TenantLocaleAccountReferralsRoute: TenantLocaleAccountReferralsRoute,
+  TenantLocaleAccountReviewsRoute: TenantLocaleAccountReviewsRoute,
   TenantLocaleAccountSettingsRoute: TenantLocaleAccountSettingsRoute,
   TenantLocaleAccountStoreCreditsRoute: TenantLocaleAccountStoreCreditsRoute,
   TenantLocaleAccountVerificationRoute: TenantLocaleAccountVerificationRoute,
@@ -7222,8 +7352,10 @@ const TenantLocaleRouteChildren: TenantLocaleRouteChildren = {
   TenantLocaleManageInvoicesRoute: TenantLocaleManageInvoicesRoute,
   TenantLocaleManageLegalRoute: TenantLocaleManageLegalRoute,
   TenantLocaleManageLoyaltyRoute: TenantLocaleManageLoyaltyRoute,
+  TenantLocaleManageMediaRoute: TenantLocaleManageMediaRoute,
   TenantLocaleManageMembershipsRoute: TenantLocaleManageMembershipsRoute,
   TenantLocaleManageMetricsRoute: TenantLocaleManageMetricsRoute,
+  TenantLocaleManageNavigationRoute: TenantLocaleManageNavigationRoute,
   TenantLocaleManageNewslettersRoute: TenantLocaleManageNewslettersRoute,
   TenantLocaleManageNodesRoute: TenantLocaleManageNodesRoute,
   TenantLocaleManageNotificationPreferencesRoute:

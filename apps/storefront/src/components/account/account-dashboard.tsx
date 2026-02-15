@@ -99,7 +99,7 @@ export function AccountDashboard({ customer, stats }: AccountDashboardProps) {
     dashboardLinks.push({
       label: "Business Portal",
       description: "Access B2B features",
-      href: `${prefix}/business`,
+      href: `${prefix}/b2b/dashboard`,
       icon: Buildings,
       feature: 'b2b'
     })
@@ -195,7 +195,7 @@ export function AccountDashboard({ customer, stats }: AccountDashboardProps) {
         <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
         <div className="flex flex-wrap gap-3">
           <Link
-            to={`${prefix}/store` as any}
+            to={`${prefix}/` as any}
             className="inline-flex items-center gap-2 px-4 py-2 bg-ds-primary text-ds-primary-foreground rounded-md hover:bg-ds-primary"
           >
             <ShoppingBag className="h-4 w-4" />
@@ -204,7 +204,7 @@ export function AccountDashboard({ customer, stats }: AccountDashboardProps) {
           
           {isEnabled('subscriptions') && (
             <Link
-              to={`${prefix}/subscriptions` as any}
+              to={`${prefix}/account/subscriptions` as any}
               className="inline-flex items-center gap-2 px-4 py-2 border border-ds-border rounded-md hover:bg-ds-muted"
             >
               Start a Subscription
@@ -213,7 +213,7 @@ export function AccountDashboard({ customer, stats }: AccountDashboardProps) {
           
           {isEnabled('bookings') && (
             <Link
-              to={`${prefix}/bookings` as any}
+              to={`${prefix}/account/bookings` as any}
               className="inline-flex items-center gap-2 px-4 py-2 border border-ds-border rounded-md hover:bg-ds-muted"
             >
               <Calendar className="h-4 w-4" />

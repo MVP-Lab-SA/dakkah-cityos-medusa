@@ -61,7 +61,7 @@ export function RecentOrders({ orders, isLoading }: RecentOrdersProps) {
           <ShoppingBag className="h-12 w-12 text-ds-muted-foreground mx-auto mb-4" />
           <p className="text-ds-muted-foreground">No orders yet</p>
           <Link
-            to={`${prefix}/store` as any}
+            to={`${prefix}/` as any}
             className="mt-4 inline-flex items-center text-sm font-medium text-ds-foreground hover:underline"
           >
             Start shopping

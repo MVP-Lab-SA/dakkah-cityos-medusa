@@ -12,6 +12,9 @@ import {
   Calendar,
   CogSixTooth,
   ChevronRight,
+  Star,
+  DocumentText,
+  ArrowDownTray,
 } from "@medusajs/icons"
 
 interface AccountLayoutProps {
@@ -20,13 +23,56 @@ interface AccountLayoutProps {
   description?: string
 }
 
-const navItems = [
-  { icon: User, label: "Overview", path: "" },
-  { icon: ShoppingBag, label: "Orders", path: "/orders" },
-  { icon: CreditCard, label: "Subscriptions", path: "/subscriptions" },
-  { icon: Calendar, label: "Bookings", path: "/bookings" },
-  { icon: MapPin, label: "Addresses", path: "/addresses" },
-  { icon: CogSixTooth, label: "Settings", path: "/settings" },
+type NavItem = { icon: typeof User; label: string; path: string }
+
+const navSections: { label: string; items: NavItem[] }[] = [
+  {
+    label: "",
+    items: [
+      { icon: User, label: "Overview", path: "" },
+      { icon: ShoppingBag, label: "Orders", path: "/orders" },
+      { icon: MapPin, label: "Addresses", path: "/addresses" },
+      { icon: User, label: "Profile", path: "/profile" },
+    ],
+  },
+  {
+    label: "Payments & Billing",
+    items: [
+      { icon: CreditCard, label: "Payment Methods", path: "/payment-methods" },
+      { icon: CreditCard, label: "Wallet", path: "/wallet" },
+      { icon: CreditCard, label: "Store Credits", path: "/store-credits" },
+      { icon: DocumentText, label: "Invoices", path: "/invoices" },
+      { icon: CreditCard, label: "Installments", path: "/installments" },
+    ],
+  },
+  {
+    label: "Shopping",
+    items: [
+      { icon: CreditCard, label: "Subscriptions", path: "/subscriptions" },
+      { icon: Calendar, label: "Bookings", path: "/bookings" },
+      { icon: Star, label: "Wishlist", path: "/wishlist" },
+      { icon: ArrowDownTray, label: "Downloads", path: "/downloads" },
+      { icon: DocumentText, label: "Purchase Orders", path: "/purchase-orders" },
+    ],
+  },
+  {
+    label: "Engagement",
+    items: [
+      { icon: Star, label: "Reviews", path: "/reviews" },
+      { icon: Star, label: "Loyalty", path: "/loyalty" },
+      { icon: User, label: "Referrals", path: "/referrals" },
+      { icon: DocumentText, label: "Quotes", path: "/quotes" },
+    ],
+  },
+  {
+    label: "Account",
+    items: [
+      { icon: CogSixTooth, label: "Settings", path: "/settings" },
+      { icon: DocumentText, label: "Consents", path: "/consents" },
+      { icon: DocumentText, label: "Disputes", path: "/disputes" },
+      { icon: User, label: "Verification", path: "/verification" },
+    ],
+  },
 ]
 
 export function AccountLayout({ children, title, description }: AccountLayoutProps) {
@@ -71,28 +117,40 @@ export function AccountLayout({ children, title, description }: AccountLayoutPro
           <div className="flex flex-col lg:flex-row gap-8">
             <aside className="lg:w-64 flex-shrink-0">
               <nav className="bg-ds-background rounded-lg border border-ds-border overflow-hidden">
-                {navItems.map((item) => {
-                  const Icon = item.icon
-                  const active = isActive(item.path)
-                  return (
-                    <Link
-                      key={item.path}
-                      to={`${baseHref}${item.path}` as any}
-                      className={clsx(
-                        "flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors border-b border-ds-border last:border-b-0",
-                        active
-                          ? "bg-ds-primary text-ds-primary-foreground"
-                          : "text-ds-muted-foreground hover:bg-ds-muted hover:text-ds-foreground"
-                      )}
-                    >
-                      <Icon className="h-5 w-5" />
-                      {item.label}
-                      <ChevronRight
-                        className={clsx("ms-auto h-4 w-4", active ? "text-ds-primary-foreground" : "text-ds-muted-foreground")}
-                      />
-                    </Link>
-                  )
-                })}
+                {navSections.map((section, sectionIndex) => (
+                  <div key={section.label || "main"}>
+                    {section.label && (
+                      <div className={clsx(
+                        "px-4 pt-4 pb-1 text-xs font-semibold uppercase tracking-wider text-ds-muted-foreground",
+                        sectionIndex > 0 && "border-t border-ds-border"
+                      )}>
+                        {section.label}
+                      </div>
+                    )}
+                    {section.items.map((item) => {
+                      const Icon = item.icon
+                      const active = isActive(item.path)
+                      return (
+                        <Link
+                          key={item.path}
+                          to={`${baseHref}${item.path}` as any}
+                          className={clsx(
+                            "flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors border-b border-ds-border last:border-b-0",
+                            active
+                              ? "bg-ds-primary text-ds-primary-foreground"
+                              : "text-ds-muted-foreground hover:bg-ds-muted hover:text-ds-foreground"
+                          )}
+                        >
+                          <Icon className="h-5 w-5" />
+                          {item.label}
+                          <ChevronRight
+                            className={clsx("ms-auto h-4 w-4", active ? "text-ds-primary-foreground" : "text-ds-muted-foreground")}
+                          />
+                        </Link>
+                      )
+                    })}
+                  </div>
+                ))}
               </nav>
 
               {isB2B && (
@@ -100,14 +158,14 @@ export function AccountLayout({ children, title, description }: AccountLayoutPro
                   <h3 className="text-sm font-semibold text-ds-foreground mb-3">Business</h3>
                   <div className="space-y-2">
                     <Link
-                      to={`${prefix}/business` as any}
+                      to={`${prefix}/b2b/dashboard` as any}
                       className="flex items-center gap-2 text-sm text-ds-muted-foreground hover:text-ds-foreground"
                     >
                       <ChevronRight className="h-4 w-4" />
                       Company Dashboard
                     </Link>
                     <Link
-                      to={`${prefix}/business/quotes` as any}
+                      to={`${prefix}/business/catalog` as any}
                       className="flex items-center gap-2 text-sm text-ds-muted-foreground hover:text-ds-foreground"
                     >
                       <ChevronRight className="h-4 w-4" />
