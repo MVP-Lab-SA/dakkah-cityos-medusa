@@ -56,6 +56,7 @@ function DropshippingMarketplacePage() {
   })
 
   const formatPrice = (price: number) => {
+    if (price == null) return "$0.00"
     const amount = price >= 100 ? price / 100 : price
     return `$${amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}`
   }
@@ -160,7 +161,7 @@ function DropshippingMarketplacePage() {
                           </div>
                           <div className="flex justify-between">
                             <span className="text-ds-muted-foreground">Profit/Unit</span>
-                            <span className="font-bold text-green-600">{formatPrice(item.retail_price - item.wholesale_price)}</span>
+                            <span className="font-bold text-green-600">{formatPrice((item.retail_price || 0) - (item.wholesale_price || 0))}</span>
                           </div>
                         </div>
 

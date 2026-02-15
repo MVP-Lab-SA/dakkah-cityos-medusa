@@ -53,6 +53,7 @@ function WhiteLabelShopPage() {
   })
 
   const formatPrice = (price: number) => {
+    if (price == null) return "$0.00"
     const amount = price >= 100 ? price / 100 : price
     return `$${amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}`
   }
