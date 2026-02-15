@@ -2,6 +2,7 @@
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/freelance/")({
   component: FreelancePage,
@@ -68,7 +69,7 @@ function FreelancePage() {
   })
 
   const formatPrice = (price: number | null, currency: string) => {
-    if (!price) return "Contact for pricing"
+    if (!price) return t(locale, 'verticals.contact_pricing')
     const amount = price >= 100 ? price / 100 : price
     return `Starting from ${amount.toLocaleString()} ${currency}`
   }
@@ -86,20 +87,20 @@ function FreelancePage() {
       <div className="bg-gradient-to-r from-ds-primary/100 to-ds-primary text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
-            <span className="text-white">Freelance</span>
+            <span className="text-white">{t(locale, 'freelance.breadcrumb')}</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Freelance Services</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'freelance.hero_title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
-            Find talented professionals for web development, design, writing, marketing, and more.
+            {t(locale, 'freelance.hero_subtitle')}
           </p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
-            <span>{items.length} services available</span>
+            <span>{items.length} {t(locale, 'freelance.services_available')}</span>
             <span>|</span>
-            <span>Vetted freelancers</span>
+            <span>{t(locale, 'freelance.badge_vetted')}</span>
             <span>|</span>
-            <span>Satisfaction guaranteed</span>
+            <span>{t(locale, 'freelance.badge_guaranteed')}</span>
           </div>
         </div>
       </div>
@@ -109,18 +110,18 @@ function FreelancePage() {
           <aside className="w-full lg:w-72 flex-shrink-0">
             <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'freelance.search_label')}</label>
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search services..."
+                  placeholder={t(locale, 'freelance.search_placeholder')}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-primary"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Category</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'freelance.category_label')}</label>
                 <div className="space-y-1">
                   {categoryOptions.map((opt) => (
                     <button
@@ -142,8 +143,8 @@ function FreelancePage() {
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 13.255A23.193 23.193 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No services found</h3>
-                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'verticals.no_results')}</h3>
+                <p className="text-ds-muted-foreground text-sm">{t(locale, 'freelance.no_results_hint')}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -211,7 +212,7 @@ function FreelancePage() {
                         <span className="font-bold text-ds-primary text-lg">
                           {formatPrice(item.price, item.currency)}
                         </span>
-                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-primary rounded-lg group-hover:bg-ds-primary/90 transition-colors">Hire Now</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-primary rounded-lg group-hover:bg-ds-primary/90 transition-colors">{t(locale, 'freelance.hire_now')}</span>
                       </div>
                     </div>
                   </a>
@@ -224,22 +225,22 @@ function FreelancePage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'verticals.how_it_works')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Find a Freelancer</h3>
-              <p className="text-sm text-ds-muted-foreground">Browse services and find the perfect professional for your project needs.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'freelance.step1_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'freelance.step1_desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Discuss & Hire</h3>
-              <p className="text-sm text-ds-muted-foreground">Share your requirements, agree on deliverables, and hire with confidence.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'freelance.step2_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'freelance.step2_desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Get Results</h3>
-              <p className="text-sm text-ds-muted-foreground">Receive high-quality work with revisions included. Pay only when satisfied.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'freelance.step3_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'freelance.step3_desc')}</p>
             </div>
           </div>
         </div>

@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 const hardcodedPosts = [
   {
@@ -135,13 +136,13 @@ function BlogPage() {
       <div className="bg-gradient-to-r from-ds-primary to-ds-primary/80 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <span className="text-white">Blog</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Blog</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'blog.title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
-            Insights, guides, and stories from our community of vendors and experts.
+            {t(locale, 'blog.subtitle')}
           </p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>{items.length} articles</span>
@@ -163,7 +164,7 @@ function BlogPage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search articles..."
+                  placeholder={t(locale, 'blog.search_placeholder')}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring"
                 />
               </div>
@@ -191,7 +192,7 @@ function BlogPage() {
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                 </svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No articles found</h3>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'blog.no_results')}</h3>
                 <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
@@ -231,7 +232,7 @@ function BlogPage() {
                       </div>
                       <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
                         <span className="text-xs text-ds-muted-foreground">{item.read_time}</span>
-                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-foreground/90 rounded-lg group-hover:bg-ds-foreground transition-colors">Read More</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-foreground/90 rounded-lg group-hover:bg-ds-foreground transition-colors">{t(locale, 'blog.read_more')}</span>
                       </div>
                     </div>
                   </a>
@@ -244,11 +245,11 @@ function BlogPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl font-bold text-ds-foreground mb-4">Stay Updated</h2>
-          <p className="text-ds-muted-foreground mb-6">Subscribe to our newsletter for the latest articles, guides, and marketplace insights.</p>
+          <h2 className="text-2xl font-bold text-ds-foreground mb-4">{t(locale, 'blog.stay_updated')}</h2>
+          <p className="text-ds-muted-foreground mb-6">{t(locale, 'blog.subscribe_description')}</p>
           <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-            <input type="email" placeholder="Enter your email" className="flex-1 px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring" />
-            <button className="px-6 py-2.5 text-sm font-semibold text-white bg-ds-foreground/90 rounded-lg hover:bg-ds-foreground transition-colors">Subscribe</button>
+            <input type="email" placeholder={t(locale, 'blog.subscribe_placeholder')} className="flex-1 px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring" />
+            <button className="px-6 py-2.5 text-sm font-semibold text-white bg-ds-foreground/90 rounded-lg hover:bg-ds-foreground transition-colors">{t(locale, 'blog.subscribe')}</button>
           </div>
         </div>
       </section>

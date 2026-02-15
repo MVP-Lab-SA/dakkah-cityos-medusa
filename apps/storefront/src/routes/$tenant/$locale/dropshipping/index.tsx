@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/dropshipping/")({
   component: DropshippingPage,
@@ -56,16 +57,16 @@ function DropshippingPage() {
       <div className="bg-gradient-to-r from-ds-primary to-ds-primary text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
-            <span className="text-white">Dropshipping</span>
+            <span className="text-white">{t(locale, 'dropshipping.breadcrumb')}</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Start Dropshipping</h1>
-          <p className="text-lg text-white/80 max-w-2xl mx-auto">Launch your online business with zero inventory. Sell thousands of products and we handle the rest.</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'dropshipping.hero_title')}</h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">{t(locale, 'dropshipping.hero_subtitle')}</p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
-            <span>No upfront costs</span><span>|</span><span>500+ suppliers</span><span>|</span><span>Automated fulfillment</span>
+            <span>{t(locale, 'dropshipping.badge_no_cost')}</span><span>|</span><span>{t(locale, 'dropshipping.badge_suppliers')}</span><span>|</span><span>{t(locale, 'dropshipping.badge_fulfillment')}</span>
           </div>
-          <button className="mt-8 px-8 py-3 bg-ds-card text-ds-primary font-semibold rounded-lg hover:bg-ds-card/90 transition-colors">Get Started Free</button>
+          <button className="mt-8 px-8 py-3 bg-ds-card text-ds-primary font-semibold rounded-lg hover:bg-ds-card/90 transition-colors">{t(locale, 'dropshipping.get_started')}</button>
         </div>
       </div>
 
@@ -80,15 +81,15 @@ function DropshippingPage() {
         </div>
 
         <div className="mb-6">
-          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search features..." className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-primary" />
+          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t(locale, 'dropshipping.search_placeholder')} className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-primary" />
         </div>
 
-        <h2 className="text-2xl font-bold text-ds-foreground mb-6">Why Dropship With Us</h2>
+        <h2 className="text-2xl font-bold text-ds-foreground mb-6">{t(locale, 'dropshipping.why_dropship')}</h2>
         {filtered.length === 0 ? (
           <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
             <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
-            <h3 className="text-lg font-semibold text-ds-foreground mb-2">No features found</h3>
-            <p className="text-ds-muted-foreground text-sm">Try adjusting your search.</p>
+            <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'verticals.no_results')}</h3>
+            <p className="text-ds-muted-foreground text-sm">{t(locale, 'dropshipping.no_results_hint')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
@@ -102,11 +103,11 @@ function DropshippingPage() {
           </div>
         )}
 
-        <h2 className="text-2xl font-bold text-ds-foreground mb-6">Pricing Plans</h2>
+        <h2 className="text-2xl font-bold text-ds-foreground mb-6">{t(locale, 'dropshipping.pricing_plans')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {plans.map((plan: any, i: number) => (
             <div key={i} className={`relative bg-ds-background border ${plan.popular ? "border-ds-primary ring-2 ring-ds-primary/20" : "border-ds-border"} rounded-xl p-6 hover:shadow-lg transition-all duration-200`}>
-              {plan.popular && <span className="absolute -top-3 left-6 px-3 py-1 text-xs font-bold bg-ds-primary text-white rounded-full">Most Popular</span>}
+              {plan.popular && <span className="absolute -top-3 left-6 px-3 py-1 text-xs font-bold bg-ds-primary text-white rounded-full">{t(locale, 'dropshipping.most_popular')}</span>}
               <h3 className="text-xl font-bold text-ds-foreground mb-1">{plan.name}</h3>
               <p className="text-3xl font-bold text-ds-primary mb-4">{plan.price}</p>
               <ul className="space-y-2 mb-6">
@@ -125,7 +126,7 @@ function DropshippingPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'verticals.how_it_works')}</h2>
           <div className="grid md:grid-cols-4 gap-8">
             {[{ step: "1", title: "Sign Up", desc: "Create your free account and set up your online store." }, { step: "2", title: "Choose Products", desc: "Browse our catalog and add products to your store." }, { step: "3", title: "Sell Online", desc: "Market products to your audience across any channel." }, { step: "4", title: "We Ship", desc: "We handle packaging and shipping directly to your customers." }].map((s) => (
               <div key={s.step} className="text-center">

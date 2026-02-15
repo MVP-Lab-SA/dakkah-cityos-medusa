@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/places/")({
   component: PlacesPage,
@@ -50,21 +51,21 @@ function PlacesPage() {
       <div className="bg-gradient-to-r from-ds-success to-ds-info text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
-            <span className="text-white">Places</span>
+            <span className="text-white">{t(locale, 'places.breadcrumb')}</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Places & Attractions</h1>
-          <p className="text-lg text-white/80 max-w-2xl mx-auto">Discover the most iconic landmarks, historical sites, and natural wonders across Saudi Arabia.</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'places.hero_title')}</h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">{t(locale, 'places.hero_subtitle')}</p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
-            <span>{places.length} places</span><span>|</span><span>Curated selections</span><span>|</span><span>Visitor ratings</span>
+            <span>{places.length} {t(locale, 'places.places_count')}</span><span>|</span><span>{t(locale, 'places.badge_curated')}</span><span>|</span><span>{t(locale, 'places.badge_ratings')}</span>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search places..." className="flex-1 max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-success" />
+          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t(locale, 'places.search_placeholder')} className="flex-1 max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-success" />
           <div className="flex flex-wrap gap-2">
             {categoryOptions.map((opt) => (
               <button key={opt} onClick={() => setCategoryFilter(opt)} className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${categoryFilter === opt ? "bg-ds-success text-white" : "bg-ds-muted text-ds-foreground hover:bg-ds-muted/80"}`}>
@@ -77,8 +78,8 @@ function PlacesPage() {
         {filtered.length === 0 ? (
           <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
             <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
-            <h3 className="text-lg font-semibold text-ds-foreground mb-2">No places found</h3>
-            <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
+            <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'verticals.no_results')}</h3>
+            <p className="text-ds-muted-foreground text-sm">{t(locale, 'places.no_results_hint')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

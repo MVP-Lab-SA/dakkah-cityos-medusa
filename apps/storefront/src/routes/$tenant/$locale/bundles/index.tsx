@@ -2,6 +2,7 @@
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/bundles/")({
   component: BundlesPage,
@@ -67,7 +68,7 @@ function BundlesPage() {
   })
 
   const formatPrice = (price: number | null, currency: string) => {
-    if (!price) return "Contact for pricing"
+    if (!price) return t(locale, 'verticals.contact_pricing')
     const amount = price >= 100 ? price / 100 : price
     return `${amount.toLocaleString()} ${currency}`
   }
@@ -77,13 +78,13 @@ function BundlesPage() {
       <div className="bg-gradient-to-r from-rose-500 to-ds-destructive text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <span className="text-white">Bundles</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Product Bundles</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'bundles.title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
-            Save more when you buy together. Curated bundles at special prices.
+            {t(locale, 'bundles.subtitle')}
           </p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>{items.length} bundles available</span>
@@ -105,7 +106,7 @@ function BundlesPage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search bundles..."
+                  placeholder={t(locale, 'bundles.search_placeholder')}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring"
                 />
               </div>
@@ -133,7 +134,7 @@ function BundlesPage() {
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                 </svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No bundles found</h3>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'bundles.no_results')}</h3>
                 <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
@@ -190,7 +191,7 @@ function BundlesPage() {
                             {formatPrice(item.price, item.currency)}
                           </span>
                         </div>
-                        <button className="px-3 py-1.5 text-xs font-semibold text-white bg-rose-500 rounded-lg hover:bg-rose-600 transition-colors">Add Bundle</button>
+                        <button className="px-3 py-1.5 text-xs font-semibold text-white bg-rose-500 rounded-lg hover:bg-rose-600 transition-colors">{t(locale, 'bundles.add_bundle')}</button>
                       </div>
                     </div>
                   </div>
@@ -203,7 +204,7 @@ function BundlesPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">Why Buy Bundles?</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'bundles.why_buy_bundles')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-rose-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">💰</div>

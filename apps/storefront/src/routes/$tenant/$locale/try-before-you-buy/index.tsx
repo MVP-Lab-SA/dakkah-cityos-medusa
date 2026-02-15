@@ -2,6 +2,7 @@
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 const fallbackItems = [
   { id: "tby-1", name: "Premium Noise-Cancelling Headphones", category: "electronics", thumbnail: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&q=80", description: "Experience world-class ANC with 30hr battery. Try them for 14 days risk-free.", trial_period: 14, deposit: 4999 },
@@ -69,13 +70,13 @@ function TryBeforeYouBuyPage() {
       <div className="bg-gradient-to-r from-ds-success to-ds-success text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <span className="text-white">Try Before You Buy</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">🛍️ Try Before You Buy</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'try_before_you_buy.title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
-            Try products at home before committing — love it and keep it, or return it for free.
+            {t(locale, 'try_before_you_buy.subtitle')}
           </p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>{items.length} products available</span>
@@ -93,7 +94,7 @@ function TryBeforeYouBuyPage() {
             <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
               <div>
                 <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
-                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search products..." className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring" />
+                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t(locale, 'try_before_you_buy.search_placeholder')} className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-ds-foreground mb-2">Category</label>
@@ -114,7 +115,7 @@ function TryBeforeYouBuyPage() {
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                 </svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No try-before-you-buy products found</h3>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'try_before_you_buy.no_results')}</h3>
                 <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
@@ -153,7 +154,7 @@ function TryBeforeYouBuyPage() {
 
                       <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
                         <span className="text-xs text-ds-muted-foreground">Free returns</span>
-                        <span className="px-4 py-1.5 text-xs font-semibold text-white bg-ds-success rounded-lg group-hover:bg-ds-success/90 transition-colors">Try Now</span>
+                        <span className="px-4 py-1.5 text-xs font-semibold text-white bg-ds-success rounded-lg group-hover:bg-ds-success/90 transition-colors">{t(locale, 'try_before_you_buy.try_now')}</span>
                       </div>
                     </div>
                   </div>
@@ -166,7 +167,7 @@ function TryBeforeYouBuyPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'verticals.how_it_works')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>

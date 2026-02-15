@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/consignment/")({
   component: ConsignmentPage,
@@ -52,12 +53,12 @@ function ConsignmentPage() {
       <div className="bg-gradient-to-r from-ds-success to-ds-success text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <span className="text-white">Consignment</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Consign With Us</h1>
-          <p className="text-lg text-white/80 max-w-2xl mx-auto">Turn your pre-owned treasures into cash. We handle everything — you just earn.</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'consignment.title')}</h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">{t(locale, 'consignment.subtitle')}</p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>Up to 80% earnings</span><span>|</span><span>Fully insured</span><span>|</span><span>Fast payouts</span>
           </div>
@@ -66,14 +67,14 @@ function ConsignmentPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
-          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search benefits..." className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-success" />
+          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t(locale, 'consignment.search_placeholder')} className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-success" />
         </div>
 
         <h2 className="text-2xl font-bold text-ds-foreground mb-6">Why Consign With Us</h2>
         {filteredBenefits.length === 0 ? (
           <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
             <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
-            <h3 className="text-lg font-semibold text-ds-foreground mb-2">No results found</h3>
+            <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'consignment.no_results')}</h3>
             <p className="text-ds-muted-foreground text-sm">Try adjusting your search.</p>
           </div>
         ) : (
@@ -111,7 +112,7 @@ function ConsignmentPage() {
                   </li>
                 ))}
               </ul>
-              <button className={`w-full py-2.5 rounded-lg font-medium text-white transition-colors ${btnMap[tier.color]}`}>Start Consigning</button>
+              <button className={`w-full py-2.5 rounded-lg font-medium text-white transition-colors ${btnMap[tier.color]}`}>{t(locale, 'consignment.start_consigning')}</button>
             </div>
           ))}
         </div>
@@ -119,7 +120,7 @@ function ConsignmentPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'verticals.how_it_works')}</h2>
           <div className="grid md:grid-cols-4 gap-8">
             {[{ step: "1", title: "Submit Items", desc: "Bring or ship your items to our facility for evaluation." }, { step: "2", title: "We Evaluate", desc: "Our experts assess, authenticate, and price your items." }, { step: "3", title: "We Sell", desc: "Items are photographed and listed on our marketplace." }, { step: "4", title: "You Earn", desc: "Receive your earnings within 3 days of a completed sale." }].map((s) => (
               <div key={s.step} className="text-center">

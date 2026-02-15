@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
+import { t } from "@/lib/i18n"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { CourseCurriculumBlock } from '@/components/blocks/course-curriculum-block'
 import { ReviewListBlock } from '@/components/blocks/review-list-block'
@@ -70,7 +71,7 @@ function EducationDetailPage() {
       <div className="bg-ds-card border-b border-ds-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center gap-2 text-sm text-ds-muted-foreground">
-            <Link to={`${prefix}` as any} className="hover:text-ds-foreground transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-ds-foreground transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <Link to={`${prefix}/education` as any} className="hover:text-ds-foreground transition-colors">Education</Link>
             <span>/</span>
@@ -204,7 +205,7 @@ function EducationDetailPage() {
             <div className="sticky top-4 space-y-6">
               <div className="bg-ds-background border border-ds-border rounded-xl p-6 space-y-4">
                 <p className="text-3xl font-bold text-ds-foreground text-center">
-                  {course.price != null ? (course.price === 0 ? "Free" : `$${Number(course.price || 0).toLocaleString()}`) : "Contact for pricing"}
+                  {course.price != null ? (course.price === 0 ? "Free" : `$${Number(course.price || 0).toLocaleString()}`) : t(locale, 'verticals.contact_pricing')}
                 </p>
 
                 <button className="w-full py-3 px-4 bg-ds-primary text-ds-primary-foreground rounded-lg font-medium hover:bg-ds-primary/90 transition-colors">

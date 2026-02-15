@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/quotes/")({
   component: QuotesPage,
@@ -43,28 +44,28 @@ function QuotesPage() {
       <div className="bg-gradient-to-r from-ds-warning to-ds-warning text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
-            <span className="text-white">Quotes</span>
+            <span className="text-white">{t(locale, 'quotes.breadcrumb')}</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Request a Quote</h1>
-          <p className="text-lg text-white/80 max-w-2xl mx-auto">Get competitive quotes from verified service providers across multiple industries. Fast, free, and no obligation.</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'quotes.hero_title')}</h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">{t(locale, 'quotes.hero_subtitle')}</p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
-            <span>6 categories</span><span>|</span><span>Free quotes</span><span>|</span><span>Verified providers</span>
+            <span>{t(locale, 'quotes.badge_categories')}</span><span>|</span><span>{t(locale, 'quotes.badge_free')}</span><span>|</span><span>{t(locale, 'verticals.verified_providers')}</span>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
-          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search service categories..." className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-warning" />
+          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t(locale, 'quotes.search_placeholder')} className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-warning" />
         </div>
 
         {filtered.length === 0 ? (
           <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
             <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
-            <h3 className="text-lg font-semibold text-ds-foreground mb-2">No categories found</h3>
-            <p className="text-ds-muted-foreground text-sm">Try adjusting your search.</p>
+            <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'verticals.no_results')}</h3>
+            <p className="text-ds-muted-foreground text-sm">{t(locale, 'quotes.no_results_hint')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
@@ -81,7 +82,7 @@ function QuotesPage() {
                 <div className="p-5">
                   <h3 className="text-lg font-semibold text-ds-foreground mb-2 group-hover:text-ds-warning transition-colors">{cat.name}</h3>
                   <p className="text-sm text-ds-muted-foreground mb-4">{cat.description}</p>
-                  <button className="w-full py-2.5 text-sm font-medium rounded-lg bg-ds-warning text-white hover:bg-ds-warning transition-colors">Get Quote</button>
+                  <button className="w-full py-2.5 text-sm font-medium rounded-lg bg-ds-warning text-white hover:bg-ds-warning transition-colors">{t(locale, 'quotes.get_quote')}</button>
                 </div>
               </div>
             ))}
@@ -91,22 +92,22 @@ function QuotesPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'verticals.how_it_works')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-warning text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Select a Category</h3>
-              <p className="text-sm text-ds-muted-foreground">Choose the service type you need a quote for.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'quotes.step1_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'quotes.step1_desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-warning text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Describe Your Needs</h3>
-              <p className="text-sm text-ds-muted-foreground">Provide details about your project requirements and timeline.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'quotes.step2_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'quotes.step2_desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-warning text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Receive Quotes</h3>
-              <p className="text-sm text-ds-muted-foreground">Get competitive quotes from verified providers within 24-48 hours.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'quotes.step3_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'quotes.step3_desc')}</p>
             </div>
           </div>
         </div>

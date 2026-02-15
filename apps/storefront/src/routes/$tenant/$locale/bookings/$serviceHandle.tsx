@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useState, useMemo } from "react"
+import { t } from "@/lib/i18n"
 import {
   useService,
   useServiceProviders,
@@ -441,7 +442,7 @@ function ServiceBookingPage() {
                     <textarea
                       value={notes}
                       onChange={(e) => handleNotesChange(e.target.value)}
-                      placeholder="Any specific topics you'd like to discuss?"
+                      placeholder={t(locale, 'bookings.consultation_topics_placeholder')}
                       rows={3}
                       className={`input-enterprise resize-none ${errors.notes ? "border-ds-destructive" : ""}`}
                       maxLength={MAX_NOTES_LENGTH + 50}

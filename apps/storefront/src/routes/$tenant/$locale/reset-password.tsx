@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { ForgotPasswordForm } from "@/components/auth"
 import { useAuth } from "@/lib/context/auth-context"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -61,12 +62,12 @@ function ResetWithToken({
     setError(null)
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match")
+      setError(t(locale, 'auth.passwords_do_not_match'))
       return
     }
 
     if (password.length < 8) {
-      setError("Password must be at least 8 characters")
+      setError(t(locale, 'auth.password_min_length'))
       return
     }
 
@@ -75,7 +76,7 @@ function ResetWithToken({
       await resetPassword(token, password)
       setIsSuccess(true)
     } catch (err: any) {
-      setError(err?.message || "Failed to reset password. The link may have expired.")
+      setError(err?.message || t(locale, 'auth.reset_password_failed'))
     } finally {
       setIsLoading(false)
     }
@@ -90,9 +91,9 @@ function ResetWithToken({
               <CheckCircleSolid className="w-6 h-6 text-ds-success" />
             </div>
             <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-ds-foreground">Password reset successful</h3>
+              <h3 className="text-lg font-semibold text-ds-foreground">{t(locale, 'auth.reset_password_success')}</h3>
               <p className="text-sm text-ds-muted-foreground">
-                Your password has been updated. You can now sign in with your new password.
+                {t(locale, 'auth.reset_password_success_message')}
               </p>
             </div>
             <Button
@@ -111,8 +112,8 @@ function ResetWithToken({
     <div className="min-h-[80vh] flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-ds-foreground">Set new password</h1>
-          <p className="mt-2 text-ds-muted-foreground">Enter your new password below</p>
+          <h1 className="text-3xl font-bold text-ds-foreground">{t(locale, 'auth.set_new_password')}</h1>
+          <p className="mt-2 text-ds-muted-foreground">{t(locale, 'auth.enter_new_password')}</p>
         </div>
 
         <div className="bg-ds-background border border-ds-border rounded-lg p-6 shadow-sm">
@@ -130,7 +131,7 @@ function ResetWithToken({
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="At least 8 characters"
+                placeholder={t(locale, 'account.password_min_chars')}
                 required
                 autoComplete="new-password"
                 className="h-11"
@@ -144,7 +145,7 @@ function ResetWithToken({
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm your new password"
+                placeholder={t(locale, 'account.confirm_password')}
                 required
                 autoComplete="new-password"
                 className="h-11"
@@ -159,10 +160,10 @@ function ResetWithToken({
               {isLoading ? (
                 <>
                   <Spinner className="animate-spin me-2 h-4 w-4" />
-                  Resetting...
+                  {t(locale, 'auth.resetting')}
                 </>
               ) : (
-                "Reset password"
+                t(locale, 'auth.reset_password')
               )}
             </Button>
           </form>

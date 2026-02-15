@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
+import { t } from "@/lib/i18n"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { MapBlock } from '@/components/blocks/map-block'
 import { ImageGalleryBlock } from '@/components/blocks/image-gallery-block'
@@ -71,7 +72,7 @@ function TravelDetailPage() {
       <div className="bg-ds-card border-b border-ds-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center gap-2 text-sm text-ds-muted-foreground">
-            <Link to={`${prefix}` as any} className="hover:text-ds-foreground transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-ds-foreground transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <Link to={`${prefix}/travel` as any} className="hover:text-ds-foreground transition-colors">Travel</Link>
             <span>/</span>
@@ -212,7 +213,7 @@ function TravelDetailPage() {
                 <div className="text-center">
                   <p className="text-sm text-ds-muted-foreground">Starting from</p>
                   <p className="text-3xl font-bold text-ds-foreground">
-                    {pkg.price != null ? `$${Number(pkg.price || 0).toLocaleString()}` : "Contact for pricing"}
+                    {pkg.price != null ? `$${Number(pkg.price || 0).toLocaleString()}` : t(locale, 'verticals.contact_pricing')}
                   </p>
                   {pkg.price_per && <p className="text-sm text-ds-muted-foreground">per {pkg.price_per}</p>}
                 </div>

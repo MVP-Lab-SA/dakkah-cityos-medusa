@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/financial/")({
   component: FinancialPage,
@@ -52,12 +53,12 @@ function FinancialPage() {
       <div className="bg-gradient-to-r from-ds-primary to-ds-primary/80 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <span className="text-white">Financial Services</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Financial Services</h1>
-          <p className="text-lg text-white/80 max-w-2xl mx-auto">Comprehensive financial solutions including loans, insurance, investments, and currency exchange services.</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'financial.title')}</h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">{t(locale, 'financial.subtitle')}</p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>6 services</span><span>|</span><span>Competitive rates</span><span>|</span><span>Shariah compliant</span>
           </div>
@@ -66,13 +67,13 @@ function FinancialPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
-          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search financial services..." className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring" />
+          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t(locale, 'financial.search_placeholder')} className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring" />
         </div>
 
         {filtered.length === 0 ? (
           <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
             <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            <h3 className="text-lg font-semibold text-ds-foreground mb-2">No services found</h3>
+            <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'financial.no_results')}</h3>
             <p className="text-ds-muted-foreground text-sm">Try adjusting your search.</p>
           </div>
         ) : (
@@ -94,7 +95,7 @@ function FinancialPage() {
                     <h3 className="font-semibold text-ds-foreground group-hover:text-ds-muted-foreground transition-colors">{s.name}</h3>
                   </div>
                   <p className="text-sm text-ds-muted-foreground mb-4">{s.description}</p>
-                  <button className="w-full py-2.5 text-sm font-medium rounded-lg bg-ds-primary text-ds-primary-foreground hover:bg-ds-primary/80 transition-colors">Learn More</button>
+                  <button className="w-full py-2.5 text-sm font-medium rounded-lg bg-ds-primary text-ds-primary-foreground hover:bg-ds-primary/80 transition-colors">{t(locale, 'financial.learn_more')}</button>
                 </div>
               </div>
             ))}
@@ -104,7 +105,7 @@ function FinancialPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'verticals.how_it_works')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-primary text-ds-primary-foreground flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>

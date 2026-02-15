@@ -2,6 +2,7 @@
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/classifieds/")({
   component: ClassifiedsPage,
@@ -70,7 +71,7 @@ function ClassifiedsPage() {
   })
 
   const formatPrice = (price: number | null, currency: string) => {
-    if (!price) return "Contact for price"
+    if (!price) return t(locale, 'verticals.contact_pricing')
     const amount = price >= 100 ? price / 100 : price
     return `${amount.toLocaleString()} ${currency}`
   }
@@ -98,20 +99,20 @@ function ClassifiedsPage() {
       <div className="bg-gradient-to-r from-ds-warning to-ds-warning text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <span className="text-white">Classifieds</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Classifieds</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'classifieds.title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
             Buy, sell, and trade items in your local community. Find great deals on everything you need.
           </p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>{items.length} listings available</span>
             <span>|</span>
-            <span>Verified sellers</span>
+            <span>{t(locale, 'verticals.verified_providers')}</span>
             <span>|</span>
-            <span>Secure transactions</span>
+            <span>{t(locale, 'verticals.secure_transactions')}</span>
           </div>
         </div>
       </div>
@@ -126,7 +127,7 @@ function ClassifiedsPage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search classifieds..."
+                  placeholder={t(locale, 'classifieds.search_placeholder')}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-warning"
                 />
               </div>
@@ -169,7 +170,7 @@ function ClassifiedsPage() {
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No classifieds found</h3>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'classifieds.no_results')}</h3>
                 <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
@@ -238,7 +239,7 @@ function ClassifiedsPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'verticals.how_it_works')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-warning text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>

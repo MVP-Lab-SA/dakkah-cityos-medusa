@@ -2,6 +2,7 @@
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/education/")({
   component: EducationPage,
@@ -98,11 +99,11 @@ function EducationPage() {
       <div className="bg-gradient-to-r from-ds-primary to-ds-primary/90 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <span className="text-white">Education</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Education & Learning</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'education.title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
             Expand your knowledge with expert-led courses, workshops, and programs across a wide range of topics.
           </p>
@@ -126,7 +127,7 @@ function EducationPage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search courses..."
+                  placeholder={t(locale, 'education.search_placeholder')}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-primary"
                 />
               </div>
@@ -184,7 +185,7 @@ function EducationPage() {
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No courses found</h3>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'education.no_results')}</h3>
                 <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
@@ -252,7 +253,7 @@ function EducationPage() {
                         <span className="font-bold text-ds-primary text-lg">
                           {formatPrice(item.price, item.currency_code)}
                         </span>
-                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-primary rounded-lg group-hover:bg-ds-primary/90 transition-colors">Enroll Now</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-primary rounded-lg group-hover:bg-ds-primary/90 transition-colors">{t(locale, 'education.enroll_now')}</span>
                       </div>
                     </div>
                   </a>
@@ -265,7 +266,7 @@ function EducationPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'verticals.how_it_works')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>

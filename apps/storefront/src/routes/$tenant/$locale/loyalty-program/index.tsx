@@ -2,6 +2,7 @@
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 const fallbackItems = [
   {
@@ -64,13 +65,13 @@ function LoyaltyProgramPage() {
       <div className="bg-gradient-to-r from-ds-warning to-ds-warning text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <span className="text-white">Loyalty Program</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">⭐ Loyalty Program</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'loyaltyProgram.title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
-            Earn points with every purchase and unlock exclusive rewards, discounts, and VIP perks.
+            {t(locale, 'loyaltyProgram.subtitle')}
           </p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>{items.length} tiers</span>
@@ -85,7 +86,7 @@ function LoyaltyProgramPage() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {items.length === 0 ? (
           <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
-            <h3 className="text-lg font-semibold text-ds-foreground mb-2">No loyalty tiers available</h3>
+            <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'loyaltyProgram.no_results')}</h3>
             <p className="text-ds-muted-foreground text-sm">Check back later for our loyalty program details.</p>
           </div>
         ) : (
@@ -127,7 +128,7 @@ function LoyaltyProgramPage() {
                           : "Available to all members"}
                       </div>
                       <button className="px-5 py-2 text-sm font-semibold text-white bg-ds-warning rounded-lg hover:bg-ds-warning/90 transition-colors">
-                        Join Program
+                        {t(locale, 'loyaltyProgram.join_program')}
                       </button>
                     </div>
                   </div>
@@ -140,7 +141,7 @@ function LoyaltyProgramPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'verticals.how_it_works')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-warning text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>

@@ -2,6 +2,7 @@
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/pet-services/")({
   component: PetServicesPage,
@@ -75,20 +76,20 @@ function PetServicesPage() {
       <div className="bg-gradient-to-r from-ds-destructive to-rose-600 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
-            <span className="text-white">Pet Services</span>
+            <span className="text-white">{t(locale, 'petService.breadcrumb')}</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Pet Services</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'petService.hero_title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
-            Discover adorable pets and find the perfect companion for your family.
+            {t(locale, 'petService.hero_subtitle')}
           </p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
-            <span>{items.length} pets available</span>
+            <span>{items.length} {t(locale, 'petService.pets_count')}</span>
             <span>|</span>
-            <span>Verified profiles</span>
+            <span>{t(locale, 'petService.badge_verified')}</span>
             <span>|</span>
-            <span>All breeds</span>
+            <span>{t(locale, 'petService.badge_all_breeds')}</span>
           </div>
         </div>
       </div>
@@ -98,18 +99,18 @@ function PetServicesPage() {
           <aside className="w-full lg:w-72 flex-shrink-0">
             <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'petService.search_label')}</label>
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search pets..."
+                  placeholder={t(locale, 'petService.search_placeholder')}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-destructive"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Species</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'petService.species_label')}</label>
                 <div className="space-y-1">
                   {speciesOptions.map((opt) => (
                     <button
@@ -131,8 +132,8 @@ function PetServicesPage() {
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No pets found</h3>
-                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'verticals.no_results')}</h3>
+                <p className="text-ds-muted-foreground text-sm">{t(locale, 'petService.no_results_hint')}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -196,8 +197,8 @@ function PetServicesPage() {
                       )}
 
                       <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
-                        <span className="text-sm text-ds-muted-foreground">Pet Profile</span>
-                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-destructive rounded-lg group-hover:bg-ds-destructive/90 transition-colors">View Profile</span>
+                        <span className="text-sm text-ds-muted-foreground">{t(locale, 'petService.pet_profile')}</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-destructive rounded-lg group-hover:bg-ds-destructive/90 transition-colors">{t(locale, 'petService.view_profile')}</span>
                       </div>
                     </div>
                   </a>
@@ -210,22 +211,22 @@ function PetServicesPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'verticals.how_it_works')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-destructive text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Browse Pets</h3>
-              <p className="text-sm text-ds-muted-foreground">Explore pet profiles and find the perfect companion for your family.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'petService.step1_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'petService.step1_desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-destructive text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">View Details</h3>
-              <p className="text-sm text-ds-muted-foreground">Check breed info, health records, and personality traits.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'petService.step2_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'petService.step2_desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-destructive text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Connect</h3>
-              <p className="text-sm text-ds-muted-foreground">Schedule a visit or inquire about adoption and pet services.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'petService.step3_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'petService.step3_desc')}</p>
             </div>
           </div>
         </div>

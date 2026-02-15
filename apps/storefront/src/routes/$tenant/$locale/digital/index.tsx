@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { t } from "@/lib/i18n"
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
@@ -109,20 +110,20 @@ function DigitalProductsPage() {
       <div className="bg-gradient-to-r from-ds-primary/100 to-ds-primary text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <span className="text-white">Digital Products</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Digital Products</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'digital_products.title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
             Browse and download premium digital content — ebooks, templates, software, audio, video, and more.
           </p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>{items.length} products available</span>
             <span>|</span>
-            <span>Instant download</span>
+            <span>{t(locale, 'verticals.instant_booking')}</span>
             <span>|</span>
-            <span>Secure files</span>
+            <span>{t(locale, 'verticals.secure_transactions')}</span>
           </div>
         </div>
       </div>
@@ -137,7 +138,7 @@ function DigitalProductsPage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search products..."
+                  placeholder={t(locale, 'digital_products.search_placeholder')}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-primary"
                 />
               </div>
@@ -165,7 +166,7 @@ function DigitalProductsPage() {
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                 </svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No digital products found</h3>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'digital_products.no_results')}</h3>
                 <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
@@ -230,7 +231,7 @@ function DigitalProductsPage() {
                         <span className="font-bold text-ds-primary text-lg">
                           {formatPrice(item.price, item.currency_code)}
                         </span>
-                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-primary rounded-lg group-hover:bg-ds-primary/90 transition-colors">Download</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-primary rounded-lg group-hover:bg-ds-primary/90 transition-colors">{t(locale, 'digital_products.download_now')}</span>
                       </div>
                     </div>
                   </a>
@@ -243,7 +244,7 @@ function DigitalProductsPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'verticals.how_it_works')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>

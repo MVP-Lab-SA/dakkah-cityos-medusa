@@ -2,6 +2,7 @@
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/real-estate/")({
   component: RealEstatePage,
@@ -74,7 +75,7 @@ function RealEstatePage() {
   })
 
   const formatPrice = (price: number | null, currency: string) => {
-    if (!price) return "Contact for pricing"
+    if (!price) return t(locale, 'verticals.contact_pricing')
     const amount = price >= 100 ? price / 100 : price
     return `${amount.toLocaleString()} ${currency}`
   }
@@ -84,20 +85,20 @@ function RealEstatePage() {
       <div className="bg-gradient-to-r from-ds-success to-ds-success/90 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
-            <span className="text-white">Real Estate</span>
+            <span className="text-white">{t(locale, 'realEstate.breadcrumb')}</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Real Estate</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'realEstate.hero_title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
-            Find your perfect property — apartments, villas, offices, and land across top locations.
+            {t(locale, 'realEstate.hero_subtitle')}
           </p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
-            <span>{items.length} properties listed</span>
+            <span>{items.length} {t(locale, 'realEstate.properties_count')}</span>
             <span>|</span>
-            <span>Verified listings</span>
+            <span>{t(locale, 'realEstate.badge_verified')}</span>
             <span>|</span>
-            <span>Sale & Rent</span>
+            <span>{t(locale, 'realEstate.badge_sale_rent')}</span>
           </div>
         </div>
       </div>
@@ -107,18 +108,18 @@ function RealEstatePage() {
           <aside className="w-full lg:w-72 flex-shrink-0">
             <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'realEstate.search_label')}</label>
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search properties..."
+                  placeholder={t(locale, 'realEstate.search_placeholder')}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-success"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Listing Type</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'realEstate.listing_type_label')}</label>
                 <div className="space-y-1">
                   {listingTypeOptions.map((opt) => (
                     <button
@@ -133,7 +134,7 @@ function RealEstatePage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Property Type</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'realEstate.property_type_label')}</label>
                 <div className="space-y-1">
                   {propertyTypeOptions.map((opt) => (
                     <button
@@ -155,8 +156,8 @@ function RealEstatePage() {
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No properties found</h3>
-                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'verticals.no_results')}</h3>
+                <p className="text-ds-muted-foreground text-sm">{t(locale, 'realEstate.no_results_hint')}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -228,7 +229,7 @@ function RealEstatePage() {
                       )}
 
                       <div className="flex justify-end items-center pt-3 mt-3 border-t border-ds-border">
-                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-success rounded-lg group-hover:bg-ds-success/90 transition-colors">View Details</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-success rounded-lg group-hover:bg-ds-success/90 transition-colors">{t(locale, 'verticals.view_details')}</span>
                       </div>
                     </div>
                   </a>
@@ -241,22 +242,22 @@ function RealEstatePage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'verticals.how_it_works')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Search Properties</h3>
-              <p className="text-sm text-ds-muted-foreground">Browse properties by type, location, and budget to find your ideal space.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'realEstate.step1_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'realEstate.step1_desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Schedule a Visit</h3>
-              <p className="text-sm text-ds-muted-foreground">Contact the agent and arrange a viewing at your convenience.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'realEstate.step2_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'realEstate.step2_desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Close the Deal</h3>
-              <p className="text-sm text-ds-muted-foreground">Finalize your purchase or lease with full transparency and support.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'realEstate.step3_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'realEstate.step3_desc')}</p>
             </div>
           </div>
         </div>

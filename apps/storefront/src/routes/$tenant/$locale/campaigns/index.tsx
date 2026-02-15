@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 const hardcodedCampaigns = [
   {
@@ -120,20 +121,20 @@ function CampaignsPage() {
       <div className="bg-gradient-to-r from-ds-destructive to-ds-warning text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
-            <span className="text-white">Campaigns</span>
+            <span className="text-white">{t(locale, 'crowdfunding.breadcrumb')}</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Campaigns & Promotions</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'crowdfunding.hero_title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
-            Discover amazing deals, flash sales, and seasonal promotions across all categories.
+            {t(locale, 'crowdfunding.hero_subtitle')}
           </p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
-            <span>{items.length} active campaigns</span>
+            <span>{items.length} {t(locale, 'crowdfunding.active_campaigns')}</span>
             <span>|</span>
-            <span>Limited time offers</span>
+            <span>{t(locale, 'crowdfunding.badge_limited_time')}</span>
             <span>|</span>
-            <span>Huge savings</span>
+            <span>{t(locale, 'crowdfunding.badge_savings')}</span>
           </div>
         </div>
       </div>
@@ -143,18 +144,18 @@ function CampaignsPage() {
           <aside className="w-full lg:w-72 flex-shrink-0">
             <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'crowdfunding.search_label')}</label>
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search campaigns..."
+                  placeholder={t(locale, 'crowdfunding.search_placeholder')}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Type</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'crowdfunding.type_label')}</label>
                 <div className="space-y-1">
                   {typeOptions.map((opt) => (
                     <button
@@ -176,8 +177,8 @@ function CampaignsPage() {
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No campaigns found</h3>
-                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'verticals.no_results')}</h3>
+                <p className="text-ds-muted-foreground text-sm">{t(locale, 'crowdfunding.no_results_hint')}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -216,7 +217,7 @@ function CampaignsPage() {
 
                       <div className="pt-3 mt-3 border-t border-ds-border flex justify-between items-center">
                         <span className="text-lg font-bold text-ds-destructive">{item.discount} OFF</span>
-                        <button className="px-4 py-1.5 text-xs font-semibold text-white bg-ds-destructive rounded-lg hover:bg-ds-destructive transition-colors">Shop Now</button>
+                        <button className="px-4 py-1.5 text-xs font-semibold text-white bg-ds-destructive rounded-lg hover:bg-ds-destructive transition-colors">{t(locale, 'crowdfunding.shop_now')}</button>
                       </div>
                     </div>
                   </div>
@@ -229,22 +230,22 @@ function CampaignsPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">Never Miss a Deal</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'crowdfunding.how_it_works_title')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-destructive text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">🔔</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Get Notified</h3>
-              <p className="text-sm text-ds-muted-foreground">Enable notifications to be first in line for flash deals.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'crowdfunding.step1_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'crowdfunding.step1_desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-destructive text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">⏰</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Limited Time</h3>
-              <p className="text-sm text-ds-muted-foreground">Act fast — our best campaigns run for a limited time only.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'crowdfunding.step2_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'crowdfunding.step2_desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-destructive text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">🎯</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">All Categories</h3>
-              <p className="text-sm text-ds-muted-foreground">Find promotions across fashion, tech, food, home, and more.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'crowdfunding.step3_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'crowdfunding.step3_desc')}</p>
             </div>
           </div>
         </div>

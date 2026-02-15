@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/returns/")({
   component: ReturnsPage,
@@ -52,7 +53,7 @@ function ReturnsPage() {
       <div className="bg-gradient-to-r from-ds-destructive to-rose-600 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <span className="text-white">Returns</span>
           </div>
@@ -68,7 +69,7 @@ function ReturnsPage() {
         <div className="bg-gradient-to-br from-ds-destructive/10 to-rose-500/5 border border-ds-destructive/20 rounded-xl p-6 mb-8">
           <h3 className="font-semibold text-ds-foreground mb-3">Track Your Return</h3>
           <div className="flex gap-3">
-            <input type="text" value={trackingId} onChange={(e) => setTrackingId(e.target.value)} placeholder="Enter return ID or order number..." className="flex-1 px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-destructive" />
+            <input type="text" value={trackingId} onChange={(e) => setTrackingId(e.target.value)} placeholder={t(locale, 'returns.search_placeholder')} className="flex-1 px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-destructive" />
             <button className="px-6 py-2.5 text-sm font-medium rounded-lg bg-ds-destructive text-white hover:bg-ds-destructive transition-colors">Track</button>
           </div>
         </div>

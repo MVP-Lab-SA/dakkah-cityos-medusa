@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
+import { t } from "@/lib/i18n"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { PetProfileCardBlock } from "@/components/blocks/pet-profile-card-block"
 import { ReviewListBlock } from "@/components/blocks/review-list-block"
@@ -86,7 +87,7 @@ function PetServiceDetailPage() {
       <div className="bg-ds-card border-b border-ds-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center gap-2 text-sm text-ds-muted-foreground">
-            <Link to={`${prefix}` as any} className="hover:text-ds-foreground transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-ds-foreground transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <Link to={`${prefix}/pet-services` as any} className="hover:text-ds-foreground transition-colors">Pet Services</Link>
             <span>/</span>

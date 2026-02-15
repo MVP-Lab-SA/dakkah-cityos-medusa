@@ -2,6 +2,7 @@
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 const fallbackItems = [
   { id: "ti-1", name: "iPhone 15 Pro", category: "phones", thumbnail: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600&q=80", description: "Trade in your iPhone 15 Pro for store credit. All storage sizes accepted.", condition_requirements: "Powers on, no cracks, iCloud unlocked", trade_in_min: 35000, trade_in_max: 65000 },
@@ -69,13 +70,13 @@ function TradeInPage() {
       <div className="bg-gradient-to-r from-ds-success to-ds-success text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <span className="text-white">Trade-In Program</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">♻️ Trade-In Program</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'trade_in.title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
-            Trade in your old devices for instant store credit — easy, sustainable, and rewarding.
+            {t(locale, 'trade_in.subtitle')}
           </p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>{items.length} eligible products</span>
@@ -93,7 +94,7 @@ function TradeInPage() {
             <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
               <div>
                 <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
-                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search products..." className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring" />
+                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t(locale, 'trade_in.search_placeholder')} className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-ds-foreground mb-2">Category</label>
@@ -112,7 +113,7 @@ function TradeInPage() {
             {filteredItems.length === 0 ? (
               <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182" /></svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No trade-in products found</h3>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'trade_in.no_results')}</h3>
                 <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
@@ -150,7 +151,7 @@ function TradeInPage() {
 
                       <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
                         <span className="text-xs text-ds-muted-foreground">Free shipping label</span>
-                        <span className="px-4 py-1.5 text-xs font-semibold text-white bg-ds-success rounded-lg group-hover:bg-ds-success/90 transition-colors">Start Trade-In</span>
+                        <span className="px-4 py-1.5 text-xs font-semibold text-white bg-ds-success rounded-lg group-hover:bg-ds-success/90 transition-colors">{t(locale, 'trade_in.start_trade_in')}</span>
                       </div>
                     </div>
                   </div>
@@ -163,7 +164,7 @@ function TradeInPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How Trade-In Works</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'verticals.how_it_works')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>

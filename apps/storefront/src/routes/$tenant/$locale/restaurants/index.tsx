@@ -2,6 +2,7 @@
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/restaurants/")({
   component: RestaurantsPage,
@@ -77,20 +78,20 @@ function RestaurantsPage() {
       <div className="bg-gradient-to-r from-ds-warning to-ds-destructive text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
-            <span className="text-white">Restaurants</span>
+            <span className="text-white">{t(locale, 'restaurant.breadcrumb')}</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Restaurants & Dining</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'restaurant.hero_title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
-            Discover the finest dining experiences from traditional Saudi cuisine to international flavors.
+            {t(locale, 'restaurant.hero_subtitle')}
           </p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
-            <span>{items.length} restaurants available</span>
+            <span>{items.length} {t(locale, 'restaurant.restaurants_count')}</span>
             <span>|</span>
-            <span>Verified reviews</span>
+            <span>{t(locale, 'restaurant.badge_verified')}</span>
             <span>|</span>
-            <span>All cuisines</span>
+            <span>{t(locale, 'restaurant.badge_all_cuisines')}</span>
           </div>
         </div>
       </div>
@@ -100,18 +101,18 @@ function RestaurantsPage() {
           <aside className="w-full lg:w-72 flex-shrink-0">
             <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'restaurant.search_label')}</label>
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search restaurants..."
+                  placeholder={t(locale, 'restaurant.search_placeholder')}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-warning"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Cuisine Type</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'restaurant.cuisine_label')}</label>
                 <div className="space-y-1">
                   {cuisineOptions.map((opt) => (
                     <button
@@ -126,7 +127,7 @@ function RestaurantsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Price Range</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'restaurant.price_label')}</label>
                 <div className="space-y-1">
                   {priceRangeOptions.map((opt) => (
                     <button
@@ -148,8 +149,8 @@ function RestaurantsPage() {
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1" />
                 </svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No restaurants found</h3>
-                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'verticals.no_results')}</h3>
+                <p className="text-ds-muted-foreground text-sm">{t(locale, 'restaurant.no_results_hint')}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -228,7 +229,7 @@ function RestaurantsPage() {
                         {item.phone && (
                           <span className="text-xs text-ds-muted-foreground">{item.phone}</span>
                         )}
-                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-warning rounded-lg group-hover:bg-ds-warning transition-colors ml-auto">View Menu</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-warning rounded-lg group-hover:bg-ds-warning transition-colors ml-auto">{t(locale, 'restaurant.view_menu')}</span>
                       </div>
                     </div>
                   </a>
@@ -241,22 +242,22 @@ function RestaurantsPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'verticals.how_it_works')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-warning text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Browse Restaurants</h3>
-              <p className="text-sm text-ds-muted-foreground">Explore restaurants by cuisine, price range, or location to find your perfect meal.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'restaurant.step1_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'restaurant.step1_desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-warning text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">View Menu & Reviews</h3>
-              <p className="text-sm text-ds-muted-foreground">Check the menu, read reviews from other diners, and see photos of the dishes.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'restaurant.step2_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'restaurant.step2_desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-warning text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Order or Reserve</h3>
-              <p className="text-sm text-ds-muted-foreground">Place your order for delivery or pickup, or reserve a table for dine-in.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'restaurant.step3_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'restaurant.step3_desc')}</p>
             </div>
           </div>
         </div>

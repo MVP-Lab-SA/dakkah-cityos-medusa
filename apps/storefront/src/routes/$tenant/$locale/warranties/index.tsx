@@ -2,6 +2,7 @@
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/warranties/")({
   component: WarrantiesPage,
@@ -74,7 +75,7 @@ function WarrantiesPage() {
   })
 
   const formatPrice = (price: number | null, currency: string) => {
-    if (!price) return "Get Quote"
+    if (!price) return t(locale, 'verticals.contact_pricing')
     const amount = price >= 100 ? price / 100 : price
     return `${amount.toLocaleString()} ${currency}`
   }
@@ -93,13 +94,13 @@ function WarrantiesPage() {
       <div className="bg-gradient-to-r from-ds-success to-ds-success text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <span className="text-white">Warranties</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Warranty Plans</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'warranty.title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
-            Protect your purchases with comprehensive warranty coverage — peace of mind for everything you own.
+            {t(locale, 'warranty.subtitle')}
           </p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>{items.length} plans available</span>
@@ -121,7 +122,7 @@ function WarrantiesPage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search warranties..."
+                  placeholder={t(locale, 'warranty.search_placeholder')}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-success"
                 />
               </div>
@@ -149,7 +150,7 @@ function WarrantiesPage() {
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No warranty plans found</h3>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'warranty.no_results')}</h3>
                 <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
@@ -218,7 +219,7 @@ function WarrantiesPage() {
                         <span className="font-bold text-ds-success text-lg">
                           {formatPrice(item.price, item.currency_code)}
                         </span>
-                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-success rounded-lg group-hover:bg-ds-success/90 transition-colors">Get Protection</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-success rounded-lg group-hover:bg-ds-success/90 transition-colors">{t(locale, 'warranty.get_protection')}</span>
                       </div>
                     </div>
                   </a>
@@ -231,7 +232,7 @@ function WarrantiesPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">Why Choose Our Warranties?</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'warranty.why_choose')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>

@@ -3,6 +3,7 @@ import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { NewsletterBlock } from "@/components/blocks/newsletter-block"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 function normalizeDetail(item: any) {
   if (!item) return null
@@ -80,7 +81,7 @@ function NewsletterDetailPage() {
       <div className="bg-ds-card border-b border-ds-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center gap-2 text-sm text-ds-muted-foreground">
-            <Link to={`${prefix}` as any} className="hover:text-ds-foreground transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-ds-foreground transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <Link to={`${prefix}/newsletter` as any} className="hover:text-ds-foreground transition-colors">Newsletters</Link>
             <span>/</span>
@@ -211,7 +212,7 @@ function NewsletterDetailPage() {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Enter your email"
+                      placeholder={t(locale, 'newsletter.email_placeholder')}
                       required
                       className="w-full px-3 py-2 border border-ds-border rounded-lg text-ds-foreground bg-ds-background focus:outline-none focus:ring-2 focus:ring-ds-primary text-sm"
                     />

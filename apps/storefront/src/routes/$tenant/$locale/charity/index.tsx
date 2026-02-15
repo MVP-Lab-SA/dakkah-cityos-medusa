@@ -2,6 +2,7 @@
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/charity/")({
   component: CharityPage,
@@ -92,11 +93,11 @@ function CharityPage() {
       <div className="bg-gradient-to-r from-ds-success to-ds-success text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <span className="text-white">Charity</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Charity & Giving</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'charity.title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
             Make a difference — support causes that matter to you and help change lives.
           </p>
@@ -120,7 +121,7 @@ function CharityPage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search campaigns..."
+                  placeholder={t(locale, 'charity.search_placeholder')}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring"
                 />
               </div>
@@ -148,7 +149,7 @@ function CharityPage() {
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No campaigns found</h3>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'charity.no_results')}</h3>
                 <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
@@ -216,7 +217,7 @@ function CharityPage() {
 
                         <div className="pt-3 mt-3 border-t border-ds-border flex justify-between items-center">
                           <span className="text-sm font-medium text-ds-success">{Math.round(progress)}% funded</span>
-                          <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-success rounded-lg group-hover:bg-ds-success transition-colors">Donate Now</span>
+                          <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-success rounded-lg group-hover:bg-ds-success transition-colors">{t(locale, 'charity.donate_now')}</span>
                         </div>
                       </div>
                     </a>
@@ -230,7 +231,7 @@ function CharityPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How Your Donation Helps</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'verticals.how_it_works')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">🎯</div>

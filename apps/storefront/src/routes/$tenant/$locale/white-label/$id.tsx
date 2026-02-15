@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
+import { t } from "@/lib/i18n"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
 import { ReviewListBlock } from "@/components/blocks/review-list-block"
@@ -71,7 +72,7 @@ function WhiteLabelDetailPage() {
       <div className="bg-ds-card border-b border-ds-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center gap-2 text-sm text-ds-muted-foreground">
-            <Link to={`${prefix}` as any} className="hover:text-ds-foreground transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-ds-foreground transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <Link to={`${prefix}/white-label` as any} className="hover:text-ds-foreground transition-colors">White Label</Link>
             <span>/</span>
@@ -105,7 +106,7 @@ function WhiteLabelDetailPage() {
               <h1 className="text-2xl sm:text-3xl font-bold text-ds-foreground">{product.title || product.name}</h1>
               <div className="flex flex-wrap items-center gap-4 mt-3">
                 <span className="text-2xl font-bold text-ds-primary">
-                  {product.price != null ? `$${Number(product.price || 0).toLocaleString()}` : "Contact for pricing"}
+                  {product.price != null ? `$${Number(product.price || 0).toLocaleString()}` : t(locale, 'verticals.contact_pricing')}
                 </span>
                 {product.min_order_qty && (
                   <span className="px-3 py-1 text-xs font-medium rounded-full bg-ds-muted text-ds-muted-foreground">
@@ -168,7 +169,7 @@ function WhiteLabelDetailPage() {
               <div className="bg-ds-background border border-ds-border rounded-xl p-6 space-y-4">
                 <div className="text-center">
                   <p className="text-3xl font-bold text-ds-foreground">
-                    {product.price != null ? `$${Number(product.price || 0).toLocaleString()}` : "Contact for pricing"}
+                    {product.price != null ? `$${Number(product.price || 0).toLocaleString()}` : t(locale, 'verticals.contact_pricing')}
                   </p>
                   {product.min_order_qty && (
                     <p className="text-xs text-ds-muted-foreground mt-1">Minimum order: {product.min_order_qty} units</p>

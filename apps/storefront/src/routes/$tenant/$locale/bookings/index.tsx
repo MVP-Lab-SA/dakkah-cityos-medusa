@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { t } from "@/lib/i18n"
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
@@ -72,7 +73,7 @@ function BookingsPage() {
   })
 
   const formatPrice = (price: number | null, currency: string) => {
-    if (!price) return "Contact for pricing"
+    if (!price) return t(locale, 'verticals.contact_pricing')
     const amount = price >= 100 ? price / 100 : price
     return `${amount.toLocaleString()} ${currency}`
   }
@@ -82,20 +83,20 @@ function BookingsPage() {
       <div className="bg-gradient-to-r from-ds-primary to-ds-primary/90 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <span className="text-white">Bookings</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Book a Service</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'bookings.title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
-            Schedule consultations, classes, experiences, and wellness sessions with top-rated providers across Saudi Arabia.
+            {t(locale, 'bookings.hero_subtitle')}
           </p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>{items.length} services available</span>
             <span>|</span>
-            <span>Instant booking</span>
+            <span>{t(locale, 'verticals.instant_booking')}</span>
             <span>|</span>
-            <span>Verified providers</span>
+            <span>{t(locale, 'verticals.verified_providers')}</span>
           </div>
         </div>
       </div>
@@ -110,7 +111,7 @@ function BookingsPage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search services..."
+                  placeholder={t(locale, 'bookings.search_placeholder')}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring"
                 />
               </div>
@@ -138,7 +139,7 @@ function BookingsPage() {
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No services found</h3>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'bookings.no_results')}</h3>
                 <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
@@ -222,7 +223,7 @@ function BookingsPage() {
                         <span className="font-bold text-ds-primary text-lg">
                           {formatPrice(item.price, item.currency)}
                         </span>
-                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-primary rounded-lg group-hover:bg-ds-primary/90 transition-colors">Book Now</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-primary rounded-lg group-hover:bg-ds-primary/90 transition-colors">{t(locale, 'bookings.book_now')}</span>
                       </div>
                     </div>
                   </a>
@@ -235,7 +236,7 @@ function BookingsPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'verticals.how_it_works')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>

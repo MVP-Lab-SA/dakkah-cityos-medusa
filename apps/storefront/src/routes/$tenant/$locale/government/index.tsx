@@ -2,6 +2,7 @@
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 const fallbackItems = [
   { id: "gov-1", name: "Business License", department: "municipal", description: "Register and obtain a license to operate your business within the municipality. Required for all commercial activities.", icon: "briefcase", required_documents: ["ID/Passport copy", "Commercial registration", "Lease agreement", "Tax registration certificate"], processing_time: "5-7 business days", fee: 25000 },
@@ -78,20 +79,20 @@ function GovernmentPage() {
       <div className="bg-gradient-to-r from-ds-primary to-ds-primary/80 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
-            <span className="text-white">Government Services</span>
+            <span className="text-white">{t(locale, 'government.breadcrumb')}</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">🏛️ Government Services</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'government.hero_title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
-            Access permits, licenses, and certifications from government departments — all in one place.
+            {t(locale, 'government.hero_subtitle')}
           </p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
-            <span>{items.length} services available</span>
+            <span>{items.length} {t(locale, 'government.services_available')}</span>
             <span>|</span>
-            <span>Online applications</span>
+            <span>{t(locale, 'government.badge_online')}</span>
             <span>|</span>
-            <span>Track your status</span>
+            <span>{t(locale, 'government.badge_tracking')}</span>
           </div>
         </div>
       </div>
@@ -101,17 +102,17 @@ function GovernmentPage() {
           <aside className="w-full lg:w-72 flex-shrink-0">
             <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'government.search_label')}</label>
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search services..."
+                  placeholder={t(locale, 'government.search_placeholder')}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Department</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'government.department_label')}</label>
                 <div className="space-y-1">
                   {departmentOptions.map((opt) => (
                     <button
@@ -133,8 +134,8 @@ function GovernmentPage() {
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No services found</h3>
-                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'verticals.no_results')}</h3>
+                <p className="text-ds-muted-foreground text-sm">{t(locale, 'government.no_results_hint')}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -159,7 +160,7 @@ function GovernmentPage() {
 
                     {item.required_documents && (
                       <div className="mb-4">
-                        <p className="text-xs font-medium text-ds-foreground mb-1.5">Required Documents:</p>
+                        <p className="text-xs font-medium text-ds-foreground mb-1.5">{t(locale, 'government.required_documents')}:</p>
                         <ul className="space-y-1">
                           {item.required_documents.slice(0, 3).map((doc: string, idx: number) => (
                             <li key={idx} className="text-xs text-ds-muted-foreground flex items-center gap-1.5">
@@ -179,20 +180,20 @@ function GovernmentPage() {
                         <div className="flex justify-between">
                           <span className="text-ds-muted-foreground flex items-center gap-1">
                             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                            Processing
+                            {t(locale, 'government.processing')}
                           </span>
                           <span className="font-medium text-ds-foreground">{item.processing_time}</span>
                         </div>
                       )}
                       <div className="flex justify-between">
-                        <span className="text-ds-muted-foreground">Fee</span>
+                        <span className="text-ds-muted-foreground">{t(locale, 'government.fee')}</span>
                         <span className="font-bold text-ds-foreground">{formatFee(item.fee)}</span>
                       </div>
                     </div>
 
                     <div className="pt-3 border-t border-ds-border">
                       <span className="inline-flex items-center gap-1 px-4 py-2 text-sm font-semibold text-ds-primary-foreground bg-ds-primary rounded-lg group-hover:bg-ds-primary/80 transition-colors w-full justify-center">
-                        Apply Now
+                        {t(locale, 'government.apply_now')}
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                       </span>
                     </div>
@@ -206,22 +207,22 @@ function GovernmentPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">Application Process</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'government.application_process')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-primary text-ds-primary-foreground flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Submit Application</h3>
-              <p className="text-sm text-ds-muted-foreground">Fill out the form and upload required documents online.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'government.step1_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'government.step1_desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-primary text-ds-primary-foreground flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Review & Processing</h3>
-              <p className="text-sm text-ds-muted-foreground">Your application is reviewed by the relevant department.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'government.step2_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'government.step2_desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-primary text-ds-primary-foreground flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Receive Approval</h3>
-              <p className="text-sm text-ds-muted-foreground">Get your permit or license delivered digitally.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'government.step3_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'government.step3_desc')}</p>
             </div>
           </div>
         </div>

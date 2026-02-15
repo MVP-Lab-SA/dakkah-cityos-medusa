@@ -2,6 +2,7 @@
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/parking/")({
   component: ParkingPage,
@@ -67,7 +68,7 @@ function ParkingPage() {
   })
 
   const formatPrice = (price: number | null, currency: string) => {
-    if (!price) return "Contact for pricing"
+    if (!price) return t(locale, 'verticals.contact_pricing')
     const amount = price >= 100 ? price / 100 : price
     return `${amount.toLocaleString()} ${currency}/hr`
   }
@@ -97,20 +98,20 @@ function ParkingPage() {
       <div className="bg-gradient-to-r from-ds-primary to-ds-primary/90 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
-            <span className="text-white">Parking</span>
+            <span className="text-white">{t(locale, 'parking.breadcrumb')}</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Parking</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'parking.hero_title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
-            Find and reserve parking spots in covered garages, open lots, underground facilities, and valet services.
+            {t(locale, 'parking.hero_subtitle')}
           </p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
-            <span>{items.length} facilities available</span>
+            <span>{items.length} {t(locale, 'parking.facilities_count')}</span>
             <span>|</span>
-            <span>Instant reservation</span>
+            <span>{t(locale, 'parking.badge_instant')}</span>
             <span>|</span>
-            <span>24/7 access</span>
+            <span>{t(locale, 'parking.badge_24_7')}</span>
           </div>
         </div>
       </div>
@@ -120,18 +121,18 @@ function ParkingPage() {
           <aside className="w-full lg:w-72 flex-shrink-0">
             <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'parking.search_label')}</label>
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search parking..."
+                  placeholder={t(locale, 'parking.search_placeholder')}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-primary"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Zone Type</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'parking.zone_type_label')}</label>
                 <div className="space-y-1">
                   {zoneTypeOptions.map((opt) => (
                     <button
@@ -153,8 +154,8 @@ function ParkingPage() {
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No parking facilities found</h3>
-                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'verticals.no_results')}</h3>
+                <p className="text-ds-muted-foreground text-sm">{t(locale, 'parking.no_results_hint')}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -213,7 +214,7 @@ function ParkingPage() {
                         <span className="font-bold text-ds-primary text-lg">
                           {formatPrice(item.price_per_hour, item.currency)}
                         </span>
-                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-primary rounded-lg group-hover:bg-ds-primary/90 transition-colors">Reserve Spot</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-primary rounded-lg group-hover:bg-ds-primary/90 transition-colors">{t(locale, 'parking.reserve_spot')}</span>
                       </div>
                     </div>
                   </a>
@@ -226,22 +227,22 @@ function ParkingPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'verticals.how_it_works')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Find a Spot</h3>
-              <p className="text-sm text-ds-muted-foreground">Search by location and filter by type to find the perfect parking spot.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'parking.step1_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'parking.step1_desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Reserve Online</h3>
-              <p className="text-sm text-ds-muted-foreground">Book your spot instantly and get a confirmation with directions.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'parking.step2_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'parking.step2_desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Park & Go</h3>
-              <p className="text-sm text-ds-muted-foreground">Arrive at the facility and enjoy hassle-free parking with your reservation.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'parking.step3_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'parking.step3_desc')}</p>
             </div>
           </div>
         </div>

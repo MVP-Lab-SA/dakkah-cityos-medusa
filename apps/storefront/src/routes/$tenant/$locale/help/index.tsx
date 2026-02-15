@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/help/")({
   component: HelpPage,
@@ -56,14 +57,14 @@ function HelpPage() {
       <div className="bg-gradient-to-r from-ds-primary to-ds-info text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <span className="text-white">Help</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Help Center</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">Find answers to common questions, browse support topics, or contact our team for assistance.</p>
           <div className="mt-6 max-w-lg mx-auto">
-            <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search for help..." className="w-full px-4 py-3 text-sm rounded-lg bg-ds-card/20 backdrop-blur text-white placeholder:text-white/60 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50" />
+            <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t(locale, 'help.search_placeholder')} className="w-full px-4 py-3 text-sm rounded-lg bg-ds-card/20 backdrop-blur text-white placeholder:text-white/60 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50" />
           </div>
         </div>
       </div>

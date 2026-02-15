@@ -2,6 +2,7 @@
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 const fallbackItems = [
   { id: "vd-1", name: "Premium Ballpoint Pens", category: "office", thumbnail: "https://images.unsplash.com/photo-1585336261022-680e295ce3fe?w=600&q=80", description: "Smooth-writing metal ballpoint pens with ergonomic grip. Blue ink. Ideal for corporate gifts.", tiers: [{ qty: "10+", price: 499 }, { qty: "50+", price: 399 }, { qty: "100+", price: 299 }], max_savings: 40 },
@@ -69,20 +70,20 @@ function VolumeDealsPage() {
       <div className="bg-gradient-to-r from-ds-primary to-ds-info text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
-            <span className="text-white">Volume Deals</span>
+            <span className="text-white">{t(locale, 'volume_deals.breadcrumb')}</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">📦 Volume Deals</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'volume_deals.hero_title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
-            Buy more, save more — tiered pricing that rewards bulk orders with bigger discounts.
+            {t(locale, 'volume_deals.hero_subtitle')}
           </p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
-            <span>{items.length} products</span>
+            <span>{items.length} {t(locale, 'volume_deals.products_count')}</span>
             <span>|</span>
-            <span>Up to 57% savings</span>
+            <span>{t(locale, 'volume_deals.badge_savings')}</span>
             <span>|</span>
-            <span>Tiered pricing</span>
+            <span>{t(locale, 'volume_deals.badge_tiered')}</span>
           </div>
         </div>
       </div>
@@ -92,11 +93,11 @@ function VolumeDealsPage() {
           <aside className="w-full lg:w-72 flex-shrink-0">
             <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
-                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search products..." className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring" />
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'volume_deals.search_label')}</label>
+                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t(locale, 'volume_deals.search_placeholder')} className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Category</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'volume_deals.category_label')}</label>
                 <div className="space-y-1">
                   {categoryOptions.map((opt) => (
                     <button key={opt} onClick={() => setCategoryFilter(opt)} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${categoryFilter === opt ? "bg-ds-primary text-white" : "text-ds-foreground hover:bg-ds-muted"}`}>
@@ -112,8 +113,8 @@ function VolumeDealsPage() {
             {filteredItems.length === 0 ? (
               <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No volume deals found</h3>
-                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'verticals.no_results')}</h3>
+                <p className="text-ds-muted-foreground text-sm">{t(locale, 'volume_deals.no_results_hint')}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -136,7 +137,7 @@ function VolumeDealsPage() {
 
                       {item.tiers && (
                         <div className="mt-3 space-y-1.5">
-                          <p className="text-xs font-medium text-ds-foreground">Pricing tiers:</p>
+                          <p className="text-xs font-medium text-ds-foreground">{t(locale, 'volume_deals.pricing_tiers')}:</p>
                           {item.tiers.map((tier: any, idx: number) => (
                             <div key={idx} className={`flex justify-between items-center text-sm px-3 py-1.5 rounded-lg ${idx === item.tiers.length - 1 ? "bg-ds-success/10 border border-ds-success/30" : "bg-ds-muted/50"}`}>
                               <span className="font-medium text-ds-foreground">{tier.qty}</span>
@@ -147,8 +148,8 @@ function VolumeDealsPage() {
                       )}
 
                       <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
-                        <span className="text-xs text-ds-success font-medium">Best value at 100+ units</span>
-                        <span className="px-4 py-1.5 text-xs font-semibold text-white bg-ds-primary rounded-lg group-hover:bg-ds-primary/90 transition-colors">Order Bulk</span>
+                        <span className="text-xs text-ds-success font-medium">{t(locale, 'volume_deals.best_value')}</span>
+                        <span className="px-4 py-1.5 text-xs font-semibold text-white bg-ds-primary rounded-lg group-hover:bg-ds-primary/90 transition-colors">{t(locale, 'volume_deals.order_bulk')}</span>
                       </div>
                     </div>
                   </div>
@@ -161,22 +162,22 @@ function VolumeDealsPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How Volume Deals Work</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'volume_deals.how_it_works_title')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Choose Quantity</h3>
-              <p className="text-sm text-ds-muted-foreground">Select your quantity tier for the best price per unit.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'volume_deals.step1_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'volume_deals.step1_desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Place Order</h3>
-              <p className="text-sm text-ds-muted-foreground">Higher quantities unlock bigger discounts automatically.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'volume_deals.step2_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'volume_deals.step2_desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Save More</h3>
-              <p className="text-sm text-ds-muted-foreground">Enjoy wholesale pricing and free shipping on large orders.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'volume_deals.step3_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'volume_deals.step3_desc')}</p>
             </div>
           </div>
         </div>

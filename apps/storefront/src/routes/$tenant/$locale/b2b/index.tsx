@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { t } from "@/lib/i18n"
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
@@ -63,20 +64,20 @@ function B2BMarketplacePage() {
       <div className="bg-gradient-to-r from-ds-primary to-ds-primary/80 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <span className="text-white">B2B Marketplace</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">🏢 B2B Marketplace</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'b2b.title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
             Connect with verified business partners, suppliers, and service providers across industries.
           </p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>{items.length} companies</span>
             <span>|</span>
-            <span>Verified partners</span>
+            <span>{t(locale, 'verticals.verified_providers')}</span>
             <span>|</span>
-            <span>Direct contact</span>
+            <span>{t(locale, 'b2b.contact_supplier')}</span>
           </div>
         </div>
       </div>
@@ -87,7 +88,7 @@ function B2BMarketplacePage() {
             <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
               <div>
                 <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
-                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search companies..." className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring" />
+                <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t(locale, 'b2b.search_placeholder')} className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-ds-foreground mb-2">Industry</label>
@@ -108,7 +109,7 @@ function B2BMarketplacePage() {
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 0h.008v.008h-.008V7.5z" />
                 </svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No B2B companies found</h3>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'b2b.no_results')}</h3>
                 <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
@@ -162,7 +163,7 @@ function B2BMarketplacePage() {
 
                       <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
                         <span className="text-xs text-ds-muted-foreground">Verified partner</span>
-                        <span className="px-4 py-1.5 text-xs font-semibold text-ds-primary-foreground bg-ds-primary rounded-lg group-hover:bg-ds-primary/80 transition-colors">Contact Supplier</span>
+                        <span className="px-4 py-1.5 text-xs font-semibold text-ds-primary-foreground bg-ds-primary rounded-lg group-hover:bg-ds-primary/80 transition-colors">{t(locale, 'b2b.contact_supplier')}</span>
                       </div>
                     </div>
                   </div>

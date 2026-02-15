@@ -2,6 +2,7 @@
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 const fallbackItems = [
   { id: "nl-1", name: "Tech Trends Weekly", topic: "technology", thumbnail: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80", edition_date: "2026-02-10", topics_covered: ["AI & Machine Learning", "Web3 Updates", "Cloud Computing"], description: "Stay ahead with the latest technology trends, product launches, and industry insights." },
@@ -63,20 +64,20 @@ function NewsletterPage() {
       <div className="bg-gradient-to-r from-ds-primary to-ds-primary text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
-            <span className="text-white">Newsletter</span>
+            <span className="text-white">{t(locale, 'newsletter.breadcrumb')}</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">📬 Newsletter</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'newsletter.hero_title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
-            Stay informed with curated content — browse our newsletter editions and never miss an update.
+            {t(locale, 'newsletter.hero_subtitle')}
           </p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
-            <span>{items.length} editions</span>
+            <span>{items.length} {t(locale, 'newsletter.editions_count')}</span>
             <span>|</span>
-            <span>Weekly updates</span>
+            <span>{t(locale, 'newsletter.badge_weekly')}</span>
             <span>|</span>
-            <span>Free to read</span>
+            <span>{t(locale, 'newsletter.badge_free')}</span>
           </div>
         </div>
       </div>
@@ -86,17 +87,17 @@ function NewsletterPage() {
           <aside className="w-full lg:w-72 flex-shrink-0">
             <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'newsletter.search_label')}</label>
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search newsletters..."
+                  placeholder={t(locale, 'newsletter.search_placeholder')}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Topic</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'newsletter.topic_label')}</label>
                 <div className="space-y-1">
                   {topicOptions.map((opt) => (
                     <button
@@ -118,8 +119,8 @@ function NewsletterPage() {
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
                 </svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No newsletters found</h3>
-                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'verticals.no_results')}</h3>
+                <p className="text-ds-muted-foreground text-sm">{t(locale, 'newsletter.no_results_hint')}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -155,7 +156,7 @@ function NewsletterPage() {
 
                       {item.topics_covered && (
                         <div className="mt-3">
-                          <p className="text-xs text-ds-muted-foreground mb-1.5">Topics covered:</p>
+                          <p className="text-xs text-ds-muted-foreground mb-1.5">{t(locale, 'newsletter.topics_covered')}:</p>
                           <div className="flex flex-wrap gap-1.5">
                             {item.topics_covered.map((topic: string) => (
                               <span key={topic} className="px-2 py-0.5 bg-ds-info/10 text-ds-info rounded text-xs font-medium">{topic}</span>
@@ -166,9 +167,9 @@ function NewsletterPage() {
 
                       <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
                         <span className="text-xs text-ds-muted-foreground">
-                          {item.edition_date ? new Date(item.edition_date).toLocaleDateString() : "Recent edition"}
+                          {item.edition_date ? new Date(item.edition_date).toLocaleDateString() : t(locale, 'newsletter.recent_edition')}
                         </span>
-                        <span className="px-4 py-1.5 text-xs font-semibold text-white bg-ds-primary rounded-lg group-hover:bg-ds-primary/90 transition-colors">Read Newsletter</span>
+                        <span className="px-4 py-1.5 text-xs font-semibold text-white bg-ds-primary rounded-lg group-hover:bg-ds-primary/90 transition-colors">{t(locale, 'newsletter.read_newsletter')}</span>
                       </div>
                     </div>
                   </div>
@@ -181,22 +182,22 @@ function NewsletterPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">Stay Connected</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'newsletter.stay_connected')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Browse Topics</h3>
-              <p className="text-sm text-ds-muted-foreground">Find newsletters that match your interests.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'newsletter.step1_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'newsletter.step1_desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Read & Learn</h3>
-              <p className="text-sm text-ds-muted-foreground">Access curated content from industry experts.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'newsletter.step2_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'newsletter.step2_desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Subscribe</h3>
-              <p className="text-sm text-ds-muted-foreground">Get weekly updates delivered to your inbox.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'newsletter.step3_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'newsletter.step3_desc')}</p>
             </div>
           </div>
         </div>

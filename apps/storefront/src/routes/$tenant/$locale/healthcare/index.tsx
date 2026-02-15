@@ -2,6 +2,7 @@
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/healthcare/")({
   component: HealthcarePage,
@@ -70,7 +71,7 @@ function HealthcarePage() {
   })
 
   const formatFee = (fee: number | null, currency: string) => {
-    if (!fee) return "Contact for pricing"
+    if (!fee) return t(locale, 'verticals.contact_pricing')
     const amount = fee >= 100 ? fee / 100 : fee
     return `${amount.toLocaleString()} ${currency.toUpperCase()}`
   }
@@ -85,20 +86,20 @@ function HealthcarePage() {
       <div className="bg-gradient-to-r from-ds-primary to-ds-info text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <span className="text-white">Healthcare</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Healthcare</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'healthcare.title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
-            Find trusted healthcare professionals and book appointments with top-rated doctors.
+            {t(locale, 'healthcare.hero_subtitle')}
           </p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>{items.length} providers</span>
             <span>|</span>
-            <span>Verified credentials</span>
+            <span>{t(locale, 'verticals.verified_providers')}</span>
             <span>|</span>
-            <span>Online booking</span>
+            <span>{t(locale, 'verticals.instant_booking')}</span>
           </div>
         </div>
       </div>
@@ -113,7 +114,7 @@ function HealthcarePage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search doctors..."
+                  placeholder={t(locale, 'healthcare.search_placeholder')}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-primary"
                 />
               </div>
@@ -141,7 +142,7 @@ function HealthcarePage() {
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No healthcare providers found</h3>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'healthcare.no_results')}</h3>
                 <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
@@ -226,7 +227,7 @@ function HealthcarePage() {
                         <span className="font-bold text-ds-primary text-lg">
                           {formatFee(item.consultation_fee, item.currency_code)}
                         </span>
-                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-primary rounded-lg group-hover:bg-ds-primary/90 transition-colors">Book Appointment</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-primary rounded-lg group-hover:bg-ds-primary/90 transition-colors">{t(locale, 'healthcare.book_appointment')}</span>
                       </div>
                     </a>
                   )
@@ -239,7 +240,7 @@ function HealthcarePage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'verticals.how_it_works')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>

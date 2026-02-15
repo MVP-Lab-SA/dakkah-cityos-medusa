@@ -2,6 +2,7 @@
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/insurance/")({
   component: InsurancePage,
@@ -70,7 +71,7 @@ function InsurancePage() {
   }
 
   const formatPrice = (price: number | null, currency: string) => {
-    if (!price) return "Get Quote"
+    if (!price) return t(locale, 'insurance.get_quote')
     const amount = price >= 100 ? price / 100 : price
     return `${amount.toLocaleString()} ${currency.toUpperCase()}`
   }
@@ -90,20 +91,20 @@ function InsurancePage() {
       <div className="bg-gradient-to-r from-ds-info to-ds-success/90 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <span className="text-white">Insurance</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Insurance Plans</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'insurance.title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
             Protect what matters most with comprehensive coverage options tailored to your needs.
           </p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>{items.length} plans available</span>
             <span>|</span>
-            <span>Trusted providers</span>
+            <span>{t(locale, 'verticals.verified_providers')}</span>
             <span>|</span>
-            <span>Instant quotes</span>
+            <span>{t(locale, 'verticals.instant_booking')}</span>
           </div>
         </div>
       </div>
@@ -118,7 +119,7 @@ function InsurancePage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search insurance plans..."
+                  placeholder={t(locale, 'insurance.search_placeholder')}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-info"
                 />
               </div>
@@ -146,7 +147,7 @@ function InsurancePage() {
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No insurance plans found</h3>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'insurance.no_results')}</h3>
                 <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
@@ -209,7 +210,7 @@ function InsurancePage() {
                           <span className="font-bold text-ds-info text-lg">
                             {formatPrice(item.price, item.currency_code)}
                           </span>
-                          <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-info rounded-lg group-hover:bg-ds-info/90 transition-colors">Get Quote</span>
+                          <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-info rounded-lg group-hover:bg-ds-info/90 transition-colors">{t(locale, 'insurance.get_quote')}</span>
                         </div>
                       </div>
                     </a>
@@ -223,7 +224,7 @@ function InsurancePage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'verticals.how_it_works')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-info text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>

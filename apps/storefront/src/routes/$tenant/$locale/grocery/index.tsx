@@ -2,6 +2,7 @@
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/grocery/")({
   component: GroceryPage,
@@ -70,7 +71,7 @@ function GroceryPage() {
   })
 
   const formatPrice = (price: number | null, currency: string, unit: string | null) => {
-    if (!price) return "Price TBD"
+    if (!price) return t(locale, 'verticals.contact_pricing')
     const amount = price >= 100 ? price / 100 : price
     return `${amount.toLocaleString()} ${currency}${unit ? ` / ${unit}` : ""}`
   }
@@ -87,20 +88,20 @@ function GroceryPage() {
       <div className="bg-gradient-to-r from-ds-success to-lime-600 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
-            <span className="text-white">Grocery</span>
+            <span className="text-white">{t(locale, 'grocery.breadcrumb')}</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Fresh Grocery</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'grocery.hero_title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
-            Shop fresh produce, dairy, bakery items, and household essentials delivered right to your door.
+            {t(locale, 'grocery.hero_subtitle')}
           </p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
-            <span>{items.length} products available</span>
+            <span>{items.length} {t(locale, 'grocery.products_available')}</span>
             <span>|</span>
-            <span>Fresh daily</span>
+            <span>{t(locale, 'grocery.badge_fresh')}</span>
             <span>|</span>
-            <span>Organic options</span>
+            <span>{t(locale, 'grocery.badge_organic')}</span>
           </div>
         </div>
       </div>
@@ -110,18 +111,18 @@ function GroceryPage() {
           <aside className="w-full lg:w-72 flex-shrink-0">
             <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'grocery.search_label')}</label>
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search groceries..."
+                  placeholder={t(locale, 'grocery.search_placeholder')}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-success"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Category</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'grocery.category_label')}</label>
                 <div className="space-y-1">
                   {categoryOptions.map((opt) => (
                     <button
@@ -136,7 +137,7 @@ function GroceryPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Organic</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'grocery.organic_label')}</label>
                 <div className="space-y-1">
                   {organicOptions.map((opt) => (
                     <button
@@ -158,8 +159,8 @@ function GroceryPage() {
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
                 </svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No grocery products found</h3>
-                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'verticals.no_results')}</h3>
+                <p className="text-ds-muted-foreground text-sm">{t(locale, 'grocery.no_results_hint')}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -180,7 +181,7 @@ function GroceryPage() {
                         </div>
                       )}
                       {item.organic && (
-                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-ds-success text-white rounded-md">🌿 Organic</span>
+                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-ds-success text-white rounded-md">🌿 {t(locale, 'grocery.organic_badge')}</span>
                       )}
                       {item.category && (
                         <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-ds-card/90 text-ds-foreground/80 rounded-md capitalize">{item.category}</span>
@@ -216,7 +217,7 @@ function GroceryPage() {
                         <span className="font-bold text-ds-success text-lg">
                           {formatPrice(item.price, item.currency, item.unit_type)}
                         </span>
-                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-success rounded-lg group-hover:bg-ds-success/90 transition-colors">Add to Cart</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-success rounded-lg group-hover:bg-ds-success/90 transition-colors">{t(locale, 'grocery.add_to_cart')}</span>
                       </div>
                     </div>
                   </a>
@@ -229,22 +230,22 @@ function GroceryPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">Why Shop With Us</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'grocery.why_shop_title')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Farm Fresh</h3>
-              <p className="text-sm text-ds-muted-foreground">Sourced directly from local farms and trusted suppliers for maximum freshness.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'grocery.step1_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'grocery.step1_desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Quick Delivery</h3>
-              <p className="text-sm text-ds-muted-foreground">Get your groceries delivered to your doorstep within hours of ordering.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'grocery.step2_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'grocery.step2_desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Quality Guaranteed</h3>
-              <p className="text-sm text-ds-muted-foreground">Every product is quality-checked. Not satisfied? Get a full refund.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'grocery.step3_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'grocery.step3_desc')}</p>
             </div>
           </div>
         </div>

@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/credit/")({
   component: CreditPage,
@@ -48,14 +49,14 @@ function CreditPage() {
       <div className="bg-gradient-to-r from-ds-primary to-ds-primary/90 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
-            <span className="text-white">Store Credit</span>
+            <span className="text-white">{t(locale, 'credit.breadcrumb')}</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Store Credit</h1>
-          <p className="text-lg text-white/80 max-w-2xl mx-auto">Flexible financing options to power your purchases with competitive rates and easy repayment plans.</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'credit.hero_title')}</h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">{t(locale, 'credit.hero_subtitle')}</p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
-            <span>0% intro APR available</span><span>|</span><span>Instant approval</span><span>|</span><span>No hidden fees</span>
+            <span>{t(locale, 'credit.badge_apr')}</span><span>|</span><span>{t(locale, 'credit.badge_approval')}</span><span>|</span><span>{t(locale, 'credit.badge_fees')}</span>
           </div>
         </div>
       </div>
@@ -63,31 +64,31 @@ function CreditPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div className="bg-gradient-to-br from-ds-primary/10 to-ds-primary/5 border border-ds-info/20 rounded-xl p-6">
-            <p className="text-sm font-medium text-ds-muted-foreground mb-1">Available Credit</p>
+            <p className="text-sm font-medium text-ds-muted-foreground mb-1">{t(locale, 'credit.available_credit')}</p>
             <p className="text-3xl font-bold text-ds-foreground">{(data?.availableCredit || 0).toLocaleString()} SAR</p>
           </div>
           <div className="bg-gradient-to-br from-ds-primary/10 to-ds-primary/5 border border-ds-primary/20 rounded-xl p-6">
-            <p className="text-sm font-medium text-ds-muted-foreground mb-1">Used Credit</p>
+            <p className="text-sm font-medium text-ds-muted-foreground mb-1">{t(locale, 'credit.used_credit')}</p>
             <p className="text-3xl font-bold text-ds-foreground">{(data?.usedCredit || 0).toLocaleString()} SAR</p>
           </div>
         </div>
 
         <div className="mb-6">
-          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search credit plans..." className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-primary" />
+          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t(locale, 'credit.search_placeholder')} className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-primary" />
         </div>
 
-        <h2 className="text-2xl font-bold text-ds-foreground mb-6">Credit Plans</h2>
+        <h2 className="text-2xl font-bold text-ds-foreground mb-6">{t(locale, 'credit.credit_plans')}</h2>
         {filteredPlans.length === 0 ? (
           <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
             <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
-            <h3 className="text-lg font-semibold text-ds-foreground mb-2">No credit plans found</h3>
-            <p className="text-ds-muted-foreground text-sm">Try adjusting your search.</p>
+            <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'verticals.no_results')}</h3>
+            <p className="text-ds-muted-foreground text-sm">{t(locale, 'credit.no_results_hint')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
             {filteredPlans.map((plan: any) => (
               <div key={plan.id} className={`relative bg-ds-background border ${plan.popular ? "border-ds-info ring-2 ring-ds-primary/20" : "border-ds-border"} rounded-xl p-6 hover:shadow-lg transition-all duration-200`}>
-                {plan.popular && <span className="absolute -top-3 left-6 px-3 py-1 text-xs font-bold bg-ds-primary text-white rounded-full">Most Popular</span>}
+                {plan.popular && <span className="absolute -top-3 left-6 px-3 py-1 text-xs font-bold bg-ds-primary text-white rounded-full">{t(locale, 'credit.most_popular')}</span>}
                 <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${colorMap[plan.color]} flex items-center justify-center mb-4`}>
                   <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
                 </div>
@@ -108,7 +109,7 @@ function CreditPage() {
                     </li>
                   ))}
                 </ul>
-                <button className={`w-full py-3 rounded-lg font-medium transition-colors ${plan.popular ? "bg-ds-primary text-white hover:bg-ds-primary/90" : "bg-ds-muted text-ds-foreground hover:bg-ds-muted/80"}`}>Apply Now</button>
+                <button className={`w-full py-3 rounded-lg font-medium transition-colors ${plan.popular ? "bg-ds-primary text-white hover:bg-ds-primary/90" : "bg-ds-muted text-ds-foreground hover:bg-ds-muted/80"}`}>{t(locale, 'credit.apply_now')}</button>
               </div>
             ))}
           </div>
@@ -117,22 +118,22 @@ function CreditPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'verticals.how_it_works')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Choose a Plan</h3>
-              <p className="text-sm text-ds-muted-foreground">Select the credit plan that best fits your needs and budget.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'credit.step1_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'credit.step1_desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Get Approved</h3>
-              <p className="text-sm text-ds-muted-foreground">Quick online application with instant approval decisions.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'credit.step2_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'credit.step2_desc')}</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
-              <h3 className="font-semibold text-ds-foreground mb-2">Start Spending</h3>
-              <p className="text-sm text-ds-muted-foreground">Use your credit line immediately for purchases across the platform.</p>
+              <h3 className="font-semibold text-ds-foreground mb-2">{t(locale, 'credit.step3_title')}</h3>
+              <p className="text-sm text-ds-muted-foreground">{t(locale, 'credit.step3_desc')}</p>
             </div>
           </div>
         </div>

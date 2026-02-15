@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { t } from "@/lib/i18n"
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
@@ -90,11 +91,11 @@ function MembershipsPage() {
       <div className="bg-gradient-to-r from-ds-warning to-ds-warning text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <span className="text-white">Memberships</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Memberships</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'memberships.title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
             Unlock exclusive benefits, discounts, and premium access with our membership tiers.
           </p>
@@ -118,7 +119,7 @@ function MembershipsPage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search memberships..."
+                  placeholder={t(locale, 'memberships.search_placeholder')}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring"
                 />
               </div>
@@ -146,7 +147,7 @@ function MembershipsPage() {
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
                 </svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No memberships found</h3>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'memberships.no_results')}</h3>
                 <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
@@ -190,7 +191,7 @@ function MembershipsPage() {
                             {formatPrice(item.price, item.currency, item.interval)}
                           </span>
                           <button className="px-4 py-2 text-xs font-semibold text-white bg-ds-warning rounded-lg hover:bg-ds-warning transition-colors">
-                            Join Now
+                            {t(locale, 'memberships.join_now')}
                           </button>
                         </div>
                       </div>

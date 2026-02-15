@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/wallet/")({
   component: WalletPage,
@@ -70,12 +71,12 @@ function WalletPage() {
       <div className="bg-gradient-to-r from-ds-success to-ds-success text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <span className="text-white">Wallet</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Digital Wallet</h1>
-          <p className="text-lg text-white/80 max-w-2xl mx-auto">Manage your balance, send money, and track every transaction in one secure place.</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'wallet.title')}</h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">{t(locale, 'wallet.subtitle')}</p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>Instant transfers</span><span>|</span><span>Secure payments</span><span>|</span><span>Cashback rewards</span>
           </div>
@@ -89,19 +90,19 @@ function WalletPage() {
               <p className="text-sm font-medium text-ds-muted-foreground mb-1">Available Balance</p>
               <p className="text-4xl font-bold text-ds-foreground">{balance.toLocaleString(undefined, { minimumFractionDigits: 2 })} SAR</p>
             </div>
-            <button className="px-6 py-3 bg-ds-success text-white font-medium rounded-lg hover:bg-ds-success/90 transition-colors">Add Funds</button>
+            <button className="px-6 py-3 bg-ds-success text-white font-medium rounded-lg hover:bg-ds-success/90 transition-colors">{t(locale, 'wallet.add_funds')}</button>
           </div>
         </div>
 
         <div className="mb-6">
-          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search wallet features..." className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-success" />
+          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t(locale, 'wallet.search_placeholder')} className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-success" />
         </div>
 
         <h2 className="text-2xl font-bold text-ds-foreground mb-6">Wallet Features</h2>
         {filteredFeatures.length === 0 ? (
           <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
             <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            <h3 className="text-lg font-semibold text-ds-foreground mb-2">No features found</h3>
+            <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'wallet.no_results')}</h3>
             <p className="text-ds-muted-foreground text-sm">Try adjusting your search.</p>
           </div>
         ) : (
@@ -137,7 +138,7 @@ function WalletPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'verticals.how_it_works')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>

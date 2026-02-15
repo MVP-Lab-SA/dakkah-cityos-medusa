@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/white-label/")({
   component: WhiteLabelPage,
@@ -60,29 +61,29 @@ function WhiteLabelPage() {
       <div className="bg-gradient-to-r from-ds-primary to-ds-primary/80 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <span className="text-white">White Label</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">White Label Solutions</h1>
-          <p className="text-lg text-white/80 max-w-2xl mx-auto">Launch your own branded marketplace with our powerful white-label platform. Your brand, our technology.</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'white_label.title')}</h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">{t(locale, 'white_label.subtitle')}</p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>Full brand control</span><span>|</span><span>Custom domain</span><span>|</span><span>Mobile apps</span>
           </div>
-          <button className="mt-8 px-8 py-3 bg-ds-card text-ds-foreground font-semibold rounded-lg hover:bg-ds-card/90 transition-colors">Schedule a Demo</button>
+          <button className="mt-8 px-8 py-3 bg-ds-card text-ds-foreground font-semibold rounded-lg hover:bg-ds-card/90 transition-colors">{t(locale, 'white_label.schedule_demo')}</button>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
-          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search features..." className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring" />
+          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t(locale, 'white_label.search_placeholder')} className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring" />
         </div>
 
         <h2 className="text-2xl font-bold text-ds-foreground mb-6">Platform Features</h2>
         {filteredFeatures.length === 0 ? (
           <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
             <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" /></svg>
-            <h3 className="text-lg font-semibold text-ds-foreground mb-2">No features found</h3>
+            <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'white_label.no_results')}</h3>
             <p className="text-ds-muted-foreground text-sm">Try adjusting your search.</p>
           </div>
         ) : (
@@ -158,7 +159,7 @@ function WhiteLabelPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'verticals.how_it_works')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-ds-primary text-ds-primary-foreground flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>

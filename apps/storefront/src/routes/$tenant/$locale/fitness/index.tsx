@@ -2,6 +2,7 @@
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/fitness/")({
   component: FitnessPage,
@@ -81,11 +82,11 @@ function FitnessPage() {
       <div className="bg-gradient-to-r from-ds-destructive to-rose-600 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
-            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
+            <Link to={`${prefix}` as any} className="hover:text-white transition-colors">{t(locale, 'common.home')}</Link>
             <span>/</span>
             <span className="text-white">Fitness</span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Fitness & Wellness</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'fitness.title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">
             Find the perfect class to reach your fitness goals. From yoga to HIIT, we have it all.
           </p>
@@ -109,7 +110,7 @@ function FitnessPage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search classes..."
+                  placeholder={t(locale, 'fitness.search_placeholder')}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring"
                 />
               </div>
@@ -137,7 +138,7 @@ function FitnessPage() {
                 <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
-                <h3 className="text-lg font-semibold text-ds-foreground mb-2">No fitness classes found</h3>
+                <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'fitness.no_results')}</h3>
                 <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
               </div>
             ) : (
@@ -217,7 +218,7 @@ function FitnessPage() {
                         <span className="font-bold text-rose-600 text-lg">
                           {formatPrice(item.price, item.currency)}
                         </span>
-                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-rose-500 rounded-lg group-hover:bg-rose-600 transition-colors">Join Class</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-rose-500 rounded-lg group-hover:bg-rose-600 transition-colors">{t(locale, 'fitness.join_class')}</span>
                       </div>
                     </div>
                   </a>
@@ -230,7 +231,7 @@ function FitnessPage() {
 
       <section className="py-16 bg-ds-card border-t border-ds-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">Why Train With Us?</h2>
+          <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'verticals.how_it_works')}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-rose-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">💪</div>
