@@ -55,6 +55,8 @@ The platform supports 42 CRUD configurations for various manage verticals, utili
 ## Recent Changes (Feb 2026)
 - **Phase 0 Complete**: Fixed auctions bid query (auction_listing_id→auction_id), financial routing (/financial→/financial-products), vendors data extraction. Created 19 new backend detail endpoints. Added social-commerce seed data fallback.
 - **Phase 1 Complete**: RBAC weight lowered to 20, requiredWeight prop added, module registry expanded with CMS/Platform sections and 28 missing modules, sidebar uses actual user role weight, design token migration for role-guard and sidebar.
+- **Phase 2 Complete**: Migrated 130→3 hardcoded gray/violet colors to ds-* design tokens across 29 manage components and 8 manage route files. Total ds-* token usage: 386 instances. Only 3 intentional semantic status colors remain (emerald/amber/red for status indicators in status-badge.tsx and status-workflow.tsx).
+- **Phase 4 Complete**: Converted 5 duplicate page pairs to redirects (crowdfunding→campaigns, consignment-shop→consignment, dropshipping-marketplace→dropshipping, print-on-demand-shop→print-on-demand, white-label-shop→white-label). All 10 redirect files use TanStack Router's beforeLoad redirect pattern.
 
 ### System Responsibility Split
 - **Medusa (Commerce Engine):** Products, orders, payments, commissions, marketplace listings, vendor management.
