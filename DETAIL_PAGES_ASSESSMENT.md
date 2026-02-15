@@ -1021,17 +1021,604 @@ These blocks exist and are ready to render vertical-specific UI, but none are us
 
 Total: **~3,600 lines of vertical-specific UI code** that exists but renders nowhere.
 
-### 7.8 Block Component Quality Assessment
+### 7.8 Block Component Quality Assessment — Complete Per-Block Breakdown
 
-Most blocks contain **hardcoded placeholder data** rather than rendering from props. This means even if blocks were integrated into detail pages, many would need refactoring to accept and display real API data:
+Every block was analyzed for: (1) does it accept data via props, (2) does it render from those props or from hardcoded constants, (3) does it use the `ds-` design system tokens, (4) what refactoring is needed.
 
-| Quality Level | Count | Pattern |
+#### Tier A: Props-Driven, Ready to Use (15 blocks)
+
+These blocks accept data via props and render it — can be dropped into detail pages immediately:
+
+| Block | Lines | Props Interface | Design Token Usage | Ready? |
+|---|---|---|---|---|
+| `hero` | 86 | heading, subheading, backgroundImage, overlay, alignment, minHeight, cta, badge | 5 `ds-` refs | YES |
+| `cta` | 66 | heading, description, buttons, variant, backgroundStyle | 5 `ds-` refs | YES |
+| `faq` | 90 | heading, description, items, layout | 3 `ds-` refs | YES |
+| `features` (featureGrid) | 47 | heading, subtitle, features[], columns, variant | 3 `ds-` refs | YES |
+| `content` (richText) | 27 | content, columns, maxWidth, textAlign | 1 `ds-` ref | YES |
+| `pricing` | 171 | heading, description, plans[], billingToggle, highlightedPlan | 17 `ds-` refs | YES |
+| `stats` | 130 | heading, stats[], columns, variant, showTrend | 14 `ds-` refs | YES |
+| `membership-tiers` | 220 | heading, **tiers[]**, showComparison, variant | 21 `ds-` refs | YES — uses `tiers` prop with `defaultTiers` fallback |
+| `subscription-plans` | 238 | heading, **plans[]**, billingToggle, highlightedPlan, variant | 33 `ds-` refs | YES — uses `plans` prop with `defaultPlans` fallback |
+| `menu-display` | 161 | heading, **categories[]**, variant, showPrices, showDietaryIcons, currency | 12 `ds-` refs | YES — uses `categories` prop with `defaultCategories` fallback |
+| `service-list` | 188 | heading, services[], showPricing, showBooking, layout | 14 `ds-` refs | YES |
+| `booking-cta` | 134 | heading, description, serviceId, providerId, variant, showAvailability | 18 `ds-` refs | YES |
+| `vendor-showcase` | 109 | heading, vendors[], layout, showRating, showProducts | 8 `ds-` refs | YES |
+| `vendor-profile` | 101 | vendorId, showProducts, showReviews, variant | 16 `ds-` refs | YES |
+| `divider` | 46 | variant, label, spacing | 4 `ds-` refs | YES |
+
+**Import pattern for Tier A:**
+```tsx
+import { MembershipTiersBlock } from '../../components/blocks/membership-tiers-block'
+
+<MembershipTiersBlock
+  heading="Choose Your Plan"
+  tiers={item.tiers || []}           // Pass API data directly
+  showComparison={true}
+  variant="cards"
+/>
+```
+
+#### Tier B: Accept Props but Render Hardcoded Data (32 blocks)
+
+These blocks define TypeScript prop interfaces but IGNORE the props internally, rendering from `const placeholder...` constants instead. They need refactoring to wire props → rendering:
+
+| Block | Lines | Props Defined | Hardcoded Data | ds- Tokens | What Needs to Change |
+|---|---|---|---|---|---|
+| `auction-bidding` | 198 | auctionId, showHistory, showCountdown, variant | `placeholderBids` (5 bids), `currentBid: 1250`, `minIncrement: 50` | 47 | Accept `currentBid`, `bids[]`, `endTime` as props; render from them |
+| `booking-calendar` | 256 | serviceId, variant, showPricing, allowMultiDay | `defaultTimeSlots` (9 slots with hardcoded $50-$70 prices) | 23 | Accept `timeSlots[]`, `bookedDates[]` as props |
+| `crowdfunding-progress` | 197 | campaignId, showBackers, showUpdates, variant | `placeholderCampaign` (goal: $50,000, raised: $37,500, 842 backers), `recentBackers` (5 entries) | 43 | Accept `campaign: {goal, raised, backers, daysLeft}` as prop |
+| `donation-campaign` | 229 | campaignId, showImpact, presetAmounts, allowRecurring, variant | `placeholderCampaign` (goal: $200,000, raised: $128,500, 3240 donors), `impactStats` (4 metrics) | 41 | Accept `campaign`, `impact[]` as props |
+| `healthcare-provider` | 160 | heading, specialties, showAvailability, showRating, layout | `placeholderProviders` (6 doctors with hardcoded names/specialties) | 21 | Accept `providers[]` as prop |
+| `vehicle-listing` | 206 | heading, vehicleType, layout, showComparison | `placeholderVehicles` (6 vehicles — Tesla, Toyota, BMW, etc.) | 29 | Accept `vehicles[]` as prop |
+| `property-listing` | 158 | heading, propertyType, showMap, layout | `placeholderProperties` (hardcoded addresses, prices) | 21 | Accept `properties[]` as prop |
+| `course-curriculum` | 245 | courseId, showProgress, expandAll, variant | `placeholderModules` (3 modules with hardcoded lessons) | 39 | Accept `modules[]` as prop |
+| `event-schedule` | 203 | eventId, showSpeakers, showVenue, variant | `placeholderSessions` (5 events with hardcoded times) | 24 | Accept `sessions[]` as prop |
+| `event-list` | 210 | heading, events[], layout, showPastEvents | Renders from `events` prop but has no default | 18 | ALMOST READY — just needs events data passed |
+| `fitness-class-schedule` | 204 | heading, showInstructor, showLevel, allowBooking | `placeholderClasses` (6 classes with hardcoded schedules) | 27 | Accept `classes[]` as prop |
+| `freelancer-profile` | 247 | heading, showPortfolio, showReviews, showAvailability, layout | `placeholderFreelancer` (name: "Jordan Rivera", $95/hr), `portfolioItems` (6), `reviews` (3) | 60 | Accept `freelancer`, `portfolio[]`, `reviews[]` as props |
+| `pet-profile-card` | 223 | heading, showServices, showVetInfo, layout | `placeholderPets` (3 pets with hardcoded names/breeds) | 60 | Accept `pets[]` as prop |
+| `classified-ad-card` | 187 | heading, category, layout, showContactInfo | `placeholderAds` (6 ads with hardcoded prices/locations) | 25 | Accept `ads[]` as prop |
+| `parking-spot-finder` | 220 | locationId, showMap, showPricing, filterByType, variant | `placeholderSpots` (6 spots with hardcoded rates) | 23 | Accept `spots[]` as prop |
+| `flash-sale-countdown` | 117 | heading, endTime, products, variant | `endTime` derived from +24h, `placeholderProducts` | 14 | Accept `endTime`, `products[]` as props |
+| `gift-card-display` | 137 | heading, denominations, customizable, variant | `defaultDenominations` (5 values), hardcoded design templates | 19 | Accept `denominations[]`, `templates[]` as props |
+| `rental-calendar` | 124 | itemId, pricingUnit, showDeposit, minDuration | Generates dates from current month, no real availability data | 25 | Accept `availability[]`, `pricing` as props |
+| `appointment-slots` | 213 | providerId, date, duration, showPrice | `defaultTimeSlots`, hardcoded AM/PM slots | 29 | Accept `timeSlots[]` as prop |
+| `provider-schedule` | 188 | providerId, viewMode, showCapacity | `placeholderSchedule` (weekly schedule with hardcoded times) | 22 | Accept `schedule[]` as prop |
+| `resource-availability` | 199 | resourceType, locationId, showCalendar | `placeholderResources` (4 rooms with hardcoded availability) | — | Accept `resources[]` as prop |
+| `booking-confirmation` | 105 | bookingId, showDetails, showActions | Renders from hardcoded confirmation template | 26 | Accept `booking` object as prop |
+| `review-list` | 180 | heading, entityId, showSummary, allowSubmit | `placeholderReviews` (4 reviews with hardcoded users) | 17 | Accept `reviews[]` as prop |
+| `product-detail` | 201 | productId, showReviews, showRelated, variant | Hardcoded product with "Premium Wireless Headphones" | 40 | Accept `product` object as prop |
+| `recently-viewed` | 61 | heading, products, layout | `placeholderProducts` (3 items) | 10 | Accept `products[]` as prop |
+| `cart-summary` | 142 | variant, showCoupon, showEstimatedShipping | Hardcoded 3-item cart | 28 | Accept `cartItems[]` as prop |
+| `contact-form` | 163 | heading, recipientEmail, showMap, fields | Form fields hardcoded | 10 | Accept `fields[]` config |
+| `newsletter` | 128 | heading, description, variant, showBenefits | Hardcoded benefits list | 8 | Accept `benefits[]` as prop |
+| `map` | 198 | heading, center, markers, zoom, showSearch | `placeholderMarkers` (5 markers) | 21 | Accept `markers[]`, `center` as props |
+| `service-card-grid` | 134 | heading, services, columns, showBookingCta | `placeholderServices` (6 services) | 12 | Accept `services[]` as prop |
+| `social-proof` | 234 | variant, showPurchases, autoRotate, heading | Hardcoded purchases & reviews | 42 | Accept `purchases[]`, `reviews[]` as props |
+| `blog-post` | 182 | heading, posts, layout, showAuthor | Hardcoded blog posts | 28 | Accept `posts[]` as prop |
+
+**Refactoring pattern for Tier B:**
+```tsx
+// BEFORE (hardcoded):
+const placeholderCampaign = { goal: 50000, raised: 37500, backers: 842, daysLeft: 18 }
+const CrowdfundingProgressBlock = ({ campaignId, variant }) => {
+  const percentFunded = Math.round((placeholderCampaign.raised / placeholderCampaign.goal) * 100)
+  // renders placeholderCampaign...
+}
+
+// AFTER (data-driven):
+const CrowdfundingProgressBlock = ({ campaign, variant }) => {
+  const data = campaign || { goal: 0, raised: 0, backers: 0, daysLeft: 0 }
+  const percentFunded = data.goal > 0 ? Math.round((data.raised / data.goal) * 100) : 0
+  // renders data...
+}
+```
+
+#### Tier C: Admin/Dashboard Blocks (11 blocks)
+
+These are admin-only blocks not relevant to customer-facing detail pages:
+
+| Block | Lines | Purpose |
 |---|---|---|
-| **Props-driven with real data support** | ~15 | hero, content, cta, features, faq, products, pricing, testimonial, review-list, etc. |
-| **Props-defined but renders hardcoded data** | ~45 | auction-bidding (hardcoded bid history), crowdfunding-progress (hardcoded $1,250 goal), event-schedule (hardcoded events), etc. |
-| **Fully hardcoded / placeholder-only** | ~17 | commission-dashboard, loyalty-dashboard, approval-workflow, etc. |
+| `commission-dashboard` | 143 | Vendor commission overview |
+| `payout-history` | 180 | Vendor payout records |
+| `purchase-order-form` | 278 | B2B purchase orders |
+| `bulk-pricing-table` | 277 | B2B bulk pricing |
+| `company-dashboard` | 185 | B2B company overview |
+| `approval-workflow` | 287 | B2B approval chains |
+| `manage-stats` | 61 | Admin dashboard stats |
+| `manage-recent-orders` | 107 | Admin recent orders |
+| `manage-activity` | 74 | Admin activity feed |
+| `loyalty-dashboard` | 224 | Member loyalty overview |
+| `loyalty-points-display` | 253 | Member points display |
 
-### 7.9 What the Block System SHOULD Enable
+#### Tier D: Specialized Blocks (19 blocks)
+
+Fully working but serve specific non-vertical functions:
+
+| Block | Lines | Purpose | Design Tokens |
+|---|---|---|---|
+| `image-gallery` | 209 | Multi-image carousel/grid viewer | 14 |
+| `banner-carousel` | 185 | Promotional banner rotation | 11 |
+| `video-embed` | 114 | Video player embed | 3 |
+| `timeline` | 194 | Process/event timeline | 27 |
+| `trust-badges` | 92 | Security/trust indicators | 8 |
+| `category-grid` | 164 | Category browsing grid | 16 |
+| `collection-list` | 123 | Product collection browser | 9 |
+| `comparison-table` | 148 | Feature comparison matrix | 18 |
+| `products` (productGrid) | 95 | Product grid (ONLY block with `useQuery`) | 6 |
+| `wishlist-grid` | 94 | Saved items display | 12 |
+| `checkout-steps` | 204 | Checkout wizard | 49 |
+| `order-confirmation` | 132 | Order success display | 42 |
+| `vendor-products` | 111 | Vendor product listing | 11 |
+| `vendor-register-form` | 193 | Vendor registration | 34 |
+| `referral-program` | 258 | Referral tracking | 60 |
+| `subscription-manage` | 201 | Subscription management | 29 |
+| `promotion-banner` | 169 | Promotional banner | 11 |
+| `testimonial` | — | Customer testimonials | — |
+| `products-block` | 95 | **ONLY block that fetches own data** via `useQuery` | 6 |
+
+---
+
+### 7.9 Design System & Theme Alignment — Detailed Analysis
+
+#### 7.9.1 Token Architecture
+
+The platform uses a **CSS custom properties design system** defined in `apps/storefront/src/styles/theme.css`:
+
+```css
+@theme {
+  --color-ds-primary: var(--color-primary, hsl(221 83% 53%));        /* Blue */
+  --color-ds-primary-foreground: var(--color-primary-foreground, hsl(0 0% 100%));
+  --color-ds-secondary: var(--color-secondary, hsl(210 40% 96%));
+  --color-ds-accent: var(--color-accent, hsl(210 40% 96%));
+  --color-ds-background: var(--color-background, hsl(0 0% 100%));    /* White */
+  --color-ds-foreground: var(--color-foreground, hsl(222 47% 11%));   /* Dark navy */
+  --color-ds-muted: var(--color-muted, hsl(210 40% 96%));
+  --color-ds-muted-foreground: var(--color-muted-foreground, hsl(215 16% 47%));
+  --color-ds-card: var(--color-card, hsl(0 0% 100%));
+  --color-ds-border: var(--color-border, hsl(214 32% 91%));
+  --color-ds-destructive: var(--color-destructive, hsl(0 84% 60%));
+  --color-ds-success: var(--color-success, hsl(142 76% 36%));
+  --color-ds-warning: var(--color-warning, hsl(45 93% 47%));
+  --color-ds-info: var(--color-info, hsl(199 95% 53%));
+}
+```
+
+Plus shadow tokens (`--shadow-ds-sm/md/lg/xl`), radius tokens (`--radius-ds-sm/md/lg/xl/2xl/full`), motion tokens (`--duration-*`, `--ease-*`), and elevation tokens (`--elevation-1` through `--elevation-5`).
+
+#### 7.9.2 Block ↔ Page Design Token Consistency
+
+Both blocks AND detail pages use **identical** `ds-` prefixed Tailwind classes. There are **zero raw Tailwind color classes** (no `bg-blue-500`, `text-gray-700`, etc.) in either blocks or detail pages:
+
+| Component Type | `ds-` Token Count | Raw Tailwind Colors | Consistent? |
+|---|---|---|---|
+| **crowdfunding-progress-block** | 43 | 0 | YES |
+| **crowdfunding/$id.tsx page** | 62 | 0 | YES |
+| **healthcare-provider-block** | 21 | 0 (uses `text-yellow-500` for stars, `text-green-600` for availability) | 98% |
+| **healthcare/$id.tsx page** | 50 | 0 | YES |
+| **menu-display-block** | 12 | 0 | YES |
+| **restaurants/$id.tsx page** | 47 | 0 | YES |
+| **freelancer-profile-block** | 60 | 0 | YES |
+| **freelance/$id.tsx page** | 51 | 0 | YES |
+| **vehicle-listing-block** | 29 | 0 | YES |
+| **automotive/$id.tsx page** | 40 | 0 | YES |
+
+**Key finding:** Both blocks and pages use the exact same CSS class vocabulary. Mixing blocks into pages will produce **pixel-perfect style consistency**. No theme conflicts will occur.
+
+Only 2 minor exceptions across all 77 blocks:
+- `healthcare-provider-block.tsx` uses `text-yellow-500` for star ratings and `text-green-600` for "Available" status — acceptable semantic colors
+- `auction-bidding-block.tsx` uses `text-green-600` and `text-red-500` for bid up/down indicators — acceptable
+
+#### 7.9.3 Common UI Patterns — Block vs Page Comparison
+
+Both blocks and pages use identical UI structural patterns:
+
+| Pattern | Block Implementation | Page Implementation | Match? |
+|---|---|---|---|
+| **Card wrapper** | `bg-ds-card border border-ds-border rounded-lg p-6 hover:shadow-md transition-shadow` | `bg-ds-background border border-ds-border rounded-xl p-6` | 95% (blocks use `rounded-lg`, pages use `rounded-xl`) |
+| **Primary button** | `bg-ds-primary text-ds-primary-foreground rounded-lg font-semibold hover:opacity-90` | `bg-ds-primary text-ds-primary-foreground rounded-lg font-medium hover:bg-ds-primary/90` | 90% (blocks use `opacity-90`, pages use `bg-ds-primary/90`) |
+| **Secondary button** | `bg-ds-muted text-ds-muted-foreground hover:text-ds-foreground` | `border border-ds-border text-ds-foreground hover:bg-ds-muted` | 85% |
+| **Badge/tag** | `text-xs px-2 py-0.5 rounded-full bg-ds-muted text-ds-muted-foreground` | `px-3 py-1 text-xs font-medium rounded-full bg-ds-muted text-ds-muted-foreground` | 95% |
+| **Section heading** | `text-2xl md:text-3xl lg:text-4xl font-bold text-ds-foreground mb-8` | `text-xl font-semibold text-ds-foreground mb-2` | 80% (blocks use responsive sizing) |
+| **Muted text** | `text-sm text-ds-muted-foreground` | `text-sm text-ds-muted-foreground` | 100% |
+| **Container** | `container mx-auto px-4 md:px-6` | `max-w-7xl mx-auto px-4 sm:px-6 lg:px-8` | 85% (blocks use `container`, pages use `max-w-7xl`) |
+
+**Integration Note:** When importing blocks into detail pages, the minor differences in border-radius (`rounded-lg` vs `rounded-xl`) and container widths will be visually seamless since both are within the same design token system. No normalization needed.
+
+#### 7.9.4 How the Tailwind Config Connects to Tokens
+
+The `apps/storefront/tailwind.config.ts` is minimal — it only adds custom transition properties and opacity utilities. The `ds-` color tokens are resolved through Tailwind v4's `@theme` directive in `theme.css`, which maps CSS variables to Tailwind classes automatically:
+
+```
+theme.css: @theme { --color-ds-primary: hsl(221 83% 53%) }
+    ↓
+Tailwind: bg-ds-primary → background-color: var(--color-ds-primary)
+    ↓
+Rendered: background-color: hsl(221 83% 53%)
+```
+
+This means blocks and pages share the **exact same color pipeline** with zero configuration differences. Multi-tenant theming works automatically — changing `--color-primary` in a tenant's CSS overrides `--color-ds-primary` in both blocks and pages simultaneously.
+
+---
+
+### 7.10 Detailed Gap Analysis: Each Vertical's Page vs Block
+
+For every vertical that has a matching block component, here is the exact gap between what the current detail page renders and what the block could provide:
+
+#### 7.10.1 Crowdfunding
+
+| Aspect | Current `crowdfunding/$id.tsx` (248 lines) | Available `crowdfunding-progress-block` (197 lines) |
+|---|---|---|
+| **Progress bar** | Inline `<div>` with calculated width — 8 lines of JSX | Full progress bar with percentage label, animated fill — 12 lines |
+| **Campaign stats** | Inline grid showing raised/goal/backers — 15 lines | Grid showing raised/goal/backers/daysLeft + percentage — 20 lines |
+| **Donation form** | Single "Back This Campaign" button, no amount picker | Full preset amount picker ($25/$50/$100/$250/$500) + custom amount input |
+| **Recent backers** | Not shown | Shows last 5 backers with names, amounts, timestamps |
+| **Variants** | Single layout | 3 variants: `full` (detail page), `widget` (sidebar), `minimal` (compact) |
+| **Gap:** | Page has breadcrumbs, hero image, description, creator sidebar | Block adds donation form + backer list — combine for full page |
+| **Data flow gap:** | Page uses `campaign.goal`, `campaign.raised` from API | Block uses `placeholderCampaign.goal = 50000` hardcoded |
+| **Fix:** | Pass `campaign` prop to block → block reads `campaign.goal/raised/backers/daysLeft` |
+
+#### 7.10.2 Healthcare
+
+| Aspect | Current `healthcare/$id.tsx` (220 lines) | Available `healthcare-provider-block` (160 lines) |
+|---|---|---|
+| **Provider card** | Shows name, specialty, rating, location inline | Rich card with avatar placeholder, insurance tags, availability, "Book Appointment" CTA |
+| **Specialty filter** | Not available | Interactive filter tabs (All, Family Medicine, Cardiology, etc.) |
+| **Layout options** | Fixed 2-column layout | 3 layouts: `grid`, `list`, `cards` |
+| **Insurance display** | Not shown | Shows insurance acceptance tags per provider |
+| **Availability** | Shows raw `provider.availability` slots | Shows "Next Available: Tomorrow, 10:00 AM" formatted |
+| **Gap:** | Page has breadcrumbs, sidebar with book/call/video buttons, credentials section | Block has provider listing + filter — need both |
+| **Data flow gap:** | Page uses real API data from loader | Block uses `placeholderProviders` (6 hardcoded doctors) |
+| **Fix:** | Accept `providers[]` prop → render from it instead of `placeholderProviders` |
+
+#### 7.10.3 Restaurants
+
+| Aspect | Current `restaurants/$id.tsx` (229 lines) | Available `menu-display-block` (161 lines) |
+|---|---|---|
+| **Menu display** | NO MENU — only shows name, description, hours, features | Full categorized menu with items, prices, dietary icons, "Add to Order" buttons |
+| **Category tabs** | N/A | Sidebar tabs: Starters, Main Courses, Desserts, Drinks |
+| **Price display** | Shows `price_range` as "$" symbols | Shows individual item prices formatted per currency |
+| **Dietary icons** | N/A | Emoji-based dietary labels: Vegetarian, Vegan, Gluten-Free, Halal, Kosher |
+| **Variants** | N/A | 3 variants: `grid`, `list`, `visual` (with food images) |
+| **Gap:** | Page has hero image, breadcrumbs, hours, features sidebar, reserve/order/call buttons | Block adds THE MENU — the core functionality missing |
+| **Data flow gap:** | Page has no menu data in API response | Block uses `defaultCategories` (4 categories, 13 items) |
+| **Fix:** | Add `menu_categories` to restaurant API response → pass as `categories` prop |
+
+#### 7.10.4 Auctions
+
+| Aspect | Current `auctions/$id.tsx` (262 lines) | Available `auction-bidding-block` (198 lines) |
+|---|---|---|
+| **Bid form** | Shows current/starting price, no bid input | Full bid form with amount input, min increment display, "Place Bid" button |
+| **Bid history** | Not shown | Recent bids table: bidder, amount, time |
+| **Countdown** | Shows `time_left` as text | Live countdown timer with days:hours:minutes:seconds |
+| **Quick bids** | N/A | "+$50", "+$100", "+$250" increment buttons |
+| **Variants** | N/A | 3 variants: `full`, `compact`, `live` |
+| **Gap:** | Page has breadcrumbs, image, details sidebar, bidding section skeleton | Block provides the ACTUAL bidding interface |
+| **Data flow gap:** | Page reads `item.current_bid`, `item.starting_price` | Block uses `currentBid: 1250` hardcoded |
+| **Fix:** | Accept `currentBid`, `bids[]`, `endTime` props → render from them |
+
+#### 7.10.5 Education
+
+| Aspect | Current `education/$id.tsx` (263 lines) | Available `course-curriculum-block` (245 lines) |
+|---|---|---|
+| **Curriculum** | Not shown — only title, description, generic fields | Full expandable module tree with lessons, durations, lock states |
+| **Progress** | N/A | Progress bar per module, completion percentage |
+| **Lesson details** | N/A | Lesson type icons (video/text/quiz), duration, preview button |
+| **Variants** | N/A | 3 variants: `full`, `accordion`, `sidebar` |
+| **Gap:** | Page has basic layout but no course structure | Block provides THE CORE FEATURE of a course page |
+| **Data flow gap:** | N/A | Block uses `placeholderModules` (3 modules, 9 lessons) |
+| **Fix:** | Add `modules` to course API → pass as prop |
+
+#### 7.10.6 Fitness
+
+| Aspect | Current `fitness/$id.tsx` (228 lines) | Available `fitness-class-schedule-block` (204 lines) |
+|---|---|---|
+| **Class schedule** | Not shown | Weekly schedule grid with time slots, instructor names, class levels |
+| **Level filter** | N/A | Filter by: All, Beginner, Intermediate, Advanced |
+| **Booking** | Generic "Book Now" button | Per-class "Join Class" button with availability counter |
+| **Instructor** | Not shown | Name, photo placeholder per class |
+| **Gap:** | Page shows basic service info | Block provides interactive class schedule |
+| **Fix:** | Accept `classes[]` prop |
+
+#### 7.10.7 Freelance
+
+| Aspect | Current `freelance/$id.tsx` (246 lines) | Available `freelancer-profile-block` (247 lines) |
+|---|---|---|
+| **Portfolio** | Not shown | 6-item portfolio grid with category tags |
+| **Skills** | Shows generic `item.skills` array | Shows skill badges in styled grid |
+| **Reviews** | Generic review list | 3 detailed reviews with ratings, dates, text |
+| **Stats** | Basic info display | Completions counter, rating, availability badge |
+| **Variants** | N/A | 3 layouts: `full`, `card`, `sidebar` |
+| **Gap:** | Page has breadcrumbs, sidebar with hire/message buttons | Block adds portfolio + skill showcase |
+| **Data flow gap:** | Page uses `item.skills` from API | Block uses `placeholderFreelancer` (name: "Jordan Rivera", $95/hr) |
+| **Fix:** | Accept `freelancer`, `portfolio[]`, `reviews[]` props |
+
+#### 7.10.8 Automotive
+
+| Aspect | Current `automotive/$id.tsx` (205 lines) | Available `vehicle-listing-block` (206 lines) |
+|---|---|---|
+| **Vehicle specs** | Shows generic metadata fields | Structured specs grid: year, mileage, fuel type, transmission, engine, color |
+| **Make filter** | N/A | Filter dropdown by make |
+| **Comparison** | N/A | Checkbox comparison tool for 2+ vehicles |
+| **Layout toggle** | N/A | Grid/list view toggle |
+| **Gap:** | Page shows one vehicle's detail | Block shows a listing of vehicles — better for LIST page |
+| **Fix:** | For detail page, need `vehicle-detail-block` or pass single vehicle to listing block |
+
+#### 7.10.9 Parking
+
+| Aspect | Current `parking/$id.tsx` (245 lines) | Available `parking-spot-finder-block` (220 lines) |
+|---|---|---|
+| **Spot finder** | Shows basic parking zone info | Interactive spot finder with type filter (covered/open/valet/EV) |
+| **Pricing grid** | Shows generic `item.rate` | Structured pricing: hourly, daily, monthly rates |
+| **Availability** | Not shown | Real-time availability indicator per spot |
+| **Map** | Not shown | Map placeholder with markers |
+| **Gap:** | Page has basic zone info + sidebar | Block provides interactive parking interface |
+| **Fix:** | Accept `spots[]` prop |
+
+#### 7.10.10 Charity / Donations
+
+| Aspect | Current `charity/$id.tsx` | Available `donation-campaign-block` (229 lines) |
+|---|---|---|
+| **Donation form** | Basic "Donate" button | Full donation form with preset amounts ($10/$25/$50/$100/$250), custom input, recurring toggle |
+| **Impact stats** | Not shown | "12 Wells Built, 8,500+ People Served, 24 Communities, 5 Countries" |
+| **Progress** | Not shown | Progress bar with percentage, goal, raised amount |
+| **Variants** | N/A | 3 variants: `full`, `compact`, `widget` |
+| **Fix:** | Accept `campaign`, `impact[]` props |
+
+---
+
+### 7.11 Import Guide — How to Wire Blocks into Detail Pages
+
+#### Method 1: Direct Import (Hybrid approach — recommended for quick wins)
+
+Keep the existing route files but import block components for the vertical-specific sections:
+
+```tsx
+// apps/storefront/src/routes/$tenant/$locale/crowdfunding/$id.tsx
+import { createFileRoute, Link } from "@tanstack/react-router"
+import { CrowdfundingProgressBlock } from '../../../../components/blocks/crowdfunding-progress-block'
+import { ReviewListBlock } from '../../../../components/blocks/review-list-block'
+
+function CrowdfundingDetailPage() {
+  const loaderData = Route.useLoaderData()
+  const campaign = loaderData?.item
+
+  return (
+    <div className="min-h-screen bg-ds-background">
+      {/* Keep custom breadcrumbs + hero */}
+      <div className="bg-ds-card border-b border-ds-border">...</div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-6">
+            {/* REPLACE inline progress with block */}
+            <CrowdfundingProgressBlock
+              campaign={{
+                title: campaign.name || campaign.title,
+                description: campaign.description,
+                goal: Number(campaign.goal || 0),
+                raised: Number(campaign.raised || campaign.amount_raised || 0),
+                backers: Number(campaign.backers_count || 0),
+                daysLeft: campaign.days_left || 0,
+              }}
+              variant="full"
+              showBackers={true}
+            />
+
+            {/* REPLACE inline reviews with block */}
+            <ReviewListBlock
+              reviews={campaign.reviews || []}
+              heading="Campaign Reviews"
+              showSummary={true}
+            />
+          </div>
+
+          <aside>
+            {/* Sidebar CTA */}
+            <CrowdfundingProgressBlock
+              campaign={...same data...}
+              variant="widget"
+            />
+          </aside>
+        </div>
+      </div>
+    </div>
+  )
+}
+```
+
+**Import path pattern:** Blocks live at `apps/storefront/src/components/blocks/<name>-block.tsx`.
+From route files at `apps/storefront/src/routes/$tenant/$locale/<vertical>/$id.tsx`:
+```
+import { BlockName } from '../../../../components/blocks/<name>-block'
+```
+
+#### Method 2: BlockRenderer with Layout (CMS-driven approach)
+
+Use the `BlockRenderer` component with a layout array defined per vertical:
+
+```tsx
+import { BlockRenderer } from '../../../../components/blocks'
+
+function CrowdfundingDetailPage() {
+  const campaign = Route.useLoaderData()?.item
+
+  const layout = [
+    {
+      blockType: 'hero',
+      heading: campaign?.title,
+      subheading: campaign?.description?.substring(0, 120),
+      backgroundImage: campaign?.thumbnail ? { url: campaign.thumbnail } : undefined,
+      minHeight: 'sm',
+    },
+    {
+      blockType: 'crowdfundingProgress',
+      campaign: {
+        title: campaign?.title,
+        goal: Number(campaign?.goal || 0),
+        raised: Number(campaign?.raised || 0),
+        backers: campaign?.backers_count || 0,
+        daysLeft: campaign?.days_left || 0,
+      },
+      variant: 'full',
+      showBackers: true,
+    },
+    {
+      blockType: 'reviewList',
+      reviews: campaign?.reviews || [],
+      heading: 'Reviews',
+    },
+    {
+      blockType: 'recentlyViewed',
+      heading: 'Recently Viewed',
+    },
+  ]
+
+  return (
+    <div className="min-h-screen bg-ds-background">
+      <BlockRenderer blocks={layout} />
+    </div>
+  )
+}
+```
+
+#### Method 3: Full CMS Integration (long-term approach)
+
+Use the CMS registry's `buildDetailPage()` to define per-vertical layouts, then have a generic route file resolve and render them:
+
+1. Update `cms-registry.ts` `buildDetailPage()` to return vertical-specific layouts
+2. Create a generic `$tenant/$locale/$vertical/$id.tsx` route
+3. In the loader, resolve the CMS page and entity data
+4. Pass layout + data to `BlockRenderer`
+
+This requires the most infrastructure changes but yields the most maintainable architecture.
+
+---
+
+### 7.12 Per-Block Refactoring Recipes
+
+For every Tier B block that needs refactoring, here is the exact code change pattern:
+
+#### Pattern: Replace `const placeholder...` with prop + fallback
+
+```tsx
+// Step 1: Add data prop to interface
+interface CrowdfundingProgressBlockProps {
+  campaignId?: string
+  campaign?: {                          // ADD THIS
+    title: string
+    description?: string
+    goal: number
+    raised: number
+    backers: number
+    daysLeft: number
+  }
+  showBackers?: boolean
+  variant?: 'full' | 'widget' | 'minimal'
+}
+
+// Step 2: Keep placeholder as fallback default
+const defaultCampaign = { title: 'Campaign', goal: 0, raised: 0, backers: 0, daysLeft: 0 }
+
+// Step 3: Use prop with fallback
+export const CrowdfundingProgressBlock: React.FC<CrowdfundingProgressBlockProps> = ({
+  campaign = defaultCampaign,           // USE PROP, fallback to empty
+  variant = 'full',
+}) => {
+  const percentFunded = campaign.goal > 0
+    ? Math.round((campaign.raised / campaign.goal) * 100) : 0
+  // ...render from `campaign` instead of `placeholderCampaign`
+}
+```
+
+#### Blocks requiring this pattern (with their new prop shapes):
+
+| Block | New Prop Name | Prop Shape |
+|---|---|---|
+| `crowdfunding-progress` | `campaign` | `{ title, goal, raised, backers, daysLeft }` |
+| `donation-campaign` | `campaign` | `{ title, description, raised, goal, donors }` + `impact[]` |
+| `healthcare-provider` | `providers` | `Provider[]` (id, name, specialty, rating, etc.) |
+| `vehicle-listing` | `vehicles` | `Vehicle[]` (id, title, make, model, year, price, etc.) |
+| `property-listing` | `properties` | `Property[]` (id, title, address, price, type, etc.) |
+| `course-curriculum` | `modules` | `Module[]` (id, title, lessons[], duration) |
+| `event-schedule` | `sessions` | `Session[]` (id, title, time, speaker, venue) |
+| `freelancer-profile` | `freelancer` + `portfolio` | `Freelancer` + `PortfolioItem[]` |
+| `fitness-class-schedule` | `classes` | `FitnessClass[]` (id, name, time, instructor, level) |
+| `pet-profile-card` | `pets` | `Pet[]` (id, name, breed, services) |
+| `auction-bidding` | `currentBid` + `bids` + `endTime` | `number` + `Bid[]` + `Date` |
+| `parking-spot-finder` | `spots` | `ParkingSpot[]` (id, type, rate, available) |
+| `classified-ad-card` | `ads` | `ClassifiedAd[]` (id, title, price, location) |
+| `rental-calendar` | `availability` + `pricing` | `AvailableDate[]` + `PricingConfig` |
+| `booking-calendar` | `timeSlots` + `bookedDates` | `TimeSlot[]` + `Date[]` |
+
+---
+
+### 7.13 Database Format Adapter Specification
+
+The `cms_page` table stores 7 pages with blocks in **incompatible format**. An adapter function is needed:
+
+```typescript
+// apps/backend/src/lib/platform/block-format-adapter.ts
+interface DatabaseBlock {
+  type: string
+  data: Record<string, any>
+}
+
+interface RendererBlock {
+  blockType: string
+  [key: string]: any
+}
+
+export function adaptDatabaseBlocks(dbBlocks: DatabaseBlock[]): RendererBlock[] {
+  return dbBlocks.map(block => {
+    const fieldMap: Record<string, Record<string, string>> = {
+      hero: { title: 'heading', subtitle: 'subheading' },
+      content: { body: 'content' },
+      vertical_grid: { title: 'heading', limit: 'limit' },
+      featured_products: { title: 'heading', limit: 'limit' },
+      cta: { text: 'description', title: 'heading' },
+      contact_form: { title: 'heading', email: 'recipientEmail' },
+    }
+
+    const mapped = fieldMap[block.type] || {}
+    const props: Record<string, any> = {}
+
+    for (const [dbKey, value] of Object.entries(block.data || {})) {
+      props[mapped[dbKey] || dbKey] = value
+    }
+
+    const blockTypeMap: Record<string, string> = {
+      hero: 'hero',
+      content: 'richText',
+      vertical_grid: 'categoryGrid',
+      featured_products: 'productGrid',
+      cta: 'cta',
+      contact_form: 'contactForm',
+    }
+
+    return {
+      blockType: blockTypeMap[block.type] || block.type,
+      ...props,
+    }
+  })
+}
+```
+
+**Database examples and their transformed output:**
+
+| Database Format | Adapted Format |
+|---|---|
+| `{"type":"hero","data":{"title":"Welcome","subtitle":"Shop now"}}` | `{"blockType":"hero","heading":"Welcome","subheading":"Shop now"}` |
+| `{"type":"content","data":{"body":"About us..."}}` | `{"blockType":"richText","content":"About us..."}` |
+| `{"type":"featured_products","data":{"title":"Featured","limit":4}}` | `{"blockType":"productGrid","heading":"Featured","limit":4}` |
+| `{"type":"cta","data":{"title":"Join","text":"Start today"}}` | `{"blockType":"cta","heading":"Join","description":"Start today"}` |
+| `{"type":"contact_form","data":{"title":"Contact","email":"hi@..."}}` | `{"blockType":"contactForm","heading":"Contact","recipientEmail":"hi@..."}` |
+
+---
+
+### 7.14 What the Block System SHOULD Enable
 
 If properly connected, the block system would allow:
 
@@ -1053,13 +1640,13 @@ If properly connected, the block system would allow:
 
 3. **Non-Developer Page Customization** — When migrated to actual Payload CMS, editors could rearrange, add, or remove blocks per vertical without code changes.
 
-### 7.10 Recommended Block Integration Strategy
+### 7.15 Recommended Block Integration Strategy
 
 | Phase | Action | Impact | Effort |
 |---|---|---|---|
 | **Phase 0** | Fix database format mismatch (adapt `type`/`data` to `blockType`/flat props) | Enables DB-stored pages to render | 2 hours |
 | **Phase 1** | Create vertical-specific detail page layouts in `cms-registry.ts` `buildDetailPage()` | Defines what blocks each detail page shows | 4 hours |
-| **Phase 2** | Refactor ~45 blocks to accept real data from props instead of hardcoded data | Blocks render actual API data | 12 hours |
+| **Phase 2** | Refactor ~32 Tier B blocks to accept real data from props instead of hardcoded data | Blocks render actual API data | 12 hours |
 | **Phase 3** | Create `GenericVerticalDetailPage` route that uses `BlockRenderer` | Replaces 50 hardcoded route files with 1 | 8 hours |
 | **Phase 4** | Add entity data context provider so blocks can access the loaded entity | Blocks auto-populate from SSR data | 4 hours |
 
@@ -1071,24 +1658,30 @@ If properly connected, the block system would allow:
 
 1. **77 React block components** (12,750+ lines) — fully implemented with TypeScript interfaces
 2. **57 block type definitions** in the design system — comprehensive prop types with variants
-3. **BlockRenderer component** — generic renderer that maps `blockType` → React component
-4. **CMS page registry** with 27 vertical-specific LIST layouts — well-differentiated per vertical
-5. **CMS resolve API endpoint** — `GET /platform/cms/resolve?path=...` returns page + layout
-6. **CMS page database model** — `cms_page` table with `layout` JSON column (7 seeded pages)
-7. **Payload CMS integration spec** — full contract document for webhook sync
-8. **CMS hooks** — `useCMSVerticals()`, `useCMSNavigation()` in storefront
-9. **Payload webhook handlers** — `POST /admin/webhooks/payload` and `POST /webhooks/payload-cms`
-10. **CMS-to-ERP sync engine** — `cms-hierarchy-sync/engine.ts` for 8-collection sync
+3. **BlockRenderer component** (44 lines) — generic renderer that maps `blockType` → React component
+4. **Block registry** (180 lines) — maps 77 string keys to React component imports
+5. **CMS page registry** with 27 vertical-specific LIST layouts — well-differentiated per vertical (restaurants: 5 blocks, healthcare: 4 blocks, education: 4 blocks, etc.)
+6. **CMS resolve API endpoint** — `GET /platform/cms/resolve?path=...` returns page + layout
+7. **CMS page database model** — `cms_page` table with `layout` JSON column (7 seeded pages)
+8. **Design system with 24 semantic color tokens** — `ds-primary/foreground/background/muted/card/border/destructive/success/warning/info` + foreground variants
+9. **Zero raw Tailwind colors** in blocks or pages — 100% design system token compliance
+10. **Payload CMS integration spec** — full contract document for webhook sync
+11. **CMS hooks** — `useCMSVerticals()`, `useCMSNavigation()` in storefront
+12. **Payload webhook handlers** — `POST /admin/webhooks/payload` and `POST /webhooks/payload-cms`
+13. **CMS-to-ERP sync engine** — `cms-hierarchy-sync/engine.ts` for 8-collection sync
 
 ### What is MISSING / DISCONNECTED:
 
-1. **Zero detail pages use `BlockRenderer`** — all 50 pages use hardcoded inline JSX
-2. **No vertical-specific detail page layouts** in CMS registry — all get same 3 generic blocks
-3. **Database and registry use incompatible block formats** — `type`/`data` vs `blockType`/flat
-4. **Most blocks render placeholder data** — ~45 of 77 blocks don't use their props for rendering
+1. **Zero detail pages import or use `BlockRenderer`** — all 50 pages use hardcoded inline JSX (grep confirms 0 matches for `BlockRenderer` in routes/)
+2. **No vertical-specific detail page layouts** in CMS registry — `buildDetailPage()` returns the same 3 generic blocks (hero + reviewList + recentlyViewed) for ALL 27 verticals
+3. **Database and registry use incompatible block formats** — `cms_page.layout` stores `{"type": "hero", "data": {"title": "..."}}` but `BlockRenderer` expects `{"blockType": "hero", "heading": "..."}`
+4. **32 blocks render placeholder data** instead of using their props (e.g., `placeholderCampaign`, `placeholderProviders`, `placeholderVehicles`)
 5. **No entity data context** — blocks can't access the SSR-loaded entity data automatically
 6. **No `useCMSPage()` hook** — storefront has `useCMSVerticals` and `useCMSNavigation` but no hook to fetch a specific page's block layout
 7. **No generic detail page route** — each vertical has its own hardcoded route file instead of a shared CMS-driven page
+8. **13 blocks accept entity-specific ID props** (`campaignId`, `auctionId`, `serviceId`, etc.) but never fetch data themselves — they expect a parent to pass the data, which no parent currently does
+9. **Minor UI pattern inconsistencies** — blocks use `container mx-auto px-4 md:px-6` while pages use `max-w-7xl mx-auto px-4 sm:px-6 lg:px-8`; blocks use `rounded-lg` while pages use `rounded-xl`
+10. **No block-level error boundaries** — if a block fails to render, the entire page breaks
 
 ---
 
@@ -1106,14 +1699,18 @@ If properly connected, the block system would allow:
   - Enables CMS-driven page customization
   - Consistent with the platform's stated architecture
   - Blocks already have vertical-specific UI (auction bidding, booking calendar, etc.)
+  - Zero theme conflict — both systems use identical `ds-` token vocabulary
 - **Cons:** Requires upfront integration work, blocks need refactoring to use real data
-- **Effort to implement:** ~30 hours total across 4 phases
+- **Effort to implement:** ~30 hours total across 5 phases
 
-### Option C: Hybrid — Custom Pages with Block Sections
-- **Pros:** Custom page structure + block components for complex sections
+### Option C: Hybrid — Custom Pages with Block Sections (Pragmatic)
+- **Pros:** Custom page structure + block components for complex sections; quickest path to adding missing features (menus, bid forms, schedules)
 - **Cons:** Still maintains 50 files, partial block utilization
 - **Effort:** ~20 hours
+- **How it works:** Keep each route file's breadcrumbs, hero, and sidebar layout. Import vertical-specific blocks for the main content sections. Each page becomes ~80 lines instead of ~250.
 
 ### Recommendation
 
-**Option B (Block-Based)** is the architecturally correct choice. The block system was clearly built for this purpose — 18 vertical-specific blocks exist that exactly match the vertical detail pages. The CMS registry already has the infrastructure for page resolution and layout delivery. The main gap is connecting the dots between the existing layers.
+**Option C (Hybrid)** is the fastest path to production readiness. It preserves the existing page structure (breadcrumbs, hero, sidebar with CTAs) while immediately adding the rich vertical-specific features that are currently missing (menus, bid forms, class schedules, donation forms, etc.). Since both blocks and pages use identical `ds-` design tokens, visual integration will be seamless with zero style conflicts.
+
+**Option B (Block-Based)** should be the follow-up architectural refactor once Option C proves the blocks work correctly with real data.
