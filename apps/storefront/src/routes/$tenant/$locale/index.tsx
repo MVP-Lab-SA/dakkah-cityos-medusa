@@ -8,34 +8,36 @@ export const Route = createFileRoute("/$tenant/$locale/")({
   loader: async ({ params, context }) => {
     const { locale } = params
     if (typeof window === "undefined") return { locale, region: null }
-    const { queryClient } = context
+    try {
+      const { queryClient } = context
 
-    const region = await queryClient.ensureQueryData({
-      queryKey: ["region", locale],
-      queryFn: () => getRegion({ country_code: locale }),
-    })
+      const region = await queryClient.ensureQueryData({
+        queryKey: ["region", locale],
+        queryFn: () => getRegion({ country_code: locale }),
+      })
 
-    if (!region) {
-      return { countryCode: locale, region: null }
-    }
+      if (!region) {
+        return { countryCode: locale, region: null }
+      }
 
-    // Prefetch latest products for SSR (non-blocking)
-    // FeaturedProducts component will use cached data when available
-    queryClient.prefetchQuery({
-      queryKey: queryKeys.products.latest(4, region.id),
-      queryFn: () =>
-        listProducts({
-          query_params: {
-            limit: 4,
-            order: "-created_at",
-          },
-          region_id: region.id,
-        }),
-    })
+      queryClient.prefetchQuery({
+        queryKey: queryKeys.products.latest(4, region.id),
+        queryFn: () =>
+          listProducts({
+            query_params: {
+              limit: 4,
+              order: "-created_at",
+            },
+            region_id: region.id,
+          }),
+      })
 
-    return {
-      locale,
-      region,
+      return {
+        locale,
+        region,
+      }
+    } catch {
+      return { locale, region: null }
     }
   },
   head: () => {

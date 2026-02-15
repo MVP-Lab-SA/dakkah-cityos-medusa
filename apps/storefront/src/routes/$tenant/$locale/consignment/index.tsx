@@ -5,20 +5,24 @@ import { useState } from "react"
 export const Route = createFileRoute("/$tenant/$locale/consignment/")({
   component: ConsignmentPage,
   loader: async () => {
-    const tiers = [
-      { id: "1", name: "Standard", commission: "70/30", description: "You keep 70% of the sale price. Ideal for everyday items and accessories.", minValue: "50 SAR", features: ["Basic product listing", "Standard photography", "30-day listing period", "Email support"], color: "emerald" },
-      { id: "2", name: "Premium", commission: "75/25", description: "You keep 75% of the sale price. Great for designer and branded items.", minValue: "200 SAR", features: ["Featured listing placement", "Professional photography", "60-day listing period", "Priority support"], color: "teal", popular: true },
-      { id: "3", name: "Luxury", commission: "80/20", description: "You keep 80% of the sale price. For high-value luxury and collectible items.", minValue: "1,000 SAR", features: ["Premium showcase placement", "Studio photography", "90-day listing period", "Dedicated account manager"], color: "amber" },
-    ]
-    const benefits = [
-      { title: "Earn from Unused Items", description: "Turn pre-owned items into cash without the hassle of selling directly.", icon: "💰" },
-      { title: "Professional Handling", description: "We handle photography, listing, pricing, and customer inquiries.", icon: "📸" },
-      { title: "Secure & Insured", description: "All consigned items are fully insured while in our care.", icon: "🛡️" },
-      { title: "Wide Audience Reach", description: "Access thousands of active buyers on our marketplace.", icon: "🌍" },
-      { title: "Transparent Tracking", description: "Real-time updates on views, inquiries, and sales of your items.", icon: "📊" },
-      { title: "Fast Payments", description: "Receive your earnings within 3 business days of a completed sale.", icon: "⚡" },
-    ]
-    return { tiers, benefits }
+    try {
+      const tiers = [
+        { id: "1", name: "Standard", commission: "70/30", description: "You keep 70% of the sale price. Ideal for everyday items and accessories.", minValue: "50 SAR", features: ["Basic product listing", "Standard photography", "30-day listing period", "Email support"], color: "emerald" },
+        { id: "2", name: "Premium", commission: "75/25", description: "You keep 75% of the sale price. Great for designer and branded items.", minValue: "200 SAR", features: ["Featured listing placement", "Professional photography", "60-day listing period", "Priority support"], color: "teal", popular: true },
+        { id: "3", name: "Luxury", commission: "80/20", description: "You keep 80% of the sale price. For high-value luxury and collectible items.", minValue: "1,000 SAR", features: ["Premium showcase placement", "Studio photography", "90-day listing period", "Dedicated account manager"], color: "amber" },
+      ]
+      const benefits = [
+        { title: "Earn from Unused Items", description: "Turn pre-owned items into cash without the hassle of selling directly.", icon: "💰" },
+        { title: "Professional Handling", description: "We handle photography, listing, pricing, and customer inquiries.", icon: "📸" },
+        { title: "Secure & Insured", description: "All consigned items are fully insured while in our care.", icon: "🛡️" },
+        { title: "Wide Audience Reach", description: "Access thousands of active buyers on our marketplace.", icon: "🌍" },
+        { title: "Transparent Tracking", description: "Real-time updates on views, inquiries, and sales of your items.", icon: "📊" },
+        { title: "Fast Payments", description: "Receive your earnings within 3 business days of a completed sale.", icon: "⚡" },
+      ]
+      return { tiers, benefits }
+    } catch {
+      return { tiers: [], benefits: [] }
+    }
   },
 })
 

@@ -5,21 +5,25 @@ import { useState } from "react"
 export const Route = createFileRoute("/$tenant/$locale/print-on-demand/")({
   component: PrintOnDemandPage,
   loader: async () => {
-    const products = [
-      { id: "1", name: "T-Shirts", description: "Premium cotton tees in 20+ colors. Perfect for custom designs, logos, and artwork.", startingAt: "35 SAR", image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=300&fit=crop" },
-      { id: "2", name: "Hoodies", description: "Comfortable fleece hoodies with full-color front and back printing options.", startingAt: "89 SAR", image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=300&fit=crop" },
-      { id: "3", name: "Mugs", description: "Ceramic mugs with vibrant, dishwasher-safe prints. 11oz and 15oz sizes available.", startingAt: "25 SAR", image: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=400&h=300&fit=crop" },
-      { id: "4", name: "Phone Cases", description: "Durable phone cases with high-resolution prints for iPhone and Samsung models.", startingAt: "39 SAR", image: "https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?w=400&h=300&fit=crop" },
-      { id: "5", name: "Tote Bags", description: "Eco-friendly canvas tote bags with all-over print or centered designs.", startingAt: "29 SAR", image: "https://images.unsplash.com/photo-1597633425046-08f5110420b5?w=400&h=300&fit=crop" },
-      { id: "6", name: "Posters & Art", description: "Museum-quality prints on premium paper. Multiple sizes from A4 to A1.", startingAt: "19 SAR", image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=400&h=300&fit=crop" },
-    ]
-    const benefits = [
-      { title: "Zero Upfront Costs", description: "No inventory, no minimum orders. Products are printed only when ordered.", icon: "💸" },
-      { title: "Easy Design Tools", description: "Upload your designs or use our built-in editor with templates and mockups.", icon: "🎨" },
-      { title: "Global Shipping", description: "We ship to 30+ countries with tracking on every order.", icon: "🌍" },
-      { title: "Quality Guarantee", description: "Premium materials and printing. Unhappy? We reprint or refund.", icon: "✅" },
-    ]
-    return { products, benefits }
+    try {
+      const products = [
+        { id: "1", name: "T-Shirts", description: "Premium cotton tees in 20+ colors. Perfect for custom designs, logos, and artwork.", startingAt: "35 SAR", image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=300&fit=crop" },
+        { id: "2", name: "Hoodies", description: "Comfortable fleece hoodies with full-color front and back printing options.", startingAt: "89 SAR", image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=300&fit=crop" },
+        { id: "3", name: "Mugs", description: "Ceramic mugs with vibrant, dishwasher-safe prints. 11oz and 15oz sizes available.", startingAt: "25 SAR", image: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=400&h=300&fit=crop" },
+        { id: "4", name: "Phone Cases", description: "Durable phone cases with high-resolution prints for iPhone and Samsung models.", startingAt: "39 SAR", image: "https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?w=400&h=300&fit=crop" },
+        { id: "5", name: "Tote Bags", description: "Eco-friendly canvas tote bags with all-over print or centered designs.", startingAt: "29 SAR", image: "https://images.unsplash.com/photo-1597633425046-08f5110420b5?w=400&h=300&fit=crop" },
+        { id: "6", name: "Posters & Art", description: "Museum-quality prints on premium paper. Multiple sizes from A4 to A1.", startingAt: "19 SAR", image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=400&h=300&fit=crop" },
+      ]
+      const benefits = [
+        { title: "Zero Upfront Costs", description: "No inventory, no minimum orders. Products are printed only when ordered.", icon: "💸" },
+        { title: "Easy Design Tools", description: "Upload your designs or use our built-in editor with templates and mockups.", icon: "🎨" },
+        { title: "Global Shipping", description: "We ship to 30+ countries with tracking on every order.", icon: "🌍" },
+        { title: "Quality Guarantee", description: "Premium materials and printing. Unhappy? We reprint or refund.", icon: "✅" },
+      ]
+      return { products, benefits }
+    } catch {
+      return { products: [], benefits: [] }
+    }
   },
 })
 

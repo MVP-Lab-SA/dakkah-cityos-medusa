@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { useState, useEffect } from "react"
 import { TemplateRenderer } from "@/components/cms/template-renderer"
 import type { CMSPage } from "@/lib/types/cityos"
+import { getServerBaseUrl } from "@/lib/utils/env"
 
 const DEFAULT_TENANT_ID = "01KGZ2JRYX607FWMMYQNQRKVWS"
 
@@ -11,7 +12,7 @@ const TENANT_SLUG_TO_ID: Record<string, string> = {
 
 async function resolvePageFromServer(tenantId: string, path: string, locale?: string): Promise<CMSPage | null> {
   try {
-    const baseUrl = typeof window === "undefined" ? "http://localhost:9000" : ""
+    const baseUrl = getServerBaseUrl()
     const params = new URLSearchParams({ path, tenant_id: tenantId })
     if (locale) params.set("locale", locale)
     const response = await fetch(`${baseUrl}/platform/cms/resolve?${params}`)

@@ -1,3 +1,4 @@
+import { getBackendUrl } from "@/lib/utils/env"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { sdk } from "../utils/sdk"
 import type {
@@ -18,7 +19,7 @@ export const subscriptionKeys = {
 
 // API Fetch helper
 async function fetchApi<T>(path: string, options?: RequestInit): Promise<T> {
-  const baseUrl = import.meta.env.VITE_MEDUSA_BACKEND_URL || "http://localhost:9000"
+  const baseUrl = getBackendUrl()
   const response = await fetch(`${baseUrl}${path}`, {
     ...options,
     headers: {

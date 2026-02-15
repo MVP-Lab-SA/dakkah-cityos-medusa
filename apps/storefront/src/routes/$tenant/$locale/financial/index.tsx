@@ -5,15 +5,19 @@ import { useState } from "react"
 export const Route = createFileRoute("/$tenant/$locale/financial/")({
   component: FinancialPage,
   loader: async () => {
-    const services = [
-      { id: "1", name: "Personal Loans", description: "Flexible personal loans with competitive rates starting from 2.5% APR. Quick approval and disbursement within 24 hours.", icon: "banknotes", rate: "From 2.5% APR", image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=300&fit=crop" },
-      { id: "2", name: "Business Financing", description: "Tailored financing solutions for SMEs and enterprises. Working capital, equipment financing, and growth funding.", icon: "building", rate: "From 3.5% APR", image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=300&fit=crop" },
-      { id: "3", name: "Insurance", description: "Comprehensive insurance products covering health, auto, property, and travel. Protect what matters most.", icon: "shield", rate: "From 99 SAR/mo", image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=400&h=300&fit=crop" },
-      { id: "4", name: "Investment", description: "Diversified investment portfolios managed by expert advisors. Grow your wealth with stocks, sukuk, and mutual funds.", icon: "chart", rate: "5-12% returns", image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&h=300&fit=crop" },
-      { id: "5", name: "Payment Plans", description: "Split your purchases into easy installments with 0% interest on select plans. Buy now, pay later with flexibility.", icon: "calendar", rate: "0% interest available", image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop" },
-      { id: "6", name: "Currency Exchange", description: "Real-time currency exchange at competitive rates. Send and receive international transfers with low fees.", icon: "globe", rate: "Low 0.5% spread", image: "https://images.unsplash.com/photo-1580519542036-c47de6196ba5?w=400&h=300&fit=crop" },
-    ]
-    return { services }
+    try {
+      const services = [
+        { id: "1", name: "Personal Loans", description: "Flexible personal loans with competitive rates starting from 2.5% APR. Quick approval and disbursement within 24 hours.", icon: "banknotes", rate: "From 2.5% APR", image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=300&fit=crop" },
+        { id: "2", name: "Business Financing", description: "Tailored financing solutions for SMEs and enterprises. Working capital, equipment financing, and growth funding.", icon: "building", rate: "From 3.5% APR", image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=300&fit=crop" },
+        { id: "3", name: "Insurance", description: "Comprehensive insurance products covering health, auto, property, and travel. Protect what matters most.", icon: "shield", rate: "From 99 SAR/mo", image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=400&h=300&fit=crop" },
+        { id: "4", name: "Investment", description: "Diversified investment portfolios managed by expert advisors. Grow your wealth with stocks, sukuk, and mutual funds.", icon: "chart", rate: "5-12% returns", image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&h=300&fit=crop" },
+        { id: "5", name: "Payment Plans", description: "Split your purchases into easy installments with 0% interest on select plans. Buy now, pay later with flexibility.", icon: "calendar", rate: "0% interest available", image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop" },
+        { id: "6", name: "Currency Exchange", description: "Real-time currency exchange at competitive rates. Send and receive international transfers with low fees.", icon: "globe", rate: "Low 0.5% spread", image: "https://images.unsplash.com/photo-1580519542036-c47de6196ba5?w=400&h=300&fit=crop" },
+      ]
+      return { services }
+    } catch {
+      return { services: [] }
+    }
   },
 })
 

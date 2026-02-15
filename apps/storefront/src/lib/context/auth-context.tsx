@@ -1,5 +1,6 @@
 import { sdk } from "@/lib/utils/sdk"
 import { queryKeys } from "@/lib/utils/query-keys"
+import { getBackendUrl } from "@/lib/utils/env"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { createContext, useContext, useCallback, useState, useEffect, type ReactNode } from "react"
 
@@ -180,7 +181,7 @@ function ClientAuthProvider({ children }: { children: ReactNode }) {
   const resetPasswordMutation = useMutation({
     mutationFn: async ({ token, password }: { token: string; password: string }) => {
       // Use fetch directly for password update since SDK method signature varies
-      const backendUrl = import.meta.env.VITE_MEDUSA_BACKEND_URL || 'http://localhost:9000'
+      const backendUrl = getBackendUrl()
       await fetch(`${backendUrl}/auth/customer/emailpass/update`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -1,9 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Company, CompanyMember, CreditInfo } from "@/lib/types/companies"
-
-const getBackendUrl = () => {
-  return import.meta.env.VITE_BACKEND_URL || "http://localhost:9000"
-}
+import { getBackendUrl } from "@/lib/utils/env"
 
 export function useMyCompany() {
   const backendUrl = getBackendUrl()

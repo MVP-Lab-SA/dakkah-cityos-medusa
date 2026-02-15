@@ -11,6 +11,11 @@ export function getBackendUrl(): string {
   return import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_MEDUSA_BACKEND_URL || "http://localhost:9000"
 }
 
+export function getServerBaseUrl(): string {
+  const isServer = typeof window === "undefined"
+  return isServer ? getBackendUrl() : ""
+}
+
 /**
  * Get the storefront URL
  * Uses VITE_STOREFRONT_URL environment variable with fallback

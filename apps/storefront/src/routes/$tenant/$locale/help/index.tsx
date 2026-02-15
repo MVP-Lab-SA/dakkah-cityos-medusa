@@ -5,23 +5,27 @@ import { useState } from "react"
 export const Route = createFileRoute("/$tenant/$locale/help/")({
   component: HelpPage,
   loader: async () => {
-    const categories = [
-      { id: "1", name: "Orders", icon: "📦", description: "Track orders, order issues, cancellations, and modifications.", count: 24 },
-      { id: "2", name: "Payments", icon: "💳", description: "Payment methods, billing issues, refunds, and invoices.", count: 18 },
-      { id: "3", name: "Shipping", icon: "🚚", description: "Delivery times, tracking, international shipping, and fees.", count: 15 },
-      { id: "4", name: "Account", icon: "👤", description: "Profile settings, security, notifications, and preferences.", count: 12 },
-    ]
-    const faqs = [
-      { id: "f1", question: "How do I track my order?", answer: "You can track your order by visiting your account dashboard and clicking on 'My Orders'. Each order has a tracking number that you can use to see real-time delivery updates.", category: "Orders" },
-      { id: "f2", question: "What payment methods do you accept?", answer: "We accept Visa, Mastercard, American Express, Apple Pay, mada, and bank transfers. All payments are processed securely through our PCI-compliant payment gateway.", category: "Payments" },
-      { id: "f3", question: "How long does shipping take?", answer: "Standard shipping within Saudi Arabia takes 2-5 business days. Express shipping is available for 1-2 business day delivery. International shipping takes 7-14 business days.", category: "Shipping" },
-      { id: "f4", question: "How do I reset my password?", answer: "Click on 'Forgot Password' on the login page, enter your email address, and we'll send you a password reset link. The link expires after 24 hours for security.", category: "Account" },
-      { id: "f5", question: "Can I cancel my order?", answer: "You can cancel your order within 1 hour of placing it. After that, the order enters processing and may not be cancellable. Contact our support team for assistance.", category: "Orders" },
-      { id: "f6", question: "How do I request a refund?", answer: "Navigate to your order in 'My Orders', click 'Request Refund', and follow the instructions. Refunds are processed within 5-7 business days to your original payment method.", category: "Payments" },
-      { id: "f7", question: "Do you ship internationally?", answer: "Yes, we ship to over 30 countries. International shipping rates and delivery times vary by destination. You can check availability at checkout.", category: "Shipping" },
-      { id: "f8", question: "How do I update my email address?", answer: "Go to Account Settings > Profile Information and click 'Edit' next to your email. You'll need to verify the new email address before the change takes effect.", category: "Account" },
-    ]
-    return { categories, faqs }
+    try {
+      const categories = [
+        { id: "1", name: "Orders", icon: "📦", description: "Track orders, order issues, cancellations, and modifications.", count: 24 },
+        { id: "2", name: "Payments", icon: "💳", description: "Payment methods, billing issues, refunds, and invoices.", count: 18 },
+        { id: "3", name: "Shipping", icon: "🚚", description: "Delivery times, tracking, international shipping, and fees.", count: 15 },
+        { id: "4", name: "Account", icon: "👤", description: "Profile settings, security, notifications, and preferences.", count: 12 },
+      ]
+      const faqs = [
+        { id: "f1", question: "How do I track my order?", answer: "You can track your order by visiting your account dashboard and clicking on 'My Orders'. Each order has a tracking number that you can use to see real-time delivery updates.", category: "Orders" },
+        { id: "f2", question: "What payment methods do you accept?", answer: "We accept Visa, Mastercard, American Express, Apple Pay, mada, and bank transfers. All payments are processed securely through our PCI-compliant payment gateway.", category: "Payments" },
+        { id: "f3", question: "How long does shipping take?", answer: "Standard shipping within Saudi Arabia takes 2-5 business days. Express shipping is available for 1-2 business day delivery. International shipping takes 7-14 business days.", category: "Shipping" },
+        { id: "f4", question: "How do I reset my password?", answer: "Click on 'Forgot Password' on the login page, enter your email address, and we'll send you a password reset link. The link expires after 24 hours for security.", category: "Account" },
+        { id: "f5", question: "Can I cancel my order?", answer: "You can cancel your order within 1 hour of placing it. After that, the order enters processing and may not be cancellable. Contact our support team for assistance.", category: "Orders" },
+        { id: "f6", question: "How do I request a refund?", answer: "Navigate to your order in 'My Orders', click 'Request Refund', and follow the instructions. Refunds are processed within 5-7 business days to your original payment method.", category: "Payments" },
+        { id: "f7", question: "Do you ship internationally?", answer: "Yes, we ship to over 30 countries. International shipping rates and delivery times vary by destination. You can check availability at checkout.", category: "Shipping" },
+        { id: "f8", question: "How do I update my email address?", answer: "Go to Account Settings > Profile Information and click 'Edit' next to your email. You'll need to verify the new email address before the change takes effect.", category: "Account" },
+      ]
+      return { categories, faqs }
+    } catch {
+      return { categories: [], faqs: [] }
+    }
   },
 })
 

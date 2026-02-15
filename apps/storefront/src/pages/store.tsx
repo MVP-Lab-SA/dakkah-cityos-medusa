@@ -2,6 +2,7 @@ import ProductCard from "@/components/product-card"
 import { Button } from "@/components/ui/button"
 import { useParams } from "@tanstack/react-router"
 import { useState, useEffect, useCallback } from "react"
+import { getServerBaseUrl } from "@/lib/utils/env"
 
 const LOCALE_TO_COUNTRY: Record<string, string> = {
   en: "us",
@@ -12,7 +13,7 @@ const LOCALE_TO_COUNTRY: Record<string, string> = {
 const PUBLISHABLE_KEY = import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || ""
 
 function getBaseUrl() {
-  return typeof window === "undefined" ? "http://localhost:9000" : ""
+  return getServerBaseUrl()
 }
 
 const Store = () => {

@@ -5,26 +5,30 @@ import { useState } from "react"
 export const Route = createFileRoute("/$tenant/$locale/dropshipping/")({
   component: DropshippingPage,
   loader: async () => {
-    const features = [
-      { id: "1", title: "No Inventory Needed", description: "Sell products without stocking them. We handle warehousing and fulfillment for you.", icon: "📦", color: "violet" },
-      { id: "2", title: "Global Supplier Network", description: "Access 500+ verified suppliers across electronics, fashion, home goods, and more.", icon: "🌐", color: "purple" },
-      { id: "3", title: "Automated Fulfillment", description: "Orders are automatically routed to suppliers for fast processing and shipping.", icon: "⚡", color: "blue" },
-      { id: "4", title: "Brand Customization", description: "Add your branding to packaging, invoices, and shipping labels for a professional look.", icon: "🎨", color: "pink" },
-      { id: "5", title: "Real-Time Analytics", description: "Track sales, profits, and inventory levels with comprehensive dashboards.", icon: "📊", color: "green" },
-      { id: "6", title: "24/7 Support", description: "Dedicated support team to help with orders, returns, and supplier issues.", icon: "🛟", color: "amber" },
-    ]
-    const stats = [
-      { label: "Active Dropshippers", value: "5,000+" },
-      { label: "Verified Suppliers", value: "500+" },
-      { label: "Products Available", value: "50,000+" },
-      { label: "Countries Shipped", value: "30+" },
-    ]
-    const plans = [
-      { name: "Starter", price: "Free", features: ["Up to 50 products", "Basic analytics", "Standard shipping", "Email support"], cta: "Start Free" },
-      { name: "Growth", price: "199 SAR/mo", features: ["Up to 500 products", "Advanced analytics", "Express shipping", "Priority support", "Custom branding"], cta: "Start Growing", popular: true },
-      { name: "Enterprise", price: "499 SAR/mo", features: ["Unlimited products", "Premium analytics", "Same-day shipping", "Dedicated manager", "API access", "White-label"], cta: "Contact Sales" },
-    ]
-    return { features, stats, plans }
+    try {
+      const features = [
+        { id: "1", title: "No Inventory Needed", description: "Sell products without stocking them. We handle warehousing and fulfillment for you.", icon: "📦", color: "violet" },
+        { id: "2", title: "Global Supplier Network", description: "Access 500+ verified suppliers across electronics, fashion, home goods, and more.", icon: "🌐", color: "purple" },
+        { id: "3", title: "Automated Fulfillment", description: "Orders are automatically routed to suppliers for fast processing and shipping.", icon: "⚡", color: "blue" },
+        { id: "4", title: "Brand Customization", description: "Add your branding to packaging, invoices, and shipping labels for a professional look.", icon: "🎨", color: "pink" },
+        { id: "5", title: "Real-Time Analytics", description: "Track sales, profits, and inventory levels with comprehensive dashboards.", icon: "📊", color: "green" },
+        { id: "6", title: "24/7 Support", description: "Dedicated support team to help with orders, returns, and supplier issues.", icon: "🛟", color: "amber" },
+      ]
+      const stats = [
+        { label: "Active Dropshippers", value: "5,000+" },
+        { label: "Verified Suppliers", value: "500+" },
+        { label: "Products Available", value: "50,000+" },
+        { label: "Countries Shipped", value: "30+" },
+      ]
+      const plans = [
+        { name: "Starter", price: "Free", features: ["Up to 50 products", "Basic analytics", "Standard shipping", "Email support"], cta: "Start Free" },
+        { name: "Growth", price: "199 SAR/mo", features: ["Up to 500 products", "Advanced analytics", "Express shipping", "Priority support", "Custom branding"], cta: "Start Growing", popular: true },
+        { name: "Enterprise", price: "499 SAR/mo", features: ["Unlimited products", "Premium analytics", "Same-day shipping", "Dedicated manager", "API access", "White-label"], cta: "Contact Sales" },
+      ]
+      return { features, stats, plans }
+    } catch {
+      return { features: [], stats: [], plans: [] }
+    }
   },
 })
 

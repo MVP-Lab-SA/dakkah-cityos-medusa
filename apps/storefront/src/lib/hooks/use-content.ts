@@ -1,3 +1,4 @@
+import { getBackendUrl } from "@/lib/utils/env"
 import { useQuery } from "@tanstack/react-query"
 import { normalizeItem } from "@/lib/utils/normalize-item"
 
@@ -77,7 +78,7 @@ export interface POIFilters {
   limit?: number
 }
 
-const baseUrl = import.meta.env.VITE_MEDUSA_BACKEND_URL || "http://localhost:9000"
+const baseUrl = getBackendUrl()
 
 async function fetchApi<T>(path: string): Promise<T> {
   const response = await fetch(`${baseUrl}${path}`, {

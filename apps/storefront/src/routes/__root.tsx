@@ -22,12 +22,16 @@ export const Route = createRootRouteWithContext<{
 }>()({
   loader: async ({ context }) => {
     if (typeof window === "undefined") return {}
-    const { queryClient } = context
-    await queryClient.ensureQueryData({
-      queryKey: ["regions"],
-      queryFn: () => listRegions({ fields: "id, name, currency_code, *countries" }),
-    })
-    return {}
+    try {
+      const { queryClient } = context
+      await queryClient.ensureQueryData({
+        queryKey: ["regions"],
+        queryFn: () => listRegions({ fields: "id, name, currency_code, *countries" }),
+      })
+      return {}
+    } catch {
+      return {}
+    }
   },
   head: () => ({
     links: [

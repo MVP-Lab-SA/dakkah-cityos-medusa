@@ -5,19 +5,23 @@ import { useState } from "react"
 export const Route = createFileRoute("/$tenant/$locale/affiliate/")({
   component: AffiliatePage,
   loader: async () => {
-    const tiers = [
-      { id: "1", name: "Starter", commission: "5%", requirement: "0+ sales/month", earnings: "Up to 2,500 SAR/mo", color: "gray", features: ["Basic dashboard", "Standard links", "Monthly payouts", "Email support"], icon: "🚀" },
-      { id: "2", name: "Pro", commission: "10%", requirement: "20+ sales/month", earnings: "Up to 10,000 SAR/mo", color: "blue", features: ["Advanced analytics", "Custom links", "Bi-weekly payouts", "Priority support"], icon: "⭐" },
-      { id: "3", name: "Elite", commission: "15%", requirement: "50+ sales/month", earnings: "Up to 30,000 SAR/mo", color: "purple", features: ["Real-time analytics", "API access", "Weekly payouts", "Dedicated manager"], icon: "💎", popular: true },
-      { id: "4", name: "Partner", commission: "20%", requirement: "100+ sales/month", earnings: "Unlimited", color: "amber", features: ["White-label tools", "Custom integrations", "Daily payouts", "Strategic partnership"], icon: "👑" },
-    ]
-    const stats = [
-      { label: "Active Affiliates", value: "2,500+" },
-      { label: "Total Commissions Paid", value: "4.2M SAR" },
-      { label: "Avg. Monthly Earning", value: "1,680 SAR" },
-      { label: "Products Available", value: "10,000+" },
-    ]
-    return { tiers, stats }
+    try {
+      const tiers = [
+        { id: "1", name: "Starter", commission: "5%", requirement: "0+ sales/month", earnings: "Up to 2,500 SAR/mo", color: "gray", features: ["Basic dashboard", "Standard links", "Monthly payouts", "Email support"], icon: "🚀" },
+        { id: "2", name: "Pro", commission: "10%", requirement: "20+ sales/month", earnings: "Up to 10,000 SAR/mo", color: "blue", features: ["Advanced analytics", "Custom links", "Bi-weekly payouts", "Priority support"], icon: "⭐" },
+        { id: "3", name: "Elite", commission: "15%", requirement: "50+ sales/month", earnings: "Up to 30,000 SAR/mo", color: "purple", features: ["Real-time analytics", "API access", "Weekly payouts", "Dedicated manager"], icon: "💎", popular: true },
+        { id: "4", name: "Partner", commission: "20%", requirement: "100+ sales/month", earnings: "Unlimited", color: "amber", features: ["White-label tools", "Custom integrations", "Daily payouts", "Strategic partnership"], icon: "👑" },
+      ]
+      const stats = [
+        { label: "Active Affiliates", value: "2,500+" },
+        { label: "Total Commissions Paid", value: "4.2M SAR" },
+        { label: "Avg. Monthly Earning", value: "1,680 SAR" },
+        { label: "Products Available", value: "10,000+" },
+      ]
+      return { tiers, stats }
+    } catch {
+      return { tiers: [], stats: [] }
+    }
   },
 })
 

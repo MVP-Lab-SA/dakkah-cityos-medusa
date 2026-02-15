@@ -7,23 +7,27 @@ export const Route = createFileRoute("/$tenant/$locale/order/$orderId/confirmed"
   loader: async ({ params, context }) => {
     const { locale, orderId } = params
     if (typeof window === "undefined") return { locale, order: null }
-    const { queryClient } = context
+    try {
+      const { queryClient } = context
 
-    const order = await queryClient.ensureQueryData({
-      queryKey: queryKeys.orders.detail(orderId),
-      queryFn: () => retrieveOrder({ 
-        order_id: orderId,
-        fields: "id, display_id, created_at, currency_code, status, email, *items, *shipping_address, *billing_address, *shipping_methods, *payment_collections.payment_sessions, subtotal, shipping_total, discount_total, tax_total, total"
-      }),
-    })
+      const order = await queryClient.ensureQueryData({
+        queryKey: queryKeys.orders.detail(orderId),
+        queryFn: () => retrieveOrder({ 
+          order_id: orderId,
+          fields: "id, display_id, created_at, currency_code, status, email, *items, *shipping_address, *billing_address, *shipping_methods, *payment_collections.payment_sessions, subtotal, shipping_total, discount_total, tax_total, total"
+        }),
+      })
 
-    if (!order) {
-      throw notFound()
-    }
+      if (!order) {
+        throw notFound()
+      }
 
-    return {
-      locale,
-      order,
+      return {
+        locale,
+        order,
+      }
+    } catch {
+      return { locale, order: null }
     }
   },
   component: OrderConfirmationPage,

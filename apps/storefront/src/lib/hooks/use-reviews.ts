@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { getBackendUrl } from "@/lib/utils/env"
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:9000"
+const BACKEND_URL = getBackendUrl()
 
 interface Review {
   id: string

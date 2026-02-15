@@ -20,8 +20,7 @@ export function InvoiceDownload({ orderId, displayId, onDownload }: InvoiceDownl
       } else {
         // Default: simulate download
         await new Promise((resolve) => setTimeout(resolve, 1000))
-        // In real implementation, would fetch PDF from backend
-        console.log(`Downloading invoice for order ${orderId}`)
+        void orderId
       }
       setDownloaded(true)
       setTimeout(() => setDownloaded(false), 3000)

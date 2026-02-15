@@ -322,11 +322,7 @@ export const CartPromo = ({ cart }: CartPromoProps) => {
     removePromoCodeMutation.mutate(
       { code },
       {
-        onSuccess: () => {
-          console.log("Promo code removed successfully")
-        },
-        onError: (error) => {
-          console.error("Failed to remove promo code:", error)
+        onError: (_error) => {
         },
       }
     )
@@ -341,7 +337,6 @@ export const CartPromo = ({ cart }: CartPromoProps) => {
           setPromoCode("")
         },
         onError: () => {
-          console.error("Failed to apply promo code")
         },
       }
     )

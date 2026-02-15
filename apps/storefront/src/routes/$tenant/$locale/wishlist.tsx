@@ -12,12 +12,10 @@ function WishlistPage() {
   const prefix = `/${tenant}/${locale}`
   const { data: items, isLoading } = useWishlist()
 
-  const handleRemove = (itemId: string) => {
-    console.log("Remove from wishlist:", itemId)
+  const handleRemove = (_itemId: string) => {
   }
 
-  const handleMoveToCart = (itemId: string) => {
-    console.log("Move to cart:", itemId)
+  const handleMoveToCart = (_itemId: string) => {
   }
 
   return (

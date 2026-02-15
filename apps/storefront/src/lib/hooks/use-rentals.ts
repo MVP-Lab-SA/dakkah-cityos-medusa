@@ -1,3 +1,4 @@
+import { getBackendUrl } from "@/lib/utils/env"
 import { useQuery } from "@tanstack/react-query"
 import { normalizeItem } from "@/lib/utils/normalize-item"
 
@@ -24,7 +25,7 @@ export interface RentalItem {
 }
 
 async function fetchApi<T>(path: string): Promise<T> {
-  const baseUrl = import.meta.env.VITE_MEDUSA_BACKEND_URL || "http://localhost:9000"
+  const baseUrl = getBackendUrl()
   const response = await fetch(`${baseUrl}${path}`, {
     headers: { "Content-Type": "application/json" },
     credentials: "include",

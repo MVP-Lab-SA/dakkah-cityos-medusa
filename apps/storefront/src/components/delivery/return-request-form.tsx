@@ -217,7 +217,7 @@ export function ReturnRequestForm({
                 <div key={index} className="relative w-16 h-16 rounded-lg bg-ds-muted overflow-hidden">
                   <img
                     src={URL.createObjectURL(photo)}
-                    alt=""
+                    alt={`Return photo ${index + 1}`}
                     className="w-full h-full object-cover"
                   />
                   <button

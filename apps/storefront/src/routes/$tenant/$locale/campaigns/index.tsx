@@ -74,7 +74,11 @@ const hardcodedCampaigns = [
 export const Route = createFileRoute("/$tenant/$locale/campaigns/")({
   component: CampaignsPage,
   loader: async () => {
-    return { items: hardcodedCampaigns, count: hardcodedCampaigns.length }
+    try {
+      return { items: hardcodedCampaigns, count: hardcodedCampaigns.length }
+    } catch {
+      return { items: [], count: 0 }
+    }
   },
 })
 

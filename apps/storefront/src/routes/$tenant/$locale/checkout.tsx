@@ -22,21 +22,25 @@ export const Route = createFileRoute("/$tenant/$locale/checkout")({
     const { locale } = params
     const { step } = deps
     if (typeof window === "undefined") return { region: null, locale, step }
-    const { queryClient } = context
+    try {
+      const { queryClient } = context
 
-    const region = await queryClient.ensureQueryData({
-      queryKey: ["region", locale],
-      queryFn: () => getRegion({ country_code: locale }),
-    })
+      const region = await queryClient.ensureQueryData({
+        queryKey: ["region", locale],
+        queryFn: () => getRegion({ country_code: locale }),
+      })
 
-    if (!region) {
-      throw notFound()
-    }
+      if (!region) {
+        throw notFound()
+      }
 
-    return {
-      region,
-      locale,
-      step,
+      return {
+        region,
+        locale,
+        step,
+      }
+    } catch {
+      return { region: null, locale, step }
     }
   },
   component: Checkout,

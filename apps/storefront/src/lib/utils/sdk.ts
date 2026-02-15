@@ -1,16 +1,7 @@
 import Medusa from "@medusajs/js-sdk"
+import { getServerBaseUrl } from "@/lib/utils/env"
 
-const isServer = typeof window === "undefined"
-
-let MEDUSA_BACKEND_URL = "http://localhost:9000"
-
-if (import.meta.env.VITE_MEDUSA_BACKEND_URL) {
-  MEDUSA_BACKEND_URL = import.meta.env.VITE_MEDUSA_BACKEND_URL
-}
-
-if (!isServer) {
-  MEDUSA_BACKEND_URL = ""
-}
+const MEDUSA_BACKEND_URL = getServerBaseUrl()
 
 export const sdk = new Medusa({
   baseUrl: MEDUSA_BACKEND_URL,

@@ -67,7 +67,6 @@ export function WishlistPageContent() {
   }
 
   const handleMoveToCart = (item: WishlistItem) => {
-    console.log("Move to cart:", item.productId)
     handleRemove(item.productId, item.variantId)
   }
 

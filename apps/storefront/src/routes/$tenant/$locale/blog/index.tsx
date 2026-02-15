@@ -88,7 +88,11 @@ const hardcodedPosts = [
 export const Route = createFileRoute("/$tenant/$locale/blog/")({
   component: BlogPage,
   loader: async () => {
-    return { items: hardcodedPosts, count: hardcodedPosts.length }
+    try {
+      return { items: hardcodedPosts, count: hardcodedPosts.length }
+    } catch {
+      return { items: [], count: 0 }
+    }
   },
 })
 

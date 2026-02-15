@@ -5,13 +5,17 @@ import { useState } from "react"
 export const Route = createFileRoute("/$tenant/$locale/credit/")({
   component: CreditPage,
   loader: async () => {
-    const plans = [
-      { id: "1", name: "Basic Credit", limit: 5000, apr: 0, term: "6 months", monthly: 833, description: "Perfect for small purchases with 0% interest for 6 months.", features: ["0% APR intro rate", "Up to 5,000 SAR", "No annual fee", "Online management"], color: "blue", popular: false },
-      { id: "2", name: "Standard Credit", limit: 15000, apr: 4.9, term: "12 months", monthly: 1250, description: "Flexible credit for medium-sized purchases with competitive rates.", features: ["4.9% APR", "Up to 15,000 SAR", "Rewards points", "Free balance transfers"], color: "indigo", popular: true },
-      { id: "3", name: "Premium Credit", limit: 50000, apr: 3.5, term: "24 months", monthly: 2083, description: "Higher limits for big purchases with premium benefits and lower rates.", features: ["3.5% APR", "Up to 50,000 SAR", "Priority support", "Travel insurance included"], color: "purple", popular: false },
-      { id: "4", name: "Business Credit", limit: 100000, apr: 2.9, term: "36 months", monthly: 2778, description: "Enterprise-grade credit line for business procurement and operations.", features: ["2.9% APR", "Up to 100,000 SAR", "Dedicated account manager", "Custom payment schedules"], color: "slate", popular: false },
-    ]
-    return { plans, availableCredit: 12500, usedCredit: 2500, currency: "SAR" }
+    try {
+      const plans = [
+        { id: "1", name: "Basic Credit", limit: 5000, apr: 0, term: "6 months", monthly: 833, description: "Perfect for small purchases with 0% interest for 6 months.", features: ["0% APR intro rate", "Up to 5,000 SAR", "No annual fee", "Online management"], color: "blue", popular: false },
+        { id: "2", name: "Standard Credit", limit: 15000, apr: 4.9, term: "12 months", monthly: 1250, description: "Flexible credit for medium-sized purchases with competitive rates.", features: ["4.9% APR", "Up to 15,000 SAR", "Rewards points", "Free balance transfers"], color: "indigo", popular: true },
+        { id: "3", name: "Premium Credit", limit: 50000, apr: 3.5, term: "24 months", monthly: 2083, description: "Higher limits for big purchases with premium benefits and lower rates.", features: ["3.5% APR", "Up to 50,000 SAR", "Priority support", "Travel insurance included"], color: "purple", popular: false },
+        { id: "4", name: "Business Credit", limit: 100000, apr: 2.9, term: "36 months", monthly: 2778, description: "Enterprise-grade credit line for business procurement and operations.", features: ["2.9% APR", "Up to 100,000 SAR", "Dedicated account manager", "Custom payment schedules"], color: "slate", popular: false },
+      ]
+      return { plans, availableCredit: 12500, usedCredit: 2500, currency: "SAR" }
+    } catch {
+      return { plans: [], availableCredit: 0, usedCredit: 0, currency: "SAR" }
+    }
   },
 })
 

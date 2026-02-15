@@ -81,13 +81,13 @@ function VendorOrderDetail({ orderId, locale }: VendorOrderDetailProps) {
 
   const currentStatusIndex = STATUS_FLOW.indexOf(order.status);
 
-  const handleStatusUpdate = (newStatus: string) => {
-    console.log(`Updating order ${orderId} status to ${newStatus}`);
+  const handleStatusUpdate = (_newStatus: string) => {
+    void orderId;
   };
 
   const handleTrackingSubmit = () => {
     if (trackingNumber.trim()) {
-      console.log(`Setting tracking number for order ${orderId}: ${trackingNumber}`);
+      void orderId;
     }
   };
 

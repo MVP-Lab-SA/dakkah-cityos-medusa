@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState, useMemo } from "react"
 import ProductCard from "@/components/product-card"
+import { getServerBaseUrl } from "@/lib/utils/env"
 
 const LOCALE_TO_COUNTRY: Record<string, string> = {
   en: "us",
@@ -17,7 +18,7 @@ function getPublishableKey() {
 }
 
 function getBaseUrl() {
-  return typeof window === "undefined" ? "http://localhost:9000" : ""
+  return getServerBaseUrl()
 }
 
 export const Route = createFileRoute("/$tenant/$locale/categories/$handle")({

@@ -5,25 +5,29 @@ import { useState } from "react"
 export const Route = createFileRoute("/$tenant/$locale/returns/")({
   component: ReturnsPage,
   loader: async () => {
-    const steps = [
-      { id: "1", title: "Initiate Return", description: "Log into your account, go to 'My Orders', select the item, and click 'Return Item'. Fill in the reason for return.", icon: "📋" },
-      { id: "2", title: "Print Label", description: "Download and print the prepaid return shipping label. Attach it securely to your package.", icon: "🏷️" },
-      { id: "3", title: "Ship Item", description: "Drop off the package at any authorized shipping location or schedule a free pickup.", icon: "📦" },
-      { id: "4", title: "Get Refund", description: "Once we receive and inspect the item, your refund is processed within 5-7 business days.", icon: "💰" },
-    ]
-    const policies = [
-      { title: "30-Day Return Window", description: "Most items can be returned within 30 days of delivery for a full refund." },
-      { title: "Free Return Shipping", description: "We provide prepaid return labels at no cost for all eligible returns." },
-      { title: "Original Condition Required", description: "Items must be unused, unworn, and in original packaging with all tags attached." },
-      { title: "Non-Returnable Items", description: "Perishable goods, personal care items, and custom orders cannot be returned." },
-    ]
-    const faqs = [
-      { id: "r1", question: "How long do I have to return an item?", answer: "You have 30 days from the delivery date to initiate a return for most items. Some categories like electronics have a 15-day window." },
-      { id: "r2", question: "When will I receive my refund?", answer: "Refunds are processed within 5-7 business days after we receive and inspect the returned item. The refund goes back to your original payment method." },
-      { id: "r3", question: "Can I exchange instead of return?", answer: "Yes, you can request an exchange for a different size, color, or variant during the return process. Exchanges are processed within 3-5 business days." },
-      { id: "r4", question: "What if my item arrived damaged?", answer: "If your item arrived damaged, contact us within 48 hours with photos. We'll arrange a free return and send a replacement immediately." },
-    ]
-    return { steps, policies, faqs }
+    try {
+      const steps = [
+        { id: "1", title: "Initiate Return", description: "Log into your account, go to 'My Orders', select the item, and click 'Return Item'. Fill in the reason for return.", icon: "📋" },
+        { id: "2", title: "Print Label", description: "Download and print the prepaid return shipping label. Attach it securely to your package.", icon: "🏷️" },
+        { id: "3", title: "Ship Item", description: "Drop off the package at any authorized shipping location or schedule a free pickup.", icon: "📦" },
+        { id: "4", title: "Get Refund", description: "Once we receive and inspect the item, your refund is processed within 5-7 business days.", icon: "💰" },
+      ]
+      const policies = [
+        { title: "30-Day Return Window", description: "Most items can be returned within 30 days of delivery for a full refund." },
+        { title: "Free Return Shipping", description: "We provide prepaid return labels at no cost for all eligible returns." },
+        { title: "Original Condition Required", description: "Items must be unused, unworn, and in original packaging with all tags attached." },
+        { title: "Non-Returnable Items", description: "Perishable goods, personal care items, and custom orders cannot be returned." },
+      ]
+      const faqs = [
+        { id: "r1", question: "How long do I have to return an item?", answer: "You have 30 days from the delivery date to initiate a return for most items. Some categories like electronics have a 15-day window." },
+        { id: "r2", question: "When will I receive my refund?", answer: "Refunds are processed within 5-7 business days after we receive and inspect the returned item. The refund goes back to your original payment method." },
+        { id: "r3", question: "Can I exchange instead of return?", answer: "Yes, you can request an exchange for a different size, color, or variant during the return process. Exchanges are processed within 3-5 business days." },
+        { id: "r4", question: "What if my item arrived damaged?", answer: "If your item arrived damaged, contact us within 48 hours with photos. We'll arrange a free return and send a replacement immediately." },
+      ]
+      return { steps, policies, faqs }
+    } catch {
+      return { steps: [], policies: [], faqs: [] }
+    }
   },
 })
 

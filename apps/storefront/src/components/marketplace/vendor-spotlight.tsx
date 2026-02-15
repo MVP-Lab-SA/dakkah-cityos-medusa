@@ -45,7 +45,7 @@ export function VendorSpotlight({ locale: localeProp, vendor }: VendorSpotlightP
     <div className="bg-ds-card rounded-xl border border-ds-border overflow-hidden">
       <div className="relative h-32 bg-gradient-to-r from-ds-primary/20 to-ds-accent/20">
         {vendor.banner && (
-          <img src={vendor.banner} alt="" className="w-full h-full object-cover" />
+          <img src={vendor.banner} alt={`${vendor.name} banner`} className="w-full h-full object-cover" />
         )}
         <div className="absolute top-3 start-3">
           <span className="bg-ds-warning text-ds-warning-foreground text-xs font-bold px-2.5 py-1 rounded-full">

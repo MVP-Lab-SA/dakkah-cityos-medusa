@@ -54,8 +54,7 @@ export function ComparePageContent() {
     setProducts(updated)
   }
 
-  const handleAddToCart = (product: CompareItem) => {
-    console.log("Add to cart:", product.productId)
+  const handleAddToCart = (_product: CompareItem) => {
   }
 
   const getValuesDiffer = (key: string): boolean => {

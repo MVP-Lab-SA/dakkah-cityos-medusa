@@ -5,30 +5,34 @@ import { useState } from "react"
 export const Route = createFileRoute("/$tenant/$locale/white-label/")({
   component: WhiteLabelPage,
   loader: async () => {
-    const packages = [
-      { id: "1", name: "Starter", price: "999", period: "mo", description: "Essential white-label tools for small businesses launching their brand.", features: ["Custom domain", "Logo & color branding", "Up to 100 products", "Basic analytics", "Email support", "SSL certificate"], color: "gray", cta: "Get Started" },
-      { id: "2", name: "Business", price: "2,499", period: "mo", description: "Complete branding solution for growing businesses that need full customization.", features: ["Everything in Starter", "Up to 1,000 products", "Custom checkout flow", "Advanced analytics", "Priority support", "Custom email templates", "Mobile app branding"], color: "slate", cta: "Start Building", popular: true },
-      { id: "3", name: "Enterprise", price: "Custom", period: "", description: "Fully tailored solution for large organizations with dedicated infrastructure.", features: ["Everything in Business", "Unlimited products", "Dedicated infrastructure", "Custom integrations", "SLA guarantee", "Dedicated account team", "API access", "Multi-region deployment"], color: "dark", cta: "Contact Sales" },
-    ]
-    const features = [
-      { title: "Complete Brand Control", description: "Your logo, colors, domain, and identity — no trace of our platform visible to your customers.", icon: "🎨" },
-      { title: "Custom Storefront", description: "Fully customizable storefront with your branding, layout preferences, and design language.", icon: "🏪" },
-      { title: "Branded Mobile App", description: "Launch your own branded mobile app on iOS and Android app stores.", icon: "📱" },
-      { title: "Payment Integration", description: "Integrate your preferred payment gateways with your brand's checkout experience.", icon: "💳" },
-      { title: "Custom Analytics", description: "White-labeled dashboards and reports with your branding for internal and client use.", icon: "📊" },
-      { title: "API & Integrations", description: "Full API access to integrate with your existing systems, CRM, and ERP tools.", icon: "🔗" },
-    ]
-    const comparisons = [
-      { feature: "Custom Domain", starter: true, business: true, enterprise: true },
-      { feature: "Brand Customization", starter: "Basic", business: "Full", enterprise: "Full" },
-      { feature: "Product Limit", starter: "100", business: "1,000", enterprise: "Unlimited" },
-      { feature: "Mobile App", starter: false, business: true, enterprise: true },
-      { feature: "API Access", starter: false, business: false, enterprise: true },
-      { feature: "Dedicated Infrastructure", starter: false, business: false, enterprise: true },
-      { feature: "SLA Guarantee", starter: false, business: false, enterprise: true },
-      { feature: "Support Level", starter: "Email", business: "Priority", enterprise: "Dedicated" },
-    ]
-    return { packages, features, comparisons }
+    try {
+      const packages = [
+        { id: "1", name: "Starter", price: "999", period: "mo", description: "Essential white-label tools for small businesses launching their brand.", features: ["Custom domain", "Logo & color branding", "Up to 100 products", "Basic analytics", "Email support", "SSL certificate"], color: "gray", cta: "Get Started" },
+        { id: "2", name: "Business", price: "2,499", period: "mo", description: "Complete branding solution for growing businesses that need full customization.", features: ["Everything in Starter", "Up to 1,000 products", "Custom checkout flow", "Advanced analytics", "Priority support", "Custom email templates", "Mobile app branding"], color: "slate", cta: "Start Building", popular: true },
+        { id: "3", name: "Enterprise", price: "Custom", period: "", description: "Fully tailored solution for large organizations with dedicated infrastructure.", features: ["Everything in Business", "Unlimited products", "Dedicated infrastructure", "Custom integrations", "SLA guarantee", "Dedicated account team", "API access", "Multi-region deployment"], color: "dark", cta: "Contact Sales" },
+      ]
+      const features = [
+        { title: "Complete Brand Control", description: "Your logo, colors, domain, and identity — no trace of our platform visible to your customers.", icon: "🎨" },
+        { title: "Custom Storefront", description: "Fully customizable storefront with your branding, layout preferences, and design language.", icon: "🏪" },
+        { title: "Branded Mobile App", description: "Launch your own branded mobile app on iOS and Android app stores.", icon: "📱" },
+        { title: "Payment Integration", description: "Integrate your preferred payment gateways with your brand's checkout experience.", icon: "💳" },
+        { title: "Custom Analytics", description: "White-labeled dashboards and reports with your branding for internal and client use.", icon: "📊" },
+        { title: "API & Integrations", description: "Full API access to integrate with your existing systems, CRM, and ERP tools.", icon: "🔗" },
+      ]
+      const comparisons = [
+        { feature: "Custom Domain", starter: true, business: true, enterprise: true },
+        { feature: "Brand Customization", starter: "Basic", business: "Full", enterprise: "Full" },
+        { feature: "Product Limit", starter: "100", business: "1,000", enterprise: "Unlimited" },
+        { feature: "Mobile App", starter: false, business: true, enterprise: true },
+        { feature: "API Access", starter: false, business: false, enterprise: true },
+        { feature: "Dedicated Infrastructure", starter: false, business: false, enterprise: true },
+        { feature: "SLA Guarantee", starter: false, business: false, enterprise: true },
+        { feature: "Support Level", starter: "Email", business: "Priority", enterprise: "Dedicated" },
+      ]
+      return { packages, features, comparisons }
+    } catch {
+      return { packages: [], features: [], comparisons: [] }
+    }
   },
 })
 

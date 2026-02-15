@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { normalizeItem } from "@/lib/utils/normalize-item"
+import { getServerBaseUrl } from "@/lib/utils/env"
 
 async function fetchEvents(filters?: Record<string, unknown>) {
   const params = new URLSearchParams()
@@ -13,8 +14,7 @@ async function fetchEvents(filters?: Record<string, unknown>) {
   const queryStr = params.toString()
   const url = `/store/events${queryStr ? `?${queryStr}` : ""}`
 
-  const isServer = typeof window === "undefined"
-  const baseUrl = isServer ? (import.meta.env?.VITE_MEDUSA_BACKEND_URL || "http://localhost:9000") : ""
+  const baseUrl = getServerBaseUrl()
   const fullUrl = `${baseUrl}${url}`
 
   const resp = await fetch(fullUrl, {
@@ -41,8 +41,7 @@ export function useEvent(eventId: string) {
   return useQuery({
     queryKey: ["event", eventId],
     queryFn: async () => {
-      const isServer = typeof window === "undefined"
-      const baseUrl = isServer ? (import.meta.env?.VITE_MEDUSA_BACKEND_URL || "http://localhost:9000") : ""
+      const baseUrl = getServerBaseUrl()
       const resp = await fetch(`${baseUrl}/store/events/${eventId}`, {
         headers: {
           "Content-Type": "application/json",

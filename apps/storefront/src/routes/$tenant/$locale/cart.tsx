@@ -6,20 +6,24 @@ export const Route = createFileRoute("/$tenant/$locale/cart")({
   loader: async ({ params, context }) => {
     const { locale } = params
     if (typeof window === "undefined") return { region: null, locale }
-    const { queryClient } = context
+    try {
+      const { queryClient } = context
 
-    const region = await queryClient.ensureQueryData({
-      queryKey: ["region", locale],
-      queryFn: () => getRegion({ country_code: locale }),
-    })
+      const region = await queryClient.ensureQueryData({
+        queryKey: ["region", locale],
+        queryFn: () => getRegion({ country_code: locale }),
+      })
 
-    if (!region) {
-      throw notFound()
-    }
+      if (!region) {
+        throw notFound()
+      }
 
-    return {
-      region,
-      locale,
+      return {
+        region,
+        locale,
+      }
+    } catch {
+      return { region: null, locale }
     }
   },
   component: Cart,

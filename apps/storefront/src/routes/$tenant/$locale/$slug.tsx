@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { TemplateRenderer } from '@/components/cms/template-renderer'
 import type { CMSPage } from '@/lib/types/cityos'
 import ProductCard from '@/components/product-card'
+import { getServerBaseUrl } from '@/lib/utils/env'
 
 const DEFAULT_TENANT_ID = "01KGZ2JRYX607FWMMYQNQRKVWS"
 
@@ -26,7 +27,7 @@ function getPublishableKey() {
 }
 
 function getBaseUrl() {
-  return typeof window === "undefined" ? "http://localhost:9000" : ""
+  return getServerBaseUrl()
 }
 
 async function resolvePageFromServer(tenantId: string, path: string, locale?: string): Promise<CMSPage | null> {

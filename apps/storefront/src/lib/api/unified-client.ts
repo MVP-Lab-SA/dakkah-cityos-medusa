@@ -7,8 +7,9 @@
  * - Combined product data (Medusa product + Payload content)
  */
 
-const isServer = typeof window === "undefined"
-const MEDUSA_BACKEND_URL = (isServer ? (import.meta.env?.VITE_MEDUSA_BACKEND_URL || 'http://localhost:9000') : '')
+import { getServerBaseUrl } from "@/lib/utils/env"
+
+const MEDUSA_BACKEND_URL = getServerBaseUrl()
 const PAYLOAD_CMS_URL = (import.meta.env?.VITE_PAYLOAD_CMS_URL || (typeof process !== 'undefined' ? process.env?.PAYLOAD_CMS_URL : '') || 'http://localhost:3001')
 const MEDUSA_PUBLISHABLE_KEY = import.meta.env?.VITE_MEDUSA_PUBLISHABLE_KEY || ''
 
