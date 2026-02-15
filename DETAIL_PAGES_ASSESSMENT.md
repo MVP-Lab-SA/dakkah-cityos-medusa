@@ -3026,3 +3026,669 @@ Same as print-on-demand — duplicate page.
 - **Design:** Service selection checkboxes, quantity inputs, estimated total display, "Request Quote" button
 - **Props:** `services: {id, name, basePrice}[]`, `allowCustom?: boolean`
 - **Lines estimate:** ~100 lines
+
+---
+
+## Section 14: Current vs Targeted State — Centralization & Payload CMS Alignment
+
+### 14.1 Architecture Gap Summary — What Exists Today vs What Should Exist
+
+#### CURRENT STATE (Fragmented)
+
+```
+Route Files (50 files, ~11,500 lines total)
+├── Each file contains:
+│   ├── Its own `normalizeDetail()` function (DUPLICATED 50 times)
+│   ├── Its own inline `fetch()` call in loader (DUPLICATED 50 times)
+│   ├── Its own inline JSX for breadcrumbs (DUPLICATED ~48 times)
+│   ├── Its own inline JSX for hero section (DUPLICATED ~48 times)
+│   ├── Its own inline JSX for sidebar (DUPLICATED ~48 times)
+│   ├── Its own inline JSX for review section (DUPLICATED ~48 times)
+│   └── Zero imports from blocks/ directory (0 of 77 blocks used)
+│
+├── Hooks (38 hooks exist, ~0 used by detail pages)
+│   ├── use-reviews.ts (has useProductReviews, useVendorReviews, useCreateReview)
+│   ├── use-bookings.ts, use-auctions.ts, use-events.ts, use-cms.ts
+│   └── NONE of these hooks are imported by ANY detail page
+│
+├── Blocks (77 blocks, 12,750 lines — COMPLETELY DISCONNECTED)
+│   ├── BlockRenderer exists but used NOWHERE in routes/
+│   ├── Block registry maps 77 components to blockType strings
+│   └── All blocks self-contained with hardcoded placeholder data
+│
+├── CMS Registry (1,042 lines)
+│   ├── buildDetailPage() returns same 3 generic blocks for ALL 27 verticals
+│   │   └── [hero, reviewList, recentlyViewed] — identical for every vertical
+│   ├── buildListPage() returns unique block layouts per vertical (GOOD)
+│   └── TemplateRenderer exists for VerticalDetailTemplate but has no data
+│
+└── Payload CMS (Orchestrator app)
+    ├── Pages collection defined with 3 block types only (hero, richText, media)
+    ├── 77 blocks in storefront NOT registered in Payload's block config
+    └── Sync infrastructure exists but blocks don't flow through it
+```
+
+#### TARGETED STATE (Centralized, CMS-Driven)
+
+```
+Centralized Architecture
+├── Shared Infrastructure (NEW)
+│   ├── lib/data/detail-loader.ts — Single SSR loader function for ALL verticals
+│   ├── lib/data/normalizer.ts — Single normalizeDetail() shared across all pages
+│   ├── lib/hooks/use-vertical-detail.ts — Single hook for entity data + CMS layout
+│   ├── lib/hooks/use-cms-page.ts — Fetches page layout from CMS resolve endpoint
+│   └── lib/context/entity-context.tsx — Provides loaded entity to child blocks
+│
+├── Route Files (REDUCED from 50 × ~230 lines to either:)
+│   ├── Option A: 50 thin route files × ~30 lines each (import shared + compose)
+│   └── Option B: 1 generic route using CMS registry per-vertical layouts
+│
+├── Blocks (77 blocks — ALL integrated and data-driven)
+│   ├── All Tier B blocks refactored: props → rendering (no hardcoded data)
+│   ├── BlockRenderer used by VerticalDetailTemplate for layout rendering
+│   ├── EntityDataProvider wraps blocks → blocks auto-receive entity data
+│   └── Each block registered in both storefront block-registry AND Payload config
+│
+├── CMS Registry (ENHANCED)
+│   ├── buildDetailPage() returns UNIQUE layouts per vertical:
+│   │   ├── restaurants: [hero, menuDisplay, imageGallery, reviewList, map, newsletter]
+│   │   ├── auctions:    [hero, imageGallery, auctionBidding, reviewList, recentlyViewed]
+│   │   ├── healthcare:  [hero, healthcareProvider, appointmentSlots, faq, reviewList]
+│   │   ├── education:   [hero, courseCurriculum, subscriptionPlans, testimonial, reviewList]
+│   │   └── ... (27 unique layouts, one per vertical)
+│   └── Layout changes via registry = instant page customization (no code deploys)
+│
+├── Payload CMS (FULL integration)
+│   ├── Pages collection has ALL 77 block types registered
+│   ├── Content editors can drag/drop blocks to build pages
+│   ├── Webhook sync: Payload → Medusa → Storefront hydration
+│   └── Preview mode: editors see live block rendering before publishing
+│
+└── Unified API Layer
+    ├── All detail loaders use sdk.client.fetch() with publishable key
+    ├── Backend vertical endpoints return Payload-compatible response shape
+    ├── CMS resolve endpoint returns merged entity data + page layout
+    └── Single error handling pattern across all verticals
+```
+
+---
+
+### 14.2 Centralization Requirements — Shared Components & Functions
+
+#### 14.2.1 Shared Data Layer (currently missing)
+
+**File: `apps/storefront/src/lib/data/detail-loader.ts`** (NEW — replaces 50 duplicated loaders)
+
+```typescript
+interface DetailLoaderConfig {
+  verticalSlug: string
+  apiEndpoint: string
+}
+
+export async function loadVerticalDetail(params: { id: string; tenant: string; locale: string }, config: DetailLoaderConfig) {
+  const isServer = typeof window === "undefined"
+  const baseUrl = isServer ? "http://localhost:9000" : ""
+  const headers = {
+    "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_...",
+  }
+
+  // Parallel: fetch entity data + CMS page layout
+  const [entityResp, cmsResp] = await Promise.all([
+    fetch(`${baseUrl}/${config.apiEndpoint}/${params.id}`, { headers }),
+    fetch(`${baseUrl}/platform/cms/resolve?path=${config.verticalSlug}/${params.id}&tenant=${params.tenant}&locale=${params.locale}`, { headers }),
+  ])
+
+  const entityData = entityResp.ok ? await entityResp.json() : null
+  const cmsData = cmsResp.ok ? await cmsResp.json() : null
+
+  return {
+    item: normalizeDetail(entityData?.item || entityData),
+    layout: cmsData?.page?.layout || getDefaultLayout(config.verticalSlug),
+    seo: cmsData?.page?.seo || null,
+  }
+}
+```
+
+**Impact:** Eliminates 50 duplicated `loader:` functions → 1 shared function. Each route file becomes:
+```typescript
+export const Route = createFileRoute("/$tenant/$locale/restaurants/$id")({
+  loader: ({ params }) => loadVerticalDetail(params, { verticalSlug: "restaurants", apiEndpoint: "store/restaurants" }),
+  component: VerticalDetailPage,
+})
+```
+
+#### 14.2.2 Shared Normalizer (currently duplicated 50 times)
+
+**File: `apps/storefront/src/lib/data/normalizer.ts`** (NEW — consolidates the `normalizeDetail` function)
+
+The SAME `normalizeDetail()` function is copy-pasted into every single detail page. It should be extracted once:
+
+```typescript
+export function normalizeDetail(item: any) {
+  if (!item) return null
+  const meta = typeof item.metadata === 'string' ? JSON.parse(item.metadata) : (item.metadata || {})
+  return {
+    ...meta, ...item,
+    thumbnail: item.thumbnail || item.photo_url || item.banner_url || item.logo_url || meta.thumbnail || (meta.images && meta.images[0]) || null,
+    images: meta.images || [item.photo_url || item.banner_url || item.logo_url].filter(Boolean),
+    description: item.description || meta.description || "",
+    price: item.price ?? meta.price ?? null,
+    rating: item.rating ?? item.avg_rating ?? meta.rating ?? null,
+    review_count: item.review_count ?? meta.review_count ?? null,
+    location: item.location || item.city || item.address || meta.location || null,
+  }
+}
+```
+
+#### 14.2.3 Shared Hooks (exist but unused by detail pages)
+
+**38 hooks exist** in `apps/storefront/src/lib/hooks/` but **0 are imported by detail pages:**
+
+| Hook | Purpose | Should Be Used By |
+|---|---|---|
+| `use-reviews.ts` | `useProductReviews()`, `useVendorReviews()`, `useCreateReview()` | ALL 50 detail pages (replace inline review sections) |
+| `use-bookings.ts` | `useBookingSlots()`, `useCreateBooking()` | bookings, healthcare, fitness, pet-services, travel |
+| `use-auctions.ts` | `useAuctionBids()`, `usePlaceBid()` | auctions |
+| `use-events.ts` | `useEventSchedule()`, `useEventTickets()` | events |
+| `use-cms.ts` | `useCMSVerticals()`, `useCMSNavigation()` | VerticalDetailTemplate |
+| `use-products.ts` | `useProducts()`, `useProductDetail()` | digital, grocery, flash-deals, bundles |
+| `use-cart.ts` | `useCart()`, `useAddToCart()` | ALL commerce pages |
+| `use-vendors.ts` | `useVendor()`, `useVendorProducts()` | vendors, dropshipping, affiliate |
+| `use-subscriptions.ts` | `useSubscriptionPlans()` | subscriptions, memberships |
+| `use-gift-cards.ts` | `useGiftCards()` | gift-cards-shop |
+| `use-commerce-extras.ts` | Various commerce utilities | Multiple pages |
+| `use-dropshipping.ts` | `useDropshippingProducts()` | dropshipping, dropshipping-marketplace |
+
+**Targeted state:** Detail pages should use these hooks for client-side interactivity (reviews, cart actions, bookings) while blocks receive initial data via SSR props.
+
+#### 14.2.4 Shared UI Components (exist, partially used)
+
+**~30 UI components** exist in `apps/storefront/src/components/ui/`:
+
+| Component | Lines | Used in Detail Pages? | Should Be Used By |
+|---|---|---|---|
+| `breadcrumb.tsx` | ~40 | NO — all pages render inline breadcrumbs | ALL 50 pages |
+| `rating.tsx` | 77 | YES — imported by some blocks | Review sections in all pages |
+| `badge.tsx` | ~30 | YES — imported by some blocks | Status badges, tags |
+| `image-gallery.tsx` | 87 | NO — blocks have their own gallery | Replace block gallery with shared |
+| `price.tsx` | 82 | NO — pages render prices inline | ALL commerce pages |
+| `pagination.tsx` | 97 | NO — not used on detail pages | Review pagination |
+| `skeleton.tsx` | ~20 | NO | Loading states in all pages |
+| `empty-state.tsx` | 76 | NO | "Not found" states |
+| `progress-bar.tsx` | ~30 | YES — used by some blocks | Crowdfunding, loyalty, course progress |
+| `toast.tsx` | 117 | NO | Success/error feedback |
+| `dialog.tsx` | 106 | NO | Confirmations (bid, book, donate) |
+| `accordion.tsx` | ~40 | NO | FAQ sections |
+
+**Targeted state:** Blocks should import from `components/ui/` for primitive elements (Rating, Badge, Price, Skeleton) instead of reimplementing them. This ensures visual consistency and reduces block code size.
+
+#### 14.2.5 Entity Data Context (currently missing)
+
+**File: `apps/storefront/src/lib/context/entity-context.tsx`** (NEW)
+
+Blocks need access to the SSR-loaded entity data without prop drilling. An `EntityDataProvider` wraps the block rendering:
+
+```typescript
+interface EntityData {
+  item: any
+  verticalSlug: string
+  locale: string
+  tenant: string
+}
+
+const EntityContext = React.createContext<EntityData | null>(null)
+
+export const EntityDataProvider: React.FC<React.PropsWithChildren<EntityData>> = ({ children, ...data }) => (
+  <EntityContext.Provider value={data}>{children}</EntityContext.Provider>
+)
+
+export function useEntityData() {
+  return React.useContext(EntityContext)
+}
+```
+
+**Usage in VerticalDetailTemplate:**
+```tsx
+<EntityDataProvider item={item} verticalSlug={verticalSlug} locale={locale} tenant={tenant}>
+  <BlockRenderer blocks={layout} locale={locale} />
+</EntityDataProvider>
+```
+
+**Usage in blocks:**
+```tsx
+const ReviewListBlock = ({ heading, showSummary }) => {
+  const entity = useEntityData()
+  const { data: reviews } = useProductReviews(entity?.item?.id)
+  // Renders from live hook data, falling back to SSR data
+}
+```
+
+---
+
+### 14.3 Payload CMS Alignment — Block Registration Gap
+
+#### 14.3.1 Current Payload Pages Collection Block Types
+
+The Payload orchestrator `Pages` collection currently defines **only 3 block types**:
+
+```typescript
+// apps/orchestrator/src/collections/Pages.ts
+layout: {
+  type: 'blocks',
+  blocks: [
+    { slug: 'hero', fields: [title, subtitle, image, cta, ctaLink] },
+    { slug: 'richText', fields: [content] },
+    { slug: 'media', fields: [media, caption] },
+  ]
+}
+```
+
+The storefront `block-registry.ts` has **77 block types** mapped. This means:
+
+| System | Block Types Defined | Can Editors Use? |
+|---|---|---|
+| Payload CMS Pages collection | 3 (hero, richText, media) | YES — but only 3 types |
+| Storefront BlockRenderer | 77 (full catalog) | NO — not in Payload |
+| CMS Registry (backend) | Uses blockType strings in layout arrays | N/A — local config only |
+
+**Gap:** Content editors using Payload CMS can ONLY create pages with 3 block types. The other 74 block types exist in the storefront but are invisible to Payload's page builder.
+
+#### 14.3.2 Targeted Payload Block Registration
+
+ALL 77 blocks should be registered in the `Pages` collection's `layout` field. Grouped by category for the Payload admin UI:
+
+```typescript
+// TARGETED: apps/orchestrator/src/collections/Pages.ts
+layout: {
+  type: 'blocks',
+  blocks: [
+    // --- Content & Layout ---
+    { slug: 'hero', fields: [...] },
+    { slug: 'richText', fields: [...] },
+    { slug: 'cta', fields: [...] },
+    { slug: 'featureGrid', fields: [...] },
+    { slug: 'stats', fields: [...] },
+    { slug: 'imageGallery', fields: [...] },
+    { slug: 'divider', fields: [...] },
+    { slug: 'bannerCarousel', fields: [...] },
+    { slug: 'videoEmbed', fields: [...] },
+    { slug: 'timeline', fields: [...] },
+    { slug: 'trustBadges', fields: [...] },
+    { slug: 'socialProof', fields: [...] },
+    { slug: 'blogPost', fields: [...] },
+
+    // --- Navigation & Discovery ---
+    { slug: 'categoryGrid', fields: [...] },
+    { slug: 'collectionList', fields: [...] },
+    { slug: 'comparisonTable', fields: [...] },
+    { slug: 'contactForm', fields: [...] },
+    { slug: 'faq', fields: [...] },
+    { slug: 'pricing', fields: [...] },
+    { slug: 'newsletter', fields: [...] },
+    { slug: 'reviewList', fields: [...] },
+    { slug: 'map', fields: [...] },
+
+    // --- Commerce ---
+    { slug: 'productGrid', fields: [...] },
+    { slug: 'productDetail', fields: [...] },
+    { slug: 'cartSummary', fields: [...] },
+    { slug: 'checkoutSteps', fields: [...] },
+    { slug: 'orderConfirmation', fields: [...] },
+    { slug: 'wishlistGrid', fields: [...] },
+    { slug: 'recentlyViewed', fields: [...] },
+    { slug: 'flashSaleCountdown', fields: [...] },
+    { slug: 'giftCardDisplay', fields: [...] },
+
+    // --- Vendor ---
+    { slug: 'vendorProfile', fields: [...] },
+    { slug: 'vendorProducts', fields: [...] },
+    { slug: 'vendorShowcase', fields: [...] },
+    { slug: 'vendorRegisterForm', fields: [...] },
+    { slug: 'commissionDashboard', fields: [...] },
+    { slug: 'payoutHistory', fields: [...] },
+
+    // --- Booking & Service ---
+    { slug: 'bookingCalendar', fields: [...] },
+    { slug: 'bookingCta', fields: [...] },
+    { slug: 'bookingConfirmation', fields: [...] },
+    { slug: 'serviceCardGrid', fields: [...] },
+    { slug: 'serviceList', fields: [...] },
+    { slug: 'appointmentSlots', fields: [...] },
+    { slug: 'providerSchedule', fields: [...] },
+    { slug: 'resourceAvailability', fields: [...] },
+
+    // --- Subscription & Loyalty ---
+    { slug: 'subscriptionPlans', fields: [...] },
+    { slug: 'membershipTiers', fields: [...] },
+    { slug: 'loyaltyDashboard', fields: [...] },
+    { slug: 'loyaltyPointsDisplay', fields: [...] },
+    { slug: 'subscriptionManage', fields: [...] },
+    { slug: 'referralProgram', fields: [...] },
+
+    // --- Vertical-Specific ---
+    { slug: 'auctionBidding', fields: [...] },
+    { slug: 'rentalCalendar', fields: [...] },
+    { slug: 'propertyListing', fields: [...] },
+    { slug: 'vehicleListing', fields: [...] },
+    { slug: 'menuDisplay', fields: [...] },
+    { slug: 'courseCurriculum', fields: [...] },
+    { slug: 'eventSchedule', fields: [...] },
+    { slug: 'eventList', fields: [...] },
+    { slug: 'healthcareProvider', fields: [...] },
+    { slug: 'fitnessClassSchedule', fields: [...] },
+    { slug: 'petProfileCard', fields: [...] },
+    { slug: 'classifiedAdCard', fields: [...] },
+    { slug: 'crowdfundingProgress', fields: [...] },
+    { slug: 'donationCampaign', fields: [...] },
+    { slug: 'freelancerProfile', fields: [...] },
+    { slug: 'parkingSpotFinder', fields: [...] },
+
+    // --- B2B ---
+    { slug: 'purchaseOrderForm', fields: [...] },
+    { slug: 'bulkPricingTable', fields: [...] },
+    { slug: 'companyDashboard', fields: [...] },
+    { slug: 'approvalWorkflow', fields: [...] },
+
+    // --- Admin/Manage ---
+    { slug: 'manageStats', fields: [...] },
+    { slug: 'manageRecentOrders', fields: [...] },
+    { slug: 'manageActivity', fields: [...] },
+    { slug: 'promotionBanner', fields: [...] },
+  ]
+}
+```
+
+#### 14.3.3 Payload Block Field Definitions — What Each Block Needs in CMS
+
+Each block type registered in Payload needs its own field definition so editors can configure it. Here are the field definitions for all blocks, grouped by complexity:
+
+**Simple blocks (2-4 fields):**
+
+| Block | Payload Fields |
+|---|---|
+| `richText` | `content` (richText, required) |
+| `divider` | `variant` (select: line/dotted/label/space), `label` (text), `spacing` (select: sm/md/lg/xl) |
+| `videoEmbed` | `url` (text, required), `title` (text), `aspectRatio` (select: 16:9/4:3/1:1) |
+| `trustBadges` | `badges` (array: icon, label, description), `layout` (select: horizontal/grid) |
+| `recentlyViewed` | `heading` (text), `layout` (select: carousel/grid) |
+
+**Medium blocks (5-8 fields):**
+
+| Block | Payload Fields |
+|---|---|
+| `hero` | `heading` (text), `subheading` (textarea), `backgroundImage` (upload→media), `overlay` (select), `alignment` (select), `minHeight` (select), `cta` (array: label, href), `badge` (text) |
+| `cta` | `heading` (text), `description` (textarea), `buttons` (array: label, href, variant), `variant` (select), `backgroundStyle` (select) |
+| `featureGrid` | `heading` (text), `subtitle` (text), `features` (array: icon, title, description), `columns` (select: 2/3/4), `variant` (select) |
+| `stats` | `heading` (text), `stats` (array: value, label, trend, trendDirection), `columns` (select), `variant` (select) |
+| `faq` | `heading` (text), `description` (textarea), `items` (array: question, answer), `layout` (select) |
+| `pricing` | `heading` (text), `description` (textarea), `plans` (array: name, price, currency, interval, features[], highlighted, cta), `billingToggle` (checkbox) |
+| `newsletter` | `heading` (text), `description` (textarea), `variant` (select), `showBenefits` (checkbox) |
+| `reviewList` | `heading` (text), `entityId` (text), `showSummary` (checkbox), `allowSubmit` (checkbox) |
+| `contactForm` | `heading` (text), `recipientEmail` (email), `showMap` (checkbox), `fields` (json) |
+| `bookingCta` | `heading` (text), `description` (textarea), `serviceId` (text), `variant` (select), `showAvailability` (checkbox) |
+
+**Complex blocks (9+ fields):**
+
+| Block | Payload Fields |
+|---|---|
+| `imageGallery` | `heading` (text), `images` (array: image→upload, caption), `layout` (select: grid/masonry/carousel), `columns` (select), `aspectRatio` (select) |
+| `subscriptionPlans` | `heading` (text), `plans` (array: name, price, interval, features[], highlighted), `billingToggle` (checkbox), `highlightedPlan` (text), `variant` (select) |
+| `membershipTiers` | `heading` (text), `tiers` (array: name, price, interval, color, benefits[]), `showComparison` (checkbox), `variant` (select) |
+| `menuDisplay` | `heading` (text), `categories` (array: name, items[]: name, description, price, dietaryLabels[]), `variant` (select), `showPrices` (checkbox), `currency` (text) |
+| `eventSchedule` | `days` (array: label, date, sessions[]: title, time, endTime, speaker, room, track, description), `view` (select), `showSpeakers` (checkbox) |
+| `bookingCalendar` | `serviceId` (relationship), `variant` (select), `showPricing` (checkbox), `allowMultiDay` (checkbox) |
+| `auctionBidding` | `auctionId` (text), `showHistory` (checkbox), `showCountdown` (checkbox), `variant` (select) |
+| `courseCurriculum` | `modules` (array: title, lessons[]: title, type, duration, preview, locked), `showProgress` (checkbox), `variant` (select) |
+
+#### 14.3.4 Payload → Storefront Data Flow (Targeted)
+
+```
+1. Content editor creates/edits page in Payload CMS
+   └─ Payload auto-saves layout[] with blockType + configured fields
+
+2. Payload fires webhook → Medusa backend
+   └─ POST /admin/webhooks/payload { event: "page.updated", data: { layout, slug, tenant } }
+
+3. Medusa stores page in cms_page table
+   └─ Block format adapter converts Payload format → BlockRenderer format
+
+4. Storefront SSR loader fetches
+   └─ GET /platform/cms/resolve?path=restaurants/abc123
+   └─ Returns: { page: { layout: [...blocks...], seo: {...} }, entity: { ...restaurant data... } }
+
+5. VerticalDetailTemplate renders
+   └─ <EntityDataProvider item={entity}>
+        <BlockRenderer blocks={layout} locale={locale} />
+      </EntityDataProvider>
+
+6. Each block receives:
+   └─ Direct props from CMS layout (heading, variant, etc.)
+   └─ Entity data from EntityDataProvider context (for data-dependent blocks)
+   └─ Client-side interactivity from hooks (useProductReviews, useCreateBooking, etc.)
+```
+
+---
+
+### 14.4 Targeted State — Per-Page Transformation
+
+For each of the 50 detail pages, this defines the exact targeted state: what the page looks like after centralization and Payload CMS integration.
+
+#### Column key:
+- **Current Lines:** Current code size
+- **Target Lines:** After centralization (route file only, blocks are shared)
+- **Loader:** Current inline fetch → Targeted shared `loadVerticalDetail()`
+- **Blocks:** Which blocks the CMS layout will contain (managed via Payload)
+- **Hooks:** Which client-side hooks the page/blocks will use
+- **CMS Editable:** Whether content editors can rearrange blocks in Payload
+
+---
+
+#### 14.4.1 High-Value Verticals (pages with rich vertical-specific blocks)
+
+| # | Page | Current | Target | Loader Source | CMS Layout Blocks | Active Hooks | CMS Editable |
+|---|---|---|---|---|---|---|---|
+| 1 | `auctions/$id` | 262 lines, inline JSX | ~30 lines | `loadVerticalDetail(params, {verticalSlug:"auctions", apiEndpoint:"store/auctions"})` | `hero` → `imageGallery` → `auctionBidding`(R) → `richText` → `reviewList`(R) → `recentlyViewed`(R) | `useAuctionBids()`, `usePlaceBid()`, `useProductReviews()` | YES |
+| 2 | `restaurants/$id` | 229 lines, inline JSX, NO MENU | ~30 lines | `loadVerticalDetail(params, {verticalSlug:"restaurants", apiEndpoint:"store/restaurants"})` | `hero` → `menuDisplay`(E) → `imageGallery` → `map`(R) → `reviewList`(R) → `newsletter`(R) | `useProductReviews()`, `useCart()` | YES |
+| 3 | `healthcare/$id` | 220 lines, inline JSX | ~30 lines | `loadVerticalDetail(params, {verticalSlug:"healthcare", apiEndpoint:"store/healthcare"})` | `hero` → `healthcareProvider`(R) → `appointmentSlots`(R) → `faq` → `reviewList`(R) | `useProductReviews()`, `useBookingSlots()` | YES |
+| 4 | `education/$id` | 263 lines, inline JSX | ~30 lines | `loadVerticalDetail(params, {verticalSlug:"education", apiEndpoint:"store/education"})` | `hero` → `courseCurriculum`(R) → `subscriptionPlans`(E) → `testimonial` → `reviewList`(R) | `useProductReviews()` | YES |
+| 5 | `crowdfunding/$id` | 248 lines, inline JSX | ~30 lines | `loadVerticalDetail(params, {verticalSlug:"crowdfunding", apiEndpoint:"store/crowdfunding"})` | `hero` → `crowdfundingProgress`(R) → `imageGallery` → `richText` → `stats` → `reviewList`(R) → `recentlyViewed`(R) | `useProductReviews()` | YES |
+| 6 | `charity/$id` | 243 lines, inline JSX | ~30 lines | `loadVerticalDetail(params, {verticalSlug:"charity", apiEndpoint:"store/charity"})` | `hero` → `donationCampaign`(R) → `stats` → `faq` → `reviewList`(R) | `useProductReviews()` | YES |
+| 7 | `events/$id` | 319 lines, inline JSX | ~30 lines | `loadVerticalDetail(params, {verticalSlug:"events", apiEndpoint:"store/events"})` | `hero` → `eventSchedule`(R) → `map`(R) → `reviewList`(R) → `newsletter`(R) | `useProductReviews()`, `useEventTickets()` | YES |
+| 8 | `fitness/$id` | 228 lines, inline JSX | ~30 lines | `loadVerticalDetail(params, {verticalSlug:"fitness", apiEndpoint:"store/fitness"})` | `hero` → `fitnessClassSchedule`(R) → `membershipTiers`(E) → `testimonial` → `reviewList`(R) → `bookingCta`(E) | `useProductReviews()`, `useBookingSlots()` | YES |
+| 9 | `freelance/$id` | 246 lines, inline JSX | ~30 lines | `loadVerticalDetail(params, {verticalSlug:"freelance", apiEndpoint:"store/freelance"})` | `hero` → `freelancerProfile`(R) → `reviewList`(R) → `contactForm`(R) | `useProductReviews()` | YES |
+| 10 | `automotive/$id` | 205 lines, inline JSX | ~30 lines | `loadVerticalDetail(params, {verticalSlug:"automotive", apiEndpoint:"store/automotive"})` | `hero` → `imageGallery` → `vehicleListing`(R) → `comparisonTable` → `reviewList`(R) | `useProductReviews()` | YES |
+| 11 | `real-estate/$id` | 213 lines, inline JSX | ~30 lines | `loadVerticalDetail(params, {verticalSlug:"real-estate", apiEndpoint:"store/real-estate"})` | `hero` → `imageGallery` → `propertyListing`(R) → `map`(R) → `contactForm`(R) | `useProductReviews()` | YES |
+| 12 | `parking/$id` | 245 lines, inline JSX | ~30 lines | `loadVerticalDetail(params, {verticalSlug:"parking", apiEndpoint:"store/parking"})` | `hero` → `parkingSpotFinder`(R) → `map`(R) → `pricing` → `reviewList`(R) | `useProductReviews()` | YES |
+| 13 | `classifieds/$id` | 222 lines, inline JSX | ~30 lines | `loadVerticalDetail(params, {verticalSlug:"classifieds", apiEndpoint:"store/classifieds"})` | `hero` → `classifiedAdCard`(R) → `imageGallery` → `contactForm`(R) → `map`(R) | — | YES |
+| 14 | `pet-services/$id` | 246 lines, inline JSX | ~30 lines | `loadVerticalDetail(params, {verticalSlug:"pet-services", apiEndpoint:"store/pet-services"})` | `hero` → `petProfileCard`(R) → `serviceList`(E) → `bookingCta`(E) → `reviewList`(R) | `useProductReviews()`, `useBookingSlots()` | YES |
+| 15 | `rentals/$id` | 288 lines, inline JSX | ~30 lines | `loadVerticalDetail(params, {verticalSlug:"rentals", apiEndpoint:"store/rentals"})` | `hero` → `imageGallery` → `rentalCalendar`(R) → `pricing` → `reviewList`(R) | `useProductReviews()` | YES |
+
+#### 14.4.2 Service-Based Verticals
+
+| # | Page | Current | Target | CMS Layout Blocks | Active Hooks |
+|---|---|---|---|---|---|
+| 16 | `bookings/$id` | 249 lines | ~30 lines | `hero` → `bookingCalendar`(R) → `serviceList`(E) → `bookingCta`(E) → `reviewList`(R) | `useBookingSlots()`, `useCreateBooking()`, `useProductReviews()` |
+| 17 | `legal/$id` | 249 lines | ~30 lines | `hero` → `serviceList`(E) → `bookingCalendar`(R) → `faq` → `contactForm`(R) → `reviewList`(R) | `useProductReviews()` |
+| 18 | `insurance/$id` | 237 lines | ~30 lines | `hero` → `serviceList`(E) → `comparisonTable` → `faq` → `contactForm`(R) → `reviewList`(R) | `useProductReviews()` |
+| 19 | `government/$id` | 247 lines | ~30 lines | `hero` → `serviceList`(E) → `timeline` → `faq` → `contactForm`(R) | — |
+| 20 | `travel/$id` | 286 lines | ~30 lines | `hero` → `imageGallery` → `bookingCalendar`(R) → `pricing` → `map`(R) → `reviewList`(R) | `useProductReviews()`, `useBookingSlots()` |
+
+#### 14.4.3 Commerce Verticals
+
+| # | Page | Current | Target | CMS Layout Blocks | Active Hooks |
+|---|---|---|---|---|---|
+| 21 | `subscriptions/$id` | 241 lines | ~30 lines | `hero` → `subscriptionPlans`(E) → `comparisonTable` → `faq` → `reviewList`(R) | `useSubscriptionPlans()`, `useProductReviews()` |
+| 22 | `memberships/$id` | 185 lines | ~30 lines | `hero` → `membershipTiers`(E) → `featureGrid` → `testimonial` → `faq` | — |
+| 23 | `loyalty-program/$id` | 199 lines | ~30 lines | `hero` → `loyaltyDashboard`(R) → `membershipTiers`(E) → `referralProgram`(R) | — |
+| 24 | `flash-deals/$id` | 216 lines | ~30 lines | `hero` → `flashSaleCountdown`(R) → `productDetail`(R) → `reviewList`(R) | `useCart()`, `useProductReviews()` |
+| 25 | `gift-cards-shop/$id` | 191 lines | ~30 lines | `hero` → `giftCardDisplay`(R) → `reviewList`(R) | `useGiftCards()`, `useProductReviews()` |
+| 26 | `bundles/$id` | 210 lines | ~30 lines | `hero` → `productGrid`(fetches) → `pricing` → `reviewList`(R) | `useCart()`, `useProductReviews()` |
+| 27 | `digital/$id` | 181 lines | ~30 lines | `hero` → `productDetail`(R) → `reviewList`(R) | `useCart()`, `useProductReviews()` |
+| 28 | `grocery/$id` | 249 lines | ~30 lines | `hero` → `productDetail`(R) → `categoryGrid` → `reviewList`(R) | `useCart()`, `useProductReviews()` |
+
+#### 14.4.4 Marketplace Verticals
+
+| # | Page | Current | Target | CMS Layout Blocks | Active Hooks |
+|---|---|---|---|---|---|
+| 29 | `vendors/$id` | 293 lines | ~30 lines | `hero` → `vendorProfile`(E) → `vendorProducts`(R) → `reviewList`(R) → `contactForm`(R) | `useVendor()`, `useVendorProducts()`, `useVendorReviews()` |
+| 30 | `affiliate/$id` | 180 lines | ~30 lines | `hero` → `referralProgram`(R) → `stats` → `faq` | — |
+| 31 | `social-commerce/$id` | 225 lines | ~30 lines | `hero` → `socialProof`(R) → `productGrid`(fetches) → `reviewList`(R) | `useProductReviews()` |
+
+#### 14.4.5 Financial & Credit Verticals
+
+| # | Page | Current | Target | CMS Layout Blocks | Active Hooks |
+|---|---|---|---|---|---|
+| 32 | `financial/$id` | 245 lines | ~30 lines | `hero` → `serviceList`(E) → `comparisonTable` → `faq` → `contactForm`(R) | — |
+| 33 | `credit/$id` | 259 lines | ~30 lines | `hero` → `pricing` → `comparisonTable` → `timeline` → `faq` → `reviewList`(R) | `useProductReviews()` |
+| 34 | `warranties/$id` | 257 lines | ~30 lines | `hero` → `serviceList`(E) → `comparisonTable` → `faq` → `reviewList`(R) | `useProductReviews()` |
+
+#### 14.4.6 B2B Verticals
+
+| # | Page | Current | Target | CMS Layout Blocks | Active Hooks |
+|---|---|---|---|---|---|
+| 35 | `b2b/$id` | 242 lines | ~30 lines | `hero` → `bulkPricingTable`(E) → `purchaseOrderForm`(R) → `reviewList`(R) | `usePurchaseOrders()`, `useProductReviews()` |
+| 36 | `volume-deals/$id` | 225 lines | ~30 lines | `hero` → `bulkPricingTable`(E) → `productDetail`(R) → `reviewList`(R) | `useVolumePricing()`, `useProductReviews()` |
+| 37 | `white-label/$id` | 213 lines | ~30 lines | `hero` → `pricing` → `featureGrid` → `faq` → `contactForm`(R) | — |
+| 38 | `white-label-shop/$id` | 239 lines | ~30 lines | `hero` → `productDetail`(R) → `reviewList`(R) | `useCart()`, `useProductReviews()` |
+
+#### 14.4.7 Remaining Verticals
+
+| # | Page | Current | Target | CMS Layout Blocks | Active Hooks |
+|---|---|---|---|---|---|
+| 39 | `campaigns/$id` | 181 lines | ~30 lines | `hero` → `crowdfundingProgress`(R) → `richText` → `reviewList`(R) | `useProductReviews()` |
+| 40 | `consignment/$id` | 213 lines | ~30 lines | `hero` → `productDetail`(R) → `pricing` → `reviewList`(R) | `useCart()`, `useProductReviews()` |
+| 41 | `consignment-shop/$id` | 212 lines | ~30 lines | MERGE with consignment — duplicate page | — |
+| 42 | `dropshipping/$id` | 205 lines | ~30 lines | `hero` → `productDetail`(R) → `vendorProfile`(E) → `reviewList`(R) | `useDropshippingProducts()`, `useProductReviews()` |
+| 43 | `dropshipping-marketplace/$id` | 211 lines | ~30 lines | MERGE with dropshipping — duplicate page | — |
+| 44 | `newsletter/$id` | 259 lines | ~30 lines | `hero` → `blogPost`(R) → `newsletter`(R) → `reviewList`(R) | `useProductReviews()` |
+| 45 | `print-on-demand/$id` | 217 lines | ~30 lines | `hero` → `imageGallery` → `productDetail`(R) → `reviewList`(R) | `useCart()`, `useProductReviews()` |
+| 46 | `print-on-demand-shop/$id` | 207 lines | ~30 lines | MERGE with print-on-demand — duplicate page | — |
+| 47 | `trade-in/$id` | 219 lines | ~30 lines | `hero` → `productDetail`(R) → `pricing` → `timeline` → `faq` | `useProductReviews()` |
+| 48 | `try-before-you-buy/$id` | 201 lines | ~30 lines | `hero` → `productDetail`(R) → `timeline` → `faq` → `reviewList`(R) | `useProductReviews()` |
+| 49 | `quotes/$id` | 74 lines | ~30 lines | `hero` → `serviceList`(E) → `contactForm`(R) | — |
+| 50 | `places/$id` | 83 lines | ~30 lines | `hero` → `imageGallery` → `map`(R) → `contactForm`(R) → `reviewList`(R) | `useProductReviews()` |
+
+---
+
+### 14.5 Duplicate Page Consolidation
+
+3 pairs of duplicate pages share the same API endpoint and nearly identical layouts:
+
+| Duplicate Pair | Lines | Same API? | Recommendation |
+|---|---|---|---|
+| `consignment/$id` + `consignment-shop/$id` | 213 + 212 = 425 | YES (`store/consignments/`) | MERGE → keep `consignment/$id`, redirect shop |
+| `dropshipping/$id` + `dropshipping-marketplace/$id` | 205 + 211 = 416 | YES (`store/dropshipping/`) | MERGE → keep `dropshipping/$id`, redirect marketplace |
+| `print-on-demand/$id` + `print-on-demand-shop/$id` | 217 + 207 = 424 | YES (`store/print-on-demand/`) | MERGE → keep `print-on-demand/$id`, redirect shop |
+
+**Impact:** Eliminates 3 redundant files (631 lines) and 3 redundant API calls.
+
+---
+
+### 14.6 Centralization Impact Summary
+
+| Metric | Current | Targeted | Reduction |
+|---|---|---|---|
+| **Total detail page route lines** | ~11,500 | ~1,410 (47 × ~30) | **88% reduction** |
+| **Duplicated normalizeDetail()** | 50 copies | 1 shared function | **98% reduction** |
+| **Duplicated fetch() loaders** | 50 copies | 1 shared loader | **98% reduction** |
+| **Inline breadcrumb JSX** | ~48 copies | 1 shared Breadcrumb component | **98% reduction** |
+| **Inline hero JSX** | ~48 copies | `hero` block via BlockRenderer | **100% reduction** |
+| **Inline review JSX** | ~48 copies | `reviewList` block via BlockRenderer | **100% reduction** |
+| **Blocks actually used** | 0 of 77 | 42+ of 77 | **From 0% to 55%+** |
+| **CMS-editable layouts** | 0 pages | 47 pages | **From 0% to 100%** |
+| **Payload block types** | 3 | 77 | **25× increase** |
+| **Hooks used by detail pages** | 0 of 38 | 12+ of 38 | **From 0% to 32%+** |
+| **Route files** | 50 | 47 (after merging duplicates) | **6% reduction** |
+
+---
+
+### 14.7 Implementation Phases — Centralization + Payload Alignment
+
+| Phase | Action | Files Created/Modified | Impact | Effort |
+|---|---|---|---|---|
+| **Phase 0: Shared Infrastructure** | Create `detail-loader.ts`, `normalizer.ts`, `entity-context.tsx`, `use-cms-page.ts` | 4 new files (~200 lines) | Foundation for all other phases | 3 hours |
+| **Phase 1: Block Refactoring (P0)** | Refactor `reviewList`, `recentlyViewed`, `productDetail` to accept real data | 3 files modified | Unblocks 40+ pages | 4 hours |
+| **Phase 2: Block Refactoring (P1)** | Refactor 8 vertical-specific blocks (auctionBidding, menuDisplay, etc.) | 8 files modified | Rich features for 8 key verticals | 6 hours |
+| **Phase 3: CMS Registry Enhancement** | Update `buildDetailPage()` with per-vertical layouts in `cms-registry.ts` | 1 file modified (~400 lines added) | CMS layouts ready for all 27 verticals | 4 hours |
+| **Phase 4: Route File Refactoring** | Replace 50 inline route files with shared loader + BlockRenderer | 50 files modified (each: 230→30 lines) | 88% code reduction | 8 hours |
+| **Phase 5: Payload Block Registration** | Add all 77 block type definitions to Orchestrator Pages collection | 1 file modified (~1,200 lines added) | Content editors can build pages | 6 hours |
+| **Phase 6: Duplicate Consolidation** | Merge 3 duplicate page pairs, add redirects | 3 files removed, 3 redirects added | Clean architecture | 2 hours |
+| **Phase 7: Hook Integration** | Wire 12+ hooks into blocks for client-side interactivity | 12+ block files modified | Live data (reviews, bookings, bids) | 4 hours |
+| **Phase 8: Block Refactoring (P2+P3)** | Refactor remaining 17 Tier B blocks | 17 files modified | Full block catalog data-driven | 8 hours |
+
+**Total estimated effort:** ~45 hours across 9 phases
+
+---
+
+### 14.8 Targeted Route File Template
+
+After centralization, every detail page route file should look like this:
+
+```typescript
+// @ts-nocheck
+// apps/storefront/src/routes/$tenant/$locale/restaurants/$id.tsx
+import { createFileRoute } from "@tanstack/react-router"
+import { loadVerticalDetail } from "@/lib/data/detail-loader"
+import { VerticalDetailPage } from "@/components/pages/vertical-detail-page"
+
+export const Route = createFileRoute("/$tenant/$locale/restaurants/$id")({
+  loader: ({ params }) =>
+    loadVerticalDetail(params, {
+      verticalSlug: "restaurants",
+      apiEndpoint: "store/restaurants",
+    }),
+  component: () => <VerticalDetailPage verticalSlug="restaurants" />,
+})
+```
+
+**~12 lines per page** instead of ~230 lines.
+
+The `VerticalDetailPage` component (shared):
+
+```typescript
+// apps/storefront/src/components/pages/vertical-detail-page.tsx
+import { BlockRenderer } from "@/components/blocks/block-renderer"
+import { EntityDataProvider } from "@/lib/context/entity-context"
+import { Breadcrumbs } from "@/components/ui/breadcrumb"
+import { Route } from "@tanstack/react-router"
+
+export function VerticalDetailPage({ verticalSlug }: { verticalSlug: string }) {
+  const { item, layout, seo } = Route.useLoaderData()
+
+  if (!item) return <NotFoundState vertical={verticalSlug} />
+
+  return (
+    <div className="min-h-screen bg-ds-background">
+      <EntityDataProvider item={item} verticalSlug={verticalSlug}>
+        <Breadcrumbs items={[
+          { label: "Home", href: "/" },
+          { label: verticalSlug, href: `/${verticalSlug}` },
+          { label: item.name || item.title },
+        ]} />
+        <BlockRenderer blocks={layout} />
+      </EntityDataProvider>
+    </div>
+  )
+}
+```
+
+---
+
+### 14.9 Payload CMS Page Builder — How Editors Will Use It
+
+Once fully integrated, content editors using the Payload CMS admin panel will be able to:
+
+1. **Browse Pages** — See all pages organized by tenant, vertical, and status (draft/published)
+2. **Edit Page Layout** — Drag-and-drop blocks from 77 available types, organized into 9 categories
+3. **Configure Block Props** — Each block shows its configurable fields (heading, variant, columns, etc.)
+4. **Preview Live** — See the page rendered with the storefront's BlockRenderer in a preview iframe
+5. **Publish** — Publishing triggers a webhook → Medusa syncs the layout → storefront reflects changes immediately
+
+**Editor workflow for creating a new restaurant detail page:**
+1. Create new Page → set template: "vertical-detail", vertical: "restaurants"
+2. Add blocks: Hero → Menu Display → Image Gallery → Map → Review List → Newsletter
+3. Configure each block: set heading text, choose variant, toggle options
+4. Preview → see the rendered page with real restaurant data
+5. Publish → page goes live, no developer involvement
+
+**This is the architectural target:** The 77 blocks become Payload CMS's page builder components, making the entire storefront CMS-driven and customizable without code changes.
