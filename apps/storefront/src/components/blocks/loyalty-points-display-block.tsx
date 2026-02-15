@@ -39,7 +39,11 @@ const transactions = [
 
 const tierProgress = ((pointsData.balance - 2500) / (pointsData.nextTierThreshold - 2500)) * 100
 
-export const LoyaltyPointsDisplayBlock: React.FC<LoyaltyPointsDisplayBlockProps> = ({
+export const LoyaltyPointsDisplayBlock: React.FC<LoyaltyPointsDisplayBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   variant = 'card',
   showHistory = true,
   showRedemption = true,

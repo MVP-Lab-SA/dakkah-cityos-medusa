@@ -12,7 +12,11 @@ interface FeaturesBlockProps {
   columns?: 2 | 3 | 4
 }
 
-export const FeaturesBlock: React.FC<FeaturesBlockProps> = ({
+export const FeaturesBlock: React.FC<FeaturesBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   title,
   features,
   columns = 3,

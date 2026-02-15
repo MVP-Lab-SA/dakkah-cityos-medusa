@@ -36,7 +36,11 @@ const reviews = [
   { author: 'David K.', rating: 4, text: 'Very skilled developer. Handled complex requirements with ease.', date: 'Dec 2025' },
 ]
 
-export const FreelancerProfileBlock: React.FC<FreelancerProfileBlockProps> = ({
+export const FreelancerProfileBlock: React.FC<FreelancerProfileBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   heading,
   showPortfolio = true,
   showReviews = true,

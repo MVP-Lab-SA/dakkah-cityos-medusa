@@ -58,7 +58,11 @@ const placeholderSchedule: Record<string, FitnessClass[]> = {
   ],
 }
 
-export const FitnessClassScheduleBlock: React.FC<FitnessClassScheduleBlockProps> = ({
+export const FitnessClassScheduleBlock: React.FC<FitnessClassScheduleBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   heading = 'Class Schedule',
   view = 'weekly',
   showInstructor = true,

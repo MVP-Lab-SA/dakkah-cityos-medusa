@@ -30,7 +30,11 @@ const columnClasses: Record<number, string> = {
   6: 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6',
 }
 
-export const CategoryGridBlock: React.FC<CategoryGridBlockProps> = ({
+export const CategoryGridBlock: React.FC<CategoryGridBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   heading,
   description,
   categories,

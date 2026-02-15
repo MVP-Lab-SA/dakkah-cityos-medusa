@@ -7,7 +7,11 @@ interface ProductDetailBlockProps {
   variant?: 'default' | 'compact' | 'full'
 }
 
-export const ProductDetailBlock: React.FC<ProductDetailBlockProps> = ({
+export const ProductDetailBlock: React.FC<ProductDetailBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   productId,
   showReviews = true,
   showRelated = true,

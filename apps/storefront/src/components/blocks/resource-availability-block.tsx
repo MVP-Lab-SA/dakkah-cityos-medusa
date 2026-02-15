@@ -38,7 +38,11 @@ const statusDot: Record<string, string> = {
   maintenance: 'bg-ds-warning',
 }
 
-export const ResourceAvailabilityBlock: React.FC<ResourceAvailabilityBlockProps> = ({
+export const ResourceAvailabilityBlock: React.FC<ResourceAvailabilityBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   resourceType = 'Meeting Room',
   resourceId,
   dateRange,

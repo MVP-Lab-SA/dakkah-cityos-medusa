@@ -32,7 +32,11 @@ const columnClasses: Record<number, string> = {
   4: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4',
 }
 
-export const ServiceCardGridBlock: React.FC<ServiceCardGridBlockProps> = ({
+export const ServiceCardGridBlock: React.FC<ServiceCardGridBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   heading = 'Our Services',
   services,
   columns = 3,

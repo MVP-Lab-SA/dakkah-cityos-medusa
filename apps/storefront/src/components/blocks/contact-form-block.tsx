@@ -21,7 +21,11 @@ interface ContactFormBlockProps {
   locale?: string
 }
 
-export const ContactFormBlock: React.FC<ContactFormBlockProps> = ({
+export const ContactFormBlock: React.FC<ContactFormBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   heading,
   description,
   fields,

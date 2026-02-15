@@ -40,7 +40,11 @@ const monthNames = [
   'July', 'August', 'September', 'October', 'November', 'December',
 ]
 
-export const BookingCalendarBlock: React.FC<BookingCalendarBlockProps> = ({
+export const BookingCalendarBlock: React.FC<BookingCalendarBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   serviceId,
   variant = 'monthly',
   showPricing = true,

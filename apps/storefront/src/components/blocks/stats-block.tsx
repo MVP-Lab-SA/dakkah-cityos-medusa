@@ -20,7 +20,11 @@ interface StatsBlockProps {
   animated?: boolean
 }
 
-export const StatsBlock: React.FC<StatsBlockProps> = ({
+export const StatsBlock: React.FC<StatsBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   heading,
   stats,
   variant = 'default',

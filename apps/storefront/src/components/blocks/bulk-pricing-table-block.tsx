@@ -20,7 +20,11 @@ const pricingTiers = [
 const basePrice = 49.99
 const bestValueIndex = 4
 
-export const BulkPricingTableBlock: React.FC<BulkPricingTableBlockProps> = ({
+export const BulkPricingTableBlock: React.FC<BulkPricingTableBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   heading = 'Bulk Pricing',
   showSavings = true,
   highlightBestValue = true,

@@ -6,7 +6,11 @@ interface BookingConfirmationBlockProps {
   confirmationMessage?: string
 }
 
-export const BookingConfirmationBlock: React.FC<BookingConfirmationBlockProps> = ({
+export const BookingConfirmationBlock: React.FC<BookingConfirmationBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   showCalendarAdd = true,
   showCancellationPolicy = true,
   confirmationMessage = 'Your booking has been confirmed!',

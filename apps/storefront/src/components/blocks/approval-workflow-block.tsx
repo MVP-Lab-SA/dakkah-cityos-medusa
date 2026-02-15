@@ -32,7 +32,11 @@ const priorityStyles: Record<string, string> = {
   low: 'bg-ds-muted text-ds-muted-foreground',
 }
 
-export const ApprovalWorkflowBlock: React.FC<ApprovalWorkflowBlockProps> = ({
+export const ApprovalWorkflowBlock: React.FC<ApprovalWorkflowBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   showPending = true,
   showHistory = true,
   variant = 'list',

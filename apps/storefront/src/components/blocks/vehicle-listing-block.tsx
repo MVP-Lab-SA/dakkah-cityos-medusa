@@ -30,7 +30,11 @@ const placeholderVehicles: Vehicle[] = [
   { id: '6', title: '2023 Mercedes C-Class', make: 'Mercedes', model: 'C-Class', year: 2023, price: '$48,300', mileage: '11,800 mi', fuelType: 'Gasoline', transmission: 'Automatic', engine: '2.0L Turbo I4', color: 'Gray' },
 ]
 
-export const VehicleListingBlock: React.FC<VehicleListingBlockProps> = ({
+export const VehicleListingBlock: React.FC<VehicleListingBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   heading = 'Vehicle Listings',
   vehicleType,
   layout: initialLayout = 'grid',

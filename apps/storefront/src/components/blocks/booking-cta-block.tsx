@@ -13,7 +13,11 @@ interface BookingCtaBlockProps {
   locale?: string
 }
 
-export const BookingCtaBlock: React.FC<BookingCtaBlockProps> = ({
+export const BookingCtaBlock: React.FC<BookingCtaBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   heading,
   description,
   serviceId,

@@ -34,7 +34,11 @@ interface PricingBlockProps {
   locale?: string
 }
 
-export const PricingBlock: React.FC<PricingBlockProps> = ({
+export const PricingBlock: React.FC<PricingBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   heading,
   description,
   plans,

@@ -16,7 +16,11 @@ interface HeroBlockProps {
   branding?: any
 }
 
-export const HeroBlock: React.FC<HeroBlockProps> = ({
+export const HeroBlock: React.FC<HeroBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   heading,
   subheading,
   image,

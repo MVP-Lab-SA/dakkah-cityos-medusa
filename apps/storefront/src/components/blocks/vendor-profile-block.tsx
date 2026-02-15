@@ -8,7 +8,11 @@ interface VendorProfileBlockProps {
   layout?: 'default' | 'compact' | 'hero'
 }
 
-export const VendorProfileBlock: React.FC<VendorProfileBlockProps> = ({
+export const VendorProfileBlock: React.FC<VendorProfileBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   vendorId,
   showRating = true,
   showProducts = true,

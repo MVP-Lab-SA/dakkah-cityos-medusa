@@ -7,7 +7,11 @@ interface GiftCardDisplayBlockProps {
   variant?: 'default' | 'compact' | 'premium'
 }
 
-export const GiftCardDisplayBlock: React.FC<GiftCardDisplayBlockProps> = ({
+export const GiftCardDisplayBlock: React.FC<GiftCardDisplayBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   heading = 'Gift Cards',
   denominations = [25, 50, 75, 100, 150, 200],
   allowCustomAmount = true,

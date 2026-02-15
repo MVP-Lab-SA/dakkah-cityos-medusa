@@ -29,7 +29,11 @@ const placeholderProperties: Property[] = [
   { id: '6', title: 'Urban Townhouse', image: '', price: '$3,200/mo', beds: 3, baths: 2, sqft: 1800, location: 'Midtown East', type: 'Townhouse' },
 ]
 
-export const PropertyListingBlock: React.FC<PropertyListingBlockProps> = ({
+export const PropertyListingBlock: React.FC<PropertyListingBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   heading = 'Property Listings',
   propertyType,
   layout: initialLayout = 'grid',

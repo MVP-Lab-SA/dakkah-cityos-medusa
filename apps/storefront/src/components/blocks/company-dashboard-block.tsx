@@ -29,7 +29,11 @@ const periodData: Record<string, { spend: number; orders: number; orderValue: nu
   yearly: { spend: 142800, orders: 245, orderValue: 583, budget: 300000, budgetUsed: 142800 },
 }
 
-export const CompanyDashboardBlock: React.FC<CompanyDashboardBlockProps> = ({
+export const CompanyDashboardBlock: React.FC<CompanyDashboardBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   showSpend = true,
   showOrders = true,
   showTeam = true,

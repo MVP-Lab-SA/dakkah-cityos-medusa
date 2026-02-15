@@ -51,7 +51,11 @@ const alignmentClasses: Record<string, string> = {
   right: 'items-end text-end',
 }
 
-export const BannerCarouselBlock: React.FC<BannerCarouselBlockProps> = ({
+export const BannerCarouselBlock: React.FC<BannerCarouselBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   slides,
   autoplay = true,
   interval = 5000,

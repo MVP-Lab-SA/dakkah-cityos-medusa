@@ -32,7 +32,11 @@ const heightMap = {
   xl: 'h-96 md:h-[32rem]',
 }
 
-export const MapBlock: React.FC<MapBlockProps> = ({
+export const MapBlock: React.FC<MapBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   heading,
   locations,
   height = 'md',

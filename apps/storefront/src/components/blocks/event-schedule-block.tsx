@@ -58,7 +58,11 @@ const trackColors: Record<string, string> = {
   Product: 'bg-ds-warning/15 text-ds-warning',
 }
 
-export const EventScheduleBlock: React.FC<EventScheduleBlockProps> = ({
+export const EventScheduleBlock: React.FC<EventScheduleBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   eventId,
   view = 'timeline',
   showSpeakers = true,

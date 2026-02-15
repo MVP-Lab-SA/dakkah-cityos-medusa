@@ -15,13 +15,18 @@ function normalizeDetail(item: any) {
     ? rawPrice 
     : { amount: Number(rawPrice), currencyCode: currency }
 
+  const rawRating = item.rating ?? item.avg_rating ?? meta.rating ?? 0
+  const rawReviewCount = item.review_count ?? meta.review_count ?? 0
+  const ratingObj = typeof rawRating === 'object' && rawRating.average != null 
+    ? rawRating 
+    : { average: Number(rawRating), count: Number(rawReviewCount) }
+
   return { ...meta, ...item,
     thumbnail: item.thumbnail || item.photo_url || item.banner_url || item.logo_url || meta.thumbnail || (meta.images && meta.images[0]) || null,
     images: meta.images || [item.photo_url || item.banner_url || item.logo_url].filter(Boolean),
     description: item.description || meta.description || "",
     price: priceObj,
-    rating: item.rating ?? item.avg_rating ?? meta.rating ?? null,
-    review_count: item.review_count ?? meta.review_count ?? null,
+    rating: ratingObj,
     location: item.location || item.city || item.address || meta.location || null,
   }
 }
@@ -78,6 +83,13 @@ function BookingDetailPage() {
     pending: "bg-ds-warning/15 text-ds-warning",
     cancelled: "bg-ds-destructive/15 text-ds-destructive",
     completed: "bg-ds-info/15 text-ds-info",
+  }
+
+  const formatPrice = (price: any) => {
+    if (!price || price.amount == null) return "Free"
+    const amount = Number(price.amount / 100).toFixed(2)
+    const currency = price.currencyCode === 'SAR' ? 'SAR' : '$'
+    return currency === 'SAR' ? `${amount} SAR` : `$${amount}`
   }
 
   return (
@@ -197,7 +209,7 @@ function BookingDetailPage() {
                 <div className="text-center">
                   <p className="text-sm text-ds-muted-foreground">Total Price</p>
                   <p className="text-3xl font-bold text-ds-foreground">
-                    {booking.price?.amount ? `$${Number(booking.price.amount / 100).toFixed(2)}` : "Free"}
+                    {formatPrice(booking.price)}
                   </p>
                 </div>
 

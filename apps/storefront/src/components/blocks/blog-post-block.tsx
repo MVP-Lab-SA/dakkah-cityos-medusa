@@ -47,7 +47,11 @@ const relatedPosts = [
   { title: 'Building Stronger Supplier Relationships', category: 'Strategy', date: 'Jan 20, 2026' },
 ]
 
-export const BlogPostBlock: React.FC<BlogPostBlockProps> = ({
+export const BlogPostBlock: React.FC<BlogPostBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   heading = 'The Future of B2B Commerce: Trends and Insights for 2026',
   content = defaultContent,
   author = { name: 'Sarah Chen', bio: 'Head of Commerce Strategy with 10+ years in B2B digital transformation.' },

@@ -6,7 +6,11 @@ interface CommissionDashboardBlockProps {
   showChart?: boolean
 }
 
-export const CommissionDashboardBlock: React.FC<CommissionDashboardBlockProps> = ({
+export const CommissionDashboardBlock: React.FC<CommissionDashboardBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   vendorId,
   period = 'month',
   showChart = true,

@@ -69,7 +69,11 @@ const placeholderModules: Module[] = [
   },
 ]
 
-export const CourseCurriculumBlock: React.FC<CourseCurriculumBlockProps> = ({
+export const CourseCurriculumBlock: React.FC<CourseCurriculumBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   courseId,
   showProgress = true,
   expandAll = false,

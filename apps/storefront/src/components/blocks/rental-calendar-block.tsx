@@ -14,7 +14,11 @@ const pricingRates: Record<string, number> = {
   monthly: 3200,
 }
 
-export const RentalCalendarBlock: React.FC<RentalCalendarBlockProps> = ({
+export const RentalCalendarBlock: React.FC<RentalCalendarBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   itemId,
   pricingUnit = 'daily',
   showDeposit = true,

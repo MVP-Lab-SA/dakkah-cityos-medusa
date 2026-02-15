@@ -14,7 +14,11 @@ interface TrustBadgesBlockProps {
   variant?: 'icon' | 'card' | 'minimal'
 }
 
-export const TrustBadgesBlock: React.FC<TrustBadgesBlockProps> = ({
+export const TrustBadgesBlock: React.FC<TrustBadgesBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   heading,
   badges,
   layout = 'row',

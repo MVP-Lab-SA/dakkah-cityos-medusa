@@ -47,7 +47,11 @@ const StarRating = ({ rating }: { rating: number }) => (
   </div>
 )
 
-export const SocialProofBlock: React.FC<SocialProofBlockProps> = ({
+export const SocialProofBlock: React.FC<SocialProofBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   heading = 'Trusted by Businesses Worldwide',
   variant = 'inline',
   showPurchases = true,

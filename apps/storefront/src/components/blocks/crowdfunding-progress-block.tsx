@@ -26,7 +26,11 @@ const recentBackers = [
 
 const presetAmounts = [25, 50, 100, 250, 500]
 
-export const CrowdfundingProgressBlock: React.FC<CrowdfundingProgressBlockProps> = ({
+export const CrowdfundingProgressBlock: React.FC<CrowdfundingProgressBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   campaignId,
   showBackers = true,
   showUpdates = false,

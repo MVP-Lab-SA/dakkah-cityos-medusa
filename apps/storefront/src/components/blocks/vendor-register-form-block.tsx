@@ -7,7 +7,11 @@ interface VendorRegisterFormBlockProps {
   termsUrl?: string
 }
 
-export const VendorRegisterFormBlock: React.FC<VendorRegisterFormBlockProps> = ({
+export const VendorRegisterFormBlock: React.FC<VendorRegisterFormBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   heading = 'Become a Vendor',
   steps = ['Business Info', 'Contact', 'Documents', 'Review'],
   requiredFields = [],

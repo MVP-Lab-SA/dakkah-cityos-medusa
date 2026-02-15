@@ -6,7 +6,11 @@ interface OrderConfirmationBlockProps {
   thankYouMessage?: string
 }
 
-export const OrderConfirmationBlock: React.FC<OrderConfirmationBlockProps> = ({
+export const OrderConfirmationBlock: React.FC<OrderConfirmationBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   showTracking = true,
   showRecommendations = true,
   thankYouMessage = 'Thank you for your order!',

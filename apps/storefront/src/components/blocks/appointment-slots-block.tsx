@@ -35,7 +35,11 @@ const defaultSlots: SlotData[] = [
 
 const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
-export const AppointmentSlotsBlock: React.FC<AppointmentSlotsBlockProps> = ({
+export const AppointmentSlotsBlock: React.FC<AppointmentSlotsBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   providerId,
   date,
   duration = '30 min',

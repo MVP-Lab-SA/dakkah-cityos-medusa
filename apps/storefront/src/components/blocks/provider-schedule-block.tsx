@@ -23,7 +23,11 @@ const scheduleData: Record<string, Record<string, 'available' | 'booked' | 'brea
   Sun: { '8:00 AM': 'break', '9:00 AM': 'break', '10:00 AM': 'break', '11:00 AM': 'break', '12:00 PM': 'break', '1:00 PM': 'break', '2:00 PM': 'break', '3:00 PM': 'break', '4:00 PM': 'break', '5:00 PM': 'break', '6:00 PM': 'break', '7:00 PM': 'break' },
 }
 
-export const ProviderScheduleBlock: React.FC<ProviderScheduleBlockProps> = ({
+export const ProviderScheduleBlock: React.FC<ProviderScheduleBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   providerId,
   view: initialView = 'week',
   showAvailability = true,

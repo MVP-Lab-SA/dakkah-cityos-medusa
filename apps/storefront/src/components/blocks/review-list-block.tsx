@@ -51,7 +51,11 @@ function computeDistribution(reviews: ReviewItem[]): number[] {
   return counts
 }
 
-export const ReviewListBlock: React.FC<ReviewListBlockProps> = ({
+export const ReviewListBlock: React.FC<ReviewListBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   heading,
   reviews = [],
   limit,

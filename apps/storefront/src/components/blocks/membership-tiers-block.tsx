@@ -35,12 +35,17 @@ const defaultTiers: TierData[] = [
   },
 ]
 
-export const MembershipTiersBlock: React.FC<MembershipTiersBlockProps> = ({
+export const MembershipTiersBlock: React.FC<MembershipTiersBlockProps> = (props) => {
+  const { heading, description, ...rest } = props;
+  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
+  const items = itemsKey ? props[itemsKey] : [];
+  if ((!items || !items.length) && !heading && !description) return null;
   heading = 'Membership Tiers',
   tiers,
   showComparison = false,
   variant = 'cards',
 }) => {
+  if (tiers && tiers.length === 0 && !heading) return null
   const items = tiers && tiers.length > 0 ? tiers : defaultTiers
 
   const renderCardsVariant = () => (
