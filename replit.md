@@ -66,6 +66,11 @@ The platform supports 42 CRUD configurations for various manage verticals, utili
 - **Phase 10 Complete**: Backend URL centralization — replaced 90+ hardcoded localhost:9000 with getServerBaseUrl()/getBackendUrl() utilities. Added SSR-aware helper to env.ts. Updated 80 route loaders and 11 hooks files. Only env.ts retains the fallback as single source of truth.
 - **Phase 11 Complete**: Loader error handling — added try/catch to 19 loaders missing it. All 104/104 loaders now have graceful error fallbacks returning correct types.
 - **Phase 12 Complete**: Accessibility — fixed all empty alt="" attributes with meaningful contextual alt text. Zero accessibility issues remaining.
+- **Phase 13 Complete**: Empty catch blocks — added console.error to 5 silent catch blocks (vendor disputes/reviews, CMS page resolution, store data fetch). 13 remaining are intentionally silent (localStorage/sessionStorage/clipboard/JSON.parse).
+- **Phase 14 Complete**: Image optimization — added loading="lazy" to all 133 images across the storefront for improved page load performance.
+- **Phase 15 Complete**: XSS protection — created sanitize-html.ts utility covering script/style/iframe/object/embed/form/SVG/base/meta/link tags, event handlers, javascript:/data:/vbscript: URIs. Applied to all 4 dangerouslySetInnerHTML usages.
+- **Phase 16 Complete**: i18n gap audit — cataloged 68 hardcoded placeholders + 303 button/label texts. 775 strings already i18n'd via t(locale,...). Gap documented for future migration.
+- **Phase 17 Complete**: SEO meta tags — added head() with title/description to 132 public storefront routes. Index pages use static titles, detail pages use dynamic loaderData titles. Zero duplicates.
 
 ### System Responsibility Split
 - **Medusa (Commerce Engine):** Products, orders, payments, commissions, marketplace listings, vendor management.
