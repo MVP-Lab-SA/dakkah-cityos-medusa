@@ -42,6 +42,20 @@ JWT-based authentication is used for the customer SDK. All tenant/governance/nod
 ### Manage Page Infrastructure
 The platform supports 42 CRUD configurations for various manage verticals, utilizing shared components like DataTable, Charts, Calendar, and FormWizard. Enhanced features include AnalyticsOverview, BulkActionsBar, and AdvancedFilters.
 
+### RBAC & Navigation Architecture
+- **10 roles** with weights: super-admin(100), city-manager(90), district-manager(80), zone-manager(70), facility-manager(60), asset-manager(50), vendor-admin(40), content-editor(30), analyst(20), viewer(10)
+- **MIN_MANAGE_WEIGHT**: 20 (allows analyst+ to access manage area)
+- **Per-route weight**: RoleGuard accepts `requiredWeight` prop for granular access control
+- **Module registry**: 9 nav sections (overview, commerce, marketplace, verticals, marketing, cms, organization, platform, system) with ~75 modules
+- **CMS section**: minWeight 30 (content-editors can access page builder, content, media)
+- **Platform section**: minWeight 90 (super-admin/city-manager only: tenants, governance, webhooks, integrations)
+- **Sidebar**: Uses `useManageRole()` for dynamic weight-based module filtering (no longer hardcoded)
+- **Design tokens**: role-guard and sidebar use ds-* token classes (not raw gray/violet)
+
+## Recent Changes (Feb 2026)
+- **Phase 0 Complete**: Fixed auctions bid query (auction_listing_id→auction_id), financial routing (/financial→/financial-products), vendors data extraction. Created 19 new backend detail endpoints. Added social-commerce seed data fallback.
+- **Phase 1 Complete**: RBAC weight lowered to 20, requiredWeight prop added, module registry expanded with CMS/Platform sections and 28 missing modules, sidebar uses actual user role weight, design token migration for role-guard and sidebar.
+
 ### System Responsibility Split
 - **Medusa (Commerce Engine):** Products, orders, payments, commissions, marketplace listings, vendor management.
 - **Payload CMS (Entity & Content Management):** Tenant profiles, POI content, vendor public profiles, pages, navigation.
