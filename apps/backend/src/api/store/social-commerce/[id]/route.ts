@@ -1,17 +1,163 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 
-export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const mod = req.scope.resolve("socialCommerce") as any
-  const { id } = req.params
-  const { type } = req.query as Record<string, string | undefined>
+const SOCIAL_COMMERCE_SEED = [
+  {
+    id: "sc_001",
+    name: "Riyadh Fashion Collective",
+    handle: "riyadh-fashion-collective",
+    description: "Curated Saudi fashion brands featuring modern abayas, thobes, and contemporary streetwear. Live shows every Thursday.",
+    platform: "instagram",
+    category: "Fashion",
+    city: "Riyadh",
+    country_code: "SA",
+    followers: 245000,
+    rating: 4.8,
+    total_reviews: 3200,
+    is_active: true,
+    seller_name: "Noura Al-Rashid",
+    seller: "noura.fashion",
+    price: 12900,
+    likes: 18200,
+    tags: ["fashion", "abayas", "streetwear", "saudi"],
+  },
+  {
+    id: "sc_002",
+    name: "Desert Glow Skincare",
+    handle: "desert-glow-skincare",
+    description: "Natural skincare products inspired by Arabian botanicals. Handcrafted in Jeddah with locally sourced ingredients.",
+    platform: "tiktok",
+    category: "Beauty",
+    city: "Jeddah",
+    country_code: "SA",
+    followers: 180000,
+    rating: 4.7,
+    total_reviews: 5600,
+    is_active: true,
+    seller_name: "Lama Designs",
+    seller: "desertglow",
+    price: 7500,
+    likes: 24500,
+    tags: ["skincare", "beauty", "natural", "handmade"],
+  },
+  {
+    id: "sc_003",
+    name: "Saudi Artisan Oud",
+    handle: "saudi-artisan-oud",
+    description: "Premium oud and bakhoor collections from master perfumers. Exclusive blends and rare wood chips.",
+    platform: "instagram",
+    category: "Fragrance",
+    city: "Mecca",
+    country_code: "SA",
+    followers: 320000,
+    rating: 4.9,
+    total_reviews: 8900,
+    is_active: true,
+    seller_name: "House of Oud",
+    seller: "artisan.oud",
+    price: 35000,
+    likes: 42100,
+    tags: ["oud", "bakhoor", "perfume", "fragrance"],
+  },
+  {
+    id: "sc_004",
+    name: "Homemade Saudi Sweets",
+    handle: "homemade-saudi-sweets",
+    description: "Traditional Saudi sweets and dates gift boxes. Perfect for Eid, Ramadan, and special occasions.",
+    platform: "whatsapp",
+    category: "Food",
+    city: "Medina",
+    country_code: "SA",
+    followers: 95000,
+    rating: 4.6,
+    total_reviews: 2100,
+    is_active: true,
+    seller_name: "Umm Ahmad Kitchen",
+    seller: "umm.ahmad",
+    price: 4500,
+    likes: 8900,
+    tags: ["sweets", "dates", "traditional", "gifts"],
+  },
+  {
+    id: "sc_005",
+    name: "Tech Gadgets KSA",
+    handle: "tech-gadgets-ksa",
+    description: "Latest tech accessories, phone cases, and smart gadgets. Flash sales and group buys every week.",
+    platform: "tiktok",
+    category: "Electronics",
+    city: "Riyadh",
+    country_code: "SA",
+    followers: 410000,
+    rating: 4.4,
+    total_reviews: 12000,
+    is_active: true,
+    seller_name: "TechHub Arabia",
+    seller: "techhub.ksa",
+    price: 9900,
+    likes: 56700,
+    tags: ["tech", "gadgets", "accessories", "electronics"],
+  },
+  {
+    id: "sc_006",
+    name: "Saudi Fitness Gear",
+    handle: "saudi-fitness-gear",
+    description: "Home gym equipment, supplements, and fitness apparel. Group buy deals for premium brands.",
+    platform: "instagram",
+    category: "Fitness",
+    city: "Dammam",
+    country_code: "SA",
+    followers: 156000,
+    rating: 4.5,
+    total_reviews: 4500,
+    is_active: true,
+    seller_name: "FitLife Arabia",
+    seller: "fitlife.arabia",
+    price: 19900,
+    likes: 12300,
+    tags: ["fitness", "gym", "supplements", "sportswear"],
+  },
+  {
+    id: "sc_007",
+    name: "Handmade Jewelry Arabia",
+    handle: "handmade-jewelry-arabia",
+    description: "Elegant handcrafted jewelry blending traditional Saudi motifs with contemporary designs. Custom orders welcome.",
+    platform: "instagram",
+    category: "Jewelry",
+    city: "Jeddah",
+    country_code: "SA",
+    followers: 278000,
+    rating: 4.8,
+    total_reviews: 6700,
+    is_active: true,
+    seller_name: "Zahara Jewels",
+    seller: "zahara.jewels",
+    price: 24900,
+    likes: 31500,
+    tags: ["jewelry", "handmade", "gold", "accessories"],
+  },
+]
 
-  if (type === "group_buy") {
-    const [item] = await mod.listGroupBuys({ id }, { take: 1 })
-    if (!item) return res.status(404).json({ message: "Not found" })
-    return res.json({ item })
+export async function GET(req: MedusaRequest, res: MedusaResponse) {
+  const { id } = req.params
+
+  const seedItem = SOCIAL_COMMERCE_SEED.find(s => s.id === id || s.handle === id)
+  if (seedItem) {
+    return res.json({ item: seedItem })
   }
 
-  const [item] = await mod.listLiveStreams({ id }, { take: 1 })
-  if (!item) return res.status(404).json({ message: "Not found" })
-  return res.json({ item })
+  try {
+    const mod = req.scope.resolve("socialCommerce") as any
+    const { type } = req.query as Record<string, string | undefined>
+
+    if (type === "group_buy") {
+      const [item] = await mod.listGroupBuys({ id }, { take: 1 })
+      if (!item) return res.status(404).json({ message: "Not found" })
+      return res.json({ item })
+    }
+
+    const [item] = await mod.listLiveStreams({ id }, { take: 1 })
+    if (!item) return res.status(404).json({ message: "Not found" })
+    return res.json({ item })
+  } catch (error: any) {
+    return res.status(404).json({ message: "Not found" })
+  }
 }

@@ -6,7 +6,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     const { id } = req.params
     const item = await mod.retrieveAuctionListing(id)
     if (!item) return res.status(404).json({ message: "Not found" })
-    const bids = await mod.listBids({ auction_listing_id: id }, { take: 100 })
+    const bids = await mod.listBids({ auction_id: id }, { take: 100 })
     return res.json({ item: { ...item, bids } })
   } catch (error: any) {
     if (error.type === "not_found" || error.message?.includes("not found")) {

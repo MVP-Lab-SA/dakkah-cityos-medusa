@@ -27,7 +27,7 @@ export const Route = createFileRoute("/$tenant/$locale/vendors/$id")({
       })
       if (!resp.ok) return { item: null }
       const data = await resp.json()
-      return { item: normalizeDetail(data.item || data) }
+      return { item: normalizeDetail(data.vendor || data.item || data) }
     } catch { return { item: null } }
   },
 })

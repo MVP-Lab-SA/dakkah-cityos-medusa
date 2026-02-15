@@ -38,7 +38,7 @@ class AuctionModuleService extends MedusaService({
     }
 
     const bid = await (this as any).createBids({
-      auction_listing_id: auctionId,
+      auction_id: auctionId,
       bidder_id: bidderId,
       amount,
       status: "active",
@@ -74,7 +74,7 @@ class AuctionModuleService extends MedusaService({
 
     if (hasMetReserve && highestBid) {
       const result = await (this as any).createAuctionResults({
-        auction_listing_id: auctionId,
+        auction_id: auctionId,
         winning_bid_id: highestBid.id,
         winner_id: highestBid.bidder_id,
         final_price: highestBid.amount,
@@ -88,7 +88,7 @@ class AuctionModuleService extends MedusaService({
 
   /** Get the highest bid for an auction */
   async getHighestBid(auctionId: string): Promise<any | null> {
-    const bids = await this.listBids({ auction_listing_id: auctionId, status: "active" }) as any
+    const bids = await this.listBids({ auction_id: auctionId, status: "active" }) as any
     const bidList = Array.isArray(bids) ? bids : [bids].filter(Boolean)
 
     if (bidList.length === 0) return null
