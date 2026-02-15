@@ -87,7 +87,7 @@ export function ImageGallery({ locale: localeProp, images }: ImageGalleryProps) 
       </div>
 
       {lightboxOpen && (
-        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center" role="dialog" aria-modal="true" aria-label={t(locale, "common.lightbox")} onClick={() => setLightboxOpen(false)} onKeyDown={(e) => { if (e.key === "Escape") setLightboxOpen(false); }}>
+        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center" role="dialog" aria-modal="true" aria-label={t(locale, "common.lightbox")} tabIndex={-1} onClick={() => setLightboxOpen(false)} onKeyDown={(e) => { if (e.key === "Escape") setLightboxOpen(false); }}>
           <button
             onClick={() => setLightboxOpen(false)}
             className="absolute top-4 end-4 p-2 text-white hover:text-ds-muted-foreground/50 transition-colors z-10"
