@@ -4280,3 +4280,849 @@ Each vertical ideally has 4 layers: Storefront (list + detail), Vendor Dashboard
 | 8 | 20 verticals not in CMS registry | Can't be CMS-managed | Add entries |
 | 9 | 9 slug mismatches | Broken CMS resolve lookups | Standardize naming |
 | 10 | No shared list page infrastructure | 67 list pages duplicate patterns | Create shared VerticalListPage component |
+
+---
+
+## Section 19: Admin Role Hierarchy — Deep Assessment
+
+### 19.1 The 10-Role RBAC System
+
+The platform defines a weight-based RBAC hierarchy in `apps/storefront/src/lib/types/tenant-admin.ts`:
+
+| # | Role | Weight | Intended Scope | Current Access | Architecture Gap |
+|---|---|---|---|---|---|
+| 1 | `super-admin` | 100 | Entire platform, all tenants | All manage pages (weight ≥ 40) | NO separate super-admin section |
+| 2 | `city-manager` | 90 | City-level node + children | All manage pages (weight ≥ 40) | Sees same pages as super-admin |
+| 3 | `district-manager` | 80 | District-level node + children | All manage pages (weight ≥ 40) | No node-scoped data filtering |
+| 4 | `zone-manager` | 70 | Zone-level node + children | All manage pages (weight ≥ 40) | No node-scoped data filtering |
+| 5 | `facility-manager` | 60 | Single facility | All manage pages (weight ≥ 40) | Sees tenant-wide data, not facility data |
+| 6 | `asset-manager` | 50 | Single asset | All manage pages (weight ≥ 40) | Sees tenant-wide data, not asset data |
+| 7 | `vendor-admin` | 40 | Own vendor data only | All manage pages (weight ≥ 40) | Sees ALL tenant data, not just own vendor |
+| 8 | `content-editor` | 30 | CMS content editing | **BLOCKED from manage (weight < 40)** | **CRITICAL: Can't access manage CMS pages!** |
+| 9 | `analyst` | 20 | Read-only analytics | BLOCKED from manage (weight < 40) | No dedicated analytics view |
+| 10 | `viewer` | 10 | Read-only storefront | BLOCKED from manage (weight < 40) | No special capabilities |
+
+**CRITICAL FINDING:** The `RoleGuard` component in `role-guard.tsx` enforces `MIN_MANAGE_WEIGHT = 40`. This means:
+- Roles 1-7 (super-admin through vendor-admin) ALL see the exact same manage section
+- Roles 8-10 (content-editor, analyst, viewer) are completely BLOCKED from all manage pages
+- There is NO page-level role differentiation — every manage page requires the same minimum weight
+
+### 19.2 Role-to-System Mapping — Payload CMS vs Storefront RBAC
+
+The Payload CMS (Orchestrator) uses a DIFFERENT role system than the Storefront:
+
+| Payload CMS Role | Storefront RBAC Equivalent | Weight | Mapping Status |
+|---|---|---|---|
+| `super_admin` | `super-admin` | 100 | **Matched** (underscore vs hyphen) |
+| `tenant_admin` | **NO EQUIVALENT** | — | **MISSING** — closest is `city-manager` (90) |
+| `content_editor` | `content-editor` | 30 | **Matched** — but weight mismatch (Payload allows CMS access, Storefront blocks manage) |
+
+**CRITICAL GAPS:**
+1. **Payload has `tenant_admin`** but the storefront's 10-role RBAC does NOT include `tenant_admin` — there is no role between `super-admin` (100) and `city-manager` (90) that maps to "admin of a single tenant"
+2. **7 storefront roles** (city-manager through vendor-admin) have NO Payload equivalent — Payload only knows 3 roles
+3. **`content_editor` is blocked** from manage pages in the storefront (weight 30 < 40) BUT Payload CMS grants `content_editor` full create/update access to Pages — this is an architectural conflict
+
+### 19.3 Who Is the Tenant Manager (Page Builder User)?
+
+The **tenant manager** — the person who uses the Payload CMS page builder to create and customize pages — maps to the `content-editor` role (weight 30). This role is explicitly designed for:
+- Creating CMS pages using the Payload page builder
+- Arranging blocks to build custom storefront pages
+- Managing content without developer involvement
+- Previewing pages before publishing
+
+**THE PROBLEM:** The content-editor (weight 30) is BELOW the manage page minimum weight (40). This creates an impossible workflow:
+
+```
+Content-Editor Workflow (BROKEN):
+1. Log into storefront → Can browse store ✓
+2. Navigate to /$tenant/$locale/manage → BLOCKED (weight 30 < 40) ✗
+3. Navigate to /$tenant/$locale/manage/cms → BLOCKED ✗
+4. Navigate to /$tenant/$locale/manage/cms-content → BLOCKED ✗
+5. Has NO WAY to access CMS management from storefront
+6. Must use Payload admin panel directly (separate URL, separate auth)
+```
+
+**vs. the intended workflow:**
+
+```
+Content-Editor Workflow (TARGET):
+1. Log into storefront → Can browse store ✓
+2. Navigate to /$tenant/$locale/manage → See CMS-only sidebar ✓
+3. Navigate to /$tenant/$locale/manage/cms → Manage pages ✓
+4. Open page builder → Drag-and-drop 77 blocks ✓
+5. Preview page → See live preview in storefront context ✓
+6. Publish → Page goes live ✓
+```
+
+### 19.4 Three Admin Tiers — What Should Exist
+
+The platform needs 3 distinct admin tiers with separate page sets:
+
+#### Tier 1: Super-Admin (Platform Administration)
+**Role:** `super-admin` (weight 100)
+**Scope:** ALL tenants, platform-wide settings, cross-tenant operations
+**Access Pattern:** Sees everything across all tenants simultaneously
+
+**Pages that SHOULD be super-admin only (but are currently accessible to vendor-admin weight 40+):**
+
+| # | Manage Page | Lines | Why Super-Admin Only | Current Access |
+|---|---|---|---|---|
+| 1 | `tenants-admin.tsx` | 188 | Creates/manages ALL tenants | vendor-admin+ (WRONG) |
+| 2 | `governance.tsx` | 193 | Platform-wide governance policies | vendor-admin+ (WRONG) |
+| 3 | `nodes.tsx` | 194 | 5-level node hierarchy (CITY→ASSET) | vendor-admin+ (WRONG) |
+| 4 | `personas.tsx` | 188 | 6-axis persona system | vendor-admin+ (WRONG) |
+| 5 | `region-zones.tsx` | 188 | Geographic zone management | vendor-admin+ (WRONG) |
+| 6 | `temporal.tsx` | 75 | Workflow orchestration (Temporal Cloud) | vendor-admin+ (WRONG) |
+| 7 | `webhooks.tsx` | 210 | System webhook configuration | vendor-admin+ (WRONG) |
+| 8 | `integrations.tsx` | 77 | External system integrations | vendor-admin+ (WRONG) |
+| 9 | `audit.tsx` | 108 | Platform audit log | vendor-admin+ (WRONG) |
+| 10 | `channels.tsx` | 188 | Sales channel management | vendor-admin+ (WRONG) |
+| 11 | `metrics.tsx` | 71 | Platform-wide metrics | vendor-admin+ (WRONG) |
+| 12 | `i18n.tsx` | 193 | Internationalization management | vendor-admin+ (WRONG) |
+| 13 | `tax-config.tsx` | 188 | Tax configuration | vendor-admin+ (WRONG) |
+| 14 | `payment-terms.tsx` | 186 | Payment terms management | vendor-admin+ (WRONG) |
+| 15 | `shipping-extensions.tsx` | 188 | Shipping rule extensions | vendor-admin+ (WRONG) |
+| 16 | `cart-extensions.tsx` | 188 | Cart rule extensions | vendor-admin+ (WRONG) |
+| 17 | `promotion-extensions.tsx` | 188 | Promotion rule extensions | vendor-admin+ (WRONG) |
+| **TOTAL** | **17 pages** | **2,851 lines** | | |
+
+**Missing super-admin pages that DON'T exist yet:**
+
+| # | Missing Page | Purpose | Priority |
+|---|---|---|---|
+| 1 | `platform-dashboard.tsx` | Cross-tenant overview, tenant health monitoring | P0 |
+| 2 | `tenant-onboarding.tsx` | Tenant provisioning wizard | P0 |
+| 3 | `platform-settings.tsx` | Global platform configuration | P0 |
+| 4 | `rbac-management.tsx` | Role and permission definitions | P1 |
+| 5 | `platform-billing.tsx` | Multi-tenant billing/subscription management | P1 |
+| 6 | `system-health.tsx` | Infrastructure monitoring dashboard | P1 |
+| 7 | `data-migration.tsx` | Cross-tenant data migration tools | P2 |
+| 8 | `feature-flags.tsx` | Feature flag management across tenants | P2 |
+| 9 | `api-keys.tsx` | Platform API key management | P1 |
+| 10 | `sync-dashboard.tsx` | CMS ↔ Medusa ↔ ERPNext sync monitoring | P1 |
+
+#### Tier 2: Tenant-Admin (Tenant Administration)
+**Roles:** `city-manager` (90), `district-manager` (80), `zone-manager` (70), `facility-manager` (60), `asset-manager` (50), `vendor-admin` (40)
+**Scope:** Single tenant's data, commerce operations, vendor management
+**Access Pattern:** Sees only their tenant's data, scoped by node assignment
+
+**Pages that belong to tenant-admin tier (currently correct in the manage section):**
+
+| # | Section | Manage Pages | Count | Lines |
+|---|---|---|---|---|
+| 1 | **Commerce Core** | products, orders, customers, quotes, invoices, subscriptions, reviews, inventory, inventory-extension | 9 | 1,886 |
+| 2 | **Marketplace** | vendors, commissions, payouts, affiliates, commission-rules, service-providers | 6 | 1,294 |
+| 3 | **Verticals (18)** | auctions, bookings, event-ticketing, rentals, restaurants, grocery, travel, automotive, real-estate, healthcare, education, fitness, pet-services, digital-products, memberships, financial-products, freelance, parking | 18 | 3,770 |
+| 4 | **More Verticals (17)** | advertising, social-commerce, classifieds, crowdfunding, charity/charities, flash-sales, dropshipping, gift-cards, insurance, loyalty, newsletters, print-on-demand, trade-in, try-before-you-buy, volume-pricing, white-label, warranty/warranties | 17 | 3,521 |
+| 5 | **Commerce Extensions** | promotions, promotions-ext, subscription-plans, bundles, credit, consignments, purchase-orders, availability, wallet, pricing-tiers | 10 | 2,065 |
+| 6 | **Marketing** | campaigns (via crowdfunding), wishlists, notification-preferences | 3 | 505 |
+| 7 | **Organization** | team, companies, companies-admin, company, stores, legal, utilities, disputes | 8 | 1,630 |
+| 8 | **System (tenant-level)** | analytics, settings | 2 | 261 |
+| **TOTAL** | | | **73 pages** | **14,932 lines** |
+
+**BUT — critical data scoping issues:**
+
+| # | Issue | Details | Impact |
+|---|---|---|---|
+| 1 | `vendor-admin` sees ALL tenant data | vendor-admin (weight 40) can access products, orders, customers for ALL vendors in the tenant | HIGH — data leak across vendors |
+| 2 | No node-based data scoping | A `facility-manager` for Facility A sees data for Facilities B, C, D too | HIGH — no isolation |
+| 3 | `zone-manager` vs `district-manager` see same data | Both have weight > 40, both see all pages with no scope filtering | MEDIUM — roles are equivalent |
+| 4 | Duplicate pages for same vertical | `charity.tsx` AND `charities.tsx`, `warranty.tsx` AND `warranties.tsx` | LOW — maintenance waste |
+
+**Missing tenant-admin pages:**
+
+| # | Missing Page | Purpose | Priority |
+|---|---|---|---|
+| 1 | `tenant-dashboard.tsx` | Dedicated tenant overview (current index.tsx is too generic) | P1 |
+| 2 | `vendor-onboarding-review.tsx` | Review and approve vendor applications | P0 |
+| 3 | `content-moderation.tsx` | Review flagged content from vendors/customers | P1 |
+| 4 | `reports.tsx` | Generate and download business reports | P1 |
+| 5 | `import-export.tsx` | Bulk data import/export for products, customers, orders | P1 |
+| 6 | `email-templates.tsx` | Manage transactional email templates | P2 |
+| 7 | `theme-customization.tsx` | Tenant branding and theme management | P1 |
+| 8 | `delivery-zones.tsx` | Manage delivery zones (Fleetbase integration) | P1 |
+| 9 | `payout-schedules.tsx` | Configure vendor payout schedules | P1 |
+| 10 | `tax-rates.tsx` | Manage tax rates per region | P2 |
+
+#### Tier 3: Tenant Manager / Content-Editor (Page Builder User)
+**Role:** `content-editor` (weight 30)
+**Scope:** CMS content only — pages, blocks, media, blog posts
+**Access Pattern:** Creates and manages storefront pages using the Payload page builder
+
+**What this user NEEDS to access (but currently CANNOT):**
+
+| # | Required Page | Current Status | Blocker |
+|---|---|---|---|
+| 1 | `manage/cms.tsx` | EXISTS (193 lines) but BLOCKED | Weight 30 < minWeight 40 |
+| 2 | `manage/cms-content.tsx` | EXISTS (209 lines) but BLOCKED | Weight 30 < minWeight 40 |
+| 3 | Page builder / block editor | DOES NOT EXIST | No page builder in storefront |
+| 4 | Media library | DOES NOT EXIST in storefront | No media management page |
+| 5 | Page preview | DOES NOT EXIST | No preview functionality |
+| 6 | Navigation menu editor | DOES NOT EXIST | No navigation management |
+| 7 | Blog post editor | DOES NOT EXIST | No blog management |
+| 8 | SEO settings editor | DOES NOT EXIST | No SEO management page |
+| 9 | Redirect rules | DOES NOT EXIST | No URL redirect management |
+| 10 | Template library | DOES NOT EXIST | No page template gallery |
+
+**Complete tenant manager (content-editor) workflow gap:**
+
+```
+CURRENT STATE:
+┌─────────────────────────────────────────────────────────────┐
+│ Content-Editor (weight 30)                                  │
+│                                                             │
+│ CAN access:                                                 │
+│   - Storefront pages (as customer)                         │
+│   - Payload CMS admin panel (IF deployed separately)       │
+│                                                             │
+│ CANNOT access:                                              │
+│   - ANY manage page (weight < 40)                          │
+│   - CMS management in storefront                           │
+│   - Page builder                                           │
+│   - Media library                                          │
+│   - Content preview                                        │
+│   - Blog management                                        │
+│                                                             │
+│ RESULT: Content-editor has NO usable workflow               │
+└─────────────────────────────────────────────────────────────┘
+
+TARGET STATE:
+┌─────────────────────────────────────────────────────────────┐
+│ Content-Editor (weight 30)                                  │
+│                                                             │
+│ CAN access:                                                 │
+│   - /$tenant/$locale/manage/                               │
+│     ├── cms-dashboard    (CMS overview)                    │
+│     ├── pages            (Page list + builder)             │
+│     ├── page-builder     (Drag-drop block editor)          │
+│     ├── media            (Media library)                   │
+│     ├── blog             (Blog post management)            │
+│     ├── navigation       (Menu editor)                     │
+│     ├── redirects        (URL redirects)                   │
+│     ├── seo              (SEO settings)                    │
+│     └── templates        (Page templates gallery)          │
+│                                                             │
+│ CANNOT access:                                              │
+│   - Commerce pages (products, orders, etc.)                │
+│   - Marketplace pages (vendors, commissions)               │
+│   - System pages (settings, analytics, etc.)               │
+│   - Platform pages (tenants, governance, nodes)            │
+│                                                             │
+│ RESULT: Content-editor has a complete CMS workflow          │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Section 20: Payload CMS Block Gap Analysis — Page Builder Readiness
+
+### 20.1 Payload Pages Collection — Current State
+
+The Payload CMS `Pages` collection (at `apps/orchestrator/src/collections/Pages.ts`) defines only **3 block types** in its `layout` field:
+
+| # | Payload Block Slug | Equivalent Storefront Block? | Status |
+|---|---|---|---|
+| 1 | `hero` | `HeroBlock` (exists) | Minimal — only title/subtitle/image/cta |
+| 2 | `richText` | `ContentBlock` (exists) | OK — basic rich text |
+| 3 | `media` | — (no standalone media block) | Minimal — single upload |
+
+**Meanwhile, the storefront has 77 blocks** in the `BLOCK_REGISTRY`, organized into these categories:
+
+### 20.2 Complete Storefront Block Inventory (77 Blocks)
+
+#### Category A: Core Layout Blocks (12 blocks) — Storefront-ready, NOT in Payload
+
+| # | Block Key | Component | Lines | In Payload? | Content-Editor Usable? |
+|---|---|---|---|---|---|
+| 1 | `hero` | HeroBlock | YES | YES (3 fields only) | PARTIAL — Payload version is stripped-down |
+| 2 | `featureGrid` | FeaturesBlock | YES | NO | YES — perfect for page builder |
+| 3 | `richText` | ContentBlock | YES | YES | YES |
+| 4 | `cta` | CTABlock | YES | NO | YES — perfect for page builder |
+| 5 | `stats` | StatsBlock | YES | NO | YES |
+| 6 | `imageGallery` | ImageGalleryBlock | YES | NO | YES |
+| 7 | `divider` | DividerBlock | YES | NO | YES |
+| 8 | `timeline` | TimelineBlock | YES | NO | YES |
+| 9 | `videoEmbed` | VideoEmbedBlock | YES | NO | YES |
+| 10 | `bannerCarousel` | BannerCarouselBlock | YES | NO | YES |
+| 11 | `contactForm` | ContactFormBlock | YES | NO | YES |
+| 12 | `map` | MapBlock | YES | NO | YES |
+
+#### Category B: Commerce Blocks (8 blocks)
+
+| # | Block Key | Component | In Payload? | Content-Editor Usable? |
+|---|---|---|---|---|
+| 13 | `productGrid` | ProductsBlock | NO | YES — show products on any page |
+| 14 | `productDetail` | ProductDetailBlock | NO | LIMITED — needs product data context |
+| 15 | `cartSummary` | CartSummaryBlock | NO | NO — functional component, not content |
+| 16 | `checkoutSteps` | CheckoutStepsBlock | NO | NO — functional component |
+| 17 | `orderConfirmation` | OrderConfirmationBlock | NO | NO — functional component |
+| 18 | `wishlistGrid` | WishlistGridBlock | NO | LIMITED — needs customer context |
+| 19 | `recentlyViewed` | RecentlyViewedBlock | NO | YES — widget block |
+| 20 | `flashSaleCountdown` | FlashSaleCountdownBlock | NO | YES — promotional block |
+
+#### Category C: Social & Trust Blocks (6 blocks)
+
+| # | Block Key | Component | In Payload? | Content-Editor Usable? |
+|---|---|---|---|---|
+| 21 | `testimonial` | TestimonialBlock | NO | YES — perfect for page builder |
+| 22 | `reviewList` | ReviewListBlock | NO | YES — data-driven widget |
+| 23 | `trustBadges` | TrustBadgesBlock | NO | YES — perfect for page builder |
+| 24 | `socialProof` | SocialProofBlock | NO | YES — perfect for page builder |
+| 25 | `comparisonTable` | ComparisonTableBlock | NO | YES — content block |
+| 26 | `newsletter` | NewsletterBlock | NO | YES — perfect for page builder |
+
+#### Category D: Vendor Blocks (5 blocks)
+
+| # | Block Key | Component | In Payload? | Content-Editor Usable? |
+|---|---|---|---|---|
+| 27 | `vendorShowcase` | VendorShowcaseBlock | NO | YES — show vendors on any page |
+| 28 | `vendorProfile` | VendorProfileBlock | NO | LIMITED — needs vendor data |
+| 29 | `vendorProducts` | VendorProductsBlock | NO | LIMITED — needs vendor data |
+| 30 | `vendorRegisterForm` | VendorRegisterFormBlock | NO | YES — embed on any page |
+| 31 | `commissionDashboard` | CommissionDashboardBlock | NO | NO — admin block |
+
+#### Category E: Category & Collection Blocks (3 blocks)
+
+| # | Block Key | Component | In Payload? | Content-Editor Usable? |
+|---|---|---|---|---|
+| 32 | `categoryGrid` | CategoryGridBlock | NO | YES — perfect for page builder |
+| 33 | `serviceList` | ServiceListBlock | NO | YES — data-driven listing |
+| 34 | `collectionList` | CollectionListBlock | NO | YES — data-driven listing |
+
+#### Category F: Booking & Service Blocks (6 blocks)
+
+| # | Block Key | Component | In Payload? | Content-Editor Usable? |
+|---|---|---|---|---|
+| 35 | `bookingCalendar` | BookingCalendarBlock | NO | LIMITED — needs booking context |
+| 36 | `serviceCardGrid` | ServiceCardGridBlock | NO | YES — listing widget |
+| 37 | `appointmentSlots` | AppointmentSlotsBlock | NO | LIMITED — needs service context |
+| 38 | `bookingConfirmation` | BookingConfirmationBlock | NO | NO — functional component |
+| 39 | `providerSchedule` | ProviderScheduleBlock | NO | NO — admin/vendor block |
+| 40 | `resourceAvailability` | ResourceAvailabilityBlock | NO | NO — admin/vendor block |
+
+#### Category G: Subscription & Loyalty Blocks (4 blocks)
+
+| # | Block Key | Component | In Payload? | Content-Editor Usable? |
+|---|---|---|---|---|
+| 41 | `subscriptionPlans` | SubscriptionPlansBlock | NO | YES — perfect for page builder |
+| 42 | `membershipTiers` | MembershipTiersBlock | NO | YES — perfect for page builder |
+| 43 | `loyaltyDashboard` | LoyaltyDashboardBlock | NO | LIMITED — needs customer context |
+| 44 | `subscriptionManage` | SubscriptionManageBlock | NO | NO — customer account block |
+
+#### Category H: Vertical-Specific Blocks (16 blocks)
+
+| # | Block Key | Component | In Payload? | Content-Editor Usable? |
+|---|---|---|---|---|
+| 45 | `auctionBidding` | AuctionBiddingBlock | NO | LIMITED — needs auction data |
+| 46 | `rentalCalendar` | RentalCalendarBlock | NO | LIMITED — needs rental data |
+| 47 | `propertyListing` | PropertyListingBlock | NO | YES — listing widget |
+| 48 | `vehicleListing` | VehicleListingBlock | NO | YES — listing widget |
+| 49 | `menuDisplay` | MenuDisplayBlock | NO | YES — restaurant menus |
+| 50 | `courseCurriculum` | CourseCurriculumBlock | NO | YES — education content |
+| 51 | `eventSchedule` | EventScheduleBlock | NO | YES — event listings |
+| 52 | `healthcareProvider` | HealthcareProviderBlock | NO | YES — provider directory |
+| 53 | `fitnessClassSchedule` | FitnessClassScheduleBlock | NO | YES — class timetable |
+| 54 | `petProfileCard` | PetProfileCardBlock | NO | YES — pet profiles |
+| 55 | `classifiedAdCard` | ClassifiedAdCardBlock | NO | YES — classified listings |
+| 56 | `crowdfundingProgress` | CrowdfundingProgressBlock | NO | YES — campaign widget |
+| 57 | `donationCampaign` | DonationCampaignBlock | NO | YES — charity widget |
+| 58 | `freelancerProfile` | FreelancerProfileBlock | NO | YES — freelancer directory |
+| 59 | `parkingSpotFinder` | ParkingSpotFinderBlock | NO | YES — parking map widget |
+| 60 | `giftCardDisplay` | GiftCardDisplayBlock | NO | YES — gift card showcase |
+
+#### Category I: B2B Blocks (4 blocks)
+
+| # | Block Key | Component | In Payload? | Content-Editor Usable? |
+|---|---|---|---|---|
+| 61 | `purchaseOrderForm` | PurchaseOrderFormBlock | NO | NO — functional form |
+| 62 | `bulkPricingTable` | BulkPricingTableBlock | NO | YES — pricing display |
+| 63 | `companyDashboard` | CompanyDashboardBlock | NO | NO — admin dashboard |
+| 64 | `approvalWorkflow` | ApprovalWorkflowBlock | NO | NO — functional workflow |
+
+#### Category J: Marketing & Content Blocks (5 blocks)
+
+| # | Block Key | Component | In Payload? | Content-Editor Usable? |
+|---|---|---|---|---|
+| 65 | `blogPost` | BlogPostBlock | NO | YES — blog content |
+| 66 | `promotionBanner` | PromotionBannerBlock | NO | YES — promotional content |
+| 67 | `bookingCTA` | BookingCtaBlock | NO | YES — call-to-action |
+| 68 | `eventList` | EventListBlock | NO | YES — event listings |
+| 69 | `pricing` | PricingBlock | NO | YES — pricing tables |
+
+#### Category K: Customer Account Blocks (3 blocks)
+
+| # | Block Key | Component | In Payload? | Content-Editor Usable? |
+|---|---|---|---|---|
+| 70 | `faq` | FaqBlock | NO | YES — perfect for page builder |
+| 71 | `referralProgram` | ReferralProgramBlock | NO | YES — marketing widget |
+| 72 | `loyaltyPointsDisplay` | LoyaltyPointsDisplayBlock | NO | LIMITED — needs customer data |
+
+#### Category L: Existing Admin Blocks (3 blocks — manage dashboard only)
+
+| # | Block Key | Component | Lines | In Payload? | Content-Editor Usable? |
+|---|---|---|---|---|---|
+| 73 | `manageStats` | ManageStatsBlock | 61 | NO | NO — admin dashboard only |
+| 74 | `manageRecentOrders` | ManageRecentOrdersBlock | 107 | NO | NO — admin dashboard only |
+| 75 | `manageActivity` | ManageActivityBlock | 74 | NO | NO — admin dashboard only |
+
+#### Category M: Not Yet Created — Missing Admin Blocks
+
+| # | Block Key (Proposed) | Purpose | Category | Priority |
+|---|---|---|---|---|
+| 76 | `dataTableBlock` | Data table with sorting, filtering, pagination | Admin CRUD | P0 |
+| 77 | `formBuilderBlock` | Dynamic form with field configuration | Admin CRUD | P0 |
+| 78 | `statsDashboardBlock` | Configurable stats cards grid | Admin dashboard | P0 |
+| 79 | `chartBlock` | Line/bar/pie charts with data source config | Admin dashboard | P1 |
+| 80 | `activityFeedBlock` | Filterable activity/audit log | Admin dashboard | P1 |
+| 81 | `calendarViewBlock` | Calendar with events/bookings/availability | Admin scheduling | P1 |
+| 82 | `kanbanBoardBlock` | Kanban board for order/task status | Admin workflow | P2 |
+| 83 | `workflowBuilderBlock` | Visual workflow state machine editor | Admin automation | P2 |
+| 84 | `crudPageBlock` | Complete CRUD page (table + form + actions) | Admin CRUD | P0 |
+| 85 | `mapDashboardBlock` | Geographic data visualization | Admin geo | P2 |
+| 86 | `notificationCenterBlock` | Notification management panel | Admin comms | P2 |
+| 87 | `fileManagerBlock` | File/media upload and management | Admin media | P1 |
+| 88 | `userManagementBlock` | User/team member management | Admin org | P1 |
+| 89 | `permissionMatrixBlock` | Role/permission visual editor | Admin RBAC | P2 |
+| 90 | `integrationStatusBlock` | External system connection status | Admin system | P2 |
+
+### 20.3 Block Classification Summary — Content-Editor (Page Builder) Usability
+
+| Classification | Count | % of Total | Examples |
+|---|---|---|---|
+| **YES — Perfect for page builder** | 38 | 49% | hero, featureGrid, cta, testimonial, categoryGrid, pricing |
+| **YES — Data-driven widget** | 12 | 16% | productGrid, reviewList, eventList, serviceCardGrid |
+| **LIMITED — Needs entity context** | 10 | 13% | productDetail, bookingCalendar, auctionBidding, loyaltyDashboard |
+| **NO — Functional/admin only** | 15 | 19% | cartSummary, checkoutSteps, providerSchedule, companyDashboard |
+| **NO — Admin dashboard only** | 3 | 4% | manageStats, manageRecentOrders, manageActivity |
+| **NOT YET CREATED** | 15 | — | dataTableBlock, formBuilderBlock, crudPageBlock, etc. |
+
+**For the content-editor (tenant manager) page builder:**
+- **50 blocks (65%)** are usable for building storefront pages
+- **15 blocks (19%)** are NOT suitable for page builder (admin/functional)
+- **12 blocks (16%)** need entity context — usable on detail pages only
+- **15 admin blocks** are MISSING and need to be created for admin page building
+
+### 20.4 Payload Pages Collection — What Needs to Change
+
+The Payload `Pages` collection currently defines **3 block types** but needs **50+ block types** for the content-editor to build real pages:
+
+**Current Payload `layout.blocks` array (3 entries):**
+```
+hero: title, subtitle, image, cta, ctaLink
+richText: content
+media: media, caption
+```
+
+**Required Payload `layout.blocks` array (50+ entries) — organized by page builder category:**
+
+| Category | Blocks to Add | Count |
+|---|---|---|
+| Core Layout | featureGrid, cta, stats, imageGallery, divider, timeline, videoEmbed, bannerCarousel, contactForm, map | 10 |
+| Commerce | productGrid, recentlyViewed, flashSaleCountdown, giftCardDisplay | 4 |
+| Social/Trust | testimonial, reviewList, trustBadges, socialProof, comparisonTable, newsletter | 6 |
+| Vendor | vendorShowcase, vendorRegisterForm | 2 |
+| Categories | categoryGrid, serviceList, collectionList | 3 |
+| Booking/Service | serviceCardGrid | 1 |
+| Subscriptions | subscriptionPlans, membershipTiers | 2 |
+| Verticals | propertyListing, vehicleListing, menuDisplay, courseCurriculum, eventSchedule, healthcareProvider, fitnessClassSchedule, petProfileCard, classifiedAdCard, crowdfundingProgress, donationCampaign, freelancerProfile, parkingSpotFinder | 13 |
+| B2B | bulkPricingTable | 1 |
+| Marketing | blogPost, promotionBanner, bookingCTA, eventList, pricing | 5 |
+| Customer | faq, referralProgram | 2 |
+| **TOTAL** | | **49 blocks** |
+
+---
+
+## Section 21: Manage Page Architecture — Complete Analysis
+
+### 21.1 All 96 Manage Pages by Admin Tier Assignment
+
+Every manage page is classified below with its CORRECT admin tier, current access status, and gaps:
+
+#### TIER 1: Super-Admin Only (17 pages — 2,851 lines)
+
+| # | Page | Lines | Section | Why Super-Admin | Has CRUD Config? | Module Registry? |
+|---|---|---|---|---|---|---|
+| 1 | `tenants-admin.tsx` | 188 | system | Multi-tenant management | YES (tenants) | NO |
+| 2 | `governance.tsx` | 193 | system | Platform governance policies | YES | NO |
+| 3 | `nodes.tsx` | 194 | system | 5-level node hierarchy | YES | NO |
+| 4 | `personas.tsx` | 188 | system | 6-axis persona system | YES | NO |
+| 5 | `region-zones.tsx` | 188 | system | Geographic zone management | YES (region-zones) | NO |
+| 6 | `temporal.tsx` | 75 | system | Temporal Cloud workflows | NO | NO |
+| 7 | `webhooks.tsx` | 210 | system | Webhook management | NO | NO |
+| 8 | `integrations.tsx` | 77 | system | External integrations | NO | NO |
+| 9 | `audit.tsx` | 108 | system | Audit log viewer | NO | NO |
+| 10 | `channels.tsx` | 188 | system | Sales channel config | NO | NO |
+| 11 | `metrics.tsx` | 71 | system | Platform metrics | NO | NO |
+| 12 | `i18n.tsx` | 193 | system | i18n management | YES | NO |
+| 13 | `tax-config.tsx` | 188 | system | Tax configuration | YES (tax-config) | NO |
+| 14 | `payment-terms.tsx` | 186 | system | Payment terms | NO | NO |
+| 15 | `shipping-extensions.tsx` | 188 | system | Shipping rule extensions | YES (shipping-ext) | NO |
+| 16 | `cart-extensions.tsx` | 188 | system | Cart rule extensions | YES (cart-extension) | NO |
+| 17 | `promotion-extensions.tsx` | 188 | system | Promotion extensions | YES (promotion-ext) | NO |
+
+**Key findings for super-admin pages:**
+- **0 of 17** appear in the Module Registry sidebar — they are hidden from navigation!
+- **All 17** use minWeight: 40 (same as vendor-admin) — NO elevated access control
+- **Only 10 of 17** have CRUD configs — 7 have custom or minimal implementations
+- **0 of 17** have dedicated super-admin UI patterns (no platform-wide dashboard, no cross-tenant views)
+
+#### TIER 2: Tenant-Admin (73 pages — 14,932 lines)
+
+**Commerce Core (9 pages, 1,886 lines):**
+
+| # | Page | Lines | CRUD Config? | Module Registry? | Vendor Equivalent? |
+|---|---|---|---|---|---|
+| 1 | `products.tsx` | 211 | YES | YES | vendor/products/ |
+| 2 | `orders.tsx` | 174 | YES | YES | vendor/orders/ |
+| 3 | `customers.tsx` | 195 | YES | YES | — |
+| 4 | `quotes.tsx` | 209 | YES | YES | vendor/quotes |
+| 5 | `invoices.tsx` | 217 | YES | YES | vendor/invoices |
+| 6 | `subscriptions.tsx` | 222 | YES | YES | vendor/subscriptions |
+| 7 | `reviews.tsx` | 210 | YES | YES | vendor/reviews |
+| 8 | `inventory.tsx` | 200 | NO | NO | vendor/inventory |
+| 9 | `inventory-extension.tsx` | 211 | YES (inventory-extension) | NO | vendor/inventory-extension |
+
+**Marketplace (6 pages, 1,294 lines):**
+
+| # | Page | Lines | CRUD Config? | Module Registry? | Vendor Equivalent? |
+|---|---|---|---|---|---|
+| 10 | `vendors.tsx` | 222 | YES | YES | — (vendor IS the user) |
+| 11 | `commissions.tsx` | 228 | YES | YES | vendor/commissions (stub) |
+| 12 | `payouts.tsx` | 171 | YES | YES | vendor/payouts (stub) |
+| 13 | `affiliates.tsx` | 212 | YES (affiliates) | YES | vendor/affiliate |
+| 14 | `commission-rules.tsx` | 219 | NO | NO | — |
+| 15 | `service-providers.tsx` | 217 | NO | NO | — |
+
+**Verticals — All 35 pages (7,291 lines):**
+
+| # | Page | Lines | Has CRUD? | In Registry? | Vendor? | Storefront? |
+|---|---|---|---|---|---|---|
+| 16 | `auctions.tsx` | 210 | YES | YES | YES | YES |
+| 17 | `bookings.tsx` | 212 | YES | YES | YES | YES |
+| 18 | `event-ticketing.tsx` | 212 | NO (events) | YES | YES | NO storefront |
+| 19 | `events.tsx` | 103 | YES | NO | YES | YES |
+| 20 | `rentals.tsx` | 214 | YES | YES | YES | YES |
+| 21 | `restaurants.tsx` | 215 | YES | YES | YES | YES |
+| 22 | `grocery.tsx` | 205 | YES | YES | YES | YES |
+| 23 | `travel.tsx` | 210 | YES | YES | YES | YES |
+| 24 | `automotive.tsx` | 210 | YES | YES | YES | YES |
+| 25 | `real-estate.tsx` | 209 | YES | YES | YES | YES |
+| 26 | `healthcare.tsx` | 205 | YES | YES | YES (healthcare) | YES |
+| 27 | `education.tsx` | 205 | YES | YES | YES | YES |
+| 28 | `fitness.tsx` | 205 | YES | YES | YES | YES |
+| 29 | `pet-services.tsx` | 205 | YES | YES | YES (pet-service) | YES |
+| 30 | `digital-products.tsx` | 205 | YES (digital-products) | YES | YES | YES (as digital/) |
+| 31 | `memberships.tsx` | 205 | YES | YES | YES | YES |
+| 32 | `financial-products.tsx` | 204 | YES (financial-products) | YES | YES (financial-product) | YES (as financial/) |
+| 33 | `freelance.tsx` | 205 | YES | YES | YES | YES |
+| 34 | `parking.tsx` | 205 | YES | YES | YES | YES |
+| 35 | `advertising.tsx` | 212 | YES | YES (marketing) | YES | NO storefront |
+| 36 | `social-commerce.tsx` | 206 | YES (social-commerce) | YES (marketing) | YES | YES |
+| 37 | `classifieds.tsx` | 204 | YES | YES (marketing) | YES (classified) | YES |
+| 38 | `crowdfunding.tsx` | 212 | YES | YES (marketing) | YES | YES |
+| 39 | `charity.tsx` | 206 | YES | YES (marketing) | YES | YES |
+| 40 | `charities.tsx` | 211 | NO | NO | — | — (DUPLICATE of charity) |
+| 41 | `flash-sales.tsx` | 216 | YES (flash-sales) | NO | YES | YES (as flash-deals/) |
+| 42 | `dropshipping.tsx` | 218 | NO | NO | YES | YES |
+| 43 | `gift-cards.tsx` | 211 | YES (gift-cards) | NO | YES (gift-cards) | YES (gift-cards-shop/) |
+| 44 | `insurance.tsx` | 205 | YES | NO | YES | YES |
+| 45 | `loyalty.tsx` | 200 | YES | NO | YES | YES (loyalty-program/) |
+| 46 | `newsletters.tsx` | 205 | NO | NO | YES (newsletter) | YES (newsletter/) |
+| 47 | `print-on-demand.tsx` | 212 | YES (print-on-demand) | NO | YES | YES |
+| 48 | `trade-in.tsx` | 191 | YES (trade-in) | NO | YES | YES |
+| 49 | `try-before-you-buy.tsx` | 212 | YES (try-before-you-buy) | NO | YES | YES |
+| 50 | `volume-pricing.tsx` | 188 | YES (volume-pricing) | NO | YES (volume-pricing) | YES (volume-deals/) |
+| 51 | `white-label.tsx` | 211 | YES (white-label) | NO | YES | YES |
+| 52 | `warranty.tsx` | 210 | NO | NO | YES (warranty) | — (DUPLICATE naming) |
+| 53 | `warranties.tsx` | 188 | YES | NO | — | YES |
+
+**Commerce Extensions (10 pages, 2,065 lines):**
+
+| # | Page | Lines | CRUD Config? | Module Registry? |
+|---|---|---|---|---|
+| 54 | `promotions.tsx` | 216 | YES | YES |
+| 55 | `promotions-ext.tsx` | 221 | NO | NO (DUPLICATE?) |
+| 56 | `subscription-plans.tsx` | 218 | NO | NO |
+| 57 | `bundles.tsx` | 207 | NO | NO |
+| 58 | `credit.tsx` | 212 | NO | NO |
+| 59 | `consignments.tsx` | 211 | NO | NO |
+| 60 | `purchase-orders.tsx` | 215 | NO | NO |
+| 61 | `availability.tsx` | 224 | NO | NO |
+| 62 | `wallet.tsx` | 190 | NO | NO |
+| 63 | `pricing-tiers.tsx` | 187 | NO | NO |
+
+**Organization (8 pages, 1,630 lines):**
+
+| # | Page | Lines | CRUD Config? | Module Registry? |
+|---|---|---|---|---|
+| 64 | `team.tsx` | 195 | YES | YES |
+| 65 | `companies.tsx` | 216 | YES | YES |
+| 66 | `companies-admin.tsx` | 188 | NO | NO (DUPLICATE?) |
+| 67 | `company.tsx` | 209 | NO | NO (DUPLICATE?) |
+| 68 | `stores.tsx` | 205 | YES | YES |
+| 69 | `legal.tsx` | 198 | YES | YES |
+| 70 | `utilities.tsx` | 210 | YES | YES |
+| 71 | `disputes.tsx` | 199 | YES | NO |
+
+**Marketing & Customer (3 pages, 505 lines):**
+
+| # | Page | Lines | Module Registry? |
+|---|---|---|---|
+| 72 | `wishlists.tsx` | 93 | NO |
+| 73 | `notification-preferences.tsx` | 193 | NO |
+
+**System — Tenant-Level (2 pages, 261 lines):**
+
+| # | Page | Lines | Module Registry? |
+|---|---|---|---|
+| 74 | `analytics.tsx` | 78 | YES |
+| 75 | `settings.tsx` | 183 | YES |
+
+**+ Manage Dashboard (1 page, 107 lines):**
+
+| # | Page | Lines |
+|---|---|---|
+| 76 | `index.tsx` | 107 |
+
+#### TIER 3: Content-Editor / Tenant Manager (6 existing + 10 missing = 16 needed)
+
+**Currently existing CMS-related manage pages:**
+
+| # | Page | Lines | Currently Accessible? | Content-Editor Needs? |
+|---|---|---|---|---|
+| 1 | `cms.tsx` | 193 | NO (weight 30 < 40) | YES — primary CMS page manager |
+| 2 | `cms-content.tsx` | 209 | NO (weight 30 < 40) | YES — content block editor |
+
+**Missing pages for content-editor workflow (MUST be created):**
+
+| # | Missing Page | Purpose | Priority | Blocks Needed |
+|---|---|---|---|---|
+| 3 | `page-builder.tsx` | Visual drag-and-drop page builder | P0 | ALL 50 usable blocks |
+| 4 | `media-library.tsx` | Upload and manage images/files | P0 | fileManagerBlock |
+| 5 | `page-preview.tsx` | Live preview of CMS pages in storefront context | P0 | — (renders actual blocks) |
+| 6 | `blog-manager.tsx` | Create and edit blog posts | P1 | blogPost, richText |
+| 7 | `navigation-editor.tsx` | Manage site navigation menus | P1 | — (custom editor) |
+| 8 | `seo-manager.tsx` | Edit page SEO metadata, og tags, schema markup | P1 | — (form-based) |
+| 9 | `redirects.tsx` | Manage URL redirects (301/302) | P2 | — (data table) |
+| 10 | `template-gallery.tsx` | Pre-built page templates for quick starts | P2 | — (template picker) |
+| 11 | `content-scheduler.tsx` | Schedule page publish/unpublish dates | P2 | — (calendar + table) |
+| 12 | `cms-analytics.tsx` | Page view analytics and content performance | P2 | chartBlock |
+
+### 21.2 Module Registry vs Actual Pages — Complete Gap Analysis
+
+The Module Registry (`module-registry.ts`) defines **45 modules** in the sidebar. But there are **96 actual manage page files**. This means **54 pages** are "hidden" — they have route files but NO sidebar navigation:
+
+| Category | Registry Modules | Actual Pages | Hidden Pages |
+|---|---|---|---|
+| Overview | 1 (dashboard) | 1 (index) | 0 |
+| Commerce | 7 | 11 (+ inventory, inventory-extension, events, subscription-plans) | 4 |
+| Marketplace | 4 | 8 (+ commission-rules, service-providers, availability, wallet) | 4 |
+| Verticals | 18 | 37 (all extra verticals not in registry) | 19 |
+| Marketing | 6 | 8 (+ wishlists, notification-preferences) | 2 |
+| Organization | 5 | 10 (+ companies-admin, company, disputes, plus extras) | 5 |
+| System | 2 | 20 (ALL platform pages are hidden from sidebar) | 18 |
+| CMS | 0 | 2 (cms, cms-content) | 2 |
+| **TOTAL** | **43** | **96** | **54** |
+
+**53 pages (55%) are accessible only via direct URL** — they have NO sidebar link. Users cannot discover them.
+
+### 21.3 Duplicate Manage Pages (Wasted Code)
+
+| # | Primary Page | Duplicate Page | Same Config? | Lines Wasted | Action |
+|---|---|---|---|---|---|
+| 1 | `charity.tsx` (206) | `charities.tsx` (211) | Different CRUD key | 211 | MERGE — keep charity |
+| 2 | `warranty.tsx` (210) | `warranties.tsx` (188) | Different CRUD key | 188 | MERGE — keep warranties |
+| 3 | `companies.tsx` (216) | `companies-admin.tsx` (188) | Likely same | 188 | MERGE |
+| 4 | `companies.tsx` (216) | `company.tsx` (209) | Likely same | 209 | MERGE |
+| 5 | `promotions.tsx` (216) | `promotions-ext.tsx` (221) | Extensions | 221 | MERGE into single page with tabs |
+| 6 | `events.tsx` (103) | `event-ticketing.tsx` (212) | Different scope | — | KEEP both (events = listing, event-ticketing = management) |
+| **TOTAL wasted** | | | | **1,017 lines** | |
+
+### 21.4 CRUD Config Coverage for Manage Pages
+
+The `crud-configs.ts` file defines CRUD configurations. Here's the coverage:
+
+| Metric | Count | % of 96 Pages |
+|---|---|---|
+| Pages WITH matching CRUD config | 49 | 51% |
+| Pages WITHOUT CRUD config | 47 | 49% |
+| Pages using `useManageCrud` hook | 90 | 94% |
+| Pages using `FormDrawer` | 87 | 91% |
+| Pages using `DataTable` | ~85 | 89% |
+| Pages using `BlockRenderer` | 0 | **0%** |
+
+**47 pages (49%) have NO CRUD config** — they reference a config key that doesn't exist, which means their CRUD operations silently fail or use fallback defaults.
+
+---
+
+## Section 22: Content-Editor (Tenant Manager) — Page Builder Architecture Gap
+
+### 22.1 The Core Problem
+
+The content-editor is the **primary user of the page builder** but has **ZERO access** to any page building tools:
+
+```
+Content-Editor Capability Matrix:
+┌────────────────────────────────────┬─────────┬──────────┐
+│ Capability                         │ Current │ Required │
+├────────────────────────────────────┼─────────┼──────────┤
+│ Access manage section              │ ✗       │ ✓        │
+│ View CMS pages list                │ ✗       │ ✓        │
+│ Create new pages                   │ ✗       │ ✓        │
+│ Edit page title/slug/SEO           │ ✗       │ ✓        │
+│ Add blocks to page layout          │ ✗       │ ✓        │
+│ Configure block properties         │ ✗       │ ✓        │
+│ Rearrange blocks (drag-and-drop)   │ ✗       │ ✓        │
+│ Preview page in storefront context │ ✗       │ ✓        │
+│ Publish/unpublish pages            │ ✗       │ ✓        │
+│ Schedule page publishing           │ ✗       │ ✓        │
+│ Upload/manage media files          │ ✗       │ ✓        │
+│ Edit blog posts                    │ ✗       │ ✓        │
+│ Manage navigation menus            │ ✗       │ ✓        │
+│ View content analytics             │ ✗       │ ✓        │
+│ Access commerce pages              │ ✗       │ ✗        │
+│ Access platform admin pages        │ ✗       │ ✗        │
+└────────────────────────────────────┴─────────┴──────────┘
+```
+
+### 22.2 Required Architecture Changes for Content-Editor Access
+
+**Change 1: Role Guard must support per-page weight overrides**
+
+Currently, `role-guard.tsx` enforces a global `MIN_MANAGE_WEIGHT = 40`. This must be changed to support per-route weight requirements:
+
+```
+Current: ALL manage pages → weight ≥ 40
+Target:  
+  Platform pages → weight ≥ 100 (super-admin only)
+  Commerce/vertical pages → weight ≥ 40 (tenant-admin)
+  CMS pages → weight ≥ 30 (content-editor)
+  Analytics (read-only) → weight ≥ 20 (analyst)
+```
+
+**Change 2: Module Registry must include CMS section with lower minWeight**
+
+The Module Registry needs a new `cms` section with `minWeight: 30`:
+
+```
+Current sections: overview, commerce, marketplace, verticals, marketing, organization, system
+Target sections:  overview, commerce, marketplace, verticals, marketing, organization, system, CMS, PLATFORM
+```
+
+**Change 3: Manage Sidebar must filter modules by user's role weight**
+
+Currently, `getModulesBySection(maxWeight)` filters modules by weight, but the sidebar always shows all modules because no per-section weight filtering exists.
+
+**Change 4: Payload Pages must register all 50 content-editor-usable blocks**
+
+The Payload Pages collection layout field must be expanded from 3 to 50+ block definitions so content-editors can actually use them in the page builder.
+
+### 22.3 Payload CMS Block Definitions Needed — Field Specifications
+
+Each block added to the Payload Pages collection needs properly defined fields. Here are the required field definitions for the top priority blocks:
+
+| # | Block Slug | Required Payload Fields | Complexity |
+|---|---|---|---|
+| 1 | `featureGrid` | title: text, features: array[{icon, title, description, link}], columns: select[2,3,4] | MEDIUM |
+| 2 | `cta` | heading: text, subheading: text, buttonText: text, buttonLink: text, variant: select[primary,secondary], bgColor: text | LOW |
+| 3 | `productGrid` | heading: text, source: select[featured,new,sale,category], categoryId: text, limit: number, layout: select[grid,carousel] | MEDIUM |
+| 4 | `testimonial` | heading: text, testimonials: array[{name, role, company, quote, avatar: upload}], layout: select[grid,carousel] | MEDIUM |
+| 5 | `stats` | heading: text, stats: array[{label, value, change, icon}] | LOW |
+| 6 | `imageGallery` | heading: text, images: array[{image: upload, caption, alt}], layout: select[grid,masonry,carousel] | MEDIUM |
+| 7 | `faq` | heading: text, faqs: array[{question, answer}], layout: select[accordion,list] | LOW |
+| 8 | `pricing` | heading: text, plans: array[{name, price, period, features: array, cta, highlighted: boolean}] | HIGH |
+| 9 | `vendorShowcase` | heading: text, source: select[featured,top-rated,new], limit: number, layout: select[grid,carousel], showRating: boolean | MEDIUM |
+| 10 | `categoryGrid` | heading: text, source: select[top-level,featured], limit: number, showCount: boolean | LOW |
+| 11 | `newsletter` | heading: text, subheading: text, buttonText: text, bgColor: text | LOW |
+| 12 | `trustBadges` | heading: text, badges: array[{icon, label, description}] | LOW |
+| 13 | `divider` | style: select[line,dots,space], spacing: select[sm,md,lg] | LOW |
+| 14 | `videoEmbed` | heading: text, url: text, autoplay: boolean, aspectRatio: select[16:9,4:3,1:1] | LOW |
+| 15 | `bannerCarousel` | banners: array[{image: upload, title, subtitle, cta, ctaLink}], autoplay: boolean, interval: number | MEDIUM |
+| 16 | `contactForm` | heading: text, fields: array[{label, type, required}], submitButton: text, recipient: email | HIGH |
+| 17 | `map` | heading: text, latitude: number, longitude: number, zoom: number, markers: array[{lat, lng, label}] | MEDIUM |
+| 18 | `reviewList` | heading: text, source: select[product,vendor,all], limit: number, showRating: boolean | MEDIUM |
+| 19 | `blogPost` | heading: text, source: select[recent,featured,category], categoryId: text, limit: number | LOW |
+| 20 | `promotionBanner` | heading: text, description: text, discount: text, code: text, expiresAt: date, bgImage: upload | MEDIUM |
+
+### 22.4 Manage CMS Pages for Content-Editor — Needed vs Existing
+
+| # | Page | Exists? | Lines | Status | What It Needs |
+|---|---|---|---|---|---|
+| 1 | CMS Dashboard | NO | — | MISSING | Overview of all pages, recent edits, draft count, published count |
+| 2 | Pages List | `cms.tsx` | 193 | EXISTS — blocked (weight 30 < 40) | Lower minWeight to 30, add status filters, preview links |
+| 3 | Page Editor | `cms-content.tsx` | 209 | EXISTS — blocked | Lower minWeight, add block palette, drag-and-drop editor |
+| 4 | Page Builder | NO | — | MISSING | Visual block editor with 50 blocks, live preview panel |
+| 5 | Page Preview | NO | — | MISSING | Iframe-based preview of page with blocks rendered in storefront context |
+| 6 | Media Library | NO | — | MISSING | Upload, browse, search media assets for use in blocks |
+| 7 | Blog Manager | NO | — | MISSING | Blog post CRUD with rich text editor and categories |
+| 8 | Navigation Editor | NO | — | MISSING | Visual menu builder for storefront navigation |
+| 9 | SEO Manager | NO | — | MISSING | Per-page SEO settings, og tags, sitemap management |
+| 10 | URL Redirects | NO | — | MISSING | 301/302 redirect rule management |
+| 11 | Content Scheduler | NO | — | MISSING | Calendar view of scheduled publish/unpublish dates |
+| 12 | Page Templates | NO | — | MISSING | Pre-built page templates for quick page creation |
+| 13 | CMS Analytics | NO | — | MISSING | Page views, engagement metrics per page/block |
+| 14 | Form Submissions | NO | — | MISSING | View contact form and other form submissions |
+
+**Result: Only 2 of 14 needed pages exist, and BOTH are blocked from content-editor access.**
+
+---
+
+## Section 23: Summary — Admin Architecture Gaps
+
+### 23.1 Role System Gaps
+
+| # | Gap | Severity | Impact |
+|---|---|---|---|
+| 1 | ALL manage pages require same weight (40) — no tier separation | CRITICAL | Super-admin pages visible to vendor-admin |
+| 2 | Content-editor (weight 30) blocked from all manage pages | CRITICAL | Page builder user has no workflow |
+| 3 | Payload CMS uses 3 roles, storefront uses 10 roles — no mapping | HIGH | Authentication confusion |
+| 4 | No `tenant_admin` role in storefront RBAC | HIGH | Payload's primary admin role missing |
+| 5 | No node-based data scoping for roles 2-6 | HIGH | Zone/facility managers see all tenant data |
+| 6 | `vendor-admin` sees all tenant data, not just own vendor | HIGH | Data isolation violation |
+| 7 | `analyst` (weight 20) has no dedicated read-only views | MEDIUM | Role has no purpose |
+
+### 23.2 Manage Page Gaps
+
+| # | Gap | Severity | Count |
+|---|---|---|---|
+| 1 | 54 pages (56%) hidden from sidebar — no navigation | CRITICAL | 54 pages |
+| 2 | 47 pages (49%) have no CRUD config — forms may silently fail | HIGH | 47 pages |
+| 3 | 0 pages use BlockRenderer — no CMS-driven manage pages | CRITICAL | 96 pages |
+| 4 | 17 platform-admin pages accessible to vendor-admin+ | CRITICAL | 17 pages |
+| 5 | 5 duplicate manage page pairs wasting ~1,017 lines | LOW | 5 pairs |
+| 6 | 10 missing super-admin pages (platform-dashboard, etc.) | MEDIUM | 10 pages |
+| 7 | 10 missing tenant-admin pages (vendor-onboarding-review, etc.) | MEDIUM | 10 pages |
+| 8 | 12 missing content-editor pages (page-builder, media-library, etc.) | CRITICAL | 12 pages |
+
+### 23.3 Payload CMS Block Gaps
+
+| # | Gap | Severity | Count |
+|---|---|---|---|
+| 1 | Payload Pages collection has only 3 block definitions | CRITICAL | 3 of 77 (4%) |
+| 2 | 50 content-editor-usable blocks NOT in Payload | CRITICAL | 50 blocks |
+| 3 | 15 admin blocks DON'T EXIST yet | HIGH | 15 blocks |
+| 4 | 3 existing admin blocks not in Payload either | MEDIUM | 3 blocks |
+| 5 | No block preview in page builder | CRITICAL | — |
+| 6 | No block property panel / configuration UI | CRITICAL | — |
+
+### 23.4 Architecture Priority Actions for Admin Tiers
+
+| Priority | Action | Impact | Effort |
+|---|---|---|---|
+| **P0** | Implement per-page weight requirements in RoleGuard | Enable content-editor access to CMS pages | 2h |
+| **P0** | Add CMS section to Module Registry with minWeight: 30 | Content-editor sees CMS sidebar | 1h |
+| **P0** | Add platform section to Module Registry with minWeight: 100 | Super-admin pages separated | 1h |
+| **P0** | Register 50 blocks in Payload Pages collection | Enable page builder | 8h |
+| **P0** | Create page-builder.tsx for content-editor | Core page builder functionality | 12h |
+| **P0** | Create media-library.tsx | Content-editor can upload images | 4h |
+| **P1** | Create platform-dashboard.tsx for super-admin | Platform overview | 4h |
+| **P1** | Fix RBAC role mapping between Payload and storefront | Consistent authentication | 3h |
+| **P1** | Add node-based data scoping to manage pages | Role-appropriate data isolation | 8h |
+| **P1** | Create vendor-data isolation for vendor-admin | Vendor sees only own data | 4h |
+| **P2** | Merge 5 duplicate manage pages | Reduce maintenance | 2h |
+| **P2** | Add 47 missing CRUD configs | Fix form submission errors | 4h |
+| **P2** | Create 15 admin blocks (dataTableBlock, etc.) | CMS-driven manage pages | 12h |
+| **P2** | Create remaining 10 missing content-editor pages | Complete CMS workflow | 8h |
+| **P3** | Create 10 missing super-admin pages | Complete platform admin | 10h |
+| **P3** | Create 10 missing tenant-admin pages | Complete tenant management | 10h |
+| **P3** | Add analyst read-only views (weight 20) | Purpose for analyst role | 4h |
