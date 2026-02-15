@@ -29,13 +29,36 @@ async function fetchApi<T>(path: string, options?: RequestInit): Promise<T> {
   return response as T
 }
 
+function normalizeService(raw: any): Service {
+  const meta = typeof raw.metadata === "string"
+    ? JSON.parse(raw.metadata)
+    : raw.metadata || {}
+  return {
+    id: raw.id,
+    name: raw.name || meta.name || "Untitled Service",
+    handle: raw.handle || raw.product_id || raw.id,
+    description: raw.description || meta.description || meta.short_description || "",
+    duration: raw.duration ?? raw.duration_minutes ?? meta.duration ?? 60,
+    buffer_time: raw.buffer_time ?? raw.buffer_before_minutes ?? 0,
+    price: raw.price ?? meta.price ?? 0,
+    currency_code: raw.currency_code || meta.currency_code || meta.currency || "USD",
+    capacity: raw.capacity ?? raw.max_capacity ?? meta.capacity ?? 1,
+    category_id: raw.category_id || meta.category || undefined,
+    providers: raw.providers || [],
+    images: raw.images || (meta.images ? meta.images.map((url: string) => ({ url })) : []),
+    metadata: meta,
+    created_at: raw.created_at,
+    updated_at: raw.updated_at,
+  }
+}
+
 // Hooks - Services
 export function useServices() {
   return useQuery({
     queryKey: bookingKeys.services(),
     queryFn: async () => {
-      const response = await fetchApi<{ services: Service[] }>("/store/bookings/services")
-      return response.services
+      const response = await fetchApi<{ services: any[] }>("/store/bookings/services")
+      return (response.services || []).map(normalizeService)
     },
     staleTime: 5 * 60 * 1000,
   })

@@ -1,8 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useState, useMemo } from "react"
 import { t } from "@/lib/i18n"
+import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import {
-  useService,
   useServiceProviders,
   useProviderAvailability,
   useCreateBooking,
@@ -23,14 +23,48 @@ function SpinnerIcon({ className }: { className?: string }) {
   )
 }
 
+function normalizeServiceDetail(raw: any) {
+  const meta = typeof raw.metadata === "string" ? JSON.parse(raw.metadata) : raw.metadata || {}
+  return {
+    id: raw.id,
+    name: raw.name || meta.name || "Untitled Service",
+    handle: raw.handle || raw.product_id || raw.id,
+    description: raw.description || meta.description || meta.short_description || "",
+    duration: raw.duration ?? raw.duration_minutes ?? meta.duration ?? 60,
+    buffer_time: raw.buffer_time ?? raw.buffer_before_minutes ?? 0,
+    price: raw.price ?? meta.price ?? 0,
+    currency_code: raw.currency_code || meta.currency_code || meta.currency || "USD",
+    capacity: raw.capacity ?? raw.max_capacity ?? meta.capacity ?? 1,
+    category_id: raw.category_id || meta.category || undefined,
+    providers: raw.providers || [],
+    images: raw.images || (meta.images ? meta.images.map((url: string) => ({ url })) : []),
+    metadata: meta,
+  }
+}
+
 export const Route = createFileRoute("/$tenant/$locale/bookings/$serviceHandle")({
   component: ServiceBookingPage,
   head: ({ loaderData }) => ({
     meta: [
-      { title: `${loaderData?.title || loaderData?.name || "Booking Service"} | Dakkah CityOS` },
-      { name: "description", content: loaderData?.description || loaderData?.excerpt || "" },
+      { title: `${loaderData?.service?.name || "Booking Service"} | Dakkah CityOS` },
+      { name: "description", content: loaderData?.service?.description || "" },
     ],
   }),
+  loader: async ({ params }) => {
+    try {
+      const baseUrl = getServerBaseUrl()
+      const resp = await fetchWithTimeout(`${baseUrl}/store/bookings/services`, {
+        headers: { "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445" },
+      })
+      if (!resp.ok) return { service: null }
+      const data = await resp.json()
+      const services = (data.services || []).map(normalizeServiceDetail)
+      const service = services.find(
+        (s: any) => s.id === params.serviceHandle || s.handle === params.serviceHandle
+      ) || null
+      return { service }
+    } catch { return { service: null } }
+  },
 })
 
 const MAX_NOTES_LENGTH = 500
@@ -48,7 +82,9 @@ function ServiceBookingPage() {
   const navigate = useNavigate()
   const { addToast } = useToast()
 
-  const { data: service, isLoading: serviceLoading } = useService(serviceHandle)
+  const loaderData = Route.useLoaderData()
+  const service = loaderData?.service
+  const serviceLoading = false
   const { data: providers, isLoading: providersLoading } = useServiceProviders(
     service?.id
   )
@@ -74,15 +110,22 @@ function ServiceBookingPage() {
     service?.duration
   )
 
-  const formatPrice = (amount: number, currency: string) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currency.toUpperCase(),
-      minimumFractionDigits: 0,
-    }).format(amount)
+  const formatPrice = (amount: number | undefined | null, currency: string | undefined | null) => {
+    const amt = typeof amount === "number" ? amount / 100 : 0
+    const cur = (currency || "USD").toUpperCase()
+    try {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: cur,
+        minimumFractionDigits: 0,
+      }).format(amt)
+    } catch {
+      return `${cur} ${amt.toFixed(2)}`
+    }
   }
 
-  const formatDuration = (minutes: number) => {
+  const formatDuration = (minutes: number | undefined | null) => {
+    if (!minutes) return "1 hour"
     if (minutes < 60) return `${minutes} minutes`
     const hours = Math.floor(minutes / 60)
     const mins = minutes % 60
