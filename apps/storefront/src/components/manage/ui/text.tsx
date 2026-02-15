@@ -12,9 +12,9 @@ const sizeStyles: Record<TextSize, string> = {
 }
 
 const colorStyles: Record<TextColor, string> = {
-  primary: "text-gray-900",
-  secondary: "text-gray-500",
-  muted: "text-gray-400",
+  primary: "text-ds-foreground",
+  secondary: "text-ds-muted-foreground",
+  muted: "text-ds-muted-foreground/70",
   inherit: "text-inherit",
 }
 

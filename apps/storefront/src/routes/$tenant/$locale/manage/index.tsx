@@ -92,7 +92,7 @@ function ManageDashboard() {
                 <Link
                   key={action.to}
                   to={action.to as any}
-                  className="flex items-center gap-3 px-3 py-2 text-[13px] text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
+                  className="flex items-center gap-3 px-3 py-2 text-[13px] text-ds-muted-foreground hover:text-ds-foreground hover:bg-ds-muted/50 rounded-lg transition-colors"
                 >
                   <span className="flex-1">{action.label}</span>
                   <ChevronRight className="w-4 h-4" />

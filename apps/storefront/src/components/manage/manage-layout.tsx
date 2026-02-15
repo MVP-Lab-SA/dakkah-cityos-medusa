@@ -39,7 +39,7 @@ function ManageLayoutClient({ children, locale, tenantSlug }: { children: ReactN
   }, [sidebarOpen])
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-ds-muted/50 flex">
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black/40 z-40 lg:hidden"
@@ -48,30 +48,30 @@ function ManageLayoutClient({ children, locale, tenantSlug }: { children: ReactN
       )}
 
       <aside
-        className={`fixed inset-y-0 start-0 z-50 w-[216px] bg-white border-e border-gray-200 flex flex-col transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:z-auto ${
+        className={`fixed inset-y-0 start-0 z-50 w-[216px] bg-ds-card border-e border-ds-border flex flex-col transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:z-auto ${
           sidebarOpen
             ? "translate-x-0"
             : "ltr:-translate-x-full rtl:translate-x-full"
         }`}
       >
-        <div className="h-12 px-4 flex items-center border-b border-gray-100">
+        <div className="h-12 px-4 flex items-center border-b border-ds-border/50">
           <Link
             to={`/${tenantSlug}/${locale}/manage` as any}
             className="flex items-center gap-2.5"
           >
-            <div className="w-6 h-6 rounded-md bg-violet-600 flex items-center justify-center">
+            <div className="w-6 h-6 rounded-md bg-ds-primary flex items-center justify-center">
               <BuildingStorefront className="w-3.5 h-3.5 text-white" />
             </div>
-            <span className="font-semibold text-[13px] text-gray-900">Dakkah</span>
+            <span className="font-semibold text-[13px] text-ds-foreground">Dakkah</span>
           </Link>
         </div>
         <div className="flex-1 overflow-y-auto px-2 py-3">
           <ManageSidebar locale={locale} onNavigate={() => setSidebarOpen(false)} />
         </div>
-        <div className="px-3 py-3 border-t border-gray-100">
+        <div className="px-3 py-3 border-t border-ds-border/50">
           <Link
             to={`/${tenantSlug}/${locale}` as any}
-            className="flex items-center gap-2 px-2 py-1.5 text-[13px] text-gray-400 hover:text-gray-600 rounded-md transition-colors"
+            className="flex items-center gap-2 px-2 py-1.5 text-[13px] text-ds-muted-foreground/70 hover:text-ds-muted-foreground rounded-md transition-colors"
           >
             <ArrowLeftMini className="w-3.5 h-3.5 flex-shrink-0 rtl:rotate-180" />
             {t(locale, "manage.back_to_store")}

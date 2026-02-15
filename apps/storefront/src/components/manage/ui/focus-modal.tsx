@@ -41,17 +41,17 @@ export function FocusModal({ open, onClose, title, children, className }: FocusM
 
       <div
         className={clsx(
-          "relative bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden animate-[fadeInScale_0.15s_ease-out]",
+          "relative bg-ds-card rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden animate-[fadeInScale_0.15s_ease-out]",
           className
         )}
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-ds-border">
           {title && (
-            <h2 className="text-base font-semibold text-gray-900">{title}</h2>
+            <h2 className="text-base font-semibold text-ds-foreground">{title}</h2>
           )}
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors rounded-md p-1 ms-auto -me-1"
+            className="text-ds-muted-foreground/70 hover:text-ds-muted-foreground transition-colors rounded-md p-1 ms-auto -me-1"
           >
             <XMark className="w-5 h-5" />
           </button>

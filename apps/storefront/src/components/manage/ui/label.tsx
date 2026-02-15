@@ -13,12 +13,12 @@ export function Label({ htmlFor, required, children, className }: LabelProps) {
     <label
       htmlFor={htmlFor}
       className={clsx(
-        "text-sm font-medium text-gray-700",
+        "text-sm font-medium text-ds-foreground/80",
         className
       )}
     >
       {children}
-      {required && <span className="text-red-500 ms-0.5">*</span>}
+      {required && <span className="text-ds-destructive ms-0.5">*</span>}
     </label>
   )
 }

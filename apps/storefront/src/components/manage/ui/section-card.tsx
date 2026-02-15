@@ -12,12 +12,12 @@ interface SectionCardProps {
 
 export function SectionCard({ title, subtitle, headerAction, children, noPadding, className }: SectionCardProps) {
   return (
-    <div className={clsx("bg-white border border-gray-200 rounded-lg overflow-hidden divide-y divide-gray-200", className)}>
+    <div className={clsx("bg-ds-card border border-ds-border rounded-lg overflow-hidden divide-y divide-ds-border", className)}>
       {(title || headerAction) && (
         <div className="flex items-center justify-between px-6 py-4">
           <div>
-            {title && <h3 className="text-sm font-semibold text-gray-900">{title}</h3>}
-            {subtitle && <p className="mt-0.5 text-xs text-gray-500">{subtitle}</p>}
+            {title && <h3 className="text-sm font-semibold text-ds-foreground">{title}</h3>}
+            {subtitle && <p className="mt-0.5 text-xs text-ds-muted-foreground">{subtitle}</p>}
           </div>
           {headerAction && (
             <div className="flex items-center gap-2">{headerAction}</div>

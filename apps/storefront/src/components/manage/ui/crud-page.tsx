@@ -55,12 +55,12 @@ function LoadingSkeleton() {
   return (
     <div className="space-y-6 animate-pulse">
       <div className="space-y-2">
-        <div className="h-7 bg-gray-200/60 rounded w-48" />
-        <div className="h-4 bg-gray-200/60 rounded w-32" />
+        <div className="h-7 bg-ds-border/60 rounded w-48" />
+        <div className="h-4 bg-ds-border/60 rounded w-32" />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-24 bg-gray-200/60 rounded-lg" />
+          <div key={i} className="h-24 bg-ds-border/60 rounded-lg" />
         ))}
       </div>
       <SkeletonTable rows={5} cols={4} />
@@ -115,7 +115,7 @@ export function CrudPage({
           breadcrumbs={breadcrumbs}
           actions={
             <div className="flex items-center gap-2">
-              {Icon && <Icon className="w-5 h-5 text-gray-400" />}
+              {Icon && <Icon className="w-5 h-5 text-ds-muted-foreground/70" />}
               {actions}
             </div>
           }

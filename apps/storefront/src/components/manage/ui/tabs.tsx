@@ -16,7 +16,7 @@ interface TabsProps {
 
 export function Tabs({ tabs, activeTab, onTabChange, className }: TabsProps) {
   return (
-    <div className={clsx("border-b border-gray-200", className)}>
+    <div className={clsx("border-b border-ds-border", className)}>
       <nav className="flex gap-0 -mb-px" role="tablist">
         {tabs.map((tab) => (
           <button
@@ -28,8 +28,8 @@ export function Tabs({ tabs, activeTab, onTabChange, className }: TabsProps) {
             className={clsx(
               "inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors whitespace-nowrap",
               activeTab === tab.id
-                ? "border-violet-600 text-violet-700"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
+                ? "border-ds-primary text-ds-primary"
+                : "border-transparent text-ds-muted-foreground hover:text-ds-foreground hover:border-ds-border",
               tab.disabled && "opacity-50 cursor-not-allowed"
             )}
           >
@@ -39,8 +39,8 @@ export function Tabs({ tabs, activeTab, onTabChange, className }: TabsProps) {
                 className={clsx(
                   "inline-flex items-center justify-center px-1.5 py-0.5 text-xs rounded-full min-w-[20px]",
                   activeTab === tab.id
-                    ? "bg-violet-100 text-violet-700"
-                    : "bg-gray-100 text-gray-500"
+                    ? "bg-ds-primary/15 text-ds-primary"
+                    : "bg-ds-muted text-ds-muted-foreground"
                 )}
               >
                 {tab.count}

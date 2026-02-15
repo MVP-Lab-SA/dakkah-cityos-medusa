@@ -51,7 +51,7 @@ function LoadingSkeleton({ cols }: { cols: number }) {
   return (
     <>
       {Array.from({ length: 5 }).map((_, i) => (
-        <tr key={i} className="border-b border-gray-100">
+        <tr key={i} className="border-b border-ds-border/50">
           {Array.from({ length: cols }).map((_, j) => (
             <td key={j} className="px-4 py-3">
               <Skeleton className="h-4 w-full" />
@@ -160,7 +160,7 @@ export function DataTable<T extends Record<string, unknown>>({
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
           {searchable && (
             <div className="relative flex-1 max-w-sm">
-              <MagnifyingGlass className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <MagnifyingGlass className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ds-muted-foreground/70" />
               <input
                 type="text"
                 value={search}
@@ -169,7 +169,7 @@ export function DataTable<T extends Record<string, unknown>>({
                   setPage(0)
                 }}
                 placeholder={searchPlaceholder}
-                className="w-full ps-9 pe-3 py-2 bg-white border border-gray-200 rounded-md text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:shadow-sm"
+                className="w-full ps-9 pe-3 py-2 bg-ds-card border border-ds-border rounded-md text-sm text-ds-foreground placeholder:text-ds-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-ds-primary focus:shadow-sm"
               />
             </div>
           )}
@@ -178,7 +178,7 @@ export function DataTable<T extends Record<string, unknown>>({
               key={f.key}
               value={activeFilters[f.key] || ""}
               onChange={(e) => handleFilterChange(f.key, e.target.value)}
-              className="rounded-md border border-gray-200 bg-white px-3 py-2 pe-8 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-500 appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236b7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.23%207.21a.75.75%200%20011.06.02L10%2011.168l3.71-3.938a.75.75%200%20111.08%201.04l-4.25%204.5a.75.75%200%2001-1.08%200l-4.25-4.5a.75.75%200%2001.02-1.06z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25rem] bg-[position:right_0.5rem_center] bg-no-repeat"
+              className="rounded-md border border-ds-border bg-ds-card px-3 py-2 pe-8 text-sm text-ds-foreground/80 focus:outline-none focus:ring-2 focus:ring-ds-primary appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236b7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.23%207.21a.75.75%200%20011.06.02L10%2011.168l3.71-3.938a.75.75%200%20111.08%201.04l-4.25%204.5a.75.75%200%2001-1.08%200l-4.25-4.5a.75.75%200%2001.02-1.06z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25rem] bg-[position:right_0.5rem_center] bg-no-repeat"
             >
               <option value="">{f.label}</option>
               {f.options.map((opt) => (
@@ -192,19 +192,19 @@ export function DataTable<T extends Record<string, unknown>>({
         </div>
       )}
 
-      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+      <div className="bg-ds-card border border-ds-border rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-200">
+              <tr className="border-b border-ds-border">
                 {columns.map((col) => (
                   <th
                     key={col.key}
                     style={col.width ? { width: col.width } : undefined}
                     className={clsx(
-                      "px-4 py-3 text-[11px] font-medium text-gray-500 uppercase tracking-wider",
+                      "px-4 py-3 text-[11px] font-medium text-ds-muted-foreground uppercase tracking-wider",
                       alignClass(col.align),
-                      col.sortable && "cursor-pointer select-none hover:text-gray-700"
+                      col.sortable && "cursor-pointer select-none hover:text-ds-foreground"
                     )}
                     onClick={col.sortable ? () => handleSort(col.key) : undefined}
                   >
@@ -220,7 +220,7 @@ export function DataTable<T extends Record<string, unknown>>({
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-ds-border">
               {isLoading ? (
                 <LoadingSkeleton cols={columns.length} />
               ) : paged.length === 0 ? (
@@ -239,7 +239,7 @@ export function DataTable<T extends Record<string, unknown>>({
                     key={getRowKey(row, page * pageSize + rowIdx)}
                     onClick={onRowClick ? () => onRowClick(row, page * pageSize + rowIdx) : undefined}
                     className={clsx(
-                      "hover:bg-gray-50 transition-colors",
+                      "hover:bg-ds-muted/50 transition-colors",
                       onRowClick && "cursor-pointer"
                     )}
                   >
@@ -247,7 +247,7 @@ export function DataTable<T extends Record<string, unknown>>({
                       <td
                         key={col.key}
                         className={clsx(
-                          "px-4 py-3 text-sm text-gray-700",
+                          "px-4 py-3 text-sm text-ds-foreground/80",
                           alignClass(col.align)
                         )}
                       >
@@ -263,8 +263,8 @@ export function DataTable<T extends Record<string, unknown>>({
           </table>
         </div>
 
-        <div className="flex items-center justify-between px-4 py-2.5 border-t border-gray-200">
-          <p className="text-xs text-gray-500">
+        <div className="flex items-center justify-between px-4 py-2.5 border-t border-ds-border">
+          <p className="text-xs text-ds-muted-foreground">
             {totalCount > 0
               ? `Showing ${rangeStart}-${rangeEnd} of ${totalCount} ${countLabel}`
               : `0 ${countLabel}`}
@@ -275,18 +275,18 @@ export function DataTable<T extends Record<string, unknown>>({
                 type="button"
                 disabled={page === 0}
                 onClick={() => setPage(page - 1)}
-                className="inline-flex items-center justify-center w-7 h-7 rounded-md text-gray-500 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="inline-flex items-center justify-center w-7 h-7 rounded-md text-ds-muted-foreground hover:bg-ds-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <span className="text-xs text-gray-500 px-1.5">
+              <span className="text-xs text-ds-muted-foreground px-1.5">
                 {page + 1} / {totalPages}
               </span>
               <button
                 type="button"
                 disabled={page >= totalPages - 1}
                 onClick={() => setPage(page + 1)}
-                className="inline-flex items-center justify-center w-7 h-7 rounded-md text-gray-500 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="inline-flex items-center justify-center w-7 h-7 rounded-md text-ds-muted-foreground hover:bg-ds-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>

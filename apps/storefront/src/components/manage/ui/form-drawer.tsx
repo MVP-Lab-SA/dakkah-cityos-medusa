@@ -88,9 +88,9 @@ export function FormDrawer({
               checked={!!value}
               onChange={(e) => onChange(field.key, e.target.checked)}
               disabled={field.disabled || loading}
-              className="h-4 w-4 rounded border-gray-300 text-violet-600 focus:ring-violet-500"
+              className="h-4 w-4 rounded border-ds-border text-ds-primary focus:ring-ds-primary"
             />
-            <span className="text-sm text-gray-700">{field.placeholder || ""}</span>
+            <span className="text-sm text-ds-foreground/80">{field.placeholder || ""}</span>
           </label>
         )
 
@@ -146,7 +146,7 @@ export function FormDrawer({
             )}
             {renderField(field)}
             {field.helpText && (
-              <p className="mt-1 text-xs text-gray-400">{field.helpText}</p>
+              <p className="mt-1 text-xs text-ds-muted-foreground/70">{field.helpText}</p>
             )}
           </div>
         ))}

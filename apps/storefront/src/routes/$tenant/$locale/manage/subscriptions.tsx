@@ -129,7 +129,7 @@ function ManageSubscriptionsPage() {
             active: "bg-green-600",
             paused: "bg-amber-500",
             cancelled: "bg-red-600",
-            expired: "bg-gray-400",
+            expired: "bg-ds-muted-foreground/70",
           }}
         />
       ),

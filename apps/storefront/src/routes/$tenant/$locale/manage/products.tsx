@@ -110,10 +110,10 @@ function ManageProductsPage() {
             <img
               src={row.thumbnail as string}
               alt={row.title as string}
-              className="w-10 h-10 rounded-md object-cover border border-gray-200"
+              className="w-10 h-10 rounded-md object-cover border border-ds-border"
             />
           ) : (
-            <div className="w-10 h-10 rounded-md bg-gray-100 flex items-center justify-center text-gray-500 text-xs">
+            <div className="w-10 h-10 rounded-md bg-ds-muted flex items-center justify-center text-ds-muted-foreground text-xs">
               —
             </div>
           )}

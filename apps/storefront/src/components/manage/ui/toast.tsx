@@ -36,7 +36,7 @@ const iconMap: Record<ToastType, typeof CheckCircleSolid> = {
 
 const colorMap: Record<ToastType, string> = {
   success: "text-emerald-600",
-  error: "text-red-600",
+  error: "text-ds-destructive",
   info: "text-blue-600",
 }
 
@@ -45,13 +45,13 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string)
 
   return (
     <div
-      className="flex items-start gap-3 bg-white border border-gray-200 rounded-lg shadow-lg px-4 py-3 min-w-[300px] max-w-md animate-[slideIn_0.2s_ease-out]"
+      className="flex items-start gap-3 bg-ds-card border border-ds-border rounded-lg shadow-lg px-4 py-3 min-w-[300px] max-w-md animate-[slideIn_0.2s_ease-out]"
     >
       <Icon className={clsx("w-5 h-5 flex-shrink-0 mt-0.5", colorMap[toast.type])} />
-      <p className="flex-1 text-sm text-gray-900">{toast.message}</p>
+      <p className="flex-1 text-sm text-ds-foreground">{toast.message}</p>
       <button
         onClick={() => onDismiss(toast.id)}
-        className="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
+        className="flex-shrink-0 text-ds-muted-foreground/70 hover:text-ds-muted-foreground transition-colors"
       >
         <XMark className="w-4 h-4" />
       </button>

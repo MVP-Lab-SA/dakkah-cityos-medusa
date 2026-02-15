@@ -48,10 +48,10 @@ export function ConfirmDialog({
         onClick={loading ? undefined : onClose}
       />
 
-      <div className="relative bg-white rounded-lg shadow-xl w-full max-w-md p-6 animate-[fadeInScale_0.15s_ease-out]">
-        <h2 className="text-base font-semibold text-gray-900">{title}</h2>
+      <div className="relative bg-ds-card rounded-lg shadow-xl w-full max-w-md p-6 animate-[fadeInScale_0.15s_ease-out]">
+        <h2 className="text-base font-semibold text-ds-foreground">{title}</h2>
         {description && (
-          <p className="mt-2 text-sm text-gray-500">{description}</p>
+          <p className="mt-2 text-sm text-ds-muted-foreground">{description}</p>
         )}
 
         <div className="mt-6 flex items-center justify-end gap-2">
@@ -59,7 +59,7 @@ export function ConfirmDialog({
             type="button"
             onClick={onClose}
             disabled={loading}
-            className="inline-flex items-center justify-center rounded-md border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-violet-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center justify-center rounded-md border border-ds-border bg-ds-card px-3 py-2 text-sm font-medium text-ds-foreground/80 transition-colors hover:bg-ds-muted/50 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-ds-primary disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
           </button>

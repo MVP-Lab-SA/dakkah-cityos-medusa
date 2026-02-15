@@ -101,7 +101,7 @@ function ManageTeamPage() {
       header: t(locale, "manage.member_name"),
       render: (_: unknown, row: Record<string, unknown>) => (
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-violet-50 flex items-center justify-center text-violet-600 text-xs font-medium">
+          <div className="w-8 h-8 rounded-full bg-ds-primary/10 flex items-center justify-center text-ds-primary text-xs font-medium">
             {((row.name as string) || "?").charAt(0).toUpperCase()}
           </div>
           <span className="font-medium">{row.name as string}</span>

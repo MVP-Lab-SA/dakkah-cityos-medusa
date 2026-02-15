@@ -44,7 +44,7 @@ function ManageSettingsPage() {
 
         <SectionCard
           title={t(locale, "manage.store_info")}
-          headerAction={<BuildingStorefront className="w-3.5 h-3.5 text-gray-400" />}
+          headerAction={<BuildingStorefront className="w-3.5 h-3.5 text-ds-muted-foreground/70" />}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -69,7 +69,7 @@ function ManageSettingsPage() {
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
                 rows={3}
-                className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none"
+                className="w-full px-3 py-2 bg-ds-muted/50 border border-ds-border rounded-lg text-sm text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-primary resize-none"
               />
             </div>
           </div>
@@ -77,7 +77,7 @@ function ManageSettingsPage() {
 
         <SectionCard
           title={t(locale, "manage.localization")}
-          headerAction={<GlobeEurope className="w-3.5 h-3.5 text-gray-400" />}
+          headerAction={<GlobeEurope className="w-3.5 h-3.5 text-ds-muted-foreground/70" />}
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
@@ -119,7 +119,7 @@ function ManageSettingsPage() {
 
         <SectionCard
           title={t(locale, "manage.commerce_settings")}
-          headerAction={<CurrencyDollar className="w-3.5 h-3.5 text-gray-400" />}
+          headerAction={<CurrencyDollar className="w-3.5 h-3.5 text-ds-muted-foreground/70" />}
         >
           <div className="space-y-4">
             <label className="flex items-center gap-3 cursor-pointer">
@@ -127,34 +127,34 @@ function ManageSettingsPage() {
                 type="checkbox"
                 checked={form.guestCheckout}
                 onChange={(e) => setForm({ ...form, guestCheckout: e.target.checked })}
-                className="w-4 h-4 rounded border-gray-200 text-violet-600 accent-violet-600 focus:ring-violet-500"
+                className="w-4 h-4 rounded border-ds-border text-ds-primary accent-ds-primary focus:ring-ds-primary"
               />
-              <span className="text-sm text-gray-900">{t(locale, "manage.guest_checkout")}</span>
+              <span className="text-sm text-ds-foreground">{t(locale, "manage.guest_checkout")}</span>
             </label>
             <label className="flex items-center gap-3 cursor-pointer">
               <input
                 type="checkbox"
                 checked={form.trackInventory}
                 onChange={(e) => setForm({ ...form, trackInventory: e.target.checked })}
-                className="w-4 h-4 rounded border-gray-200 text-violet-600 accent-violet-600 focus:ring-violet-500"
+                className="w-4 h-4 rounded border-ds-border text-ds-primary accent-ds-primary focus:ring-ds-primary"
               />
-              <span className="text-sm text-gray-900">{t(locale, "manage.track_inventory")}</span>
+              <span className="text-sm text-ds-foreground">{t(locale, "manage.track_inventory")}</span>
             </label>
             <label className="flex items-center gap-3 cursor-pointer">
               <input
                 type="checkbox"
                 checked={form.allowBackorders}
                 onChange={(e) => setForm({ ...form, allowBackorders: e.target.checked })}
-                className="w-4 h-4 rounded border-gray-200 text-violet-600 accent-violet-600 focus:ring-violet-500"
+                className="w-4 h-4 rounded border-ds-border text-ds-primary accent-ds-primary focus:ring-ds-primary"
               />
-              <span className="text-sm text-gray-900">{t(locale, "manage.allow_backorders")}</span>
+              <span className="text-sm text-ds-foreground">{t(locale, "manage.allow_backorders")}</span>
             </label>
           </div>
         </SectionCard>
 
         <SectionCard
           title={t(locale, "manage.notifications")}
-          headerAction={<BellAlert className="w-3.5 h-3.5 text-gray-400" />}
+          headerAction={<BellAlert className="w-3.5 h-3.5 text-ds-muted-foreground/70" />}
         >
           <div className="space-y-4">
             <label className="flex items-center gap-3 cursor-pointer">
@@ -162,18 +162,18 @@ function ManageSettingsPage() {
                 type="checkbox"
                 checked={form.notifyNewOrder}
                 onChange={(e) => setForm({ ...form, notifyNewOrder: e.target.checked })}
-                className="w-4 h-4 rounded border-gray-200 text-violet-600 accent-violet-600 focus:ring-violet-500"
+                className="w-4 h-4 rounded border-ds-border text-ds-primary accent-ds-primary focus:ring-ds-primary"
               />
-              <span className="text-sm text-gray-900">{t(locale, "manage.notify_new_order")}</span>
+              <span className="text-sm text-ds-foreground">{t(locale, "manage.notify_new_order")}</span>
             </label>
             <label className="flex items-center gap-3 cursor-pointer">
               <input
                 type="checkbox"
                 checked={form.notifyLowStock}
                 onChange={(e) => setForm({ ...form, notifyLowStock: e.target.checked })}
-                className="w-4 h-4 rounded border-gray-200 text-violet-600 accent-violet-600 focus:ring-violet-500"
+                className="w-4 h-4 rounded border-ds-border text-ds-primary accent-ds-primary focus:ring-ds-primary"
               />
-              <span className="text-sm text-gray-900">{t(locale, "manage.notify_low_stock")}</span>
+              <span className="text-sm text-ds-foreground">{t(locale, "manage.notify_low_stock")}</span>
             </label>
           </div>
         </SectionCard>

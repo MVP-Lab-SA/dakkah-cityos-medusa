@@ -48,7 +48,7 @@ export function DropdownMenu({ items, trigger, align = "end", className }: Dropd
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="inline-flex items-center justify-center w-8 h-8 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+        className="inline-flex items-center justify-center w-8 h-8 rounded-md text-ds-muted-foreground hover:text-ds-foreground hover:bg-ds-muted transition-colors"
       >
         {trigger || <EllipsisHorizontal className="w-5 h-5" />}
       </button>
@@ -56,13 +56,13 @@ export function DropdownMenu({ items, trigger, align = "end", className }: Dropd
       {open && (
         <div
           className={clsx(
-            "absolute z-50 mt-1 min-w-[160px] bg-white border border-gray-200 rounded-lg shadow-lg py-1",
+            "absolute z-50 mt-1 min-w-[160px] bg-ds-card border border-ds-border rounded-lg shadow-lg py-1",
             align === "end" ? "end-0" : "start-0"
           )}
         >
           {items.map((entry, i) => {
             if (isSeparator(entry)) {
-              return <div key={i} className="my-1 border-t border-gray-200" />
+              return <div key={i} className="my-1 border-t border-ds-border" />
             }
 
             return (
@@ -77,8 +77,8 @@ export function DropdownMenu({ items, trigger, align = "end", className }: Dropd
                 className={clsx(
                   "w-full flex items-center gap-2 px-3 py-2 text-sm text-start transition-colors",
                   entry.variant === "danger"
-                    ? "text-red-600 hover:bg-red-50"
-                    : "text-gray-700 hover:bg-gray-50",
+                    ? "text-ds-destructive hover:bg-ds-destructive/10"
+                    : "text-ds-foreground/80 hover:bg-ds-muted/50",
                   entry.disabled && "opacity-50 cursor-not-allowed"
                 )}
               >

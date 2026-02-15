@@ -176,7 +176,7 @@ function ManageCompaniesPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by name..."
-            className="px-3 py-1.5 text-sm rounded-lg border border-gray-200 bg-white text-gray-900 placeholder:text-gray-400 w-64"
+            className="px-3 py-1.5 text-sm rounded-lg border border-ds-border bg-ds-card text-ds-foreground placeholder:text-ds-muted-foreground/70 w-64"
           />
         </div>
 

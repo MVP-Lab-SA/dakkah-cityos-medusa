@@ -126,10 +126,10 @@ function ManageInvoicesPage() {
           status={val as string}
           variants={{
             draft: "bg-amber-500",
-            sent: "bg-violet-600",
+            sent: "bg-ds-primary",
             paid: "bg-green-600",
             overdue: "bg-red-600",
-            void: "bg-gray-400",
+            void: "bg-ds-muted-foreground/70",
           }}
         />
       ),

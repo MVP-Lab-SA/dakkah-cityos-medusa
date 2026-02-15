@@ -6,9 +6,9 @@ type ButtonVariant = "primary" | "secondary" | "transparent" | "danger"
 type ButtonSize = "small" | "base" | "large"
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary: "bg-violet-600 text-white hover:bg-violet-700 focus:ring-violet-500",
-  secondary: "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 focus:ring-violet-500",
-  transparent: "bg-transparent text-gray-700 hover:bg-gray-100 focus:ring-violet-500",
+  primary: "bg-ds-primary text-white hover:bg-ds-primary/90 focus:ring-ds-primary",
+  secondary: "bg-ds-card text-ds-foreground/80 border border-ds-border hover:bg-ds-muted/50 focus:ring-ds-primary",
+  transparent: "bg-transparent text-ds-foreground/80 hover:bg-ds-muted focus:ring-ds-primary",
   danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
 }
 

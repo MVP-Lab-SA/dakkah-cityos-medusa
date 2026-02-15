@@ -13,13 +13,13 @@ export function PageHeader({ title, subtitle, breadcrumbs, actions, className }:
   return (
     <div className={clsx("space-y-2", className)}>
       {breadcrumbs && (
-        <div className="text-xs text-gray-500">{breadcrumbs}</div>
+        <div className="text-xs text-ds-muted-foreground">{breadcrumbs}</div>
       )}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-xl font-semibold text-gray-900">{title}</h1>
+          <h1 className="text-xl font-semibold text-ds-foreground">{title}</h1>
           {subtitle && (
-            <p className="mt-1 text-sm text-gray-500">{subtitle}</p>
+            <p className="mt-1 text-sm text-ds-muted-foreground">{subtitle}</p>
           )}
         </div>
         {actions && (

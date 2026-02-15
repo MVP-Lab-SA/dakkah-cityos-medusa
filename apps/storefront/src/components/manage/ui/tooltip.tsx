@@ -24,7 +24,7 @@ export function Tooltip({ content, side = "top", children, className }: TooltipP
         <div
           role="tooltip"
           className={clsx(
-            "absolute z-50 px-2.5 py-1.5 text-xs font-medium text-white bg-gray-900 rounded-md whitespace-nowrap pointer-events-none",
+            "absolute z-50 px-2.5 py-1.5 text-xs font-medium text-white bg-ds-foreground rounded-md whitespace-nowrap pointer-events-none",
             "start-1/2 -translate-x-1/2",
             side === "top" && "bottom-full mb-2",
             side === "bottom" && "top-full mt-2",
@@ -34,7 +34,7 @@ export function Tooltip({ content, side = "top", children, className }: TooltipP
           {content}
           <div
             className={clsx(
-              "absolute start-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45",
+              "absolute start-1/2 -translate-x-1/2 w-2 h-2 bg-ds-foreground rotate-45",
               side === "top" && "top-full -mt-1",
               side === "bottom" && "bottom-full -mb-1"
             )}

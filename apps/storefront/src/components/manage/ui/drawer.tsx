@@ -43,20 +43,20 @@ export function Drawer({ open, onClose, title, description, children, footer, cl
 
       <div
         className={clsx(
-          "absolute top-0 end-0 bottom-0 w-full max-w-lg bg-white shadow-xl flex flex-col animate-[slideInRight_0.2s_ease-out]",
+          "absolute top-0 end-0 bottom-0 w-full max-w-lg bg-ds-card shadow-xl flex flex-col animate-[slideInRight_0.2s_ease-out]",
           className
         )}
       >
-        <div className="flex items-start justify-between px-6 py-5 border-b border-gray-200">
+        <div className="flex items-start justify-between px-6 py-5 border-b border-ds-border">
           <div>
-            <h2 className="text-base font-semibold text-gray-900">{title}</h2>
+            <h2 className="text-base font-semibold text-ds-foreground">{title}</h2>
             {description && (
-              <p className="mt-1 text-sm text-gray-500">{description}</p>
+              <p className="mt-1 text-sm text-ds-muted-foreground">{description}</p>
             )}
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors rounded-md p-1 -me-1 -mt-1"
+            className="text-ds-muted-foreground/70 hover:text-ds-muted-foreground transition-colors rounded-md p-1 -me-1 -mt-1"
           >
             <XMark className="w-5 h-5" />
           </button>
@@ -67,7 +67,7 @@ export function Drawer({ open, onClose, title, description, children, footer, cl
         </div>
 
         {footer && (
-          <div className="border-t border-gray-200 px-6 py-4 flex items-center justify-end gap-2">
+          <div className="border-t border-ds-border px-6 py-4 flex items-center justify-end gap-2">
             {footer}
           </div>
         )}

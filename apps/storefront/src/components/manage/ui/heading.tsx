@@ -4,9 +4,9 @@ import { clsx } from "clsx"
 type HeadingLevel = "h1" | "h2" | "h3"
 
 const levelStyles: Record<HeadingLevel, string> = {
-  h1: "text-xl font-semibold text-gray-900",
-  h2: "text-base font-semibold text-gray-900",
-  h3: "text-sm font-semibold text-gray-900",
+  h1: "text-xl font-semibold text-ds-foreground",
+  h2: "text-base font-semibold text-ds-foreground",
+  h3: "text-sm font-semibold text-ds-foreground",
 }
 
 interface HeadingProps {

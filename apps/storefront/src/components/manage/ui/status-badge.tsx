@@ -7,10 +7,10 @@ const dotColorMap: Record<string, string> = {
   paid: "bg-emerald-500",
   approved: "bg-emerald-500",
   confirmed: "bg-emerald-500",
-  draft: "bg-gray-400",
-  inactive: "bg-gray-400",
-  archived: "bg-gray-400",
-  deactivated: "bg-gray-400",
+  draft: "bg-ds-muted-foreground/70",
+  inactive: "bg-ds-muted-foreground/70",
+  archived: "bg-ds-muted-foreground/70",
+  deactivated: "bg-ds-muted-foreground/70",
   pending: "bg-amber-500",
   processing: "bg-amber-500",
   in_progress: "bg-amber-500",
@@ -34,7 +34,7 @@ interface StatusBadgeProps {
 
 export function StatusBadge({ status, label, variants, className }: StatusBadgeProps) {
   const normalizedStatus = status.toLowerCase().replace(/[\s-]/g, "_")
-  const dotColor = variants?.[status] || dotColorMap[normalizedStatus] || "bg-gray-400"
+  const dotColor = variants?.[status] || dotColorMap[normalizedStatus] || "bg-ds-muted-foreground/70"
   const displayLabel = label || status.replace(/[_-]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
 
   return (
@@ -45,7 +45,7 @@ export function StatusBadge({ status, label, variants, className }: StatusBadgeP
       )}
     >
       <span className={clsx("w-1.5 h-1.5 rounded-full flex-shrink-0", dotColor)} />
-      <span className="text-xs font-normal text-gray-700">
+      <span className="text-xs font-normal text-ds-foreground/80">
         {displayLabel}
       </span>
     </span>
