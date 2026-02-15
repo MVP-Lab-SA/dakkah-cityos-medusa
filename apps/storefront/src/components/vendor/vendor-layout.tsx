@@ -117,7 +117,7 @@ const navSections: NavSection[] = [
       { icon: CogSixTooth, label: "Warranty", path: "/warranty" },
       { icon: ShoppingBag, label: "White Label", path: "/white-label" },
       { icon: Star, label: "Wishlists", path: "/wishlists" },
-      { icon: Star, label: "Newsletter", path: "/newsletters" },
+      { icon: Star, label: "Newsletter", path: "/newsletter" },
       { icon: CogSixTooth, label: "Notification Preferences", path: "/notification-preferences" },
       { icon: Star, label: "Disputes", path: "/disputes" },
       { icon: CogSixTooth, label: "Legal", path: "/legal" },
