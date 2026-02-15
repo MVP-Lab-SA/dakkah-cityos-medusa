@@ -53,7 +53,7 @@ export function DynamicHeader({
   if (header.showB2BPortal && isEnabled('b2b')) {
     navItems.push({
       label: "Business",
-      href: `${prefix}/business`
+      href: `${prefix}/b2b/dashboard`
     })
   }
 

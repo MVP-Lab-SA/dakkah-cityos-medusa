@@ -58,7 +58,7 @@ export function DynamicFooter({ categories = [] }: DynamicFooterProps) {
   }
 
   if (isEnabled('b2b')) {
-    customerLinks.push({ label: "Business Portal", href: `${prefix}/business` })
+    customerLinks.push({ label: "Business Portal", href: `${prefix}/b2b/dashboard` })
   }
 
   sections.push({
@@ -69,10 +69,10 @@ export function DynamicFooter({ categories = [] }: DynamicFooterProps) {
   sections.push({
     title: "Help",
     links: [
-      { label: "Contact Us", href: `${prefix}/contact` },
+      { label: "Contact Us", href: `${prefix}/help` },
       { label: "Shipping Info", href: `${prefix}/shipping` },
       { label: "Returns", href: `${prefix}/returns` },
-      { label: "FAQ", href: `${prefix}/faq` }
+      { label: "FAQ", href: `${prefix}/help` }
     ]
   })
 

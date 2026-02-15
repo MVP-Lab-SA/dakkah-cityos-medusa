@@ -136,7 +136,7 @@ export function UserMenu() {
             <DropdownMenuSeparator />
             <DropdownMenuLabel className="text-xs text-ds-muted-foreground">Business</DropdownMenuLabel>
             <DropdownMenuItem asChild>
-              <Link to={`${prefix}/business` as any} className="cursor-pointer">
+              <Link to={`${prefix}/b2b/dashboard` as any} className="cursor-pointer">
                 <BuildingStorefront className="me-2 h-4 w-4" />
                 Company Dashboard
               </Link>

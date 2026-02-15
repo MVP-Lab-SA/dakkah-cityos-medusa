@@ -56,6 +56,7 @@ import { Route as TenantLocalePetServicesIndexRouteImport } from './routes/$tena
 import { Route as TenantLocaleParkingIndexRouteImport } from './routes/$tenant/$locale/parking/index'
 import { Route as TenantLocaleNewsletterIndexRouteImport } from './routes/$tenant/$locale/newsletter/index'
 import { Route as TenantLocaleMembershipsIndexRouteImport } from './routes/$tenant/$locale/memberships/index'
+import { Route as TenantLocaleMarketplaceIndexRouteImport } from './routes/$tenant/$locale/marketplace/index'
 import { Route as TenantLocaleManageIndexRouteImport } from './routes/$tenant/$locale/manage/index'
 import { Route as TenantLocaleLoyaltyProgramIndexRouteImport } from './routes/$tenant/$locale/loyalty-program/index'
 import { Route as TenantLocaleLegalIndexRouteImport } from './routes/$tenant/$locale/legal/index'
@@ -81,6 +82,7 @@ import { Route as TenantLocaleConsignmentShopIndexRouteImport } from './routes/$
 import { Route as TenantLocaleClassifiedsIndexRouteImport } from './routes/$tenant/$locale/classifieds/index'
 import { Route as TenantLocaleCharityIndexRouteImport } from './routes/$tenant/$locale/charity/index'
 import { Route as TenantLocaleCampaignsIndexRouteImport } from './routes/$tenant/$locale/campaigns/index'
+import { Route as TenantLocaleBusinessIndexRouteImport } from './routes/$tenant/$locale/business/index'
 import { Route as TenantLocaleBundlesIndexRouteImport } from './routes/$tenant/$locale/bundles/index'
 import { Route as TenantLocaleBookingsIndexRouteImport } from './routes/$tenant/$locale/bookings/index'
 import { Route as TenantLocaleBlogIndexRouteImport } from './routes/$tenant/$locale/blog/index'
@@ -588,6 +590,12 @@ const TenantLocaleMembershipsIndexRoute =
     path: '/memberships/',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
+const TenantLocaleMarketplaceIndexRoute =
+  TenantLocaleMarketplaceIndexRouteImport.update({
+    id: '/marketplace/',
+    path: '/marketplace/',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
 const TenantLocaleManageIndexRoute = TenantLocaleManageIndexRouteImport.update({
   id: '/manage/',
   path: '/manage/',
@@ -731,6 +739,12 @@ const TenantLocaleCampaignsIndexRoute =
   TenantLocaleCampaignsIndexRouteImport.update({
     id: '/campaigns/',
     path: '/campaigns/',
+    getParentRoute: () => TenantLocaleRoute,
+  } as any)
+const TenantLocaleBusinessIndexRoute =
+  TenantLocaleBusinessIndexRouteImport.update({
+    id: '/business/',
+    path: '/business/',
     getParentRoute: () => TenantLocaleRoute,
   } as any)
 const TenantLocaleBundlesIndexRoute =
@@ -2615,6 +2629,7 @@ export interface FileRoutesByFullPath {
   '/$tenant/$locale/blog': typeof TenantLocaleBlogIndexRoute
   '/$tenant/$locale/bookings': typeof TenantLocaleBookingsIndexRoute
   '/$tenant/$locale/bundles': typeof TenantLocaleBundlesIndexRoute
+  '/$tenant/$locale/business': typeof TenantLocaleBusinessIndexRoute
   '/$tenant/$locale/campaigns': typeof TenantLocaleCampaignsIndexRoute
   '/$tenant/$locale/charity': typeof TenantLocaleCharityIndexRoute
   '/$tenant/$locale/classifieds': typeof TenantLocaleClassifiedsIndexRoute
@@ -2640,6 +2655,7 @@ export interface FileRoutesByFullPath {
   '/$tenant/$locale/legal': typeof TenantLocaleLegalIndexRoute
   '/$tenant/$locale/loyalty-program': typeof TenantLocaleLoyaltyProgramIndexRoute
   '/$tenant/$locale/manage': typeof TenantLocaleManageIndexRoute
+  '/$tenant/$locale/marketplace': typeof TenantLocaleMarketplaceIndexRoute
   '/$tenant/$locale/memberships': typeof TenantLocaleMembershipsIndexRoute
   '/$tenant/$locale/newsletter': typeof TenantLocaleNewsletterIndexRoute
   '/$tenant/$locale/parking': typeof TenantLocaleParkingIndexRoute
@@ -2955,6 +2971,7 @@ export interface FileRoutesByTo {
   '/$tenant/$locale/blog': typeof TenantLocaleBlogIndexRoute
   '/$tenant/$locale/bookings': typeof TenantLocaleBookingsIndexRoute
   '/$tenant/$locale/bundles': typeof TenantLocaleBundlesIndexRoute
+  '/$tenant/$locale/business': typeof TenantLocaleBusinessIndexRoute
   '/$tenant/$locale/campaigns': typeof TenantLocaleCampaignsIndexRoute
   '/$tenant/$locale/charity': typeof TenantLocaleCharityIndexRoute
   '/$tenant/$locale/classifieds': typeof TenantLocaleClassifiedsIndexRoute
@@ -2980,6 +2997,7 @@ export interface FileRoutesByTo {
   '/$tenant/$locale/legal': typeof TenantLocaleLegalIndexRoute
   '/$tenant/$locale/loyalty-program': typeof TenantLocaleLoyaltyProgramIndexRoute
   '/$tenant/$locale/manage': typeof TenantLocaleManageIndexRoute
+  '/$tenant/$locale/marketplace': typeof TenantLocaleMarketplaceIndexRoute
   '/$tenant/$locale/memberships': typeof TenantLocaleMembershipsIndexRoute
   '/$tenant/$locale/newsletter': typeof TenantLocaleNewsletterIndexRoute
   '/$tenant/$locale/parking': typeof TenantLocaleParkingIndexRoute
@@ -3299,6 +3317,7 @@ export interface FileRoutesById {
   '/$tenant/$locale/blog/': typeof TenantLocaleBlogIndexRoute
   '/$tenant/$locale/bookings/': typeof TenantLocaleBookingsIndexRoute
   '/$tenant/$locale/bundles/': typeof TenantLocaleBundlesIndexRoute
+  '/$tenant/$locale/business/': typeof TenantLocaleBusinessIndexRoute
   '/$tenant/$locale/campaigns/': typeof TenantLocaleCampaignsIndexRoute
   '/$tenant/$locale/charity/': typeof TenantLocaleCharityIndexRoute
   '/$tenant/$locale/classifieds/': typeof TenantLocaleClassifiedsIndexRoute
@@ -3324,6 +3343,7 @@ export interface FileRoutesById {
   '/$tenant/$locale/legal/': typeof TenantLocaleLegalIndexRoute
   '/$tenant/$locale/loyalty-program/': typeof TenantLocaleLoyaltyProgramIndexRoute
   '/$tenant/$locale/manage/': typeof TenantLocaleManageIndexRoute
+  '/$tenant/$locale/marketplace/': typeof TenantLocaleMarketplaceIndexRoute
   '/$tenant/$locale/memberships/': typeof TenantLocaleMembershipsIndexRoute
   '/$tenant/$locale/newsletter/': typeof TenantLocaleNewsletterIndexRoute
   '/$tenant/$locale/parking/': typeof TenantLocaleParkingIndexRoute
@@ -3644,6 +3664,7 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/blog'
     | '/$tenant/$locale/bookings'
     | '/$tenant/$locale/bundles'
+    | '/$tenant/$locale/business'
     | '/$tenant/$locale/campaigns'
     | '/$tenant/$locale/charity'
     | '/$tenant/$locale/classifieds'
@@ -3669,6 +3690,7 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/legal'
     | '/$tenant/$locale/loyalty-program'
     | '/$tenant/$locale/manage'
+    | '/$tenant/$locale/marketplace'
     | '/$tenant/$locale/memberships'
     | '/$tenant/$locale/newsletter'
     | '/$tenant/$locale/parking'
@@ -3984,6 +4006,7 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/blog'
     | '/$tenant/$locale/bookings'
     | '/$tenant/$locale/bundles'
+    | '/$tenant/$locale/business'
     | '/$tenant/$locale/campaigns'
     | '/$tenant/$locale/charity'
     | '/$tenant/$locale/classifieds'
@@ -4009,6 +4032,7 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/legal'
     | '/$tenant/$locale/loyalty-program'
     | '/$tenant/$locale/manage'
+    | '/$tenant/$locale/marketplace'
     | '/$tenant/$locale/memberships'
     | '/$tenant/$locale/newsletter'
     | '/$tenant/$locale/parking'
@@ -4327,6 +4351,7 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/blog/'
     | '/$tenant/$locale/bookings/'
     | '/$tenant/$locale/bundles/'
+    | '/$tenant/$locale/business/'
     | '/$tenant/$locale/campaigns/'
     | '/$tenant/$locale/charity/'
     | '/$tenant/$locale/classifieds/'
@@ -4352,6 +4377,7 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/legal/'
     | '/$tenant/$locale/loyalty-program/'
     | '/$tenant/$locale/manage/'
+    | '/$tenant/$locale/marketplace/'
     | '/$tenant/$locale/memberships/'
     | '/$tenant/$locale/newsletter/'
     | '/$tenant/$locale/parking/'
@@ -4722,6 +4748,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TenantLocaleMembershipsIndexRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
+    '/$tenant/$locale/marketplace/': {
+      id: '/$tenant/$locale/marketplace/'
+      path: '/marketplace'
+      fullPath: '/$tenant/$locale/marketplace'
+      preLoaderRoute: typeof TenantLocaleMarketplaceIndexRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
     '/$tenant/$locale/manage/': {
       id: '/$tenant/$locale/manage/'
       path: '/manage'
@@ -4895,6 +4928,13 @@ declare module '@tanstack/react-router' {
       path: '/campaigns'
       fullPath: '/$tenant/$locale/campaigns'
       preLoaderRoute: typeof TenantLocaleCampaignsIndexRouteImport
+      parentRoute: typeof TenantLocaleRoute
+    }
+    '/$tenant/$locale/business/': {
+      id: '/$tenant/$locale/business/'
+      path: '/business'
+      fullPath: '/$tenant/$locale/business'
+      preLoaderRoute: typeof TenantLocaleBusinessIndexRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$tenant/$locale/bundles/': {
@@ -7157,6 +7197,7 @@ interface TenantLocaleRouteChildren {
   TenantLocaleBlogIndexRoute: typeof TenantLocaleBlogIndexRoute
   TenantLocaleBookingsIndexRoute: typeof TenantLocaleBookingsIndexRoute
   TenantLocaleBundlesIndexRoute: typeof TenantLocaleBundlesIndexRoute
+  TenantLocaleBusinessIndexRoute: typeof TenantLocaleBusinessIndexRoute
   TenantLocaleCampaignsIndexRoute: typeof TenantLocaleCampaignsIndexRoute
   TenantLocaleCharityIndexRoute: typeof TenantLocaleCharityIndexRoute
   TenantLocaleClassifiedsIndexRoute: typeof TenantLocaleClassifiedsIndexRoute
@@ -7182,6 +7223,7 @@ interface TenantLocaleRouteChildren {
   TenantLocaleLegalIndexRoute: typeof TenantLocaleLegalIndexRoute
   TenantLocaleLoyaltyProgramIndexRoute: typeof TenantLocaleLoyaltyProgramIndexRoute
   TenantLocaleManageIndexRoute: typeof TenantLocaleManageIndexRoute
+  TenantLocaleMarketplaceIndexRoute: typeof TenantLocaleMarketplaceIndexRoute
   TenantLocaleMembershipsIndexRoute: typeof TenantLocaleMembershipsIndexRoute
   TenantLocaleNewsletterIndexRoute: typeof TenantLocaleNewsletterIndexRoute
   TenantLocaleParkingIndexRoute: typeof TenantLocaleParkingIndexRoute
@@ -7512,6 +7554,7 @@ const TenantLocaleRouteChildren: TenantLocaleRouteChildren = {
   TenantLocaleBlogIndexRoute: TenantLocaleBlogIndexRoute,
   TenantLocaleBookingsIndexRoute: TenantLocaleBookingsIndexRoute,
   TenantLocaleBundlesIndexRoute: TenantLocaleBundlesIndexRoute,
+  TenantLocaleBusinessIndexRoute: TenantLocaleBusinessIndexRoute,
   TenantLocaleCampaignsIndexRoute: TenantLocaleCampaignsIndexRoute,
   TenantLocaleCharityIndexRoute: TenantLocaleCharityIndexRoute,
   TenantLocaleClassifiedsIndexRoute: TenantLocaleClassifiedsIndexRoute,
@@ -7538,6 +7581,7 @@ const TenantLocaleRouteChildren: TenantLocaleRouteChildren = {
   TenantLocaleLegalIndexRoute: TenantLocaleLegalIndexRoute,
   TenantLocaleLoyaltyProgramIndexRoute: TenantLocaleLoyaltyProgramIndexRoute,
   TenantLocaleManageIndexRoute: TenantLocaleManageIndexRoute,
+  TenantLocaleMarketplaceIndexRoute: TenantLocaleMarketplaceIndexRoute,
   TenantLocaleMembershipsIndexRoute: TenantLocaleMembershipsIndexRoute,
   TenantLocaleNewsletterIndexRoute: TenantLocaleNewsletterIndexRoute,
   TenantLocaleParkingIndexRoute: TenantLocaleParkingIndexRoute,
