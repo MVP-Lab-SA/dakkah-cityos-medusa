@@ -3692,3 +3692,591 @@ Once fully integrated, content editors using the Payload CMS admin panel will be
 5. Publish → page goes live, no developer involvement
 
 **This is the architectural target:** The 77 blocks become Payload CMS's page builder components, making the entire storefront CMS-driven and customizable without code changes.
+
+---
+
+## Section 15: Complete Page Inventory — ALL 336 Route Files
+
+The storefront contains **336 route files** totaling **58,770 lines** across 7 categories:
+
+| Category | Files | Lines | % of Total |
+|---|---|---|---|
+| Detail pages (`$id.tsx`) | 54 | 11,905 | 20.3% |
+| List pages (`index.tsx`) | 67 | 11,696 | 19.9% |
+| Manage pages (tenant admin) | 96 | 18,661 | 31.8% |
+| Vendor pages (vendor dashboard) | 56 | 9,493 | 16.2% |
+| Account pages (customer portal) | 26 | 2,823 | 4.8% |
+| Special pages (cart, checkout, etc.) | 15 | 1,562 | 2.7% |
+| Sub-route pages (sub-flows) | 18 | 1,284 | 2.2% |
+| Root/layout files | 4 | ~350 | 0.6% |
+| **TOTAL** | **336** | **58,770** | **100%** |
+
+---
+
+### 15.1 All List Pages (67 pages) — Complete Inventory with Line Counts
+
+ALL list pages use inline JSX. ZERO list pages use TemplateRenderer or BlockRenderer.
+
+| # | Route Path | Lines | Backend Endpoint | CMS Registry? | Notes |
+|---|---|---|---|---|---|
+| 1 | `education/index.tsx` | 284 | `store/education` | YES | Highest line count list page |
+| 2 | `travel/index.tsx` | 279 | `store/travel` | YES | |
+| 3 | `crowdfunding/index.tsx` | 272 | `store/crowdfunding` | YES | |
+| 4 | `auctions/index.tsx` | 271 | `store/auctions` | YES | |
+| 5 | `rentals/index.tsx` | 268 | `store/rentals` | YES | |
+| 6 | `social-commerce/index.tsx` | 267 | `store/social-commerce` | YES | |
+| 7 | `automotive/index.tsx` | 267 | `store/automotive` | YES | |
+| 8 | `digital/index.tsx` | 262 | `store/digital-products` | YES (as digital-products) | Slug mismatch |
+| 9 | `restaurants/index.tsx` | 260 | `store/restaurants` | YES | |
+| 10 | `real-estate/index.tsx` | 260 | `store/real-estate` | YES | |
+| 11 | `vendors/index.tsx` | 259 | `store/vendors` | YES | |
+| 12 | `healthcare/index.tsx` | 258 | `store/healthcare` | YES | |
+| 13 | `classifieds/index.tsx` | 257 | `store/classifieds` | YES | |
+| 14 | `bookings/index.tsx` | 254 | `store/bookings` | Not in CMS registry | MISSING from CMS |
+| 15 | `events/index.tsx` | 253 | `store/events` | YES | |
+| 16 | `warranties/index.tsx` | 250 | `store/warranties` | YES | |
+| 17 | `fitness/index.tsx` | 249 | `store/fitness` | YES | |
+| 18 | `charity/index.tsx` | 249 | `store/charity` | YES | |
+| 19 | `legal/index.tsx` | 248 | `store/legal` | YES | |
+| 20 | `grocery/index.tsx` | 248 | `store/grocery` | YES | |
+| 21 | `blog/index.tsx` | 247 | — (static/CMS) | NO | No backend endpoint |
+| 22 | `parking/index.tsx` | 245 | `store/parking` | YES | |
+| 23 | `flash-deals/index.tsx` | 244 | `store/flash-sales` | NO (slug mismatch) | |
+| 24 | `campaigns/index.tsx` | 244 | `store/crowdfunding` | NO | Uses same endpoint as crowdfunding |
+| 25 | `freelance/index.tsx` | 243 | `store/freelance` | YES | |
+| 26 | `insurance/index.tsx` | 242 | `store/insurance` | Not in CMS registry | MISSING from CMS |
+| 27 | `pet-services/index.tsx` | 229 | `store/pet-services` | YES | |
+| 28 | `subscriptions/index.tsx` | 225 | `store/subscriptions` | Not in CMS registry | MISSING from CMS |
+| 29 | `government/index.tsx` | 225 | `store/government` | YES | |
+| 30 | `memberships/index.tsx` | 224 | `store/memberships` | YES | |
+| 31 | `bundles/index.tsx` | 222 | `store/bundles` | Not in CMS registry | MISSING from CMS |
+| 32 | `dropshipping-marketplace/index.tsx` | 213 | `store/dropshipping` | NO | Duplicate of dropshipping |
+| 33 | `gift-cards-shop/index.tsx` | 204 | `store/gift-cards` | Not in CMS registry | MISSING from CMS |
+| 34 | `consignment-shop/index.tsx` | 201 | `store/consignments` | NO | Duplicate of consignment |
+| 35 | `newsletter/index.tsx` | 200 | `store/newsletters` | Not in CMS registry | MISSING from CMS |
+| 36 | `b2b/index.tsx` | 194 | `store/b2b` | Not in CMS registry | MISSING from CMS |
+| 37 | `white-label-shop/index.tsx` | 188 | `store/white-label` | NO | Duplicate of white-label |
+| 38 | `try-before-you-buy/index.tsx` | 185 | `store/try-before-you-buy` | Not in CMS registry | MISSING from CMS |
+| 39 | `trade-in/index.tsx` | 182 | `store/trade-in` | Not in CMS registry | MISSING from CMS |
+| 40 | `volume-deals/index.tsx` | 180 | `store/volume-deals` | Not in CMS registry | MISSING from CMS |
+| 41 | `print-on-demand-shop/index.tsx` | 178 | `store/print-on-demand` | NO | Duplicate of print-on-demand |
+| 42 | `white-label/index.tsx` | 173 | `store/white-label` | Not in CMS registry | MISSING from CMS |
+| 43 | `loyalty-program/index.tsx` | 159 | `store/loyalty` | Not in CMS registry | MISSING from CMS |
+| 44 | `wallet/index.tsx` | 152 | `store/wallet` | NO | Utility page |
+| 45 | `dropshipping/index.tsx` | 132 | `store/dropshipping` | Not in CMS registry | MISSING from CMS |
+| 46 | `credit/index.tsx` | 132 | `store/credit` | Not in CMS registry | MISSING from CMS |
+| 47 | `consignment/index.tsx` | 126 | `store/consignments` | Not in CMS registry | MISSING from CMS |
+| 48 | `print-on-demand/index.tsx` | 123 | `store/print-on-demand` | Not in CMS registry | MISSING from CMS |
+| 49 | `affiliate/index.tsx` | 122 | `store/affiliate` | YES (as affiliates) | Slug mismatch |
+| 50 | `help/index.tsx` | 119 | — | NO | Static content |
+| 51 | `financial/index.tsx` | 119 | `store/financial` | YES (as financial-products) | Slug mismatch |
+| 52 | `returns/index.tsx` | 117 | — | NO | Account utility |
+| 53 | `manage/index.tsx` | 107 | — | NO | Admin dashboard |
+| 54 | `quotes/index.tsx` | 106 | `store/quotes` | Not in CMS registry | MISSING from CMS |
+| 55 | `places/index.tsx` | 104 | `store/content/pois` | Not in CMS registry | MISSING from CMS |
+| 56 | `account/index.tsx` | 56 | — | NO | Account dashboard |
+| 57 | `vendor/index.tsx` | 37 | — | NO | Vendor dashboard |
+| 58-67 | Account sub-lists (orders, bookings, subscriptions, purchase-orders, vendor/products, vendor/orders, vendor/payouts, vendor/onboarding) | Various | Various | NO | Account/vendor sub-pages |
+
+#### List Page Issues Found:
+- **0 of 67 list pages use BlockRenderer** — ALL use inline JSX
+- **21 list pages have NO CMS registry entry** — cannot be CMS-managed
+- **5 duplicate list pages** share same endpoint (consignment-shop, dropshipping-marketplace, print-on-demand-shop, white-label-shop, campaigns)
+- **9 slug mismatches** between frontend route names and backend/CMS slugs
+
+---
+
+### 15.2 All Detail Pages (54 pages) — Complete Inventory
+
+| # | Route Path | Lines | API Endpoint | Notes |
+|---|---|---|---|---|
+| 1 | `events/$id.tsx` | 319 | `store/events` | Largest detail page |
+| 2 | `vendors/$id.tsx` | 293 | `store/vendors` | Has $handle.tsx AND $id.tsx |
+| 3 | `rentals/$id.tsx` | 288 | `store/rentals` | |
+| 4 | `travel/$id.tsx` | 286 | `store/travel` | |
+| 5 | `education/$id.tsx` | 263 | `store/education` | |
+| 6 | `auctions/$id.tsx` | 262 | `store/auctions` | |
+| 7 | `newsletter/$id.tsx` | 259 | `store/newsletters` | |
+| 8 | `credit/$id.tsx` | 259 | `store/credit` | |
+| 9 | `warranties/$id.tsx` | 257 | `store/warranties` | |
+| 10 | `legal/$id.tsx` | 249 | `store/legal` | |
+| 11 | `grocery/$id.tsx` | 249 | `store/grocery` | |
+| 12 | `bookings/$id.tsx` | 249 | `store/bookings` | Reference page |
+| 13 | `crowdfunding/$id.tsx` | 248 | `store/crowdfunding` | |
+| 14 | `government/$id.tsx` | 247 | `store/government` | |
+| 15 | `pet-services/$id.tsx` | 246 | `store/pet-services` | |
+| 16 | `freelance/$id.tsx` | 246 | `store/freelance` | |
+| 17 | `parking/$id.tsx` | 245 | `store/parking` | |
+| 18 | `financial/$id.tsx` | 245 | `store/financial` | |
+| 19 | `charity/$id.tsx` | 243 | `store/charity` | |
+| 20 | `b2b/$id.tsx` | 242 | `store/b2b` | |
+| 21 | `subscriptions/$id.tsx` | 241 | `store/subscriptions` | |
+| 22 | `white-label-shop/$id.tsx` | 239 | `store/white-label` | DUPLICATE — same endpoint as white-label |
+| 23 | `insurance/$id.tsx` | 237 | `store/insurance` | |
+| 24 | `restaurants/$id.tsx` | 229 | `store/restaurants` | |
+| 25 | `fitness/$id.tsx` | 228 | `store/fitness` | |
+| 26 | `volume-deals/$id.tsx` | 225 | `store/volume-deals` | |
+| 27 | `social-commerce/$id.tsx` | 225 | `store/social-commerce` | |
+| 28 | `classifieds/$id.tsx` | 222 | `store/classifieds` | |
+| 29 | `healthcare/$id.tsx` | 220 | `store/healthcare` | |
+| 30 | `trade-in/$id.tsx` | 219 | `store/trade-in` | |
+| 31 | `print-on-demand/$id.tsx` | 217 | `store/print-on-demand` | |
+| 32 | `flash-deals/$id.tsx` | 216 | `store/flash-sales` | |
+| 33 | `white-label/$id.tsx` | 213 | `store/white-label` | |
+| 34 | `real-estate/$id.tsx` | 213 | `store/real-estate` | |
+| 35 | `consignment/$id.tsx` | 213 | `store/consignments` | |
+| 36 | `consignment-shop/$id.tsx` | 212 | `store/consignments` | DUPLICATE |
+| 37 | `dropshipping-marketplace/$id.tsx` | 211 | `store/dropshipping` | DUPLICATE |
+| 38 | `bundles/$id.tsx` | 210 | `store/bundles` | |
+| 39 | `print-on-demand-shop/$id.tsx` | 207 | `store/print-on-demand` | DUPLICATE |
+| 40 | `dropshipping/$id.tsx` | 205 | `store/dropshipping` | |
+| 41 | `automotive/$id.tsx` | 205 | `store/automotive` | |
+| 42 | `try-before-you-buy/$id.tsx` | 201 | `store/try-before-you-buy` | |
+| 43 | `loyalty-program/$id.tsx` | 199 | `store/loyalty` | |
+| 44 | `gift-cards-shop/$id.tsx` | 191 | `store/gift-cards` | |
+| 45 | `memberships/$id.tsx` | 185 | `store/memberships` | |
+| 46 | `digital/$id.tsx` | 181 | `store/digital-products` | |
+| 47 | `campaigns/$id.tsx` | 181 | `store/crowdfunding` | DUPLICATE endpoint (same as crowdfunding) |
+| 48 | `affiliate/$id.tsx` | 180 | `store/affiliate` | |
+| 49 | `places/$id.tsx` | 83 | `store/content/pois` | Smallest — likely incomplete |
+| 50 | `quotes/$id.tsx` | 74 | `store/quotes` | Smallest — likely incomplete |
+| 51 | `account/bookings/$id.tsx` | — | Internal | Account sub-page |
+| 52 | `account/orders/$id.tsx` | — | Internal | Account sub-page |
+| 53 | `account/purchase-orders/$id.tsx` | — | Internal | Account sub-page |
+| 54 | `account/subscriptions/$id.tsx` | — | Internal | Account sub-page |
+
+**Note:** Pages #49 (`places`) and #50 (`quotes`) are significantly smaller than others (83 and 74 lines vs average ~230 lines), indicating they are likely incomplete implementations.
+
+---
+
+### 15.3 All Manage Pages (96 pages) — Complete Inventory
+
+The manage section is the tenant admin dashboard for managing all verticals and platform settings.
+
+| # | Manage Page | Lines | Matching Vendor Page? | Matching Storefront Vertical? |
+|---|---|---|---|---|
+| 1 | `commissions.tsx` | 228 | YES (vendor/commissions) | — |
+| 2 | `availability.tsx` | 224 | NO — MISSING | — |
+| 3 | `vendors.tsx` | 222 | NO (vendor portal ≠ manage) | YES (vendors/) |
+| 4 | `subscriptions.tsx` | 222 | YES | YES |
+| 5 | `promotions-ext.tsx` | 221 | NO | — |
+| 6 | `commission-rules.tsx` | 219 | NO — MISSING | — |
+| 7 | `subscription-plans.tsx` | 218 | NO — MISSING | — |
+| 8 | `dropshipping.tsx` | 218 | YES | YES |
+| 9 | `service-providers.tsx` | 217 | NO — MISSING | — |
+| 10 | `invoices.tsx` | 217 | YES | — |
+| 11 | `promotions.tsx` | 216 | NO — MISSING | — |
+| 12 | `flash-sales.tsx` | 216 | YES | YES (as flash-deals) |
+| 13 | `companies.tsx` | 216 | NO — MISSING | — |
+| 14 | `restaurants.tsx` | 215 | YES | YES |
+| 15 | `purchase-orders.tsx` | 215 | NO — MISSING | — |
+| 16 | `rentals.tsx` | 214 | YES | YES |
+| 17 | `try-before-you-buy.tsx` | 212 | YES | YES |
+| 18 | `print-on-demand.tsx` | 212 | YES | YES |
+| 19 | `event-ticketing.tsx` | 212 | YES | — (no storefront page) |
+| 20-96 | *(remaining 77 pages)* | 135-212 | Various | Various |
+
+**Total manage pages: 96, Total lines: 18,661**
+
+Key manage-only pages (no vendor equivalent):
+- `governance.tsx`, `nodes.tsx`, `personas.tsx` — CityOS platform admin
+- `cms.tsx`, `cms-content.tsx` — Content management
+- `tenants-admin.tsx`, `stores.tsx`, `region-zones.tsx` — Multi-tenant admin
+- `temporal.tsx`, `webhooks.tsx`, `integrations.tsx` — System integration admin
+- `team.tsx`, `settings.tsx` — Organization settings
+
+---
+
+### 15.4 All Vendor Pages (56 pages) — Complete Inventory
+
+The vendor section is the vendor dashboard for managing their own listings, products, and operations.
+
+| Category | Pages | Lines |
+|---|---|---|
+| Vendor dashboard | `home.tsx`, `index.tsx` | 236 |
+| Vendor onboarding | `onboarding/` (3 pages) | ~350 |
+| Product management | `products/` (3 pages) | ~450 |
+| Order management | `orders/` (1 page) | ~170 |
+| Financial | `payouts/`, `payouts.tsx`, `transactions.tsx`, `commissions.tsx`, `invoices.tsx`, `wallet.tsx` | ~950 |
+| Vertical-specific (40 pages) | One per vertical | ~6,200 |
+| Settings | `register.tsx`, `reviews.tsx`, `analytics.tsx`, `notification-preferences.tsx`, etc. | ~1,100 |
+
+**Total vendor pages: 56, Total lines: 9,493**
+
+Key vendor pages WITHOUT manage equivalent:
+- `cart-rules.tsx` — Vendor cart customization
+- `shipping-rules.tsx` — Vendor shipping config
+- `transactions.tsx` — Vendor financial transactions
+- `home.tsx` — Vendor dashboard overview
+
+---
+
+### 15.5 All Account Pages (26 pages) — Complete Inventory
+
+| # | Page | Lines | Purpose |
+|---|---|---|---|
+| 1 | `disputes.tsx` | 173 | Dispute management |
+| 2 | `verification.tsx` | 172 | Identity verification |
+| 3 | `settings.tsx` | 149 | Account settings |
+| 4 | `addresses.tsx` | 133 | Address book |
+| 5 | `wallet.tsx` | 110 | Digital wallet |
+| 6 | `installments.tsx` | 98 | Payment installments |
+| 7 | `wishlist.tsx` | 66 | Wishlist |
+| 8 | `consents.tsx` | 65 | Privacy consent |
+| 9 | `loyalty.tsx` | 64 | Loyalty points |
+| 10 | `index.tsx` | 56 | Account dashboard |
+| 11 | `store-credits.tsx` | 53 | Store credits |
+| 12 | `referrals.tsx` | 51 | Referral program |
+| 13 | `downloads.tsx` | 18 | Digital downloads |
+| 14 | `profile.tsx` | 17 | Profile (minimal!) |
+| 15 | `orders/index.tsx` | — | Order list |
+| 16 | `orders/$id.tsx` | — | Order detail |
+| 17 | `orders/$id.return.tsx` | — | Return flow |
+| 18 | `orders/$id.track.tsx` | — | Order tracking |
+| 19 | `bookings/index.tsx` | — | Booking list |
+| 20 | `bookings/$id.tsx` | — | Booking detail |
+| 21 | `subscriptions/index.tsx` | — | Subscription list |
+| 22 | `subscriptions/$id.tsx` | — | Subscription detail |
+| 23 | `subscriptions/$id.billing.tsx` | — | Billing management |
+| 24 | `purchase-orders/index.tsx` | — | PO list |
+| 25 | `purchase-orders/$id.tsx` | — | PO detail |
+| 26 | `purchase-orders/new.tsx` | — | Create PO |
+
+**Total account pages: 26, Total lines: 2,823**
+
+**Issues found:**
+- `profile.tsx` is only 17 lines — likely incomplete/stub
+- `downloads.tsx` is only 18 lines — likely incomplete/stub
+- No `account/reviews.tsx` — customers can't see their own reviews
+- No `account/returns/index.tsx` — returns list is separate at `returns/index.tsx`
+
+---
+
+### 15.6 All Special Pages (15 pages) — Complete Inventory
+
+| # | Page | Lines | Purpose | CMS-able? |
+|---|---|---|---|---|
+| 1 | `gift-cards.tsx` | 191 | Gift card purchase | YES |
+| 2 | `reset-password.tsx` | 167 | Password reset | NO (auth flow) |
+| 3 | `trade-in.tsx` | 166 | Trade-in landing | YES — duplicates trade-in/index |
+| 4 | `compare.tsx` | 163 | Product comparison | YES |
+| 5 | `$slug.tsx` | 151 | CMS dynamic slug page | YES (already CMS) |
+| 6 | `$.tsx` | 112 | CMS splat/catch-all | YES (already CMS) |
+| 7 | `track.tsx` | 98 | Order tracking | NO (utility) |
+| 8 | `register.tsx` | 84 | User registration | NO (auth flow) |
+| 9 | `login.tsx` | 83 | User login | NO (auth flow) |
+| 10 | `index.tsx` | 82 | Homepage | YES |
+| 11 | `flash-sales.tsx` | 81 | Flash sales landing | YES — duplicates flash-deals/index |
+| 12 | `store-pickup.tsx` | 62 | Store pickup locator | YES |
+| 13 | `wishlist.tsx` | 55 | Wishlist page | NO (utility) |
+| 14 | `checkout.tsx` | 42 | Checkout flow | NO (commerce flow) |
+| 15 | `cart.tsx` | 25 | Shopping cart | NO (commerce flow) |
+
+**Issues found:**
+- `trade-in.tsx` (166 lines) likely duplicates `trade-in/index.tsx` (182 lines)
+- `flash-sales.tsx` (81 lines) likely duplicates `flash-deals/index.tsx` (244 lines)
+
+---
+
+### 15.7 All Sub-Route Pages (18 pages) — Complete Inventory
+
+| # | Page | Lines | Purpose |
+|---|---|---|---|
+| 1 | `bookings/$serviceHandle.tsx` | — | Service-specific booking |
+| 2 | `bookings/confirmation.tsx` | — | Booking confirmation |
+| 3 | `b2b/dashboard.tsx` | — | B2B dashboard |
+| 4 | `b2b/register.tsx` | — | B2B registration |
+| 5 | `subscriptions/checkout.tsx` | — | Subscription checkout |
+| 6 | `subscriptions/success.tsx` | — | Subscription success |
+| 7 | `blog/$slug.tsx` | — | Blog post detail |
+| 8 | `help/$slug.tsx` | — | Help article detail |
+| 9 | `categories/$handle.tsx` | — | Category page |
+| 10 | `vendors/$handle.tsx` | — | Vendor by handle |
+| 11 | `verify/age.tsx` | — | Age verification |
+| 12 | `vendor/products/$productId.tsx` | — | Vendor product edit |
+| 13 | `vendor/products/new.tsx` | — | Vendor new product |
+| 14 | `vendor/onboarding/complete.tsx` | — | Onboarding complete |
+| 15 | `vendor/onboarding/verification.tsx` | — | Vendor verification |
+| 16 | `account/orders/$id.return.tsx` | — | Return flow |
+| 17 | `account/orders/$id.track.tsx` | — | Track order |
+| 18 | `account/subscriptions/$id.billing.tsx` | — | Subscription billing |
+
+---
+
+## Section 16: Missing Pages & Structural Gaps
+
+### 16.1 Missing Common Pages (Should Exist But Don't)
+
+| # | Missing Page | Expected Path | Priority | Notes |
+|---|---|---|---|---|
+| 1 | **About page** | `about.tsx` or via CMS `$slug` | HIGH | Every commerce site needs About |
+| 2 | **Contact page** | `contact.tsx` or via CMS `$slug` | HIGH | Customer support entry point |
+| 3 | **Terms of Service** | `terms.tsx` or via CMS `$slug` | HIGH | Legal requirement |
+| 4 | **Privacy Policy** | `privacy.tsx` or via CMS `$slug` | HIGH | Legal requirement (GDPR) |
+| 5 | **FAQ page** | `faq.tsx` or via CMS `$slug` | MEDIUM | Customer self-service |
+| 6 | **Search results page** | `search.tsx` | HIGH | Platform-wide search |
+| 7 | **Sitemap** | `sitemap.tsx` | LOW | SEO requirement |
+| 8 | **404 page** | Custom 404 component | MEDIUM | Currently falls through to splat route |
+| 9 | **500 error page** | Custom 500 component | MEDIUM | User-friendly error handling |
+
+**Note:** The CMS `$slug.tsx` and `$.tsx` (splat) routes can serve About, Contact, Terms, Privacy, and FAQ if the content exists in the CMS registry. However, they are NOT currently registered as CMS pages in `cms-registry.ts`, so these pages will show "Page not found."
+
+### 16.2 Missing CMS Registry Entries
+
+The CMS registry defines **27 verticals** but the storefront has **51 list pages**. These storefront verticals have NO CMS registry entry:
+
+| # | Storefront Route | Backend Endpoint | CMS Status | Impact |
+|---|---|---|---|---|
+| 1 | `bookings/` | `store/bookings` | NOT in CMS registry | Cannot resolve via CMS |
+| 2 | `b2b/` | `store/b2b` | NOT in CMS registry | Cannot resolve via CMS |
+| 3 | `bundles/` | `store/bundles` | NOT in CMS registry | Cannot resolve via CMS |
+| 4 | `campaigns/` | `store/crowdfunding` | NOT in CMS registry | Uses crowdfunding endpoint |
+| 5 | `consignment/` | `store/consignments` | NOT in CMS registry | Cannot resolve via CMS |
+| 6 | `credit/` | `store/credit` | NOT in CMS registry | Cannot resolve via CMS |
+| 7 | `dropshipping/` | `store/dropshipping` | NOT in CMS registry | Cannot resolve via CMS |
+| 8 | `flash-deals/` | `store/flash-sales` | NOT in CMS registry | Cannot resolve via CMS |
+| 9 | `gift-cards-shop/` | `store/gift-cards` | NOT in CMS registry | Cannot resolve via CMS |
+| 10 | `insurance/` | `store/insurance` | NOT in CMS registry | Cannot resolve via CMS |
+| 11 | `loyalty-program/` | `store/loyalty` | NOT in CMS registry | Cannot resolve via CMS |
+| 12 | `newsletter/` | `store/newsletters` | NOT in CMS registry | Cannot resolve via CMS |
+| 13 | `print-on-demand/` | `store/print-on-demand` | NOT in CMS registry | Cannot resolve via CMS |
+| 14 | `places/` | `store/content/pois` | NOT in CMS registry | Cannot resolve via CMS |
+| 15 | `quotes/` | `store/quotes` | NOT in CMS registry | Cannot resolve via CMS |
+| 16 | `subscriptions/` | `store/subscriptions` | NOT in CMS registry | Cannot resolve via CMS |
+| 17 | `trade-in/` | `store/trade-in` | NOT in CMS registry | Cannot resolve via CMS |
+| 18 | `try-before-you-buy/` | `store/try-before-you-buy` | NOT in CMS registry | Cannot resolve via CMS |
+| 19 | `volume-deals/` | `store/volume-deals` | NOT in CMS registry | Cannot resolve via CMS |
+| 20 | `white-label/` | `store/white-label` | NOT in CMS registry | Cannot resolve via CMS |
+
+**Impact:** These 20 verticals cannot be managed via Payload CMS because they have no CMS page definition. Content editors cannot create or customize pages for these verticals.
+
+### 16.3 Missing Detail Pages (CMS Verticals Without Detail Route)
+
+| # | CMS Vertical | Has List Page? | Has Detail Page? | Has Backend Endpoint? | Gap |
+|---|---|---|---|---|---|
+| 1 | `advertising` | NO route at all | NO | YES (`store/advertising`) | MISSING both list and detail |
+| 2 | `utilities` | NO route at all | NO | YES (`store/utilities`) | MISSING both list and detail |
+| 3 | `blog` | YES (index) | `$slug.tsx` (not $id) | NO backend | Has slug-based detail, not ID-based |
+
+### 16.4 Backend Endpoints Without Storefront Routes
+
+These backend API endpoints exist but have NO corresponding storefront page:
+
+| # | Backend Endpoint | Purpose | Storefront Page? | Gap Severity |
+|---|---|---|---|---|
+| 1 | `store/advertising` | Ad campaigns | NO storefront route | HIGH — CMS vertical defined |
+| 2 | `store/utilities` | Utility services | NO storefront route | HIGH — CMS vertical defined |
+| 3 | `store/event-ticketing` | Ticket management | NO storefront route | MEDIUM — manage/vendor pages exist |
+| 4 | `store/cityos` | CityOS platform API | NO (internal API) | LOW — internal |
+| 5 | `store/trade-ins` | Trade-in (plural) | `trade-in/` (singular route exists) | LOW — naming variant |
+| 6 | `store/newsletters` | Newsletter (plural) | `newsletter/` (singular route exists) | LOW — naming variant |
+
+### 16.5 Slug/Naming Mismatches (Frontend → Backend → CMS)
+
+These inconsistencies between frontend route slugs, backend API endpoint names, and CMS registry slugs cause bugs and confusion:
+
+| # | Frontend Route Slug | Backend API Endpoint | CMS Registry Slug | Mismatch Type |
+|---|---|---|---|---|
+| 1 | `affiliate` | `store/affiliates` (plural) | `affiliates` | Singular vs plural |
+| 2 | `digital` | `store/digital-products` | `digital-products` | Abbreviated |
+| 3 | `financial` | `store/financial-products` | `financial-products` | Abbreviated |
+| 4 | `flash-deals` | `store/flash-sales` | — (not in CMS) | Different name |
+| 5 | `gift-cards-shop` | `store/gift-cards` | — (not in CMS) | Extra suffix |
+| 6 | `consignment` | `store/consignments` (plural) | — (not in CMS) | Singular vs plural |
+| 7 | `newsletter` | `store/newsletters` (plural) | — (not in CMS) | Singular vs plural |
+| 8 | `loyalty-program` | `store/loyalty` | — (not in CMS) | Different name |
+| 9 | `trade-in` | `store/trade-in` AND `store/trade-ins` | — (not in CMS) | Backend has both |
+
+**Impact:** When the CMS resolve endpoint looks up a page by slug, mismatches mean the wrong page definition is returned or no page is found at all. The unified `loadVerticalDetail()` function must include a slug → endpoint mapping table to handle these.
+
+### 16.6 Duplicate/Redundant Pages
+
+| # | Primary Page | Duplicate Page | Same API? | Lines Wasted | Action |
+|---|---|---|---|---|---|
+| 1 | `consignment/` (list + detail) | `consignment-shop/` (list + detail) | YES (`store/consignments`) | 413 | MERGE → redirect |
+| 2 | `dropshipping/` (list + detail) | `dropshipping-marketplace/` (list + detail) | YES (`store/dropshipping`) | 424 | MERGE → redirect |
+| 3 | `print-on-demand/` (list + detail) | `print-on-demand-shop/` (list + detail) | YES (`store/print-on-demand`) | 385 | MERGE → redirect |
+| 4 | `white-label/` (list + detail) | `white-label-shop/` (list + detail) | YES (`store/white-label`) | 427 | MERGE → redirect |
+| 5 | `crowdfunding/` (list + detail) | `campaigns/` (list + detail) | YES (`store/crowdfunding`) | 425 | MERGE → redirect |
+| 6 | `flash-deals/` (list) | `flash-sales.tsx` (special page) | Similar | 81 | REMOVE flash-sales.tsx |
+| 7 | `trade-in/` (list) | `trade-in.tsx` (special page) | Same | 166 | REMOVE trade-in.tsx |
+
+**Total duplicate lines: 2,321** — eliminating these saves significant maintenance burden.
+
+### 16.7 Incomplete/Stub Pages
+
+Pages that are significantly shorter than average, indicating they are likely stubs or incomplete:
+
+| # | Page | Lines | Average for Type | Completeness |
+|---|---|---|---|---|
+| 1 | `quotes/$id.tsx` | 74 | ~230 | **32%** — likely minimal stub |
+| 2 | `places/$id.tsx` | 83 | ~230 | **36%** — likely minimal stub |
+| 3 | `account/profile.tsx` | 17 | ~100 | **17%** — almost empty |
+| 4 | `account/downloads.tsx` | 18 | ~100 | **18%** — almost empty |
+| 5 | `vendor/index.tsx` | 37 | ~107 | **35%** — minimal dashboard |
+
+### 16.8 Flow Completeness Gaps
+
+Critical user flows that are missing pages or steps:
+
+| # | Flow | Existing Steps | Missing Step | Impact |
+|---|---|---|---|---|
+| 1 | **Checkout flow** | Cart → Checkout → (gap) | No order confirmation page after checkout | HIGH — users see nothing after paying |
+| 2 | **Vendor onboarding** | Register → Onboarding → Verification → Complete | No vendor approval/pending status page | MEDIUM |
+| 3 | **Return flow** | Orders → Return request | No return tracking page (only order tracking) | MEDIUM |
+| 4 | **Search flow** | No dedicated search results page | Search results page `/search` is missing | HIGH — no global search |
+| 5 | **Blog flow** | Blog list → Blog post (via $slug) | No blog category/tag filtering page | LOW |
+| 6 | **Customer reviews** | Reviews exist in detail pages | No account page to see your own reviews | LOW |
+| 7 | **Invoice flow** | Invoices in manage | No customer-facing invoice view | MEDIUM |
+| 8 | **Notification center** | Notification preferences in manage/vendor | No customer notification center | LOW |
+
+---
+
+## Section 17: Vertical Completeness Matrix — All 4 Layers
+
+Each vertical ideally has 4 layers: Storefront (list + detail), Vendor Dashboard, and Manage (admin). Here is the completeness for every vertical:
+
+### Legend: ✓ = exists, ✗ = missing, ~ = partial/mismatched slug
+
+| # | Vertical | Storefront List | Storefront Detail | Vendor | Manage | Backend API | CMS Registry | Completeness |
+|---|---|---|---|---|---|---|---|---|
+| 1 | restaurants | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | **100%** |
+| 2 | healthcare | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | **100%** |
+| 3 | education | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | **100%** |
+| 4 | real-estate | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | **100%** |
+| 5 | automotive | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | **100%** |
+| 6 | grocery | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | **100%** |
+| 7 | events | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | **100%** |
+| 8 | fitness | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | **100%** |
+| 9 | travel | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | **100%** |
+| 10 | charity | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | **100%** |
+| 11 | classifieds | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | **100%** |
+| 12 | crowdfunding | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | **100%** |
+| 13 | freelance | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | **100%** |
+| 14 | government | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | **100%** |
+| 15 | parking | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | **100%** |
+| 16 | pet-services | ✓ | ✓ | ~ (pet-service) | ✓ | ✓ | ✓ | **95%** — vendor slug mismatch |
+| 17 | rentals | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | **100%** |
+| 18 | auctions | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | **100%** |
+| 19 | legal | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | **100%** |
+| 20 | memberships | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | **100%** |
+| 21 | warranties | ✓ | ✓ | ~ (warranty) | ✓ | ✓ | ✓ | **95%** — vendor slug mismatch |
+| 22 | social-commerce | ✓ | ✓ | ✓ | NO | ✓ | ✓ | **83%** — no manage page |
+| 23 | affiliates | ~ (affiliate) | ~ (affiliate) | ✓ | ✓ | ✓ | ✓ | **90%** — slug mismatch |
+| 24 | advertising | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ | **67%** — NO storefront pages |
+| 25 | utilities | ✗ | ✗ | NO | ✓ | ✓ | ✓ | **50%** — NO storefront/vendor |
+| 26 | digital-products | ~ (digital) | ~ (digital) | ✓ | ✓ | ✓ | ✓ | **90%** — slug mismatch |
+| 27 | financial-products | ~ (financial) | ~ (financial) | ✓ | ✓ | ✓ | ✓ | **90%** — slug mismatch |
+
+### Non-CMS-Registry Verticals (exist in storefront but not in CMS registry's 27)
+
+| # | Vertical | List | Detail | Vendor | Manage | Backend API | CMS? | Completeness |
+|---|---|---|---|---|---|---|---|---|
+| 28 | bookings | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ | **83%** — no CMS entry |
+| 29 | b2b | ✓ | ✓ | ✓ | ~ (b2b not in manage) | ✓ | ✗ | **67%** — no CMS, no manage |
+| 30 | bundles | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ | **83%** — no CMS entry |
+| 31 | consignment | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ | **83%** — no CMS entry |
+| 32 | credit | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ | **83%** — no CMS entry |
+| 33 | dropshipping | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ | **83%** — no CMS entry |
+| 34 | flash-deals | ✓ | ✓ | ~ (flash-sales) | ✓ | ✓ (flash-sales) | ✗ | **75%** — no CMS, slug mismatch |
+| 35 | gift-cards-shop | ✓ | ✓ | ~ (gift-cards) | ✓ | ✓ (gift-cards) | ✗ | **75%** — no CMS, slug mismatch |
+| 36 | insurance | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ | **83%** — no CMS entry |
+| 37 | loyalty-program | ✓ | ✓ | ~ (loyalty) | ✓ | ✓ (loyalty) | ✗ | **75%** — no CMS, slug mismatch |
+| 38 | newsletter | ✓ | ✓ | ✓ | ✓ (newsletters) | ✓ (newsletters) | ✗ | **83%** — no CMS entry |
+| 39 | print-on-demand | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ | **83%** — no CMS entry |
+| 40 | places | ✓ | ✓ (stub) | ✗ | ✗ | ✓ (content/pois) | ✗ | **50%** — stub, no CMS/vendor/manage |
+| 41 | quotes | ✓ | ✓ (stub) | ✓ | ✓ | ✓ | ✗ | **75%** — stub detail, no CMS |
+| 42 | subscriptions | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ | **83%** — no CMS entry |
+| 43 | trade-in | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ | **83%** — no CMS entry |
+| 44 | try-before-you-buy | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ | **83%** — no CMS entry |
+| 45 | volume-deals | ✓ | ✓ | ~ (volume-pricing) | ~ (pricing-tiers) | ✓ (volume-pricing) | ✗ | **67%** — slugs differ everywhere |
+| 46 | white-label | ✓ | ✓ | ✓ | ~ (white-label) | ✓ | ✗ | **83%** — no CMS entry |
+
+### Duplicate Verticals (should be consolidated)
+
+| # | Primary | Duplicate | Recommendation |
+|---|---|---|---|
+| 47 | consignment | consignment-shop | MERGE — same API |
+| 48 | dropshipping | dropshipping-marketplace | MERGE — same API |
+| 49 | print-on-demand | print-on-demand-shop | MERGE — same API |
+| 50 | white-label | white-label-shop | MERGE — same API |
+| 51 | crowdfunding | campaigns | MERGE — same API |
+
+### Special Non-Vertical Routes
+
+| # | Route | Purpose | Layer |
+|---|---|---|---|
+| 52 | blog | Content/articles | Storefront only |
+| 53 | help | Support articles | Storefront only |
+| 54 | vendors | Vendor directory | Storefront + manage |
+| 55 | returns | Returns center | Storefront (account utility) |
+| 56 | wallet | Digital wallet | Storefront + account |
+| 57 | cart | Shopping cart | Core commerce flow |
+| 58 | checkout | Checkout flow | Core commerce flow |
+| 59 | compare | Product comparison | Storefront utility |
+| 60 | wishlist | Wishlist | Storefront + account |
+
+---
+
+## Section 18: Summary Statistics — Complete Platform
+
+### 18.1 Overall Page Counts
+
+| Metric | Count |
+|---|---|
+| Total route files | 336 |
+| Total route lines | 58,770 |
+| Unique verticals with storefront pages | 51 (including duplicates) |
+| Unique verticals (deduplicated) | 46 |
+| CMS-registered verticals | 27 |
+| Verticals missing CMS registration | 20 |
+| Verticals missing from storefront | 2 (advertising, utilities) |
+| Duplicate vertical pages (to merge) | 5 pairs (10 pages) |
+| Incomplete/stub pages | 5 pages |
+| Missing common pages | 9 pages |
+
+### 18.2 Centralization Opportunity — All Page Types
+
+| Page Type | Files | Current Lines | Target Lines | Reduction |
+|---|---|---|---|---|
+| Detail pages | 54 → 47 (after dedup) | 11,905 | ~1,410 | **88%** |
+| List pages | 67 → 57 (after dedup) | 11,696 | ~2,850 | **76%** |
+| Manage pages | 96 | 18,661 | ~9,000 (shared CRUD) | **52%** |
+| Vendor pages | 56 | 9,493 | ~4,700 (shared patterns) | **50%** |
+| Account pages | 26 | 2,823 | ~2,000 (minor) | **29%** |
+| Special pages | 15 | 1,562 | ~1,200 (minor) | **23%** |
+| Sub-routes | 18 | 1,284 | ~1,000 (minor) | **22%** |
+| **TOTAL** | **336 → ~308** | **58,770** | **~22,160** | **62%** |
+
+### 18.3 Priority Actions
+
+| Priority | Action | Impact | Effort |
+|---|---|---|---|
+| P0 | Create shared infrastructure (loader, normalizer, entity context) | Enables all subsequent work | 3 hours |
+| P0 | Add 20 missing CMS registry entries | All verticals CMS-manageable | 2 hours |
+| P0 | Fix 9 slug/naming mismatches | Consistent data flow | 2 hours |
+| P1 | Merge 5 duplicate page pairs | Remove 10 redundant pages, ~2,300 lines | 3 hours |
+| P1 | Refactor 50 detail pages to use shared loader | 88% code reduction | 8 hours |
+| P1 | Register all 77 blocks in Payload Pages collection | Full CMS page builder | 6 hours |
+| P2 | Refactor 57 list pages to use shared template | 76% code reduction | 8 hours |
+| P2 | Add missing common pages (about, contact, terms, privacy, search) | Complete user experience | 4 hours |
+| P2 | Complete stub pages (quotes, places, profile, downloads) | Functional pages | 3 hours |
+| P2 | Add advertising and utilities storefront pages | 100% vertical coverage | 2 hours |
+| P3 | Centralize manage pages with shared CRUD patterns | 52% code reduction | 12 hours |
+| P3 | Centralize vendor pages with shared patterns | 50% code reduction | 8 hours |
+| P3 | Fix flow gaps (checkout confirmation, search results, etc.) | Complete user flows | 6 hours |
+
+### 18.4 Blockers for Full CMS-Driven Architecture
+
+| # | Blocker | Current Status | Required Fix |
+|---|---|---|---|
+| 1 | Shared detail-loader.ts doesn't exist | Every page has its own loader | Create single shared loader with vertical config |
+| 2 | normalizeDetail() duplicated 50 times | Copy-pasted in every file | Extract to shared module |
+| 3 | BlockRenderer not used in any route | 77 blocks exist, 0 connected | VerticalDetailPage component using BlockRenderer |
+| 4 | CMS registry only 3 generic blocks per detail page | All verticals get same layout | Per-vertical unique block layouts |
+| 5 | Payload Pages collection has only 3 block types | 74 blocks invisible to editors | Register all 77 blocks |
+| 6 | EntityDataProvider doesn't exist | Blocks can't access SSR entity data | Create React context provider |
+| 7 | 38 hooks unused by detail pages | All interactivity is inline | Wire hooks into blocks |
+| 8 | 20 verticals not in CMS registry | Can't be CMS-managed | Add entries |
+| 9 | 9 slug mismatches | Broken CMS resolve lookups | Standardize naming |
+| 10 | No shared list page infrastructure | 67 list pages duplicate patterns | Create shared VerticalListPage component |
