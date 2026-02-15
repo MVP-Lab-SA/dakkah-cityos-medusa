@@ -57,7 +57,7 @@ function WhiteLabelPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-gray-600 to-slate-800 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-primary to-ds-primary/80 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -69,13 +69,13 @@ function WhiteLabelPage() {
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>Full brand control</span><span>|</span><span>Custom domain</span><span>|</span><span>Mobile apps</span>
           </div>
-          <button className="mt-8 px-8 py-3 bg-ds-card text-slate-800 font-semibold rounded-lg hover:bg-ds-card/90 transition-colors">Schedule a Demo</button>
+          <button className="mt-8 px-8 py-3 bg-ds-card text-ds-foreground font-semibold rounded-lg hover:bg-ds-card/90 transition-colors">Schedule a Demo</button>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
-          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search features..." className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-slate-500" />
+          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search features..." className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring" />
         </div>
 
         <h2 className="text-2xl font-bold text-ds-foreground mb-6">Platform Features</h2>
@@ -88,7 +88,7 @@ function WhiteLabelPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             {filteredFeatures.map((f: any, i: number) => (
-              <div key={i} className="bg-ds-background border border-ds-border rounded-xl p-6 hover:shadow-lg hover:border-slate-300 transition-all duration-200">
+              <div key={i} className="bg-ds-background border border-ds-border rounded-xl p-6 hover:shadow-lg hover:border-ds-border transition-all duration-200">
                 <div className="text-3xl mb-3">{f.icon}</div>
                 <h3 className="font-semibold text-ds-foreground mb-2">{f.title}</h3>
                 <p className="text-sm text-ds-muted-foreground">{f.description}</p>
@@ -100,11 +100,11 @@ function WhiteLabelPage() {
         <h2 className="text-2xl font-bold text-ds-foreground mb-6">Pricing Plans</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {packages.map((pkg: any) => (
-            <div key={pkg.id} className={`relative bg-ds-background border ${pkg.popular ? "border-slate-600 ring-2 ring-slate-600/20" : "border-ds-border"} rounded-xl p-6 hover:shadow-lg transition-all duration-200`}>
-              {pkg.popular && <span className="absolute -top-3 left-6 px-3 py-1 text-xs font-bold bg-slate-700 text-white rounded-full">Most Popular</span>}
+            <div key={pkg.id} className={`relative bg-ds-background border ${pkg.popular ? "border-ds-primary ring-2 ring-ds-primary/20" : "border-ds-border"} rounded-xl p-6 hover:shadow-lg transition-all duration-200`}>
+              {pkg.popular && <span className="absolute -top-3 left-6 px-3 py-1 text-xs font-bold bg-ds-primary text-ds-primary-foreground rounded-full">Most Popular</span>}
               <h3 className="text-xl font-bold text-ds-foreground mb-1">{pkg.name}</h3>
               <div className="flex items-baseline gap-1 mb-2">
-                <span className="text-3xl font-bold text-slate-700">{pkg.price}</span>
+                <span className="text-3xl font-bold text-ds-foreground">{pkg.price}</span>
                 {pkg.period && <span className="text-sm text-ds-muted-foreground">SAR/{pkg.period}</span>}
               </div>
               <p className="text-sm text-ds-muted-foreground mb-4">{pkg.description}</p>
@@ -116,7 +116,7 @@ function WhiteLabelPage() {
                   </li>
                 ))}
               </ul>
-              <button className={`w-full py-2.5 rounded-lg font-medium transition-colors ${pkg.popular ? "bg-slate-700 text-white hover:bg-slate-800" : "bg-ds-muted text-ds-foreground hover:bg-ds-muted/80"}`}>{pkg.cta}</button>
+              <button className={`w-full py-2.5 rounded-lg font-medium transition-colors ${pkg.popular ? "bg-ds-primary text-ds-primary-foreground hover:bg-ds-primary/80" : "bg-ds-muted text-ds-foreground hover:bg-ds-muted/80"}`}>{pkg.cta}</button>
             </div>
           ))}
         </div>
@@ -161,17 +161,17 @@ function WhiteLabelPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-slate-700 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-ds-primary-foreground flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Choose Your Plan</h3>
               <p className="text-sm text-ds-muted-foreground">Select the package that matches your business needs and scale.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-slate-700 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-ds-primary-foreground flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Customize & Brand</h3>
               <p className="text-sm text-ds-muted-foreground">Apply your brand identity, configure features, and connect your domain.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-slate-700 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-ds-primary-foreground flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Launch & Grow</h3>
               <p className="text-sm text-ds-muted-foreground">Go live with your branded marketplace and start growing your business.</p>
             </div>

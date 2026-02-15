@@ -79,7 +79,7 @@ function LegalServicesPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-gray-700 to-slate-800 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-primary to-ds-primary/80 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -111,7 +111,7 @@ function LegalServicesPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search attorneys..."
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-slate-400"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring"
                 />
               </div>
 
@@ -122,7 +122,7 @@ function LegalServicesPage() {
                     <button
                       key={opt}
                       onClick={() => setSpecFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${specFilter === opt ? "bg-slate-700 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${specFilter === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Specializations" : formatSpec(opt)}
                     </button>
@@ -149,20 +149,20 @@ function LegalServicesPage() {
                     <a
                       key={item.id}
                       href={`${prefix}/legal/${item.id}`}
-                      className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-slate-400 transition-all duration-200 p-5"
+                      className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-muted-foreground transition-all duration-200 p-5"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gray-200 to-slate-300 overflow-hidden flex-shrink-0">
+                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-ds-muted to-ds-border overflow-hidden flex-shrink-0">
                           {item.thumbnail ? (
                             <img loading="lazy" src={item.thumbnail} alt={item.name} className="w-full h-full object-cover" />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-slate-600 text-xl font-bold">
+                            <div className="w-full h-full flex items-center justify-center text-ds-muted-foreground text-xl font-bold">
                               {(item.name || "A").charAt(0)}
                             </div>
                           )}
                         </div>
                         <div className="min-w-0">
-                          <h3 className="font-semibold text-ds-foreground group-hover:text-slate-600 transition-colors line-clamp-1">{item.name}</h3>
+                          <h3 className="font-semibold text-ds-foreground group-hover:text-ds-muted-foreground transition-colors line-clamp-1">{item.name}</h3>
                           {item.bar_number && (
                             <p className="text-xs text-ds-muted-foreground">Bar #{item.bar_number}</p>
                           )}
@@ -172,10 +172,10 @@ function LegalServicesPage() {
                       {specs.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-3">
                           {specs.slice(0, 3).map((s: string) => (
-                            <span key={s} className="px-2 py-0.5 text-xs font-medium bg-slate-100 text-slate-700 rounded-md">{formatSpec(s)}</span>
+                            <span key={s} className="px-2 py-0.5 text-xs font-medium bg-ds-muted text-ds-foreground rounded-md">{formatSpec(s)}</span>
                           ))}
                           {specs.length > 3 && (
-                            <span className="px-2 py-0.5 text-xs font-medium bg-slate-100 text-slate-500 rounded-md">+{specs.length - 3}</span>
+                            <span className="px-2 py-0.5 text-xs font-medium bg-ds-muted text-ds-muted-foreground rounded-md">+{specs.length - 3}</span>
                           )}
                         </div>
                       )}
@@ -213,10 +213,10 @@ function LegalServicesPage() {
                       )}
 
                       <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
-                        <span className="font-bold text-slate-700 text-lg">
+                        <span className="font-bold text-ds-foreground text-lg">
                           {formatRate(item.hourly_rate, item.currency_code)}
                         </span>
-                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-slate-700 rounded-lg group-hover:bg-slate-800 transition-colors">Book Consultation</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-ds-primary-foreground bg-ds-primary rounded-lg group-hover:bg-ds-primary/80 transition-colors">Book Consultation</span>
                       </div>
                     </a>
                   )
@@ -232,17 +232,17 @@ function LegalServicesPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-slate-700 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-ds-primary-foreground flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Find an Attorney</h3>
               <p className="text-sm text-ds-muted-foreground">Browse verified attorneys by specialization and experience level.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-slate-700 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-ds-primary-foreground flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Schedule Consultation</h3>
               <p className="text-sm text-ds-muted-foreground">Book an initial consultation to discuss your legal needs.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-slate-700 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-ds-primary-foreground flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Get Legal Help</h3>
               <p className="text-sm text-ds-muted-foreground">Work with your attorney to resolve your legal matters effectively.</p>
             </div>

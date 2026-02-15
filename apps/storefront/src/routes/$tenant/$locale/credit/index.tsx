@@ -40,7 +40,7 @@ function CreditPage() {
     blue: "from-ds-primary to-ds-primary",
     indigo: "from-ds-primary to-ds-primary",
     purple: "from-ds-primary to-ds-primary",
-    slate: "from-slate-600 to-slate-700",
+    slate: "from-ds-muted-foreground to-ds-primary",
   }
 
   return (

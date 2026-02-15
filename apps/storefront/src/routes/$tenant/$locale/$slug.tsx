@@ -118,7 +118,7 @@ function CMSSlugPageComponent() {
         <h1 className="text-xl mb-6">All Products</h1>
 
         {products.length === 0 ? (
-          <div className="text-zinc-600">No products found</div>
+          <div className="text-ds-muted-foreground">No products found</div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {products.map((product: any) => (

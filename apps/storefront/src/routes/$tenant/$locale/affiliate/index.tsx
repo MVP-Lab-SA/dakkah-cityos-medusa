@@ -44,7 +44,7 @@ function AffiliatePage() {
   )
 
   const colorBorder: Record<string, string> = { gray: "border-ds-border", blue: "border-ds-info ring-2 ring-ds-primary/20", purple: "border-ds-primary ring-2 ring-ds-primary/20", amber: "border-ds-warning" }
-  const colorBg: Record<string, string> = { gray: "from-gray-500 to-gray-600", blue: "from-ds-primary to-ds-primary", purple: "from-ds-primary to-ds-primary", amber: "from-ds-warning to-ds-warning" }
+  const colorBg: Record<string, string> = { gray: "from-ds-muted-foreground to-ds-muted-foreground/80", blue: "from-ds-primary to-ds-primary", purple: "from-ds-primary to-ds-primary", amber: "from-ds-warning to-ds-warning" }
   const colorBtn: Record<string, string> = { gray: "bg-ds-muted-foreground hover:bg-ds-foreground/80", blue: "bg-ds-primary hover:bg-ds-primary/90", purple: "bg-ds-primary hover:bg-ds-primary/90", amber: "bg-ds-warning hover:bg-ds-warning/90" }
 
   return (

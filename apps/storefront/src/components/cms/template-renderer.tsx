@@ -200,13 +200,13 @@ const VERTICAL_COLORS: Record<string, string> = {
   "digital-products": "from-ds-primary to-ds-primary",
   rentals: "from-ds-success to-ds-success",
   auctions: "from-ds-warning to-ds-warning",
-  "financial-products": "from-slate-600 to-zinc-700",
+  "financial-products": "from-ds-muted-foreground to-ds-primary/80",
   government: "from-ds-primary to-ds-primary/90",
   memberships: "from-ds-primary/100 to-ds-primary/90",
-  parking: "from-gray-500 to-slate-600",
+  parking: "from-ds-muted-foreground to-ds-muted-foreground/80",
   utilities: "from-ds-success to-ds-success/90",
   warranties: "from-ds-primary to-ds-info",
-  legal: "from-slate-700 to-gray-800",
+  legal: "from-ds-primary to-ds-primary/80",
   advertising: "from-ds-destructive to-ds-primary",
   "pet-services": "from-ds-warning to-ds-warning",
   classifieds: "from-ds-success to-ds-info",
@@ -347,7 +347,7 @@ function VerticalDetailTemplate({ page, tenant, locale }: { page: CMSPage; tenan
   if (isLoading) {
     return (
       <div className="flex justify-center py-20">
-        <div className="w-8 h-8 border-4 border-ds-border border-t-zinc-900 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-ds-border border-t-ds-foreground rounded-full animate-spin" />
       </div>
     )
   }

@@ -10,7 +10,7 @@ const fallbackItems = [
     description: "Start earning rewards from your very first purchase. Every dollar spent earns you 1 point."
   },
   {
-    id: "tier-2", name: "Silver", color: "gray-400", bg: "from-gray-400 to-gray-600", points_required: 500, badge_emoji: "🥈",
+    id: "tier-2", name: "Silver", color: "ds-muted-foreground", bg: "from-ds-muted-foreground to-ds-muted-foreground/80", points_required: 500, badge_emoji: "🥈",
     perks: ["10% discount on all purchases", "Birthday bonus points (3x)", "Early access to new products", "Free standard shipping on all orders", "Exclusive member-only deals", "Priority customer support"],
     description: "Reach Silver status with 500 points and unlock premium shopping benefits."
   },
@@ -20,7 +20,7 @@ const fallbackItems = [
     description: "Gold members enjoy the best perks with 2,000 points. Shop more, save more."
   },
   {
-    id: "tier-4", name: "Platinum", color: "slate-300", bg: "from-slate-500 to-slate-800", points_required: 5000, badge_emoji: "💎",
+    id: "tier-4", name: "Platinum", color: "ds-muted-foreground", bg: "from-ds-muted-foreground to-ds-primary", points_required: 5000, badge_emoji: "💎",
     perks: ["20% discount on all purchases", "Birthday bonus points (10x)", "First access to all new launches", "Free same-day shipping", "Personal shopper service", "Invite-only events", "Annual luxury gift box", "Lifetime price guarantee", "Complimentary alterations", "Free returns, no questions asked"],
     description: "The ultimate tier. Platinum members with 5,000+ points enjoy unmatched luxury benefits."
   },

@@ -88,12 +88,12 @@ function AutomotivePage() {
 
   const listingTypeBadge = (type: string | null) => {
     if (type === "lease") return { label: "Lease", color: "bg-ds-primary text-white" }
-    return { label: "For Sale", color: "bg-slate-700 text-white" }
+    return { label: "For Sale", color: "bg-ds-primary text-ds-primary-foreground" }
   }
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-slate-700 to-gray-900 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-primary to-ds-primary/80 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -125,7 +125,7 @@ function AutomotivePage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search make, model..."
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-slate-500"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring"
                 />
               </div>
 
@@ -136,7 +136,7 @@ function AutomotivePage() {
                     <button
                       key={opt}
                       onClick={() => setBodyTypeFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${bodyTypeFilter === opt ? "bg-slate-700 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${bodyTypeFilter === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Body Types" : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
@@ -151,7 +151,7 @@ function AutomotivePage() {
                     <button
                       key={opt}
                       onClick={() => setFuelTypeFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${fuelTypeFilter === opt ? "bg-slate-700 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${fuelTypeFilter === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Fuel Types" : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
@@ -178,14 +178,14 @@ function AutomotivePage() {
                     <a
                       key={item.id}
                       href={`${prefix}/automotive/${item.id}`}
-                      className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-slate-400 transition-all duration-200"
+                      className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-muted-foreground transition-all duration-200"
                     >
-                      <div className="aspect-[4/3] bg-gradient-to-br from-slate-100 to-gray-200 relative overflow-hidden">
+                      <div className="aspect-[4/3] bg-gradient-to-br from-ds-muted to-ds-muted/80 relative overflow-hidden">
                         {item.thumbnail ? (
                           <img loading="lazy" src={item.thumbnail} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
-                            <svg className="w-16 h-16 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg className="w-16 h-16 text-ds-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                             </svg>
                           </div>
@@ -199,7 +199,7 @@ function AutomotivePage() {
                         )}
                       </div>
                       <div className="p-4">
-                        <h3 className="font-semibold text-ds-foreground group-hover:text-slate-600 transition-colors line-clamp-1">
+                        <h3 className="font-semibold text-ds-foreground group-hover:text-ds-muted-foreground transition-colors line-clamp-1">
                           {item.year && item.make && item.model_name
                             ? `${item.year} ${item.make} ${item.model_name}`
                             : item.title}
@@ -231,10 +231,10 @@ function AutomotivePage() {
                         )}
 
                         <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
-                          <span className="font-bold text-slate-700 text-lg">
+                          <span className="font-bold text-ds-foreground text-lg">
                             {formatPrice(item.price, item.currency)}
                           </span>
-                          <span className="px-3 py-1.5 text-xs font-semibold text-white bg-slate-700 rounded-lg group-hover:bg-slate-800 transition-colors">View Details</span>
+                          <span className="px-3 py-1.5 text-xs font-semibold text-ds-primary-foreground bg-ds-primary rounded-lg group-hover:bg-ds-primary/80 transition-colors">View Details</span>
                         </div>
                       </div>
                     </a>
@@ -251,17 +251,17 @@ function AutomotivePage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">Why Choose Us</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-slate-700 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-ds-primary-foreground flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Wide Selection</h3>
               <p className="text-sm text-ds-muted-foreground">Browse thousands of vehicles from trusted dealers and private sellers.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-slate-700 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-ds-primary-foreground flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Verified Listings</h3>
               <p className="text-sm text-ds-muted-foreground">Every vehicle is inspected and verified for your peace of mind.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-slate-700 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-ds-primary-foreground flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Easy Financing</h3>
               <p className="text-sm text-ds-muted-foreground">Flexible financing options to make your dream car a reality.</p>
             </div>

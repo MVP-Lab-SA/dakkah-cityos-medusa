@@ -60,7 +60,7 @@ function B2BMarketplacePage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-slate-700 to-gray-900 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-primary to-ds-primary/80 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -93,7 +93,7 @@ function B2BMarketplacePage() {
                 <label className="block text-sm font-medium text-ds-foreground mb-2">Industry</label>
                 <div className="space-y-1">
                   {industryOptions.map((opt) => (
-                    <button key={opt} onClick={() => setIndustryFilter(opt)} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${industryFilter === opt ? "bg-slate-700 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}>
+                    <button key={opt} onClick={() => setIndustryFilter(opt)} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${industryFilter === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}>
                       {opt === "all" ? "All Industries" : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
                   ))}
@@ -114,22 +114,22 @@ function B2BMarketplacePage() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredItems.map((item: any) => (
-                  <div key={item.id} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-slate-400 transition-all duration-200">
-                    <div className="aspect-[4/3] bg-gradient-to-br from-slate-50 to-gray-100 relative overflow-hidden">
+                  <div key={item.id} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-muted-foreground transition-all duration-200">
+                    <div className="aspect-[4/3] bg-gradient-to-br from-ds-background to-ds-muted relative overflow-hidden">
                       {item.thumbnail ? (
                         <img loading="lazy" src={item.thumbnail} alt={item.company_name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center"><svg className="w-16 h-16 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21" /></svg></div>
+                        <div className="w-full h-full flex items-center justify-center"><svg className="w-16 h-16 text-ds-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21" /></svg></div>
                       )}
                       {item.industry && (
-                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-slate-700 text-white rounded-md capitalize">{item.industry}</span>
+                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-ds-primary text-ds-primary-foreground rounded-md capitalize">{item.industry}</span>
                       )}
                       {item.established && (
                         <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-ds-card/90 text-ds-foreground/80 rounded-md">Est. {item.established}</span>
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-ds-foreground group-hover:text-slate-600 transition-colors line-clamp-1">{item.company_name}</h3>
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-ds-muted-foreground transition-colors line-clamp-1">{item.company_name}</h3>
                       {item.description && (<p className="text-sm text-ds-muted-foreground mt-1 line-clamp-2">{item.description}</p>)}
 
                       <div className="space-y-2 mt-3 text-sm">
@@ -151,10 +151,10 @@ function B2BMarketplacePage() {
                         <div className="mt-3">
                           <div className="flex flex-wrap gap-1.5">
                             {item.products_services.slice(0, 3).map((svc: string) => (
-                              <span key={svc} className="px-2 py-0.5 bg-slate-100 text-slate-700 rounded text-xs font-medium">{svc}</span>
+                              <span key={svc} className="px-2 py-0.5 bg-ds-muted text-ds-foreground rounded text-xs font-medium">{svc}</span>
                             ))}
                             {item.products_services.length > 3 && (
-                              <span className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded text-xs">+{item.products_services.length - 3}</span>
+                              <span className="px-2 py-0.5 bg-ds-muted text-ds-muted-foreground rounded text-xs">+{item.products_services.length - 3}</span>
                             )}
                           </div>
                         </div>
@@ -162,7 +162,7 @@ function B2BMarketplacePage() {
 
                       <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
                         <span className="text-xs text-ds-muted-foreground">Verified partner</span>
-                        <span className="px-4 py-1.5 text-xs font-semibold text-white bg-slate-700 rounded-lg group-hover:bg-slate-800 transition-colors">Contact Supplier</span>
+                        <span className="px-4 py-1.5 text-xs font-semibold text-ds-primary-foreground bg-ds-primary rounded-lg group-hover:bg-ds-primary/80 transition-colors">Contact Supplier</span>
                       </div>
                     </div>
                   </div>
@@ -178,17 +178,17 @@ function B2BMarketplacePage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">Partner With Us</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-slate-700 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-ds-primary-foreground flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Browse Partners</h3>
               <p className="text-sm text-ds-muted-foreground">Explore verified companies across multiple industries.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-slate-700 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-ds-primary-foreground flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Connect Directly</h3>
               <p className="text-sm text-ds-muted-foreground">Reach out to suppliers and start business discussions.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-slate-700 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-ds-primary-foreground flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Grow Together</h3>
               <p className="text-sm text-ds-muted-foreground">Build lasting partnerships that drive mutual growth.</p>
             </div>

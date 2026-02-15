@@ -345,18 +345,14 @@ class UnifiedAPIClient {
   async getStores(tenantId?: string): Promise<StoreBranding[]> {
     // Try Medusa backend first
     try {
-      console.log('Fetching stores from:', `${this.medusaUrl}/store/stores`)
       const response = await fetch(`${this.medusaUrl}/store/stores`, {
         headers: {
           'x-publishable-api-key': this.publishableKey,
         },
       })
       
-      console.log('Stores API response status:', response.status)
-      
       if (response.ok) {
         const data = await response.json()
-        console.log('Stores data:', data)
         return data.stores || []
       } else {
         const errorText = await response.text()

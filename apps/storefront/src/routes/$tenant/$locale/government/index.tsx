@@ -75,7 +75,7 @@ function GovernmentPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-slate-600 to-gray-800 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-primary to-ds-primary/80 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -117,7 +117,7 @@ function GovernmentPage() {
                     <button
                       key={opt}
                       onClick={() => setDepartmentFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${departmentFilter === opt ? "bg-slate-700 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${departmentFilter === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Departments" : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
@@ -141,16 +141,16 @@ function GovernmentPage() {
                 {filteredItems.map((item: any) => (
                   <div
                     key={item.id}
-                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-slate-400 transition-all duration-200 p-6"
+                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-muted-foreground transition-all duration-200 p-6"
                   >
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0">
-                        <svg className="w-6 h-6 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <div className="w-12 h-12 rounded-xl bg-ds-muted flex items-center justify-center flex-shrink-0">
+                        <svg className="w-6 h-6 text-ds-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           {iconMap[item.icon] || iconMap.briefcase}
                         </svg>
                       </div>
                       <div>
-                        <h3 className="font-semibold text-ds-foreground group-hover:text-slate-600 transition-colors line-clamp-1">{item.name}</h3>
+                        <h3 className="font-semibold text-ds-foreground group-hover:text-ds-muted-foreground transition-colors line-clamp-1">{item.name}</h3>
                         <span className="text-xs text-ds-muted-foreground capitalize">{item.department} Department</span>
                       </div>
                     </div>
@@ -163,7 +163,7 @@ function GovernmentPage() {
                         <ul className="space-y-1">
                           {item.required_documents.slice(0, 3).map((doc: string, idx: number) => (
                             <li key={idx} className="text-xs text-ds-muted-foreground flex items-center gap-1.5">
-                              <svg className="w-3 h-3 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" /></svg>
+                              <svg className="w-3 h-3 text-ds-muted-foreground flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" /></svg>
                               {doc}
                             </li>
                           ))}
@@ -186,12 +186,12 @@ function GovernmentPage() {
                       )}
                       <div className="flex justify-between">
                         <span className="text-ds-muted-foreground">Fee</span>
-                        <span className="font-bold text-slate-700">{formatFee(item.fee)}</span>
+                        <span className="font-bold text-ds-foreground">{formatFee(item.fee)}</span>
                       </div>
                     </div>
 
                     <div className="pt-3 border-t border-ds-border">
-                      <span className="inline-flex items-center gap-1 px-4 py-2 text-sm font-semibold text-white bg-slate-700 rounded-lg group-hover:bg-slate-800 transition-colors w-full justify-center">
+                      <span className="inline-flex items-center gap-1 px-4 py-2 text-sm font-semibold text-ds-primary-foreground bg-ds-primary rounded-lg group-hover:bg-ds-primary/80 transition-colors w-full justify-center">
                         Apply Now
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                       </span>
@@ -209,17 +209,17 @@ function GovernmentPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">Application Process</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-slate-700 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-ds-primary-foreground flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Submit Application</h3>
               <p className="text-sm text-ds-muted-foreground">Fill out the form and upload required documents online.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-slate-700 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-ds-primary-foreground flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Review & Processing</h3>
               <p className="text-sm text-ds-muted-foreground">Your application is reviewed by the relevant department.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-slate-700 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-ds-primary-foreground flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Receive Approval</h3>
               <p className="text-sm text-ds-muted-foreground">Get your permit or license delivered digitally.</p>
             </div>

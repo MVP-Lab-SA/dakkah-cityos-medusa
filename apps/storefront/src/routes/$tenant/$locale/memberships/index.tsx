@@ -49,7 +49,7 @@ const tierOptions = ["all", "bronze", "silver", "gold", "platinum"] as const
 
 const tierColors: Record<string, string> = {
   bronze: "from-ds-warning to-ds-warning/90",
-  silver: "from-gray-400 to-gray-500",
+  silver: "from-ds-muted-foreground to-ds-muted-foreground/80",
   gold: "from-ds-warning to-ds-warning",
   platinum: "from-ds-primary to-ds-primary",
 }
