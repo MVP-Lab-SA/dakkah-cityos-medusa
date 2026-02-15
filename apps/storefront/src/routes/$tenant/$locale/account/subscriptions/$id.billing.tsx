@@ -6,8 +6,26 @@ import { ArrowLeft, Spinner } from "@medusajs/icons"
 import { useSubscription } from "@/lib/hooks/use-subscriptions"
 import { useQuery, useMutation } from "@tanstack/react-query"
 import { sdk } from "@/lib/utils/sdk"
+import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 
 export const Route = createFileRoute("/$tenant/$locale/account/subscriptions/$id/billing")({
+  loader: async ({ params }) => {
+    try {
+      const baseUrl = getServerBaseUrl()
+      const resp = await fetchWithTimeout(`${baseUrl}/store/subscriptions/${params.id}`, {
+        headers: { "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445" },
+      })
+      if (!resp.ok) return { item: null }
+      const data = await resp.json()
+      return { item: data.subscription || data }
+    } catch { return { item: null } }
+  },
+  head: () => ({
+    meta: [
+      { title: "Billing & Payments" },
+      { name: "description", content: "Manage your subscription billing and payment methods" },
+    ],
+  }),
   component: BillingPage,
 })
 
