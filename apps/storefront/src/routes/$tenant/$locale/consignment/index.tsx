@@ -34,12 +34,12 @@ function ConsignmentPage() {
     searchQuery ? b.title.toLowerCase().includes(searchQuery.toLowerCase()) || b.description.toLowerCase().includes(searchQuery.toLowerCase()) : true
   )
 
-  const colorMap: Record<string, string> = { emerald: "from-emerald-500 to-emerald-600", teal: "from-teal-500 to-teal-600", amber: "from-amber-500 to-amber-600" }
-  const btnMap: Record<string, string> = { emerald: "bg-emerald-600 hover:bg-emerald-700", teal: "bg-teal-600 hover:bg-teal-700", amber: "bg-amber-600 hover:bg-amber-700" }
+  const colorMap: Record<string, string> = { emerald: "from-ds-success to-ds-success", teal: "from-ds-success to-ds-success", amber: "from-ds-warning to-ds-warning" }
+  const btnMap: Record<string, string> = { emerald: "bg-ds-success hover:bg-ds-success/90", teal: "bg-ds-success hover:bg-ds-success/90", amber: "bg-ds-warning hover:bg-ds-warning/90" }
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-success to-ds-success text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -56,7 +56,7 @@ function ConsignmentPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
-          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search benefits..." className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search benefits..." className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-success" />
         </div>
 
         <h2 className="text-2xl font-bold text-ds-foreground mb-6">Why Consign With Us</h2>
@@ -69,7 +69,7 @@ function ConsignmentPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             {filteredBenefits.map((b: any, i: number) => (
-              <div key={i} className="bg-ds-background border border-ds-border rounded-xl p-6 hover:shadow-lg hover:border-emerald-300 transition-all duration-200">
+              <div key={i} className="bg-ds-background border border-ds-border rounded-xl p-6 hover:shadow-lg hover:border-ds-success/40 transition-all duration-200">
                 <div className="text-3xl mb-3">{b.icon}</div>
                 <h3 className="font-semibold text-ds-foreground mb-2">{b.title}</h3>
                 <p className="text-sm text-ds-muted-foreground">{b.description}</p>
@@ -81,14 +81,14 @@ function ConsignmentPage() {
         <h2 className="text-2xl font-bold text-ds-foreground mb-6">Commission Tiers</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {tiers.map((tier: any) => (
-            <div key={tier.id} className={`relative bg-ds-background border ${tier.popular ? "border-teal-500 ring-2 ring-teal-500/20" : "border-ds-border"} rounded-xl p-6 hover:shadow-lg transition-all duration-200`}>
-              {tier.popular && <span className="absolute -top-3 left-6 px-3 py-1 text-xs font-bold bg-teal-600 text-white rounded-full">Most Popular</span>}
+            <div key={tier.id} className={`relative bg-ds-background border ${tier.popular ? "border-ds-success ring-2 ring-ds-success/20" : "border-ds-border"} rounded-xl p-6 hover:shadow-lg transition-all duration-200`}>
+              {tier.popular && <span className="absolute -top-3 left-6 px-3 py-1 text-xs font-bold bg-ds-success text-white rounded-full">Most Popular</span>}
               <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${colorMap[tier.color]} flex items-center justify-center mb-4`}>
                 <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
               </div>
               <h3 className="text-xl font-bold text-ds-foreground mb-1">{tier.name}</h3>
               <div className="flex items-baseline gap-1 mb-2">
-                <span className="text-3xl font-bold text-emerald-600">{tier.commission}</span>
+                <span className="text-3xl font-bold text-ds-success">{tier.commission}</span>
                 <span className="text-sm text-ds-muted-foreground">split</span>
               </div>
               <p className="text-sm text-ds-muted-foreground mb-2">Min. value: {tier.minValue}</p>
@@ -96,7 +96,7 @@ function ConsignmentPage() {
               <ul className="space-y-2 mb-6">
                 {tier.features.map((f: string, i: number) => (
                   <li key={i} className="flex items-center gap-2 text-sm text-ds-foreground">
-                    <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                    <svg className="w-4 h-4 text-ds-success flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                     {f}
                   </li>
                 ))}
@@ -113,7 +113,7 @@ function ConsignmentPage() {
           <div className="grid md:grid-cols-4 gap-8">
             {[{ step: "1", title: "Submit Items", desc: "Bring or ship your items to our facility for evaluation." }, { step: "2", title: "We Evaluate", desc: "Our experts assess, authenticate, and price your items." }, { step: "3", title: "We Sell", desc: "Items are photographed and listed on our marketplace." }, { step: "4", title: "You Earn", desc: "Receive your earnings within 3 days of a completed sale." }].map((s) => (
               <div key={s.step} className="text-center">
-                <div className="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">{s.step}</div>
+                <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">{s.step}</div>
                 <h3 className="font-semibold text-ds-foreground mb-2">{s.title}</h3>
                 <p className="text-sm text-ds-muted-foreground">{s.desc}</p>
               </div>

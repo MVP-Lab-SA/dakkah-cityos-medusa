@@ -22,10 +22,10 @@ function getPerformanceBadge(metrics: PerformanceMetrics): {
     metrics.fulfillmentRate * 0.3 +
     (100 - metrics.returnRate) * 0.2;
 
-  if (score >= 115) return { label: "Excellent", color: "bg-green-100 text-green-800" };
-  if (score >= 100) return { label: "Good", color: "bg-blue-100 text-blue-800" };
-  if (score >= 80) return { label: "Fair", color: "bg-yellow-100 text-yellow-800" };
-  return { label: "Needs Improvement", color: "bg-red-100 text-red-800" };
+  if (score >= 115) return { label: "Excellent", color: "bg-ds-success/15 text-ds-success" };
+  if (score >= 100) return { label: "Good", color: "bg-ds-info/15 text-ds-info" };
+  if (score >= 80) return { label: "Fair", color: "bg-ds-warning/15 text-ds-warning" };
+  return { label: "Needs Improvement", color: "bg-ds-destructive/15 text-ds-destructive" };
 }
 
 function VendorPerformanceCard({ vendorId, locale }: VendorPerformanceCardProps) {

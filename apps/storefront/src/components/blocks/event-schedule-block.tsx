@@ -52,10 +52,10 @@ const defaultDays: EventDay[] = [
 
 const trackColors: Record<string, string> = {
   General: 'bg-ds-muted text-ds-muted-foreground',
-  Engineering: 'bg-blue-100 text-blue-800',
-  Design: 'bg-purple-100 text-purple-800',
-  AI: 'bg-green-100 text-green-800',
-  Product: 'bg-orange-100 text-orange-800',
+  Engineering: 'bg-ds-info/15 text-ds-info',
+  Design: 'bg-ds-primary/15 text-ds-primary',
+  AI: 'bg-ds-success/15 text-ds-success',
+  Product: 'bg-ds-warning/15 text-ds-warning',
 }
 
 export const EventScheduleBlock: React.FC<EventScheduleBlockProps> = ({

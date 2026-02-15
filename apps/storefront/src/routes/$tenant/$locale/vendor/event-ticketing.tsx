@@ -44,11 +44,11 @@ function VendorEventTicketingRoute() {
   const items = data?.items || []
 
   const statusColors: Record<string, string> = {
-    active: "bg-green-100 text-green-800",
+    active: "bg-ds-success/15 text-ds-success",
     draft: "bg-ds-muted text-ds-foreground",
-    sold_out: "bg-red-100 text-red-800",
-    expired: "bg-orange-100 text-orange-800",
-    cancelled: "bg-red-100 text-red-600",
+    sold_out: "bg-ds-destructive/15 text-ds-destructive",
+    expired: "bg-ds-warning/15 text-ds-warning",
+    cancelled: "bg-ds-destructive/15 text-ds-destructive",
   }
 
   const ticketTypeLabels: Record<string, string> = {
@@ -105,15 +105,15 @@ function VendorEventTicketingRoute() {
         </div>
         <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Total Sold</p>
-          <p className="text-2xl font-bold text-green-600">{totalSold}</p>
+          <p className="text-2xl font-bold text-ds-success">{totalSold}</p>
         </div>
         <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Revenue</p>
-          <p className="text-2xl font-bold text-green-600">{formatCurrency(totalRevenue, "USD")}</p>
+          <p className="text-2xl font-bold text-ds-success">{formatCurrency(totalRevenue, "USD")}</p>
         </div>
         <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Active</p>
-          <p className="text-2xl font-bold text-blue-600">{items.filter((t) => t.status === "active").length}</p>
+          <p className="text-2xl font-bold text-ds-primary">{items.filter((t) => t.status === "active").length}</p>
         </div>
       </div>
 
@@ -133,7 +133,7 @@ function VendorEventTicketingRoute() {
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[ticket.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {ticket.status?.replace(/_/g, " ")}
                     </span>
-                    <span className="text-xs bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded">
+                    <span className="text-xs bg-ds-primary/15 text-ds-primary px-2 py-0.5 rounded">
                       {ticketTypeLabels[ticket.ticket_type] || ticket.ticket_type}
                     </span>
                   </div>
@@ -147,7 +147,7 @@ function VendorEventTicketingRoute() {
                   </div>
                   <div className="mt-3">
                     <div className="w-full bg-ds-muted rounded-full h-2">
-                      <div className="bg-green-500 h-2 rounded-full" style={{ width: `${ticket.quantity_available > 0 ? Math.min(((ticket.quantity_sold || 0) / ticket.quantity_available) * 100, 100) : 0}%` }} />
+                      <div className="bg-ds-success h-2 rounded-full" style={{ width: `${ticket.quantity_available > 0 ? Math.min(((ticket.quantity_sold || 0) / ticket.quantity_available) * 100, 100) : 0}%` }} />
                     </div>
                   </div>
                 </div>

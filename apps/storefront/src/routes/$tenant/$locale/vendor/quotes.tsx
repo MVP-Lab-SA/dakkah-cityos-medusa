@@ -43,11 +43,11 @@ function VendorQuotesRoute() {
 
   const statusColors: Record<string, string> = {
     draft: "bg-ds-muted text-ds-foreground",
-    sent: "bg-blue-100 text-blue-800",
-    accepted: "bg-green-100 text-green-800",
-    rejected: "bg-red-100 text-red-800",
-    expired: "bg-orange-100 text-orange-800",
-    converted: "bg-purple-100 text-purple-800",
+    sent: "bg-ds-info/15 text-ds-info",
+    accepted: "bg-ds-success/15 text-ds-success",
+    rejected: "bg-ds-destructive/15 text-ds-destructive",
+    expired: "bg-ds-warning/15 text-ds-warning",
+    converted: "bg-ds-primary/15 text-ds-primary",
   }
 
   function formatCurrency(amount: number, currency: string) {
@@ -96,15 +96,15 @@ function VendorQuotesRoute() {
         </div>
         <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Accepted</p>
-          <p className="text-2xl font-bold text-green-600">{items.filter((q) => q.status === "accepted").length}</p>
+          <p className="text-2xl font-bold text-ds-success">{items.filter((q) => q.status === "accepted").length}</p>
         </div>
         <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Pending</p>
-          <p className="text-2xl font-bold text-blue-600">{items.filter((q) => q.status === "sent").length}</p>
+          <p className="text-2xl font-bold text-ds-primary">{items.filter((q) => q.status === "sent").length}</p>
         </div>
         <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Conversion Rate</p>
-          <p className="text-2xl font-bold text-purple-600">
+          <p className="text-2xl font-bold text-ds-primary">
             {items.length > 0 ? Math.round((items.filter((q) => ["accepted", "converted"].includes(q.status)).length / items.length) * 100) : 0}%
           </p>
         </div>

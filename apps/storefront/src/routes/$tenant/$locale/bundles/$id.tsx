@@ -84,14 +84,14 @@ function BundleDetailPage() {
               {bundle.thumbnail || bundle.image ? (
                 <img src={bundle.thumbnail || bundle.image} alt={bundle.title || bundle.name} className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-100">
-                  <svg className="w-16 h-16 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-ds-primary/10 to-ds-primary/15">
+                  <svg className="w-16 h-16 text-ds-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                   </svg>
                 </div>
               )}
               {savingsAmount > 0 && (
-                <span className="absolute top-4 start-4 px-3 py-1 text-xs font-semibold rounded-full bg-red-600 text-white">
+                <span className="absolute top-4 start-4 px-3 py-1 text-xs font-semibold rounded-full bg-ds-destructive text-white">
                   Save ${Number(savingsAmount || 0).toLocaleString()}
                 </span>
               )}
@@ -107,7 +107,7 @@ function BundleDetailPage() {
                   <span className="text-lg text-ds-muted-foreground line-through">${Number(totalValue || 0).toLocaleString()}</span>
                 )}
                 {Number(savingsPercent) > 0 && (
-                  <span className="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">{savingsPercent}% off</span>
+                  <span className="px-3 py-1 text-xs font-medium rounded-full bg-ds-success/15 text-ds-success">{savingsPercent}% off</span>
                 )}
               </div>
             </div>

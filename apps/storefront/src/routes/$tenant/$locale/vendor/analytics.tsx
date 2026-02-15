@@ -92,10 +92,10 @@ function VendorAnalyticsRoute() {
   const orderTrends = data?.order_trends || []
 
   const statusColors: Record<string, string> = {
-    completed: "bg-green-100 text-green-800",
-    pending: "bg-yellow-100 text-yellow-800",
-    processing: "bg-blue-100 text-blue-800",
-    cancelled: "bg-red-100 text-red-800",
+    completed: "bg-ds-success/15 text-ds-success",
+    pending: "bg-ds-warning/15 text-ds-warning",
+    processing: "bg-ds-info/15 text-ds-info",
+    cancelled: "bg-ds-destructive/15 text-ds-destructive",
     refunded: "bg-ds-muted text-ds-foreground",
   }
 

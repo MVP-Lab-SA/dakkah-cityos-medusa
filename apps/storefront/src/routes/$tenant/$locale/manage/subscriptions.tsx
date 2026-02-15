@@ -126,9 +126,9 @@ function ManageSubscriptionsPage() {
         <StatusBadge
           status={val as string}
           variants={{
-            active: "bg-green-600",
-            paused: "bg-amber-500",
-            cancelled: "bg-red-600",
+            active: "bg-ds-success",
+            paused: "bg-ds-warning",
+            cancelled: "bg-ds-destructive",
             expired: "bg-ds-muted-foreground/70",
           }}
         />

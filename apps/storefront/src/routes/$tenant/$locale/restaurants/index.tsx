@@ -68,7 +68,7 @@ function RestaurantsPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-orange-500 to-red-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-warning to-ds-destructive text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -100,7 +100,7 @@ function RestaurantsPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search restaurants..."
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-orange-400"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-warning"
                 />
               </div>
 
@@ -111,7 +111,7 @@ function RestaurantsPage() {
                     <button
                       key={opt}
                       onClick={() => setCuisineFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${cuisineFilter === opt ? "bg-orange-500 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${cuisineFilter === opt ? "bg-ds-warning text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Cuisines" : opt.split("_").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
                     </button>
@@ -126,7 +126,7 @@ function RestaurantsPage() {
                     <button
                       key={opt}
                       onClick={() => setPriceFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${priceFilter === opt ? "bg-orange-500 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${priceFilter === opt ? "bg-ds-warning text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "Any Price" : opt}
                     </button>
@@ -151,20 +151,20 @@ function RestaurantsPage() {
                   <a
                     key={item.id}
                     href={`${prefix}/restaurants/${item.id}`}
-                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-orange-300 transition-all duration-200"
+                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-warning/40 transition-all duration-200"
                   >
-                    <div className="aspect-[4/3] bg-gradient-to-br from-orange-50 to-red-100 relative overflow-hidden">
+                    <div className="aspect-[4/3] bg-gradient-to-br from-ds-warning/10 to-ds-destructive/15 relative overflow-hidden">
                       {item.thumbnail ? (
                         <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <svg className="w-16 h-16 text-orange-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="w-16 h-16 text-ds-warning/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1" />
                           </svg>
                         </div>
                       )}
                       {item.cuisine_type && (
-                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-orange-500 text-white rounded-md capitalize">
+                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-ds-warning text-white rounded-md capitalize">
                           {String(item.cuisine_type).split("_").join(" ")}
                         </span>
                       )}
@@ -181,7 +181,7 @@ function RestaurantsPage() {
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-ds-foreground group-hover:text-orange-600 transition-colors line-clamp-1">{item.name}</h3>
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-ds-warning transition-colors line-clamp-1">{item.name}</h3>
                       {item.description && (
                         <p className="text-sm text-ds-muted-foreground mt-1.5 line-clamp-2">{item.description}</p>
                       )}
@@ -190,7 +190,7 @@ function RestaurantsPage() {
                         <div className="flex items-center gap-1.5 mt-2">
                           <div className="flex items-center">
                             {[1, 2, 3, 4, 5].map((star) => (
-                              <svg key={star} className={`w-3.5 h-3.5 ${star <= Math.round(item.rating) ? "text-amber-400" : "text-ds-border"}`} fill="currentColor" viewBox="0 0 20 20">
+                              <svg key={star} className={`w-3.5 h-3.5 ${star <= Math.round(item.rating) ? "text-ds-warning" : "text-ds-border"}`} fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                               </svg>
                             ))}
@@ -208,13 +208,13 @@ function RestaurantsPage() {
 
                       <div className="flex items-center gap-2 mt-2 text-xs text-ds-muted-foreground">
                         {item.delivery_available && (
-                          <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-md font-medium">Delivery</span>
+                          <span className="px-2 py-0.5 bg-ds-success/15 text-ds-success rounded-md font-medium">Delivery</span>
                         )}
                         {item.pickup_available && (
-                          <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-md font-medium">Pickup</span>
+                          <span className="px-2 py-0.5 bg-ds-info/15 text-ds-info rounded-md font-medium">Pickup</span>
                         )}
                         {item.dine_in_available && (
-                          <span className="px-2 py-0.5 bg-purple-100 text-purple-700 rounded-md font-medium">Dine-in</span>
+                          <span className="px-2 py-0.5 bg-ds-primary/15 text-ds-primary rounded-md font-medium">Dine-in</span>
                         )}
                       </div>
 
@@ -222,7 +222,7 @@ function RestaurantsPage() {
                         {item.phone && (
                           <span className="text-xs text-ds-muted-foreground">{item.phone}</span>
                         )}
-                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-orange-500 rounded-lg group-hover:bg-orange-600 transition-colors ml-auto">View Menu</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-warning rounded-lg group-hover:bg-ds-warning transition-colors ml-auto">View Menu</span>
                       </div>
                     </div>
                   </a>
@@ -238,17 +238,17 @@ function RestaurantsPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-orange-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-warning text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Browse Restaurants</h3>
               <p className="text-sm text-ds-muted-foreground">Explore restaurants by cuisine, price range, or location to find your perfect meal.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-orange-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-warning text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">View Menu & Reviews</h3>
               <p className="text-sm text-ds-muted-foreground">Check the menu, read reviews from other diners, and see photos of the dishes.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-orange-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-warning text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Order or Reserve</h3>
               <p className="text-sm text-ds-muted-foreground">Place your order for delivery or pickup, or reserve a table for dine-in.</p>
             </div>

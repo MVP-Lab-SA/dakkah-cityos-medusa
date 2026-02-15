@@ -326,7 +326,7 @@ export function VendorRegistrationForm() {
   const getFieldClass = (field: keyof FieldErrors) => {
     const base = "w-full px-3 py-2 border rounded-md";
     if (touched[field] && errors[field]) {
-      return `${base} border-ds-destructive focus:ring-red-500`;
+      return `${base} border-ds-destructive focus:ring-ds-destructive`;
     }
     return base;
   };

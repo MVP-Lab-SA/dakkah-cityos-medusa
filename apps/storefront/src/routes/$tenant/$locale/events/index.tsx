@@ -90,7 +90,7 @@ function EventsPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-teal-600 to-cyan-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-success to-ds-info text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -122,7 +122,7 @@ function EventsPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search events..."
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-success"
                 />
               </div>
 
@@ -133,7 +133,7 @@ function EventsPage() {
                     <button
                       key={opt}
                       onClick={() => setTypeFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${typeFilter === opt ? "bg-teal-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${typeFilter === opt ? "bg-ds-success text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Types" : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
@@ -158,24 +158,24 @@ function EventsPage() {
                   <a
                     key={item.id}
                     href={`${prefix}/events/${item.id}`}
-                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-teal-300 transition-all duration-200"
+                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-success/40 transition-all duration-200"
                   >
-                    <div className="aspect-[4/3] bg-gradient-to-br from-teal-50 to-cyan-100 relative overflow-hidden">
+                    <div className="aspect-[4/3] bg-gradient-to-br from-ds-success/10 to-ds-info/15 relative overflow-hidden">
                       {item.thumbnail ? (
                         <img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <svg className="w-16 h-16 text-teal-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="w-16 h-16 text-ds-success/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                           </svg>
                         </div>
                       )}
                       {item.event_type && (
-                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-teal-600 text-white rounded-md capitalize">{item.event_type}</span>
+                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-ds-success text-white rounded-md capitalize">{item.event_type}</span>
                       )}
                       {item.starts_at && (
                         <div className="absolute bottom-2 left-2 bg-ds-card/95 rounded-lg px-2 py-1 text-center shadow-sm">
-                          <div className="text-xs font-bold text-teal-600 uppercase">{new Date(item.starts_at).toLocaleDateString("en-US", { month: "short" })}</div>
+                          <div className="text-xs font-bold text-ds-success uppercase">{new Date(item.starts_at).toLocaleDateString("en-US", { month: "short" })}</div>
                           <div className="text-lg font-bold text-ds-foreground leading-tight">{new Date(item.starts_at).getDate()}</div>
                         </div>
                       )}
@@ -187,7 +187,7 @@ function EventsPage() {
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-ds-foreground group-hover:text-teal-600 transition-colors line-clamp-1">{item.title}</h3>
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-ds-success transition-colors line-clamp-1">{item.title}</h3>
                       {item.organizer && (
                         <p className="text-xs text-ds-muted-foreground mt-0.5">by {item.organizer}</p>
                       )}
@@ -212,10 +212,10 @@ function EventsPage() {
                       )}
 
                       <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
-                        <span className="font-bold text-teal-600 text-lg">
+                        <span className="font-bold text-ds-success text-lg">
                           {formatPrice(item.price, item.currency)}
                         </span>
-                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-teal-600 rounded-lg group-hover:bg-teal-700 transition-colors">Get Tickets</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-success rounded-lg group-hover:bg-ds-success/90 transition-colors">Get Tickets</span>
                       </div>
                     </div>
                   </a>
@@ -231,17 +231,17 @@ function EventsPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-teal-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Discover Events</h3>
               <p className="text-sm text-ds-muted-foreground">Browse events by type, date, or location to find experiences that excite you.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-teal-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Get Your Tickets</h3>
               <p className="text-sm text-ds-muted-foreground">Select your seats, choose ticket types, and complete your purchase securely.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-teal-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Enjoy the Experience</h3>
               <p className="text-sm text-ds-muted-foreground">Receive your digital tickets and enjoy an unforgettable experience.</p>
             </div>

@@ -60,12 +60,12 @@ function VendorRealEstateRoute() {
   const items = data?.items || []
 
   const statusColors: Record<string, string> = {
-    active: "bg-green-100 text-green-800",
+    active: "bg-ds-success/15 text-ds-success",
     draft: "bg-ds-muted text-ds-foreground",
-    under_offer: "bg-yellow-100 text-yellow-800",
-    sold: "bg-purple-100 text-purple-800",
-    rented: "bg-blue-100 text-blue-800",
-    expired: "bg-red-100 text-red-800",
+    under_offer: "bg-ds-warning/15 text-ds-warning",
+    sold: "bg-ds-primary/15 text-ds-primary",
+    rented: "bg-ds-info/15 text-ds-info",
+    expired: "bg-ds-destructive/15 text-ds-destructive",
     withdrawn: "bg-ds-muted text-ds-muted-foreground",
   }
 
@@ -88,7 +88,7 @@ function VendorRealEstateRoute() {
     <div className="container mx-auto py-12">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold">Property Listings</h1>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+        <button className="px-4 py-2 bg-ds-primary text-white rounded-lg hover:bg-ds-primary/90 transition">
           + List Property
         </button>
       </div>
@@ -99,7 +99,7 @@ function VendorRealEstateRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
+              statusFilter === s ? "bg-ds-primary text-white border-ds-primary" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {(s || "All").replace("_", " ")}
@@ -126,7 +126,7 @@ function VendorRealEstateRoute() {
                     <span className="px-2 py-0.5 text-xs rounded-full bg-ds-muted text-ds-muted-foreground">
                       {property.property_type}
                     </span>
-                    <span className="px-2 py-0.5 text-xs rounded-full bg-blue-50 text-blue-700">
+                    <span className="px-2 py-0.5 text-xs rounded-full bg-ds-info/10 text-ds-info">
                       For {property.listing_type}
                     </span>
                   </div>
@@ -150,14 +150,14 @@ function VendorRealEstateRoute() {
                       <span>{property.viewing_count} viewings</span>
                     )}
                     {property.offer_count != null && (
-                      <span className="font-medium text-orange-600">{property.offer_count} offers</span>
+                      <span className="font-medium text-ds-warning">{property.offer_count} offers</span>
                     )}
                     {property.virtual_tour_url && (
-                      <span className="text-blue-600">Virtual tour available</span>
+                      <span className="text-ds-primary">Virtual tour available</span>
                     )}
                   </div>
                 </div>
-                <button className="text-sm text-blue-600 hover:underline ml-4">
+                <button className="text-sm text-ds-primary hover:underline ml-4">
                   View Offers
                 </button>
               </div>

@@ -54,7 +54,7 @@ function NewsletterPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-primary to-ds-primary text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -96,7 +96,7 @@ function NewsletterPage() {
                     <button
                       key={opt}
                       onClick={() => setTopicFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${topicFilter === opt ? "bg-blue-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${topicFilter === opt ? "bg-ds-primary text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Topics" : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
@@ -120,20 +120,20 @@ function NewsletterPage() {
                 {filteredItems.map((item: any) => (
                   <div
                     key={item.id}
-                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-blue-300 transition-all duration-200"
+                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-primary/40 transition-all duration-200"
                   >
-                    <div className="aspect-[4/3] bg-gradient-to-br from-blue-50 to-indigo-50 relative overflow-hidden">
+                    <div className="aspect-[4/3] bg-gradient-to-br from-ds-primary/10 to-ds-primary/10 relative overflow-hidden">
                       {item.thumbnail ? (
                         <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <svg className="w-16 h-16 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="w-16 h-16 text-ds-primary/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75" />
                           </svg>
                         </div>
                       )}
                       {item.topic && (
-                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-blue-600 text-white rounded-md capitalize">{item.topic}</span>
+                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-ds-primary text-white rounded-md capitalize">{item.topic}</span>
                       )}
                       {item.edition_date && (
                         <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-ds-card/90 text-ds-foreground/80 rounded-md">
@@ -142,7 +142,7 @@ function NewsletterPage() {
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-ds-foreground group-hover:text-blue-600 transition-colors line-clamp-1">{item.name}</h3>
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-ds-primary transition-colors line-clamp-1">{item.name}</h3>
                       {item.description && (
                         <p className="text-sm text-ds-muted-foreground mt-1 line-clamp-2">{item.description}</p>
                       )}
@@ -152,7 +152,7 @@ function NewsletterPage() {
                           <p className="text-xs text-ds-muted-foreground mb-1.5">Topics covered:</p>
                           <div className="flex flex-wrap gap-1.5">
                             {item.topics_covered.map((topic: string) => (
-                              <span key={topic} className="px-2 py-0.5 bg-blue-50 text-blue-700 rounded text-xs font-medium">{topic}</span>
+                              <span key={topic} className="px-2 py-0.5 bg-ds-info/10 text-ds-info rounded text-xs font-medium">{topic}</span>
                             ))}
                           </div>
                         </div>
@@ -162,7 +162,7 @@ function NewsletterPage() {
                         <span className="text-xs text-ds-muted-foreground">
                           {item.edition_date ? new Date(item.edition_date).toLocaleDateString() : "Recent edition"}
                         </span>
-                        <span className="px-4 py-1.5 text-xs font-semibold text-white bg-blue-600 rounded-lg group-hover:bg-blue-700 transition-colors">Read Newsletter</span>
+                        <span className="px-4 py-1.5 text-xs font-semibold text-white bg-ds-primary rounded-lg group-hover:bg-ds-primary/90 transition-colors">Read Newsletter</span>
                       </div>
                     </div>
                   </div>
@@ -178,17 +178,17 @@ function NewsletterPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">Stay Connected</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Browse Topics</h3>
               <p className="text-sm text-ds-muted-foreground">Find newsletters that match your interests.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Read & Learn</h3>
               <p className="text-sm text-ds-muted-foreground">Access curated content from industry experts.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Subscribe</h3>
               <p className="text-sm text-ds-muted-foreground">Get weekly updates delivered to your inbox.</p>
             </div>

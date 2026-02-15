@@ -18,7 +18,7 @@ const STATUS_FILTERS = ["all", "pending", "approved", "rejected"] as const
 function renderStars(rating: number) {
   const stars = Math.min(Math.max(Math.round(rating), 0), 5)
   return (
-    <span className="text-amber-500" title={`${rating}/5`}>
+    <span className="text-ds-warning" title={`${rating}/5`}>
       {"★".repeat(stars)}
       {"☆".repeat(5 - stars)}
     </span>
@@ -128,9 +128,9 @@ function ManageReviewsPage() {
         <StatusBadge
           status={val as string}
           variants={{
-            pending: "bg-amber-500",
-            approved: "bg-green-600",
-            rejected: "bg-red-600",
+            pending: "bg-ds-warning",
+            approved: "bg-ds-success",
+            rejected: "bg-ds-destructive",
           }}
         />
       ),

@@ -87,7 +87,7 @@ function VendorDigitalProductsRoute() {
     <div className="container mx-auto py-12">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold">Digital Products</h1>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+        <button className="px-4 py-2 bg-ds-primary text-white rounded-lg hover:bg-ds-primary/90 transition">
           + Upload Product
         </button>
       </div>
@@ -108,7 +108,7 @@ function VendorDigitalProductsRoute() {
                     <div className="flex items-center gap-3 mb-1">
                       <h3 className="text-lg font-semibold">{product.title}</h3>
                       <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${
-                        product.is_active !== false ? "bg-green-100 text-green-800" : "bg-ds-muted text-ds-foreground"
+                        product.is_active !== false ? "bg-ds-success/15 text-ds-success" : "bg-ds-muted text-ds-foreground"
                       }`}>
                         {product.is_active !== false ? "Active" : "Inactive"}
                       </span>
@@ -125,13 +125,13 @@ function VendorDigitalProductsRoute() {
                       )}
                     </div>
                     {product.revenue != null && (
-                      <p className="text-sm font-medium text-green-700 mt-2">
+                      <p className="text-sm font-medium text-ds-success mt-2">
                         Revenue: {product.currency_code?.toUpperCase() || "USD"} {(product.revenue / 100).toFixed(2)}
                       </p>
                     )}
                   </div>
                 </div>
-                <button className="text-sm text-blue-600 hover:underline ml-4">
+                <button className="text-sm text-ds-primary hover:underline ml-4">
                   View Analytics
                 </button>
               </div>

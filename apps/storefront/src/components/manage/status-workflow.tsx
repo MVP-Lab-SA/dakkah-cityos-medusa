@@ -24,22 +24,22 @@ interface StatusWorkflowProps {
 }
 
 const statusColorMap: Record<string, { bg: string; text: string; dot: string }> = {
-  pending: { bg: 'bg-amber-50', text: 'text-amber-700', dot: 'bg-amber-500' },
-  processing: { bg: 'bg-amber-50', text: 'text-amber-700', dot: 'bg-amber-500' },
-  in_progress: { bg: 'bg-amber-50', text: 'text-amber-700', dot: 'bg-amber-500' },
-  review: { bg: 'bg-blue-50', text: 'text-blue-700', dot: 'bg-blue-500' },
-  active: { bg: 'bg-emerald-50', text: 'text-emerald-700', dot: 'bg-emerald-500' },
-  approved: { bg: 'bg-emerald-50', text: 'text-emerald-700', dot: 'bg-emerald-500' },
-  confirmed: { bg: 'bg-emerald-50', text: 'text-emerald-700', dot: 'bg-emerald-500' },
-  completed: { bg: 'bg-emerald-50', text: 'text-emerald-700', dot: 'bg-emerald-500' },
-  delivered: { bg: 'bg-emerald-50', text: 'text-emerald-700', dot: 'bg-emerald-500' },
-  published: { bg: 'bg-emerald-50', text: 'text-emerald-700', dot: 'bg-emerald-500' },
-  shipped: { bg: 'bg-violet-50', text: 'text-violet-700', dot: 'bg-violet-500' },
+  pending: { bg: 'bg-ds-warning/15', text: 'text-ds-warning', dot: 'bg-ds-warning' },
+  processing: { bg: 'bg-ds-warning/15', text: 'text-ds-warning', dot: 'bg-ds-warning' },
+  in_progress: { bg: 'bg-ds-warning/15', text: 'text-ds-warning', dot: 'bg-ds-warning' },
+  review: { bg: 'bg-ds-info/15', text: 'text-ds-info', dot: 'bg-ds-info' },
+  active: { bg: 'bg-ds-success/15', text: 'text-ds-success', dot: 'bg-ds-success' },
+  approved: { bg: 'bg-ds-success/15', text: 'text-ds-success', dot: 'bg-ds-success' },
+  confirmed: { bg: 'bg-ds-success/15', text: 'text-ds-success', dot: 'bg-ds-success' },
+  completed: { bg: 'bg-ds-success/15', text: 'text-ds-success', dot: 'bg-ds-success' },
+  delivered: { bg: 'bg-ds-success/15', text: 'text-ds-success', dot: 'bg-ds-success' },
+  published: { bg: 'bg-ds-success/15', text: 'text-ds-success', dot: 'bg-ds-success' },
+  shipped: { bg: 'bg-ds-info/15', text: 'text-ds-info', dot: 'bg-ds-info' },
   draft: { bg: 'bg-ds-muted', text: 'text-ds-muted-foreground', dot: 'bg-ds-muted-foreground/70' },
   archived: { bg: 'bg-ds-muted', text: 'text-ds-muted-foreground', dot: 'bg-ds-muted-foreground/70' },
-  cancelled: { bg: 'bg-red-50', text: 'text-red-700', dot: 'bg-red-500' },
-  rejected: { bg: 'bg-red-50', text: 'text-red-700', dot: 'bg-red-500' },
-  suspended: { bg: 'bg-red-50', text: 'text-red-700', dot: 'bg-red-500' },
+  cancelled: { bg: 'bg-ds-destructive/15', text: 'text-ds-destructive', dot: 'bg-ds-destructive' },
+  rejected: { bg: 'bg-ds-destructive/15', text: 'text-ds-destructive', dot: 'bg-ds-destructive' },
+  suspended: { bg: 'bg-ds-destructive/15', text: 'text-ds-destructive', dot: 'bg-ds-destructive' },
 }
 
 const defaultColor = { bg: 'bg-ds-muted', text: 'text-ds-muted-foreground', dot: 'bg-ds-muted-foreground/70' }

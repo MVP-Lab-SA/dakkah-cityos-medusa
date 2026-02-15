@@ -16,8 +16,8 @@ export const BookingConfirmationBlock: React.FC<BookingConfirmationBlockProps> =
       <div className="container mx-auto px-4 md:px-6">
         <div className="max-w-lg mx-auto">
           <div className="bg-ds-card border border-ds-border rounded-xl p-8 md:p-10 text-center">
-            <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-green-100 flex items-center justify-center">
-              <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-ds-success/15 flex items-center justify-center">
+              <svg className="w-8 h-8 text-ds-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
             </div>

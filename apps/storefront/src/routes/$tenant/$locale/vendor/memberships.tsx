@@ -70,7 +70,7 @@ function VendorMembershipsRoute() {
     <div className="container mx-auto py-12">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold">Membership Plans</h1>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+        <button className="px-4 py-2 bg-ds-primary text-white rounded-lg hover:bg-ds-primary/90 transition">
           + Create Plan
         </button>
       </div>
@@ -96,7 +96,7 @@ function VendorMembershipsRoute() {
               <div className="flex items-center justify-between mb-3">
                 <h3 className="font-semibold text-lg">{tier.name}</h3>
                 <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${
-                  tier.is_active !== false ? "bg-green-100 text-green-800" : "bg-ds-muted text-ds-foreground"
+                  tier.is_active !== false ? "bg-ds-success/15 text-ds-success" : "bg-ds-muted text-ds-foreground"
                 }`}>
                   {tier.is_active !== false ? "Active" : "Inactive"}
                 </span>
@@ -126,7 +126,7 @@ function VendorMembershipsRoute() {
                 {tier.revenue != null && (
                   <div className="flex justify-between">
                     <span className="text-ds-muted-foreground">Revenue</span>
-                    <span className="font-medium text-green-700">
+                    <span className="font-medium text-ds-success">
                       {tier.currency_code?.toUpperCase() || "USD"} {(tier.revenue / 100).toFixed(2)}
                     </span>
                   </div>
@@ -138,7 +138,7 @@ function VendorMembershipsRoute() {
                   <ul className="space-y-1">
                     {tier.benefits.slice(0, 3).map((b, i) => (
                       <li key={i} className="text-xs text-ds-foreground/80 flex items-center gap-1">
-                        <span className="text-green-500">✓</span> {b}
+                        <span className="text-ds-success">✓</span> {b}
                       </li>
                     ))}
                     {tier.benefits.length > 3 && (
@@ -147,7 +147,7 @@ function VendorMembershipsRoute() {
                   </ul>
                 </div>
               )}
-              <button className="w-full mt-4 text-sm text-blue-600 hover:underline text-center">
+              <button className="w-full mt-4 text-sm text-ds-primary hover:underline text-center">
                 View Members
               </button>
             </div>

@@ -70,11 +70,11 @@ export function EventCard({
   const eventLink = event.handle || event.id
 
   const statusStyles: Record<string, string> = {
-    upcoming: "bg-blue-100 text-blue-700",
-    ongoing: "bg-green-100 text-green-700",
+    upcoming: "bg-ds-info/15 text-ds-info",
+    ongoing: "bg-ds-success/15 text-ds-success",
     ended: "bg-ds-muted text-ds-muted-foreground",
-    cancelled: "bg-red-100 text-red-700",
-    "sold-out": "bg-amber-100 text-amber-700",
+    cancelled: "bg-ds-destructive/15 text-ds-destructive",
+    "sold-out": "bg-ds-warning/15 text-ds-warning",
   }
 
   const formatPrice = (amount: number, currency: string) => {
@@ -93,7 +93,7 @@ export function EventCard({
   return (
     <div className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:border-ds-ring hover:shadow-lg transition-all duration-300">
       <Link to={`${prefix}/events/${eventLink}` as any} className="block">
-        <div className="relative aspect-[4/3] bg-gradient-to-br from-blue-500/10 to-purple-500/10 overflow-hidden">
+        <div className="relative aspect-[4/3] bg-gradient-to-br from-ds-primary/10 to-ds-accent/10 overflow-hidden">
           {(event.image_url || event.thumbnail) ? (
             <img
               src={event.image_url || event.thumbnail}
@@ -101,9 +101,9 @@ export function EventCard({
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-ds-primary/10 to-ds-accent/15">
               <svg
-                className="w-12 h-12 text-blue-300"
+                className="w-12 h-12 text-ds-primary/40"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -120,7 +120,7 @@ export function EventCard({
 
           {isValidDate && (
             <div className="absolute top-3 start-3 flex flex-col items-center bg-white/95 backdrop-blur-sm rounded-lg px-3 py-1.5 shadow-md">
-              <span className="text-[10px] font-bold text-blue-600 uppercase leading-tight tracking-wider">
+              <span className="text-[10px] font-bold text-ds-primary uppercase leading-tight tracking-wider">
                 {month}
               </span>
               <span className="text-xl font-bold text-ds-foreground leading-tight">
@@ -151,7 +151,7 @@ export function EventCard({
 
       <div className="p-4 space-y-3">
         <Link to={`${prefix}/events/${eventLink}` as any} className="block">
-          <h3 className="font-semibold text-ds-foreground line-clamp-2 group-hover:text-blue-600 transition-colors">
+          <h3 className="font-semibold text-ds-foreground line-clamp-2 group-hover:text-ds-primary transition-colors">
             {eventTitle}
           </h3>
         </Link>
@@ -169,7 +169,7 @@ export function EventCard({
         {event.rating && (
           <div className="flex items-center gap-1.5 text-sm">
             <div className="flex items-center gap-0.5">
-              <svg className="w-4 h-4 text-amber-400 fill-amber-400" viewBox="0 0 20 20">
+              <svg className="w-4 h-4 text-ds-warning fill-ds-warning" viewBox="0 0 20 20">
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
               </svg>
               <span className="font-medium text-ds-foreground/80">{event.rating}</span>
@@ -183,7 +183,7 @@ export function EventCard({
         <div className="flex items-end justify-between pt-1">
           <div>
             {isFree ? (
-              <span className="text-sm font-semibold text-green-600">
+              <span className="text-sm font-semibold text-ds-success">
                 {t(locale, "events.free_event")}
               </span>
             ) : priceAmount != null ? (
@@ -199,7 +199,7 @@ export function EventCard({
 
         <Link
           to={`${prefix}/events/${eventLink}` as any}
-          className="block w-full text-center px-4 py-2.5 text-sm font-semibold bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+          className="block w-full text-center px-4 py-2.5 text-sm font-semibold bg-ds-primary text-ds-primary-foreground rounded-lg hover:bg-ds-primary/90 transition-colors shadow-sm"
         >
           {status === "sold-out"
             ? t(locale, "events.sold_out")

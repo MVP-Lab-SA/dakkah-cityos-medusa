@@ -72,17 +72,17 @@ export function AnalyticsOverview({ metrics, title }: AnalyticsOverviewProps) {
             {metric.change !== undefined && (
               <div className="mt-3 flex items-center gap-1.5">
                 {metric.change >= 0 ? (
-                  <svg className="h-4 w-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="h-4 w-4 text-ds-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
                   </svg>
                 ) : (
-                  <svg className="h-4 w-4 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="h-4 w-4 text-ds-destructive" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                   </svg>
                 )}
                 <span
                   className={`text-sm font-medium ${
-                    metric.change >= 0 ? "text-green-600" : "text-red-600"
+                    metric.change >= 0 ? "text-ds-success" : "text-ds-destructive"
                   }`}
                 >
                   {metric.change >= 0 ? "+" : ""}

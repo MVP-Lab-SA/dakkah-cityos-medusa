@@ -53,19 +53,19 @@ function VendorGroceryRoute() {
   const items = data?.items || []
 
   const statusColors: Record<string, string> = {
-    available: "bg-green-100 text-green-800",
-    out_of_stock: "bg-red-100 text-red-800",
-    low_stock: "bg-yellow-100 text-yellow-800",
+    available: "bg-ds-success/15 text-ds-success",
+    out_of_stock: "bg-ds-destructive/15 text-ds-destructive",
+    low_stock: "bg-ds-warning/15 text-ds-warning",
     draft: "bg-ds-muted text-ds-foreground",
-    expired: "bg-red-100 text-red-800",
+    expired: "bg-ds-destructive/15 text-ds-destructive",
   }
 
   function getFreshnessIndicator(date: string) {
     const diff = new Date(date).getTime() - Date.now()
-    if (diff <= 0) return { label: "Expired", color: "text-red-600" }
+    if (diff <= 0) return { label: "Expired", color: "text-ds-destructive" }
     const days = Math.ceil(diff / (1000 * 60 * 60 * 24))
-    if (days <= 3) return { label: `${days}d left`, color: "text-orange-600" }
-    return { label: `${days}d left`, color: "text-green-600" }
+    if (days <= 3) return { label: `${days}d left`, color: "text-ds-warning" }
+    return { label: `${days}d left`, color: "text-ds-success" }
   }
 
   if (isLoading) {
@@ -88,7 +88,7 @@ function VendorGroceryRoute() {
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold">Grocery Products</h1>
         <div className="flex gap-2">
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+          <button className="px-4 py-2 bg-ds-primary text-white rounded-lg hover:bg-ds-primary/90 transition">
             + Add Product
           </button>
           <button className="px-4 py-2 border rounded-lg hover:bg-ds-muted/50 transition">
@@ -103,7 +103,7 @@ function VendorGroceryRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
+              statusFilter === s ? "bg-ds-primary text-white border-ds-primary" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {(s || "All").replace(/_/g, " ")}
@@ -133,7 +133,7 @@ function VendorGroceryRoute() {
                         {product.category}
                       </span>
                       {product.organic && (
-                        <span className="px-2 py-0.5 text-xs rounded-full bg-green-50 text-green-700">
+                        <span className="px-2 py-0.5 text-xs rounded-full bg-ds-success/10 text-ds-success">
                           Organic
                         </span>
                       )}
@@ -148,7 +148,7 @@ function VendorGroceryRoute() {
                       {product.weight && <span>{product.weight}</span>}
                     </div>
                   </div>
-                  <button className="text-sm text-blue-600 hover:underline ml-4">
+                  <button className="text-sm text-ds-primary hover:underline ml-4">
                     Edit
                   </button>
                 </div>

@@ -43,10 +43,10 @@ function VendorDisputesRoute() {
   const items = data?.items || []
 
   const statusColors: Record<string, string> = {
-    pending: "bg-yellow-100 text-yellow-800",
-    vendor_responded: "bg-blue-100 text-blue-800",
-    escalated: "bg-red-100 text-red-800",
-    resolved: "bg-green-100 text-green-800",
+    pending: "bg-ds-warning/15 text-ds-warning",
+    vendor_responded: "bg-ds-info/15 text-ds-info",
+    escalated: "bg-ds-destructive/15 text-ds-destructive",
+    resolved: "bg-ds-success/15 text-ds-success",
     closed: "bg-ds-muted text-ds-foreground",
   }
 
@@ -114,15 +114,15 @@ function VendorDisputesRoute() {
         </div>
         <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Pending</p>
-          <p className="text-2xl font-bold text-yellow-600">{items.filter((d) => d.status === "pending").length}</p>
+          <p className="text-2xl font-bold text-ds-warning">{items.filter((d) => d.status === "pending").length}</p>
         </div>
         <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Escalated</p>
-          <p className="text-2xl font-bold text-red-600">{items.filter((d) => d.status === "escalated").length}</p>
+          <p className="text-2xl font-bold text-ds-destructive">{items.filter((d) => d.status === "escalated").length}</p>
         </div>
         <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Resolved</p>
-          <p className="text-2xl font-bold text-green-600">{items.filter((d) => d.status === "resolved").length}</p>
+          <p className="text-2xl font-bold text-ds-success">{items.filter((d) => d.status === "resolved").length}</p>
         </div>
       </div>
 
@@ -150,9 +150,9 @@ function VendorDisputesRoute() {
                   </div>
                   <p className="text-sm mb-2">{dispute.description}</p>
                   {dispute.vendor_response && (
-                    <div className="bg-blue-50 rounded p-3 mt-2">
-                      <p className="text-xs font-medium text-blue-800 mb-1">Your Response:</p>
-                      <p className="text-sm text-blue-700">{dispute.vendor_response}</p>
+                    <div className="bg-ds-info/10 rounded p-3 mt-2">
+                      <p className="text-xs font-medium text-ds-info mb-1">Your Response:</p>
+                      <p className="text-sm text-ds-info">{dispute.vendor_response}</p>
                     </div>
                   )}
                   <p className="text-xs text-muted-foreground mt-2">

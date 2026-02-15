@@ -81,14 +81,14 @@ function ParkingPage() {
 
   const availabilityColor = (available: number | null, total: number | null) => {
     if (available == null) return "text-ds-muted-foreground"
-    if (available === 0) return "text-red-600"
-    if (total && available / total < 0.2) return "text-yellow-600"
-    return "text-green-600"
+    if (available === 0) return "text-ds-destructive"
+    if (total && available / total < 0.2) return "text-ds-warning"
+    return "text-ds-success"
   }
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-primary to-ds-primary/90 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -120,7 +120,7 @@ function ParkingPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search parking..."
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-primary"
                 />
               </div>
 
@@ -131,7 +131,7 @@ function ParkingPage() {
                     <button
                       key={opt}
                       onClick={() => setZoneTypeFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${zoneTypeFilter === opt ? "bg-blue-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${zoneTypeFilter === opt ? "bg-ds-primary text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Zone Types" : zoneLabel(opt)}
                     </button>
@@ -156,20 +156,20 @@ function ParkingPage() {
                   <a
                     key={item.id}
                     href={`${prefix}/parking/${item.id}`}
-                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-blue-300 transition-all duration-200"
+                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-primary/40 transition-all duration-200"
                   >
-                    <div className="aspect-[4/3] bg-gradient-to-br from-blue-50 to-indigo-100 relative overflow-hidden">
+                    <div className="aspect-[4/3] bg-gradient-to-br from-ds-primary/10 to-ds-primary/15 relative overflow-hidden">
                       {item.thumbnail ? (
                         <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <svg className="w-16 h-16 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="w-16 h-16 text-ds-primary/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                           </svg>
                         </div>
                       )}
                       {item.zone_type && (
-                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-blue-600 text-white rounded-md">{zoneIcon(item.zone_type)} {zoneLabel(item.zone_type)}</span>
+                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-ds-primary text-white rounded-md">{zoneIcon(item.zone_type)} {zoneLabel(item.zone_type)}</span>
                       )}
                       {item.images && item.images.length > 1 && (
                         <div className="absolute bottom-2 right-2 px-2 py-0.5 text-xs font-medium bg-black/50 text-white rounded-md flex items-center gap-1">
@@ -179,7 +179,7 @@ function ParkingPage() {
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-ds-foreground group-hover:text-blue-600 transition-colors line-clamp-1">{item.name}</h3>
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-ds-primary transition-colors line-clamp-1">{item.name}</h3>
 
                       {item.address && (
                         <div className="flex items-center gap-1 mt-1.5 text-xs text-ds-muted-foreground">
@@ -204,10 +204,10 @@ function ParkingPage() {
                       </div>
 
                       <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
-                        <span className="font-bold text-blue-600 text-lg">
+                        <span className="font-bold text-ds-primary text-lg">
                           {formatPrice(item.price_per_hour, item.currency)}
                         </span>
-                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 rounded-lg group-hover:bg-blue-700 transition-colors">Reserve Spot</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-primary rounded-lg group-hover:bg-ds-primary/90 transition-colors">Reserve Spot</span>
                       </div>
                     </div>
                   </a>
@@ -223,17 +223,17 @@ function ParkingPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Find a Spot</h3>
               <p className="text-sm text-ds-muted-foreground">Search by location and filter by type to find the perfect parking spot.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Reserve Online</h3>
               <p className="text-sm text-ds-muted-foreground">Book your spot instantly and get a confirmation with directions.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Park & Go</h3>
               <p className="text-sm text-ds-muted-foreground">Arrive at the facility and enjoy hassle-free parking with your reservation.</p>
             </div>

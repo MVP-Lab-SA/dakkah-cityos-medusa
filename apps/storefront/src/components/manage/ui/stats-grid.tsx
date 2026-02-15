@@ -28,7 +28,7 @@ function StatCard({ icon, label, value, trend, description }: StatCardProps) {
           <span
             className={clsx(
               "text-xs font-medium",
-              trend.positive ? "text-emerald-600" : "text-ds-destructive"
+              trend.positive ? "text-ds-success" : "text-ds-destructive"
             )}
           >
             {trend.positive ? "+" : ""}{trend.value}%

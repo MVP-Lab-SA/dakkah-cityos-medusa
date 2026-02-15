@@ -43,7 +43,7 @@ function HelpPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-blue-500 to-sky-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-primary to-ds-info text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -62,11 +62,11 @@ function HelpPage() {
         <h2 className="text-2xl font-bold text-ds-foreground mb-6">Support Categories</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {categories.map((cat: any) => (
-            <button key={cat.id} onClick={() => setActiveCategory(cat.name)} className={`text-left bg-ds-background border rounded-xl p-6 hover:shadow-lg transition-all duration-200 ${activeCategory === cat.name ? "border-blue-500 ring-2 ring-blue-500/20" : "border-ds-border hover:border-blue-300"}`}>
+            <button key={cat.id} onClick={() => setActiveCategory(cat.name)} className={`text-left bg-ds-background border rounded-xl p-6 hover:shadow-lg transition-all duration-200 ${activeCategory === cat.name ? "border-ds-info ring-2 ring-ds-primary/20" : "border-ds-border hover:border-ds-primary/40"}`}>
               <div className="text-3xl mb-3">{cat.icon}</div>
               <h3 className="font-semibold text-ds-foreground mb-1">{cat.name}</h3>
               <p className="text-sm text-ds-muted-foreground mb-2">{cat.description}</p>
-              <span className="text-xs text-blue-600 font-medium">{cat.count} articles</span>
+              <span className="text-xs text-ds-primary font-medium">{cat.count} articles</span>
             </button>
           ))}
         </div>
@@ -74,7 +74,7 @@ function HelpPage() {
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-ds-foreground">Frequently Asked Questions</h2>
           {activeCategory !== "all" && (
-            <button onClick={() => setActiveCategory("all")} className="text-sm text-blue-600 hover:underline">Show all</button>
+            <button onClick={() => setActiveCategory("all")} className="text-sm text-ds-primary hover:underline">Show all</button>
           )}
         </div>
 
@@ -90,7 +90,7 @@ function HelpPage() {
               <div key={faq.id} className="bg-ds-background border border-ds-border rounded-xl overflow-hidden">
                 <button onClick={() => setOpenFaq(openFaq === faq.id ? null : faq.id)} className="w-full flex items-center justify-between p-5 text-left hover:bg-ds-muted/50 transition-colors">
                   <div className="flex items-center gap-3">
-                    <span className="px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-700 rounded">{faq.category}</span>
+                    <span className="px-2 py-0.5 text-xs font-medium bg-ds-info/15 text-ds-info rounded">{faq.category}</span>
                     <span className="font-medium text-ds-foreground">{faq.question}</span>
                   </div>
                   <svg className={`w-5 h-5 text-ds-muted-foreground transition-transform ${openFaq === faq.id ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
@@ -105,11 +105,11 @@ function HelpPage() {
           </div>
         )}
 
-        <div className="bg-gradient-to-br from-blue-500/10 to-sky-500/5 border border-blue-500/20 rounded-xl p-8 text-center">
+        <div className="bg-gradient-to-br from-ds-primary/10 to-ds-info/5 border border-ds-info/20 rounded-xl p-8 text-center">
           <h3 className="text-xl font-bold text-ds-foreground mb-2">Still need help?</h3>
           <p className="text-sm text-ds-muted-foreground mb-4">Our support team is available 24/7 to assist you.</p>
           <div className="flex items-center justify-center gap-4 flex-wrap">
-            <button className="px-6 py-2.5 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors">Contact Support</button>
+            <button className="px-6 py-2.5 text-sm font-medium rounded-lg bg-ds-primary text-white hover:bg-ds-primary/90 transition-colors">Contact Support</button>
             <button className="px-6 py-2.5 text-sm font-medium rounded-lg bg-ds-background border border-ds-border text-ds-foreground hover:bg-ds-muted transition-colors">Live Chat</button>
           </div>
         </div>

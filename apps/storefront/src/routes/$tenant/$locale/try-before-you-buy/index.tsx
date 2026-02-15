@@ -60,7 +60,7 @@ function TryBeforeYouBuyPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-emerald-500 to-green-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-success to-ds-success text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -93,7 +93,7 @@ function TryBeforeYouBuyPage() {
                 <label className="block text-sm font-medium text-ds-foreground mb-2">Category</label>
                 <div className="space-y-1">
                   {categoryOptions.map((opt) => (
-                    <button key={opt} onClick={() => setCategoryFilter(opt)} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${categoryFilter === opt ? "bg-emerald-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}>
+                    <button key={opt} onClick={() => setCategoryFilter(opt)} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${categoryFilter === opt ? "bg-ds-success text-white" : "text-ds-foreground hover:bg-ds-muted"}`}>
                       {opt === "all" ? "All Categories" : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
                   ))}
@@ -114,24 +114,24 @@ function TryBeforeYouBuyPage() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredItems.map((item: any) => (
-                  <div key={item.id} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-emerald-300 transition-all duration-200">
-                    <div className="aspect-[4/3] bg-gradient-to-br from-emerald-50 to-green-50 relative overflow-hidden">
+                  <div key={item.id} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-success/40 transition-all duration-200">
+                    <div className="aspect-[4/3] bg-gradient-to-br from-ds-success/10 to-ds-success/10 relative overflow-hidden">
                       {item.thumbnail ? (
                         <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center"><svg className="w-16 h-16 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5" /></svg></div>
+                        <div className="w-full h-full flex items-center justify-center"><svg className="w-16 h-16 text-ds-success/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5" /></svg></div>
                       )}
-                      <span className="absolute top-2 left-2 px-2.5 py-1 text-xs font-bold bg-emerald-500 text-white rounded-md">Try Free</span>
+                      <span className="absolute top-2 left-2 px-2.5 py-1 text-xs font-bold bg-ds-success text-white rounded-md">Try Free</span>
                       {item.trial_period && (
                         <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-black/70 text-white rounded-md">{item.trial_period}-day trial</span>
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-ds-foreground group-hover:text-emerald-600 transition-colors line-clamp-1">{item.name}</h3>
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-ds-success transition-colors line-clamp-1">{item.name}</h3>
                       {item.description && (<p className="text-sm text-ds-muted-foreground mt-1 line-clamp-2">{item.description}</p>)}
 
                       {item.category && (
-                        <span className="inline-block mt-2 px-2 py-0.5 text-xs font-medium bg-emerald-50 text-emerald-700 rounded capitalize">{item.category}</span>
+                        <span className="inline-block mt-2 px-2 py-0.5 text-xs font-medium bg-ds-success/10 text-ds-success rounded capitalize">{item.category}</span>
                       )}
 
                       <div className="space-y-2 mt-3 text-sm">
@@ -141,13 +141,13 @@ function TryBeforeYouBuyPage() {
                         </div>
                         <div className="flex justify-between">
                           <span className="text-ds-muted-foreground">Refundable Deposit</span>
-                          <span className="font-bold text-emerald-600">{formatPrice(item.deposit)}</span>
+                          <span className="font-bold text-ds-success">{formatPrice(item.deposit)}</span>
                         </div>
                       </div>
 
                       <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
                         <span className="text-xs text-ds-muted-foreground">Free returns</span>
-                        <span className="px-4 py-1.5 text-xs font-semibold text-white bg-emerald-600 rounded-lg group-hover:bg-emerald-700 transition-colors">Try Now</span>
+                        <span className="px-4 py-1.5 text-xs font-semibold text-white bg-ds-success rounded-lg group-hover:bg-ds-success/90 transition-colors">Try Now</span>
                       </div>
                     </div>
                   </div>
@@ -163,17 +163,17 @@ function TryBeforeYouBuyPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Choose a Product</h3>
               <p className="text-sm text-ds-muted-foreground">Select a product and start your free trial with a refundable deposit.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Try at Home</h3>
               <p className="text-sm text-ds-muted-foreground">Use the product during the trial period. No commitment.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Keep or Return</h3>
               <p className="text-sm text-ds-muted-foreground">Love it? Keep it. Not for you? Return it for free and get your deposit back.</p>
             </div>

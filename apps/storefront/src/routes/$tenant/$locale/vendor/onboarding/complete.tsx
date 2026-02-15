@@ -24,7 +24,7 @@ function ProgressIndicator({ currentStep }: { currentStep: number }) {
               <div
                 className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-colors ${
                   step.number < currentStep
-                    ? "bg-green-600 text-white"
+                    ? "bg-ds-success text-white"
                     : step.number === currentStep
                       ? "bg-ds-bg-accent text-ds-text-accent"
                       : "bg-ds-bg-secondary text-ds-text-secondary"
@@ -43,7 +43,7 @@ function ProgressIndicator({ currentStep }: { currentStep: number }) {
             {idx < steps.length - 1 && (
               <div
                 className={`mx-2 mb-5 h-0.5 w-12 sm:w-20 ${
-                  step.number < currentStep ? "bg-green-600" : "bg-ds-bg-secondary"
+                  step.number < currentStep ? "bg-ds-success" : "bg-ds-bg-secondary"
                 }`}
               />
             )}
@@ -79,8 +79,8 @@ function VendorOnboardingStep3() {
       <div className="min-h-screen bg-ds-bg-secondary">
         <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6">
           <div className="rounded-xl border border-ds-border-primary bg-ds-bg-primary p-8 shadow-sm text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-              <svg className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-ds-success/15">
+              <svg className="h-8 w-8 text-ds-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
@@ -201,16 +201,16 @@ function VendorOnboardingStep3() {
               </div>
             </div>
 
-            <div className="rounded-lg border border-green-200 bg-green-50 p-4">
+            <div className="rounded-lg border border-ds-success/30 bg-ds-success/10 p-4">
               <div className="flex items-start gap-3">
-                <svg className="mt-0.5 h-5 w-5 flex-shrink-0 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="mt-0.5 h-5 w-5 flex-shrink-0 text-ds-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <div>
-                  <p className="text-sm font-medium text-green-800">
+                  <p className="text-sm font-medium text-ds-success">
                     Terms & Conditions Accepted
                   </p>
-                  <p className="mt-0.5 text-xs text-green-700">
+                  <p className="mt-0.5 text-xs text-ds-success">
                     You agreed to the Vendor Terms of Service and Marketplace Policies.
                   </p>
                 </div>
@@ -231,7 +231,7 @@ function VendorOnboardingStep3() {
             <button
               onClick={handleSubmit}
               disabled={submitting}
-              className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-2 rounded-lg bg-ds-success px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-ds-success/90 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {submitting ? (
                 <>

@@ -27,15 +27,15 @@ function CreditPage() {
   )
 
   const colorMap: Record<string, string> = {
-    blue: "from-blue-500 to-blue-600",
-    indigo: "from-indigo-500 to-indigo-600",
-    purple: "from-purple-500 to-purple-600",
+    blue: "from-ds-primary to-ds-primary",
+    indigo: "from-ds-primary to-ds-primary",
+    purple: "from-ds-primary to-ds-primary",
     slate: "from-slate-600 to-slate-700",
   }
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-primary to-ds-primary/90 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -52,18 +52,18 @@ function CreditPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div className="bg-gradient-to-br from-blue-500/10 to-indigo-500/5 border border-blue-500/20 rounded-xl p-6">
+          <div className="bg-gradient-to-br from-ds-primary/10 to-ds-primary/5 border border-ds-info/20 rounded-xl p-6">
             <p className="text-sm font-medium text-ds-muted-foreground mb-1">Available Credit</p>
             <p className="text-3xl font-bold text-ds-foreground">{(data?.availableCredit || 0).toLocaleString()} SAR</p>
           </div>
-          <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/5 border border-indigo-500/20 rounded-xl p-6">
+          <div className="bg-gradient-to-br from-ds-primary/10 to-ds-primary/5 border border-ds-primary/20 rounded-xl p-6">
             <p className="text-sm font-medium text-ds-muted-foreground mb-1">Used Credit</p>
             <p className="text-3xl font-bold text-ds-foreground">{(data?.usedCredit || 0).toLocaleString()} SAR</p>
           </div>
         </div>
 
         <div className="mb-6">
-          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search credit plans..." className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search credit plans..." className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-primary" />
         </div>
 
         <h2 className="text-2xl font-bold text-ds-foreground mb-6">Credit Plans</h2>
@@ -76,15 +76,15 @@ function CreditPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
             {filteredPlans.map((plan: any) => (
-              <div key={plan.id} className={`relative bg-ds-background border ${plan.popular ? "border-blue-500 ring-2 ring-blue-500/20" : "border-ds-border"} rounded-xl p-6 hover:shadow-lg transition-all duration-200`}>
-                {plan.popular && <span className="absolute -top-3 left-6 px-3 py-1 text-xs font-bold bg-blue-600 text-white rounded-full">Most Popular</span>}
+              <div key={plan.id} className={`relative bg-ds-background border ${plan.popular ? "border-ds-info ring-2 ring-ds-primary/20" : "border-ds-border"} rounded-xl p-6 hover:shadow-lg transition-all duration-200`}>
+                {plan.popular && <span className="absolute -top-3 left-6 px-3 py-1 text-xs font-bold bg-ds-primary text-white rounded-full">Most Popular</span>}
                 <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${colorMap[plan.color]} flex items-center justify-center mb-4`}>
                   <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
                 </div>
                 <h3 className="text-xl font-bold text-ds-foreground mb-1">{plan.name}</h3>
                 <p className="text-sm text-ds-muted-foreground mb-4">{plan.description}</p>
                 <div className="flex items-baseline gap-1 mb-4">
-                  <span className="text-3xl font-bold text-blue-600">{plan.limit.toLocaleString()}</span>
+                  <span className="text-3xl font-bold text-ds-primary">{plan.limit.toLocaleString()}</span>
                   <span className="text-sm text-ds-muted-foreground">SAR limit</span>
                 </div>
                 <div className="flex items-center gap-4 text-sm text-ds-muted-foreground mb-4">
@@ -93,12 +93,12 @@ function CreditPage() {
                 <ul className="space-y-2 mb-6">
                   {plan.features.map((f: string, i: number) => (
                     <li key={i} className="flex items-center gap-2 text-sm text-ds-foreground">
-                      <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                      <svg className="w-4 h-4 text-ds-success flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                       {f}
                     </li>
                   ))}
                 </ul>
-                <button className={`w-full py-3 rounded-lg font-medium transition-colors ${plan.popular ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-ds-muted text-ds-foreground hover:bg-ds-muted/80"}`}>Apply Now</button>
+                <button className={`w-full py-3 rounded-lg font-medium transition-colors ${plan.popular ? "bg-ds-primary text-white hover:bg-ds-primary/90" : "bg-ds-muted text-ds-foreground hover:bg-ds-muted/80"}`}>Apply Now</button>
               </div>
             ))}
           </div>
@@ -110,17 +110,17 @@ function CreditPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Choose a Plan</h3>
               <p className="text-sm text-ds-muted-foreground">Select the credit plan that best fits your needs and budget.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Get Approved</h3>
               <p className="text-sm text-ds-muted-foreground">Quick online application with instant approval decisions.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Start Spending</h3>
               <p className="text-sm text-ds-muted-foreground">Use your credit line immediately for purchases across the platform.</p>
             </div>

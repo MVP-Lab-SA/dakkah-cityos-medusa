@@ -198,9 +198,9 @@ export function ComparePageContent() {
                         <span
                           className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
                             product.availability === "In Stock"
-                              ? "bg-green-100 text-green-800"
+                              ? "bg-ds-success/15 text-ds-success"
                               : product.availability === "Out of Stock"
-                              ? "bg-red-100 text-red-800"
+                              ? "bg-ds-destructive/15 text-ds-destructive"
                               : "bg-ds-muted text-ds-muted-foreground"
                           }`}
                         >

@@ -46,11 +46,11 @@ const platformOptions = ["all", "instagram", "tiktok", "youtube", "snapchat", "t
 const categoryOptions = ["all", "fashion", "electronics", "home", "beauty", "sports", "handmade", "food"] as const
 
 const platformColors: Record<string, string> = {
-  instagram: "bg-gradient-to-r from-purple-500 to-pink-500",
+  instagram: "bg-gradient-to-r from-ds-primary to-ds-destructive",
   tiktok: "bg-black",
-  youtube: "bg-red-600",
-  snapchat: "bg-yellow-400 text-black",
-  twitter: "bg-sky-500",
+  youtube: "bg-ds-destructive",
+  snapchat: "bg-ds-warning text-black",
+  twitter: "bg-ds-info",
 }
 
 const platformIcons: Record<string, string> = {
@@ -83,7 +83,7 @@ function SocialCommercePage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-pink-500 to-fuchsia-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-destructive to-fuchsia-600 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -115,7 +115,7 @@ function SocialCommercePage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search shops..."
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-pink-400"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-destructive"
                 />
               </div>
 
@@ -126,7 +126,7 @@ function SocialCommercePage() {
                     <button
                       key={opt}
                       onClick={() => setPlatformFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${platformFilter === opt ? "bg-pink-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${platformFilter === opt ? "bg-ds-destructive text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Platforms" : `${platformIcons[opt] || ""} ${opt.charAt(0).toUpperCase() + opt.slice(1)}`}
                     </button>
@@ -141,7 +141,7 @@ function SocialCommercePage() {
                     <button
                       key={opt}
                       onClick={() => setCategoryFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${categoryFilter === opt ? "bg-pink-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${categoryFilter === opt ? "bg-ds-destructive text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Categories" : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
@@ -166,14 +166,14 @@ function SocialCommercePage() {
                   <a
                     key={item.id}
                     href={`${prefix}/social-commerce/${item.handle || item.id}`}
-                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-pink-300 transition-all duration-200"
+                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-destructive/40 transition-all duration-200"
                   >
-                    <div className="aspect-[4/3] bg-gradient-to-br from-pink-50 to-fuchsia-100 relative overflow-hidden">
+                    <div className="aspect-[4/3] bg-gradient-to-br from-ds-destructive/10 to-fuchsia-100 relative overflow-hidden">
                       {item.thumbnail ? (
                         <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <svg className="w-16 h-16 text-pink-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="w-16 h-16 text-ds-destructive/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                           </svg>
                         </div>
@@ -191,9 +191,9 @@ function SocialCommercePage() {
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-ds-foreground group-hover:text-pink-600 transition-colors line-clamp-1">{item.name}</h3>
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-ds-destructive transition-colors line-clamp-1">{item.name}</h3>
                       {item.handle && (
-                        <p className="text-xs text-pink-500 mt-0.5">@{item.handle}</p>
+                        <p className="text-xs text-ds-destructive mt-0.5">@{item.handle}</p>
                       )}
                       {item.description && (
                         <p className="text-sm text-ds-muted-foreground mt-1.5 line-clamp-2">{item.description}</p>
@@ -218,7 +218,7 @@ function SocialCommercePage() {
                         <div className="flex items-center gap-1.5 mt-2">
                           <div className="flex items-center">
                             {[1, 2, 3, 4, 5].map((star) => (
-                              <svg key={star} className={`w-3.5 h-3.5 ${star <= Math.round(item.rating) ? "text-amber-400" : "text-ds-border"}`} fill="currentColor" viewBox="0 0 20 20">
+                              <svg key={star} className={`w-3.5 h-3.5 ${star <= Math.round(item.rating) ? "text-ds-warning" : "text-ds-border"}`} fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                               </svg>
                             ))}
@@ -229,7 +229,7 @@ function SocialCommercePage() {
 
                       <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
                         <span className="text-xs text-ds-muted-foreground capitalize">{item.category || "Shop"}</span>
-                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-pink-600 rounded-lg group-hover:bg-fuchsia-600 transition-colors">Visit Shop</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-destructive rounded-lg group-hover:bg-fuchsia-600 transition-colors">Visit Shop</span>
                       </div>
                     </div>
                   </a>
@@ -245,17 +245,17 @@ function SocialCommercePage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">Why Shop Social?</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-pink-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-destructive text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Discover Creators</h3>
               <p className="text-sm text-ds-muted-foreground">Find unique products from your favorite social media sellers and influencers.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-pink-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-destructive text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Authentic Reviews</h3>
               <p className="text-sm text-ds-muted-foreground">Read real reviews and see authentic content from verified buyers.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-pink-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-destructive text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Shop Securely</h3>
               <p className="text-sm text-ds-muted-foreground">Enjoy secure checkout and buyer protection on every purchase.</p>
             </div>

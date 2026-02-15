@@ -59,7 +59,7 @@ function GiftCardsShopPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-pink-500 to-purple-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-destructive to-ds-primary text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -101,7 +101,7 @@ function GiftCardsShopPage() {
                     <button
                       key={opt}
                       onClick={() => setThemeFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${themeFilter === opt ? "bg-pink-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${themeFilter === opt ? "bg-ds-destructive text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Themes" : themeLabel(opt)}
                     </button>
@@ -125,24 +125,24 @@ function GiftCardsShopPage() {
                 {filteredItems.map((item: any) => (
                   <div
                     key={item.id}
-                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-pink-300 transition-all duration-200"
+                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-destructive/40 transition-all duration-200"
                   >
-                    <div className="aspect-[16/10] bg-gradient-to-br from-pink-50 to-purple-50 relative overflow-hidden">
+                    <div className="aspect-[16/10] bg-gradient-to-br from-ds-destructive/10 to-ds-primary/10 relative overflow-hidden">
                       {item.thumbnail ? (
                         <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <svg className="w-16 h-16 text-pink-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="w-16 h-16 text-ds-destructive/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
                           </svg>
                         </div>
                       )}
                       {item.theme && (
-                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-pink-600 text-white rounded-md">{themeLabel(item.theme)}</span>
+                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-ds-destructive text-white rounded-md">{themeLabel(item.theme)}</span>
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-ds-foreground group-hover:text-pink-600 transition-colors line-clamp-1">{item.name}</h3>
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-ds-destructive transition-colors line-clamp-1">{item.name}</h3>
                       {item.description && (
                         <p className="text-sm text-ds-muted-foreground mt-1 line-clamp-2">{item.description}</p>
                       )}
@@ -152,7 +152,7 @@ function GiftCardsShopPage() {
                           <p className="text-xs text-ds-muted-foreground mb-1.5">Available denominations:</p>
                           <div className="flex flex-wrap gap-1.5">
                             {item.denominations.map((d: number) => (
-                              <span key={d} className="px-2.5 py-1 bg-purple-50 text-purple-700 rounded-md text-xs font-semibold">${d}</span>
+                              <span key={d} className="px-2.5 py-1 bg-ds-primary/10 text-ds-primary rounded-md text-xs font-semibold">${d}</span>
                             ))}
                           </div>
                         </div>
@@ -165,8 +165,8 @@ function GiftCardsShopPage() {
                       )}
 
                       <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
-                        <span className="font-bold text-pink-600 text-lg">From ${item.denominations?.[0] || 10}</span>
-                        <span className="px-4 py-1.5 text-xs font-semibold text-white bg-pink-600 rounded-lg group-hover:bg-pink-700 transition-colors">Buy Gift Card</span>
+                        <span className="font-bold text-ds-destructive text-lg">From ${item.denominations?.[0] || 10}</span>
+                        <span className="px-4 py-1.5 text-xs font-semibold text-white bg-ds-destructive rounded-lg group-hover:bg-ds-destructive/90 transition-colors">Buy Gift Card</span>
                       </div>
                     </div>
                   </div>
@@ -182,17 +182,17 @@ function GiftCardsShopPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-pink-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-destructive text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Choose a Design</h3>
               <p className="text-sm text-ds-muted-foreground">Pick from beautiful themes for every occasion.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-pink-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-destructive text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Select Amount</h3>
               <p className="text-sm text-ds-muted-foreground">Choose a denomination and add a personal message.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-pink-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-destructive text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Send Instantly</h3>
               <p className="text-sm text-ds-muted-foreground">Deliver via email or print for a personal touch.</p>
             </div>

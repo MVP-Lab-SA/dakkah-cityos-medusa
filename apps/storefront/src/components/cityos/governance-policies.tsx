@@ -92,7 +92,7 @@ function AuthorityCard({ authority }: { authority: GovernanceAuthority }) {
     region: "bg-ds-accent/10 text-ds-accent",
     country: "bg-ds-info text-ds-info",
     authority: "bg-ds-success text-ds-success",
-    department: "bg-orange-100 text-orange-800",
+    department: "bg-ds-warning/15 text-ds-warning",
   }
 
   return (

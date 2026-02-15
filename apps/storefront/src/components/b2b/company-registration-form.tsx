@@ -216,7 +216,7 @@ export function CompanyRegistrationForm() {
 
   const getFieldClass = (field: keyof FieldErrors) => {
     if (touched[field] && errors[field]) {
-      return "border-ds-destructive focus:ring-red-500";
+      return "border-ds-destructive focus:ring-ds-destructive";
     }
     return "";
   };

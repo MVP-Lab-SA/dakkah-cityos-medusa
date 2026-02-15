@@ -47,17 +47,17 @@ function VendorCartRulesRoute() {
   const items = data?.items || []
 
   const statusColors: Record<string, string> = {
-    active: "bg-green-100 text-green-800",
+    active: "bg-ds-success/15 text-ds-success",
     draft: "bg-ds-muted text-ds-foreground",
-    expired: "bg-red-100 text-red-800",
-    scheduled: "bg-blue-100 text-blue-800",
+    expired: "bg-ds-destructive/15 text-ds-destructive",
+    scheduled: "bg-ds-info/15 text-ds-info",
   }
 
   const typeColors: Record<string, string> = {
-    discount: "bg-green-50 text-green-700",
-    upsell: "bg-purple-50 text-purple-700",
-    bundle: "bg-blue-50 text-blue-700",
-    free_shipping: "bg-yellow-50 text-yellow-700",
+    discount: "bg-ds-success/10 text-ds-success",
+    upsell: "bg-ds-primary/10 text-ds-primary",
+    bundle: "bg-ds-info/10 text-ds-info",
+    free_shipping: "bg-ds-warning/10 text-ds-warning",
   }
 
   if (isLoading) {
@@ -79,7 +79,7 @@ function VendorCartRulesRoute() {
     <div className="container mx-auto py-12">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold">Cart Rules</h1>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+        <button className="px-4 py-2 bg-ds-primary text-white rounded-lg hover:bg-ds-primary/90 transition">
           + Add Rule
         </button>
       </div>
@@ -90,7 +90,7 @@ function VendorCartRulesRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
+              statusFilter === s ? "bg-ds-primary text-white border-ds-primary" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -124,7 +124,7 @@ function VendorCartRulesRoute() {
                     <span><span className="font-medium text-ds-foreground/80">Used:</span> {rule.usage_count} times</span>
                   </div>
                 </div>
-                <button className="text-sm text-blue-600 hover:underline ml-4">
+                <button className="text-sm text-ds-primary hover:underline ml-4">
                   Edit
                 </button>
               </div>

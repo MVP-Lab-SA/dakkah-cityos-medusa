@@ -4,7 +4,7 @@ import { useState } from "react"
 
 const fallbackItems = [
   {
-    id: "tier-1", name: "Bronze", color: "amber-700", bg: "from-amber-600 to-amber-800", points_required: 0, badge_emoji: "🥉",
+    id: "tier-1", name: "Bronze", color: "ds-warning", bg: "from-ds-warning to-ds-warning/90", points_required: 0, badge_emoji: "🥉",
     perks: ["5% discount on all purchases", "Birthday bonus points (2x)", "Early access to sales", "Free standard shipping on orders $50+"],
     description: "Start earning rewards from your very first purchase. Every dollar spent earns you 1 point."
   },
@@ -14,7 +14,7 @@ const fallbackItems = [
     description: "Reach Silver status with 500 points and unlock premium shopping benefits."
   },
   {
-    id: "tier-3", name: "Gold", color: "yellow-500", bg: "from-yellow-500 to-amber-600", points_required: 2000, badge_emoji: "🥇",
+    id: "tier-3", name: "Gold", color: "yellow-500", bg: "from-ds-warning to-ds-warning", points_required: 2000, badge_emoji: "🥇",
     perks: ["15% discount on all purchases", "Birthday bonus points (5x)", "Early access to flash sales (1hr)", "Free express shipping on all orders", "Exclusive VIP deals", "Dedicated account manager", "Free gift wrapping", "Extended return period (60 days)"],
     description: "Gold members enjoy the best perks with 2,000 points. Shop more, save more."
   },
@@ -55,7 +55,7 @@ function LoyaltyProgramPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-amber-500 to-orange-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-warning to-ds-warning text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -90,7 +90,7 @@ function LoyaltyProgramPage() {
                 className="group bg-ds-background border border-ds-border rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300"
               >
                 <div className="flex flex-col md:flex-row">
-                  <div className={`bg-gradient-to-br ${tier.bg || "from-amber-500 to-orange-600"} p-8 md:w-72 flex flex-col items-center justify-center text-white`}>
+                  <div className={`bg-gradient-to-br ${tier.bg || "from-ds-warning to-ds-warning"} p-8 md:w-72 flex flex-col items-center justify-center text-white`}>
                     <span className="text-5xl mb-3">{tier.badge_emoji || "⭐"}</span>
                     <h3 className="text-2xl font-bold">{tier.name}</h3>
                     <p className="text-white/80 text-sm mt-1">
@@ -105,7 +105,7 @@ function LoyaltyProgramPage() {
                       <div className="grid sm:grid-cols-2 gap-2">
                         {(tier.perks || []).map((perk: string, idx: number) => (
                           <div key={idx} className="flex items-start gap-2 text-sm">
-                            <svg className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg className="w-4 h-4 text-ds-warning mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
                             <span className="text-ds-foreground">{perk}</span>
@@ -120,7 +120,7 @@ function LoyaltyProgramPage() {
                           ? `Earn ${tier.points_required.toLocaleString()} points to unlock`
                           : "Available to all members"}
                       </div>
-                      <button className="px-5 py-2 text-sm font-semibold text-white bg-amber-600 rounded-lg hover:bg-amber-700 transition-colors">
+                      <button className="px-5 py-2 text-sm font-semibold text-white bg-ds-warning rounded-lg hover:bg-ds-warning/90 transition-colors">
                         Join Program
                       </button>
                     </div>
@@ -137,17 +137,17 @@ function LoyaltyProgramPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-amber-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-warning text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Sign Up Free</h3>
               <p className="text-sm text-ds-muted-foreground">Create an account and automatically start earning points.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-amber-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-warning text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Earn Points</h3>
               <p className="text-sm text-ds-muted-foreground">Get 1 point for every $1 spent. Bonus points on special days.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-amber-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-warning text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Unlock Rewards</h3>
               <p className="text-sm text-ds-muted-foreground">Rise through tiers and enjoy increasing benefits and discounts.</p>
             </div>

@@ -39,7 +39,7 @@ function ReturnsPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-red-500 to-rose-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-destructive to-rose-600 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -55,20 +55,20 @@ function ReturnsPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-gradient-to-br from-red-500/10 to-rose-500/5 border border-red-500/20 rounded-xl p-6 mb-8">
+        <div className="bg-gradient-to-br from-ds-destructive/10 to-rose-500/5 border border-ds-destructive/20 rounded-xl p-6 mb-8">
           <h3 className="font-semibold text-ds-foreground mb-3">Track Your Return</h3>
           <div className="flex gap-3">
-            <input type="text" value={trackingId} onChange={(e) => setTrackingId(e.target.value)} placeholder="Enter return ID or order number..." className="flex-1 px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-red-500" />
-            <button className="px-6 py-2.5 text-sm font-medium rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors">Track</button>
+            <input type="text" value={trackingId} onChange={(e) => setTrackingId(e.target.value)} placeholder="Enter return ID or order number..." className="flex-1 px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-destructive" />
+            <button className="px-6 py-2.5 text-sm font-medium rounded-lg bg-ds-destructive text-white hover:bg-ds-destructive transition-colors">Track</button>
           </div>
         </div>
 
         <h2 className="text-2xl font-bold text-ds-foreground mb-6">How to Return</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {steps.map((step: any) => (
-            <div key={step.id} className="bg-ds-background border border-ds-border rounded-xl p-6 text-center hover:shadow-lg hover:border-red-300 transition-all duration-200">
+            <div key={step.id} className="bg-ds-background border border-ds-border rounded-xl p-6 text-center hover:shadow-lg hover:border-ds-destructive/40 transition-all duration-200">
               <div className="text-3xl mb-3">{step.icon}</div>
-              <div className="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center text-sm font-bold mx-auto mb-3">{step.id}</div>
+              <div className="w-8 h-8 rounded-full bg-ds-destructive text-white flex items-center justify-center text-sm font-bold mx-auto mb-3">{step.id}</div>
               <h3 className="font-semibold text-ds-foreground mb-2">{step.title}</h3>
               <p className="text-sm text-ds-muted-foreground">{step.description}</p>
             </div>
@@ -79,7 +79,7 @@ function ReturnsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
           {policies.map((policy: any, i: number) => (
             <div key={i} className="bg-ds-background border border-ds-border rounded-xl p-6 flex items-start gap-4">
-              <svg className="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <svg className="w-6 h-6 text-ds-destructive flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
               <div>
                 <h3 className="font-semibold text-ds-foreground mb-1">{policy.title}</h3>
                 <p className="text-sm text-ds-muted-foreground">{policy.description}</p>

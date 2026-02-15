@@ -24,7 +24,7 @@ function ProgressIndicator({ currentStep }: { currentStep: number }) {
               <div
                 className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-colors ${
                   step.number < currentStep
-                    ? "bg-green-600 text-white"
+                    ? "bg-ds-success text-white"
                     : step.number === currentStep
                       ? "bg-ds-bg-accent text-ds-text-accent"
                       : "bg-ds-bg-secondary text-ds-text-secondary"
@@ -43,7 +43,7 @@ function ProgressIndicator({ currentStep }: { currentStep: number }) {
             {idx < steps.length - 1 && (
               <div
                 className={`mx-2 mb-5 h-0.5 w-12 sm:w-20 ${
-                  step.number < currentStep ? "bg-green-600" : "bg-ds-bg-secondary"
+                  step.number < currentStep ? "bg-ds-success" : "bg-ds-bg-secondary"
                 }`}
               />
             )}
@@ -117,13 +117,13 @@ function VendorOnboardingStep2() {
               <div className="rounded-lg border-2 border-dashed border-ds-border-primary p-6 text-center transition-colors hover:border-ds-border-accent">
                 {licenseFile ? (
                   <div className="flex items-center justify-center gap-2">
-                    <svg className="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="h-5 w-5 text-ds-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <span className="text-sm text-ds-text-primary">{licenseFile}</span>
                     <button
                       onClick={() => setLicenseFile(null)}
-                      className="text-sm text-red-600 hover:underline"
+                      className="text-sm text-ds-destructive hover:underline"
                     >
                       Remove
                     </button>

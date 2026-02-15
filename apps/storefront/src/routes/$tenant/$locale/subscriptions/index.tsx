@@ -76,7 +76,7 @@ function SubscriptionsPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-indigo-500 to-blue-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-primary to-ds-primary text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -143,11 +143,11 @@ function SubscriptionsPage() {
                 {filteredItems.map((item: any) => (
                   <div
                     key={item.id}
-                    className={`group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-indigo-300 transition-all duration-200 ${item.is_popular ? "ring-2 ring-indigo-400" : ""}`}
+                    className={`group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-primary/40 transition-all duration-200 ${item.is_popular ? "ring-2 ring-ds-primary" : ""}`}
                   >
-                    <div className="bg-gradient-to-br from-indigo-500 to-blue-600 p-6 text-white text-center relative">
+                    <div className="bg-gradient-to-br from-ds-primary to-ds-primary p-6 text-white text-center relative">
                       {item.is_popular && (
-                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-bold bg-ds-card text-indigo-600 rounded-full">Popular</span>
+                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-bold bg-ds-card text-ds-primary rounded-full">Popular</span>
                       )}
                       <div className="text-3xl mb-2">
                         <svg className="w-10 h-10 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
@@ -164,7 +164,7 @@ function SubscriptionsPage() {
                       )}
 
                       {item.trial_days > 0 && (
-                        <div className="flex items-center gap-2 mb-3 text-xs text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg">
+                        <div className="flex items-center gap-2 mb-3 text-xs text-ds-primary bg-ds-primary/10 px-3 py-1.5 rounded-lg">
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                           {item.trial_days}-day free trial
                         </div>
@@ -179,14 +179,14 @@ function SubscriptionsPage() {
                         <ul className="space-y-2 mb-4">
                           {item.features.slice(0, 6).map((f: string, i: number) => (
                             <li key={i} className="flex items-start gap-2 text-sm text-ds-foreground">
-                              <svg className="w-4 h-4 text-indigo-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                              <svg className="w-4 h-4 text-ds-primary mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                               {f}
                             </li>
                           ))}
                         </ul>
                       )}
 
-                      <button className="w-full py-2.5 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors">
+                      <button className="w-full py-2.5 text-sm font-semibold text-white bg-ds-primary rounded-lg hover:bg-ds-primary/90 transition-colors">
                         Subscribe
                       </button>
                     </div>
@@ -203,17 +203,17 @@ function SubscriptionsPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Choose a Plan</h3>
               <p className="text-sm text-ds-muted-foreground">Select the subscription that fits your needs and budget.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Start Your Trial</h3>
               <p className="text-sm text-ds-muted-foreground">Enjoy a free trial period to explore all the features.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Stay Flexible</h3>
               <p className="text-sm text-ds-muted-foreground">Upgrade, downgrade, or cancel anytime from your dashboard.</p>
             </div>

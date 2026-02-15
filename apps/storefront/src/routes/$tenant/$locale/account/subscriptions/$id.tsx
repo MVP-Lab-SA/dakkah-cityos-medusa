@@ -14,7 +14,7 @@ const statusColors: Record<string, string> = {
   active: "bg-ds-success text-ds-success",
   paused: "bg-ds-warning text-ds-warning",
   canceled: "bg-ds-destructive text-ds-destructive",
-  past_due: "bg-orange-100 text-orange-700",
+  past_due: "bg-ds-warning/15 text-ds-warning",
 }
 
 function SubscriptionDetailPage() {

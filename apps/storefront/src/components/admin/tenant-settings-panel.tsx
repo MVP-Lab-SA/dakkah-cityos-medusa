@@ -45,7 +45,7 @@ function BillingCard({ billing }: { billing: TenantBilling }) {
     free: "bg-ds-muted text-ds-foreground",
     starter: "bg-ds-info text-ds-info",
     professional: "bg-ds-accent/10 text-ds-accent",
-    enterprise: "bg-orange-100 text-orange-800",
+    enterprise: "bg-ds-warning/15 text-ds-warning",
   }
 
   const planName = billing.plan_name || billing.plan || "N/A"

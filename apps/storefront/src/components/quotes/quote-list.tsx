@@ -76,7 +76,7 @@ function QuoteStatusBadge({ status }: { status: string }) {
     approved: "bg-ds-success text-ds-success",
     rejected: "bg-ds-destructive text-ds-destructive",
     accepted: "bg-ds-success text-ds-success",
-    declined: "bg-orange-100 text-orange-800",
+    declined: "bg-ds-warning/15 text-ds-warning",
     expired: "bg-ds-muted text-ds-foreground",
   };
 

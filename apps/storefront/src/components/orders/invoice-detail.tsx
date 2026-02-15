@@ -133,7 +133,7 @@ function InvoiceStatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
     draft: "bg-ds-muted text-ds-foreground",
     issued: "bg-ds-info text-ds-info",
-    sent: "bg-indigo-100 text-indigo-800",
+    sent: "bg-ds-primary/15 text-ds-primary",
     paid: "bg-ds-success text-ds-success",
     partially_paid: "bg-ds-warning text-ds-warning",
     overdue: "bg-ds-destructive text-ds-destructive",

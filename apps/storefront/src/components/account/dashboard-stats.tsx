@@ -36,7 +36,7 @@ export function DashboardStats({
       icon: TruckFast,
       label: "Pending Shipments",
       value: pendingShipments,
-      color: "bg-orange-50 text-orange-600",
+      color: "bg-ds-warning/10 text-ds-warning",
     },
   ]
 

@@ -60,7 +60,7 @@ function VolumeDealsPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-primary to-ds-info text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -93,7 +93,7 @@ function VolumeDealsPage() {
                 <label className="block text-sm font-medium text-ds-foreground mb-2">Category</label>
                 <div className="space-y-1">
                   {categoryOptions.map((opt) => (
-                    <button key={opt} onClick={() => setCategoryFilter(opt)} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${categoryFilter === opt ? "bg-blue-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}>
+                    <button key={opt} onClick={() => setCategoryFilter(opt)} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${categoryFilter === opt ? "bg-ds-primary text-white" : "text-ds-foreground hover:bg-ds-muted"}`}>
                       {opt === "all" ? "All Categories" : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
                   ))}
@@ -112,37 +112,37 @@ function VolumeDealsPage() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredItems.map((item: any) => (
-                  <div key={item.id} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-blue-300 transition-all duration-200">
-                    <div className="aspect-[4/3] bg-gradient-to-br from-blue-50 to-cyan-50 relative overflow-hidden">
+                  <div key={item.id} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-primary/40 transition-all duration-200">
+                    <div className="aspect-[4/3] bg-gradient-to-br from-ds-primary/10 to-ds-info/10 relative overflow-hidden">
                       {item.thumbnail ? (
                         <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center"><svg className="w-16 h-16 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg></div>
+                        <div className="w-full h-full flex items-center justify-center"><svg className="w-16 h-16 text-ds-primary/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg></div>
                       )}
-                      <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-blue-600 text-white rounded-md capitalize">{item.category}</span>
+                      <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-ds-primary text-white rounded-md capitalize">{item.category}</span>
                       {item.max_savings > 0 && (
-                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-bold bg-green-500 text-white rounded-md">Save up to {item.max_savings}%</span>
+                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-bold bg-ds-success text-white rounded-md">Save up to {item.max_savings}%</span>
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-ds-foreground group-hover:text-blue-600 transition-colors line-clamp-1">{item.name}</h3>
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-ds-primary transition-colors line-clamp-1">{item.name}</h3>
                       {item.description && (<p className="text-sm text-ds-muted-foreground mt-1 line-clamp-2">{item.description}</p>)}
 
                       {item.tiers && (
                         <div className="mt-3 space-y-1.5">
                           <p className="text-xs font-medium text-ds-foreground">Pricing tiers:</p>
                           {item.tiers.map((tier: any, idx: number) => (
-                            <div key={idx} className={`flex justify-between items-center text-sm px-3 py-1.5 rounded-lg ${idx === item.tiers.length - 1 ? "bg-green-50 border border-green-200" : "bg-ds-muted/50"}`}>
+                            <div key={idx} className={`flex justify-between items-center text-sm px-3 py-1.5 rounded-lg ${idx === item.tiers.length - 1 ? "bg-ds-success/10 border border-ds-success/30" : "bg-ds-muted/50"}`}>
                               <span className="font-medium text-ds-foreground">{tier.qty}</span>
-                              <span className={`font-bold ${idx === item.tiers.length - 1 ? "text-green-600" : "text-ds-foreground"}`}>{formatPrice(tier.price)}/unit</span>
+                              <span className={`font-bold ${idx === item.tiers.length - 1 ? "text-ds-success" : "text-ds-foreground"}`}>{formatPrice(tier.price)}/unit</span>
                             </div>
                           ))}
                         </div>
                       )}
 
                       <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
-                        <span className="text-xs text-green-600 font-medium">Best value at 100+ units</span>
-                        <span className="px-4 py-1.5 text-xs font-semibold text-white bg-blue-600 rounded-lg group-hover:bg-blue-700 transition-colors">Order Bulk</span>
+                        <span className="text-xs text-ds-success font-medium">Best value at 100+ units</span>
+                        <span className="px-4 py-1.5 text-xs font-semibold text-white bg-ds-primary rounded-lg group-hover:bg-ds-primary/90 transition-colors">Order Bulk</span>
                       </div>
                     </div>
                   </div>
@@ -158,17 +158,17 @@ function VolumeDealsPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How Volume Deals Work</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Choose Quantity</h3>
               <p className="text-sm text-ds-muted-foreground">Select your quantity tier for the best price per unit.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Place Order</h3>
               <p className="text-sm text-ds-muted-foreground">Higher quantities unlock bigger discounts automatically.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Save More</h3>
               <p className="text-sm text-ds-muted-foreground">Enjoy wholesale pricing and free shipping on large orders.</p>
             </div>

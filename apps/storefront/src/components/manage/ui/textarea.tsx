@@ -16,7 +16,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             "w-full rounded-md border bg-ds-card px-3 py-2 text-sm text-ds-foreground placeholder:text-ds-muted-foreground/70 transition-colors resize-vertical",
             "focus:outline-none focus:ring-2 focus:ring-offset-0 focus:shadow-sm",
             error
-              ? "border-ds-destructive/50 focus:ring-red-500"
+              ? "border-ds-destructive/50 focus:ring-ds-destructive"
               : "border-ds-border focus:ring-ds-primary",
             props.disabled && "bg-ds-muted/50 text-ds-muted-foreground/70 cursor-not-allowed",
             className

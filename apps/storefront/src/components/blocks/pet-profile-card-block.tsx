@@ -41,9 +41,9 @@ const services = [
 ]
 
 const statusColors: Record<string, string> = {
-  'up-to-date': 'bg-green-100 text-green-800',
-  'due-soon': 'bg-yellow-100 text-yellow-800',
-  'overdue': 'bg-red-100 text-red-800',
+  'up-to-date': 'bg-ds-success/15 text-ds-success',
+  'due-soon': 'bg-ds-warning/15 text-ds-warning',
+  'overdue': 'bg-ds-destructive/15 text-ds-destructive',
 }
 
 export const PetProfileCardBlock: React.FC<PetProfileCardBlockProps> = ({

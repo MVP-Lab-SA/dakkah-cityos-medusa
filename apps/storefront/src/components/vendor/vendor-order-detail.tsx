@@ -42,11 +42,11 @@ function maskName(name: string): string {
 }
 
 const STATUS_STYLES: Record<string, string> = {
-  pending: "bg-yellow-100 text-yellow-800",
-  confirmed: "bg-blue-100 text-blue-800",
-  shipped: "bg-purple-100 text-purple-800",
-  delivered: "bg-green-100 text-green-800",
-  cancelled: "bg-red-100 text-red-800",
+  pending: "bg-ds-warning/15 text-ds-warning",
+  confirmed: "bg-ds-info/15 text-ds-info",
+  shipped: "bg-ds-primary/15 text-ds-primary",
+  delivered: "bg-ds-success/15 text-ds-success",
+  cancelled: "bg-ds-destructive/15 text-ds-destructive",
 };
 
 const STATUS_FLOW = ["pending", "confirmed", "shipped", "delivered"];
@@ -236,7 +236,7 @@ function VendorOrderDetail({ orderId, locale }: VendorOrderDetailProps) {
           {currentStatusIndex < STATUS_FLOW.indexOf("confirmed") && (
             <button
               onClick={() => handleStatusUpdate("confirmed")}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+              className="px-4 py-2 bg-ds-primary text-white rounded-lg text-sm font-medium hover:bg-ds-primary/90 transition-colors"
             >
               {t(locale, "vendor.orders.confirm") !== "vendor.orders.confirm"
                 ? t(locale, "vendor.orders.confirm")
@@ -246,7 +246,7 @@ function VendorOrderDetail({ orderId, locale }: VendorOrderDetailProps) {
           {currentStatusIndex < STATUS_FLOW.indexOf("shipped") && currentStatusIndex >= STATUS_FLOW.indexOf("confirmed") && (
             <button
               onClick={() => handleStatusUpdate("shipped")}
-              className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors"
+              className="px-4 py-2 bg-ds-primary text-white rounded-lg text-sm font-medium hover:bg-ds-primary/90 transition-colors"
             >
               {t(locale, "vendor.orders.ship") !== "vendor.orders.ship"
                 ? t(locale, "vendor.orders.ship")
@@ -256,7 +256,7 @@ function VendorOrderDetail({ orderId, locale }: VendorOrderDetailProps) {
           {currentStatusIndex < STATUS_FLOW.indexOf("delivered") && currentStatusIndex >= STATUS_FLOW.indexOf("shipped") && (
             <button
               onClick={() => handleStatusUpdate("delivered")}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
+              className="px-4 py-2 bg-ds-success text-white rounded-lg text-sm font-medium hover:bg-ds-success/90 transition-colors"
             >
               {t(locale, "vendor.orders.deliver") !== "vendor.orders.deliver"
                 ? t(locale, "vendor.orders.deliver")

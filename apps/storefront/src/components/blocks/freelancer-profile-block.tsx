@@ -54,12 +54,12 @@ export const FreelancerProfileBlock: React.FC<FreelancerProfileBlockProps> = ({
             <h3 className="text-lg font-bold text-ds-foreground">{placeholderFreelancer.name}</h3>
             <p className="text-sm text-ds-muted-foreground mb-2">{placeholderFreelancer.title}</p>
             {showAvailability && (
-              <span className="inline-block text-xs font-medium px-2 py-1 rounded-full bg-green-100 text-green-800 mb-3">
+              <span className="inline-block text-xs font-medium px-2 py-1 rounded-full bg-ds-success/15 text-ds-success mb-3">
                 {placeholderFreelancer.availability}
               </span>
             )}
             <div className="flex items-center justify-center gap-2 mb-3">
-              <span className="text-yellow-500 text-sm">{renderStars(placeholderFreelancer.rating)}</span>
+              <span className="text-ds-warning text-sm">{renderStars(placeholderFreelancer.rating)}</span>
               <span className="text-sm font-medium text-ds-foreground">{placeholderFreelancer.rating}</span>
               <span className="text-xs text-ds-muted-foreground">({placeholderFreelancer.reviewCount})</span>
             </div>
@@ -90,13 +90,13 @@ export const FreelancerProfileBlock: React.FC<FreelancerProfileBlockProps> = ({
                 <p className="text-sm text-ds-muted-foreground text-center mb-2">{placeholderFreelancer.title}</p>
                 {showAvailability && (
                   <div className="text-center mb-3">
-                    <span className="text-xs font-medium px-2 py-1 rounded-full bg-green-100 text-green-800">
+                    <span className="text-xs font-medium px-2 py-1 rounded-full bg-ds-success/15 text-ds-success">
                       {placeholderFreelancer.availability}
                     </span>
                   </div>
                 )}
                 <div className="text-center mb-3">
-                  <span className="text-yellow-500 text-sm">{renderStars(placeholderFreelancer.rating)}</span>
+                  <span className="text-ds-warning text-sm">{renderStars(placeholderFreelancer.rating)}</span>
                   <span className="text-sm ml-1 text-ds-foreground">{placeholderFreelancer.rating}</span>
                 </div>
                 <p className="text-center text-2xl font-bold text-ds-foreground mb-1">${placeholderFreelancer.hourlyRate}/hr</p>
@@ -142,7 +142,7 @@ export const FreelancerProfileBlock: React.FC<FreelancerProfileBlockProps> = ({
                           <span className="font-medium text-ds-foreground text-sm">{review.author}</span>
                           <span className="text-xs text-ds-muted-foreground">{review.date}</span>
                         </div>
-                        <span className="text-yellow-500 text-xs">{renderStars(review.rating)}</span>
+                        <span className="text-ds-warning text-xs">{renderStars(review.rating)}</span>
                         <p className="text-sm text-ds-muted-foreground mt-1">{review.text}</p>
                       </div>
                     ))}
@@ -172,7 +172,7 @@ export const FreelancerProfileBlock: React.FC<FreelancerProfileBlockProps> = ({
                 </div>
                 <div className="flex items-center gap-3">
                   {showAvailability && (
-                    <span className="text-xs font-medium px-3 py-1 rounded-full bg-green-100 text-green-800">
+                    <span className="text-xs font-medium px-3 py-1 rounded-full bg-ds-success/15 text-ds-success">
                       {placeholderFreelancer.availability}
                     </span>
                   )}
@@ -182,7 +182,7 @@ export const FreelancerProfileBlock: React.FC<FreelancerProfileBlockProps> = ({
               <p className="text-ds-muted-foreground mb-3">{placeholderFreelancer.bio}</p>
               <div className="flex items-center gap-4 mb-3">
                 <div className="flex items-center gap-1">
-                  <span className="text-yellow-500">{renderStars(placeholderFreelancer.rating)}</span>
+                  <span className="text-ds-warning">{renderStars(placeholderFreelancer.rating)}</span>
                   <span className="text-sm font-medium text-ds-foreground">{placeholderFreelancer.rating}</span>
                   <span className="text-xs text-ds-muted-foreground">({placeholderFreelancer.reviewCount} reviews)</span>
                 </div>
@@ -227,7 +227,7 @@ export const FreelancerProfileBlock: React.FC<FreelancerProfileBlockProps> = ({
                       </div>
                       <span className="text-xs text-ds-muted-foreground">{review.date}</span>
                     </div>
-                    <span className="text-yellow-500 text-sm">{renderStars(review.rating)}</span>
+                    <span className="text-ds-warning text-sm">{renderStars(review.rating)}</span>
                     <p className="text-sm text-ds-muted-foreground mt-1">{review.text}</p>
                   </div>
                 ))}

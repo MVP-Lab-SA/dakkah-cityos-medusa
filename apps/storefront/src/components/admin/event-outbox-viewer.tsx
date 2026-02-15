@@ -66,7 +66,7 @@ export function EventOutboxViewer() {
                 <span className="font-mono text-xs">Entity: {event.entity_id}</span>
                 <span className="font-mono text-xs">Correlation: {event.correlation_id}</span>
                 {event.retry_count > 0 && (
-                  <span className="text-xs text-orange-600">Retries: {event.retry_count}</span>
+                  <span className="text-xs text-ds-warning">Retries: {event.retry_count}</span>
                 )}
               </div>
               {event.error_message && (

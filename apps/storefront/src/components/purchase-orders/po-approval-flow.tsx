@@ -128,7 +128,7 @@ export function POApprovalFlow({
               onChange={(e) => setRejectReason(e.target.value)}
               placeholder="Provide a reason..."
               rows={2}
-              className="w-full rounded-lg border border-ds-warning px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              className="w-full rounded-lg border border-ds-warning px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ds-warning"
             />
             <div className="flex gap-2 mt-3">
               <Button

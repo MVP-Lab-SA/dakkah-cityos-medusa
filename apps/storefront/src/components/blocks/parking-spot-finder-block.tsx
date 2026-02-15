@@ -79,13 +79,13 @@ export const ParkingSpotFinderBlock: React.FC<ParkingSpotFinderBlockProps> = ({
         </div>
         <div className="flex items-center justify-between mb-2 text-xs text-ds-muted-foreground">
           <span>{spot.distance} away</span>
-          <span className={spot.available <= 3 ? 'text-red-500 font-medium' : ''}>
+          <span className={spot.available <= 3 ? 'text-ds-destructive font-medium' : ''}>
             {spot.available} spots available
           </span>
         </div>
         <div className="w-full bg-ds-muted rounded-full h-1.5 mb-3">
           <div
-            className={`h-1.5 rounded-full transition-all ${availPercent < 20 ? 'bg-red-500' : availPercent < 50 ? 'bg-yellow-500' : 'bg-ds-primary'}`}
+            className={`h-1.5 rounded-full transition-all ${availPercent < 20 ? 'bg-ds-destructive' : availPercent < 50 ? 'bg-ds-warning' : 'bg-ds-primary'}`}
             style={{ width: `${availPercent}%` }}
           />
         </div>
@@ -106,7 +106,7 @@ export const ParkingSpotFinderBlock: React.FC<ParkingSpotFinderBlockProps> = ({
         </div>
         <div className="flex items-center gap-3 text-sm text-ds-muted-foreground mt-1">
           <span>{spot.distance} away</span>
-          <span className={spot.available <= 3 ? 'text-red-500 font-medium' : ''}>
+          <span className={spot.available <= 3 ? 'text-ds-destructive font-medium' : ''}>
             {spot.available}/{spot.total} available
           </span>
         </div>

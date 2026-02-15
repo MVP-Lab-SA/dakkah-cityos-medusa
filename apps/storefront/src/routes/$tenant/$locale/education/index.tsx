@@ -49,9 +49,9 @@ const levelOptions = ["all", "beginner", "intermediate", "advanced"] as const
 const formatOptions = ["all", "online", "in_person", "hybrid"] as const
 
 const levelColors: Record<string, string> = {
-  beginner: "bg-green-100 text-green-700",
-  intermediate: "bg-blue-100 text-blue-700",
-  advanced: "bg-purple-100 text-purple-700",
+  beginner: "bg-ds-success/15 text-ds-success",
+  intermediate: "bg-ds-info/15 text-ds-info",
+  advanced: "bg-ds-primary/15 text-ds-primary",
 }
 
 const formatLabels: Record<string, string> = {
@@ -89,7 +89,7 @@ function EducationPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-primary to-ds-primary/90 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -121,7 +121,7 @@ function EducationPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search courses..."
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-primary"
                 />
               </div>
 
@@ -132,7 +132,7 @@ function EducationPage() {
                     <button
                       key={opt}
                       onClick={() => setCategoryFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${categoryFilter === opt ? "bg-blue-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${categoryFilter === opt ? "bg-ds-primary text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Categories" : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
@@ -147,7 +147,7 @@ function EducationPage() {
                     <button
                       key={opt}
                       onClick={() => setLevelFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${levelFilter === opt ? "bg-blue-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${levelFilter === opt ? "bg-ds-primary text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Levels" : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
@@ -162,7 +162,7 @@ function EducationPage() {
                     <button
                       key={opt}
                       onClick={() => setFormatFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${formatFilter === opt ? "bg-blue-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${formatFilter === opt ? "bg-ds-primary text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Formats" : formatLabels[opt] || opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
@@ -187,14 +187,14 @@ function EducationPage() {
                   <a
                     key={item.id}
                     href={`${prefix}/education/${item.id}`}
-                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-blue-300 transition-all duration-200"
+                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-primary/40 transition-all duration-200"
                   >
-                    <div className="aspect-video bg-gradient-to-br from-blue-50 to-indigo-100 relative overflow-hidden">
+                    <div className="aspect-video bg-gradient-to-br from-ds-primary/10 to-ds-primary/15 relative overflow-hidden">
                       {item.thumbnail ? (
                         <img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <svg className="w-16 h-16 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="w-16 h-16 text-ds-primary/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                           </svg>
                         </div>
@@ -209,7 +209,7 @@ function EducationPage() {
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-ds-foreground group-hover:text-blue-600 transition-colors line-clamp-2">{item.title}</h3>
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-ds-primary transition-colors line-clamp-2">{item.title}</h3>
                       {item.instructor_name && (
                         <p className="text-xs text-ds-muted-foreground mt-0.5">by {item.instructor_name}</p>
                       )}
@@ -233,7 +233,7 @@ function EducationPage() {
                         <div className="flex items-center gap-1.5 mt-2">
                           <div className="flex items-center">
                             {[1, 2, 3, 4, 5].map((star) => (
-                              <svg key={star} className={`w-3.5 h-3.5 ${star <= Math.round(item.rating) ? "text-amber-400" : "text-ds-border"}`} fill="currentColor" viewBox="0 0 20 20">
+                              <svg key={star} className={`w-3.5 h-3.5 ${star <= Math.round(item.rating) ? "text-ds-warning" : "text-ds-border"}`} fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                               </svg>
                             ))}
@@ -243,10 +243,10 @@ function EducationPage() {
                       )}
 
                       <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
-                        <span className="font-bold text-blue-600 text-lg">
+                        <span className="font-bold text-ds-primary text-lg">
                           {formatPrice(item.price, item.currency_code)}
                         </span>
-                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 rounded-lg group-hover:bg-indigo-700 transition-colors">Enroll Now</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-primary rounded-lg group-hover:bg-ds-primary/90 transition-colors">Enroll Now</span>
                       </div>
                     </div>
                   </a>
@@ -262,17 +262,17 @@ function EducationPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Browse Courses</h3>
               <p className="text-sm text-ds-muted-foreground">Explore our catalog of expert-led courses across multiple disciplines.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Enroll & Learn</h3>
               <p className="text-sm text-ds-muted-foreground">Sign up for your chosen course and start learning at your own pace.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Get Certified</h3>
               <p className="text-sm text-ds-muted-foreground">Complete the course and earn a certificate to showcase your skills.</p>
             </div>

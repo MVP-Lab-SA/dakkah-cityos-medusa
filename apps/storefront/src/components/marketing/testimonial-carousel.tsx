@@ -63,7 +63,7 @@ export function TestimonialCarousel({
               {Array.from({ length: 5 }).map((_, i) => (
                 <svg
                   key={i}
-                  className={`w-4 h-4 ${i < current.rating! ? "text-amber-400" : "text-ds-border"}`}
+                  className={`w-4 h-4 ${i < current.rating! ? "text-ds-warning" : "text-ds-border"}`}
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >

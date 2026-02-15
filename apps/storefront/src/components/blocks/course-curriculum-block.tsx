@@ -166,7 +166,7 @@ export const CourseCurriculumBlock: React.FC<CourseCurriculumBlockProps> = ({
                   </div>
                   <span className="text-xs text-ds-muted-foreground">{lesson.duration}</span>
                   {showProgress && lesson.completed && (
-                    <span className="text-xs text-green-600 font-medium">✓</span>
+                    <span className="text-xs text-ds-success font-medium">✓</span>
                   )}
                 </div>
               ))
@@ -230,7 +230,7 @@ export const CourseCurriculumBlock: React.FC<CourseCurriculumBlockProps> = ({
                       <span className="flex-1 text-sm text-ds-foreground">{lesson.title}</span>
                       <span className="text-xs text-ds-muted-foreground">{lesson.duration}</span>
                       {showProgress && lesson.completed && (
-                        <span className="text-xs text-green-600 font-medium">✓</span>
+                        <span className="text-xs text-ds-success font-medium">✓</span>
                       )}
                     </div>
                   ))}

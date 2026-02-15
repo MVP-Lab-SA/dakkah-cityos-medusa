@@ -32,7 +32,7 @@ export const ProviderScheduleBlock: React.FC<ProviderScheduleBlockProps> = ({
 
   const getStatusColor = (status: 'available' | 'booked' | 'break') => {
     switch (status) {
-      case 'available': return 'bg-green-100 border-green-300 text-green-800'
+      case 'available': return 'bg-ds-success/15 border-ds-success/40 text-ds-success'
       case 'booked': return 'bg-ds-muted border-ds-border text-ds-muted-foreground'
       case 'break': return 'bg-ds-background border-ds-border text-ds-muted-foreground/50'
     }
@@ -115,7 +115,7 @@ export const ProviderScheduleBlock: React.FC<ProviderScheduleBlockProps> = ({
               <div
                 key={dayNum}
                 className={`p-2 text-center rounded text-sm ${
-                  isSunday ? 'bg-ds-muted text-ds-muted-foreground' : 'bg-green-50 text-ds-foreground'
+                  isSunday ? 'bg-ds-muted text-ds-muted-foreground' : 'bg-ds-success/10 text-ds-foreground'
                 }`}
               >
                 {dayNum}
@@ -164,7 +164,7 @@ export const ProviderScheduleBlock: React.FC<ProviderScheduleBlockProps> = ({
           {showAvailability && (
             <div className="flex flex-wrap gap-4 mb-6 pb-6 border-b border-ds-border">
               <div className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded bg-green-100 border border-green-300" />
+                <span className="w-3 h-3 rounded bg-ds-success/15 border border-ds-success/40" />
                 <span className="text-xs text-ds-muted-foreground">Available</span>
               </div>
               <div className="flex items-center gap-2">

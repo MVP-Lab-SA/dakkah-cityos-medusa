@@ -138,9 +138,9 @@ export function NotificationPanel({
                 <div
                   className={`mt-0.5 p-1.5 rounded-full flex-shrink-0 ${
                     notification.type === "order"
-                      ? "bg-blue-100 text-blue-600"
+                      ? "bg-ds-info/15 text-ds-info"
                       : notification.type === "promotion"
-                      ? "bg-green-100 text-green-600"
+                      ? "bg-ds-success/15 text-ds-success"
                       : "bg-ds-muted text-ds-muted-foreground"
                   }`}
                 >

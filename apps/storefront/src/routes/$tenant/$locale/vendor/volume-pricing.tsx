@@ -48,10 +48,10 @@ function VendorVolumePricingRoute() {
   const items = data?.items || []
 
   const statusColors: Record<string, string> = {
-    active: "bg-green-100 text-green-800",
+    active: "bg-ds-success/15 text-ds-success",
     draft: "bg-ds-muted text-ds-foreground",
-    expired: "bg-red-100 text-red-800",
-    scheduled: "bg-blue-100 text-blue-800",
+    expired: "bg-ds-destructive/15 text-ds-destructive",
+    scheduled: "bg-ds-info/15 text-ds-info",
   }
 
   if (isLoading) {
@@ -73,7 +73,7 @@ function VendorVolumePricingRoute() {
     <div className="container mx-auto py-12">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold">Volume Pricing</h1>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+        <button className="px-4 py-2 bg-ds-primary text-white rounded-lg hover:bg-ds-primary/90 transition">
           + Add Tier
         </button>
       </div>
@@ -84,7 +84,7 @@ function VendorVolumePricingRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
+              statusFilter === s ? "bg-ds-primary text-white border-ds-primary" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -120,7 +120,7 @@ function VendorVolumePricingRoute() {
                   <td className="py-4 pr-4 text-right">
                     {tier.currency_code?.toUpperCase()} {(tier.unit_price / 100).toFixed(2)}
                   </td>
-                  <td className="py-4 pr-4 text-right font-medium text-green-600">
+                  <td className="py-4 pr-4 text-right font-medium text-ds-success">
                     {tier.discount_percentage}%
                   </td>
                   <td className="py-4 pr-4">
@@ -129,7 +129,7 @@ function VendorVolumePricingRoute() {
                     </span>
                   </td>
                   <td className="py-4">
-                    <button className="text-sm text-blue-600 hover:underline">Edit</button>
+                    <button className="text-sm text-ds-primary hover:underline">Edit</button>
                   </td>
                 </tr>
               ))}

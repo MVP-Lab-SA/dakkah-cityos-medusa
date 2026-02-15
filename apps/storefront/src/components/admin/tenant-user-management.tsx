@@ -121,10 +121,10 @@ function RoleBadge({ role }: { role: RbacRole }) {
     "district-manager": "bg-ds-info text-ds-info",
     "zone-manager": "bg-ds-success text-ds-success",
     "facility-manager": "bg-ds-warning text-ds-warning",
-    "asset-manager": "bg-orange-100 text-orange-800",
-    "vendor-admin": "bg-indigo-100 text-indigo-800",
-    "content-editor": "bg-pink-100 text-pink-800",
-    analyst: "bg-teal-100 text-teal-800",
+    "asset-manager": "bg-ds-warning/15 text-ds-warning",
+    "vendor-admin": "bg-ds-primary/15 text-ds-primary",
+    "content-editor": "bg-ds-destructive/15 text-ds-destructive",
+    analyst: "bg-ds-success/15 text-ds-success",
     viewer: "bg-ds-muted text-ds-foreground",
   }
   return (

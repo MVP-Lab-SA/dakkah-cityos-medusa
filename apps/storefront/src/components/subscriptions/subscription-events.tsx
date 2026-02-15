@@ -70,8 +70,8 @@ function EventDot({ type }: { type: string }) {
     plan_changed: "bg-ds-accent",
     payment_failed: "bg-ds-destructive",
     payment_succeeded: "bg-ds-success",
-    trial_started: "bg-indigo-500",
-    trial_ended: "bg-orange-500",
+    trial_started: "bg-ds-primary",
+    trial_ended: "bg-ds-warning",
   }
 
   return <div className={`w-3 h-3 rounded-full ${colors[type] || "bg-ds-muted"}`}></div>

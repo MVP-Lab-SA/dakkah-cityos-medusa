@@ -115,7 +115,7 @@ export const AppointmentSlotsBlock: React.FC<AppointmentSlotsBlockProps> = ({
           }`}
         >
           <div className="flex items-center gap-3">
-            <span className={`w-2.5 h-2.5 rounded-full ${slot.available ? 'bg-green-500' : 'bg-ds-muted-foreground/30'}`} />
+            <span className={`w-2.5 h-2.5 rounded-full ${slot.available ? 'bg-ds-success' : 'bg-ds-muted-foreground/30'}`} />
             <span className="font-medium">{slot.time}</span>
           </div>
           <span className="text-sm text-ds-muted-foreground">{duration}</span>

@@ -89,14 +89,14 @@ function NewsletterDetailPage() {
               {newsletter.thumbnail || newsletter.image || newsletter.cover ? (
                 <img src={newsletter.thumbnail || newsletter.image || newsletter.cover} alt={newsletter.title || newsletter.name} className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-cyan-100">
-                  <svg className="w-16 h-16 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-ds-primary/10 to-ds-info/15">
+                  <svg className="w-16 h-16 text-ds-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                 </div>
               )}
               {newsletter.frequency && (
-                <span className="absolute top-4 start-4 px-3 py-1 text-xs font-semibold rounded-full bg-blue-600 text-white">
+                <span className="absolute top-4 start-4 px-3 py-1 text-xs font-semibold rounded-full bg-ds-primary text-white">
                   {newsletter.frequency}
                 </span>
               )}
@@ -246,9 +246,9 @@ function NewsletterDetailPage() {
                 </div>
               </div>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
-                <h3 className="font-semibold text-blue-900 mb-2">No Spam, Ever</h3>
-                <p className="text-sm text-blue-700">We respect your inbox. Unsubscribe at any time with one click.</p>
+              <div className="bg-ds-info/10 border border-ds-info/30 rounded-xl p-6">
+                <h3 className="font-semibold text-ds-primary mb-2">No Spam, Ever</h3>
+                <p className="text-sm text-ds-info">We respect your inbox. Unsubscribe at any time with one click.</p>
               </div>
             </div>
           </aside>

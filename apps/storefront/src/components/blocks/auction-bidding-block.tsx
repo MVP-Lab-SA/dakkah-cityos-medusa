@@ -73,7 +73,7 @@ export const AuctionBiddingBlock: React.FC<AuctionBiddingBlockProps> = ({
           <div className="bg-ds-card border-2 border-ds-primary rounded-lg shadow-sm overflow-hidden">
             <div className="bg-ds-primary px-4 py-2 flex items-center justify-between">
               <span className="text-ds-primary-foreground font-semibold text-sm flex items-center gap-2">
-                <span className="w-2 h-2 bg-red-400 rounded-full animate-pulse" />
+                <span className="w-2 h-2 bg-ds-destructive/80 rounded-full animate-pulse" />
                 LIVE AUCTION
               </span>
               {showCountdown && (

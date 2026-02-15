@@ -60,7 +60,7 @@ function PersonaCard({ persona, highlighted }: { persona: Persona; highlighted?:
     "user-default": "bg-ds-info text-ds-info",
     membership: "bg-ds-success text-ds-success",
     surface: "bg-ds-accent/10 text-ds-accent",
-    session: "bg-orange-100 text-orange-800",
+    session: "bg-ds-warning/15 text-ds-warning",
   }
 
   const axes = Object.entries(persona.axes || {}) as [PersonaAxis, any][]

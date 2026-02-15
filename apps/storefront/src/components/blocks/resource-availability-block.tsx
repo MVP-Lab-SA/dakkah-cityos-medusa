@@ -27,15 +27,15 @@ const defaultWindows: AvailabilityWindow[] = [
 const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
 const statusColors: Record<string, string> = {
-  available: 'bg-green-100 border-green-300 text-green-800',
-  booked: 'bg-red-50 border-red-200 text-red-700',
-  maintenance: 'bg-yellow-50 border-yellow-200 text-yellow-700',
+  available: 'bg-ds-success/15 border-ds-success/40 text-ds-success',
+  booked: 'bg-ds-destructive/10 border-ds-destructive/30 text-ds-destructive',
+  maintenance: 'bg-ds-warning/10 border-ds-warning/30 text-ds-warning',
 }
 
 const statusDot: Record<string, string> = {
-  available: 'bg-green-500',
-  booked: 'bg-red-400',
-  maintenance: 'bg-yellow-400',
+  available: 'bg-ds-success',
+  booked: 'bg-ds-destructive/80',
+  maintenance: 'bg-ds-warning',
 }
 
 export const ResourceAvailabilityBlock: React.FC<ResourceAvailabilityBlockProps> = ({
@@ -74,10 +74,10 @@ export const ResourceAvailabilityBlock: React.FC<ResourceAvailabilityBlockProps>
                 key={day}
                 className={`p-2 text-center rounded text-sm transition-colors ${
                   isMaintenance
-                    ? 'bg-yellow-50 text-yellow-700 border border-yellow-200'
+                    ? 'bg-ds-warning/10 text-ds-warning border border-ds-warning/30'
                     : isBusy
-                      ? 'bg-red-50 text-red-600 border border-red-200'
-                      : 'bg-green-50 text-ds-foreground border border-green-200 hover:bg-green-100'
+                      ? 'bg-ds-destructive/10 text-ds-destructive border border-ds-destructive/30'
+                      : 'bg-ds-success/10 text-ds-foreground border border-ds-success/30 hover:bg-ds-success/15'
                 }`}
               >
                 {day}
@@ -161,15 +161,15 @@ export const ResourceAvailabilityBlock: React.FC<ResourceAvailabilityBlockProps>
 
             <div className="flex flex-wrap gap-4 mb-6">
               <div className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full bg-green-500" />
+                <span className="w-3 h-3 rounded-full bg-ds-success" />
                 <span className="text-xs text-ds-muted-foreground">Available</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full bg-red-400" />
+                <span className="w-3 h-3 rounded-full bg-ds-destructive/80" />
                 <span className="text-xs text-ds-muted-foreground">Booked</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full bg-yellow-400" />
+                <span className="w-3 h-3 rounded-full bg-ds-warning" />
                 <span className="text-xs text-ds-muted-foreground">Maintenance</span>
               </div>
             </div>

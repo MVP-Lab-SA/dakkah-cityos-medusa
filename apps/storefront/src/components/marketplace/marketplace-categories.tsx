@@ -17,14 +17,14 @@ interface MarketplaceCategoriesProps {
 }
 
 const defaultCategories: Category[] = [
-  { id: "electronics", name: "category_electronics", icon: "💻", slug: "electronics", productCount: 1240, color: "bg-blue-500/10" },
-  { id: "fashion", name: "category_fashion", icon: "👗", slug: "fashion", productCount: 3500, color: "bg-pink-500/10" },
-  { id: "home", name: "category_home", icon: "🏠", slug: "home-garden", productCount: 890, color: "bg-green-500/10" },
-  { id: "beauty", name: "category_beauty", icon: "✨", slug: "beauty", productCount: 2100, color: "bg-purple-500/10" },
-  { id: "sports", name: "category_sports", icon: "⚽", slug: "sports", productCount: 760, color: "bg-orange-500/10" },
-  { id: "toys", name: "category_toys", icon: "🎮", slug: "toys-games", productCount: 430, color: "bg-yellow-500/10" },
-  { id: "automotive", name: "category_automotive", icon: "🚗", slug: "automotive", productCount: 320, color: "bg-red-500/10" },
-  { id: "books", name: "category_books", icon: "📚", slug: "books", productCount: 5600, color: "bg-teal-500/10" },
+  { id: "electronics", name: "category_electronics", icon: "💻", slug: "electronics", productCount: 1240, color: "bg-ds-info/10" },
+  { id: "fashion", name: "category_fashion", icon: "👗", slug: "fashion", productCount: 3500, color: "bg-ds-destructive/10" },
+  { id: "home", name: "category_home", icon: "🏠", slug: "home-garden", productCount: 890, color: "bg-ds-success/10" },
+  { id: "beauty", name: "category_beauty", icon: "✨", slug: "beauty", productCount: 2100, color: "bg-ds-primary/10" },
+  { id: "sports", name: "category_sports", icon: "⚽", slug: "sports", productCount: 760, color: "bg-ds-warning/10" },
+  { id: "toys", name: "category_toys", icon: "🎮", slug: "toys-games", productCount: 430, color: "bg-ds-warning/10" },
+  { id: "automotive", name: "category_automotive", icon: "🚗", slug: "automotive", productCount: 320, color: "bg-ds-destructive/10" },
+  { id: "books", name: "category_books", icon: "📚", slug: "books", productCount: 5600, color: "bg-ds-success/10" },
 ]
 
 export function MarketplaceCategories({ locale: localeProp, categories }: MarketplaceCategoriesProps) {

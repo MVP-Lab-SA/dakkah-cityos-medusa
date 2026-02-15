@@ -78,7 +78,7 @@ function GroceryPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-green-500 to-lime-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-success to-lime-600 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -110,7 +110,7 @@ function GroceryPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search groceries..."
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-success"
                 />
               </div>
 
@@ -121,7 +121,7 @@ function GroceryPage() {
                     <button
                       key={opt}
                       onClick={() => setCategoryFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${categoryFilter === opt ? "bg-green-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${categoryFilter === opt ? "bg-ds-success text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Categories" : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
@@ -136,7 +136,7 @@ function GroceryPage() {
                     <button
                       key={opt}
                       onClick={() => setOrganicFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${organicFilter === opt ? "bg-green-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${organicFilter === opt ? "bg-ds-success text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Products" : opt === "yes" ? "Organic Only" : "Non-Organic"}
                     </button>
@@ -161,20 +161,20 @@ function GroceryPage() {
                   <a
                     key={item.id}
                     href={`${prefix}/grocery/${item.id}`}
-                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-green-300 transition-all duration-200"
+                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-success/40 transition-all duration-200"
                   >
-                    <div className="aspect-[4/3] bg-gradient-to-br from-green-50 to-lime-100 relative overflow-hidden">
+                    <div className="aspect-[4/3] bg-gradient-to-br from-ds-success/10 to-lime-100 relative overflow-hidden">
                       {item.thumbnail ? (
                         <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <svg className="w-16 h-16 text-green-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="w-16 h-16 text-ds-success/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
                           </svg>
                         </div>
                       )}
                       {item.organic && (
-                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-green-600 text-white rounded-md">🌿 Organic</span>
+                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-ds-success text-white rounded-md">🌿 Organic</span>
                       )}
                       {item.category && (
                         <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-ds-card/90 text-ds-foreground/80 rounded-md capitalize">{item.category}</span>
@@ -187,7 +187,7 @@ function GroceryPage() {
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-ds-foreground group-hover:text-green-600 transition-colors line-clamp-1">{item.name}</h3>
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-ds-success transition-colors line-clamp-1">{item.name}</h3>
                       {item.description && (
                         <p className="text-sm text-ds-muted-foreground mt-1.5 line-clamp-2">{item.description}</p>
                       )}
@@ -207,10 +207,10 @@ function GroceryPage() {
                       </div>
 
                       <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
-                        <span className="font-bold text-green-600 text-lg">
+                        <span className="font-bold text-ds-success text-lg">
                           {formatPrice(item.price, item.currency, item.unit_type)}
                         </span>
-                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-green-600 rounded-lg group-hover:bg-green-700 transition-colors">Add to Cart</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-success rounded-lg group-hover:bg-ds-success/90 transition-colors">Add to Cart</span>
                       </div>
                     </div>
                   </a>
@@ -226,17 +226,17 @@ function GroceryPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">Why Shop With Us</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-green-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Farm Fresh</h3>
               <p className="text-sm text-ds-muted-foreground">Sourced directly from local farms and trusted suppliers for maximum freshness.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-green-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Quick Delivery</h3>
               <p className="text-sm text-ds-muted-foreground">Get your groceries delivered to your doorstep within hours of ordering.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-green-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Quality Guaranteed</h3>
               <p className="text-sm text-ds-muted-foreground">Every product is quality-checked. Not satisfied? Get a full refund.</p>
             </div>

@@ -59,7 +59,7 @@ export function BulkActionsBar({
             {onApprove && (
               <button
                 onClick={onApprove}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-green-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-700 transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-ds-success px-3 py-1.5 text-sm font-medium text-white hover:bg-ds-success/90 transition-colors"
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -71,7 +71,7 @@ export function BulkActionsBar({
             {onReject && (
               <button
                 onClick={onReject}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-yellow-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-yellow-700 transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-ds-warning px-3 py-1.5 text-sm font-medium text-white hover:bg-ds-warning/90 transition-colors"
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
@@ -86,8 +86,8 @@ export function BulkActionsBar({
                 onBlur={() => setConfirmDelete(false)}
                 className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-white transition-colors ${
                   confirmDelete
-                    ? "bg-red-700 hover:bg-red-800"
-                    : "bg-red-600 hover:bg-red-700"
+                    ? "bg-ds-destructive/90 hover:bg-ds-destructive/90"
+                    : "bg-ds-destructive hover:bg-ds-destructive/90"
                 }`}
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -115,9 +115,9 @@ export function BulkActionsBar({
                 onClick={action.onClick}
                 className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
                   action.variant === "danger"
-                    ? "bg-red-600 text-white hover:bg-red-700"
+                    ? "bg-ds-destructive text-white hover:bg-ds-destructive/90"
                     : action.variant === "success"
-                      ? "bg-green-600 text-white hover:bg-green-700"
+                      ? "bg-ds-success text-white hover:bg-ds-success/90"
                       : "border border-ds-border-primary bg-ds-bg-primary text-ds-text-primary hover:bg-ds-bg-secondary"
                 }`}
               >

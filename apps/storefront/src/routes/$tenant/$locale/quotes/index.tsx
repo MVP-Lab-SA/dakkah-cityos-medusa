@@ -30,7 +30,7 @@ function QuotesPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-amber-500 to-orange-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-warning to-ds-warning text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -47,7 +47,7 @@ function QuotesPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
-          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search service categories..." className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber-500" />
+          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search service categories..." className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-warning" />
         </div>
 
         {filtered.length === 0 ? (
@@ -59,7 +59,7 @@ function QuotesPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             {filtered.map((cat: any) => (
-              <div key={cat.id} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-amber-300 transition-all duration-200">
+              <div key={cat.id} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-warning/40 transition-all duration-200">
                 <div className="aspect-[4/3] relative overflow-hidden">
                   <img src={cat.image} alt={cat.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
@@ -69,9 +69,9 @@ function QuotesPage() {
                   </div>
                 </div>
                 <div className="p-5">
-                  <h3 className="text-lg font-semibold text-ds-foreground mb-2 group-hover:text-amber-600 transition-colors">{cat.name}</h3>
+                  <h3 className="text-lg font-semibold text-ds-foreground mb-2 group-hover:text-ds-warning transition-colors">{cat.name}</h3>
                   <p className="text-sm text-ds-muted-foreground mb-4">{cat.description}</p>
-                  <button className="w-full py-2.5 text-sm font-medium rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition-colors">Get Quote</button>
+                  <button className="w-full py-2.5 text-sm font-medium rounded-lg bg-ds-warning text-white hover:bg-ds-warning transition-colors">Get Quote</button>
                 </div>
               </div>
             ))}
@@ -84,17 +84,17 @@ function QuotesPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-amber-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-warning text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Select a Category</h3>
               <p className="text-sm text-ds-muted-foreground">Choose the service type you need a quote for.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-amber-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-warning text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Describe Your Needs</h3>
               <p className="text-sm text-ds-muted-foreground">Provide details about your project requirements and timeline.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-amber-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-warning text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Receive Quotes</h3>
               <p className="text-sm text-ds-muted-foreground">Get competitive quotes from verified providers within 24-48 hours.</p>
             </div>

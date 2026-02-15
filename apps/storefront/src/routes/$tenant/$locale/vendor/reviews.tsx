@@ -68,7 +68,7 @@ function VendorReviewsRoute() {
 
   function renderStars(rating: number) {
     return Array.from({ length: 5 }, (_, i) => (
-      <span key={i} className={i < rating ? "text-yellow-400" : "text-ds-muted-foreground/50"}>&#9733;</span>
+      <span key={i} className={i < rating ? "text-ds-warning" : "text-ds-muted-foreground/50"}>&#9733;</span>
     ))
   }
 
@@ -118,7 +118,7 @@ function VendorReviewsRoute() {
             <div key={r.stars} className="flex items-center gap-2 mb-2">
               <span className="text-sm w-12">{r.stars} star</span>
               <div className="flex-1 bg-ds-muted rounded-full h-2">
-                <div className="bg-yellow-400 h-2 rounded-full" style={{ width: `${r.pct}%` }} />
+                <div className="bg-ds-warning h-2 rounded-full" style={{ width: `${r.pct}%` }} />
               </div>
               <span className="text-xs text-muted-foreground w-8">{r.count}</span>
             </div>
@@ -139,7 +139,7 @@ function VendorReviewsRoute() {
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-lg">{renderStars(review.rating)}</span>
-                    {review.is_verified && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">Verified</span>}
+                    {review.is_verified && <span className="text-xs bg-ds-success/15 text-ds-success px-2 py-0.5 rounded">Verified</span>}
                   </div>
                   {review.title && <h4 className="font-medium">{review.title}</h4>}
                 </div>
@@ -148,9 +148,9 @@ function VendorReviewsRoute() {
               <p className="text-sm mb-3">{review.content}</p>
               {review.product_name && <p className="text-xs text-muted-foreground mb-3">Product: {review.product_name}</p>}
               {review.vendor_reply ? (
-                <div className="bg-blue-50 rounded p-3 mt-2">
-                  <p className="text-xs font-medium text-blue-800 mb-1">Your Reply:</p>
-                  <p className="text-sm text-blue-700">{review.vendor_reply}</p>
+                <div className="bg-ds-info/10 rounded p-3 mt-2">
+                  <p className="text-xs font-medium text-ds-info mb-1">Your Reply:</p>
+                  <p className="text-sm text-ds-info">{review.vendor_reply}</p>
                 </div>
               ) : replyingTo === review.id ? (
                 <div className="mt-3">

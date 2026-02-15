@@ -66,7 +66,7 @@ function PetServicesPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-pink-500 to-rose-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-destructive to-rose-600 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -98,7 +98,7 @@ function PetServicesPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search pets..."
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-pink-400"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-destructive"
                 />
               </div>
 
@@ -109,7 +109,7 @@ function PetServicesPage() {
                     <button
                       key={opt}
                       onClick={() => setSpeciesFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${speciesFilter === opt ? "bg-pink-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${speciesFilter === opt ? "bg-ds-destructive text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Species" : `${speciesEmoji(opt)} ${opt.charAt(0).toUpperCase() + opt.slice(1)}`}
                     </button>
@@ -134,9 +134,9 @@ function PetServicesPage() {
                   <a
                     key={item.id}
                     href={`${prefix}/pet-services/${item.id}`}
-                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-pink-300 transition-all duration-200"
+                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-destructive/40 transition-all duration-200"
                   >
-                    <div className="aspect-[4/3] bg-gradient-to-br from-pink-50 to-rose-100 relative overflow-hidden">
+                    <div className="aspect-[4/3] bg-gradient-to-br from-ds-destructive/10 to-rose-100 relative overflow-hidden">
                       {item.thumbnail ? (
                         <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
@@ -145,7 +145,7 @@ function PetServicesPage() {
                         </div>
                       )}
                       {item.species && (
-                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-pink-600 text-white rounded-md capitalize">
+                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-ds-destructive text-white rounded-md capitalize">
                           {speciesEmoji(item.species)} {item.species}
                         </span>
                       )}
@@ -157,7 +157,7 @@ function PetServicesPage() {
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-ds-foreground group-hover:text-pink-600 transition-colors line-clamp-1">{item.name}</h3>
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-ds-destructive transition-colors line-clamp-1">{item.name}</h3>
                       {item.breed && (
                         <p className="text-sm text-ds-muted-foreground mt-0.5">{item.breed}</p>
                       )}
@@ -191,7 +191,7 @@ function PetServicesPage() {
 
                       <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
                         <span className="text-sm text-ds-muted-foreground">Pet Profile</span>
-                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-pink-600 rounded-lg group-hover:bg-pink-700 transition-colors">View Profile</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-destructive rounded-lg group-hover:bg-ds-destructive/90 transition-colors">View Profile</span>
                       </div>
                     </div>
                   </a>
@@ -207,17 +207,17 @@ function PetServicesPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-pink-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-destructive text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Browse Pets</h3>
               <p className="text-sm text-ds-muted-foreground">Explore pet profiles and find the perfect companion for your family.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-pink-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-destructive text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">View Details</h3>
               <p className="text-sm text-ds-muted-foreground">Check breed info, health records, and personality traits.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-pink-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-destructive text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Connect</h3>
               <p className="text-sm text-ds-muted-foreground">Schedule a visit or inquire about adoption and pet services.</p>
             </div>

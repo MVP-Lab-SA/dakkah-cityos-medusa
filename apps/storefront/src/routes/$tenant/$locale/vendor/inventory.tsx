@@ -48,9 +48,9 @@ function VendorInventoryRoute() {
   const items = data?.items || []
 
   const statusColors: Record<string, string> = {
-    in_stock: "bg-green-100 text-green-800",
-    low_stock: "bg-yellow-100 text-yellow-800",
-    out_of_stock: "bg-red-100 text-red-800",
+    in_stock: "bg-ds-success/15 text-ds-success",
+    low_stock: "bg-ds-warning/15 text-ds-warning",
+    out_of_stock: "bg-ds-destructive/15 text-ds-destructive",
     discontinued: "bg-ds-muted text-ds-foreground",
   }
 
@@ -73,7 +73,7 @@ function VendorInventoryRoute() {
     <div className="container mx-auto py-12">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold">Inventory Management</h1>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+        <button className="px-4 py-2 bg-ds-primary text-white rounded-lg hover:bg-ds-primary/90 transition">
           + Update Stock
         </button>
       </div>
@@ -84,7 +84,7 @@ function VendorInventoryRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
+              statusFilter === s ? "bg-ds-primary text-white border-ds-primary" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s ? s.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "All"}
@@ -128,7 +128,7 @@ function VendorInventoryRoute() {
                   </td>
                   <td className="py-4">
                     <div className="flex gap-2">
-                      <button className="text-sm text-blue-600 hover:underline">Update Stock</button>
+                      <button className="text-sm text-ds-primary hover:underline">Update Stock</button>
                       <button className="text-sm text-ds-muted-foreground hover:underline">View History</button>
                     </div>
                   </td>

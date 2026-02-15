@@ -84,7 +84,7 @@ function TryBeforeYouBuyDetailPage() {
                   </svg>
                 </div>
               )}
-              <span className="absolute top-4 start-4 px-3 py-1 text-xs font-semibold rounded-full bg-purple-600 text-white">
+              <span className="absolute top-4 start-4 px-3 py-1 text-xs font-semibold rounded-full bg-ds-primary text-white">
                 Try Before You Buy
               </span>
             </div>
@@ -96,7 +96,7 @@ function TryBeforeYouBuyDetailPage() {
                   {product.price != null ? `$${Number(product.price || 0).toLocaleString()}` : "Contact for price"}
                 </span>
                 {product.trial_period && (
-                  <span className="px-3 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-800">
+                  <span className="px-3 py-1 text-xs font-medium rounded-full bg-ds-primary/15 text-ds-primary">
                     {product.trial_period} Trial
                   </span>
                 )}
@@ -174,23 +174,23 @@ function TryBeforeYouBuyDetailPage() {
                 <h3 className="font-semibold text-ds-foreground mb-3">How It Works</h3>
                 <ul className="space-y-3 text-sm text-ds-muted-foreground">
                   <li className="flex items-start gap-3">
-                    <span className="w-6 h-6 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
+                    <span className="w-6 h-6 bg-ds-primary/15 text-ds-primary rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
                     Order the product to try at home
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="w-6 h-6 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
+                    <span className="w-6 h-6 bg-ds-primary/15 text-ds-primary rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
                     Try it during the trial period
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="w-6 h-6 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">3</span>
+                    <span className="w-6 h-6 bg-ds-primary/15 text-ds-primary rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">3</span>
                     Keep it and pay, or return for free
                   </li>
                 </ul>
               </div>
 
-              <div className="bg-purple-50 border border-purple-200 rounded-xl p-6">
-                <h3 className="font-semibold text-purple-900 mb-2">Risk-Free Guarantee</h3>
-                <p className="text-sm text-purple-700">No payment until you decide to keep the product. Free returns within the trial period.</p>
+              <div className="bg-ds-primary/10 border border-ds-primary/30 rounded-xl p-6">
+                <h3 className="font-semibold text-ds-primary mb-2">Risk-Free Guarantee</h3>
+                <p className="text-sm text-ds-primary">No payment until you decide to keep the product. Free returns within the trial period.</p>
               </div>
             </div>
           </aside>

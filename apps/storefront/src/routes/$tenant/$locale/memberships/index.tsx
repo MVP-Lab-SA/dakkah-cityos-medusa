@@ -42,10 +42,10 @@ export const Route = createFileRoute("/$tenant/$locale/memberships/")({
 const tierOptions = ["all", "bronze", "silver", "gold", "platinum"] as const
 
 const tierColors: Record<string, string> = {
-  bronze: "from-amber-600 to-amber-700",
+  bronze: "from-ds-warning to-ds-warning/90",
   silver: "from-gray-400 to-gray-500",
-  gold: "from-yellow-400 to-amber-500",
-  platinum: "from-indigo-400 to-purple-500",
+  gold: "from-ds-warning to-ds-warning",
+  platinum: "from-ds-primary to-ds-primary",
 }
 
 const tierIcons: Record<string, string> = {
@@ -81,7 +81,7 @@ function MembershipsPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-amber-500 to-yellow-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-warning to-ds-warning text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -147,15 +147,15 @@ function MembershipsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredItems.map((item: any) => {
                   const tierKey = (item.tier || "").toLowerCase()
-                  const gradient = tierColors[tierKey] || "from-amber-500 to-yellow-600"
+                  const gradient = tierColors[tierKey] || "from-ds-warning to-ds-warning"
                   return (
                     <div
                       key={item.id}
-                      className={`group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-amber-300 transition-all duration-200 ${item.is_popular ? "ring-2 ring-amber-400" : ""}`}
+                      className={`group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-warning/40 transition-all duration-200 ${item.is_popular ? "ring-2 ring-ds-warning" : ""}`}
                     >
                       <div className={`bg-gradient-to-br ${gradient} p-6 text-white text-center relative`}>
                         {item.is_popular && (
-                          <span className="absolute top-2 right-2 px-2 py-1 text-xs font-bold bg-ds-card text-amber-600 rounded-full">Popular</span>
+                          <span className="absolute top-2 right-2 px-2 py-1 text-xs font-bold bg-ds-card text-ds-warning rounded-full">Popular</span>
                         )}
                         <div className="text-4xl mb-2">{tierIcons[tierKey] || "⭐"}</div>
                         <h3 className="text-xl font-bold">{item.name}</h3>
@@ -172,7 +172,7 @@ function MembershipsPage() {
                           <ul className="space-y-2 mb-4">
                             {item.benefits.slice(0, 5).map((b: string, i: number) => (
                               <li key={i} className="flex items-start gap-2 text-sm text-ds-foreground">
-                                <svg className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                                <svg className="w-4 h-4 text-ds-warning mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                                 {b}
                               </li>
                             ))}
@@ -180,10 +180,10 @@ function MembershipsPage() {
                         )}
 
                         <div className="flex justify-between items-center pt-4 border-t border-ds-border">
-                          <span className="font-bold text-amber-600 text-lg">
+                          <span className="font-bold text-ds-warning text-lg">
                             {formatPrice(item.price, item.currency, item.interval)}
                           </span>
-                          <button className="px-4 py-2 text-xs font-semibold text-white bg-amber-500 rounded-lg hover:bg-amber-600 transition-colors">
+                          <button className="px-4 py-2 text-xs font-semibold text-white bg-ds-warning rounded-lg hover:bg-ds-warning transition-colors">
                             Join Now
                           </button>
                         </div>
@@ -202,17 +202,17 @@ function MembershipsPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">Why Join?</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-amber-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">🎁</div>
+              <div className="w-12 h-12 rounded-full bg-ds-warning text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">🎁</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Exclusive Perks</h3>
               <p className="text-sm text-ds-muted-foreground">Access members-only discounts, early releases, and special events.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-amber-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">📈</div>
+              <div className="w-12 h-12 rounded-full bg-ds-warning text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">📈</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Tier Up Rewards</h3>
               <p className="text-sm text-ds-muted-foreground">The more you engage, the higher your tier — unlock bigger benefits.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-amber-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">🔄</div>
+              <div className="w-12 h-12 rounded-full bg-ds-warning text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">🔄</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Flexible Plans</h3>
               <p className="text-sm text-ds-muted-foreground">Upgrade, downgrade, or cancel your membership anytime with no hassle.</p>
             </div>

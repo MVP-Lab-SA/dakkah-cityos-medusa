@@ -52,10 +52,10 @@ function VendorEducationRoute() {
   const items = data?.items || []
 
   const statusColors: Record<string, string> = {
-    published: "bg-green-100 text-green-800",
+    published: "bg-ds-success/15 text-ds-success",
     draft: "bg-ds-muted text-ds-foreground",
-    archived: "bg-red-100 text-red-800",
-    pending: "bg-yellow-100 text-yellow-800",
+    archived: "bg-ds-destructive/15 text-ds-destructive",
+    pending: "bg-ds-warning/15 text-ds-warning",
   }
 
   function renderStars(rating: number) {
@@ -86,7 +86,7 @@ function VendorEducationRoute() {
     <div className="container mx-auto py-12">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold">Courses</h1>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+        <button className="px-4 py-2 bg-ds-primary text-white rounded-lg hover:bg-ds-primary/90 transition">
           + Create Course
         </button>
       </div>
@@ -97,7 +97,7 @@ function VendorEducationRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
+              statusFilter === s ? "bg-ds-primary text-white border-ds-primary" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -133,12 +133,12 @@ function VendorEducationRoute() {
                       {course.currency_code?.toUpperCase()} {(course.price / 100).toFixed(2)}
                     </span>
                     <span>{course.enrollment_count} enrolled</span>
-                    <span className="text-yellow-600">{renderStars(course.rating)} ({course.rating.toFixed(1)})</span>
+                    <span className="text-ds-warning">{renderStars(course.rating)} ({course.rating.toFixed(1)})</span>
                     {course.level && <span>{course.level}</span>}
                     {course.duration_hours && <span>{course.duration_hours}h</span>}
                   </div>
                 </div>
-                <button className="text-sm text-blue-600 hover:underline ml-4">
+                <button className="text-sm text-ds-primary hover:underline ml-4">
                   View Analytics
                 </button>
               </div>

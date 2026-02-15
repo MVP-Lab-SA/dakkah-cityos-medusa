@@ -69,7 +69,7 @@ function VendorNotificationPreferencesRoute() {
     <div className="container mx-auto py-12">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold">Notification Preferences</h1>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+        <button className="px-4 py-2 bg-ds-primary text-white rounded-lg hover:bg-ds-primary/90 transition">
           Update Settings
         </button>
       </div>
@@ -80,7 +80,7 @@ function VendorNotificationPreferencesRoute() {
             key={s}
             onClick={() => setChannelFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              channelFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
+              channelFilter === s ? "bg-ds-primary text-white border-ds-primary" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s ? `${channelIcons[s] || ""} ${s.toUpperCase()}` : "All Channels"}
@@ -112,7 +112,7 @@ function VendorNotificationPreferencesRoute() {
                 </div>
                 <div className="flex items-center gap-3">
                   <span className={`px-3 py-1 text-sm rounded-full font-medium ${
-                    setting.enabled ? "bg-green-100 text-green-800" : "bg-ds-muted text-ds-muted-foreground"
+                    setting.enabled ? "bg-ds-success/15 text-ds-success" : "bg-ds-muted text-ds-muted-foreground"
                   }`}>
                     {setting.enabled ? "Enabled" : "Disabled"}
                   </span>

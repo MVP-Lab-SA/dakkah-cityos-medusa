@@ -38,7 +38,7 @@ export function QuickActions() {
       description: "Contact our team",
       href: `${prefix}/contact`,
       icon: ChatBubbleLeftRight,
-      color: "bg-orange-50 text-orange-600 hover:bg-orange-100",
+      color: "bg-ds-warning/10 text-ds-warning hover:bg-ds-warning/15",
     },
   ]
 

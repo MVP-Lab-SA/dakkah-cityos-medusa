@@ -60,7 +60,7 @@ function TradeInPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-green-500 to-teal-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-success to-ds-success text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -93,7 +93,7 @@ function TradeInPage() {
                 <label className="block text-sm font-medium text-ds-foreground mb-2">Category</label>
                 <div className="space-y-1">
                   {categoryOptions.map((opt) => (
-                    <button key={opt} onClick={() => setCategoryFilter(opt)} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${categoryFilter === opt ? "bg-green-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}>
+                    <button key={opt} onClick={() => setCategoryFilter(opt)} className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${categoryFilter === opt ? "bg-ds-success text-white" : "text-ds-foreground hover:bg-ds-muted"}`}>
                       {opt === "all" ? "All Categories" : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
                   ))}
@@ -112,39 +112,39 @@ function TradeInPage() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredItems.map((item: any) => (
-                  <div key={item.id} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-green-300 transition-all duration-200">
-                    <div className="aspect-[4/3] bg-gradient-to-br from-green-50 to-teal-50 relative overflow-hidden">
+                  <div key={item.id} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-success/40 transition-all duration-200">
+                    <div className="aspect-[4/3] bg-gradient-to-br from-ds-success/10 to-ds-success/10 relative overflow-hidden">
                       {item.thumbnail ? (
                         <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center"><svg className="w-16 h-16 text-green-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182" /></svg></div>
+                        <div className="w-full h-full flex items-center justify-center"><svg className="w-16 h-16 text-ds-success/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182" /></svg></div>
                       )}
-                      <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-green-600 text-white rounded-md capitalize">{item.category}</span>
+                      <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-ds-success text-white rounded-md capitalize">{item.category}</span>
                       {item.trade_in_max && (
-                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-bold bg-ds-card/90 text-green-700 rounded-md">Up to {formatPrice(item.trade_in_max)}</span>
+                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-bold bg-ds-card/90 text-ds-success rounded-md">Up to {formatPrice(item.trade_in_max)}</span>
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-ds-foreground group-hover:text-green-600 transition-colors line-clamp-1">{item.name}</h3>
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-ds-success transition-colors line-clamp-1">{item.name}</h3>
                       {item.description && (<p className="text-sm text-ds-muted-foreground mt-1 line-clamp-2">{item.description}</p>)}
 
                       {item.condition_requirements && (
-                        <div className="mt-3 p-2.5 bg-green-50 rounded-lg">
-                          <p className="text-xs font-medium text-green-800 mb-1">Condition Requirements:</p>
-                          <p className="text-xs text-green-700">{item.condition_requirements}</p>
+                        <div className="mt-3 p-2.5 bg-ds-success/10 rounded-lg">
+                          <p className="text-xs font-medium text-ds-success mb-1">Condition Requirements:</p>
+                          <p className="text-xs text-ds-success">{item.condition_requirements}</p>
                         </div>
                       )}
 
                       <div className="mt-3 space-y-1.5">
                         <p className="text-xs font-medium text-ds-foreground">Estimated trade-in value:</p>
                         <div className="flex items-center gap-2">
-                          <span className="text-lg font-bold text-green-600">{formatPrice(item.trade_in_min)} — {formatPrice(item.trade_in_max)}</span>
+                          <span className="text-lg font-bold text-ds-success">{formatPrice(item.trade_in_min)} — {formatPrice(item.trade_in_max)}</span>
                         </div>
                       </div>
 
                       <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
                         <span className="text-xs text-ds-muted-foreground">Free shipping label</span>
-                        <span className="px-4 py-1.5 text-xs font-semibold text-white bg-green-600 rounded-lg group-hover:bg-green-700 transition-colors">Start Trade-In</span>
+                        <span className="px-4 py-1.5 text-xs font-semibold text-white bg-ds-success rounded-lg group-hover:bg-ds-success/90 transition-colors">Start Trade-In</span>
                       </div>
                     </div>
                   </div>
@@ -160,17 +160,17 @@ function TradeInPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How Trade-In Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-green-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Get an Estimate</h3>
               <p className="text-sm text-ds-muted-foreground">Select your device and answer a few questions about its condition.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-green-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Ship for Free</h3>
               <p className="text-sm text-ds-muted-foreground">We send you a prepaid shipping label. Pack and ship your device.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-green-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Get Paid</h3>
               <p className="text-sm text-ds-muted-foreground">Receive store credit or payment once we verify your device.</p>
             </div>

@@ -86,7 +86,7 @@ function AuctionsPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-primary to-ds-destructive text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -118,7 +118,7 @@ function AuctionsPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search auctions..."
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-primary"
                 />
               </div>
 
@@ -129,7 +129,7 @@ function AuctionsPage() {
                     <button
                       key={opt}
                       onClick={() => setTypeFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${typeFilter === opt ? "bg-purple-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${typeFilter === opt ? "bg-ds-primary text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Types" : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
@@ -144,7 +144,7 @@ function AuctionsPage() {
                     <button
                       key={opt}
                       onClick={() => setStatusFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${statusFilter === opt ? "bg-purple-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${statusFilter === opt ? "bg-ds-primary text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Statuses" : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
@@ -171,23 +171,23 @@ function AuctionsPage() {
                     <a
                       key={item.id}
                       href={`${prefix}/auctions/${item.id}`}
-                      className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-purple-300 transition-all duration-200"
+                      className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-primary/40 transition-all duration-200"
                     >
-                      <div className="aspect-[4/3] bg-gradient-to-br from-purple-50 to-pink-100 relative overflow-hidden">
+                      <div className="aspect-[4/3] bg-gradient-to-br from-ds-primary/10 to-ds-destructive/15 relative overflow-hidden">
                         {item.thumbnail ? (
                           <img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
-                            <svg className="w-16 h-16 text-purple-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg className="w-16 h-16 text-ds-primary/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                             </svg>
                           </div>
                         )}
                         {item.auction_type && (
-                          <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-purple-600 text-white rounded-md capitalize">{item.auction_type}</span>
+                          <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-ds-primary text-white rounded-md capitalize">{item.auction_type}</span>
                         )}
                         {item.status && (
-                          <span className={`absolute top-2 right-2 px-2 py-1 text-xs font-medium rounded-md ${item.status === "active" ? "bg-green-500 text-white" : item.status === "upcoming" ? "bg-blue-500 text-white" : "bg-ds-muted-foreground text-white"}`}>
+                          <span className={`absolute top-2 right-2 px-2 py-1 text-xs font-medium rounded-md ${item.status === "active" ? "bg-ds-success text-white" : item.status === "upcoming" ? "bg-ds-info text-white" : "bg-ds-muted-foreground text-white"}`}>
                             {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
                           </span>
                         )}
@@ -199,7 +199,7 @@ function AuctionsPage() {
                         )}
                       </div>
                       <div className="p-4">
-                        <h3 className="font-semibold text-ds-foreground group-hover:text-purple-600 transition-colors line-clamp-1">{item.title}</h3>
+                        <h3 className="font-semibold text-ds-foreground group-hover:text-ds-primary transition-colors line-clamp-1">{item.title}</h3>
                         {item.description && (
                           <p className="text-sm text-ds-muted-foreground mt-1.5 line-clamp-2">{item.description}</p>
                         )}
@@ -207,7 +207,7 @@ function AuctionsPage() {
                         <div className="flex items-center justify-between mt-3 text-sm">
                           <div>
                             <span className="text-xs text-ds-muted-foreground">Current Bid</span>
-                            <p className="font-bold text-purple-600 text-lg">
+                            <p className="font-bold text-ds-primary text-lg">
                               {formatPrice(item.current_price || item.starting_price, item.currency_code)}
                             </p>
                           </div>
@@ -222,7 +222,7 @@ function AuctionsPage() {
                         {timeLeft && (
                           <div className="flex items-center gap-1 mt-2 text-xs">
                             <svg className="w-3.5 h-3.5 text-ds-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                            <span className={`font-medium ${timeLeft === "Ended" ? "text-red-500" : "text-orange-500"}`}>{timeLeft}</span>
+                            <span className={`font-medium ${timeLeft === "Ended" ? "text-ds-destructive" : "text-ds-warning"}`}>{timeLeft}</span>
                           </div>
                         )}
 
@@ -232,7 +232,7 @@ function AuctionsPage() {
                               Start: {formatPrice(item.starting_price, item.currency_code)}
                             </span>
                           )}
-                          <span className="px-3 py-1.5 text-xs font-semibold text-white bg-purple-600 rounded-lg group-hover:bg-purple-700 transition-colors ml-auto">Place Bid</span>
+                          <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-primary rounded-lg group-hover:bg-ds-primary/90 transition-colors ml-auto">Place Bid</span>
                         </div>
                       </div>
                     </a>
@@ -249,17 +249,17 @@ function AuctionsPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-purple-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Browse Auctions</h3>
               <p className="text-sm text-ds-muted-foreground">Find items you love from active and upcoming auctions across all categories.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-purple-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Place Your Bid</h3>
               <p className="text-sm text-ds-muted-foreground">Set your maximum bid and let the system bid on your behalf up to your limit.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-purple-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Win & Pay</h3>
               <p className="text-sm text-ds-muted-foreground">If you win, complete your payment securely and receive your item.</p>
             </div>

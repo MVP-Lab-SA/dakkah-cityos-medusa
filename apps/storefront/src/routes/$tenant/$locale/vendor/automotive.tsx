@@ -53,17 +53,17 @@ function VendorAutomotiveRoute() {
   const items = data?.items || []
 
   const statusColors: Record<string, string> = {
-    available: "bg-green-100 text-green-800",
-    sold: "bg-purple-100 text-purple-800",
-    reserved: "bg-yellow-100 text-yellow-800",
+    available: "bg-ds-success/15 text-ds-success",
+    sold: "bg-ds-primary/15 text-ds-primary",
+    reserved: "bg-ds-warning/15 text-ds-warning",
     draft: "bg-ds-muted text-ds-foreground",
-    pending: "bg-blue-100 text-blue-800",
+    pending: "bg-ds-info/15 text-ds-info",
   }
 
   const conditionColors: Record<string, string> = {
-    new: "bg-emerald-100 text-emerald-800",
-    used: "bg-amber-100 text-amber-800",
-    certified: "bg-blue-100 text-blue-800",
+    new: "bg-ds-success/15 text-ds-success",
+    used: "bg-ds-warning/15 text-ds-warning",
+    certified: "bg-ds-info/15 text-ds-info",
   }
 
   if (isLoading) {
@@ -85,7 +85,7 @@ function VendorAutomotiveRoute() {
     <div className="container mx-auto py-12">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold">Vehicle Listings</h1>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+        <button className="px-4 py-2 bg-ds-primary text-white rounded-lg hover:bg-ds-primary/90 transition">
           + List Vehicle
         </button>
       </div>
@@ -96,7 +96,7 @@ function VendorAutomotiveRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
+              statusFilter === s ? "bg-ds-primary text-white border-ds-primary" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -148,7 +148,7 @@ function VendorAutomotiveRoute() {
                     {vehicle.transmission && <span>{vehicle.transmission}</span>}
                   </div>
                 </div>
-                <button className="text-sm text-blue-600 hover:underline ml-4">
+                <button className="text-sm text-ds-primary hover:underline ml-4">
                   View Details
                 </button>
               </div>

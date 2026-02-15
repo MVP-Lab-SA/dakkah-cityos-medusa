@@ -22,7 +22,7 @@ function ProgressIndicator({ currentStep }: { currentStep: number }) {
               <div
                 className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-colors ${
                   step.number < currentStep
-                    ? "bg-green-600 text-white"
+                    ? "bg-ds-success text-white"
                     : step.number === currentStep
                       ? "bg-ds-bg-accent text-ds-text-accent"
                       : "bg-ds-bg-secondary text-ds-text-secondary"
@@ -41,7 +41,7 @@ function ProgressIndicator({ currentStep }: { currentStep: number }) {
             {idx < steps.length - 1 && (
               <div
                 className={`mx-2 mb-5 h-0.5 w-12 sm:w-20 ${
-                  step.number < currentStep ? "bg-green-600" : "bg-ds-bg-secondary"
+                  step.number < currentStep ? "bg-ds-success" : "bg-ds-bg-secondary"
                 }`}
               />
             )}

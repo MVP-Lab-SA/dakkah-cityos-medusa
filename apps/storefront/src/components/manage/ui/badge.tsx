@@ -6,10 +6,10 @@ type BadgeColor = "gray" | "violet" | "green" | "red" | "orange" | "blue"
 const colorStyles: Record<BadgeColor, string> = {
   gray: "bg-ds-muted text-ds-foreground/80",
   violet: "bg-ds-primary/15 text-ds-primary",
-  green: "bg-emerald-100 text-emerald-700",
-  red: "bg-ds-destructive/15 text-red-700",
-  orange: "bg-amber-100 text-amber-700",
-  blue: "bg-blue-100 text-blue-700",
+  green: "bg-ds-success/15 text-ds-success",
+  red: "bg-ds-destructive/15 text-ds-destructive",
+  orange: "bg-ds-warning/15 text-ds-warning",
+  blue: "bg-ds-info/15 text-ds-info",
 }
 
 interface BadgeProps {

@@ -16,7 +16,7 @@ const pointsData = {
 }
 
 const tiers = [
-  { name: 'Bronze', min: 0, color: 'bg-amber-700' },
+  { name: 'Bronze', min: 0, color: 'bg-ds-warning/90' },
   { name: 'Silver', min: 1000, color: 'bg-ds-muted-foreground/70' },
   { name: 'Gold', min: 2500, color: 'bg-ds-warning' },
   { name: 'Platinum', min: 5000, color: 'bg-ds-primary' },

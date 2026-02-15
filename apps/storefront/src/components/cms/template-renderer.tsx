@@ -186,33 +186,33 @@ const VERTICAL_ICONS: Record<string, string> = {
 }
 
 const VERTICAL_COLORS: Record<string, string> = {
-  restaurants: "from-orange-500 to-red-500",
-  "real-estate": "from-emerald-500 to-teal-600",
-  automotive: "from-blue-500 to-indigo-600",
-  grocery: "from-green-500 to-lime-600",
-  healthcare: "from-rose-500 to-pink-600",
-  education: "from-violet-500 to-purple-600",
-  events: "from-amber-500 to-yellow-600",
-  fitness: "from-cyan-500 to-blue-600",
-  travel: "from-sky-500 to-blue-600",
-  charity: "from-pink-500 to-rose-600",
-  freelance: "from-indigo-500 to-violet-600",
-  "digital-products": "from-purple-500 to-indigo-600",
-  rentals: "from-teal-500 to-emerald-600",
-  auctions: "from-yellow-500 to-orange-600",
+  restaurants: "from-ds-warning to-ds-destructive",
+  "real-estate": "from-ds-success to-ds-success",
+  automotive: "from-ds-primary to-ds-primary",
+  grocery: "from-ds-success to-lime-600",
+  healthcare: "from-rose-500 to-ds-destructive",
+  education: "from-ds-primary/100 to-ds-primary",
+  events: "from-ds-warning to-ds-warning",
+  fitness: "from-ds-info to-ds-primary",
+  travel: "from-ds-info/100 to-ds-primary",
+  charity: "from-ds-destructive to-rose-600",
+  freelance: "from-ds-primary to-ds-primary",
+  "digital-products": "from-ds-primary to-ds-primary",
+  rentals: "from-ds-success to-ds-success",
+  auctions: "from-ds-warning to-ds-warning",
   "financial-products": "from-slate-600 to-zinc-700",
-  government: "from-blue-600 to-blue-800",
-  memberships: "from-violet-500 to-purple-700",
+  government: "from-ds-primary to-ds-primary/90",
+  memberships: "from-ds-primary/100 to-ds-primary/90",
   parking: "from-gray-500 to-slate-600",
-  utilities: "from-green-600 to-emerald-700",
-  warranties: "from-blue-500 to-cyan-600",
+  utilities: "from-ds-success to-ds-success/90",
+  warranties: "from-ds-primary to-ds-info",
   legal: "from-slate-700 to-gray-800",
-  advertising: "from-pink-500 to-purple-600",
-  "pet-services": "from-amber-400 to-orange-500",
-  classifieds: "from-teal-500 to-cyan-600",
-  crowdfunding: "from-green-500 to-teal-600",
-  "social-commerce": "from-pink-500 to-rose-500",
-  affiliates: "from-indigo-500 to-blue-600",
+  advertising: "from-ds-destructive to-ds-primary",
+  "pet-services": "from-ds-warning to-ds-warning",
+  classifieds: "from-ds-success to-ds-info",
+  crowdfunding: "from-ds-success to-ds-success",
+  "social-commerce": "from-ds-destructive to-rose-500",
+  affiliates: "from-ds-primary to-ds-primary",
 }
 
 function resolveImage(item: any): string | null {
@@ -269,7 +269,7 @@ function VerticalCard({ item, verticalSlug, tenant, locale, cardLayout }: {
           </div>
           {description && <p className="text-ds-muted-foreground text-sm mt-2 line-clamp-2">{description}</p>}
           <div className="flex items-center gap-3 mt-3">
-            {rating != null && <span className="text-amber-500 text-sm font-medium flex items-center gap-0.5"><svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>{Number(rating).toFixed(1)}</span>}
+            {rating != null && <span className="text-ds-warning text-sm font-medium flex items-center gap-0.5"><svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>{Number(rating).toFixed(1)}</span>}
             {price != null && <span className="text-ds-foreground font-semibold">{typeof price === "number" ? `$${price.toFixed(2)}` : price}</span>}
           </div>
         </div>
@@ -306,7 +306,7 @@ function VerticalCard({ item, verticalSlug, tenant, locale, cardLayout }: {
         {description && <p className="text-ds-muted-foreground text-sm mt-2 line-clamp-2 flex-1">{description}</p>}
         <div className="flex items-center justify-between mt-3 pt-3 border-t border-ds-border">
           {rating != null ? (
-            <span className="text-amber-500 text-sm font-medium flex items-center gap-0.5">
+            <span className="text-ds-warning text-sm font-medium flex items-center gap-0.5">
               <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
               {Number(rating).toFixed(1)}
             </span>

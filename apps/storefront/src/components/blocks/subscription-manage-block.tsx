@@ -41,16 +41,16 @@ export const SubscriptionManageBlock: React.FC<SubscriptionManageBlockProps> = (
 
   const getUsagePercent = (used: number, limit: number) => Math.round((used / limit) * 100)
   const getUsageColor = (percent: number) => {
-    if (percent >= 90) return 'bg-red-500'
-    if (percent >= 70) return 'bg-yellow-500'
+    if (percent >= 90) return 'bg-ds-destructive'
+    if (percent >= 70) return 'bg-ds-warning'
     return 'bg-ds-primary'
   }
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'paid': return 'bg-green-100 text-green-700'
-      case 'pending': return 'bg-yellow-100 text-yellow-700'
-      case 'failed': return 'bg-red-100 text-red-700'
+      case 'paid': return 'bg-ds-success/15 text-ds-success'
+      case 'pending': return 'bg-ds-warning/15 text-ds-warning'
+      case 'failed': return 'bg-ds-destructive/15 text-ds-destructive'
       default: return 'bg-ds-muted text-ds-muted-foreground'
     }
   }
@@ -65,7 +65,7 @@ export const SubscriptionManageBlock: React.FC<SubscriptionManageBlockProps> = (
                 <div className="flex items-center gap-2 mb-1">
                   <h2 className="text-xl font-bold text-ds-foreground">Professional Plan</h2>
                   <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    isPaused ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'
+                    isPaused ? 'bg-ds-warning/15 text-ds-warning' : 'bg-ds-success/15 text-ds-success'
                   }`}>
                     {isPaused ? 'Paused' : 'Active'}
                   </span>
@@ -102,7 +102,7 @@ export const SubscriptionManageBlock: React.FC<SubscriptionManageBlockProps> = (
 
               <button
                 onClick={() => setShowCancelModal(!showCancelModal)}
-                className="px-5 py-2.5 border border-red-200 text-red-600 rounded-lg text-sm font-semibold hover:bg-red-50 transition-colors"
+                className="px-5 py-2.5 border border-ds-destructive/30 text-ds-destructive rounded-lg text-sm font-semibold hover:bg-ds-destructive/10 transition-colors"
               >
                 Cancel Subscription
               </button>
@@ -110,18 +110,18 @@ export const SubscriptionManageBlock: React.FC<SubscriptionManageBlockProps> = (
           </div>
 
           {showCancelModal && (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-6">
-              <h3 className="text-lg font-semibold text-red-700 mb-2">Cancel Subscription?</h3>
-              <p className="text-sm text-red-600 mb-4">
+            <div className="bg-ds-destructive/10 border border-ds-destructive/30 rounded-xl p-6 mb-6">
+              <h3 className="text-lg font-semibold text-ds-destructive mb-2">Cancel Subscription?</h3>
+              <p className="text-sm text-ds-destructive mb-4">
                 Your subscription will remain active until March 1, 2026. After that, you'll lose access to Professional features.
               </p>
               <div className="flex gap-3">
-                <button className="px-5 py-2 bg-red-600 text-white rounded-lg text-sm font-semibold hover:bg-red-700 transition-colors">
+                <button className="px-5 py-2 bg-ds-destructive text-white rounded-lg text-sm font-semibold hover:bg-ds-destructive/90 transition-colors">
                   Confirm Cancellation
                 </button>
                 <button
                   onClick={() => setShowCancelModal(false)}
-                  className="px-5 py-2 border border-red-200 text-red-600 rounded-lg text-sm font-semibold hover:bg-red-100 transition-colors"
+                  className="px-5 py-2 border border-ds-destructive/30 text-ds-destructive rounded-lg text-sm font-semibold hover:bg-ds-destructive/15 transition-colors"
                 >
                   Keep Subscription
                 </button>
@@ -150,7 +150,7 @@ export const SubscriptionManageBlock: React.FC<SubscriptionManageBlockProps> = (
                         />
                       </div>
                       {percent >= 80 && (
-                        <p className="text-xs text-yellow-600 mt-1">
+                        <p className="text-xs text-ds-warning mt-1">
                           {percent >= 90 ? 'Almost at limit!' : 'Approaching limit'}
                         </p>
                       )}

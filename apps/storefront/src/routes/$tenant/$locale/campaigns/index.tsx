@@ -81,10 +81,10 @@ export const Route = createFileRoute("/$tenant/$locale/campaigns/")({
 const typeOptions = ["all", "seasonal", "flash", "clearance", "holiday"] as const
 
 const typeColors: Record<string, string> = {
-  seasonal: "bg-green-500",
-  flash: "bg-yellow-500",
-  clearance: "bg-red-500",
-  holiday: "bg-purple-500",
+  seasonal: "bg-ds-success",
+  flash: "bg-ds-warning",
+  clearance: "bg-ds-destructive",
+  holiday: "bg-ds-primary",
 }
 
 function CampaignsPage() {
@@ -107,7 +107,7 @@ function CampaignsPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-red-500 to-orange-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-destructive to-ds-warning text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -174,17 +174,17 @@ function CampaignsPage() {
                 {filteredItems.map((item: any) => (
                   <div
                     key={item.id}
-                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-red-300 transition-all duration-200"
+                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-destructive/40 transition-all duration-200"
                   >
-                    <div className="aspect-[16/10] bg-gradient-to-br from-red-50 to-orange-100 relative overflow-hidden">
+                    <div className="aspect-[16/10] bg-gradient-to-br from-ds-destructive/10 to-ds-warning/15 relative overflow-hidden">
                       {item.image ? (
                         <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <svg className="w-16 h-16 text-red-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                          <svg className="w-16 h-16 text-ds-destructive/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                         </div>
                       )}
-                      <span className="absolute top-2 left-2 px-3 py-1.5 text-sm font-bold bg-red-600 text-white rounded-lg shadow-md">
+                      <span className="absolute top-2 left-2 px-3 py-1.5 text-sm font-bold bg-ds-destructive text-white rounded-lg shadow-md">
                         {item.discount_label || item.discount}
                       </span>
                       {item.type && (
@@ -192,7 +192,7 @@ function CampaignsPage() {
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-ds-foreground group-hover:text-red-600 transition-colors line-clamp-1">{item.title}</h3>
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-ds-destructive transition-colors line-clamp-1">{item.title}</h3>
                       {item.description && (
                         <p className="text-sm text-ds-muted-foreground mt-1.5 line-clamp-2">{item.description}</p>
                       )}
@@ -205,8 +205,8 @@ function CampaignsPage() {
                       </div>
 
                       <div className="pt-3 mt-3 border-t border-ds-border flex justify-between items-center">
-                        <span className="text-lg font-bold text-red-600">{item.discount} OFF</span>
-                        <button className="px-4 py-1.5 text-xs font-semibold text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors">Shop Now</button>
+                        <span className="text-lg font-bold text-ds-destructive">{item.discount} OFF</span>
+                        <button className="px-4 py-1.5 text-xs font-semibold text-white bg-ds-destructive rounded-lg hover:bg-ds-destructive transition-colors">Shop Now</button>
                       </div>
                     </div>
                   </div>
@@ -222,17 +222,17 @@ function CampaignsPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">Never Miss a Deal</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-red-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">🔔</div>
+              <div className="w-12 h-12 rounded-full bg-ds-destructive text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">🔔</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Get Notified</h3>
               <p className="text-sm text-ds-muted-foreground">Enable notifications to be first in line for flash deals.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-red-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">⏰</div>
+              <div className="w-12 h-12 rounded-full bg-ds-destructive text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">⏰</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Limited Time</h3>
               <p className="text-sm text-ds-muted-foreground">Act fast — our best campaigns run for a limited time only.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-red-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">🎯</div>
+              <div className="w-12 h-12 rounded-full bg-ds-destructive text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">🎯</div>
               <h3 className="font-semibold text-ds-foreground mb-2">All Categories</h3>
               <p className="text-sm text-ds-muted-foreground">Find promotions across fashion, tech, food, home, and more.</p>
             </div>

@@ -48,12 +48,12 @@ function VendorWalletRoute() {
   })
 
   const typeColors: Record<string, string> = {
-    payout: "text-green-600",
-    sale: "text-green-600",
-    refund: "text-red-600",
-    fee: "text-red-600",
-    adjustment: "text-yellow-600",
-    withdrawal: "text-blue-600",
+    payout: "text-ds-success",
+    sale: "text-ds-success",
+    refund: "text-ds-destructive",
+    fee: "text-ds-destructive",
+    adjustment: "text-ds-warning",
+    withdrawal: "text-ds-primary",
   }
 
   if (isLoading) {
@@ -82,21 +82,21 @@ function VendorWalletRoute() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="border rounded-lg p-6 bg-green-50">
+        <div className="border rounded-lg p-6 bg-ds-success/10">
           <p className="text-sm text-ds-muted-foreground mb-1">Available Balance</p>
-          <p className="text-3xl font-bold text-green-700">
+          <p className="text-3xl font-bold text-ds-success">
             {currency} {((data?.balance || 0) / 100).toFixed(2)}
           </p>
         </div>
-        <div className="border rounded-lg p-6 bg-yellow-50">
+        <div className="border rounded-lg p-6 bg-ds-warning/10">
           <p className="text-sm text-ds-muted-foreground mb-1">Pending</p>
-          <p className="text-3xl font-bold text-yellow-700">
+          <p className="text-3xl font-bold text-ds-warning">
             {currency} {((data?.pending || 0) / 100).toFixed(2)}
           </p>
         </div>
-        <div className="border rounded-lg p-6 bg-blue-50">
+        <div className="border rounded-lg p-6 bg-ds-info/10">
           <p className="text-sm text-ds-muted-foreground mb-1">Total Earned</p>
-          <p className="text-3xl font-bold text-blue-700">
+          <p className="text-3xl font-bold text-ds-info">
             {currency} {((data?.total_earned || 0) / 100).toFixed(2)}
           </p>
         </div>

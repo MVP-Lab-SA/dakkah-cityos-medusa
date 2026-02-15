@@ -76,7 +76,7 @@ function HealthcarePage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-blue-500 to-sky-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-primary to-ds-info text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -108,7 +108,7 @@ function HealthcarePage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search doctors..."
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-primary"
                 />
               </div>
 
@@ -119,7 +119,7 @@ function HealthcarePage() {
                     <button
                       key={opt}
                       onClick={() => setSpecFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${specFilter === opt ? "bg-blue-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${specFilter === opt ? "bg-ds-primary text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Specializations" : `${specIcon(opt)} ${opt.charAt(0).toUpperCase() + opt.slice(1)}`}
                     </button>
@@ -146,27 +146,27 @@ function HealthcarePage() {
                     <a
                       key={item.id}
                       href={`${prefix}/healthcare/${item.id}`}
-                      className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-blue-300 transition-all duration-200 p-5"
+                      className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-primary/40 transition-all duration-200 p-5"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-100 to-sky-200 overflow-hidden flex-shrink-0">
+                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-ds-primary/15 to-ds-info/30 overflow-hidden flex-shrink-0">
                           {item.thumbnail ? (
                             <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover" />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-blue-600 text-xl font-bold">
+                            <div className="w-full h-full flex items-center justify-center text-ds-primary text-xl font-bold">
                               {(item.name || "D").charAt(0)}
                             </div>
                           )}
                         </div>
                         <div className="min-w-0">
-                          <h3 className="font-semibold text-ds-foreground group-hover:text-blue-600 transition-colors line-clamp-1">
+                          <h3 className="font-semibold text-ds-foreground group-hover:text-ds-primary transition-colors line-clamp-1">
                             Dr. {item.name}
                           </h3>
                           {item.title && (
                             <p className="text-xs text-ds-muted-foreground">{item.title}</p>
                           )}
                           {item.specialization && (
-                            <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-700 rounded-md capitalize">
+                            <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-ds-info/15 text-ds-info rounded-md capitalize">
                               {specIcon(item.specialization)} {item.specialization}
                             </span>
                           )}
@@ -195,10 +195,10 @@ function HealthcarePage() {
                       {langs.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-2">
                           {langs.slice(0, 3).map((lang: string) => (
-                            <span key={lang} className="px-2 py-0.5 text-xs bg-sky-50 text-sky-700 rounded-md">{lang}</span>
+                            <span key={lang} className="px-2 py-0.5 text-xs bg-ds-info/10 text-ds-info rounded-md">{lang}</span>
                           ))}
                           {langs.length > 3 && (
-                            <span className="px-2 py-0.5 text-xs bg-sky-50 text-sky-500 rounded-md">+{langs.length - 3}</span>
+                            <span className="px-2 py-0.5 text-xs bg-ds-info/10 text-ds-info rounded-md">+{langs.length - 3}</span>
                           )}
                         </div>
                       )}
@@ -207,7 +207,7 @@ function HealthcarePage() {
                         <div className="flex items-center gap-1.5 mt-2">
                           <div className="flex items-center">
                             {[1, 2, 3, 4, 5].map((star) => (
-                              <svg key={star} className={`w-3.5 h-3.5 ${star <= Math.round(item.rating) ? "text-amber-400" : "text-ds-border"}`} fill="currentColor" viewBox="0 0 20 20">
+                              <svg key={star} className={`w-3.5 h-3.5 ${star <= Math.round(item.rating) ? "text-ds-warning" : "text-ds-border"}`} fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                               </svg>
                             ))}
@@ -217,10 +217,10 @@ function HealthcarePage() {
                       )}
 
                       <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
-                        <span className="font-bold text-blue-600 text-lg">
+                        <span className="font-bold text-ds-primary text-lg">
                           {formatFee(item.consultation_fee, item.currency_code)}
                         </span>
-                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 rounded-lg group-hover:bg-blue-700 transition-colors">Book Appointment</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-primary rounded-lg group-hover:bg-ds-primary/90 transition-colors">Book Appointment</span>
                       </div>
                     </a>
                   )
@@ -236,17 +236,17 @@ function HealthcarePage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Find a Doctor</h3>
               <p className="text-sm text-ds-muted-foreground">Search by specialization, experience, and patient reviews.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Book Appointment</h3>
               <p className="text-sm text-ds-muted-foreground">Choose a convenient date and time for your consultation.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Get Care</h3>
               <p className="text-sm text-ds-muted-foreground">Visit your doctor in-person or connect via telehealth.</p>
             </div>

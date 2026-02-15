@@ -42,7 +42,7 @@ function NodeItem({ node, depth }: { node: Node; depth: number }) {
     CITY: "bg-ds-accent/10 text-ds-accent",
     DISTRICT: "bg-ds-info text-ds-info",
     ZONE: "bg-ds-success text-ds-success",
-    FACILITY: "bg-orange-100 text-orange-800",
+    FACILITY: "bg-ds-warning/15 text-ds-warning",
     ASSET: "bg-ds-muted text-ds-foreground",
   }
 

@@ -58,10 +58,10 @@ function BookingDetailPage() {
   }
 
   const statusColors: Record<string, string> = {
-    confirmed: "bg-green-100 text-green-800",
-    pending: "bg-yellow-100 text-yellow-800",
-    cancelled: "bg-red-100 text-red-800",
-    completed: "bg-blue-100 text-blue-800",
+    confirmed: "bg-ds-success/15 text-ds-success",
+    pending: "bg-ds-warning/15 text-ds-warning",
+    cancelled: "bg-ds-destructive/15 text-ds-destructive",
+    completed: "bg-ds-info/15 text-ds-info",
   }
 
   return (

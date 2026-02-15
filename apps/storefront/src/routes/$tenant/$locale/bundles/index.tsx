@@ -68,7 +68,7 @@ function BundlesPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-rose-500 to-pink-600 text-white py-16">
+      <div className="bg-gradient-to-r from-rose-500 to-ds-destructive text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -137,7 +137,7 @@ function BundlesPage() {
                     key={item.id}
                     className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-rose-300 transition-all duration-200"
                   >
-                    <div className="aspect-[4/3] bg-gradient-to-br from-rose-50 to-pink-100 relative overflow-hidden">
+                    <div className="aspect-[4/3] bg-gradient-to-br from-rose-50 to-ds-destructive/15 relative overflow-hidden">
                       {item.thumbnail ? (
                         <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (

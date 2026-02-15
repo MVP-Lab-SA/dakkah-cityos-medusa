@@ -95,11 +95,11 @@ export const Route = createFileRoute("/$tenant/$locale/blog/")({
 const categoryOptions = ["all", "news", "guides", "tech", "lifestyle", "business"] as const
 
 const categoryColors: Record<string, string> = {
-  news: "bg-red-500",
-  guides: "bg-blue-500",
-  tech: "bg-purple-500",
-  lifestyle: "bg-green-500",
-  business: "bg-amber-500",
+  news: "bg-ds-destructive",
+  guides: "bg-ds-info",
+  tech: "bg-ds-primary",
+  lifestyle: "bg-ds-success",
+  business: "bg-ds-warning",
 }
 
 function BlogPage() {

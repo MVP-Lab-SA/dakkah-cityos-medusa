@@ -35,7 +35,7 @@ const statusColors: Record<string, string> = {
   canceled: "bg-ds-destructive text-ds-destructive",
   processing: "bg-ds-info text-ds-info",
   shipped: "bg-ds-accent/10 text-ds-accent",
-  requires_action: "bg-orange-100 text-orange-700",
+  requires_action: "bg-ds-warning/15 text-ds-warning",
 }
 
 const fulfillmentStatusLabels: Record<string, string> = {

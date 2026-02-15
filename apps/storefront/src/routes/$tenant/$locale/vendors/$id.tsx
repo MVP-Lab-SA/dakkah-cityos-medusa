@@ -69,7 +69,7 @@ function VendorDetailPage() {
         {[1, 2, 3, 4, 5].map((star) => (
           <svg
             key={star}
-            className={`w-5 h-5 ${star <= Math.round(rating) ? "text-yellow-500" : "text-ds-muted"}`}
+            className={`w-5 h-5 ${star <= Math.round(rating) ? "text-ds-warning" : "text-ds-muted"}`}
             fill="currentColor"
             viewBox="0 0 20 20"
           >

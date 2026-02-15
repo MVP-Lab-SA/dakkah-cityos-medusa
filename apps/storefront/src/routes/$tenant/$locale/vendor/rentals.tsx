@@ -53,10 +53,10 @@ function VendorRentalsRoute() {
   const items = data?.items || []
 
   const conditionColors: Record<string, string> = {
-    new: "bg-green-100 text-green-800",
-    like_new: "bg-blue-100 text-blue-800",
-    good: "bg-yellow-100 text-yellow-800",
-    fair: "bg-orange-100 text-orange-800",
+    new: "bg-ds-success/15 text-ds-success",
+    like_new: "bg-ds-info/15 text-ds-info",
+    good: "bg-ds-warning/15 text-ds-warning",
+    fair: "bg-ds-warning/15 text-ds-warning",
   }
 
   if (isLoading) {
@@ -78,7 +78,7 @@ function VendorRentalsRoute() {
     <div className="container mx-auto py-12">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold">Rental Items</h1>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+        <button className="px-4 py-2 bg-ds-primary text-white rounded-lg hover:bg-ds-primary/90 transition">
           + Add Rental
         </button>
       </div>
@@ -89,7 +89,7 @@ function VendorRentalsRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
+              statusFilter === s ? "bg-ds-primary text-white border-ds-primary" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -108,7 +108,7 @@ function VendorRentalsRoute() {
             <div key={rental.id} className="border rounded-lg p-5 hover:shadow-md transition">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="font-semibold text-sm truncate">{rental.title || rental.product_id}</h3>
-                <span className={`w-2.5 h-2.5 rounded-full ${rental.is_available !== false ? "bg-green-500" : "bg-red-500"}`} />
+                <span className={`w-2.5 h-2.5 rounded-full ${rental.is_available !== false ? "bg-ds-success" : "bg-ds-destructive"}`} />
               </div>
               <div className="space-y-2 text-sm text-ds-muted-foreground">
                 <div className="flex justify-between">
@@ -142,7 +142,7 @@ function VendorRentalsRoute() {
                   </div>
                 )}
               </div>
-              <button className="w-full mt-4 text-sm text-blue-600 hover:underline text-center">
+              <button className="w-full mt-4 text-sm text-ds-primary hover:underline text-center">
                 View Details
               </button>
             </div>

@@ -75,7 +75,7 @@ function RealEstatePage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-emerald-600 to-green-700 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-success to-ds-success/90 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -107,7 +107,7 @@ function RealEstatePage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search properties..."
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-success"
                 />
               </div>
 
@@ -118,7 +118,7 @@ function RealEstatePage() {
                     <button
                       key={opt}
                       onClick={() => setListingFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${listingFilter === opt ? "bg-emerald-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${listingFilter === opt ? "bg-ds-success text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Listings" : opt === "sale" ? "For Sale" : "For Rent"}
                     </button>
@@ -133,7 +133,7 @@ function RealEstatePage() {
                     <button
                       key={opt}
                       onClick={() => setPropertyFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${propertyFilter === opt ? "bg-emerald-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${propertyFilter === opt ? "bg-ds-success text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Types" : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
@@ -158,20 +158,20 @@ function RealEstatePage() {
                   <a
                     key={item.id}
                     href={`${prefix}/real-estate/${item.id}`}
-                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-emerald-300 transition-all duration-200"
+                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-success/40 transition-all duration-200"
                   >
-                    <div className="aspect-[4/3] bg-gradient-to-br from-emerald-50 to-green-100 relative overflow-hidden">
+                    <div className="aspect-[4/3] bg-gradient-to-br from-ds-success/10 to-ds-success/15 relative overflow-hidden">
                       {item.thumbnail ? (
                         <img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <svg className="w-16 h-16 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="w-16 h-16 text-ds-success/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                           </svg>
                         </div>
                       )}
                       {item.listing_type && (
-                        <span className={`absolute top-2 left-2 px-2 py-1 text-xs font-medium rounded-md ${item.listing_type === "sale" ? "bg-emerald-600 text-white" : "bg-blue-600 text-white"}`}>
+                        <span className={`absolute top-2 left-2 px-2 py-1 text-xs font-medium rounded-md ${item.listing_type === "sale" ? "bg-ds-success text-white" : "bg-ds-primary text-white"}`}>
                           {item.listing_type === "sale" ? "For Sale" : "For Rent"}
                         </span>
                       )}
@@ -186,12 +186,12 @@ function RealEstatePage() {
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-ds-foreground group-hover:text-emerald-600 transition-colors line-clamp-1">{item.title}</h3>
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-ds-success transition-colors line-clamp-1">{item.title}</h3>
                       {item.description && (
                         <p className="text-sm text-ds-muted-foreground mt-1.5 line-clamp-2">{item.description}</p>
                       )}
 
-                      <p className="text-xl font-bold text-emerald-600 mt-2">
+                      <p className="text-xl font-bold text-ds-success mt-2">
                         {formatPrice(item.price, item.currency_code)}
                         {item.listing_type === "rent" && <span className="text-xs font-normal text-ds-muted-foreground"> /month</span>}
                       </p>
@@ -222,7 +222,7 @@ function RealEstatePage() {
                       )}
 
                       <div className="flex justify-end items-center pt-3 mt-3 border-t border-ds-border">
-                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-emerald-600 rounded-lg group-hover:bg-emerald-700 transition-colors">View Details</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-success rounded-lg group-hover:bg-ds-success/90 transition-colors">View Details</span>
                       </div>
                     </div>
                   </a>
@@ -238,17 +238,17 @@ function RealEstatePage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Search Properties</h3>
               <p className="text-sm text-ds-muted-foreground">Browse properties by type, location, and budget to find your ideal space.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Schedule a Visit</h3>
               <p className="text-sm text-ds-muted-foreground">Contact the agent and arrange a viewing at your convenience.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Close the Deal</h3>
               <p className="text-sm text-ds-muted-foreground">Finalize your purchase or lease with full transparency and support.</p>
             </div>

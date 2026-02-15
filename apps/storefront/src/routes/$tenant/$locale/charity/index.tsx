@@ -50,10 +50,10 @@ const typeLabels: Record<string, string> = {
 }
 
 const typeColors: Record<string, string> = {
-  one_time: "bg-blue-500",
-  recurring: "bg-green-500",
-  emergency: "bg-red-500",
-  matching: "bg-purple-500",
+  one_time: "bg-ds-info",
+  recurring: "bg-ds-success",
+  emergency: "bg-ds-destructive",
+  matching: "bg-ds-primary",
 }
 
 function CharityPage() {
@@ -83,7 +83,7 @@ function CharityPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-success to-ds-success text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -155,27 +155,27 @@ function CharityPage() {
                     <a
                       key={item.id}
                       href={`${prefix}/charity/${item.id}`}
-                      className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-green-300 transition-all duration-200"
+                      className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-success/40 transition-all duration-200"
                     >
-                      <div className="aspect-[4/3] bg-gradient-to-br from-green-50 to-emerald-100 relative overflow-hidden">
+                      <div className="aspect-[4/3] bg-gradient-to-br from-ds-success/10 to-ds-success/15 relative overflow-hidden">
                         {item.thumbnail ? (
                           <img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
-                            <svg className="w-16 h-16 text-green-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                            <svg className="w-16 h-16 text-ds-success/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
                           </div>
                         )}
                         {item.campaign_type && (
-                          <span className={`absolute top-2 left-2 px-2 py-1 text-xs font-medium text-white rounded-md ${typeColors[item.campaign_type] || "bg-green-500"}`}>
+                          <span className={`absolute top-2 left-2 px-2 py-1 text-xs font-medium text-white rounded-md ${typeColors[item.campaign_type] || "bg-ds-success"}`}>
                             {typeLabels[item.campaign_type] || item.campaign_type}
                           </span>
                         )}
                         {item.is_urgent && (
-                          <span className="absolute top-2 right-2 px-2 py-1 text-xs font-bold bg-red-500 text-white rounded-md">Urgent</span>
+                          <span className="absolute top-2 right-2 px-2 py-1 text-xs font-bold bg-ds-destructive text-white rounded-md">Urgent</span>
                         )}
                       </div>
                       <div className="p-4">
-                        <h3 className="font-semibold text-ds-foreground group-hover:text-green-600 transition-colors line-clamp-1">{item.title}</h3>
+                        <h3 className="font-semibold text-ds-foreground group-hover:text-ds-success transition-colors line-clamp-1">{item.title}</h3>
                         {item.organization && (
                           <p className="text-xs text-ds-muted-foreground mt-0.5">by {item.organization}</p>
                         )}
@@ -185,10 +185,10 @@ function CharityPage() {
 
                         <div className="mt-3">
                           <div className="w-full bg-ds-muted rounded-full h-2.5 overflow-hidden">
-                            <div className="h-full bg-green-500 rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
+                            <div className="h-full bg-ds-success rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
                           </div>
                           <div className="flex justify-between mt-1.5 text-xs text-ds-muted-foreground">
-                            <span className="font-medium text-green-600">{formatAmount(raised, item.currency)} raised</span>
+                            <span className="font-medium text-ds-success">{formatAmount(raised, item.currency)} raised</span>
                             <span>{formatAmount(goal, item.currency)} goal</span>
                           </div>
                         </div>
@@ -209,8 +209,8 @@ function CharityPage() {
                         </div>
 
                         <div className="pt-3 mt-3 border-t border-ds-border flex justify-between items-center">
-                          <span className="text-sm font-medium text-green-600">{Math.round(progress)}% funded</span>
-                          <span className="px-3 py-1.5 text-xs font-semibold text-white bg-green-500 rounded-lg group-hover:bg-green-600 transition-colors">Donate Now</span>
+                          <span className="text-sm font-medium text-ds-success">{Math.round(progress)}% funded</span>
+                          <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-success rounded-lg group-hover:bg-ds-success transition-colors">Donate Now</span>
                         </div>
                       </div>
                     </a>
@@ -227,17 +227,17 @@ function CharityPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How Your Donation Helps</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-green-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">🎯</div>
+              <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">🎯</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Direct Impact</h3>
               <p className="text-sm text-ds-muted-foreground">100% of your donation goes directly to the cause you choose.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-green-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">📊</div>
+              <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">📊</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Full Transparency</h3>
               <p className="text-sm text-ds-muted-foreground">Track exactly how funds are used with real-time progress updates.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-green-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">❤️</div>
+              <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">❤️</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Community Power</h3>
               <p className="text-sm text-ds-muted-foreground">Join thousands of donors making a difference together.</p>
             </div>

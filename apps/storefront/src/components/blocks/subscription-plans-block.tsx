@@ -79,14 +79,14 @@ export const SubscriptionPlansBlock: React.FC<SubscriptionPlansBlockProps> = ({
                 <span className="text-ds-muted-foreground text-sm">{getPeriod()}</span>
               </div>
               {isYearly && (
-                <p className="text-xs text-green-600 mt-1">Save ${plan.price * 2}/year</p>
+                <p className="text-xs text-ds-success mt-1">Save ${plan.price * 2}/year</p>
               )}
             </div>
 
             <ul className="flex-1 space-y-3 mb-8">
               {plan.features.map((feature, fi) => (
                 <li key={fi} className="flex items-start gap-2">
-                  <svg className="w-5 h-5 text-green-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <svg className="w-5 h-5 text-ds-success shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
                   <span className="text-sm text-ds-foreground">{feature}</span>
@@ -132,7 +132,7 @@ export const SubscriptionPlansBlock: React.FC<SubscriptionPlansBlockProps> = ({
                 {items.map((plan, pi) => (
                   <td key={pi} className={`p-4 text-center ${plan.name === highlightedPlan ? 'bg-ds-primary/5' : ''}`}>
                     {plan.features.includes(feature) ? (
-                      <svg className="w-5 h-5 text-green-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <svg className="w-5 h-5 text-ds-success mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     ) : (
@@ -224,7 +224,7 @@ export const SubscriptionPlansBlock: React.FC<SubscriptionPlansBlockProps> = ({
             </button>
             <span className={`text-sm font-medium ${isYearly ? 'text-ds-foreground' : 'text-ds-muted-foreground'}`}>
               Yearly
-              <span className="ml-1 text-xs text-green-600">(Save 17%)</span>
+              <span className="ml-1 text-xs text-ds-success">(Save 17%)</span>
             </span>
           </div>
         )}

@@ -55,8 +55,8 @@ function ChannelTypeBadge({ type }: { type: string }) {
     web: "bg-ds-info text-ds-info",
     mobile: "bg-ds-accent/10 text-ds-accent",
     pos: "bg-ds-success text-ds-success",
-    marketplace: "bg-orange-100 text-orange-800",
-    social: "bg-pink-100 text-pink-800",
+    marketplace: "bg-ds-warning/15 text-ds-warning",
+    social: "bg-ds-destructive/15 text-ds-destructive",
   }
   return <span className={`text-xs px-2 py-0.5 rounded ${styles[type] || "bg-ds-muted"}`}>{type}</span>
 }

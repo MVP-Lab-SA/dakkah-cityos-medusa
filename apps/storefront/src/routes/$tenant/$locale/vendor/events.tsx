@@ -55,11 +55,11 @@ function VendorEventsRoute() {
   const items = data?.items || []
 
   const statusColors: Record<string, string> = {
-    published: "bg-green-100 text-green-800",
+    published: "bg-ds-success/15 text-ds-success",
     draft: "bg-ds-muted text-ds-foreground",
-    live: "bg-purple-100 text-purple-800",
-    completed: "bg-blue-100 text-blue-800",
-    cancelled: "bg-red-100 text-red-800",
+    live: "bg-ds-primary/15 text-ds-primary",
+    completed: "bg-ds-info/15 text-ds-info",
+    cancelled: "bg-ds-destructive/15 text-ds-destructive",
   }
 
   if (isLoading) {
@@ -81,7 +81,7 @@ function VendorEventsRoute() {
     <div className="container mx-auto py-12">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold">Events</h1>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+        <button className="px-4 py-2 bg-ds-primary text-white rounded-lg hover:bg-ds-primary/90 transition">
           + Create Event
         </button>
       </div>
@@ -92,7 +92,7 @@ function VendorEventsRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
+              statusFilter === s ? "bg-ds-primary text-white border-ds-primary" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -120,7 +120,7 @@ function VendorEventsRoute() {
                       {event.event_type}
                     </span>
                     {event.is_online && (
-                      <span className="px-2 py-0.5 text-xs rounded-full bg-blue-50 text-blue-700">Online</span>
+                      <span className="px-2 py-0.5 text-xs rounded-full bg-ds-info/10 text-ds-info">Online</span>
                     )}
                   </div>
                   <div className="flex items-center gap-6 text-sm text-ds-muted-foreground mt-2">
@@ -142,7 +142,7 @@ function VendorEventsRoute() {
                     </div>
                   )}
                 </div>
-                <button className="text-sm text-blue-600 hover:underline ml-4">
+                <button className="text-sm text-ds-primary hover:underline ml-4">
                   View Dashboard
                 </button>
               </div>

@@ -58,10 +58,10 @@ function TradeInDetailPage() {
   }
 
   const conditionColors: Record<string, string> = {
-    excellent: "bg-green-100 text-green-800",
-    good: "bg-blue-100 text-blue-800",
-    fair: "bg-yellow-100 text-yellow-800",
-    poor: "bg-red-100 text-red-800",
+    excellent: "bg-ds-success/15 text-ds-success",
+    good: "bg-ds-info/15 text-ds-info",
+    fair: "bg-ds-warning/15 text-ds-warning",
+    poor: "bg-ds-destructive/15 text-ds-destructive",
   }
 
   const conditionClass = conditionColors[(item.condition || "").toLowerCase()] || "bg-ds-muted text-ds-muted-foreground"

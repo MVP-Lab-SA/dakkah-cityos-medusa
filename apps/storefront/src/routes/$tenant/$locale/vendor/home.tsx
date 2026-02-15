@@ -91,10 +91,10 @@ function VendorHomeRoute() {
   const recentReviews = data?.recent_reviews || []
 
   const statusColors: Record<string, string> = {
-    completed: "bg-green-100 text-green-800",
-    pending: "bg-yellow-100 text-yellow-800",
-    processing: "bg-blue-100 text-blue-800",
-    cancelled: "bg-red-100 text-red-800",
+    completed: "bg-ds-success/15 text-ds-success",
+    pending: "bg-ds-warning/15 text-ds-warning",
+    processing: "bg-ds-info/15 text-ds-info",
+    cancelled: "bg-ds-destructive/15 text-ds-destructive",
     refunded: "bg-ds-muted text-ds-foreground",
   }
 
@@ -130,9 +130,9 @@ function VendorHomeRoute() {
           <Link
             key={link.label}
             to={link.href}
-            className="border rounded-lg p-4 text-center hover:shadow-md transition hover:border-blue-300"
+            className="border rounded-lg p-4 text-center hover:shadow-md transition hover:border-ds-primary/40"
           >
-            <span className="text-sm font-medium text-blue-600">{link.label}</span>
+            <span className="text-sm font-medium text-ds-primary">{link.label}</span>
           </Link>
         ))}
       </div>
@@ -178,7 +178,7 @@ function VendorHomeRoute() {
                     <div className="flex items-center gap-2">
                       <div className="flex">
                         {[...Array(5)].map((_, i) => (
-                          <span key={i} className={`text-sm ${i < review.rating ? "text-yellow-400" : "text-ds-border"}`}>
+                          <span key={i} className={`text-sm ${i < review.rating ? "text-ds-warning" : "text-ds-border"}`}>
                             ★
                           </span>
                         ))}

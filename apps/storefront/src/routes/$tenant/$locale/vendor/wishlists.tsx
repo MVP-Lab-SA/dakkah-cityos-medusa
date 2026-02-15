@@ -69,7 +69,7 @@ function VendorWishlistsRoute() {
               key={s}
               onClick={() => setSortBy(s)}
               className={`px-3 py-1.5 text-sm rounded-full border transition ${
-                sortBy === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
+                sortBy === s ? "bg-ds-primary text-white border-ds-primary" : "bg-ds-card hover:bg-ds-muted/50"
               }`}
             >
               {s === "most_wishlisted" ? "Most Wishlisted" : "Recently Added"}
@@ -106,7 +106,7 @@ function VendorWishlistsRoute() {
                   </td>
                   <td className="py-4 px-4">
                     <span className="inline-flex items-center gap-1">
-                      <span className="text-red-500">♥</span>
+                      <span className="text-ds-destructive">♥</span>
                       <span className="font-semibold">{item.wishlist_count.toLocaleString()}</span>
                     </span>
                   </td>

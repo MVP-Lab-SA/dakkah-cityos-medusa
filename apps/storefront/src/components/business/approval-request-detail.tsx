@@ -119,7 +119,7 @@ function StatusBadge({ status }: { status: string }) {
     approved: "bg-ds-success text-ds-success",
     rejected: "bg-ds-destructive text-ds-destructive",
     cancelled: "bg-ds-muted text-ds-foreground",
-    expired: "bg-orange-100 text-orange-800",
+    expired: "bg-ds-warning/15 text-ds-warning",
   }
   return <span className={`px-3 py-1 rounded-full text-sm font-medium ${styles[status] || "bg-ds-muted"}`}>{status}</span>
 }

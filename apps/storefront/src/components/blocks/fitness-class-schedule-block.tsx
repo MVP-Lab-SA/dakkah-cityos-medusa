@@ -91,11 +91,11 @@ export const FitnessClassScheduleBlock: React.FC<FitnessClassScheduleBlockProps>
         <div className="mb-3">
           <div className="flex items-center justify-between text-xs mb-1">
             <span className="text-ds-muted-foreground">{cls.enrolled}/{cls.capacity} spots</span>
-            <span className={isFull(cls) ? 'text-red-500 font-medium' : 'text-ds-muted-foreground'}>{isFull(cls) ? 'Full' : `${capacityPercent(cls)}%`}</span>
+            <span className={isFull(cls) ? 'text-ds-destructive font-medium' : 'text-ds-muted-foreground'}>{isFull(cls) ? 'Full' : `${capacityPercent(cls)}%`}</span>
           </div>
           <div className="w-full bg-ds-muted rounded-full h-1.5">
             <div
-              className={`h-1.5 rounded-full transition-all ${isFull(cls) ? 'bg-red-500' : capacityPercent(cls) > 80 ? 'bg-yellow-500' : 'bg-ds-primary'}`}
+              className={`h-1.5 rounded-full transition-all ${isFull(cls) ? 'bg-ds-destructive' : capacityPercent(cls) > 80 ? 'bg-ds-warning' : 'bg-ds-primary'}`}
               style={{ width: `${capacityPercent(cls)}%` }}
             />
           </div>
@@ -169,7 +169,7 @@ export const FitnessClassScheduleBlock: React.FC<FitnessClassScheduleBlockProps>
                 {showCapacity && (
                   <div className="w-24 flex-shrink-0">
                     <div className="w-full bg-ds-muted rounded-full h-1.5">
-                      <div className={`h-1.5 rounded-full ${isFull(cls) ? 'bg-red-500' : 'bg-ds-primary'}`} style={{ width: `${capacityPercent(cls)}%` }} />
+                      <div className={`h-1.5 rounded-full ${isFull(cls) ? 'bg-ds-destructive' : 'bg-ds-primary'}`} style={{ width: `${capacityPercent(cls)}%` }} />
                     </div>
                     <p className="text-xs text-ds-muted-foreground text-center mt-1">{cls.enrolled}/{cls.capacity}</p>
                   </div>

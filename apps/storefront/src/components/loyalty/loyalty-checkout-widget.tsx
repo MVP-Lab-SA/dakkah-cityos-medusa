@@ -139,7 +139,7 @@ export function LoyaltyCheckoutWidget({
             <span className="text-sm text-ds-muted-foreground">
               Points earned from this purchase
             </span>
-            <span className="text-sm font-semibold text-green-600">
+            <span className="text-sm font-semibold text-ds-success">
               +{pointsToEarn.toLocaleString()} pts
             </span>
           </div>

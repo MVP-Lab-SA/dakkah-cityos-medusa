@@ -106,7 +106,7 @@ export function VendorDashboard() {
         <div className="border rounded-lg p-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-muted-foreground">Pending Payout</span>
-            <ClockSolid className="w-5 h-5 text-orange-600" />
+            <ClockSolid className="w-5 h-5 text-ds-warning" />
           </div>
           <p className="text-2xl font-bold">
             ${(stats?.pending_payout || 0).toLocaleString()}

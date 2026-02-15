@@ -9,7 +9,7 @@ const variantStyles: Record<ButtonVariant, string> = {
   primary: "bg-ds-primary text-white hover:bg-ds-primary/90 focus:ring-ds-primary",
   secondary: "bg-ds-card text-ds-foreground/80 border border-ds-border hover:bg-ds-muted/50 focus:ring-ds-primary",
   transparent: "bg-transparent text-ds-foreground/80 hover:bg-ds-muted focus:ring-ds-primary",
-  danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
+  danger: "bg-ds-destructive text-white hover:bg-ds-destructive/90 focus:ring-ds-destructive",
 }
 
 const sizeStyles: Record<ButtonSize, string> = {

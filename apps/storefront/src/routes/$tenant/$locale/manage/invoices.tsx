@@ -125,10 +125,10 @@ function ManageInvoicesPage() {
         <StatusBadge
           status={val as string}
           variants={{
-            draft: "bg-amber-500",
+            draft: "bg-ds-warning",
             sent: "bg-ds-primary",
-            paid: "bg-green-600",
-            overdue: "bg-red-600",
+            paid: "bg-ds-success",
+            overdue: "bg-ds-destructive",
             void: "bg-ds-muted-foreground/70",
           }}
         />

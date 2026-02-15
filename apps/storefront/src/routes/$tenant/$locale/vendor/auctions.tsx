@@ -55,11 +55,11 @@ function VendorAuctionsRoute() {
   const items = data?.items || []
 
   const statusColors: Record<string, string> = {
-    active: "bg-green-100 text-green-800",
-    scheduled: "bg-blue-100 text-blue-800",
+    active: "bg-ds-success/15 text-ds-success",
+    scheduled: "bg-ds-info/15 text-ds-info",
     draft: "bg-ds-muted text-ds-foreground",
-    ended: "bg-purple-100 text-purple-800",
-    cancelled: "bg-red-100 text-red-800",
+    ended: "bg-ds-primary/15 text-ds-primary",
+    cancelled: "bg-ds-destructive/15 text-ds-destructive",
   }
 
   function getTimeRemaining(endsAt: string) {
@@ -91,7 +91,7 @@ function VendorAuctionsRoute() {
     <div className="container mx-auto py-12">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold">Auctions</h1>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+        <button className="px-4 py-2 bg-ds-primary text-white rounded-lg hover:bg-ds-primary/90 transition">
           + Create Auction
         </button>
       </div>
@@ -102,7 +102,7 @@ function VendorAuctionsRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
+              statusFilter === s ? "bg-ds-primary text-white border-ds-primary" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -135,14 +135,14 @@ function VendorAuctionsRoute() {
                       Starting: {auction.currency_code?.toUpperCase()} {(auction.starting_price / 100).toFixed(2)}
                     </span>
                     {auction.current_bid != null && (
-                      <span className="font-medium text-green-700">
+                      <span className="font-medium text-ds-success">
                         Current: {auction.currency_code?.toUpperCase()} {(auction.current_bid / 100).toFixed(2)}
                       </span>
                     )}
                     {auction.bid_count != null && (
                       <span>{auction.bid_count} bids</span>
                     )}
-                    <span className={`font-medium ${auction.status === "active" ? "text-orange-600" : ""}`}>
+                    <span className={`font-medium ${auction.status === "active" ? "text-ds-warning" : ""}`}>
                       {getTimeRemaining(auction.ends_at)}
                     </span>
                   </div>
@@ -152,7 +152,7 @@ function VendorAuctionsRoute() {
                     </p>
                   )}
                 </div>
-                <button className="text-sm text-blue-600 hover:underline ml-4">
+                <button className="text-sm text-ds-primary hover:underline ml-4">
                   View Bids
                 </button>
               </div>

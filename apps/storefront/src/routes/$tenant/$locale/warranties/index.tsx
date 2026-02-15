@@ -45,9 +45,9 @@ const planTypeOptions = ["all", "basic", "standard", "premium", "extended"] as c
 
 const planTypeColors: Record<string, { badge: string; accent: string }> = {
   basic: { badge: "bg-ds-muted text-ds-foreground/80", accent: "text-ds-muted-foreground" },
-  standard: { badge: "bg-blue-100 text-blue-700", accent: "text-blue-600" },
-  premium: { badge: "bg-amber-100 text-amber-700", accent: "text-amber-600" },
-  extended: { badge: "bg-emerald-100 text-emerald-700", accent: "text-emerald-600" },
+  standard: { badge: "bg-ds-info/15 text-ds-info", accent: "text-ds-primary" },
+  premium: { badge: "bg-ds-warning/15 text-ds-warning", accent: "text-ds-warning" },
+  extended: { badge: "bg-ds-success/15 text-ds-success", accent: "text-ds-success" },
 }
 
 function WarrantiesPage() {
@@ -84,7 +84,7 @@ function WarrantiesPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-emerald-500 to-green-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-success to-ds-success text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -116,7 +116,7 @@ function WarrantiesPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search warranties..."
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-success"
                 />
               </div>
 
@@ -127,7 +127,7 @@ function WarrantiesPage() {
                     <button
                       key={opt}
                       onClick={() => setPlanTypeFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${planTypeFilter === opt ? "bg-emerald-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${planTypeFilter === opt ? "bg-ds-success text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Plans" : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
@@ -152,14 +152,14 @@ function WarrantiesPage() {
                   <a
                     key={item.id}
                     href={`${prefix}/warranties/${item.id}`}
-                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-emerald-300 transition-all duration-200"
+                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-success/40 transition-all duration-200"
                   >
-                    <div className="aspect-[4/3] bg-gradient-to-br from-emerald-50 to-green-100 relative overflow-hidden">
+                    <div className="aspect-[4/3] bg-gradient-to-br from-ds-success/10 to-ds-success/15 relative overflow-hidden">
                       {item.thumbnail ? (
                         <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <svg className="w-16 h-16 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="w-16 h-16 text-ds-success/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                           </svg>
                         </div>
@@ -176,7 +176,7 @@ function WarrantiesPage() {
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-ds-foreground group-hover:text-emerald-600 transition-colors line-clamp-1">{item.name}</h3>
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-ds-success transition-colors line-clamp-1">{item.name}</h3>
                       {item.description && (
                         <p className="text-sm text-ds-muted-foreground mt-1.5 line-clamp-2">{item.description}</p>
                       )}
@@ -187,7 +187,7 @@ function WarrantiesPage() {
                           <ul className="text-xs text-ds-muted-foreground space-y-1">
                             {(Array.isArray(item.coverage) ? item.coverage.slice(0, 3) : [item.coverage]).map((c: string, i: number) => (
                               <li key={i} className="flex items-center gap-1">
-                                <svg className="w-3 h-3 text-emerald-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                                <svg className="w-3 h-3 text-ds-success flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                                 <span className="line-clamp-1">{c}</span>
                               </li>
                             ))}
@@ -199,7 +199,7 @@ function WarrantiesPage() {
                         <div className="flex items-center gap-1.5 mt-2">
                           <div className="flex items-center">
                             {[1, 2, 3, 4, 5].map((star) => (
-                              <svg key={star} className={`w-3.5 h-3.5 ${star <= Math.round(item.rating) ? "text-amber-400" : "text-ds-border"}`} fill="currentColor" viewBox="0 0 20 20">
+                              <svg key={star} className={`w-3.5 h-3.5 ${star <= Math.round(item.rating) ? "text-ds-warning" : "text-ds-border"}`} fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                               </svg>
                             ))}
@@ -209,10 +209,10 @@ function WarrantiesPage() {
                       )}
 
                       <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
-                        <span className="font-bold text-emerald-600 text-lg">
+                        <span className="font-bold text-ds-success text-lg">
                           {formatPrice(item.price, item.currency_code)}
                         </span>
-                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-emerald-600 rounded-lg group-hover:bg-green-700 transition-colors">Get Protection</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-success rounded-lg group-hover:bg-ds-success/90 transition-colors">Get Protection</span>
                       </div>
                     </div>
                   </a>
@@ -228,17 +228,17 @@ function WarrantiesPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">Why Choose Our Warranties?</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Comprehensive Coverage</h3>
               <p className="text-sm text-ds-muted-foreground">Choose from plans that cover mechanical failures, accidental damage, and more.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Easy Claims Process</h3>
               <p className="text-sm text-ds-muted-foreground">File a claim online in minutes and get fast resolution from our team.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Peace of Mind</h3>
               <p className="text-sm text-ds-muted-foreground">Rest easy knowing your valuable purchases are protected long-term.</p>
             </div>

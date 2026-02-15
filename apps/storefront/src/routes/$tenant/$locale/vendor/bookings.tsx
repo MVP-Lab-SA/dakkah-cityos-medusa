@@ -55,10 +55,10 @@ function VendorBookingsRoute() {
   const items = data?.items || []
 
   const statusColors: Record<string, string> = {
-    confirmed: "bg-green-100 text-green-800",
-    pending: "bg-yellow-100 text-yellow-800",
-    cancelled: "bg-red-100 text-red-800",
-    completed: "bg-blue-100 text-blue-800",
+    confirmed: "bg-ds-success/15 text-ds-success",
+    pending: "bg-ds-warning/15 text-ds-warning",
+    cancelled: "bg-ds-destructive/15 text-ds-destructive",
+    completed: "bg-ds-info/15 text-ds-info",
     no_show: "bg-ds-muted text-ds-foreground",
   }
 
@@ -90,7 +90,7 @@ function VendorBookingsRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
+              statusFilter === s ? "bg-ds-primary text-white border-ds-primary" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -152,7 +152,7 @@ function VendorBookingsRoute() {
                   </td>
                   <td className="py-4 text-sm">
                     <span className={`px-2 py-0.5 text-xs rounded-full ${
-                      booking.payment_status === "paid" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
+                      booking.payment_status === "paid" ? "bg-ds-success/15 text-ds-success" : "bg-ds-warning/15 text-ds-warning"
                     }`}>
                       {booking.payment_status || "pending"}
                     </span>

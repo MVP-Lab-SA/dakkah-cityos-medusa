@@ -35,7 +35,7 @@ export function PlanCard({ plan, isCurrentPlan }: PlanCardProps) {
             ? "border-ds-foreground shadow-xl scale-[1.02]"
             : "border-ds-border hover:border-ds-border hover:shadow-lg"
         }
-        ${isCurrentPlan ? "ring-2 ring-emerald-500 ring-offset-2" : ""}
+        ${isCurrentPlan ? "ring-2 ring-ds-success ring-offset-2" : ""}
       `}
     >
       {plan.is_popular && (

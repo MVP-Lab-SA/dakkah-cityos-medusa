@@ -51,10 +51,10 @@ function VendorWarrantyRoute() {
   const items = data?.items || []
 
   const statusColors: Record<string, string> = {
-    active: "bg-green-100 text-green-800",
+    active: "bg-ds-success/15 text-ds-success",
     draft: "bg-ds-muted text-ds-foreground",
-    expired: "bg-red-100 text-red-800",
-    suspended: "bg-yellow-100 text-yellow-800",
+    expired: "bg-ds-destructive/15 text-ds-destructive",
+    suspended: "bg-ds-warning/15 text-ds-warning",
   }
 
   if (isLoading) {
@@ -76,7 +76,7 @@ function VendorWarrantyRoute() {
     <div className="container mx-auto py-12">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold">Warranty Plans</h1>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+        <button className="px-4 py-2 bg-ds-primary text-white rounded-lg hover:bg-ds-primary/90 transition">
           + Create Plan
         </button>
       </div>
@@ -87,7 +87,7 @@ function VendorWarrantyRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
+              statusFilter === s ? "bg-ds-primary text-white border-ds-primary" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -129,7 +129,7 @@ function VendorWarrantyRoute() {
                     )}
                   </div>
                 </div>
-                <button className="text-sm text-blue-600 hover:underline ml-4">
+                <button className="text-sm text-ds-primary hover:underline ml-4">
                   View Claims
                 </button>
               </div>

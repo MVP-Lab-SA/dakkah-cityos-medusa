@@ -87,7 +87,7 @@ export function StarRatingInput({
             key={i}
             type="button"
             onClick={() => onChange(starValue)}
-            className="focus:outline-none focus:ring-2 focus:ring-amber-400 rounded"
+            className="focus:outline-none focus:ring-2 focus:ring-ds-warning rounded"
           >
             {filled ? (
               <StarSolid className={clx(sizeClasses[size], "text-ds-warning")} />

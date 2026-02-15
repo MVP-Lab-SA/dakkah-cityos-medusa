@@ -31,8 +31,8 @@ export const PayoutHistoryBlock: React.FC<PayoutHistoryBlockProps> = ({
 
   const statusColors: Record<string, string> = {
     completed: 'bg-ds-primary/10 text-ds-primary',
-    pending: 'bg-yellow-100 text-yellow-800',
-    processing: 'bg-blue-100 text-blue-800',
+    pending: 'bg-ds-warning/15 text-ds-warning',
+    processing: 'bg-ds-info/15 text-ds-info',
     failed: 'bg-ds-destructive/10 text-ds-destructive',
   }
 

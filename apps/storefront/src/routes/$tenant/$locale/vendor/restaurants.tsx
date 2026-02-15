@@ -105,12 +105,12 @@ function VendorRestaurantsRoute() {
                       <div className="flex items-center gap-3">
                         <h2 className="text-xl font-bold">{restaurant.name}</h2>
                         <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${
-                          restaurant.is_active ? "bg-green-100 text-green-800" : "bg-ds-muted text-ds-foreground"
+                          restaurant.is_active ? "bg-ds-success/15 text-ds-success" : "bg-ds-muted text-ds-foreground"
                         }`}>
                           {restaurant.is_active ? "Active" : "Inactive"}
                         </span>
                         {restaurant.is_accepting_orders && (
-                          <span className="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-800">
+                          <span className="px-2 py-0.5 text-xs rounded-full bg-ds-info/15 text-ds-info">
                             Accepting Orders
                           </span>
                         )}
@@ -130,7 +130,7 @@ function VendorRestaurantsRoute() {
                 {restaurant.cuisine_types && restaurant.cuisine_types.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 mb-4">
                     {restaurant.cuisine_types.map((cuisine, i) => (
-                      <span key={i} className="px-2 py-0.5 bg-orange-50 text-orange-700 text-xs rounded-full">
+                      <span key={i} className="px-2 py-0.5 bg-ds-warning/10 text-ds-warning text-xs rounded-full">
                         {cuisine}
                       </span>
                     ))}
@@ -172,7 +172,7 @@ function VendorRestaurantsRoute() {
                 </div>
 
                 <div className="flex gap-3 mt-6 pt-4 border-t">
-                  <button className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition">
+                  <button className="px-4 py-2 bg-ds-primary text-white text-sm rounded-lg hover:bg-ds-primary/90 transition">
                     Update Menu
                   </button>
                   <button className="px-4 py-2 border text-sm rounded-lg hover:bg-ds-muted/50 transition">

@@ -43,7 +43,7 @@ function DropshippingPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-ds-primary to-purple-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-primary to-ds-primary text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -55,14 +55,14 @@ function DropshippingPage() {
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>No upfront costs</span><span>|</span><span>500+ suppliers</span><span>|</span><span>Automated fulfillment</span>
           </div>
-          <button className="mt-8 px-8 py-3 bg-ds-card text-purple-700 font-semibold rounded-lg hover:bg-ds-card/90 transition-colors">Get Started Free</button>
+          <button className="mt-8 px-8 py-3 bg-ds-card text-ds-primary font-semibold rounded-lg hover:bg-ds-card/90 transition-colors">Get Started Free</button>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {stats.map((s: any, i: number) => (
-            <div key={i} className="bg-gradient-to-br from-ds-primary/10 to-purple-500/5 border border-ds-primary/20 rounded-xl p-4 text-center">
+            <div key={i} className="bg-gradient-to-br from-ds-primary/10 to-ds-primary/5 border border-ds-primary/20 rounded-xl p-4 text-center">
               <p className="text-2xl font-bold text-ds-foreground">{s.value}</p>
               <p className="text-xs text-ds-muted-foreground mt-1">{s.label}</p>
             </div>
@@ -102,7 +102,7 @@ function DropshippingPage() {
               <ul className="space-y-2 mb-6">
                 {plan.features.map((f: string, j: number) => (
                   <li key={j} className="flex items-center gap-2 text-sm text-ds-foreground">
-                    <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                    <svg className="w-4 h-4 text-ds-success flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                     {f}
                   </li>
                 ))}

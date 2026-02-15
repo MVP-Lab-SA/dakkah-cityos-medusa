@@ -37,7 +37,7 @@ function PrintOnDemandPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-pink-500 to-fuchsia-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-destructive to-fuchsia-600 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -49,14 +49,14 @@ function PrintOnDemandPage() {
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>No minimums</span><span>|</span><span>100+ products</span><span>|</span><span>Global shipping</span>
           </div>
-          <button className="mt-8 px-8 py-3 bg-ds-card text-pink-700 font-semibold rounded-lg hover:bg-ds-card/90 transition-colors">Start Creating</button>
+          <button className="mt-8 px-8 py-3 bg-ds-card text-ds-destructive font-semibold rounded-lg hover:bg-ds-card/90 transition-colors">Start Creating</button>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {benefits.map((b: any, i: number) => (
-            <div key={i} className="bg-gradient-to-br from-pink-500/10 to-fuchsia-500/5 border border-pink-500/20 rounded-xl p-6 text-center">
+            <div key={i} className="bg-gradient-to-br from-ds-destructive/10 to-fuchsia-500/5 border border-ds-destructive/20 rounded-xl p-6 text-center">
               <div className="text-3xl mb-3">{b.icon}</div>
               <h3 className="font-semibold text-ds-foreground mb-2">{b.title}</h3>
               <p className="text-sm text-ds-muted-foreground">{b.description}</p>
@@ -65,7 +65,7 @@ function PrintOnDemandPage() {
         </div>
 
         <div className="mb-6">
-          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search products..." className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-pink-500" />
+          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search products..." className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-destructive" />
         </div>
 
         <h2 className="text-2xl font-bold text-ds-foreground mb-6">Products You Can Create</h2>
@@ -78,7 +78,7 @@ function PrintOnDemandPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             {filtered.map((p: any) => (
-              <div key={p.id} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-pink-300 transition-all duration-200">
+              <div key={p.id} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-destructive/40 transition-all duration-200">
                 <div className="aspect-[4/3] relative overflow-hidden">
                   <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   <div className="absolute bottom-3 left-3">
@@ -86,9 +86,9 @@ function PrintOnDemandPage() {
                   </div>
                 </div>
                 <div className="p-5">
-                  <h3 className="text-lg font-semibold text-ds-foreground mb-2 group-hover:text-pink-600 transition-colors">{p.name}</h3>
+                  <h3 className="text-lg font-semibold text-ds-foreground mb-2 group-hover:text-ds-destructive transition-colors">{p.name}</h3>
                   <p className="text-sm text-ds-muted-foreground mb-4">{p.description}</p>
-                  <button className="w-full py-2.5 text-sm font-medium rounded-lg bg-pink-500 text-white hover:bg-pink-600 transition-colors">Design Now</button>
+                  <button className="w-full py-2.5 text-sm font-medium rounded-lg bg-ds-destructive text-white hover:bg-ds-destructive transition-colors">Design Now</button>
                 </div>
               </div>
             ))}
@@ -101,17 +101,17 @@ function PrintOnDemandPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-pink-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-destructive text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Upload Your Design</h3>
               <p className="text-sm text-ds-muted-foreground">Create or upload artwork using our design tools and mockup generator.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-pink-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-destructive text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Choose Products</h3>
               <p className="text-sm text-ds-muted-foreground">Select from 100+ product types to apply your designs to.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-pink-500 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-destructive text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Start Selling</h3>
               <p className="text-sm text-ds-muted-foreground">List products on your store. We print and ship when orders come in.</p>
             </div>

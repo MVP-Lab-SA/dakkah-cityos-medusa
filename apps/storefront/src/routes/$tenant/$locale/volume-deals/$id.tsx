@@ -98,8 +98,8 @@ function VolumeDealsDetailPage() {
               {item.thumbnail || item.image ? (
                 <img src={item.thumbnail || item.image} alt={item.title || item.name} className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-50 to-amber-100">
-                  <svg className="w-16 h-16 text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-ds-warning/10 to-ds-warning/15">
+                  <svg className="w-16 h-16 text-ds-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                   </svg>
                 </div>
@@ -191,7 +191,7 @@ function VolumeDealsDetailPage() {
                     ${currentPrice != null ? Number(currentPrice || 0).toLocaleString() : "—"}
                   </p>
                   {Number(savings) > 0 && (
-                    <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium rounded-full bg-green-100 text-green-800">
+                    <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium rounded-full bg-ds-success/15 text-ds-success">
                       Save {savings}%
                     </span>
                   )}

@@ -75,11 +75,11 @@ function ClassifiedsPage() {
   }
 
   const conditionColor = (c: string) => {
-    if (c === "new") return "bg-green-600 text-white"
-    if (c === "like_new") return "bg-emerald-500 text-white"
-    if (c === "good") return "bg-amber-500 text-white"
-    if (c === "fair") return "bg-orange-500 text-white"
-    return "bg-red-500 text-white"
+    if (c === "new") return "bg-ds-success text-white"
+    if (c === "like_new") return "bg-ds-success text-white"
+    if (c === "good") return "bg-ds-warning text-white"
+    if (c === "fair") return "bg-ds-warning text-white"
+    return "bg-ds-destructive text-white"
   }
 
   const listingTypeLabel = (t: string) => {
@@ -89,7 +89,7 @@ function ClassifiedsPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-amber-500 to-yellow-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-warning to-ds-warning text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -121,7 +121,7 @@ function ClassifiedsPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search classifieds..."
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-warning"
                 />
               </div>
 
@@ -132,7 +132,7 @@ function ClassifiedsPage() {
                     <button
                       key={opt}
                       onClick={() => setConditionFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${conditionFilter === opt ? "bg-amber-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${conditionFilter === opt ? "bg-ds-warning text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Conditions" : conditionLabel(opt)}
                     </button>
@@ -147,7 +147,7 @@ function ClassifiedsPage() {
                     <button
                       key={opt}
                       onClick={() => setListingTypeFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${listingTypeFilter === opt ? "bg-amber-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${listingTypeFilter === opt ? "bg-ds-warning text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Types" : listingTypeLabel(opt)}
                     </button>
@@ -172,14 +172,14 @@ function ClassifiedsPage() {
                   <a
                     key={item.id}
                     href={`${prefix}/classifieds/${item.id}`}
-                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-amber-300 transition-all duration-200"
+                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-warning/40 transition-all duration-200"
                   >
-                    <div className="aspect-[4/3] bg-gradient-to-br from-amber-50 to-yellow-100 relative overflow-hidden">
+                    <div className="aspect-[4/3] bg-gradient-to-br from-ds-warning/10 to-ds-warning/15 relative overflow-hidden">
                       {item.thumbnail ? (
                         <img src={item.thumbnail} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <svg className="w-16 h-16 text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="w-16 h-16 text-ds-warning/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                           </svg>
                         </div>
@@ -198,15 +198,15 @@ function ClassifiedsPage() {
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-ds-foreground group-hover:text-amber-600 transition-colors line-clamp-1">{item.title}</h3>
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-ds-warning transition-colors line-clamp-1">{item.title}</h3>
                       {item.description && (
                         <p className="text-sm text-ds-muted-foreground mt-1.5 line-clamp-2">{item.description}</p>
                       )}
 
                       <div className="flex items-center gap-2 mt-3">
-                        <span className="font-bold text-amber-600 text-lg">{formatPrice(item.price, item.currency)}</span>
+                        <span className="font-bold text-ds-warning text-lg">{formatPrice(item.price, item.currency)}</span>
                         {item.is_negotiable && (
-                          <span className="px-2 py-0.5 text-xs font-medium bg-amber-100 text-amber-700 rounded-full">Negotiable</span>
+                          <span className="px-2 py-0.5 text-xs font-medium bg-ds-warning/15 text-ds-warning rounded-full">Negotiable</span>
                         )}
                       </div>
 
@@ -219,7 +219,7 @@ function ClassifiedsPage() {
 
                       <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
                         <span className="text-xs text-ds-muted-foreground capitalize">{item.listing_type || "Listing"}</span>
-                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-amber-600 rounded-lg group-hover:bg-amber-700 transition-colors">View Listing</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-warning rounded-lg group-hover:bg-ds-warning/90 transition-colors">View Listing</span>
                       </div>
                     </div>
                   </a>
@@ -235,17 +235,17 @@ function ClassifiedsPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-amber-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-warning text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Browse Listings</h3>
               <p className="text-sm text-ds-muted-foreground">Search through thousands of items listed by verified sellers in your area.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-amber-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-warning text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Contact Seller</h3>
               <p className="text-sm text-ds-muted-foreground">Reach out to the seller directly to negotiate and arrange a meeting.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-amber-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-warning text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Complete the Deal</h3>
               <p className="text-sm text-ds-muted-foreground">Meet safely, inspect the item, and complete your transaction securely.</p>
             </div>

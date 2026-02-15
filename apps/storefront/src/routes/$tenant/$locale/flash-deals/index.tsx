@@ -77,7 +77,7 @@ function FlashDealsPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-red-600 to-orange-500 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-destructive to-ds-warning text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -120,7 +120,7 @@ function FlashDealsPage() {
                     <button
                       key={opt}
                       onClick={() => setCategoryFilter(opt)}
-                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${categoryFilter === opt ? "bg-red-600 text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
+                      className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${categoryFilter === opt ? "bg-ds-destructive text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
                       {opt === "all" ? "All Categories" : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
@@ -150,20 +150,20 @@ function FlashDealsPage() {
                   return (
                     <div
                       key={item.id}
-                      className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-red-300 transition-all duration-200"
+                      className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-destructive/40 transition-all duration-200"
                     >
-                      <div className="aspect-[4/3] bg-gradient-to-br from-red-50 to-orange-50 relative overflow-hidden">
+                      <div className="aspect-[4/3] bg-gradient-to-br from-ds-destructive/10 to-ds-warning/10 relative overflow-hidden">
                         {item.thumbnail ? (
                           <img src={item.thumbnail} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
-                            <svg className="w-16 h-16 text-red-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg className="w-16 h-16 text-ds-destructive/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
                             </svg>
                           </div>
                         )}
                         {discount > 0 && (
-                          <span className="absolute top-2 left-2 px-2.5 py-1 text-xs font-bold bg-red-600 text-white rounded-md">SALE -{discount}%</span>
+                          <span className="absolute top-2 left-2 px-2.5 py-1 text-xs font-bold bg-ds-destructive text-white rounded-md">SALE -{discount}%</span>
                         )}
                         {timeLeft && (
                           <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-black/70 text-white rounded-md flex items-center gap-1">
@@ -172,20 +172,20 @@ function FlashDealsPage() {
                           </span>
                         )}
                         {stockRemaining > 0 && stockRemaining <= 10 && (
-                          <span className="absolute bottom-2 left-2 px-2 py-1 text-xs font-medium bg-orange-500 text-white rounded-md">Only {stockRemaining} left!</span>
+                          <span className="absolute bottom-2 left-2 px-2 py-1 text-xs font-medium bg-ds-warning text-white rounded-md">Only {stockRemaining} left!</span>
                         )}
                       </div>
                       <div className="p-4">
-                        <h3 className="font-semibold text-ds-foreground group-hover:text-red-600 transition-colors line-clamp-1">{item.name}</h3>
+                        <h3 className="font-semibold text-ds-foreground group-hover:text-ds-destructive transition-colors line-clamp-1">{item.name}</h3>
                         {item.description && (
                           <p className="text-sm text-ds-muted-foreground mt-1 line-clamp-2">{item.description}</p>
                         )}
                         {item.category && (
-                          <span className="inline-block mt-2 px-2 py-0.5 text-xs font-medium bg-red-50 text-red-700 rounded capitalize">{item.category}</span>
+                          <span className="inline-block mt-2 px-2 py-0.5 text-xs font-medium bg-ds-destructive/10 text-ds-destructive rounded capitalize">{item.category}</span>
                         )}
 
                         <div className="flex items-center gap-2 mt-3">
-                          <span className="text-xl font-bold text-red-600">{formatPrice(salePrice)}</span>
+                          <span className="text-xl font-bold text-ds-destructive">{formatPrice(salePrice)}</span>
                           {originalPrice > salePrice && (
                             <span className="text-sm text-ds-muted-foreground line-through">{formatPrice(originalPrice)}</span>
                           )}
@@ -198,14 +198,14 @@ function FlashDealsPage() {
                               <span>{Math.min(Math.round((1 - stockRemaining / 30) * 100), 95)}% claimed</span>
                             </div>
                             <div className="w-full bg-ds-border rounded-full h-2">
-                              <div className="bg-gradient-to-r from-red-500 to-orange-500 h-2 rounded-full" style={{ width: `${Math.min(Math.round((1 - stockRemaining / 30) * 100), 95)}%` }} />
+                              <div className="bg-gradient-to-r from-ds-destructive to-ds-warning h-2 rounded-full" style={{ width: `${Math.min(Math.round((1 - stockRemaining / 30) * 100), 95)}%` }} />
                             </div>
                           </div>
                         )}
 
                         <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
-                          <span className="text-xs text-green-600 font-medium">Save {formatPrice(originalPrice - salePrice)}</span>
-                          <span className="px-4 py-1.5 text-xs font-semibold text-white bg-red-600 rounded-lg group-hover:bg-red-700 transition-colors">Grab Deal</span>
+                          <span className="text-xs text-ds-success font-medium">Save {formatPrice(originalPrice - salePrice)}</span>
+                          <span className="px-4 py-1.5 text-xs font-semibold text-white bg-ds-destructive rounded-lg group-hover:bg-ds-destructive/90 transition-colors">Grab Deal</span>
                         </div>
                       </div>
                     </div>
@@ -222,17 +222,17 @@ function FlashDealsPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How Flash Deals Work</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-destructive text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Browse Deals</h3>
               <p className="text-sm text-ds-muted-foreground">Discover time-limited offers with huge discounts on top products.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-destructive text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Act Fast</h3>
               <p className="text-sm text-ds-muted-foreground">Deals expire quickly and stock is limited — don't miss out!</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-destructive text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Save Big</h3>
               <p className="text-sm text-ds-muted-foreground">Enjoy savings of up to 60% on premium products.</p>
             </div>

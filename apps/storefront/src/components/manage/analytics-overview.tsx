@@ -168,8 +168,8 @@ export function AnalyticsOverview({ tenantId, locale, moduleKey }: AnalyticsOver
                   <span
                     className={`text-xs font-medium px-1.5 py-0.5 rounded-full ${
                       stat.change >= 0
-                        ? 'bg-emerald-50 text-emerald-600'
-                        : 'bg-red-50 text-red-600'
+                        ? 'bg-ds-success/10 text-ds-success'
+                        : 'bg-ds-destructive/10 text-ds-destructive'
                     }`}
                   >
                     {stat.change >= 0 ? '+' : ''}{stat.change}%

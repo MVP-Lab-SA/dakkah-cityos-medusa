@@ -46,11 +46,11 @@ function VendorInvoicesRoute() {
 
   const statusColors: Record<string, string> = {
     draft: "bg-ds-muted text-ds-foreground",
-    sent: "bg-blue-100 text-blue-800",
-    paid: "bg-green-100 text-green-800",
-    overdue: "bg-red-100 text-red-800",
-    cancelled: "bg-red-100 text-red-600",
-    partially_paid: "bg-yellow-100 text-yellow-800",
+    sent: "bg-ds-info/15 text-ds-info",
+    paid: "bg-ds-success/15 text-ds-success",
+    overdue: "bg-ds-destructive/15 text-ds-destructive",
+    cancelled: "bg-ds-destructive/15 text-ds-destructive",
+    partially_paid: "bg-ds-warning/15 text-ds-warning",
   }
 
   function formatCurrency(amount: number, currency: string) {
@@ -102,15 +102,15 @@ function VendorInvoicesRoute() {
         </div>
         <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Paid</p>
-          <p className="text-2xl font-bold text-green-600">{items.filter((i) => i.status === "paid").length}</p>
+          <p className="text-2xl font-bold text-ds-success">{items.filter((i) => i.status === "paid").length}</p>
         </div>
         <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Revenue</p>
-          <p className="text-2xl font-bold text-green-600">{formatCurrency(totalRevenue, "USD")}</p>
+          <p className="text-2xl font-bold text-ds-success">{formatCurrency(totalRevenue, "USD")}</p>
         </div>
         <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Outstanding</p>
-          <p className="text-2xl font-bold text-orange-600">{formatCurrency(totalOutstanding, "USD")}</p>
+          <p className="text-2xl font-bold text-ds-warning">{formatCurrency(totalOutstanding, "USD")}</p>
         </div>
       </div>
 

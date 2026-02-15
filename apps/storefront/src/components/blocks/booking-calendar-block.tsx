@@ -191,7 +191,7 @@ export const BookingCalendarBlock: React.FC<BookingCalendarBlockProps> = ({
                   >
                     {day}
                     {!isUnavailable && !isSelected && (
-                      <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-green-500" />
+                      <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-ds-success" />
                     )}
                   </button>
                 )
@@ -233,7 +233,7 @@ export const BookingCalendarBlock: React.FC<BookingCalendarBlockProps> = ({
                         <span className="font-semibold">${slot.price}</span>
                       )}
                       {slot.available ? (
-                        <span className="w-2 h-2 rounded-full bg-green-500" />
+                        <span className="w-2 h-2 rounded-full bg-ds-success" />
                       ) : (
                         <span className="text-xs">Booked</span>
                       )}

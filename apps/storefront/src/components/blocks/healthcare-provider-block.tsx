@@ -62,7 +62,7 @@ export const HealthcareProviderBlock: React.FC<HealthcareProviderBlockProps> = (
 
       {showRating && (
         <div className="flex items-center gap-2 mb-3">
-          <span className="text-sm text-yellow-500">{renderStars(provider.rating)}</span>
+          <span className="text-sm text-ds-warning">{renderStars(provider.rating)}</span>
           <span className="text-sm font-medium text-ds-foreground">{provider.rating}</span>
           <span className="text-xs text-ds-muted-foreground">({provider.reviewCount} reviews)</span>
         </div>
@@ -71,7 +71,7 @@ export const HealthcareProviderBlock: React.FC<HealthcareProviderBlockProps> = (
       {showAvailability && (
         <div className="mb-3">
           <p className="text-xs text-ds-muted-foreground">Next Available</p>
-          <p className="text-sm font-medium text-green-600">{provider.nextAvailability}</p>
+          <p className="text-sm font-medium text-ds-success">{provider.nextAvailability}</p>
         </div>
       )}
 
@@ -98,11 +98,11 @@ export const HealthcareProviderBlock: React.FC<HealthcareProviderBlockProps> = (
         <div className="flex items-center gap-3 mt-1">
           {showRating && (
             <span className="text-xs text-ds-muted-foreground">
-              <span className="text-yellow-500">★</span> {provider.rating} ({provider.reviewCount})
+              <span className="text-ds-warning">★</span> {provider.rating} ({provider.reviewCount})
             </span>
           )}
           {showAvailability && (
-            <span className="text-xs text-green-600">{provider.nextAvailability}</span>
+            <span className="text-xs text-ds-success">{provider.nextAvailability}</span>
           )}
         </div>
       </div>

@@ -35,9 +35,9 @@ const iconMap: Record<ToastType, typeof CheckCircleSolid> = {
 }
 
 const colorMap: Record<ToastType, string> = {
-  success: "text-emerald-600",
+  success: "text-ds-success",
   error: "text-ds-destructive",
-  info: "text-blue-600",
+  info: "text-ds-info",
 }
 
 function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string) => void }) {

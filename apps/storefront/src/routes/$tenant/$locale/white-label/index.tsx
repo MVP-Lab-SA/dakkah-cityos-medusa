@@ -101,7 +101,7 @@ function WhiteLabelPage() {
               <ul className="space-y-2 mb-6">
                 {pkg.features.map((f: string, i: number) => (
                   <li key={i} className="flex items-center gap-2 text-sm text-ds-foreground">
-                    <svg className="w-4 h-4 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                    <svg className="w-4 h-4 text-ds-success flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                     {f}
                   </li>
                 ))}
@@ -130,7 +130,7 @@ function WhiteLabelPage() {
                     {["starter", "business", "enterprise"].map((tier) => (
                       <td key={tier} className="p-4 text-center">
                         {row[tier] === true ? (
-                          <svg className="w-5 h-5 text-green-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                          <svg className="w-5 h-5 text-ds-success mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                         ) : row[tier] === false ? (
                           <svg className="w-5 h-5 text-ds-muted-foreground/50 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                         ) : (

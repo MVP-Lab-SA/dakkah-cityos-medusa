@@ -9,7 +9,7 @@ interface SubscriptionsSectionProps {
 export function SubscriptionsSection({ config }: SubscriptionsSectionProps) {
   const prefix = useTenantPrefix()
   return (
-    <section className="py-16 bg-gradient-to-r from-indigo-600 to-purple-600 text-ds-primary-foreground">
+    <section className="py-16 bg-gradient-to-r from-ds-primary to-ds-primary text-ds-primary-foreground">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
@@ -38,7 +38,7 @@ export function SubscriptionsSection({ config }: SubscriptionsSectionProps) {
             </ul>
             <Link
               to={`${prefix}/subscriptions` as any}
-              className="inline-flex items-center justify-center px-8 py-3 bg-ds-background text-indigo-600 font-medium rounded-md hover:bg-ds-muted transition-colors"
+              className="inline-flex items-center justify-center px-8 py-3 bg-ds-background text-ds-primary font-medium rounded-md hover:bg-ds-muted transition-colors"
             >
               Explore Subscriptions
             </Link>

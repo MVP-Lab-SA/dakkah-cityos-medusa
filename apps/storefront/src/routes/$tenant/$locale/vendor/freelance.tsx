@@ -55,11 +55,11 @@ function VendorFreelanceRoute() {
   const items = data?.items || []
 
   const statusColors: Record<string, string> = {
-    active: "bg-green-100 text-green-800",
+    active: "bg-ds-success/15 text-ds-success",
     draft: "bg-ds-muted text-ds-foreground",
-    paused: "bg-yellow-100 text-yellow-800",
-    completed: "bg-blue-100 text-blue-800",
-    suspended: "bg-red-100 text-red-800",
+    paused: "bg-ds-warning/15 text-ds-warning",
+    completed: "bg-ds-info/15 text-ds-info",
+    suspended: "bg-ds-destructive/15 text-ds-destructive",
   }
 
   if (isLoading) {
@@ -81,7 +81,7 @@ function VendorFreelanceRoute() {
     <div className="container mx-auto py-12">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold">Gig Listings</h1>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+        <button className="px-4 py-2 bg-ds-primary text-white rounded-lg hover:bg-ds-primary/90 transition">
           + Post Gig
         </button>
       </div>
@@ -92,7 +92,7 @@ function VendorFreelanceRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
+              statusFilter === s ? "bg-ds-primary text-white border-ds-primary" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -144,7 +144,7 @@ function VendorFreelanceRoute() {
                   {gig.skill_tags && gig.skill_tags.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mt-3">
                       {gig.skill_tags.slice(0, 5).map((tag, i) => (
-                        <span key={i} className="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs rounded">{tag}</span>
+                        <span key={i} className="px-2 py-0.5 bg-ds-info/10 text-ds-info text-xs rounded">{tag}</span>
                       ))}
                       {gig.skill_tags.length > 5 && (
                         <span className="text-xs text-ds-muted-foreground/70">+{gig.skill_tags.length - 5} more</span>
@@ -152,7 +152,7 @@ function VendorFreelanceRoute() {
                     </div>
                   )}
                 </div>
-                <button className="text-sm text-blue-600 hover:underline ml-4">
+                <button className="text-sm text-ds-primary hover:underline ml-4">
                   View Proposals
                 </button>
               </div>

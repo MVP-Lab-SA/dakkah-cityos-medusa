@@ -49,19 +49,19 @@ function VendorTransactionsRoute() {
   const items = data?.items || []
 
   const statusColors: Record<string, string> = {
-    completed: "bg-green-100 text-green-800",
-    pending: "bg-yellow-100 text-yellow-800",
-    processing: "bg-blue-100 text-blue-800",
-    failed: "bg-red-100 text-red-800",
+    completed: "bg-ds-success/15 text-ds-success",
+    pending: "bg-ds-warning/15 text-ds-warning",
+    processing: "bg-ds-info/15 text-ds-info",
+    failed: "bg-ds-destructive/15 text-ds-destructive",
     refunded: "bg-ds-muted text-ds-foreground",
   }
 
   const typeColors: Record<string, string> = {
-    sale: "bg-green-50 text-green-700",
-    refund: "bg-red-50 text-red-700",
-    payout: "bg-blue-50 text-blue-700",
-    fee: "bg-orange-50 text-orange-700",
-    adjustment: "bg-purple-50 text-purple-700",
+    sale: "bg-ds-success/10 text-ds-success",
+    refund: "bg-ds-destructive/10 text-ds-destructive",
+    payout: "bg-ds-info/10 text-ds-info",
+    fee: "bg-ds-warning/10 text-ds-warning",
+    adjustment: "bg-ds-primary/10 text-ds-primary",
   }
 
   if (isLoading) {
@@ -93,7 +93,7 @@ function VendorTransactionsRoute() {
               key={t}
               onClick={() => setTypeFilter(t)}
               className={`px-3 py-1.5 text-sm rounded-full border transition ${
-                typeFilter === t ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
+                typeFilter === t ? "bg-ds-primary text-white border-ds-primary" : "bg-ds-card hover:bg-ds-muted/50"
               }`}
             >
               {t || "All"}
@@ -107,7 +107,7 @@ function VendorTransactionsRoute() {
               key={s}
               onClick={() => setStatusFilter(s)}
               className={`px-3 py-1.5 text-sm rounded-full border transition ${
-                statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
+                statusFilter === s ? "bg-ds-primary text-white border-ds-primary" : "bg-ds-card hover:bg-ds-muted/50"
               }`}
             >
               {s || "All"}
@@ -148,7 +148,7 @@ function VendorTransactionsRoute() {
                   <td className="py-4 pr-4 text-sm font-mono text-ds-muted-foreground">{txn.reference || "—"}</td>
                   <td className="py-4 pr-4 text-sm text-ds-muted-foreground">{txn.description || "—"}</td>
                   <td className="py-4 pr-4 text-right font-medium">
-                    <span className={txn.type === "refund" || txn.type === "fee" ? "text-red-600" : "text-green-600"}>
+                    <span className={txn.type === "refund" || txn.type === "fee" ? "text-ds-destructive" : "text-ds-success"}>
                       {txn.type === "refund" || txn.type === "fee" ? "−" : "+"}{txn.currency_code?.toUpperCase()} {(Math.abs(txn.amount) / 100).toFixed(2)}
                     </span>
                   </td>

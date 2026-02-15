@@ -54,11 +54,11 @@ function VendorTravelRoute() {
   const items = data?.items || []
 
   const statusColors: Record<string, string> = {
-    active: "bg-green-100 text-green-800",
+    active: "bg-ds-success/15 text-ds-success",
     draft: "bg-ds-muted text-ds-foreground",
-    sold_out: "bg-purple-100 text-purple-800",
-    archived: "bg-red-100 text-red-800",
-    seasonal: "bg-blue-100 text-blue-800",
+    sold_out: "bg-ds-primary/15 text-ds-primary",
+    archived: "bg-ds-destructive/15 text-ds-destructive",
+    seasonal: "bg-ds-info/15 text-ds-info",
   }
 
   if (isLoading) {
@@ -80,7 +80,7 @@ function VendorTravelRoute() {
     <div className="container mx-auto py-12">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold">Travel Packages</h1>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+        <button className="px-4 py-2 bg-ds-primary text-white rounded-lg hover:bg-ds-primary/90 transition">
           + Create Package
         </button>
       </div>
@@ -91,7 +91,7 @@ function VendorTravelRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
+              statusFilter === s ? "bg-ds-primary text-white border-ds-primary" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {(s || "All").replace(/_/g, " ")}
@@ -126,13 +126,13 @@ function VendorTravelRoute() {
                     <span>{pkg.destination}</span>
                     <span>{pkg.duration}</span>
                     <span>{pkg.bookings} bookings</span>
-                    <span className="text-yellow-600">★ {pkg.rating.toFixed(1)}</span>
+                    <span className="text-ds-warning">★ {pkg.rating.toFixed(1)}</span>
                     {pkg.max_travelers && <span>Max {pkg.max_travelers} travelers</span>}
                   </div>
                   {pkg.includes && pkg.includes.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mt-3">
                       {pkg.includes.slice(0, 4).map((item, i) => (
-                        <span key={i} className="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs rounded">{item}</span>
+                        <span key={i} className="px-2 py-0.5 bg-ds-info/10 text-ds-info text-xs rounded">{item}</span>
                       ))}
                       {pkg.includes.length > 4 && (
                         <span className="text-xs text-ds-muted-foreground/70">+{pkg.includes.length - 4} more</span>
@@ -140,7 +140,7 @@ function VendorTravelRoute() {
                     </div>
                   )}
                 </div>
-                <button className="text-sm text-blue-600 hover:underline ml-4">
+                <button className="text-sm text-ds-primary hover:underline ml-4">
                   View Bookings
                 </button>
               </div>

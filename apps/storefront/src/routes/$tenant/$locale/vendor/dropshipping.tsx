@@ -49,10 +49,10 @@ function VendorDropshippingRoute() {
   const items = data?.items || []
 
   const statusColors: Record<string, string> = {
-    active: "bg-green-100 text-green-800",
+    active: "bg-ds-success/15 text-ds-success",
     draft: "bg-ds-muted text-ds-foreground",
-    out_of_stock: "bg-red-100 text-red-800",
-    paused: "bg-yellow-100 text-yellow-800",
+    out_of_stock: "bg-ds-destructive/15 text-ds-destructive",
+    paused: "bg-ds-warning/15 text-ds-warning",
   }
 
   if (isLoading) {
@@ -74,7 +74,7 @@ function VendorDropshippingRoute() {
     <div className="container mx-auto py-12">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold">Dropshipping Products</h1>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+        <button className="px-4 py-2 bg-ds-primary text-white rounded-lg hover:bg-ds-primary/90 transition">
           + Add Product
         </button>
       </div>
@@ -85,7 +85,7 @@ function VendorDropshippingRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
+              statusFilter === s ? "bg-ds-primary text-white border-ds-primary" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s ? s.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "All"}
@@ -124,7 +124,7 @@ function VendorDropshippingRoute() {
                   <td className="py-4 pr-4 text-right">
                     {product.currency_code?.toUpperCase()} {(product.retail_price / 100).toFixed(2)}
                   </td>
-                  <td className="py-4 pr-4 text-right font-medium text-green-600">
+                  <td className="py-4 pr-4 text-right font-medium text-ds-success">
                     {product.margin_percentage}%
                   </td>
                   <td className="py-4 pr-4 text-right">{product.orders}</td>
@@ -134,7 +134,7 @@ function VendorDropshippingRoute() {
                     </span>
                   </td>
                   <td className="py-4">
-                    <button className="text-sm text-blue-600 hover:underline">View Orders</button>
+                    <button className="text-sm text-ds-primary hover:underline">View Orders</button>
                   </td>
                 </tr>
               ))}

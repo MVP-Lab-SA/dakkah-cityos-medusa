@@ -47,17 +47,17 @@ function WalletPage() {
   }
 
   const colorMap: Record<string, string> = {
-    emerald: "from-emerald-500 to-emerald-600",
-    blue: "from-blue-500 to-blue-600",
-    purple: "from-purple-500 to-purple-600",
-    amber: "from-amber-500 to-amber-600",
+    emerald: "from-ds-success to-ds-success",
+    blue: "from-ds-primary to-ds-primary",
+    purple: "from-ds-primary to-ds-primary",
+    amber: "from-ds-warning to-ds-warning",
     rose: "from-rose-500 to-rose-600",
-    teal: "from-teal-500 to-teal-600",
+    teal: "from-ds-success to-ds-success",
   }
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-emerald-500 to-green-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-success to-ds-success text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -73,18 +73,18 @@ function WalletPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-gradient-to-br from-emerald-500/10 to-green-500/5 border border-emerald-500/20 rounded-xl p-8 mb-8">
+        <div className="bg-gradient-to-br from-ds-success/10 to-ds-success/5 border border-ds-success/20 rounded-xl p-8 mb-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <p className="text-sm font-medium text-ds-muted-foreground mb-1">Available Balance</p>
               <p className="text-4xl font-bold text-ds-foreground">{balance.toLocaleString(undefined, { minimumFractionDigits: 2 })} SAR</p>
             </div>
-            <button className="px-6 py-3 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition-colors">Add Funds</button>
+            <button className="px-6 py-3 bg-ds-success text-white font-medium rounded-lg hover:bg-ds-success/90 transition-colors">Add Funds</button>
           </div>
         </div>
 
         <div className="mb-6">
-          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search wallet features..." className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search wallet features..." className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-success" />
         </div>
 
         <h2 className="text-2xl font-bold text-ds-foreground mb-6">Wallet Features</h2>
@@ -97,11 +97,11 @@ function WalletPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             {filteredFeatures.map((f: any) => (
-              <div key={f.id} className="group bg-ds-background border border-ds-border rounded-xl p-6 hover:shadow-lg hover:border-emerald-300 transition-all duration-200">
+              <div key={f.id} className="group bg-ds-background border border-ds-border rounded-xl p-6 hover:shadow-lg hover:border-ds-success/40 transition-all duration-200">
                 <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${colorMap[f.color] || colorMap.emerald} flex items-center justify-center mb-4`}>
                   <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={iconMap[f.icon] || iconMap["plus-circle"]} /></svg>
                 </div>
-                <h3 className="font-semibold text-ds-foreground mb-2 group-hover:text-emerald-600 transition-colors">{f.name}</h3>
+                <h3 className="font-semibold text-ds-foreground mb-2 group-hover:text-ds-success transition-colors">{f.name}</h3>
                 <p className="text-sm text-ds-muted-foreground">{f.description}</p>
               </div>
             ))}
@@ -111,15 +111,15 @@ function WalletPage() {
         <h2 className="text-2xl font-bold text-ds-foreground mb-6">Recent Transactions</h2>
         <div className="space-y-2 mb-12">
           {transactions.map((tx: any) => (
-            <div key={tx.id} className="bg-ds-background border border-ds-border rounded-xl p-4 flex items-center justify-between hover:border-emerald-300 transition-colors">
+            <div key={tx.id} className="bg-ds-background border border-ds-border rounded-xl p-4 flex items-center justify-between hover:border-ds-success/40 transition-colors">
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold ${tx.type === "credit" ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"}`}>{tx.type === "credit" ? "+" : "-"}</div>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold ${tx.type === "credit" ? "bg-ds-success/15 text-ds-success" : "bg-ds-destructive/15 text-ds-destructive"}`}>{tx.type === "credit" ? "+" : "-"}</div>
                 <div>
                   <p className="font-medium text-ds-foreground">{tx.description}</p>
                   <p className="text-xs text-ds-muted-foreground">{new Date(tx.created_at).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })}</p>
                 </div>
               </div>
-              <span className={`text-lg font-semibold ${tx.type === "credit" ? "text-green-600" : "text-red-600"}`}>{tx.type === "credit" ? "+" : "-"}{tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })} SAR</span>
+              <span className={`text-lg font-semibold ${tx.type === "credit" ? "text-ds-success" : "text-ds-destructive"}`}>{tx.type === "credit" ? "+" : "-"}{tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })} SAR</span>
             </div>
           ))}
         </div>
@@ -130,17 +130,17 @@ function WalletPage() {
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
+              <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">1</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Create Your Wallet</h3>
               <p className="text-sm text-ds-muted-foreground">Sign up and set up your digital wallet in under a minute.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
+              <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">2</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Add Funds</h3>
               <p className="text-sm text-ds-muted-foreground">Top up your wallet via bank card, transfer, or Apple Pay.</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
+              <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">3</div>
               <h3 className="font-semibold text-ds-foreground mb-2">Pay & Earn</h3>
               <p className="text-sm text-ds-muted-foreground">Use your wallet for purchases and earn cashback on every transaction.</p>
             </div>

@@ -13,8 +13,8 @@ interface ProductBadgesProps {
 const badgeConfig: Record<BadgeType, { bgClass: string; textClass: string; i18nKey: string }> = {
   new: { bgClass: "bg-ds-primary", textClass: "text-ds-primary-foreground", i18nKey: "productDisplay.badge_new" },
   sale: { bgClass: "bg-ds-destructive", textClass: "text-white", i18nKey: "productDisplay.badge_sale" },
-  bestseller: { bgClass: "bg-amber-500", textClass: "text-white", i18nKey: "productDisplay.badge_bestseller" },
-  limited: { bgClass: "bg-purple-600", textClass: "text-white", i18nKey: "productDisplay.badge_limited" },
+  bestseller: { bgClass: "bg-ds-warning", textClass: "text-white", i18nKey: "productDisplay.badge_bestseller" },
+  limited: { bgClass: "bg-ds-primary", textClass: "text-white", i18nKey: "productDisplay.badge_limited" },
   eco: { bgClass: "bg-ds-success", textClass: "text-white", i18nKey: "productDisplay.badge_eco" },
   exclusive: { bgClass: "bg-ds-card border border-ds-border", textClass: "text-ds-text", i18nKey: "productDisplay.badge_exclusive" },
 }

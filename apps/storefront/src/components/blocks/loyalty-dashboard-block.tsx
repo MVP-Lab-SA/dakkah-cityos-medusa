@@ -176,7 +176,7 @@ export const LoyaltyDashboardBlock: React.FC<LoyaltyDashboardBlockProps> = ({
                         <p className="text-sm font-medium text-ds-foreground">{tx.description}</p>
                         <p className="text-xs text-ds-muted-foreground">{tx.date}</p>
                       </div>
-                      <span className={`text-sm font-semibold ${tx.type === 'earned' ? 'text-green-600' : 'text-red-500'}`}>
+                      <span className={`text-sm font-semibold ${tx.type === 'earned' ? 'text-ds-success' : 'text-ds-destructive'}`}>
                         {tx.type === 'earned' ? '+' : ''}{tx.points}
                       </span>
                     </div>
