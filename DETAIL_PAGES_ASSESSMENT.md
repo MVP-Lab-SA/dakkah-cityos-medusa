@@ -5126,3 +5126,992 @@ Each block added to the Payload Pages collection needs properly defined fields. 
 | **P3** | Create 10 missing super-admin pages | Complete platform admin | 10h |
 | **P3** | Create 10 missing tenant-admin pages | Complete tenant management | 10h |
 | **P3** | Add analyst read-only views (weight 20) | Purpose for analyst role | 4h |
+
+---
+
+## Section 24: Complete Route Architecture — Current vs Target
+
+### 24.1 Current Route Hierarchy
+
+The storefront uses TanStack Router with file-based routing. The URL pattern is:
+
+```
+/                                      → Redirects to /dakkah/en
+/$tenant/$locale/                      → Homepage (storefront)
+/$tenant/$locale/[vertical]/           → Vertical list page
+/$tenant/$locale/[vertical]/$id        → Vertical detail page
+/$tenant/$locale/account/              → Customer account section
+/$tenant/$locale/vendor/               → Vendor dashboard section
+/$tenant/$locale/manage/               → Admin management section (ALL admins)
+/$tenant/$locale/business/             → B2B portal section
+/$tenant/$locale/$slug                 → CMS dynamic slug page
+/$tenant/$locale/$                     → CMS splat/catch-all
+/health                                → Health check endpoint
+```
+
+**Current URL tree (simplified):**
+
+```
+/dakkah/en/
+├── [51 vertical routes]/              ← Public storefront
+│   ├── index.tsx                      ← List page
+│   └── $id.tsx                        ← Detail page
+├── account/                           ← Authenticated customer
+│   ├── index.tsx                      ← Dashboard
+│   ├── orders/                        ← Order history
+│   ├── subscriptions/                 ← Subscription management
+│   ├── bookings/                      ← Booking history
+│   ├── addresses.tsx                  ← Address book
+│   ├── settings.tsx                   ← Account settings
+│   └── [15 more pages]
+├── vendor/                            ← Vendor dashboard (no layout wrapper)
+│   ├── index.tsx                      ← Vendor dashboard
+│   ├── home.tsx                       ← Alternative dashboard
+│   ├── products/                      ← Product management
+│   ├── orders/                        ← Order management
+│   ├── payouts/                       ← Payout history
+│   ├── register.tsx                   ← Vendor registration
+│   └── [50 more vertical pages]
+├── manage/                            ← ALL admin roles (single tier)
+│   ├── index.tsx                      ← Admin dashboard
+│   ├── products.tsx                   ← Product management
+│   ├── orders.tsx                     ← Order management
+│   ├── governance.tsx                 ← Platform governance (!)
+│   ├── tenants-admin.tsx              ← Tenant management (!)
+│   ├── nodes.tsx                      ← Node hierarchy (!)
+│   ├── cms.tsx                        ← CMS management (!)
+│   └── [88 more pages — ALL at same access level]
+├── business/                          ← B2B portal
+│   ├── approvals.tsx                  ← Purchase approvals
+│   ├── catalog.tsx                    ← B2B catalog
+│   ├── orders.tsx                     ← B2B orders
+│   └── team.tsx                       ← B2B team management
+├── cart.tsx                           ← Shopping cart
+├── checkout.tsx                       ← Checkout flow
+├── login.tsx                          ← Authentication
+├── register.tsx                       ← Registration
+├── $slug.tsx                          ← CMS dynamic page
+└── $.tsx                              ← CMS catch-all
+```
+
+### 24.2 Critical Problems with Current Route Structure
+
+| # | Problem | Details | Severity |
+|---|---|---|---|
+| 1 | **Flat manage section** — no tier separation | 96 pages in `/manage/` with identical access requirements | CRITICAL |
+| 2 | **No super-admin section** | Platform admin pages (governance, tenants-admin, nodes) sit in same `/manage/` as vendor-admin pages | CRITICAL |
+| 3 | **No CMS section for content-editor** | CMS pages blocked behind weight 40, content-editor (weight 30) cannot access | CRITICAL |
+| 4 | **No vendor layout** | Vendor pages have no shared sidebar/layout — each page renders independently | HIGH |
+| 5 | **Duplicate vendor dashboards** | Both `vendor/index.tsx` AND `vendor/home.tsx` exist as dashboard pages | MEDIUM |
+| 6 | **No platform-level routes** | No `/platform/` route tree for super-admin-only cross-tenant operations | CRITICAL |
+| 7 | **Business section incomplete** | Only 4 pages, uses `AccountLayout` instead of its own layout | MEDIUM |
+| 8 | **No analyst section** | Analyst role (weight 20) has no dedicated read-only views | HIGH |
+| 9 | **Navigation doesn't reflect role** | User menu shows "Store Dashboard" for ALL admin roles — no role-specific links | HIGH |
+| 10 | **Manage sidebar hardcoded to weight 100** | `const userWeight = 100` in `manage-sidebar.tsx` — ignores actual user role | CRITICAL |
+
+### 24.3 Key Code Evidence for Problems
+
+**Problem 10 — Hardcoded weight in sidebar:**
+```typescript
+// manage-sidebar.tsx line ~230
+const userWeight = 100  // ← HARDCODED! Should use actual user role weight
+const sectionModules = getModulesBySection(userWeight)
+```
+
+**Problem 1 — Flat access control:**
+```typescript
+// role-guard.tsx
+const MIN_MANAGE_WEIGHT = 40  // ← ALL manage pages use same threshold
+```
+
+**Problem 6 — No platform routes:**
+```
+Current: /$tenant/$locale/manage/governance     ← Platform page under tenant route!
+Current: /$tenant/$locale/manage/tenants-admin  ← Managing OTHER tenants from within a tenant!
+Current: /$tenant/$locale/manage/nodes          ← Platform node hierarchy under tenant!
+```
+
+---
+
+## Section 25: Target Route Architecture — Complete Definition
+
+### 25.1 Route Hierarchy by User Type
+
+The platform needs **6 distinct route sections** for **6 user types**:
+
+```
+TARGET URL STRUCTURE:
+
+/                                              → Redirect to /dakkah/en
+/health                                        → Health check
+
+/$tenant/$locale/                              → Storefront (PUBLIC + CUSTOMER)
+/$tenant/$locale/account/                      → Customer account (CUSTOMER)
+/$tenant/$locale/business/                     → B2B portal (B2B CUSTOMER)
+/$tenant/$locale/vendor/                       → Vendor dashboard (VENDOR)
+/$tenant/$locale/manage/                       → Tenant admin (TENANT-ADMIN, weight ≥ 40)
+/$tenant/$locale/manage/cms/                   → CMS section (CONTENT-EDITOR, weight ≥ 30)
+/$tenant/$locale/manage/platform/              → Platform admin (SUPER-ADMIN, weight ≥ 90)
+/$tenant/$locale/analytics/                    → Analytics (ANALYST, weight ≥ 20)
+```
+
+### 25.2 User Type 1: Public Visitor (No Authentication)
+
+**Access:** Browsing storefront, viewing products, reading content
+**Weight Required:** None (public)
+**Layout:** Storefront layout (Navbar + Footer)
+
+**Routes:**
+
+| # | Route Path | Purpose | Navigation Entry |
+|---|---|---|---|
+| 1 | `/$tenant/$locale/` | Homepage | Logo link |
+| 2 | `/$tenant/$locale/[vertical]/` | Vertical list page (×51) | Header mega-menu "Browse" |
+| 3 | `/$tenant/$locale/[vertical]/$id` | Vertical detail page (×50) | Linked from list pages |
+| 4 | `/$tenant/$locale/categories/$handle` | Category page | Header "Shop" dropdown |
+| 5 | `/$tenant/$locale/vendors/` | Vendor directory | Header "Vendors" link |
+| 6 | `/$tenant/$locale/vendors/$handle` | Vendor profile | Linked from directory |
+| 7 | `/$tenant/$locale/vendors/$id` | Vendor profile (by ID) | Linked from products |
+| 8 | `/$tenant/$locale/blog/` | Blog listing | Header/footer link |
+| 9 | `/$tenant/$locale/blog/$slug` | Blog post | Linked from blog listing |
+| 10 | `/$tenant/$locale/help/` | Help center | Footer link |
+| 11 | `/$tenant/$locale/help/$slug` | Help article | Linked from help center |
+| 12 | `/$tenant/$locale/compare` | Product comparison | Product pages |
+| 13 | `/$tenant/$locale/gift-cards` | Gift card purchase | Header/footer link |
+| 14 | `/$tenant/$locale/cart` | Shopping cart | Cart icon in header |
+| 15 | `/$tenant/$locale/login` | Login page | "Sign in" button |
+| 16 | `/$tenant/$locale/register` | Registration page | "Sign up" link |
+| 17 | `/$tenant/$locale/reset-password` | Password reset | Login page link |
+| 18 | `/$tenant/$locale/store-pickup` | Store pickup locator | Checkout/footer |
+| 19 | `/$tenant/$locale/verify/age` | Age verification | Restricted product pages |
+| 20 | `/$tenant/$locale/$slug` | CMS dynamic page | Footer/nav links (about, terms, etc.) |
+| 21 | `/$tenant/$locale/$` | CMS catch-all | Fallback |
+
+**Navigation (Header):**
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│ [Logo] Dakkah CityOS                                                    │
+│                                                                         │
+│ Shop ▼  |  Vendors  |  Services  |  Browse ▼  |  [Search]  🛒  [Sign in] │
+│                                                                         │
+│ Shop dropdown:        Browse dropdown (mega-menu):                      │
+│   All Products          Restaurants    Real Estate    Automotive         │
+│   Category 1            Healthcare     Education      Events            │
+│   Category 2            Travel         Fitness        Grocery           │
+│   Category 3            Rentals        Freelance      Digital Products  │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+**Navigation (Footer):**
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│ Dakkah CityOS                                                           │
+│                                                                         │
+│ Shop          Marketplace     Customer      Company       Legal         │
+│ ─────         ──────────      ─────────     ────────      ──────        │
+│ All Products  Browse Vendors  My Account    About Us      Terms         │
+│ Categories    Become Vendor   Orders        Contact       Privacy       │
+│ New Arrivals  Vendor Portal   Subscriptions Careers       Cookies       │
+│ Deals                         Bookings      Blog          Refund Policy │
+│                               Wishlist      Help Center                 │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+**Missing pages for public visitors (must be created or registered in CMS):**
+| # | Page | Route | Source |
+|---|---|---|---|
+| 1 | About Us | `/$tenant/$locale/about` (CMS `$slug`) | CMS page needed |
+| 2 | Contact | `/$tenant/$locale/contact` (CMS `$slug`) | CMS page needed |
+| 3 | Terms of Service | `/$tenant/$locale/terms` (CMS `$slug`) | CMS page needed |
+| 4 | Privacy Policy | `/$tenant/$locale/privacy` (CMS `$slug`) | CMS page needed |
+| 5 | FAQ | `/$tenant/$locale/faq` (CMS `$slug`) | CMS page needed |
+| 6 | Search Results | `/$tenant/$locale/search` | New route file needed |
+| 7 | 404 Page | NotFound component | Exists but may need enhancement |
+| 8 | Order Confirmation | `/$tenant/$locale/checkout/confirmation` | New route needed |
+
+### 25.3 User Type 2: Authenticated Customer (weight: 0, logged in)
+
+**Access:** Account management, order history, subscriptions, bookings
+**Weight Required:** Authenticated (no RBAC weight needed)
+**Layout:** Storefront layout with AccountLayout sidebar
+**Entry Point:** User menu dropdown → "My Account"
+
+**Routes:**
+
+| # | Route Path | Purpose | Sidebar Entry | Status |
+|---|---|---|---|---|
+| 1 | `account/` | Dashboard overview | "Overview" | EXISTS |
+| 2 | `account/orders/` | Order list | "Orders" | EXISTS |
+| 3 | `account/orders/$id` | Order detail | — (linked from list) | EXISTS |
+| 4 | `account/orders/$id.track` | Order tracking | — (linked from detail) | EXISTS |
+| 5 | `account/orders/$id.return` | Return request | — (linked from detail) | EXISTS |
+| 6 | `account/subscriptions/` | Subscription list | "Subscriptions" | EXISTS |
+| 7 | `account/subscriptions/$id` | Subscription detail | — | EXISTS |
+| 8 | `account/subscriptions/$id.billing` | Billing management | — | EXISTS |
+| 9 | `account/bookings/` | Booking list | "Bookings" | EXISTS |
+| 10 | `account/bookings/$id` | Booking detail | — | EXISTS |
+| 11 | `account/addresses` | Address book | "Addresses" | EXISTS |
+| 12 | `account/settings` | Account settings | "Settings" | EXISTS |
+| 13 | `account/profile` | Profile edit | — | EXISTS (17 lines — STUB) |
+| 14 | `account/wallet` | Digital wallet | — (not in sidebar!) | EXISTS — MISSING from sidebar |
+| 15 | `account/wishlist` | Wishlist | — (not in sidebar!) | EXISTS — MISSING from sidebar |
+| 16 | `account/loyalty` | Loyalty points | — (not in sidebar!) | EXISTS — MISSING from sidebar |
+| 17 | `account/referrals` | Referral program | — (not in sidebar!) | EXISTS — MISSING from sidebar |
+| 18 | `account/store-credits` | Store credits | — (not in sidebar!) | EXISTS — MISSING from sidebar |
+| 19 | `account/installments` | Payment installments | — (not in sidebar!) | EXISTS — MISSING from sidebar |
+| 20 | `account/downloads` | Digital downloads | — (not in sidebar!) | EXISTS (18 lines — STUB) |
+| 21 | `account/disputes` | Dispute management | — (not in sidebar!) | EXISTS — MISSING from sidebar |
+| 22 | `account/verification` | Identity verification | — (not in sidebar!) | EXISTS — MISSING from sidebar |
+| 23 | `account/consents` | Privacy consents | — (not in sidebar!) | EXISTS — MISSING from sidebar |
+| 24 | `account/purchase-orders/` | PO list (B2B) | — (not in sidebar!) | EXISTS — MISSING from sidebar |
+| 25 | `account/purchase-orders/$id` | PO detail | — | EXISTS |
+| 26 | `account/purchase-orders/new` | Create PO | — | EXISTS |
+
+**Account Sidebar — Current vs Target:**
+
+```
+CURRENT SIDEBAR (6 items):          TARGET SIDEBAR (organized sections):
+┌─────────────────────┐             ┌───────────────────────────────┐
+│ [Avatar] User Name  │             │ [Avatar] User Name            │
+│ user@email.com      │             │ user@email.com                │
+│─────────────────────│             │───────────────────────────────│
+│ ○ Overview          │             │ MAIN                          │
+│ ○ Orders            │             │ ○ Overview                    │
+│ ○ Subscriptions     │             │ ○ Orders                      │
+│ ○ Bookings          │             │ ○ Subscriptions               │
+│ ○ Addresses         │             │ ○ Bookings                    │
+│─────────────────────│             │ ○ Addresses                   │
+│ ○ Settings          │             │───────────────────────────────│
+│                     │             │ WALLET & REWARDS              │
+│                     │             │ ○ Wallet                      │
+│                     │             │ ○ Loyalty Points              │
+│                     │             │ ○ Store Credits               │
+│                     │             │ ○ Referrals                   │
+│                     │             │───────────────────────────────│
+│                     │             │ MY STUFF                      │
+│                     │             │ ○ Wishlist                    │
+│                     │             │ ○ Downloads                   │
+│                     │             │ ○ Installments                │
+│                     │             │ ○ Disputes                    │
+│                     │             │───────────────────────────────│
+│                     │             │ ACCOUNT                       │
+│                     │             │ ○ Profile                     │
+│                     │             │ ○ Settings                    │
+│                     │             │ ○ Verification                │
+│                     │             │ ○ Privacy & Consents          │
+│─────────────────────│             │───────────────────────────────│
+│ [Sign out]          │             │ [Sign out]                    │
+└─────────────────────┘             └───────────────────────────────┘
+```
+
+**13 account pages exist but are NOT in the sidebar** — users can only reach them via direct URL.
+
+### 25.4 User Type 3: B2B Customer (authenticated + company association)
+
+**Access:** B2B purchasing, approval workflows, company management
+**Weight Required:** Authenticated + `isB2B` flag
+**Layout:** Storefront layout with AccountLayout (B2B extension)
+**Entry Point:** User menu dropdown → "Company Dashboard"
+
+**Routes:**
+
+| # | Route Path | Purpose | Status |
+|---|---|---|---|
+| 1 | `business/approvals` | Purchase approval queue | EXISTS (161 lines) |
+| 2 | `business/catalog` | B2B catalog with pricing | EXISTS (88 lines) |
+| 3 | `business/orders` | Company order history | EXISTS (80 lines) |
+| 4 | `business/team` | Company team management | EXISTS (37 lines — STUB) |
+| 5 | `b2b/` | B2B storefront landing | EXISTS (list page) |
+| 6 | `b2b/$id` | B2B product detail | EXISTS |
+| 7 | `b2b/dashboard` | B2B dashboard | EXISTS |
+| 8 | `b2b/register` | B2B registration | EXISTS |
+
+**B2B Navigation Gaps:**
+- `business/` has NO sidebar navigation — pages are disconnected
+- `business/team.tsx` is only 37 lines — STUB
+- No `business/invoices` — B2B customers can't view invoices
+- No `business/credit` — B2B credit management missing
+- No `business/reports` — B2B reporting missing
+- `b2b/dashboard` duplicates `business/` purpose — unclear which is primary
+
+### 25.5 User Type 4: Vendor (authenticated + vendor association)
+
+**Access:** Vendor product management, order fulfillment, analytics
+**Weight Required:** Authenticated + vendor association
+**Layout:** Currently NO shared layout — each page is independent
+**Entry Point:** User menu has NO vendor link (only shows if `hasAccess` for manage)
+
+**Routes (56 pages):**
+
+| # | Section | Routes | Count | Sidebar? |
+|---|---|---|---|---|
+| 1 | Dashboard | `vendor/index.tsx`, `vendor/home.tsx` | 2 | NO sidebar exists |
+| 2 | Products | `vendor/products/index`, `vendor/products/new`, `vendor/products/$productId` | 3 | — |
+| 3 | Orders | `vendor/orders/index` | 1 | — |
+| 4 | Financial | `vendor/payouts/index`, `vendor/payouts.tsx`, `vendor/commissions.tsx`, `vendor/invoices.tsx`, `vendor/transactions.tsx`, `vendor/wallet.tsx` | 6 | — |
+| 5 | Onboarding | `vendor/onboarding/index`, `vendor/onboarding/verification`, `vendor/onboarding/complete` | 3 | — |
+| 6 | Verticals | `vendor/restaurants.tsx`, `vendor/healthcare.tsx`, ... (×40) | 40 | — |
+| 7 | Settings | `vendor/register.tsx`, `vendor/reviews.tsx`, `vendor/analytics.tsx`, `vendor/notification-preferences.tsx`, `vendor/wishlists.tsx` | 5 | — |
+
+**CRITICAL: The vendor section has NO sidebar, NO layout wrapper, and NO navigation.**
+
+**Target Vendor Sidebar:**
+
+```
+TARGET VENDOR SIDEBAR:
+┌───────────────────────────────────┐
+│ [Vendor Logo] Vendor Name         │
+│ vendor-admin                      │
+│───────────────────────────────────│
+│ OVERVIEW                          │
+│ ○ Dashboard                       │
+│ ○ Analytics                       │
+│───────────────────────────────────│
+│ COMMERCE                          │
+│ ○ Products                        │
+│ ○ Orders                          │
+│ ○ Inventory                       │
+│───────────────────────────────────│
+│ FINANCIAL                         │
+│ ○ Payouts                         │
+│ ○ Commissions                     │
+│ ○ Invoices                        │
+│ ○ Transactions                    │
+│ ○ Wallet                          │
+│───────────────────────────────────│
+│ VERTICALS (contextual)            │
+│ ○ Restaurants (if applicable)     │
+│ ○ Healthcare (if applicable)      │
+│ ○ [tenant-enabled verticals]      │
+│───────────────────────────────────│
+│ SETTINGS                          │
+│ ○ Reviews                         │
+│ ○ Shipping Rules                  │
+│ ○ Cart Rules                      │
+│ ○ Tax Configuration               │
+│ ○ Notifications                   │
+│───────────────────────────────────│
+│ ← Back to Store                   │
+└───────────────────────────────────┘
+```
+
+**Vendor Navigation Gaps:**
+| # | Gap | Impact |
+|---|---|---|
+| 1 | NO VendorLayout component | No consistent sidebar/header across vendor pages |
+| 2 | NO VendorSidebar component | No navigation between vendor pages |
+| 3 | Duplicate dashboards (index.tsx + home.tsx) | Confusion about primary dashboard |
+| 4 | Duplicate payouts (payouts/index.tsx + payouts.tsx) | Route conflict |
+| 5 | NO vendor link in user menu | Vendors can't navigate to their dashboard from storefront |
+| 6 | No vendor role guard | Any authenticated user can access vendor pages |
+| 7 | 40 vertical pages have no sidebar entry | Vendors can't find vertical-specific management |
+
+### 25.6 User Type 5: Content-Editor / Tenant Manager (weight ≥ 30)
+
+**Access:** CMS page building, media management, blog editing, navigation management
+**Weight Required:** 30 (content-editor role)
+**Layout:** Manage layout with CMS-specific sidebar section
+**Entry Point:** User menu → "Content Studio" (NEW — doesn't exist yet)
+
+**Target Routes (within /$tenant/$locale/manage/cms/):**
+
+| # | Route Path | Purpose | Status | Priority |
+|---|---|---|---|---|
+| 1 | `manage/cms/` | CMS dashboard — overview of all pages, recent edits, stats | MISSING | P0 |
+| 2 | `manage/cms/pages` | Page list — all CMS pages with status, filters, search | PARTIAL (`manage/cms.tsx` exists but blocked) | P0 |
+| 3 | `manage/cms/pages/new` | Create new page — template picker → page builder | MISSING | P0 |
+| 4 | `manage/cms/pages/$pageId/edit` | Page builder — drag-and-drop block editor | MISSING | P0 |
+| 5 | `manage/cms/pages/$pageId/preview` | Page preview — iframe rendering in storefront context | MISSING | P0 |
+| 6 | `manage/cms/content` | Content blocks list — standalone content blocks | PARTIAL (`manage/cms-content.tsx` exists but blocked) | P1 |
+| 7 | `manage/cms/media` | Media library — upload, browse, search images/files | MISSING | P0 |
+| 8 | `manage/cms/blog` | Blog post list — create, edit, publish blog posts | MISSING | P1 |
+| 9 | `manage/cms/blog/new` | Blog post editor — rich text + media | MISSING | P1 |
+| 10 | `manage/cms/blog/$postId/edit` | Blog post editor | MISSING | P1 |
+| 11 | `manage/cms/navigation` | Navigation menu editor — header, footer, mobile | MISSING | P1 |
+| 12 | `manage/cms/templates` | Page template gallery — pre-built layouts | MISSING | P2 |
+| 13 | `manage/cms/seo` | SEO settings — per-page og tags, sitemap | MISSING | P2 |
+| 14 | `manage/cms/redirects` | URL redirect rules — 301/302 management | MISSING | P2 |
+| 15 | `manage/cms/scheduler` | Content scheduler — calendar of publish/unpublish | MISSING | P2 |
+| 16 | `manage/cms/forms` | Form submissions — contact forms, surveys | MISSING | P2 |
+| 17 | `manage/cms/analytics` | Content analytics — page views, engagement | MISSING | P2 |
+
+**Content-Editor Sidebar:**
+
+```
+TARGET CMS SIDEBAR (weight ≥ 30):
+┌───────────────────────────────────┐
+│ [Logo] Dakkah CMS                 │
+│ Content Studio                    │
+│───────────────────────────────────│
+│ ⌘K Search...                      │
+│───────────────────────────────────│
+│ CONTENT                           │
+│ ○ Dashboard                       │
+│ ○ Pages                           │
+│ ○ Blog Posts                      │
+│ ○ Content Blocks                  │
+│───────────────────────────────────│
+│ MEDIA                             │
+│ ○ Media Library                   │
+│───────────────────────────────────│
+│ STRUCTURE                         │
+│ ○ Navigation                      │
+│ ○ Templates                       │
+│ ○ Redirects                       │
+│───────────────────────────────────│
+│ INSIGHTS                          │
+│ ○ Content Analytics               │
+│ ○ Form Submissions                │
+│ ○ Scheduler                       │
+│───────────────────────────────────│
+│ ← Back to Store                   │
+└───────────────────────────────────┘
+```
+
+**Implementation Requirements:**
+1. `RoleGuard` must allow weight ≥ 30 for `/manage/cms/*` routes
+2. Module registry needs a `cms` section with `minWeight: 30`
+3. `ManageSidebar` must show ONLY CMS section when user weight is 30-39
+4. User menu must show "Content Studio" link for content-editor role
+
+### 25.7 User Type 6: Tenant-Admin (weight ≥ 40)
+
+**Access:** Commerce operations, vendor management, vertical management, team settings
+**Weight Required:** 40+ (vendor-admin through city-manager)
+**Layout:** Manage layout with full sidebar (minus platform section)
+**Entry Point:** User menu → "Store Dashboard"
+
+**Target Routes (within /$tenant/$locale/manage/):**
+
+The 73 tenant-admin pages organized by sidebar section:
+
+```
+TARGET TENANT-ADMIN SIDEBAR (weight ≥ 40):
+┌───────────────────────────────────┐
+│ [Logo] Dakkah                     │
+│ Store Management                  │
+│───────────────────────────────────│
+│ ⌘K Search...                      │
+│───────────────────────────────────│
+│ OVERVIEW                          │
+│ ○ Dashboard                       │
+│───────────────────────────────────│
+│ COMMERCE                          │
+│ ○ Products         ○ Quotes       │
+│ ○ Orders           ○ Invoices     │
+│ ○ Customers        ○ Subscriptions│
+│ ○ Reviews          ○ Inventory    │
+│───────────────────────────────────│
+│ MARKETPLACE                       │
+│ ○ Vendors          ○ Affiliates   │
+│ ○ Commissions      ○ Service Prov.│
+│ ○ Payouts          ○ Commission Rl│
+│───────────────────────────────────│
+│ VERTICALS                         │
+│ ○ Auctions     ○ Restaurants      │
+│ ○ Bookings     ○ Grocery          │
+│ ○ Events       ○ Travel           │
+│ ○ Rentals      ○ Automotive       │
+│ ○ Real Estate  ○ Healthcare       │
+│ ○ Education    ○ Fitness          │
+│ ○ Parking      ○ Freelance        │
+│ ○ Pet Services ○ Digital Products │
+│ ○ Memberships  ○ Financial Prod.  │
+│ ○ [+17 more verticals]           │
+│───────────────────────────────────│
+│ MARKETING                         │
+│ ○ Advertising  ○ Classifieds      │
+│ ○ Promotions   ○ Crowdfunding     │
+│ ○ Social Comm. ○ Charity          │
+│───────────────────────────────────│
+│ ORGANIZATION                      │
+│ ○ Team         ○ Legal            │
+│ ○ Companies    ○ Utilities        │
+│ ○ Stores       ○ Disputes         │
+│───────────────────────────────────│
+│ SYSTEM                            │
+│ ○ Analytics                       │
+│ ○ Settings                        │
+│───────────────────────────────────│
+│ CMS (if weight ≥ 30)             │
+│ ○ Pages        ○ Blog             │
+│ ○ Media        ○ Navigation       │
+│───────────────────────────────────│
+│ ← Back to Store                   │
+└───────────────────────────────────┘
+```
+
+**Module Registry Changes Needed:**
+
+Currently the Module Registry defines 45 modules — ALL with `minWeight: 40` and `scope: "tenant"` or `scope: "shared"`. The target requires:
+
+| Section | Current Modules | Missing Modules to Add | minWeight |
+|---|---|---|---|
+| overview | 1 (dashboard) | — | 40 |
+| commerce | 7 | 2 (inventory, inventory-extension) | 40 |
+| marketplace | 4 | 2 (commission-rules, service-providers) | 40 |
+| verticals | 18 | 17 (all unlisted verticals) | 40 |
+| marketing | 6 | 2 (wishlists, notification-preferences) | 40 |
+| organization | 5 | 3 (disputes, companies-admin → merge, company → merge) | 40 |
+| system | 2 | 0 | 40 |
+| **cms** (NEW) | 0 | 6 (dashboard, pages, media, blog, navigation, templates) | **30** |
+| **platform** (NEW) | 0 | 17 (all super-admin pages) | **90** |
+| **TOTAL** | **43** | **49** | |
+
+**Hidden pages that MUST be added to Module Registry:**
+
+| # | Manage Page | Section to Assign | Current Status |
+|---|---|---|---|
+| 1 | `audit.tsx` | platform | Hidden (no sidebar) |
+| 2 | `availability.tsx` | commerce | Hidden |
+| 3 | `bundles.tsx` | verticals | Hidden |
+| 4 | `cart-extensions.tsx` | platform | Hidden |
+| 5 | `channels.tsx` | platform | Hidden |
+| 6 | `cms.tsx` | cms | Hidden |
+| 7 | `cms-content.tsx` | cms | Hidden |
+| 8 | `commission-rules.tsx` | marketplace | Hidden |
+| 9 | `consignments.tsx` | verticals | Hidden |
+| 10 | `credit.tsx` | verticals | Hidden |
+| 11 | `disputes.tsx` | organization | Hidden |
+| 12 | `dropshipping.tsx` | verticals | Hidden |
+| 13 | `events.tsx` | verticals | Hidden |
+| 14 | `flash-sales.tsx` | verticals | Hidden |
+| 15 | `gift-cards.tsx` | verticals | Hidden |
+| 16 | `governance.tsx` | platform | Hidden |
+| 17 | `government.tsx` | verticals | Hidden |
+| 18 | `i18n.tsx` | platform | Hidden |
+| 19 | `insurance.tsx` | verticals | Hidden |
+| 20 | `integrations.tsx` | platform | Hidden |
+| 21 | `inventory.tsx` | commerce | Hidden |
+| 22 | `inventory-extension.tsx` | commerce | Hidden |
+| 23 | `loyalty.tsx` | verticals | Hidden |
+| 24 | `metrics.tsx` | platform | Hidden |
+| 25 | `newsletters.tsx` | verticals | Hidden |
+| 26 | `nodes.tsx` | platform | Hidden |
+| 27 | `notification-preferences.tsx` | organization | Hidden |
+| 28 | `payment-terms.tsx` | platform | Hidden |
+| 29 | `personas.tsx` | platform | Hidden |
+| 30 | `pricing-tiers.tsx` | commerce | Hidden |
+| 31 | `print-on-demand.tsx` | verticals | Hidden |
+| 32 | `promotion-extensions.tsx` | platform | Hidden |
+| 33 | `purchase-orders.tsx` | commerce | Hidden |
+| 34 | `region-zones.tsx` | platform | Hidden |
+| 35 | `service-providers.tsx` | marketplace | Hidden |
+| 36 | `shipping-extensions.tsx` | platform | Hidden |
+| 37 | `subscription-plans.tsx` | commerce | Hidden |
+| 38 | `tax-config.tsx` | platform | Hidden |
+| 39 | `temporal.tsx` | platform | Hidden |
+| 40 | `tenants-admin.tsx` | platform | Hidden |
+| 41 | `trade-in.tsx` | verticals | Hidden |
+| 42 | `try-before-you-buy.tsx` | verticals | Hidden |
+| 43 | `volume-pricing.tsx` | commerce | Hidden |
+| 44 | `wallet.tsx` | commerce | Hidden |
+| 45 | `warranty.tsx` | verticals | Hidden (duplicate of warranties) |
+| 46 | `warranties.tsx` | verticals | Hidden |
+| 47 | `webhooks.tsx` | platform | Hidden |
+| 48 | `white-label.tsx` | verticals | Hidden |
+| 49 | `wishlists.tsx` | marketing | Hidden |
+
+### 25.8 User Type 7: Super-Admin (weight ≥ 90)
+
+**Access:** ALL tenant-admin pages PLUS platform-wide administration
+**Weight Required:** 90+ (city-manager, super-admin)
+**Layout:** Manage layout with full sidebar including platform section
+**Entry Point:** User menu → "Store Dashboard" + "Platform Admin"
+
+**Target Routes (within /$tenant/$locale/manage/platform/):**
+
+| # | Route Path | Purpose | Status | Priority |
+|---|---|---|---|---|
+| 1 | `manage/platform/` | Platform dashboard — cross-tenant overview | MISSING (needs `platform-dashboard.tsx`) | P0 |
+| 2 | `manage/platform/tenants` | Tenant management — create, configure, suspend tenants | EXISTS as `tenants-admin.tsx` (MOVE) | P0 |
+| 3 | `manage/platform/governance` | Governance policies — platform-wide rules | EXISTS as `governance.tsx` (MOVE) | P0 |
+| 4 | `manage/platform/nodes` | Node hierarchy — CITY→DISTRICT→ZONE→FACILITY→ASSET | EXISTS as `nodes.tsx` (MOVE) | P0 |
+| 5 | `manage/platform/personas` | Persona system — 6-axis persona management | EXISTS as `personas.tsx` (MOVE) | P1 |
+| 6 | `manage/platform/region-zones` | Geographic zones — country/region management | EXISTS as `region-zones.tsx` (MOVE) | P1 |
+| 7 | `manage/platform/channels` | Sales channels — multi-channel configuration | EXISTS as `channels.tsx` (MOVE) | P1 |
+| 8 | `manage/platform/i18n` | Internationalization — locale/translation management | EXISTS as `i18n.tsx` (MOVE) | P1 |
+| 9 | `manage/platform/integrations` | External integrations — Stripe, ERPNext, Fleetbase, etc. | EXISTS as `integrations.tsx` (MOVE) | P1 |
+| 10 | `manage/platform/webhooks` | Webhook management — event subscriptions | EXISTS as `webhooks.tsx` (MOVE) | P1 |
+| 11 | `manage/platform/temporal` | Temporal workflows — workflow orchestration monitoring | EXISTS as `temporal.tsx` (MOVE) | P2 |
+| 12 | `manage/platform/audit` | Audit log — platform-wide audit trail | EXISTS as `audit.tsx` (MOVE) | P1 |
+| 13 | `manage/platform/metrics` | Platform metrics — system health, performance | EXISTS as `metrics.tsx` (MOVE) | P2 |
+| 14 | `manage/platform/tax-config` | Tax configuration — global tax rules | EXISTS as `tax-config.tsx` (MOVE) | P1 |
+| 15 | `manage/platform/payment-terms` | Payment terms — global payment policies | EXISTS as `payment-terms.tsx` (MOVE) | P2 |
+| 16 | `manage/platform/shipping-extensions` | Shipping rules — global shipping config | EXISTS as `shipping-extensions.tsx` (MOVE) | P2 |
+| 17 | `manage/platform/cart-extensions` | Cart rules — global cart config | EXISTS as `cart-extensions.tsx` (MOVE) | P2 |
+| 18 | `manage/platform/promotion-extensions` | Promotion rules — global promotion config | EXISTS as `promotion-extensions.tsx` (MOVE) | P2 |
+
+**Super-Admin Sidebar (platform section addition):**
+
+```
+TARGET PLATFORM SECTION (weight ≥ 90):
+┌───────────────────────────────────┐
+│ ... (all tenant-admin sections)   │
+│───────────────────────────────────│
+│ PLATFORM ADMIN                    │
+│ ○ Platform Dashboard              │
+│ ○ Tenants                         │
+│ ○ Governance                      │
+│ ○ Node Hierarchy                  │
+│ ○ Personas                        │
+│ ○ Region Zones                    │
+│ ○ Sales Channels                  │
+│ ○ i18n                            │
+│───────────────────────────────────│
+│ PLATFORM SYSTEM                   │
+│ ○ Integrations                    │
+│ ○ Webhooks                        │
+│ ○ Temporal Workflows              │
+│ ○ Audit Log                       │
+│ ○ Platform Metrics                │
+│ ○ Tax Config                      │
+│ ○ Payment Terms                   │
+│ ○ Shipping Extensions             │
+│ ○ Cart Extensions                 │
+│ ○ Promotion Extensions            │
+│───────────────────────────────────│
+│ ← Back to Store                   │
+└───────────────────────────────────┘
+```
+
+**Missing super-admin pages (new routes needed):**
+
+| # | Missing Page | Purpose | Priority |
+|---|---|---|---|
+| 1 | `manage/platform/index.tsx` | Platform dashboard — tenant health, system status | P0 |
+| 2 | `manage/platform/tenant-onboarding.tsx` | New tenant provisioning wizard | P1 |
+| 3 | `manage/platform/rbac.tsx` | Role and permission management | P1 |
+| 4 | `manage/platform/billing.tsx` | Multi-tenant billing dashboard | P2 |
+| 5 | `manage/platform/system-health.tsx` | Infrastructure monitoring | P2 |
+| 6 | `manage/platform/feature-flags.tsx` | Feature flag management per tenant | P2 |
+| 7 | `manage/platform/api-keys.tsx` | Platform API key management | P1 |
+| 8 | `manage/platform/sync-dashboard.tsx` | Cross-system sync monitoring (CMS↔Medusa↔ERP) | P1 |
+
+### 25.9 User Type 8: Analyst (weight ≥ 20)
+
+**Access:** Read-only analytics and reporting dashboards
+**Weight Required:** 20 (analyst role)
+**Layout:** Manage layout with analytics-only sidebar
+**Entry Point:** User menu → "Analytics" (NEW)
+
+**Target Routes (within /$tenant/$locale/analytics/ — NEW section):**
+
+| # | Route Path | Purpose | Status |
+|---|---|---|---|
+| 1 | `analytics/` | Analytics dashboard overview | MISSING |
+| 2 | `analytics/sales` | Sales analytics — revenue, orders, AOV | MISSING |
+| 3 | `analytics/products` | Product analytics — top sellers, views, conversions | MISSING |
+| 4 | `analytics/customers` | Customer analytics — acquisition, retention, LTV | MISSING |
+| 5 | `analytics/vendors` | Vendor analytics — performance, revenue share | MISSING |
+| 6 | `analytics/content` | Content analytics — page views, engagement | MISSING |
+| 7 | `analytics/verticals` | Vertical-specific analytics | MISSING |
+| 8 | `analytics/reports` | Report generation and export | MISSING |
+
+**Analyst Sidebar:**
+
+```
+TARGET ANALYST SIDEBAR (weight ≥ 20):
+┌───────────────────────────────────┐
+│ [Logo] Dakkah Analytics           │
+│ Read-only Dashboard               │
+│───────────────────────────────────│
+│ OVERVIEW                          │
+│ ○ Dashboard                       │
+│───────────────────────────────────│
+│ REPORTS                           │
+│ ○ Sales                           │
+│ ○ Products                        │
+│ ○ Customers                       │
+│ ○ Vendors                         │
+│ ○ Content                         │
+│ ○ Verticals                       │
+│───────────────────────────────────│
+│ EXPORT                            │
+│ ○ Generate Reports                │
+│───────────────────────────────────│
+│ ← Back to Store                   │
+└───────────────────────────────────┘
+```
+
+---
+
+## Section 26: Navigation Components — Current vs Target
+
+### 26.1 Component Inventory
+
+| Component | File | Purpose | Issues |
+|---|---|---|---|
+| `Navbar` | `components/navbar.tsx` | Main storefront header | Uses CMS navigation hook — OK but hardcoded "Browse" menu |
+| `DynamicHeader` | `components/layout/dynamic-header.tsx` | Feature-flag-driven header | Hardcodes 12 vertical links in "Browse" dropdown |
+| `MegaMenu` (navigation/) | `components/navigation/mega-menu.tsx` | Mega menu with categories | Takes categories prop — OK |
+| `MegaMenu` (ui/) | `components/ui/mega-menu.tsx` | Generic mega menu with groups | Uses portal — OK |
+| `Footer` | `components/footer.tsx` | Main storefront footer | Uses CMS navigation hook — OK |
+| `DynamicFooter` | `components/layout/dynamic-footer.tsx` | Feature-flag-driven footer | Hardcoded links in sections |
+| `AccountSidebar` | `components/account/account-sidebar.tsx` | Account section sidebar | Only 6 of 26 pages in sidebar |
+| `AccountLayout` | `components/account/account-layout.tsx` | Account wrapper with sidebar | Only 6 nav items |
+| `ManageSidebar` | `components/manage/manage-sidebar.tsx` | Manage section sidebar | Hardcoded `userWeight = 100` |
+| `ManageLayout` | `components/manage/manage-layout.tsx` | Manage wrapper with RoleGuard | Single weight threshold (40) |
+| `ManageHeader` | `components/manage/manage-header.tsx` | Manage breadcrumb header | OK |
+| `UserMenu` | `components/auth/user-menu.tsx` | User dropdown in header | Only shows "Store Dashboard" for admins |
+| `Layout` | `components/layout.tsx` | Root layout — detects manage pages | OK — correctly skips Navbar/Footer for manage |
+| **VendorLayout** | **DOES NOT EXIST** | Vendor wrapper with sidebar | **MISSING** |
+| **VendorSidebar** | **DOES NOT EXIST** | Vendor section sidebar | **MISSING** |
+| **AnalyticsLayout** | **DOES NOT EXIST** | Analytics wrapper with sidebar | **MISSING** |
+| **AnalyticsSidebar** | **DOES NOT EXIST** | Analytics section sidebar | **MISSING** |
+| **BusinessLayout** | **DOES NOT EXIST** | B2B portal wrapper with sidebar | **MISSING** |
+
+### 26.2 User Menu — Current vs Target
+
+**Current UserMenu dropdown:**
+```
+┌─────────────────────────────┐
+│ [Name]                      │
+│ email@example.com           │
+│ [Role: Content Editor]      │
+│─────────────────────────────│
+│ 👤 My Account               │
+│ 🛍️ Orders                   │
+│ 💳 Subscriptions             │
+│ 📅 Bookings                 │
+│─────────────────────────────│
+│ (if B2B:)                   │
+│ Business                    │
+│ 🏢 Company Dashboard        │
+│─────────────────────────────│
+│ (if hasAccess, weight ≥ 40:)│
+│ Management                  │
+│ 🏪 Store Dashboard          │
+│─────────────────────────────│
+│ ⚙️ Settings                 │
+│ 🚪 Sign out                 │
+└─────────────────────────────┘
+```
+
+**Target UserMenu dropdown (role-aware):**
+```
+┌─────────────────────────────────────┐
+│ [Name]                              │
+│ email@example.com                   │
+│ [Role: Super Admin]                 │
+│─────────────────────────────────────│
+│ 👤 My Account                       │
+│ 🛍️ Orders                           │
+│ 💳 Subscriptions                     │
+│ 📅 Bookings                         │
+│─────────────────────────────────────│
+│ (if B2B:)                           │
+│ Business                            │
+│ 🏢 Company Dashboard                │
+│─────────────────────────────────────│
+│ (if vendor:)                        │  ← NEW
+│ Vendor                              │
+│ 🏪 Vendor Dashboard                 │  ← NEW
+│─────────────────────────────────────│
+│ (if weight ≥ 20:)                   │  ← NEW threshold
+│ Analytics                           │
+│ 📊 Analytics Dashboard              │  ← NEW
+│─────────────────────────────────────│
+│ (if weight ≥ 30:)                   │  ← NEW threshold
+│ Content                             │
+│ 📝 Content Studio                   │  ← NEW
+│─────────────────────────────────────│
+│ (if weight ≥ 40:)                   │
+│ Management                          │
+│ 🏪 Store Dashboard                  │
+│─────────────────────────────────────│
+│ (if weight ≥ 90:)                   │  ← NEW threshold
+│ Platform                            │
+│ 🌐 Platform Admin                   │  ← NEW
+│─────────────────────────────────────│
+│ ⚙️ Settings                         │
+│ 🚪 Sign out                         │
+└─────────────────────────────────────┘
+```
+
+### 26.3 Required Component Changes Summary
+
+| # | Component | Change Required | Priority | Effort |
+|---|---|---|---|---|
+| 1 | `role-guard.tsx` | Support per-route minWeight instead of global 40 | P0 | 2h |
+| 2 | `manage-sidebar.tsx` | Use actual user weight instead of hardcoded 100 | P0 | 1h |
+| 3 | `module-registry.ts` | Add `cms` section (minWeight 30), `platform` section (minWeight 90), add 49 missing modules | P0 | 3h |
+| 4 | `user-menu.tsx` | Add role-aware links (Content Studio, Vendor Dashboard, Analytics, Platform Admin) | P0 | 2h |
+| 5 | `account-sidebar.tsx` | Add 13 missing page links organized into sections | P1 | 2h |
+| 6 | Create `VendorLayout` | Shared layout with sidebar for all vendor pages | P1 | 4h |
+| 7 | Create `VendorSidebar` | Sidebar navigation for vendor dashboard | P1 | 3h |
+| 8 | Create `AnalyticsLayout` | Read-only analytics layout for analyst role | P2 | 3h |
+| 9 | Create `AnalyticsSidebar` | Analytics-only sidebar | P2 | 2h |
+| 10 | Create `BusinessLayout` | B2B portal layout with sidebar | P2 | 3h |
+| 11 | `manage-layout.tsx` | Support CMS-only mode for content-editor | P0 | 2h |
+| 12 | `dynamic-header.tsx` | Remove hardcoded vertical links, use CMS data | P2 | 2h |
+| 13 | `layout.tsx` | Detect vendor, analytics, CMS routes for correct layout | P1 | 1h |
+
+---
+
+## Section 27: Route Migration Plan — Reorganizing 96 Manage Pages
+
+### 27.1 Pages to Move to Platform Section
+
+These 17 pages should move from `manage/` to `manage/platform/`:
+
+| # | Current Path | Target Path | File Change |
+|---|---|---|---|
+| 1 | `manage/tenants-admin.tsx` | `manage/platform/tenants.tsx` | MOVE + rename |
+| 2 | `manage/governance.tsx` | `manage/platform/governance.tsx` | MOVE |
+| 3 | `manage/nodes.tsx` | `manage/platform/nodes.tsx` | MOVE |
+| 4 | `manage/personas.tsx` | `manage/platform/personas.tsx` | MOVE |
+| 5 | `manage/region-zones.tsx` | `manage/platform/region-zones.tsx` | MOVE |
+| 6 | `manage/temporal.tsx` | `manage/platform/temporal.tsx` | MOVE |
+| 7 | `manage/webhooks.tsx` | `manage/platform/webhooks.tsx` | MOVE |
+| 8 | `manage/integrations.tsx` | `manage/platform/integrations.tsx` | MOVE |
+| 9 | `manage/audit.tsx` | `manage/platform/audit.tsx` | MOVE |
+| 10 | `manage/channels.tsx` | `manage/platform/channels.tsx` | MOVE |
+| 11 | `manage/metrics.tsx` | `manage/platform/metrics.tsx` | MOVE |
+| 12 | `manage/i18n.tsx` | `manage/platform/i18n.tsx` | MOVE |
+| 13 | `manage/tax-config.tsx` | `manage/platform/tax-config.tsx` | MOVE |
+| 14 | `manage/payment-terms.tsx` | `manage/platform/payment-terms.tsx` | MOVE |
+| 15 | `manage/shipping-extensions.tsx` | `manage/platform/shipping-extensions.tsx` | MOVE |
+| 16 | `manage/cart-extensions.tsx` | `manage/platform/cart-extensions.tsx` | MOVE |
+| 17 | `manage/promotion-extensions.tsx` | `manage/platform/promotion-extensions.tsx` | MOVE |
+
+### 27.2 Pages to Move to CMS Section
+
+These 2 existing pages should move, plus 15 new pages created:
+
+| # | Current Path | Target Path | File Change |
+|---|---|---|---|
+| 1 | `manage/cms.tsx` | `manage/cms/pages.tsx` | MOVE + rename |
+| 2 | `manage/cms-content.tsx` | `manage/cms/content.tsx` | MOVE + rename |
+| 3 | — | `manage/cms/index.tsx` | CREATE (CMS dashboard) |
+| 4 | — | `manage/cms/media.tsx` | CREATE (media library) |
+| 5 | — | `manage/cms/blog/index.tsx` | CREATE (blog list) |
+| 6 | — | `manage/cms/blog/new.tsx` | CREATE (blog editor) |
+| 7 | — | `manage/cms/blog/$postId.tsx` | CREATE (blog editor) |
+| 8 | — | `manage/cms/navigation.tsx` | CREATE (nav editor) |
+| 9 | — | `manage/cms/templates.tsx` | CREATE (template gallery) |
+| 10 | — | `manage/cms/seo.tsx` | CREATE (SEO settings) |
+| 11 | — | `manage/cms/redirects.tsx` | CREATE (URL redirects) |
+| 12 | — | `manage/cms/scheduler.tsx` | CREATE (content scheduler) |
+| 13 | — | `manage/cms/forms.tsx` | CREATE (form submissions) |
+| 14 | — | `manage/cms/analytics.tsx` | CREATE (content analytics) |
+| 15 | — | `manage/cms/pages/new.tsx` | CREATE (new page wizard) |
+| 16 | — | `manage/cms/pages/$pageId.tsx` | CREATE (page builder) |
+| 17 | — | `manage/cms/pages/$pageId/preview.tsx` | CREATE (page preview) |
+
+### 27.3 Pages to Delete (Duplicates)
+
+| # | File to Delete | Keep Instead | Reason |
+|---|---|---|---|
+| 1 | `manage/charities.tsx` (211 lines) | `manage/charity.tsx` (206 lines) | Duplicate vertical |
+| 2 | `manage/warranty.tsx` (210 lines) | `manage/warranties.tsx` (188 lines) | Duplicate vertical |
+| 3 | `manage/companies-admin.tsx` (188 lines) | `manage/companies.tsx` (216 lines) | Duplicate org page |
+| 4 | `manage/company.tsx` (209 lines) | `manage/companies.tsx` (216 lines) | Duplicate org page |
+| 5 | `manage/promotions-ext.tsx` (221 lines) | `manage/promotions.tsx` (216 lines) | Merge into tabs |
+
+**Total lines removed: 1,039**
+
+### 27.4 New Route Files Needed
+
+| # | File Path | Purpose | User Type | Priority |
+|---|---|---|---|---|
+| 1 | `manage/platform/index.tsx` | Platform dashboard | Super-Admin | P0 |
+| 2 | `manage/cms/index.tsx` | CMS dashboard | Content-Editor | P0 |
+| 3 | `manage/cms/pages.tsx` | Page list (from cms.tsx) | Content-Editor | P0 |
+| 4 | `manage/cms/pages/new.tsx` | New page wizard | Content-Editor | P0 |
+| 5 | `manage/cms/pages/$pageId.tsx` | Page builder | Content-Editor | P0 |
+| 6 | `manage/cms/media.tsx` | Media library | Content-Editor | P0 |
+| 7 | `manage/cms/blog/index.tsx` | Blog management | Content-Editor | P1 |
+| 8 | `manage/cms/navigation.tsx` | Navigation editor | Content-Editor | P1 |
+| 9 | `analytics/index.tsx` | Analytics dashboard | Analyst | P2 |
+| 10 | `analytics/sales.tsx` | Sales analytics | Analyst | P2 |
+| 11 | `search.tsx` | Search results | Public | P1 |
+
+### 27.5 Final Route Count After Migration
+
+| Section | Current Files | After Migration | Change |
+|---|---|---|---|
+| Manage (tenant-admin) | 96 | 73 (after moves + deletes) | -23 |
+| Manage/platform (super-admin) | 0 | 17+1 (index) = 18 | +18 |
+| Manage/cms (content-editor) | 0 | 17 | +17 |
+| Analytics (analyst) | 0 | 8 | +8 |
+| Vendor (with new layout) | 56 | 55 (merge duplicates) | -1 |
+| Account (with full sidebar) | 26 | 26 | 0 |
+| Business (with layout) | 4 | 4 | 0 |
+| Storefront (public) | ~154 | ~148 (merge duplicates) | -6 |
+| **TOTAL** | **336** | **~370** | **+34** |
+
+---
+
+## Section 28: Complete Navigation Architecture Summary
+
+### 28.1 Layout Component to Route Mapping
+
+| Layout Component | Routes Covered | Authentication | Weight | Entry Point |
+|---|---|---|---|---|
+| **StorefrontLayout** (Navbar + Footer) | `/`, verticals, CMS pages, cart, checkout, auth | None | — | Direct URL / search |
+| **AccountLayout** | `/account/*` | Required | — | User menu → "My Account" |
+| **BusinessLayout** (NEW) | `/business/*` | Required + isB2B | — | User menu → "Company Dashboard" |
+| **VendorLayout** (NEW) | `/vendor/*` | Required + vendor assoc. | — | User menu → "Vendor Dashboard" |
+| **ManageLayout** (CMS mode) | `/manage/cms/*` | Required | ≥ 30 | User menu → "Content Studio" |
+| **ManageLayout** (tenant mode) | `/manage/*` (not cms/platform) | Required | ≥ 40 | User menu → "Store Dashboard" |
+| **ManageLayout** (platform mode) | `/manage/platform/*` | Required | ≥ 90 | User menu → "Platform Admin" |
+| **AnalyticsLayout** (NEW) | `/analytics/*` | Required | ≥ 20 | User menu → "Analytics" |
+
+### 28.2 Role-to-Navigation Matrix
+
+| Role | Weight | Storefront | Account | B2B | Vendor | CMS | Manage | Platform | Analytics |
+|---|---|---|---|---|---|---|---|---|---|
+| Visitor | — | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| Customer | auth | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| B2B Customer | auth+B2B | ✓ | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| Vendor | auth+vendor | ✓ | ✓ | ✗ | ✓ | ✗ | ✗ | ✗ | ✗ |
+| Viewer | 10 | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| Analyst | 20 | ✓ | ✓ | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
+| Content-Editor | 30 | ✓ | ✓ | ✗ | ✗ | ✓ | ✗ | ✗ | ✗ |
+| Vendor-Admin | 40 | ✓ | ✓ | ✗ | ✓ | ✓ | ✓ | ✗ | ✓ |
+| Asset-Manager | 50 | ✓ | ✓ | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
+| Facility-Manager | 60 | ✓ | ✓ | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
+| Zone-Manager | 70 | ✓ | ✓ | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
+| District-Manager | 80 | ✓ | ✓ | ✗ | ✗ | ✓ | ✓ | ✗ | ✓ |
+| City-Manager | 90 | ✓ | ✓ | ✗ | ✗ | ✓ | ✓ | ✓ | ✓ |
+| Super-Admin | 100 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+
+### 28.3 Sidebar Visibility Rules
+
+| Sidebar Section | minWeight | Visible to Roles |
+|---|---|---|
+| CMS | 30 | content-editor, vendor-admin, asset-manager, ... super-admin |
+| Commerce | 40 | vendor-admin, asset-manager, ... super-admin |
+| Marketplace | 40 | vendor-admin, asset-manager, ... super-admin |
+| Verticals | 40 | vendor-admin, asset-manager, ... super-admin |
+| Marketing | 40 | vendor-admin, asset-manager, ... super-admin |
+| Organization | 40 | vendor-admin, asset-manager, ... super-admin |
+| System (tenant) | 40 | vendor-admin, asset-manager, ... super-admin |
+| Platform Admin | 90 | city-manager, super-admin |
+| Platform System | 90 | city-manager, super-admin |
+
+### 28.4 Master Implementation Checklist
+
+| # | Task | Files to Change | Priority | Status |
+|---|---|---|---|---|
+| 1 | Fix `manage-sidebar.tsx` — use actual user weight | `manage-sidebar.tsx` | P0 | NOT STARTED |
+| 2 | Fix `role-guard.tsx` — per-route weight support | `role-guard.tsx` | P0 | NOT STARTED |
+| 3 | Expand `module-registry.ts` — add cms + platform sections | `module-registry.ts` | P0 | NOT STARTED |
+| 4 | Update `user-menu.tsx` — role-aware navigation links | `user-menu.tsx` | P0 | NOT STARTED |
+| 5 | Create `manage/platform/` directory + 18 route files | 18 new files | P0 | NOT STARTED |
+| 6 | Create `manage/cms/` directory + 17 route files | 17 new files | P0 | NOT STARTED |
+| 7 | Move 17 platform pages from `manage/` to `manage/platform/` | 17 file moves | P0 | NOT STARTED |
+| 8 | Move 2 CMS pages from `manage/` to `manage/cms/` | 2 file moves | P0 | NOT STARTED |
+| 9 | Delete 5 duplicate manage pages | 5 file deletes | P1 | NOT STARTED |
+| 10 | Update `account-sidebar.tsx` — add 13 missing links | `account-sidebar.tsx` | P1 | NOT STARTED |
+| 11 | Create `VendorLayout` + `VendorSidebar` components | 2 new files | P1 | NOT STARTED |
+| 12 | Wrap all 56 vendor pages with VendorLayout | 56 file edits | P1 | NOT STARTED |
+| 13 | Create `analytics/` route section + 8 route files | 8 new files | P2 | NOT STARTED |
+| 14 | Create `AnalyticsLayout` + `AnalyticsSidebar` | 2 new files | P2 | NOT STARTED |
+| 15 | Create `BusinessLayout` for B2B portal | 1 new file | P2 | NOT STARTED |
+| 16 | Update `layout.tsx` — detect vendor/analytics/cms routes | `layout.tsx` | P1 | NOT STARTED |
+| 17 | Register all 50 blocks in Payload Pages collection | `Pages.ts` | P0 | NOT STARTED |
+| 18 | Create page builder component for CMS | New component | P0 | NOT STARTED |
+| 19 | Create 8 missing public pages (about, contact, search, etc.) | CMS entries + 1 route | P1 | NOT STARTED |
+| 20 | Add 49 missing modules to Module Registry | `module-registry.ts` | P0 | NOT STARTED |
