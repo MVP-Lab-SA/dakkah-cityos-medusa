@@ -4,7 +4,28 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const customerId = req.auth_context?.actor_id
 
   if (!customerId) {
-    return res.status(401).json({ message: "Authentication required" })
+    return res.json({
+      enrolled: false,
+      account: null,
+      program: null,
+      recent_transactions: [],
+      public_info: {
+        title: "Loyalty Rewards Program",
+        description: "Earn points on every purchase and redeem them for discounts, free products, and exclusive perks.",
+        benefits: [
+          "Earn 1 point per dollar spent",
+          "Redeem points for discounts on future purchases",
+          "Exclusive member-only deals and early access",
+          "Birthday rewards and special bonuses",
+        ],
+        tiers: [
+          { name: "Bronze", min_points: 0, perks: ["1x points earning", "Member-only deals"] },
+          { name: "Silver", min_points: 500, perks: ["1.5x points earning", "Free shipping on orders over $50"] },
+          { name: "Gold", min_points: 2000, perks: ["2x points earning", "Free shipping on all orders", "Early access to sales"] },
+          { name: "Platinum", min_points: 5000, perks: ["3x points earning", "Free shipping", "Priority support", "Exclusive events"] },
+        ],
+      },
+    })
   }
 
   const { tenant_id } = req.query as Record<string, string | undefined>

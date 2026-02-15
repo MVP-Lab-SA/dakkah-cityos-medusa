@@ -4,7 +4,29 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const customerId = req.auth_context?.actor_id
 
   if (!customerId) {
-    return res.status(401).json({ message: "Authentication required" })
+    return res.json({
+      credit: {
+        limit: 0,
+        used: 0,
+        available: 0,
+        currency: "USD",
+      },
+      public_info: {
+        title: "Store Credit & Buy Now, Pay Later",
+        description: "Flexible credit options for businesses and individuals.",
+        options: [
+          { name: "Business Credit Line", description: "Get approved for a revolving credit line for your business purchases", requirements: "Business account required" },
+          { name: "Net-30 Terms", description: "Pay within 30 days of purchase with no interest", requirements: "Approved business account" },
+          { name: "Net-60 Terms", description: "Extended 60-day payment terms for qualified businesses", requirements: "Established business relationship" },
+        ],
+        how_to_apply: [
+          "Create or log in to your account",
+          "Link your business profile",
+          "Submit a credit application",
+          "Get approved and start purchasing on credit",
+        ],
+      },
+    })
   }
 
   const { tenant_id } = req.query as Record<string, string | undefined>

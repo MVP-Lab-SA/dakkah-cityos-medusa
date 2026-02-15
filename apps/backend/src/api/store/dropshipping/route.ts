@@ -13,14 +13,14 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       search,
     } = req.query as Record<string, string | undefined>
 
-    const filters: Record<string, any> = { type: "dropshipping" }
+    const filters: Record<string, any> = {}
     if (tenant_id) filters.tenant_id = tenant_id
     if (category) filters.category = category
     if (supplier) filters.vendor_id = supplier
     if (status) {
       filters.status = status
     } else {
-      filters.status = "active"
+      filters.status = "approved"
     }
     if (search) filters.title = { $like: `%${search}%` }
 

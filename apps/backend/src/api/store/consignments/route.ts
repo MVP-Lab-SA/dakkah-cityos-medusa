@@ -4,7 +4,29 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const customerId = req.auth_context?.actor_id
 
   if (!customerId) {
-    return res.status(401).json({ message: "Authentication required" })
+    return res.json({
+      consignments: [],
+      count: 0,
+      limit: 20,
+      offset: 0,
+      public_info: {
+        title: "Consignment Services",
+        description: "Sell your items through our marketplace with our consignment program.",
+        how_it_works: [
+          "Submit your items for consignment review",
+          "We evaluate and list approved items in our store",
+          "Items are sold at agreed-upon prices",
+          "You receive your share once the item sells",
+        ],
+        benefits: [
+          "No upfront costs to list your items",
+          "Professional photography and listing creation",
+          "Secure handling and storage",
+          "Competitive commission rates",
+        ],
+        categories: ["Fashion & Apparel", "Electronics", "Furniture", "Art & Collectibles", "Jewelry & Watches"],
+      },
+    })
   }
 
   const { limit = "20", offset = "0", tenant_id } = req.query as Record<string, string | undefined>

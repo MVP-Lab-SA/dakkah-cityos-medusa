@@ -14,7 +14,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     limit = 50,
     category,
     is_verified,
-    sort_by = "name",
+    sort_by = "business_name",
     order = "ASC",
     tenant_id,
     marketplace_id,

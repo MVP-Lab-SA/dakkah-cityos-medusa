@@ -4,7 +4,25 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const customerId = req.auth_context?.actor_id
 
   if (!customerId) {
-    return res.status(401).json({ message: "Authentication required" })
+    return res.json({
+      wallet: {
+        gift_card_balance: 0,
+        loyalty_points: 0,
+        total_credits: 0,
+        currency: "USD",
+      },
+      public_info: {
+        title: "Digital Wallet",
+        description: "Manage your store credits, gift cards, and loyalty points all in one place.",
+        features: [
+          "Store and manage gift card balances",
+          "Track loyalty points across programs",
+          "Apply credits at checkout instantly",
+          "Top up your wallet for faster checkout",
+        ],
+        accepted_methods: ["Gift Cards", "Store Credits", "Loyalty Points", "Promotional Credits"],
+      },
+    })
   }
 
   const { tenant_id } = req.query as Record<string, string | undefined>
