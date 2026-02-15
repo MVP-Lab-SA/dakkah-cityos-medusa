@@ -1,899 +1,876 @@
-# Dakkah CityOS — Detail Pages Comprehensive Assessment
+# Dakkah CityOS — Detail Pages Deep Assessment
 
-**Date:** February 15, 2026
-**Scope:** All 50 storefront detail pages (excluding 4 account pages)
-**Purpose:** Identify gaps in layout, backend endpoints, data models, and seed data across all commerce verticals
+**Date:** February 15, 2026  
+**Scope:** All 50 storefront detail pages (excluding account pages)  
+**Depth:** Layout blocks, backend route handlers, database schemas, seed data quality, API response fields, data model alignment, image availability, routing mismatches
 
 ---
 
 ## Executive Summary
 
-| Category | Total | Fully Working | Partial | Broken/Missing |
+| Category | Total | Working | Partial | Broken |
 |---|---|---|---|---|
 | **Storefront Detail Pages** | 50 | 14 | 14 | 22 |
-| **Backend Detail Endpoints** | 50 needed | 28 exist | 3 erroring | 19 missing |
-| **Seeded Listing Data** | 50 needed | 36 have data | — | 14 empty |
-| **Data Model Completeness** | 50 needed | 8 rich | 20 partial | 22 sparse/empty |
+| **Backend GET /[id] Routes** | 28 exist | 14 return 200 | 3 return errors | 19 missing entirely |
+| **Database Tables** | 26 exist | 22 with data | 4 empty | 24 verticals with no table |
+| **Image Data** | 26 tables checked | 21 have image URLs | 5 have no images | — |
+| **Seeded Listing Data** | 50 needed | 36 have data | — | 14 completely empty |
+
+### Critical Structural Finding
+
+**38 of 50 detail pages are copy-paste templates.** They all reference the exact same 13 generic fields (`address`, `avg_rating`, `banner_url`, `city`, `description`, `location`, `logo_url`, `metadata`, `photo_url`, `price`, `rating`, `review_count`, `thumbnail`) and ignore the unique fields each vertical's backend model actually provides. Only 12 pages have any customized field references.
+
+**5 duplicate page pairs exist** (10 pages total) that fetch from the same backend endpoint and provide nearly identical layouts:
+- `campaigns` (181 lines) ↔ `crowdfunding` (248 lines) — both fetch `/store/crowdfunding/{id}`
+- `consignment` (213 lines) ↔ `consignment-shop` (212 lines) — both fetch `/store/consignments/{id}`
+- `dropshipping` (205 lines) ↔ `dropshipping-marketplace` (211 lines) — both fetch `/store/dropshipping/{id}`
+- `print-on-demand` (217 lines) ↔ `print-on-demand-shop` (207 lines) — both fetch `/store/print-on-demand/{id}`
+- `white-label` (213 lines) ↔ `white-label-shop` (239 lines) — both fetch `/store/white-label/{id}`
 
 ---
 
 ## Tier Classification
 
-### TIER 1 — Fully Functional (14 pages)
-Backend detail endpoint returns 200, has seeded data, page renders with content via SSR.
+### Tier 1 — Fully Functional (14 pages)
+Backend detail endpoint returns 200, database has seeded rows, API response fields are displayable.
 
-### TIER 2 — Partial (14 pages)
-Has seeded listing data, but detail endpoint returns 404/500, or data model is too sparse for a meaningful detail view.
+### Tier 2 — Partial (14 pages)
+Has seeded listing data, but detail endpoint returns 404/500, or the page template doesn't map to the actual API response fields.
 
-### TIER 3 — Broken/Missing (22 pages)
-No seeded data, no working detail endpoint, or endpoint doesn't exist at all.
+### Tier 3 — Broken (22 pages)
+No seeded data, no working detail endpoint, fundamental data model mismatch, or no backend table exists.
 
 ---
 
-## Per-Vertical Assessment
+## Section 1: Database Schema Analysis
+
+### Tables That Exist With Data
+
+| Table Name | Row Count | Has Images | Key Display Fields | Image Storage |
+|---|---|---|---|---|
+| `auction_listing` | 6 | No (in metadata) | title, description, price, currency | `metadata.images` |
+| `vehicle_listing` | 6 | Yes (column) | title, make, model, year, price | `images` JSON array |
+| `classified_listing` | 7 | Yes (metadata) | title, description, price, condition | `metadata.images`, `metadata.thumbnail` |
+| `crowdfund_campaign` | 5 | Yes (column) | title, description, goal/raised amounts | `images` JSON array |
+| `digital_asset` | 6 | Yes (metadata) | title, file_type, file_url | `metadata.images`, `metadata.thumbnail` |
+| `class_schedule` | 10 | Yes (metadata) | class_name, description, difficulty | `metadata.images`, `metadata.thumbnail` |
+| `gig_listing` | 7 | Yes (metadata) | title, description, price, rating | `metadata.images`, `metadata.thumbnail` |
+| `fresh_product` | 8 | Partial (metadata) | storage_type, shelf_life, organic | `metadata.name` (name only in metadata!) |
+| `practitioner` | 11 | Yes (column) | name, specialization, bio, rating | `photo_url` |
+| `insurance_product` | 7 | No (metadata) | name, description, insurance_type | `metadata.images`, `metadata.thumbnail` |
+| `insurance_policy` | 2 | No | policy_number, status, premium | None |
+| `attorney_profile` | 8 | Yes (column) | name, specializations, bio, rating | `photo_url` |
+| `parking_zone` | 6 | Yes (metadata) | name, description, zone_type, rates | `metadata.images`, `metadata.thumbnail` |
+| `pet_profile` | 5 | Yes (column) | name, species, breed, weight | `photo_url` |
+| `property_listing` | 7 | Yes (column) | title, description, price, bedrooms | `images` JSON array |
+| `rental_product` | 7 | Yes (metadata) | rental_type, base_price, deposit | `metadata.name`, `metadata.images` |
+| `restaurant` | 5 | Yes (columns) | name, description, cuisine_types, rating | `logo_url`, `banner_url` |
+| `event` | 6 | Yes (column) | title, description, event_type, venue | `image_url` |
+| `subscription_plan` | 5 | Partial (metadata) | name, description, price, features | `metadata.seeded` (no images!) |
+| `membership_tier` | 6 | No | name, description, benefits, annual_fee | `icon_url` (empty) |
+| `membership` | 3 | No | membership_number, status, points | None (customer record) |
+| `loyalty_program` | 2 | Partial (metadata) | name, description, points_per_currency | `metadata.welcome_bonus` |
+| `warranty_plan` | 5 | Yes (metadata) | name, description, plan_type, price | `metadata.images`, `metadata.thumbnail` |
+| `charity_org` | 5 | Yes (column) | name, description, category, website | `logo_url` |
+| `vendor` | 10 | Yes (columns) | business_name, description, rating | `logo_url`, `banner_url` |
+| `travel_property` | 7 | Yes (column) | name, description, property_type, stars | `images` JSON array |
+| `course` | 6 | Yes (column) | title, description, price, rating | `thumbnail_url` |
+| `donation_campaign` | 8 | Yes (column) | title, description, goal_amount | `images` JSON array |
+| `booking` | 3 | No | booking_number, status, total | None |
+| `trade_in` | Table exists | — | — | — |
+| `credit_line` | Table exists | — | — | — |
+
+### Tables That Do NOT Exist
+
+These verticals have no dedicated database table at all:
+
+| Vertical | What Route Handler Uses Instead |
+|---|---|
+| **b2b** | `company` module (Company, PurchaseOrder) — procurement, not products |
+| **bundles** | `promotionExt` module (ProductBundle) — `product_bundle` table |
+| **consignment** | No module — listing route attempts vendor queries |
+| **credit** | Wallet module — `credit_line` table (customer credit, not products) |
+| **dropshipping** | `vendor` module — `vendor_product` table (join table, not products) |
+| **flash-deals** | `promotionExt` + Medusa promotions — `promotion` table (codes, not deals) |
+| **gift-cards** | Medusa core gift cards — `gift_card_ext` table (issued cards, not designs) |
+| **newsletter** | Simple module — `newsletter` table doesn't exist, data from notification module |
+| **places** | `tenant` module — `tenant_poi` table |
+| **print-on-demand** | No module exists |
+| **social-commerce** | Data hardcoded in route handler (no table, uses `social_post`/`live_stream` for detail) |
+| **try-before-you-buy** | `vendor` module — same `vendor_product` table as dropshipping |
+| **volume-deals** | `volume-pricing` module — `volume_pricing` table (pricing tiers, not products) |
+| **white-label** | No module exists |
+
+---
+
+## Section 2: Backend Route Handler Analysis
+
+### Detail Endpoint Handler Patterns
+
+| Quality | Count | Pattern | Verticals |
+|---|---|---|---|
+| **Full with relations** | 3 | Fetches main entity + related records (bids, campaigns, etc.) | auctions (57 lines, broken), bookings (57 lines), charity (24 lines, broken) |
+| **Simple retrieve** | 22 | `mod.retrieve[Entity](id)` — single entity fetch, 14-17 lines | automotive, classifieds, crowdfunding, digital, fitness, freelance, government, grocery, legal, parking, pet-services, rentals, travel, warranties, etc. |
+| **Complex with auth** | 2 | Requires authentication, multi-step logic | purchase-orders (87 lines), quotes (51 lines) |
+| **Dual-entity lookup** | 2 | Tries multiple entity types | charity (CharityOrg then DonationCampaign), social-commerce (GroupBuy then LiveStream) |
+| **Missing entirely** | 19 | No `[id]/route.ts` file exists | See Section 3 |
+
+### Detail Endpoint Bugs (3 broken endpoints)
+
+**1. Auctions — 500 Internal Server Error**
+- **Root Cause:** Route queries `mod.listBids({ auction_listing_id: id })` but the `bid` table column is named `auction_id`, not `auction_listing_id`
+- **Fix:** Change query filter from `auction_listing_id` to `auction_id`
+- **File:** `apps/backend/src/api/store/auctions/[id]/route.ts`
+
+**2. Charity — 404 Not Found on valid IDs**
+- **Root Cause:** Route calls `mod.retrieveCharityOrg(id)` which throws "not found" (caught silently), then tries `mod.retrieveDonationCampaign(id)` which also fails. The listing endpoint returns items with IDs from the `charity_org` table, but `retrieveCharityOrg()` may have a query filter mismatch or the resolver method doesn't match the module's service method name.
+- **File:** `apps/backend/src/api/store/charity/[id]/route.ts`
+
+**3. Social-Commerce — 404 Not Found on valid IDs**
+- **Root Cause:** Listing endpoint uses hardcoded seed data (in-memory array with IDs like `sc_001`), but detail endpoint queries `mod.listLiveStreams({ id })` or `mod.listGroupBuys({ id })` against database tables. The hardcoded IDs don't exist in any database table.
+- **Fix:** Either store social commerce data in a database table, or have the detail endpoint reference the same hardcoded array.
+- **File:** `apps/backend/src/api/store/social-commerce/[id]/route.ts`
+
+### Listing Endpoints With Hardcoded/In-Memory Data (no database)
+
+| Vertical | Data Source | Detail |
+|---|---|---|
+| **social-commerce** | `SOCIAL_COMMERCE_SEED` array (7 items) in route handler | No database table — data exists only in source code |
+| **events** | Database (`event` table, 6 rows) + some inline construction in route | Mixed approach |
+
+### Listing Endpoints Using Wrong Data Model
+
+| Vertical | What Listing Returns | What Detail Page Expects |
+|---|---|---|
+| **dropshipping** | `vendor_product` join records (vendor_id, product_id, status) | Product with name, description, images, price |
+| **try-before-you-buy** | Same `vendor_product` join records | Product with name, description, images, price |
+| **flash-deals** | Medusa `promotion` records (code, is_automatic, type) | Deal with name, images, price, discount |
+| **memberships** | `membership` customer records (customer_id, points, status) | Plan with name, benefits, price, features |
+| **subscriptions** | `subscription` customer records (customer_id, billing_interval) | Plan with name, description, price, features |
+| **credit** | `credit_line` records (customer balance) | Credit product with terms, rates |
+| **gift-cards** | Medusa gift card records (code, balance) | Gift card design with images, denominations |
+
+---
+
+## Section 3: Per-Vertical Deep Assessment
+
+### Legend
+- **DB Table:** The actual PostgreSQL table name and row count
+- **API Response Fields:** What the backend detail endpoint actually returns
+- **Page Expects:** What the storefront JSX template references via `item.xxx`
+- **Field Alignment:** Whether API response fields match what the page template uses
+- **Image Pipeline:** Whether images flow from DB → API → Page display
+
+---
 
 ### 1. affiliate
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/affiliate/$id.tsx` — 180 lines |
-| **Layout Blocks** | Breadcrumb, Sidebar, CTAs (3), Details grid, Share button, Not-found state |
-| **Missing Layout** | No hero image, no image tag, no gallery |
-| **Backend Listing** | `/store/affiliate` — ERROR (endpoint returns non-JSON) |
-| **Backend Detail** | `/store/affiliates/[id]` — route file exists |
-| **Seeded Data** | None |
-| **Data Model** | `affiliate` module: Affiliate, ReferralLink, ClickTracking, AffiliateCommission, InfluencerCampaign |
-| **Gaps** | No seeded data. Listing endpoint broken. Detail endpoint untested. No images in model. |
 | **Tier** | **3 — Broken** |
+| **DB Table** | `affiliate` — 0 rows |
+| **Backend Listing** | `/store/affiliates` — ERROR (empty response / module resolution failure) |
+| **Backend Detail** | `/store/affiliates/[id]` — 16 lines, simple retrieve. Untested (no data). |
+| **Page Template** | 180 lines. GENERIC template (13 standard fields). |
+| **Page Customization** | None — uses cookie-cutter template |
+| **Field Alignment** | Unknown — no API response to compare against |
+| **Image Pipeline** | No images in model (no photo_url, no images column) |
+| **Gaps** | No seeded data. No images in model. Listing endpoint fails. Generic template. |
 
 ---
 
 ### 2. auctions
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/auctions/$id.tsx` — 262 lines |
-| **Layout Blocks** | Hero image, Sidebar, Reviews |
-| **Missing Layout** | No breadcrumb, no CTA buttons, no not-found state, no gallery |
-| **Backend Listing** | `/store/auctions` — 5 items |
-| **Backend Detail** | `/store/auctions/[id]` — **500 ERROR**: "Trying to query by not existing property Bid.auction_listing_id" |
-| **Seeded Data** | 5 auctions. Fields: id, title, description, auction_type, status, currency_code, starts_at, ends_at |
-| **Data Model** | `auction` module: AuctionListing, Bid, AuctionResult, AuctionEscrow, AutoBidRule |
-| **Data Gaps** | No images on model (stored in metadata.images). No rating. No location. |
-| **Gaps** | Detail endpoint crashes on Bid relationship query. Missing breadcrumb, CTAs, not-found state. |
 | **Tier** | **2 — Partial** |
+| **DB Table** | `auction_listing` — 6 rows. Columns: title, description, auction_type, status, starting_price, reserve_price, buy_now_price, current_price, currency_code, bid_increment, starts_at, ends_at, total_bids |
+| **DB Images** | `metadata` column — images stored as metadata JSON but **currently NULL** for all rows. No dedicated images column despite `images` field existing in seed scripts. |
+| **Backend Listing** | `/store/auctions` — 200 OK, 5 items returned |
+| **Backend Detail** | `/store/auctions/[id]` — **500 ERROR**. Bug: queries `listBids({ auction_listing_id: id })` but `bid` table column is `auction_id`. |
+| **API Response (listing)** | `{id, title, description, auction_type, status, starting_price, reserve_price, current_price, currency_code, starts_at, ends_at, total_bids, metadata}` |
+| **Page Template** | 262 lines. GENERIC template. Has hero image, sidebar, reviews reference. |
+| **Missing from page** | No breadcrumb, no CTA (Place Bid button), no not-found state, no auction countdown timer, no bid history display |
+| **Field Alignment** | POOR — Page references `item.price`, `item.rating`, `item.photo_url` but API returns `starting_price`, `current_price`, no rating, no photo_url |
+| **Unique fields NOT used by page** | `auction_type`, `starting_price`, `reserve_price`, `buy_now_price`, `current_price`, `bid_increment`, `starts_at`, `ends_at`, `total_bids`, `auto_extend` |
+| **Gaps** | Detail endpoint crashes. Page doesn't display any auction-specific fields. No bid UI. No countdown. No images in DB despite metadata field. |
 
 ---
 
 ### 3. automotive
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/automotive/$id.tsx` — 205 lines |
-| **Layout Blocks** | Hero image, Breadcrumb, Sidebar, CTAs (Schedule Test Drive, Contact Dealer), Details grid (4 sections), img tag |
-| **Missing Layout** | No gallery, no reviews section, no related items, no share |
-| **Backend Listing** | `/store/automotive` — 6 items |
-| **Backend Detail** | `/store/automotive/[id]` — **200 OK** |
-| **Seeded Data** | 6 vehicles. Fields: title, make, model_name, year, mileage_km, fuel_type, transmission, body_type, color, VIN, condition, price |
-| **Data Model** | `automotive` module: VehicleListing, TestDrive, TradeIn, VehicleService, PartCatalog |
-| **Data Gaps** | Has photo_url on model but no images seeded. No rating field. |
-| **Gaps** | No gallery for multiple vehicle photos. No reviews section. Images field empty in seed data. |
 | **Tier** | **1 — Fully Functional** |
+| **DB Table** | `vehicle_listing` — 6 rows. Columns: title, make, model_name, year, mileage_km, fuel_type, transmission, body_type, color, VIN, condition, price, features, images, location_city |
+| **DB Images** | `images` column — **YES**, populated with Unsplash URLs (JSON array of strings) |
+| **Backend Detail** | `/store/automotive/[id]` — **200 OK** |
+| **API Response** | Full vehicle data: `{id, title, make, model_name, year, mileage_km, fuel_type, transmission, body_type, color, vin, condition, price, description, features, images, location_city, location_country, view_count}` |
+| **Page Template** | 205 lines. GENERIC template but has some custom sections: hero image, breadcrumb, sidebar, CTAs (Schedule Test Drive, Contact Dealer), details grid (4 sections). |
+| **Field Alignment** | POOR despite working — Page references `item.price`, `item.thumbnail` but API returns `price` (integer), `images` (array). Page misses: make, model, year, mileage, fuel_type, transmission, body_type, VIN, features, location. |
+| **Unique fields NOT used by page** | `make`, `model_name`, `year`, `mileage_km`, `fuel_type`, `transmission`, `body_type`, `color`, `vin`, `condition`, `features`, `view_count` |
+| **Gaps** | Despite 200 OK, the generic template wastes the rich vehicle data. No vehicle spec display. No image gallery for multiple photos. |
 
 ---
 
 ### 4. b2b
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/b2b/$id.tsx` — 242 lines |
-| **Layout Blocks** | Hero image, Breadcrumb, Sidebar, CTAs (2), Tabs (5), Details grid, img tag |
-| **Missing Layout** | No gallery, no reviews, no share |
-| **Backend Listing** | `/store/b2b` — 0 items (empty) |
-| **Backend Detail** | No `[id]` route exists |
-| **Seeded Data** | None |
-| **Data Model** | `company` module: Company, CompanyUser, PurchaseOrder, PurchaseOrderItem, ApprovalWorkflow, PaymentTerms, TaxExemption |
-| **Gaps** | No data seeded. No detail endpoint. Model doesn't have typical product fields (images, description) — it's company/procurement focused, not a product detail. |
 | **Tier** | **3 — Broken** |
+| **DB Table** | `company` — for companies. `purchase_order` — for orders. No product-browsing table. |
+| **Backend Listing** | `/store/b2b` — 0 items |
+| **Backend Detail** | No `[id]` route |
+| **Page Template** | 242 lines. CUSTOM template — references `company_name`, `industry`, `employees`, `moq`, `bulk_pricing`, `lead_time`, `certifications`, `products`. |
+| **Field Alignment** | N/A — no API to compare |
+| **Gaps** | No data model for B2B product browsing. Company module is for company management, not product catalog. Page has custom fields but nothing to display. |
 
 ---
 
 ### 5. bookings
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/bookings/$id.tsx` — 249 lines |
-| **Layout Blocks** | Breadcrumb, Sidebar, CTA (1), Details grid, Reviews, Not-found state |
-| **Missing Layout** | No hero image area, no img tag, no gallery |
-| **Backend Listing** | `/store/bookings` — 0 items (empty) |
-| **Backend Detail** | `/store/bookings/[id]` — route exists (untested, no data) |
-| **Seeded Data** | None |
-| **Data Model** | `booking` module: Booking, ServiceProduct, ServiceProvider, Availability, Reminder |
-| **Gaps** | No seeded data. Model has no image fields. Missing hero image section in layout. |
 | **Tier** | **3 — Broken** |
+| **DB Table** | `booking` — 3 rows, but these are customer booking records (with booking_number, status, payment_status), not browseable services. `service_product` table — 0 rows. |
+| **Backend Detail** | `/store/bookings/[id]` — 57 lines with auth. Retrieves individual booking (requires authentication). |
+| **Page Template** | 249 lines. GENERIC template. |
+| **Gaps** | The `booking` table has customer appointments, not service listings. `service_product` table is empty. Detail endpoint is for viewing your own booking, not browsing services. Needs a service catalog model. |
 
 ---
 
 ### 6. bundles
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/bundles/$id.tsx` — 210 lines |
-| **Layout Blocks** | Hero image, Breadcrumb, Sidebar, CTA (1), img tags (2), Not-found state |
-| **Missing Layout** | No gallery, no reviews, no details grid |
-| **Backend Listing** | `/store/bundles` — 7 items |
-| **Backend Detail** | No `[id]` route exists — returns **404** |
-| **Seeded Data** | 7 bundles. Fields: title, handle, description, bundle_type, discount_type, discount_value. Price/images/rating in metadata. |
-| **Data Model** | Part of `promotion-ext` module |
-| **Data Gaps** | No native image or price columns — stored in metadata JSON |
-| **Gaps** | Missing detail endpoint. Price/images only in metadata. No reviews, no gallery. |
 | **Tier** | **2 — Partial** |
+| **DB Table** | `product_bundle` — 7 rows. Columns: title, handle, description, bundle_type, discount_type, discount_value, is_active. |
+| **DB Images** | metadata — `{price, images, rating, category, thumbnail}` with Unsplash URLs |
+| **Backend Listing** | `/store/bundles` — 200 OK, 7 items |
+| **Backend Detail** | No `[id]` route — **404** |
+| **Page Template** | 210 lines. CUSTOM template — references `item.name`, `item.title`, `item.quantity`, `item.image`. |
+| **Field Alignment** | Partial match — page expects `name`, API has `title`. Images in metadata but page references `item.image`. |
+| **Gaps** | Missing detail endpoint. Price only in metadata JSON. Page field references don't match API field names. |
 
 ---
 
 ### 7. campaigns
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/campaigns/$id.tsx` — 181 lines |
-| **Layout Blocks** | img tag |
-| **Missing Layout** | No breadcrumb, no sidebar, no CTAs, no hero image, no not-found state, no gallery, no details grid |
-| **Backend Listing** | `/store/crowdfunding` — 5 items (shared with crowdfunding) |
-| **Backend Detail** | `/store/crowdfunding/[id]` — **200 OK** |
-| **Seeded Data** | 5 campaigns. Fields: title, description, campaign_type, status, backer_count, images |
-| **Data Model** | `crowdfunding` module: Campaign, RewardTier, Backer, Pledge, CampaignUpdate |
-| **Data Gaps** | No rating. Has images field on model. |
-| **Gaps** | Very minimal layout — missing breadcrumb, sidebar, CTAs, not-found state. Shares endpoint with crowdfunding page. |
-| **Tier** | **2 — Partial** (data works, layout severely lacking) |
+| **Tier** | **2 — Partial** (DUPLICATE of crowdfunding) |
+| **DB Table** | `crowdfund_campaign` — 5 rows (shared with crowdfunding) |
+| **Backend Detail** | `/store/crowdfunding/[id]` — **200 OK** (same endpoint as crowdfunding) |
+| **API Response** | `{title, description, campaign_type, status, goal_amount, raised_amount, backer_count, starts_at, ends_at, images, reward_tiers[], risks_and_challenges}` |
+| **Page Template** | 181 lines. GENERIC template. Very minimal layout — no breadcrumb, no sidebar, no CTAs, no not-found state. |
+| **Unique fields NOT used by page** | `campaign_type`, `goal_amount`, `raised_amount`, `backer_count`, `reward_tiers`, `starts_at`, `ends_at`, `risks_and_challenges` |
+| **Gaps** | Duplicate page sharing same backend as crowdfunding. Severely minimal layout. Ignores all crowdfunding-specific fields like progress bar, reward tiers, timeline. |
 
 ---
 
 ### 8. charity
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/charity/$id.tsx` — 243 lines |
-| **Layout Blocks** | Hero image, Breadcrumb, Sidebar, CTA (Donate), img tag, Share, Details grid, Not-found state |
-| **Missing Layout** | No gallery, no reviews |
-| **Backend Listing** | `/store/charity` — 5 items |
-| **Backend Detail** | `/store/charity/[id]` — **404** on valid IDs |
-| **Seeded Data** | 5 charities. Fields: name, description, registration_number, category, website, email, phone, address, logo_url, is_verified, currency_code |
-| **Data Model** | `charity` module: CharityOrg, DonationCampaign, Donation, ImpactReport |
-| **Data Gaps** | Has logo_url. No rating. No gallery images. |
-| **Gaps** | Detail endpoint returns 404 despite route existing — likely a query bug. |
 | **Tier** | **2 — Partial** |
+| **DB Table** | `charity_org` — 5 rows. `donation_campaign` — 8 rows. |
+| **DB Images** | `logo_url` on charity_org — **YES**, Unsplash URLs. `images` on donation_campaign — **YES**. |
+| **Backend Detail** | `/store/charity/[id]` — **404** on valid IDs. Bug: `retrieveCharityOrg(id)` throws, falls to `retrieveDonationCampaign(id)` which also fails. Likely module service method name mismatch. |
+| **Page Template** | 243 lines. GENERIC template but has Share, CTAs (Donate). |
+| **Gaps** | Detail endpoint query bug. Rich data exists in DB but unreachable. |
 
 ---
 
 ### 9. classifieds
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/classifieds/$id.tsx` — 222 lines |
-| **Layout Blocks** | Hero image, Breadcrumb, Sidebar, CTAs (3), img tag, Share, Details grid (2), Not-found state |
-| **Missing Layout** | No gallery, no reviews |
-| **Backend Listing** | `/store/classifieds` — 7 items |
-| **Backend Detail** | `/store/classifieds/[id]` — **200 OK** |
-| **Seeded Data** | 7 listings. Fields: title, description, category, listing_type, condition, currency_code, is_negotiable, location. Images in metadata. |
-| **Data Model** | `classified` module: ClassifiedListing, ListingCategory, ListingImage, ListingOffer, ListingFlag |
-| **Data Gaps** | No native image column — images in metadata.images and metadata.thumbnail. No rating. |
-| **Gaps** | Image gallery model exists (ListingImage) but not used in API. No reviews section. |
 | **Tier** | **1 — Fully Functional** |
+| **DB Table** | `classified_listing` — 7 rows. All key fields populated. |
+| **DB Images** | `metadata` — `{images: [...], thumbnail: "..."}` — **YES**, Unsplash URLs |
+| **Backend Detail** | `/store/classifieds/[id]` — **200 OK** |
+| **API Response** | `{id, title, description, category_id, listing_type, condition, price, currency_code, is_negotiable, location_city, location_state, location_country, metadata}` |
+| **Page Template** | 222 lines. CUSTOM template — references `item.title`, `item.category`, `item.condition`, `item.seller`, `item.details`. |
+| **Field Alignment** | Good — page has custom fields that roughly match API. But `seller` field doesn't exist in API (seller_id only). |
+| **Gaps** | `ListingImage` model exists in DB but not used by API (images only in metadata). No gallery despite image model. |
 
 ---
 
 ### 10. consignment
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/consignment/$id.tsx` — 213 lines |
-| **Layout Blocks** | Breadcrumb, Sidebar, CTAs (2), img tag, Share, Details grid (2), Not-found state |
-| **Missing Layout** | No hero image, no gallery, no reviews |
-| **Backend Listing** | `/store/consignments` — 0 items |
-| **Backend Detail** | No `[id]` route exists |
-| **Seeded Data** | None |
-| **Data Model** | No dedicated consignment module — uses vendor module |
-| **Gaps** | No data, no detail endpoint, no dedicated data model. |
 | **Tier** | **3 — Broken** |
+| **DB Table** | No dedicated table. Route queries vendor/consignment module. |
+| **Backend Listing** | `/store/consignments` — 0 items |
+| **Backend Detail** | No `[id]` route |
+| **Page Template** | 213 lines. CUSTOM template — references `item.brand`, `item.condition`, `item.consignor`, `item.commission_rate`, `item.original_price`. |
+| **Gaps** | DUPLICATE with consignment-shop. No data model. Custom template has fields that don't match any existing model. |
 
 ---
 
 ### 11. consignment-shop
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/consignment-shop/$id.tsx` — 212 lines |
-| **Layout Blocks** | Hero image, Breadcrumb, Sidebar, CTAs (3), img tag, Share, Details grid (2), Not-found state |
-| **Missing Layout** | No gallery, no reviews |
-| **Backend Listing** | `/store/consignments` — 0 items (shared with consignment) |
-| **Backend Detail** | No `[id]` route exists |
-| **Seeded Data** | None |
-| **Data Model** | Same as consignment |
-| **Gaps** | Duplicate page of consignment. No data, no detail endpoint. |
-| **Tier** | **3 — Broken** |
+| **Tier** | **3 — Broken** (DUPLICATE of consignment) |
+| **Page Template** | 212 lines. CUSTOM template — references `item.brand`, `item.authenticity`, `item.provenance`, `item.material`, `item.color`, `item.size`. |
+| **Gaps** | Same backend as consignment. Both pages are empty. |
 
 ---
 
 ### 12. credit
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/credit/$id.tsx` — 259 lines |
-| **Layout Blocks** | Hero image, Breadcrumb, Sidebar, CTA (Apply Now), img tag, Details grid (3), Not-found state |
-| **Missing Layout** | No gallery, no reviews, no share |
-| **Backend Listing** | `/store/credit` — 0 items |
-| **Backend Detail** | No `[id]` route exists |
-| **Seeded Data** | None |
-| **Data Model** | Uses `wallet` module (Store Credit) |
-| **Gaps** | No data seeded. No detail endpoint. Credit model is wallet-based, not product-based. |
 | **Tier** | **3 — Broken** |
+| **DB Table** | `credit_line` — exists. Model is for customer store credit, not browseable credit products. |
+| **Backend Listing** | `/store/credit` — 0 items (lists customer credit lines) |
+| **Backend Detail** | No `[id]` route |
+| **Page Template** | 259 lines. GENERIC template. |
+| **Gaps** | Fundamental model mismatch — store credit vs credit products. |
 
 ---
 
 ### 13. crowdfunding
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/crowdfunding/$id.tsx` — 248 lines |
-| **Layout Blocks** | Hero image, Breadcrumb, Sidebar, img tag, Share, Not-found state |
-| **Missing Layout** | No CTA buttons, no gallery, no reviews |
-| **Backend Listing** | `/store/crowdfunding` — 5 items |
+| **Tier** | **1 — Fully Functional** |
+| **DB Table** | `crowdfund_campaign` — 5 rows |
+| **DB Images** | `images` column — **YES**, Unsplash URL arrays |
 | **Backend Detail** | `/store/crowdfunding/[id]` — **200 OK** |
-| **Seeded Data** | 5 campaigns. Fields: title, description, campaign_type, status, backer_count, starts_at, ends_at, images |
-| **Data Model** | `crowdfunding` module: Campaign, RewardTier, Backer, Pledge, CampaignUpdate |
-| **Data Gaps** | No rating. Has images. No location. |
-| **Gaps** | Missing CTA (Back This Project) button. No reviews. |
-| **Tier** | **1 — Fully Functional** (minor layout gaps) |
+| **API Response** | `{title, description, campaign_type, goal_amount, raised_amount, backer_count, images, reward_tiers[{id, title, description, price, estimated_delivery, limited_quantity}], risks_and_challenges, starts_at, ends_at}` |
+| **Page Template** | 248 lines. GENERIC template. Has Share. |
+| **Unique fields NOT used by page** | `campaign_type`, `goal_amount`, `raised_amount`, `backer_count`, `reward_tiers`, `starts_at`, `ends_at`, `risks_and_challenges` |
+| **Gaps** | Page ignores all crowdfunding-specific data: no progress bar, no reward tier cards, no backer count, no campaign deadline countdown. Missing CTAs (Back This Project). |
 
 ---
 
 ### 14. digital
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/digital/$id.tsx` — 181 lines |
-| **Layout Blocks** | img tag, Reviews (5 references), Details grid (2) |
-| **Missing Layout** | No breadcrumb, no sidebar, no hero image, no CTAs, no not-found state, no gallery |
-| **Backend Listing** | `/store/digital-products` — 6 items |
-| **Backend Detail** | `/store/digital-products/[id]` — **200 OK** |
-| **Seeded Data** | 6 products. Fields: title, file_url, file_type, file_size_bytes, preview_url, version, max_downloads. Price/images in metadata. |
-| **Data Model** | `digital-product` module: DigitalAsset |
-| **Data Gaps** | No native price column (in metadata.price_sar). No native description. Has metadata.images, thumbnail, cover_image. |
-| **Gaps** | Very minimal layout — no sidebar, breadcrumb, CTAs, or not-found state. Needs significant UI rebuild. |
 | **Tier** | **2 — Partial** (data works, layout severely lacking) |
+| **DB Table** | `digital_asset` — 6 rows |
+| **DB Images** | `metadata` — `{images: [...], thumbnail: "...", cover_image: "...", price_sar: N}` — **YES** |
+| **Backend Detail** | `/store/digital-products/[id]` — **200 OK** |
+| **API Response** | `{title, file_type, file_size_bytes, file_url, preview_url, version, max_downloads, is_active, metadata}` |
+| **Page Template** | 181 lines. GENERIC template. No breadcrumb, no sidebar, no CTAs. |
+| **Unique fields NOT used by page** | `file_type`, `file_size_bytes`, `preview_url`, `version`, `max_downloads`, `metadata.price_sar`, `metadata.pages`, `metadata.author` |
+| **Gaps** | Very minimal layout despite working endpoint. Price buried in metadata. No Download/Buy button. No file type display. |
 
 ---
 
-### 15. dropshipping
-| Aspect | Status | Detail |
+### 15-16. dropshipping + dropshipping-marketplace
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/dropshipping/$id.tsx` — 205 lines |
-| **Layout Blocks** | Breadcrumb, Sidebar, CTA (1), Details grid, Not-found state |
-| **Missing Layout** | No hero image, no img tag, no gallery, no reviews |
-| **Backend Listing** | `/store/dropshipping` — 12 items (vendor-product records) |
-| **Backend Detail** | No `[id]` route exists — **404** |
-| **Seeded Data** | 12 vendor-product mappings. Fields: vendor_id, product_id, status, fulfillment_method, lead_time_days. No name/description/images. |
-| **Data Model** | `vendor` module: VendorProduct (relationship table, not a product entity) |
-| **Data Gaps** | Model is a join table — has no name, description, images, price. Not suitable for a product detail page. |
-| **Gaps** | Fundamental model mismatch — dropshipping listing data is vendor-product mappings, not displayable products. Needs different data source. |
-| **Tier** | **3 — Broken** |
-
----
-
-### 16. dropshipping-marketplace
-| Aspect | Status | Detail |
-|---|---|---|
-| **Storefront Page** | `$tenant/$locale/dropshipping-marketplace/$id.tsx` — 211 lines |
-| **Layout Blocks** | Hero image, Breadcrumb, Sidebar, CTAs (4), img tag, Details grid (4), Not-found state |
-| **Missing Layout** | No gallery, no reviews |
-| **Backend Listing** | `/store/dropshipping` — 12 items (same as dropshipping) |
-| **Backend Detail** | No `[id]` route — **404** |
-| **Seeded Data** | Same vendor-product join records as dropshipping |
-| **Gaps** | Same model mismatch as dropshipping. Duplicate vertical. |
-| **Tier** | **3 — Broken** |
+| **Tier** | **3 — Broken** (both pages) |
+| **DB Table** | `vendor_product` — 12 rows. Columns: vendor_id, product_id, status, fulfillment_method, lead_time_days. **No name, description, images, or price.** |
+| **Backend Listing** | `/store/dropshipping` — returns 12 `vendor_product` join records |
+| **Backend Detail** | No `[id]` route |
+| **Page Templates** | dropshipping: 205 lines GENERIC. dropshipping-marketplace: 211 lines GENERIC. |
+| **Fundamental Issue** | `vendor_product` is a many-to-many join table linking vendors to products. It has no display fields. These pages need to query the linked `product` records with their names, images, and prices instead. |
 
 ---
 
 ### 17. education
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/education/$id.tsx` — 263 lines |
-| **Layout Blocks** | Hero image, Breadcrumb, Sidebar, CTAs (Enroll Now, 1 more), img tag, Reviews (7), Share, Not-found state |
-| **Missing Layout** | No gallery |
-| **Backend Listing** | `/store/education` — 6 items |
-| **Backend Detail** | No `[id]` route — **404** |
-| **Seeded Data** | 6 courses. Fields: title, description, category, level, format, language, currency_code, duration_hours, total_lessons, total_enrollments, rating |
-| **Data Model** | `education` module: Course, Lesson, Enrollment, Certificate, Quiz, Assignment |
-| **Data Gaps** | Has image field but images empty in seed. Has rating + price. Rich model. |
-| **Gaps** | Missing detail endpoint despite having a complete data model. Good layout. |
 | **Tier** | **2 — Partial** (just needs detail endpoint) |
+| **DB Table** | `course` — 6 rows. Rich model: title, description, category, level, format, language, price, duration_hours, total_lessons, total_enrollments, avg_rating, thumbnail_url, preview_video_url, syllabus, prerequisites, tags |
+| **DB Images** | `thumbnail_url` — **YES**, Unsplash URLs |
+| **Backend Listing** | `/store/education` — 200 OK, 6 items |
+| **Backend Detail** | **No `[id]` route — 404** |
+| **Page Template** | 263 lines. GENERIC template but has good layout: hero, breadcrumb, sidebar, CTAs (Enroll Now), reviews (7 refs), share. |
+| **Priority** | **HIGH** — rich data model, good layout, just needs 16-line detail endpoint. |
 
 ---
 
 ### 18. events
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/events/$id.tsx` — 319 lines |
-| **Layout Blocks** | Hero image, Sidebar, Share (4), Reviews |
-| **Missing Layout** | No breadcrumb, no CTA buttons, no img tag, no not-found state |
-| **Backend Listing** | `/store/events` — 8 items |
-| **Backend Detail** | No `[id]` route — **404** |
-| **Seeded Data** | 8 events. Fields: name, description, event_type, venue, city, country_code, start_date, end_date, price, rating. No metadata — flat fields. |
-| **Data Model** | `events` module + `event-ticketing` module: Event, Ticket, EventRegistration |
-| **Data Gaps** | No image field on model. No metadata. Has price and rating as flat fields. |
-| **Gaps** | Missing detail endpoint. Missing breadcrumb, CTAs, not-found state. No image support in data model. |
 | **Tier** | **2 — Partial** |
+| **DB Table** | `event` — 6 rows. Columns: title, description, event_type, status, address, starts_at, ends_at, is_online, max_capacity, image_url |
+| **DB Images** | `image_url` — **YES**, Unsplash URLs |
+| **Backend Listing** | `/store/events` — 200 OK, 8 items (6 DB + 2 constructed) |
+| **Backend Detail** | **No `[id]` route — 404** |
+| **Page Template** | 319 lines (longest page). GENERIC template. Has share (4 refs). |
+| **Missing from page** | No breadcrumb, no CTAs (Buy Tickets), no not-found state |
+| **Unique fields NOT used** | `event_type`, `venue_id`, `starts_at`, `ends_at`, `is_online`, `online_url`, `max_capacity`, `current_attendees`, `image_url`, `organizer_name` |
+| **Priority** | **HIGH** — 319 lines of layout but none of the event-specific data is used. |
 
 ---
 
 ### 19. financial
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/financial/$id.tsx` — 245 lines |
-| **Layout Blocks** | Breadcrumb, Sidebar, CTA (1), Details grid (3), Not-found state |
-| **Missing Layout** | No hero image, no img tag, no gallery, no reviews |
-| **Backend Listing** | `/store/financial` — ERROR (endpoint broken) |
-| **Backend Detail** | `/store/financial-products/[id]` — route exists (different endpoint name) |
-| **Seeded Data** | None (listing endpoint errors) |
-| **Data Model** | `financial-product` module: FinancialProduct |
-| **Gaps** | Listing endpoint is `/store/financial` but detail route is `/store/financial-products/[id]` — naming mismatch. No seeded data. |
 | **Tier** | **3 — Broken** |
+| **DB Table** | No `financial` table. Uses `financial-product` module. |
+| **Backend Listing** | `/store/financial` — ERROR. But `/store/financial-products` route exists. |
+| **Backend Detail** | `/store/financial-products/[id]` — route exists |
+| **Page Template** | 245 lines. GENERIC template. Fetches `/store/financial/${id}` but backend route is `/store/financial-products/[id]` |
+| **Routing Mismatch** | Page fetches `/store/financial/{id}` → No such route. Backend has `/store/financial-products/[id]`. |
+| **Gaps** | Endpoint naming mismatch between storefront and backend. |
 
 ---
 
 ### 20. fitness
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/fitness/$id.tsx` — 228 lines |
-| **Layout Blocks** | Hero image, Breadcrumb, Sidebar, CTAs (Book Class, 2 more), img tag, Not-found state |
-| **Missing Layout** | No gallery, no reviews, no share |
-| **Backend Listing** | `/store/fitness` — 10 items |
-| **Backend Detail** | `/store/fitness/[id]` — **200 OK** |
-| **Seeded Data** | 10 classes. Fields: class_name, description, class_type, instructor_id, day_of_week, start_time, duration_minutes, max_capacity, difficulty. Price/images/rating in metadata. |
-| **Data Model** | `fitness` module: FitnessClass, FitnessSubscription, FitnessBooking, FacilityEquipment, FitnessFacility |
-| **Data Gaps** | No native price/image columns — all in metadata. |
-| **Gaps** | No reviews section. Price and images from metadata only. |
 | **Tier** | **1 — Fully Functional** |
+| **DB Table** | `class_schedule` — 10 rows |
+| **DB Images** | `metadata` — `{price: N, images: [...], rating: N, category: "...", thumbnail: "..."}` — **YES** |
+| **Backend Detail** | `/store/fitness/[id]` — **200 OK** |
+| **API Response** | `{class_name, description, class_type, day_of_week, start_time, end_time, duration_minutes, max_capacity, current_enrollment, difficulty, room, metadata}` |
+| **Page Template** | 228 lines. CUSTOM template — references `item.name`, `item.instructor`, `item.duration`, `item.level`, `item.schedule`, `item.benefits`, `item.membership_options`. |
+| **Field Alignment** | PARTIAL — page expects `name` (API has `class_name`), `instructor` (API has no instructor data), `level` (API has `difficulty`). |
+| **Unique fields NOT used** | `class_type`, `day_of_week`, `start_time`, `end_time`, `max_capacity`, `current_enrollment`, `room`, `is_recurring` |
 
 ---
 
 ### 21. flash-deals
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/flash-deals/$id.tsx` — 216 lines |
-| **Layout Blocks** | Hero image, Breadcrumb, Sidebar, CTA (1), img tag, Details grid (2), Not-found state |
-| **Missing Layout** | No gallery, no reviews, no share |
-| **Backend Listing** | `/store/flash-sales` — 3 items |
-| **Backend Detail** | No `[id]` route — **404** |
-| **Seeded Data** | 3 promotions. Fields: code, is_automatic, type, status, campaign_id. No name, description, images, price. |
-| **Data Model** | Uses `promotion-ext` module (Medusa promotions, not a product entity) |
-| **Data Gaps** | Model is promotion records — no product-like fields (name, description, images, price). Fundamental mismatch. |
-| **Gaps** | Data model is for promotion codes, not product deals. Needs a different data source or custom model. |
 | **Tier** | **3 — Broken** |
+| **DB Table** | Uses Medusa `promotion` table — 3 records with `code`, `is_automatic`, `type`, `status`, `campaign_id`. |
+| **Backend Listing** | `/store/flash-sales` — returns Medusa promotion records |
+| **Fundamental Issue** | Promotions are discount codes/rules, not product deals. A flash deal page needs products with their original price, discounted price, countdown timer, and stock quantity. |
+| **Gaps** | Complete model mismatch. Need a `flash_deal` table linking promotions to products with deal-specific fields. |
 
 ---
 
 ### 22. freelance
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/freelance/$id.tsx` — 246 lines |
-| **Layout Blocks** | Hero image, Breadcrumb, Sidebar, CTAs (2), img tag, Reviews (8), Not-found state |
-| **Missing Layout** | No gallery, no share |
-| **Backend Listing** | `/store/freelance` — 7 items |
-| **Backend Detail** | `/store/freelance/[id]` — **200 OK** |
-| **Seeded Data** | 7 gigs. Fields: title, description, category, subcategory, listing_type, currency_code, delivery_time_days, revisions_included, skill_tags, rating. Images/thumbnail in metadata. |
-| **Data Model** | `freelance` module: FreelanceGig, FreelanceProposal, FreelanceContract, FreelanceMilestone, FreelanceReview |
-| **Data Gaps** | No native image column — in metadata. Has rating. Has price. |
-| **Gaps** | Minor — could add gallery support for portfolio_urls. |
 | **Tier** | **1 — Fully Functional** |
+| **DB Table** | `gig_listing` — 7 rows. Rich: title, description, category, price, hourly_rate, delivery_time_days, skill_tags, avg_rating, portfolio_urls |
+| **DB Images** | `metadata` — `{images: [...], thumbnail: "..."}` — **YES** |
+| **Backend Detail** | `/store/freelance/[id]` — **200 OK** |
+| **API Response** | `{title, description, category, subcategory, listing_type, price, hourly_rate, currency_code, delivery_time_days, revisions_included, skill_tags, avg_rating, portfolio_urls, metadata}` |
+| **Page Template** | 246 lines. GENERIC template but has Reviews (8 refs). |
+| **Unique fields NOT used** | `category`, `subcategory`, `listing_type`, `hourly_rate`, `delivery_time_days`, `revisions_included`, `skill_tags`, `portfolio_urls` |
+| **Gaps** | Generic template wastes rich freelancer data. No skill tags display, no portfolio gallery, no delivery time info, no reviews form. |
 
 ---
 
 ### 23. gift-cards-shop
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/gift-cards-shop/$id.tsx` — 191 lines |
-| **Layout Blocks** | Hero image, Breadcrumb, Sidebar, CTA (1), img tag, Not-found state |
-| **Missing Layout** | No gallery, no reviews, no details grid, no share |
-| **Backend Listing** | `/store/gift-cards` — 8 items |
-| **Backend Detail** | No `[id]` route — **404** |
-| **Seeded Data** | 8 gift cards. Fields: code, currency_code, sender_name, recipient_email, is_active. Design/images/category in metadata. No name or description. |
-| **Data Model** | Medusa core gift card model |
-| **Data Gaps** | No name or description fields. Design/images in metadata. |
-| **Gaps** | Missing detail endpoint. Gift cards don't have typical product fields — model mismatch. |
 | **Tier** | **2 — Partial** |
+| **DB Table** | `gift_card_ext` — 8 rows. Customer-issued gift cards: code, currency_code, sender_name, recipient_email. |
+| **DB Images** | `metadata` — `{design, images, category, thumbnail}` — images in metadata |
+| **Backend Detail** | **No `[id]` route — 404** |
+| **Fundamental Issue** | Data model is issued gift cards (with codes, balances), not a gift card design catalog. Page expects browseable gift card designs with images and denominations. |
 
 ---
 
 ### 24. government
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/government/$id.tsx` — 247 lines |
-| **Layout Blocks** | Breadcrumb, Sidebar, CTAs (Track, Report, Update — 3), Details grid, Not-found state |
-| **Missing Layout** | No hero image, no img tag, no gallery, no reviews |
-| **Backend Listing** | `/store/government` — 2 items |
-| **Backend Detail** | `/store/government/[id]` — **200 OK** |
-| **Seeded Data** | 2 service requests. Fields: request_type, category, title, description, location, status, priority, department, photos |
-| **Data Model** | `government` module: GovernmentServiceRequest |
-| **Data Gaps** | Has photos field but no thumbnail/image. No price (government services). No rating. |
-| **Gaps** | Very few seeded items. No image display in layout despite photos field. |
 | **Tier** | **1 — Fully Functional** (but only 2 items) |
+| **DB Table** | No `government_service_request` table found (may use different name). API returns 2 items. |
+| **Backend Detail** | `/store/government/[id]` — **200 OK** |
+| **API Response** | `{title, description, request_type, category, location, status, priority, department, photos}` |
+| **Page Template** | 247 lines. GENERIC template. |
+| **Gaps** | Very few items. Generic template. API has `photos` field but page doesn't render them. |
 
 ---
 
 ### 25. grocery
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/grocery/$id.tsx` — 249 lines |
-| **Layout Blocks** | Breadcrumb, Sidebar, CTA (Add to Cart), img tag, Related items (5), Details grid, Not-found state |
-| **Missing Layout** | No hero image area, no gallery, no reviews |
-| **Backend Listing** | `/store/grocery` — 8 items |
-| **Backend Detail** | `/store/grocery/[id]` — **200 OK** |
-| **Seeded Data** | 8 products. Fields: storage_type, shelf_life_days, origin_country, organic, unit_type, nutrition_info. Name only in metadata. No images, price, description on model. |
-| **Data Model** | `grocery` module: GroceryProduct (extends Medusa product) |
-| **Data Gaps** | Very sparse — no native name (in metadata.name), no images, no price, no description, no rating. Grocery-specific fields only (storage, shelf life, organic). |
-| **Gaps** | Data model lacks display fields. Depends entirely on metadata or linked Medusa product for name/images/price. |
 | **Tier** | **1 — Fully Functional** (but very sparse data) |
+| **DB Table** | `fresh_product` — 8 rows. Columns: storage_type, shelf_life_days, origin_country, organic, unit_type, nutrition_info. **Name only in metadata!** |
+| **DB Images** | `metadata` — `{name: "...", seeded: true}` — **NO dedicated images** |
+| **Backend Detail** | `/store/grocery/[id]` — **200 OK** |
+| **API Response** | `{id, storage_type, shelf_life_days, origin_country, organic, unit_type, min_order_quantity, nutrition_info, metadata}` — **No name, no price, no images in response** |
+| **Page Template** | 249 lines. CUSTOM template — references `item.name`, `item.value`. Has Related items (5 refs — unique among all pages). |
+| **Field Alignment** | VERY POOR — page expects `name`, `price`, `thumbnail` but API returns none of these directly. Name buried in metadata. No price anywhere. |
+| **Gaps** | Grocery product model needs name, price, images, and description as first-class fields, not metadata. |
 
 ---
 
 ### 26. healthcare
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/healthcare/$id.tsx` — 220 lines |
-| **Layout Blocks** | Breadcrumb, Sidebar, CTA (Book Consultation), img tag, Reviews (8), Not-found state |
-| **Missing Layout** | No hero image, no gallery, no share |
-| **Backend Listing** | `/store/healthcare` — 11 items |
-| **Backend Detail** | No `[id]` route — **404** |
-| **Seeded Data** | 11 practitioners. Fields: name, title, specialization, license_number, bio, education, experience_years, languages, consultation_duration_minutes, rating |
-| **Data Model** | `healthcare` module: Practitioner, Appointment, MedicalRecord, Prescription |
-| **Data Gaps** | Has photo_url. Has rating. Has price. Good seed data. |
-| **Gaps** | Missing detail endpoint despite rich data model and seed data. Should be high priority fix. |
 | **Tier** | **2 — Partial** (just needs detail endpoint) |
+| **DB Table** | `practitioner` — 11 rows. Rich: name, title, specialization, bio, education, experience_years, consultation_fee, rating, photo_url, languages |
+| **DB Images** | `photo_url` — **YES**, Unsplash URLs |
+| **Backend Detail** | **No `[id]` route — 404** |
+| **Page Template** | 220 lines. GENERIC template. Has Reviews (8 refs). |
+| **Priority** | **HIGH** — 11 items with rich data, images, rating. Just needs 16-line detail endpoint. |
 
 ---
 
 ### 27. insurance
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/insurance/$id.tsx` — 237 lines |
-| **Layout Blocks** | Breadcrumb, Sidebar, CTA (Get Quote), Details grid (4), Not-found state |
-| **Missing Layout** | No hero image, no img tag, no gallery, no reviews |
-| **Backend Listing** | `/store/insurance` — 7 items |
-| **Backend Detail** | No `[id]` route — **404** |
-| **Seeded Data** | 7 plans. Fields: name, description, insurance_type, coverage_details, deductible_options, term_options, claim_process, exclusions, premium range. Images/thumbnail in metadata. |
-| **Data Model** | `insurance` module: InsurancePolicy, InsuranceClaim |
-| **Data Gaps** | No native image column — in metadata. No rating. |
-| **Gaps** | Missing detail endpoint. No image display. |
 | **Tier** | **2 — Partial** |
+| **DB Table** | `insurance_product` — 7 rows. Rich: name, description, insurance_type, coverage_details, deductible_options, term_options, claim_process, exclusions. |
+| **DB Images** | `metadata` — `{images: [...], thumbnail: "..."}` — **YES** in metadata |
+| **Backend Listing** | `/store/insurance` — uses `financialProduct` module to list insurance products. |
+| **Backend Detail** | **No `[id]` route — 404** |
+| **Page Template** | 237 lines. GENERIC template. Details grid (4 sections). |
+| **Priority** | **MEDIUM** — good data model, just needs detail endpoint. |
 
 ---
 
 ### 28. legal
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/legal/$id.tsx` — 249 lines |
-| **Layout Blocks** | Breadcrumb, Sidebar, CTA (Request Consultation), img tag, Reviews (8), Not-found state |
-| **Missing Layout** | No hero image, no gallery, no share |
-| **Backend Listing** | `/store/legal` — 8 items |
-| **Backend Detail** | `/store/legal/[id]` — **200 OK** |
-| **Seeded Data** | 8 attorneys. Fields: name, bar_number, specializations, practice_areas, bio, education, experience_years, rating, total_cases, photo_url |
-| **Data Model** | `legal` module: Attorney, LegalCase, LegalDocument, Consultation |
-| **Data Gaps** | Has photo_url. Has rating. No price column (consultation fees not on model). |
-| **Gaps** | Minor — consultation pricing not exposed. Otherwise complete. |
 | **Tier** | **1 — Fully Functional** |
+| **DB Table** | `attorney_profile` — 8 rows. Rich: name, bar_number, specializations, practice_areas, bio, education, experience_years, hourly_rate, rating, photo_url, languages |
+| **DB Images** | `photo_url` — **YES**, Unsplash URLs |
+| **Backend Detail** | `/store/legal/[id]` — **200 OK** |
+| **API Response** | `{name, bar_number, specializations, practice_areas, bio, education, experience_years, hourly_rate, currency_code, rating, total_cases, photo_url, languages}` |
+| **Page Template** | 249 lines. GENERIC template. Reviews (8 refs). |
+| **Unique fields NOT used** | `bar_number`, `specializations`, `practice_areas`, `education`, `experience_years`, `hourly_rate`, `total_cases`, `languages` |
+| **Gaps** | Rich API data completely ignored by generic template. No attorney credentials display, no rate display, no case history. |
 
 ---
 
 ### 29. loyalty-program
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/loyalty-program/$id.tsx` — 199 lines |
-| **Layout Blocks** | Breadcrumb, Sidebar, CTA (1), Details grid (2), Not-found state |
-| **Missing Layout** | No hero image, no img tag, no gallery, no reviews |
-| **Backend Listing** | `/store/loyalty` — 0 items |
-| **Backend Detail** | No `[id]` route exists |
-| **Seeded Data** | None |
-| **Data Model** | `loyalty` module: LoyaltyProgram, LoyaltyTier, LoyaltyTransaction, LoyaltyReward |
-| **Gaps** | No data seeded. No detail endpoint. No images in model. |
 | **Tier** | **3 — Broken** |
+| **DB Table** | `loyalty_program` — 2 rows. Very minimal: name, description, points_per_currency. |
+| **Backend Detail** | No `[id]` route |
+| **Page Template** | 199 lines. GENERIC template. |
+| **Gaps** | No detail endpoint. Model is a program definition, not individual rewards to browse. |
 
 ---
 
 ### 30. memberships
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/memberships/$id.tsx` — 185 lines |
-| **Layout Blocks** | Sidebar (1), Reviews |
-| **Missing Layout** | No breadcrumb, no hero image, no CTAs, no img tag, no not-found state, no gallery, no details grid |
-| **Backend Listing** | `/store/memberships` — 3 items |
-| **Backend Detail** | No `[id]` route — **404** |
-| **Seeded Data** | 3 memberships. Fields: customer_id, tier_id, membership_number, status, total_points. No name, description, images. |
-| **Data Model** | `membership` module: MembershipPlan, MembershipSubscription, MembershipBenefit |
-| **Data Gaps** | Model is customer membership records, not plan descriptions. Missing name, description, images. |
-| **Gaps** | Severely lacking layout. Data model mismatch — shows customer memberships, not browseable plans. |
 | **Tier** | **3 — Broken** |
+| **DB Table** | `membership` — 3 rows (customer records). `membership_tier` — 6 rows (tier definitions with name, description, benefits, annual_fee). |
+| **Backend Listing** | `/store/memberships` — returns `membership` records (customer's membership status, not browseable plans) |
+| **Backend Detail** | No `[id]` route |
+| **Page Template** | 185 lines. GENERIC template. No breadcrumb, no CTAs. |
+| **Fundamental Issue** | Listing serves customer memberships but page should display `membership_tier` records for browsing. |
+| **Fix Required** | Change listing to serve `membership_tier` records; add detail endpoint for tiers. |
 
 ---
 
 ### 31. newsletter
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/newsletter/$id.tsx` — 259 lines |
-| **Layout Blocks** | Hero image, Breadcrumb, Sidebar, CTAs (Subscribe — 6), img tag, Reviews (4), Details grid, Not-found state |
-| **Missing Layout** | No gallery, no share |
-| **Backend Listing** | `/store/newsletters` — 3 items |
-| **Backend Detail** | No `[id]` route — **404** |
-| **Seeded Data** | 3 newsletters. Fields: title, description, frequency, subscriber_count, category. No images, no metadata. |
-| **Data Model** | Part of notification system |
-| **Data Gaps** | No images. No price (free vs premium). No rating. Minimal model. |
-| **Gaps** | Missing detail endpoint. Sparse data model. |
 | **Tier** | **2 — Partial** |
+| **DB Table** | No dedicated table found. Backend uses notification module. |
+| **Backend Listing** | `/store/newsletters` — 3 items |
+| **Backend Detail** | No `[id]` route — 404 |
+| **Page Template** | 259 lines. CUSTOM template — references `item.title`, `item.subject`, `item.date`, `item.excerpt`, `item.preview`. Has CTAs (Subscribe — 6 refs). |
+| **Gaps** | Missing detail endpoint. Custom template but no data to display. |
 
 ---
 
 ### 32. parking
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/parking/$id.tsx` — 245 lines |
-| **Layout Blocks** | Hero image (2), Breadcrumb, Sidebar, img tag, Details grid (2), Not-found state |
-| **Missing Layout** | No CTA buttons, no gallery, no reviews |
-| **Backend Listing** | `/store/parking` — 6 items |
-| **Backend Detail** | `/store/parking/[id]` — **200 OK** |
-| **Seeded Data** | 6 zones. Fields: name, description, zone_type, address, latitude, longitude, total_spots, available_spots, operating_hours, has_ev_charging. Images/thumbnail in metadata. Rating on model. |
-| **Data Model** | `parking` module: ParkingZone, ParkingSpot, ParkingReservation, ParkingRate |
-| **Data Gaps** | Images in metadata only. Has rating. Has location. |
-| **Gaps** | Missing CTA (Reserve Spot) button. No reviews section despite having rating. |
 | **Tier** | **1 — Fully Functional** |
+| **DB Table** | `parking_zone` — 6 rows. Rich: name, description, zone_type, address, lat/lng, rates (hourly/daily/monthly), operating_hours, ev_charging, disabled_spots |
+| **DB Images** | `metadata` — `{images: [...], thumbnail: "..."}` — **YES** |
+| **Backend Detail** | `/store/parking/[id]` — **200 OK** |
+| **API Response** | `{name, description, zone_type, address, latitude, longitude, total_spots, available_spots, hourly_rate, daily_rate, monthly_rate, operating_hours, has_ev_charging, metadata}` |
+| **Page Template** | 245 lines. GENERIC template. |
+| **Unique fields NOT used** | `zone_type`, `latitude`, `longitude`, `total_spots`, `available_spots`, `hourly_rate`, `daily_rate`, `monthly_rate`, `operating_hours`, `has_ev_charging`, `has_disabled_spots` |
+| **Gaps** | Missing CTA (Reserve Spot). Rich location and pricing data completely ignored. No map display despite lat/lng. |
 
 ---
 
 ### 33. pet-services
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/pet-services/$id.tsx` — 246 lines |
-| **Layout Blocks** | Hero image, Breadcrumb, Sidebar, CTAs (Book Appointment, Contact Provider), img tag, Reviews (2), Details grid (2), Not-found state |
-| **Missing Layout** | No gallery, no share |
-| **Backend Listing** | `/store/pet-services` — 5 items |
-| **Backend Detail** | `/store/pet-services/[id]` — **200 OK** |
-| **Seeded Data** | 5 pets. Fields: name, species, breed, date_of_birth, weight_kg, color, gender, is_neutered, microchip_id. Photo_url on model. |
-| **Data Model** | `pet-service` module: PetProfile, VetRecord, Vaccination, Grooming |
-| **Data Gaps** | No price. No rating. No description. Has photo_url. Model is pet profiles, not service listings. |
-| **Gaps** | Data model is pet profiles rather than service provider listings. Works as pet detail page but not as service marketplace. |
 | **Tier** | **1 — Fully Functional** |
+| **DB Table** | `pet_profile` — 5 rows. Columns: name, species, breed, date_of_birth, weight_kg, color, gender, is_neutered, microchip_id, photo_url |
+| **DB Images** | `photo_url` — **YES**, Unsplash URLs |
+| **Backend Detail** | `/store/pet-services/[id]` — **200 OK** |
+| **Page Template** | 246 lines. GENERIC template. Has CTAs (Book Appointment, Contact Provider), Reviews (2 refs). |
+| **Note** | Data model is pet profiles, not service provider listings. Works as a pet detail page but the "pet-services" page name implies service marketplace. |
 
 ---
 
 ### 34. places
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/places/$id.tsx` — **83 lines** |
-| **Layout Blocks** | Reviews (1) |
-| **Missing Layout** | No breadcrumb, no sidebar, no hero image, no CTAs, no img tag, no not-found state, no gallery, no details grid |
+| **Tier** | **3 — Broken** |
+| **DB Table** | `tenant_poi` — 0 rows |
 | **Backend Listing** | `/store/content/pois` — 0 items |
-| **Backend Detail** | `/store/content/pois/[id]` — route exists (untested, no data) |
-| **Seeded Data** | None |
-| **Data Model** | `tenant` module: TenantPOI (Point of Interest) |
-| **Gaps** | **Most underdeveloped page.** Only 83 lines. Virtually no layout. No data. Needs complete rebuild. |
-| **Tier** | **3 — Broken** |
+| **Backend Detail** | `/store/content/pois/[id]` — route exists, untested |
+| **Page Template** | **83 lines** — the most underdeveloped page. Only has a single review reference. No breadcrumb, no sidebar, no hero, no CTAs, no img tag, no not-found state. |
+| **Gaps** | Virtually empty page. No data. Needs complete rebuild. |
 
 ---
 
-### 35. print-on-demand
-| Aspect | Status | Detail |
+### 35-36. print-on-demand + print-on-demand-shop
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/print-on-demand/$id.tsx` — 217 lines |
-| **Layout Blocks** | Breadcrumb, Sidebar, img tag, Share, Details grid (2), Not-found state |
-| **Missing Layout** | No hero image, no CTAs, no gallery, no reviews |
-| **Backend Listing** | `/store/print-on-demand` — ERROR (endpoint broken) |
-| **Backend Detail** | No `[id]` route exists |
-| **Seeded Data** | None |
-| **Data Model** | No dedicated module |
-| **Gaps** | No data model, no seeded data, broken listing endpoint, no detail endpoint. |
-| **Tier** | **3 — Broken** |
-
----
-
-### 36. print-on-demand-shop
-| Aspect | Status | Detail |
-|---|---|---|
-| **Storefront Page** | `$tenant/$locale/print-on-demand-shop/$id.tsx` — 207 lines |
-| **Layout Blocks** | Breadcrumb, Sidebar, CTAs (3), img tag, Reviews (3), Details grid (4), Not-found state |
-| **Missing Layout** | No hero image, no gallery |
-| **Backend Listing** | Same as print-on-demand — ERROR |
+| **Tier** | **3 — Broken** (both) |
+| **DB Table** | No table exists. No backend module. |
+| **Backend Listing** | `/store/print-on-demand` — ERROR (non-JSON response) |
 | **Backend Detail** | No `[id]` route |
-| **Seeded Data** | None |
-| **Gaps** | Duplicate of print-on-demand. Same issues. |
-| **Tier** | **3 — Broken** |
+| **Page Templates** | print-on-demand: 217 lines. print-on-demand-shop: 207 lines. |
+| **Gaps** | No data model exists at all. No module. Both pages are duplicates. |
 
 ---
 
 ### 37. quotes
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/quotes/$id.tsx` — **74 lines** |
-| **Layout Blocks** | Details grid (2) |
-| **Missing Layout** | No breadcrumb, no sidebar, no hero image, no CTAs, no img tag, no not-found state, no gallery, no reviews |
-| **Backend Listing** | `/store/quotes` — 0 items |
-| **Backend Detail** | `/store/quotes/[id]` — route exists (untested, no data) |
-| **Seeded Data** | None |
-| **Data Model** | `quote` module: Quote, QuoteItem |
-| **Gaps** | **Second most underdeveloped page.** Only 74 lines. Virtually no layout. No data. Needs complete rebuild. |
 | **Tier** | **3 — Broken** |
+| **DB Table** | `quote` table may exist (Medusa core). Module has QuoteItem. |
+| **Backend Listing** | `/store/quotes` — 0 items |
+| **Backend Detail** | `/store/quotes/[id]` — 51 lines, requires auth. |
+| **Page Template** | **74 lines** — second most underdeveloped. Only 2 details grid refs. No breadcrumb, sidebar, hero, CTAs, images, not-found state. |
+| **Gaps** | Quotes are B2B request-for-quote records, not browseable products. Page needs complete rebuild. No data. |
 
 ---
 
 ### 38. real-estate
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/real-estate/$id.tsx` — 213 lines |
-| **Layout Blocks** | Hero image, Breadcrumb, Sidebar, CTAs (Schedule Viewing, Contact Agent — 4), img tag, Details grid (3), Not-found state |
-| **Missing Layout** | No gallery, no reviews |
-| **Backend Listing** | `/store/real-estate` — 7 items |
-| **Backend Detail** | No `[id]` route — **404** |
-| **Seeded Data** | 7 listings. Fields: title, description, listing_type, property_type, status, price, address, city. Image field on model. |
-| **Data Model** | `real-estate` module: PropertyListing, PropertyImage, OpenHouse, PropertyInquiry |
-| **Data Gaps** | Has image model (PropertyImage) but not served. Has price. No rating. |
-| **Gaps** | Missing detail endpoint. PropertyImage model exists but not used. Good layout. |
 | **Tier** | **2 — Partial** (just needs detail endpoint) |
+| **DB Table** | `property_listing` — 7 rows. Rich: title, description, listing_type, property_type, price, address, bedrooms, bathrooms, area_sqm, year_built, features, images, virtual_tour_url |
+| **DB Images** | `images` column — **YES**, Unsplash URL arrays |
+| **Backend Detail** | **No `[id]` route — 404** |
+| **Page Template** | 213 lines. GENERIC template. Has CTAs (Schedule Viewing, Contact Agent — 4). |
+| **Priority** | **HIGH** — rich data model with images, just needs 16-line detail endpoint. |
 
 ---
 
 ### 39. rentals
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/rentals/$id.tsx` — 288 lines |
-| **Layout Blocks** | Hero image, img tag, Gallery (3 references), Tabs (2), Reviews (2) |
-| **Missing Layout** | No breadcrumb, no sidebar, no CTAs, no not-found state |
-| **Backend Listing** | `/store/rentals` — 7 items |
+| **Tier** | **1 — Fully Functional** |
+| **DB Table** | `rental_product` — 7 rows |
+| **DB Images** | `metadata` — `{name: "...", images: [...], description: "..."}` — **YES** |
 | **Backend Detail** | `/store/rentals/[id]` — **200 OK** |
-| **Seeded Data** | 7 rentals. Fields: rental_type, currency_code, min_duration, max_duration, is_available, condition, base_price, deposit. Name/images/description in metadata. |
-| **Data Model** | `rental` module: RentalItem, RentalReservation, RentalReturn, RentalInsurance |
-| **Data Gaps** | No native name/description — all in metadata. Has price. No rating. |
-| **Gaps** | Missing breadcrumb, sidebar, CTAs, not-found state. Has gallery support (unique among pages). |
-| **Tier** | **1 — Fully Functional** (but layout missing key blocks) |
+| **API Response** | `{rental_type, base_price, currency_code, deposit_amount, late_fee_per_day, min_duration, max_duration, is_available, total_rentals, metadata}` |
+| **Page Template** | 288 lines. GENERIC template but **only page with gallery support** (3 gallery refs), Tabs (2), Reviews (2). |
+| **Missing** | No breadcrumb, no sidebar, no CTAs (Rent Now), no not-found state despite being one of the more complete pages. |
+| **Gaps** | Name and description only in metadata. Missing key layout blocks despite having gallery code. |
 
 ---
 
 ### 40. restaurants
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/restaurants/$id.tsx` — 229 lines |
-| **Layout Blocks** | Hero image, Breadcrumb, Sidebar, img tag, Tabs (menu), Reviews (9), Details grid, Not-found state |
-| **Missing Layout** | No CTA buttons, no gallery, no share |
-| **Backend Listing** | `/store/restaurants` — 5 items |
-| **Backend Detail** | No `[id]` route — **404** |
-| **Seeded Data** | 5 restaurants. Fields: name, description, cuisine_types, address, city, latitude, longitude, rating. Image fields on model. |
-| **Data Model** | `restaurant` module: Restaurant, MenuItem, MenuCategory, RestaurantHours, RestaurantReview |
-| **Data Gaps** | Rich model. Has rating, location, images. Complete. |
-| **Gaps** | Missing detail endpoint despite having a complete model with rich seed data. Should be high priority fix. Missing CTAs (Order, Reserve). |
-| **Tier** | **2 — Partial** (just needs detail endpoint + CTAs) |
+| **Tier** | **2 — Partial** (just needs detail endpoint) |
+| **DB Table** | `restaurant` — 5 rows. Rich: name, description, cuisine_types, address, lat/lng, operating_hours, rating, total_reviews, logo_url, banner_url, min_order_amount, delivery_fee, avg_prep_time |
+| **DB Images** | `logo_url` + `banner_url` — **YES**, Unsplash URLs |
+| **Backend Detail** | **No `[id]` route — 404** |
+| **Page Template** | 229 lines. GENERIC template. Has Tabs (1, for menu), Reviews (9 refs). |
+| **Related Tables** | `menu_item`, `menu_category`, `restaurant_hours` — rich ecosystem exists |
+| **Priority** | **HIGH** — very rich model with images, menu system, reviews. Just needs detail endpoint. |
 
 ---
 
 ### 41. social-commerce
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/social-commerce/$id.tsx` — 225 lines |
-| **Layout Blocks** | Hero image, Breadcrumb, Sidebar, CTAs (2), img tag, Reviews (8), Share (6), Not-found state |
-| **Missing Layout** | No gallery, no details grid |
-| **Backend Listing** | `/store/social-commerce` — 7 items |
-| **Backend Detail** | `/store/social-commerce/[id]` — route exists, returns **404** on valid IDs |
-| **Seeded Data** | 7 sellers. Fields: name, description, platform, category, city, followers, rating, seller_name, price |
-| **Data Model** | `social-commerce` module: SocialSeller, SocialPost, SocialShare |
-| **Data Gaps** | No image field on listing. Has rating, price, location. |
-| **Gaps** | Detail endpoint exists but returns 404 — likely query bug. No images. |
 | **Tier** | **2 — Partial** |
+| **DB Table** | No `social_seller` table. Listing data is **hardcoded in route handler** as `SOCIAL_COMMERCE_SEED` array. |
+| **Backend Listing** | `/store/social-commerce` — returns hardcoded array (7 items with IDs like `sc_001`) |
+| **Backend Detail** | `/store/social-commerce/[id]` — queries `live_streams` or `group_buys` tables. **Mismatch: listing IDs (`sc_001`) don't exist in any DB table.** |
+| **Page Template** | 225 lines. GENERIC template. Has Share (6 refs), Reviews (8 refs). |
+| **Fundamental Issue** | Listing = hardcoded data. Detail = DB query. IDs don't match. Must either store data in DB or use same hardcoded array in detail endpoint. |
 
 ---
 
 ### 42. subscriptions
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/subscriptions/$id.tsx` — 241 lines |
-| **Layout Blocks** | Hero image, Breadcrumb, Sidebar, CTA (Subscribe Now), img tag, Details grid (2), Not-found state |
-| **Missing Layout** | No gallery, no reviews |
-| **Backend Listing** | `/store/subscriptions` — 6 items |
-| **Backend Detail** | Subscription management routes exist (cancel, pause, resume) but no GET `[id]` for detail view |
-| **Seeded Data** | 6 subscriptions. Fields: customer_id, status, billing_interval, payment_provider. No name, description, images. |
-| **Data Model** | `subscription` module: Subscription, SubscriptionPlan, SubscriptionItem, BillingCycle, SubscriptionEvent |
-| **Data Gaps** | Model has SubscriptionPlan but API returns customer subscriptions, not browseable plans. No name/images. |
-| **Gaps** | Data model mismatch — API returns customer subscription records, not plan descriptions. Needs plan listing endpoint. |
 | **Tier** | **3 — Broken** |
+| **DB Table** | `subscription` — 6 rows (customer records). `subscription_plan` — 5 rows (plan definitions: name, description, price, features, billing_interval). |
+| **Backend Listing** | `/store/subscriptions` — returns customer `subscription` records |
+| **Backend Detail** | Management routes exist (cancel, pause, resume) but **no GET `[id]` for browsing** |
+| **Page Template** | 241 lines. CUSTOM template — references `item.question`, `item.answer` (FAQ pattern). |
+| **Fundamental Issue** | Listing serves customer subscriptions, not browseable plans. Should serve `subscription_plan` records. Plans table has 5 rows with name, price, features. |
+| **Fix Required** | Create plan listing endpoint + detail endpoint querying `subscription_plan` table. |
 
 ---
 
 ### 43. trade-in
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/trade-in/$id.tsx` — 219 lines |
-| **Layout Blocks** | Hero image, Breadcrumb, Sidebar, CTA (1), img tag, Details grid (2), Not-found state |
-| **Missing Layout** | No gallery, no reviews |
-| **Backend Listing** | `/store/trade-in` — 0 items |
-| **Backend Detail** | No `[id]` route exists |
-| **Seeded Data** | None |
-| **Data Model** | `automotive` module: TradeIn (trade-in evaluation model, not a browseable entity) |
-| **Gaps** | No data. Model is for trade-in evaluations, not product listings. |
 | **Tier** | **3 — Broken** |
+| **DB Table** | `trade_in` — exists in `automotive` module. Model is for trade-in evaluations (vehicle appraisals), not browseable listings. |
+| **Backend Listing** | `/store/trade-in` — 0 items |
+| **Backend Detail** | No `[id]` route |
+| **Page Template** | 219 lines. CUSTOM template — references `item.brand`, `item.condition`, `item.trade_in_value`, `item.offered_value`, `item.original_price`, `item.requirements`. |
+| **Gaps** | Model is evaluation records, not product listings. Custom template has relevant fields but no data. |
 
 ---
 
 ### 44. travel
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/travel/$id.tsx` — 286 lines |
-| **Layout Blocks** | Hero image, Breadcrumb, Sidebar, CTAs (Book Now, Contact — 2), img tag, Reviews (8), Details grid, Not-found state |
-| **Missing Layout** | No gallery, no share |
-| **Backend Listing** | `/store/travel` — 7 items |
-| **Backend Detail** | `/store/travel/[id]` — **200 OK** |
-| **Seeded Data** | 7 properties. Fields: name, description, property_type, star_rating, address, city, latitude, longitude. Image field on model. Has amenities, rate plans, rooms. |
-| **Data Model** | `travel` module: Property, RoomType, Room, RatePlan, Reservation, GuestProfile, Amenity |
-| **Data Gaps** | Rich model. Has images, rating, location. No price on main model (on RatePlan). |
-| **Gaps** | Minor — price comes from RatePlan relationship, not main model. |
 | **Tier** | **1 — Fully Functional** |
+| **DB Table** | `travel_property` — 7 rows. Rich: name, description, property_type, star_rating, address, city, lat/lng, check_in_time, check_out_time, images, amenities |
+| **DB Images** | `images` column — **YES**, Unsplash URL arrays |
+| **Backend Detail** | `/store/travel/[id]` — **200 OK** |
+| **API Response** | `{name, description, property_type, star_rating, address, city, country_code, check_in_time, check_out_time, images, room_types[{id, name, description, base_price, max_occupancy, amenities}], avg_rating}` |
+| **Page Template** | 286 lines. GENERIC template. Has Reviews (8 refs), CTAs (Book Now, Contact — 2). |
+| **Unique fields NOT used** | `property_type`, `star_rating`, `check_in_time`, `check_out_time`, `room_types`, `amenities`, `policies` |
+| **Gaps** | Generic template ignores room types, amenities, check-in/out times, star rating display. No room selection UI. |
 
 ---
 
 ### 45. try-before-you-buy
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/try-before-you-buy/$id.tsx` — 201 lines |
-| **Layout Blocks** | Hero image, Breadcrumb, Sidebar, CTAs (Try Now, Buy — 3), img tag, Details grid (2), Not-found state |
-| **Missing Layout** | No gallery, no reviews |
-| **Backend Listing** | `/store/try-before-you-buy` — 12 items |
-| **Backend Detail** | No `[id]` route — **404** |
-| **Seeded Data** | 12 items — same vendor-product join records as dropshipping. No name/description/images. |
-| **Data Model** | Uses `vendor` module: VendorProduct (join table) |
-| **Data Gaps** | Same as dropshipping — model is a join table, not a product entity. |
-| **Gaps** | Fundamental model mismatch. Same issue as dropshipping/dropshipping-marketplace. |
 | **Tier** | **3 — Broken** |
+| **Identical to** | dropshipping — same `vendor_product` join table, same model mismatch |
 
 ---
 
 ### 46. vendors
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/vendors/$id.tsx` — 293 lines |
-| **Layout Blocks** | Breadcrumb, Sidebar, CTAs (2), img tags (2), Reviews (18), Share, Details grid (2), Not-found state |
-| **Missing Layout** | No hero image, no gallery |
-| **Backend Listing** | `/store/vendors` — 10 items |
-| **Backend Detail** | `/store/vendors/[handle]` — uses handle, not ID. Returns **404** when queried by ID. |
-| **Seeded Data** | 10 vendors. Fields: handle, business_name, description, logo_url, banner_url, total_products, total_orders, rating, review_count, categories |
-| **Data Model** | `vendor` module: Vendor, VendorUser, VendorProduct, VendorOrder, VendorAnalytics, MarketplaceListing |
-| **Data Gaps** | Rich model. Has logo_url + banner_url. Has rating + review_count. No price (vendor, not product). |
-| **Gaps** | Detail page uses `$id` param but backend uses `[handle]` — routing mismatch. Need to query by handle or add ID lookup. |
 | **Tier** | **2 — Partial** (routing mismatch) |
+| **DB Table** | `vendor` — 10 rows. Rich: handle, business_name, description, logo_url, banner_url, rating, review_count, total_products, total_orders, commission_type |
+| **DB Images** | `logo_url` + `banner_url` — **YES**, Unsplash URLs |
+| **Backend Detail** | `/store/vendors/[handle]` — uses **handle** parameter, not ID |
+| **Page Template** | 293 lines (second longest). GENERIC template. Reviews (18 refs — most of any page), Share. |
+| **Routing Mismatch** | Page fetches `/store/vendors/${params.id}` but backend route is `/store/vendors/[handle]` |
+| **Fix Required** | Either change page to use handle param or add ID-based lookup to backend. |
 
 ---
 
 ### 47. volume-deals
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/volume-deals/$id.tsx` — 225 lines |
-| **Layout Blocks** | Hero image, Breadcrumb, Sidebar, CTAs (2), img tag, Tabs (2), Details grid (2), Not-found state |
-| **Missing Layout** | No gallery, no reviews |
-| **Backend Listing** | `/store/volume-deals` — ERROR (endpoint broken) |
-| **Backend Detail** | No `[id]` route exists (volume-pricing module) |
-| **Seeded Data** | None (listing endpoint errors) |
-| **Data Model** | `volume-pricing` module: VolumePricing, VolumePricingTier |
-| **Gaps** | Broken listing endpoint. No detail endpoint. Model is pricing tiers, not a browseable product. |
 | **Tier** | **3 — Broken** |
+| **DB Table** | `volume_pricing` + `volume_pricing_tier` — pricing rules, not browseable products |
+| **Backend Listing** | ERROR (endpoint returns non-JSON) |
+| **Backend Detail** | No `[id]` route |
+| **Page Template** | 225 lines. CUSTOM template — references `item.product_name`, `item.base_price`, `item.volume_tiers`, `item.pricing_tiers`. |
+| **Gaps** | Model is pricing tiers attached to products, not standalone deal listings. |
 
 ---
 
 ### 48. warranties
-| Aspect | Status | Detail |
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/warranties/$id.tsx` — 257 lines |
-| **Layout Blocks** | Breadcrumb, Sidebar, Details grid (2), Not-found state |
-| **Missing Layout** | No hero image, no img tag, no CTAs, no gallery, no reviews |
-| **Backend Listing** | `/store/warranties` — 5 items |
+| **Tier** | **1 — Fully Functional** |
+| **DB Table** | `warranty_plan` — 5 rows. Columns: name, description, plan_type, duration_months, price, coverage, exclusions |
+| **DB Images** | `metadata` — `{images: [...], thumbnail: "..."}` — **YES** |
 | **Backend Detail** | `/store/warranties/[id]` — **200 OK** |
-| **Seeded Data** | 5 plans. Fields: name, description, plan_type, duration_months, coverage, exclusions, price. Images/thumbnail in metadata. |
-| **Data Model** | `warranty` module: WarrantyPlan, WarrantyClaim, RepairOrder, ServiceCenter, SparePart |
-| **Data Gaps** | No native image column — in metadata. Has price. No rating. |
-| **Gaps** | Missing CTAs (Purchase Plan), hero image, img tag. Layout underserves the data. |
-| **Tier** | **1 — Fully Functional** (but layout needs improvement) |
+| **API Response** | `{name, description, plan_type, duration_months, price, currency_code, coverage{}, exclusions[], is_active}` |
+| **Page Template** | 257 lines. CUSTOM template — references `item.name`, `item.question`, `item.answer`. |
+| **Unique fields NOT used** | `plan_type`, `duration_months`, `coverage`, `exclusions` |
+| **Gaps** | Missing CTAs (Purchase Plan). No hero image or img tag despite images in metadata. Coverage details and exclusions not displayed. |
 
 ---
 
-### 49. white-label
-| Aspect | Status | Detail |
+### 49-50. white-label + white-label-shop
+| Layer | Status | Detail |
 |---|---|---|
-| **Storefront Page** | `$tenant/$locale/white-label/$id.tsx` — 213 lines |
-| **Layout Blocks** | Breadcrumb, Sidebar, CTAs (3), img tag, Share, Details grid (2), Not-found state |
-| **Missing Layout** | No hero image, no gallery, no reviews |
-| **Backend Listing** | `/store/white-label` — ERROR (endpoint broken) |
-| **Backend Detail** | No `[id]` route exists |
-| **Seeded Data** | None |
-| **Data Model** | No dedicated module |
-| **Gaps** | No data model, no seeded data, broken endpoint. |
-| **Tier** | **3 — Broken** |
-
----
-
-### 50. white-label-shop
-| Aspect | Status | Detail |
-|---|---|---|
-| **Storefront Page** | `$tenant/$locale/white-label-shop/$id.tsx` — 239 lines |
-| **Layout Blocks** | Hero image, Breadcrumb, Sidebar, CTAs (4), img tag, Tabs (2), Details grid (2), Not-found state |
-| **Missing Layout** | No gallery, no reviews |
-| **Backend Listing** | Same as white-label — ERROR |
+| **Tier** | **3 — Broken** (both) |
+| **DB Table** | No table. No module. |
+| **Backend Listing** | `/store/white-label` — ERROR (non-JSON) |
 | **Backend Detail** | No `[id]` route |
-| **Seeded Data** | None |
-| **Gaps** | Duplicate of white-label. Same issues. |
-| **Tier** | **3 — Broken** |
+| **Page Templates** | white-label: 213 lines. white-label-shop: 239 lines. Both GENERIC. |
+| **Gaps** | No data model, no module, no backend. Both pages are duplicates. |
 
 ---
 
-## Gap Summary Tables
+## Section 4: Cross-Cutting Issues
 
-### Backend Detail Endpoints
+### 4.1 Cookie-Cutter Template Problem
 
-| Status | Count | Verticals |
+**38 of 50 pages** reference the identical 13 fields:
+```
+address, avg_rating, banner_url, city, description, location, 
+logo_url, metadata, photo_url, price, rating, review_count, thumbnail
+```
+
+But most backend models use completely different field names:
+| Page References | Actual API Field | Verticals Affected |
 |---|---|---|
-| **200 OK** | 14 | automotive, classifieds, crowdfunding, digital, fitness, freelance, government, grocery, legal, parking, pet-services, rentals, travel, warranties |
-| **500 Error** | 1 | auctions (Bid.auction_listing_id query bug) |
-| **404 on valid IDs** | 2 | charity, social-commerce (route exists but query fails) |
-| **Route missing entirely** | 19 | b2b, bundles, consignments, credit, dropshipping, education, events, flash-sales, gift-cards, healthcare, insurance, loyalty, memberships, newsletters, print-on-demand, real-estate, restaurants, trade-in, try-before-you-buy |
-| **Endpoint mismatch** | 2 | vendors (uses handle not id), financial (endpoint naming mismatch) |
-| **Listing endpoint broken** | 5 | affiliate, financial, print-on-demand, volume-deals, white-label |
+| `item.price` | `starting_price`, `hourly_rate`, `consultation_fee`, `base_price`, `premium_amount`, `annual_fee` | auctions, freelance, legal, rentals, insurance, memberships |
+| `item.photo_url` | `images[]`, `thumbnail_url`, `logo_url`, `banner_url`, `image_url` | Most verticals use arrays or different field names |
+| `item.rating` | `avg_rating`, `star_rating` | fitness, freelance, travel |
+| `item.thumbnail` | `metadata.thumbnail`, `thumbnail_url`, `preview_url` | All metadata-based verticals |
+| `item.address` | `address_line1`, `location_city` + `location_country` | automotive, real-estate, travel |
 
-### Data Model Mismatches
-These verticals have a storefront detail page but the backend data model doesn't represent a browseable product/service:
+### 4.2 Image Storage Inconsistency
 
-| Vertical | What Model Actually Is | What Page Expects |
+Three different patterns used across verticals:
+
+| Pattern | Count | Tables Using |
 |---|---|---|
-| dropshipping | Vendor-Product join table | Product listing |
-| dropshipping-marketplace | Vendor-Product join table | Product listing |
-| try-before-you-buy | Vendor-Product join table | Product listing |
-| flash-deals | Promotion codes | Product deal |
-| subscriptions | Customer subscription records | Browseable plan |
-| memberships | Customer membership records | Browseable plan |
-| trade-in | Trade-in evaluations | Browseable listing |
-| credit | Store credit/wallet | Credit product |
-| volume-deals | Volume pricing tiers | Deal listing |
+| **Dedicated column** (`images` JSON array, `photo_url`, `logo_url`, `image_url`) | 13 | vehicle_listing, crowdfund_campaign, property_listing, travel_property, practitioner, attorney_profile, pet_profile, restaurant, event, charity_org, vendor, course, donation_campaign |
+| **Metadata JSON** (`metadata.images`, `metadata.thumbnail`) | 10 | classified_listing, digital_asset, class_schedule, gig_listing, parking_zone, rental_product, insurance_product, warranty_plan, fresh_product, product_bundle |
+| **No images at all** | 3+ | auction_listing (metadata NULL), insurance_policy, membership, subscription |
 
-### Empty Databases (No Seed Data)
-14 verticals: affiliate, b2b, bookings, consignment, credit, financial, loyalty-program, places, print-on-demand, quotes, trade-in, volume-deals, white-label, consignment-shop
+### 4.3 Endpoint Naming Inconsistencies
 
-### Layout Quality Scores
-
-| Quality | Count | Verticals |
+| Storefront Page Fetches | Backend Route Exists At | Mismatch Type |
 |---|---|---|
-| **Complete** (250+ lines, all blocks) | 12 | bookings, credit, crowdfunding, education, events, freelance, grocery, newsletter, travel, vendors, warranties, white-label-shop |
-| **Good** (200-250 lines, most blocks) | 24 | affiliate, automotive, b2b, bundles, charity, classifieds, consignment, consignment-shop, dropshipping-marketplace, financial, fitness, flash-deals, gift-cards-shop, government, healthcare, insurance, legal, parking, pet-services, print-on-demand, print-on-demand-shop, real-estate, restaurants, social-commerce, subscriptions, trade-in, try-before-you-buy, volume-deals, white-label |
-| **Minimal** (< 200 lines, missing key blocks) | 6 | affiliate (180), campaigns (181), digital (181), memberships (185), dropshipping (205), loyalty-program (199) |
-| **Severely Lacking** (< 100 lines) | 2 | places (83), quotes (74) |
+| `/store/financial/${id}` | `/store/financial-products/[id]` | Different path name |
+| `/store/vendors/${id}` | `/store/vendors/[handle]` | Parameter type (id vs handle) |
+| `/store/events/${id}` | No `[id]` route | Missing entirely |
+| `/store/healthcare/${id}` | No `[id]` route | Missing entirely |
+| `/store/restaurants/${id}` | No `[id]` route | Missing entirely |
+| `/store/real-estate/${id}` | No `[id]` route | Missing entirely |
+| `/store/education/${id}` | No `[id]` route | Missing entirely |
+| `/store/insurance/${id}` | No `[id]` route | Missing entirely |
 
-### Missing Layout Blocks Across All Pages
+### 4.4 Data Source Inconsistencies
 
-| Block | Missing From (count) |
+| Pattern | Verticals |
 |---|---|
-| **Image Gallery** | 49 of 50 (only rentals has partial) |
-| **Related/Similar Items** | 49 of 50 (only grocery has partial) |
-| **Share/Bookmark** | 38 of 50 |
-| **Breadcrumb** | 8 of 50 |
-| **CTA Buttons** | 7 of 50 |
-| **Not-found State** | 6 of 50 |
-| **Sidebar** | 5 of 50 |
-| **Hero Image** | 15 of 50 |
-| **Reviews Section** | Most pages reference reviews but few have proper review UI |
+| **Database-backed listing + detail** | automotive, classifieds, crowdfunding, digital, fitness, freelance, government, grocery, legal, parking, pet-services, rentals, travel, warranties |
+| **Database-backed listing, missing detail endpoint** | education, events, healthcare, insurance, real-estate, restaurants |
+| **Hardcoded data in route handler** | social-commerce (7 items in JS array) |
+| **Wrong entity type in listing** | dropshipping, try-before-you-buy (join tables), flash-deals (promotions), memberships (customer records), subscriptions (customer records) |
+| **Broken listing endpoint** | affiliate, financial, print-on-demand, volume-deals, white-label |
+| **No backend at all** | print-on-demand, white-label (no module exists) |
 
 ---
 
-## Priority Action Items
+## Section 5: Priority Action Matrix
 
-### P0 — Critical (Blocking user experience)
-1. **Create 19 missing backend detail endpoints** — users clicking items see "Not Found"
-2. **Fix auctions detail endpoint** — 500 error on Bid relationship
-3. **Fix charity + social-commerce detail endpoints** — 404 on valid IDs
-4. **Fix 5 broken listing endpoints** — affiliate, financial, print-on-demand, volume-deals, white-label
+### P0 — Critical (User sees errors or empty pages)
 
-### P1 — High Priority (Data completeness)
-5. **Seed data for 14 empty verticals** — these pages show nothing at all
-6. **Resolve 9 data model mismatches** — dropshipping/try-before-you-buy/flash-deals/subscriptions/memberships/trade-in/credit/volume-deals need proper browseable models
-7. **Fix vendors routing** — detail page uses `$id` but backend uses `[handle]`
-8. **Fix financial endpoint naming** — listing is `/financial`, detail is `/financial-products`
+| # | Action | Impact | Effort | Verticals |
+|---|---|---|---|---|
+| 1 | **Fix auctions detail bug** — change `auction_listing_id` to `auction_id` in bid query | Unblocks 1 vertical | 1 line change | auctions |
+| 2 | **Fix charity detail bug** — debug retrieveCharityOrg method resolution | Unblocks 1 vertical | ~15 min | charity |
+| 3 | **Fix social-commerce listing/detail mismatch** — either persist seed data to DB or query same array in detail | Unblocks 1 vertical | ~30 min | social-commerce |
+| 4 | **Create 6 high-priority detail endpoints** (16 lines each) for verticals with rich data models | Unblocks 6 verticals | ~1 hour | education, healthcare, restaurants, real-estate, events, insurance |
+| 5 | **Fix financial routing mismatch** — align page URL with backend route | Unblocks 1 vertical | 1 line change | financial |
+| 6 | **Fix vendors routing** — change page to use handle or add ID lookup | Unblocks 1 vertical | ~15 min | vendors |
 
-### P2 — Medium Priority (Layout quality)
-9. **Rebuild places page** — only 83 lines, virtually no layout
-10. **Rebuild quotes page** — only 74 lines, virtually no layout
-11. **Add breadcrumbs** to auctions, campaigns, digital, events, memberships, places, quotes, rentals
-12. **Add CTA buttons** to auctions, campaigns, crowdfunding, events, parking, places, quotes, restaurants, warranties
-13. **Add not-found states** to auctions, events, memberships, places, quotes, rentals
-14. **Add sidebar** to campaigns, digital, places, quotes, rentals
+### P1 — High Priority (Data model fixes)
+
+| # | Action | Impact | Effort | Verticals |
+|---|---|---|---|---|
+| 7 | **Create remaining 13 detail endpoints** for verticals with some data | Unblocks 13 verticals | ~2 hours | bundles, gift-cards, loyalty, newsletter, b2b, trade-in, consignment, etc. |
+| 8 | **Fix 5 data model mismatches** — change listing endpoints to serve correct entity types | Fixes data quality | ~3 hours | memberships→tiers, subscriptions→plans, dropshipping/try-before-buy→products, flash-deals→deals |
+| 9 | **Fix 5 broken listing endpoints** | Unblocks 5 verticals | ~2 hours | affiliate, financial, print-on-demand, volume-deals, white-label |
+| 10 | **Seed data for 14 empty verticals** | Enables testing | ~4 hours | affiliate, b2b, bookings, consignment, credit, financial, loyalty, places, print-on-demand, quotes, trade-in, volume-deals, white-label |
+
+### P2 — Medium Priority (Template customization)
+
+| # | Action | Impact | Effort | Verticals |
+|---|---|---|---|---|
+| 11 | **Customize 38 generic templates** to use each vertical's actual API fields | Major UX improvement | ~16 hours | All generic pages |
+| 12 | **Rebuild places page** (83 lines → ~250 lines) | Fixes broken page | ~1 hour | places |
+| 13 | **Rebuild quotes page** (74 lines → ~250 lines) | Fixes broken page | ~1 hour | quotes |
+| 14 | **Add missing layout blocks** — breadcrumbs (8), CTAs (7), not-found states (6), sidebars (5) | UX consistency | ~4 hours | Various |
+| 15 | **Resolve 5 duplicate page pairs** — either merge or differentiate | Reduces maintenance | ~3 hours | consignment/shop, dropshipping/marketplace, POD/shop, white-label/shop, campaigns/crowdfunding |
 
 ### P3 — Polish (Production quality)
-15. **Add image gallery** support across all verticals
-16. **Add related/similar items** sections
-17. **Add share/bookmark** functionality
-18. **Seed thumbnail/images** for verticals missing visual content
-19. **Add dedicated price/rating columns** to models currently using metadata JSON
-20. **Deduplicate** consignment/consignment-shop, dropshipping/dropshipping-marketplace, print-on-demand/print-on-demand-shop, white-label/white-label-shop
+
+| # | Action | Impact | Effort | Verticals |
+|---|---|---|---|---|
+| 16 | **Add image gallery component** — useable across all verticals | Major UX improvement | ~3 hours | All 50 pages |
+| 17 | **Add related/similar items** sections | Engagement boost | ~2 hours | All pages |
+| 18 | **Standardize image storage** — migrate metadata images to dedicated columns | Data consistency | ~4 hours | 10 verticals using metadata |
+| 19 | **Add share/bookmark** functionality | Feature completeness | ~2 hours | 38 pages missing it |
+| 20 | **Migrate hardcoded data to database** | Data integrity | ~1 hour | social-commerce |
+
+---
+
+## Section 6: Quick Wins (< 30 minutes each)
+
+1. Fix auctions bid query — 1 line change
+2. Fix financial route URL — 1 line change
+3. Create education detail endpoint — 16 lines
+4. Create healthcare detail endpoint — 16 lines
+5. Create restaurants detail endpoint — 16 lines
+6. Create real-estate detail endpoint — 16 lines
+7. Create events detail endpoint — 16 lines
+8. Create insurance detail endpoint — 16 lines
+9. Fix vendors to use handle parameter — 1 line in storefront loader
+10. Add breadcrumbs to 8 pages — simple template addition
