@@ -1,3 +1,4 @@
+import { AuthGuard } from "@/components/auth/auth-guard"
 import { createFileRoute } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
 import { sdk } from "@/lib/utils/sdk"
@@ -37,11 +38,13 @@ function EditProductRoute() {
   }
 
   return (
-    <div className="container mx-auto py-12">
-      <VendorProductForm
-        mode="edit"
-        initialData={data as Parameters<typeof VendorProductForm>[0]["initialData"]}
-      />
-    </div>
+    <AuthGuard>
+      <div className="container mx-auto py-12">
+        <VendorProductForm
+          mode="edit"
+          initialData={data as Parameters<typeof VendorProductForm>[0]["initialData"]}
+        />
+      </div>
+    </AuthGuard>
   )
 }

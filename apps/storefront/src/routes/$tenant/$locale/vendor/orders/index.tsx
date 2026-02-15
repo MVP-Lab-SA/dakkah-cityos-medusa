@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { createFileRoute } from "@tanstack/react-router"
+import { withAuth } from "@/components/auth/auth-guard"
 import { VendorOrderList } from "@/components/vendor/vendor-order-list"
 import { useState } from "react"
 import { lazy, Suspense } from "react"
@@ -7,7 +8,7 @@ import { lazy, Suspense } from "react"
 const VendorOrderDetail = lazy(() => import("@/components/vendor/vendor-order-detail"))
 
 export const Route = createFileRoute("/$tenant/$locale/vendor/orders/")({
-  component: VendorOrdersRoute,
+  component: withAuth(VendorOrdersRoute),
 })
 
 function VendorOrdersRoute() {

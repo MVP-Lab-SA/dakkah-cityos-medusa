@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { PrivacySettings } from "@/components/consent/privacy-settings"
+import { AccountLayout } from "@/components/account"
 import { t } from "@/lib/i18n"
 import { useState, useEffect } from "react"
 
@@ -41,15 +42,8 @@ function ConsentsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-ds-background">
-      <div className="max-w-3xl mx-auto px-4 py-12">
-        <h1 className="text-2xl font-bold text-ds-foreground mb-2">
-          {t(locale, "consent.page_title")}
-        </h1>
-        <p className="text-ds-muted-foreground mb-8">
-          {t(locale, "consent.page_desc")}
-        </p>
-
+    <AccountLayout title={t(locale, "consent.page_title")} description={t(locale, "consent.page_desc")}>
+      <div className="max-w-3xl mx-auto">
         <PrivacySettings
           categories={defaultCategories}
           currentPreferences={preferences}
@@ -60,6 +54,6 @@ function ConsentsPage() {
           locale={locale}
         />
       </div>
-    </div>
+    </AccountLayout>
   )
 }

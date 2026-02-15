@@ -4,6 +4,7 @@ import { WholesaleCatalog } from "@/components/wholesale/wholesale-catalog"
 import { TierPricingTable } from "@/components/wholesale/tier-pricing-table"
 import { BulkOrderForm } from "@/components/wholesale/bulk-order-form"
 import { RFQForm } from "@/components/wholesale/rfq-form"
+import { AccountLayout } from "@/components/account"
 import { t, type SupportedLocale } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/business/catalog")({
@@ -35,54 +36,47 @@ function BusinessCatalogPage() {
   ]
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-ds-foreground">
-          {t(locale, "wholesale.title")}
-        </h1>
-        <p className="text-sm text-ds-muted-foreground mt-1">
-          {t(locale, "wholesale.catalog_description")}
-        </p>
-      </div>
-
-      <div className="flex items-center gap-1 bg-ds-muted rounded-lg p-1 w-fit">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              activeTab === tab.id
-                ? "bg-ds-card text-ds-foreground shadow-sm"
-                : "text-ds-muted-foreground hover:text-ds-foreground"
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {activeTab === "catalog" && (
-        <div className="space-y-6">
-          <WholesaleCatalog
-            locale={locale}
-            products={demoProducts}
-          />
-          <TierPricingTable
-            locale={locale}
-            tiers={demoTiers}
-            basePrice={12.5}
-            currency="USD"
-          />
+    <AccountLayout title={t(locale, "wholesale.title")} description={t(locale, "wholesale.catalog_description")}>
+      <div className="max-w-6xl mx-auto space-y-6">
+        <div className="flex items-center gap-1 bg-ds-muted rounded-lg p-1 w-fit">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                activeTab === tab.id
+                  ? "bg-ds-card text-ds-foreground shadow-sm"
+                  : "text-ds-muted-foreground hover:text-ds-foreground"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
-      )}
 
-      {activeTab === "quick" && (
-        <BulkOrderForm locale={locale} />
-      )}
+        {activeTab === "catalog" && (
+          <div className="space-y-6">
+            <WholesaleCatalog
+              locale={locale}
+              products={demoProducts}
+            />
+            <TierPricingTable
+              locale={locale}
+              tiers={demoTiers}
+              basePrice={12.5}
+              currency="USD"
+            />
+          </div>
+        )}
 
-      {activeTab === "rfq" && (
-        <RFQForm locale={locale} />
-      )}
-    </div>
+        {activeTab === "quick" && (
+          <BulkOrderForm locale={locale} />
+        )}
+
+        {activeTab === "rfq" && (
+          <RFQForm locale={locale} />
+        )}
+      </div>
+    </AccountLayout>
   )
 }

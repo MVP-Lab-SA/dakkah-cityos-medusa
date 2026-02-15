@@ -1,9 +1,10 @@
 // @ts-nocheck
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { withAuth } from "@/components/auth/auth-guard"
 import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/vendor/onboarding/")({
-  component: VendorOnboardingStep1,
+  component: withAuth(VendorOnboardingStep1),
 })
 
 function ProgressIndicator({ currentStep }: { currentStep: number }) {
