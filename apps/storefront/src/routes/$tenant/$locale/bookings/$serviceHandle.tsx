@@ -12,14 +12,16 @@ import {
   TimeSlotPicker,
   ProviderSelect,
 } from "@/components/bookings"
-import {
-  Spinner,
-  ArrowLeft,
-  Clock,
-  Users,
-  CheckCircleSolid,
-} from "@medusajs/icons"
 import { useToast } from "@/components/ui/toast"
+
+function SpinnerIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+    </svg>
+  )
+}
 
 export const Route = createFileRoute("/$tenant/$locale/bookings/$serviceHandle")({
   component: ServiceBookingPage,
@@ -234,7 +236,7 @@ function ServiceBookingPage() {
   if (serviceLoading) {
     return (
       <div className="min-h-screen bg-ds-muted flex items-center justify-center">
-        <Spinner className="w-8 h-8 text-ds-muted-foreground animate-spin" />
+        <SpinnerIcon className="w-8 h-8 text-ds-muted-foreground animate-spin" />
       </div>
     )
   }
@@ -272,7 +274,7 @@ function ServiceBookingPage() {
           }}
           className="flex items-center gap-2 text-ds-muted-foreground hover:text-ds-foreground mb-8"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
           {step === "provider" ? t(locale, 'verticals.all_services') : "Back"}
         </button>
 
@@ -296,12 +298,12 @@ function ServiceBookingPage() {
                     </h1>
                     <div className="flex items-center gap-4 text-sm text-ds-muted-foreground">
                       <span className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         {formatDuration(service.duration)}
                       </span>
                       {service.capacity && service.capacity > 1 && (
                         <span className="flex items-center gap-1">
-                          <Users className="w-4 h-4" />
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                           Up to {service.capacity} attendees
                         </span>
                       )}
@@ -323,7 +325,7 @@ function ServiceBookingPage() {
                 <div className="enterprise-card-body">
                   {providersLoading ? (
                     <div className="flex items-center justify-center py-8">
-                      <Spinner className="w-6 h-6 text-ds-muted-foreground animate-spin" />
+                      <SpinnerIcon className="w-6 h-6 text-ds-muted-foreground animate-spin" />
                     </div>
                   ) : providers && providers.length > 0 ? (
                     <ProviderSelect
@@ -464,10 +466,10 @@ function ServiceBookingPage() {
                     className="w-full btn-enterprise-primary py-4 text-base disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting ? (
-                      <Spinner className="w-5 h-5 animate-spin" />
+                      <SpinnerIcon className="w-5 h-5 animate-spin" />
                     ) : (
                       <>
-                        <CheckCircleSolid className="w-5 h-5" />
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
                         Confirm Booking -{" "}
                         {formatPrice(service.price, service.currency_code)}
                       </>
