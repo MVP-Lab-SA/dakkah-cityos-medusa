@@ -54,7 +54,7 @@ function VendorAffiliateRoute() {
   const statusColors: Record<string, string> = {
     active: "bg-green-100 text-green-800",
     paused: "bg-yellow-100 text-yellow-800",
-    draft: "bg-gray-100 text-gray-800",
+    draft: "bg-ds-muted text-ds-foreground",
     ended: "bg-red-100 text-red-800",
   }
 
@@ -93,7 +93,7 @@ function VendorAffiliateRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -102,7 +102,7 @@ function VendorAffiliateRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No affiliate programs yet</p>
           <p className="text-sm">Create your first program to start growing through affiliates.</p>
         </div>
@@ -114,41 +114,41 @@ function VendorAffiliateRoute() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-lg font-semibold">{program.name}</h3>
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[program.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[program.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {program.status}
                     </span>
                     {program.commission_type && (
-                      <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
+                      <span className="px-2 py-0.5 text-xs rounded-full bg-ds-muted text-ds-muted-foreground">
                         {program.commission_type}
                       </span>
                     )}
                   </div>
                   {program.description && (
-                    <p className="text-gray-600 text-sm mb-3">{program.description}</p>
+                    <p className="text-ds-muted-foreground text-sm mb-3">{program.description}</p>
                   )}
                   <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-3 mb-3">
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{program.commission_rate}%</p>
-                      <p className="text-xs text-gray-500">Commission</p>
+                      <p className="text-xs text-ds-muted-foreground">Commission</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{program.affiliates_count}</p>
-                      <p className="text-xs text-gray-500">Affiliates</p>
+                      <p className="text-xs text-ds-muted-foreground">Affiliates</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{program.currency_code?.toUpperCase()} {(program.revenue / 100).toFixed(2)}</p>
-                      <p className="text-xs text-gray-500">Revenue</p>
+                      <p className="text-xs text-ds-muted-foreground">Revenue</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{program.conversions.toLocaleString()}</p>
-                      <p className="text-xs text-gray-500">Conversions</p>
+                      <p className="text-xs text-ds-muted-foreground">Conversions</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{getConversionRate(program.conversions, program.clicks || 0)}%</p>
-                      <p className="text-xs text-gray-500">Conv. Rate</p>
+                      <p className="text-xs text-ds-muted-foreground">Conv. Rate</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-gray-500">
+                  <div className="flex items-center gap-4 text-sm text-ds-muted-foreground">
                     {program.cookie_duration && <span>Cookie: {program.cookie_duration} days</span>}
                     {program.clicks !== undefined && <span>{program.clicks.toLocaleString()} clicks</span>}
                   </div>

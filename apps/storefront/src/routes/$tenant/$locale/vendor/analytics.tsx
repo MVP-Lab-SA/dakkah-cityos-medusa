@@ -96,7 +96,7 @@ function VendorAnalyticsRoute() {
     pending: "bg-yellow-100 text-yellow-800",
     processing: "bg-blue-100 text-blue-800",
     cancelled: "bg-red-100 text-red-800",
-    refunded: "bg-gray-100 text-gray-800",
+    refunded: "bg-ds-muted text-ds-foreground",
   }
 
   return (
@@ -108,7 +108,7 @@ function VendorAnalyticsRoute() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {stats.map((stat) => (
           <div key={stat.label} className="border rounded-lg p-6">
-            <p className="text-sm text-gray-500 mb-1">{stat.label}</p>
+            <p className="text-sm text-ds-muted-foreground mb-1">{stat.label}</p>
             <p className="text-2xl font-bold">{stat.value}</p>
           </div>
         ))}
@@ -118,14 +118,14 @@ function VendorAnalyticsRoute() {
         <div className="border rounded-lg p-6">
           <h2 className="text-lg font-semibold mb-4">Order Trends</h2>
           {orderTrends.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-ds-muted-foreground">
               <p className="text-sm">No trend data available yet.</p>
             </div>
           ) : (
             <div className="space-y-2">
               {orderTrends.map((trend) => (
                 <div key={trend.date} className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">{new Date(trend.date).toLocaleDateString()}</span>
+                  <span className="text-ds-muted-foreground">{new Date(trend.date).toLocaleDateString()}</span>
                   <div className="flex gap-4">
                     <span>{trend.orders} orders</span>
                     <span className="font-medium">{currency} {(trend.revenue / 100).toFixed(2)}</span>
@@ -139,7 +139,7 @@ function VendorAnalyticsRoute() {
         <div className="border rounded-lg p-6">
           <h2 className="text-lg font-semibold mb-4">Top Products</h2>
           {topProducts.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-ds-muted-foreground">
               <p className="text-sm">No product data available yet.</p>
             </div>
           ) : (
@@ -147,10 +147,10 @@ function VendorAnalyticsRoute() {
               {topProducts.map((product, idx) => (
                 <div key={product.id} className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <span className="text-sm font-medium text-gray-400 w-6">#{idx + 1}</span>
+                    <span className="text-sm font-medium text-ds-muted-foreground/70 w-6">#{idx + 1}</span>
                     <span className="font-medium">{product.name}</span>
                   </div>
-                  <div className="flex gap-4 text-sm text-gray-600">
+                  <div className="flex gap-4 text-sm text-ds-muted-foreground">
                     <span>{product.units_sold} sold</span>
                     <span className="font-medium">{currency} {(product.revenue / 100).toFixed(2)}</span>
                   </div>
@@ -164,14 +164,14 @@ function VendorAnalyticsRoute() {
       <div className="border rounded-lg p-6">
         <h2 className="text-lg font-semibold mb-4">Recent Orders</h2>
         {recentOrders.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-ds-muted-foreground">
             <p className="text-sm">No recent orders.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
-                <tr className="border-b text-left text-sm text-gray-500">
+                <tr className="border-b text-left text-sm text-ds-muted-foreground">
                   <th className="pb-3 pr-4">Order</th>
                   <th className="pb-3 pr-4 text-right">Total</th>
                   <th className="pb-3 pr-4">Status</th>
@@ -180,15 +180,15 @@ function VendorAnalyticsRoute() {
               </thead>
               <tbody>
                 {recentOrders.map((order) => (
-                  <tr key={order.id} className="border-b hover:bg-gray-50 transition">
+                  <tr key={order.id} className="border-b hover:bg-ds-muted/50 transition">
                     <td className="py-4 pr-4 font-medium">#{order.display_id || order.id.slice(0, 8)}</td>
                     <td className="py-4 pr-4 text-right">{currency} {(order.total / 100).toFixed(2)}</td>
                     <td className="py-4 pr-4">
-                      <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[order.status] || "bg-gray-100 text-gray-800"}`}>
+                      <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[order.status] || "bg-ds-muted text-ds-foreground"}`}>
                         {order.status?.replace(/_/g, " ")}
                       </span>
                     </td>
-                    <td className="py-4 text-sm text-gray-500">{new Date(order.created_at).toLocaleDateString()}</td>
+                    <td className="py-4 text-sm text-ds-muted-foreground">{new Date(order.created_at).toLocaleDateString()}</td>
                   </tr>
                 ))}
               </tbody>

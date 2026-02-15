@@ -52,7 +52,7 @@ function VendorGovernmentRoute() {
 
   const statusColors: Record<string, string> = {
     active: "bg-green-100 text-green-800",
-    inactive: "bg-gray-100 text-gray-800",
+    inactive: "bg-ds-muted text-ds-foreground",
     pending_approval: "bg-yellow-100 text-yellow-800",
     suspended: "bg-red-100 text-red-800",
     under_review: "bg-blue-100 text-blue-800",
@@ -88,7 +88,7 @@ function VendorGovernmentRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s ? s.replace(/_/g, " ") : "All"}
@@ -97,7 +97,7 @@ function VendorGovernmentRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No government services yet</p>
           <p className="text-sm">Add your first service to start processing applications.</p>
         </div>
@@ -109,34 +109,34 @@ function VendorGovernmentRoute() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-lg font-semibold">{service.name}</h3>
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[service.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[service.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {service.status.replace(/_/g, " ")}
                     </span>
                   </div>
                   {service.description && (
-                    <p className="text-gray-600 text-sm mb-3">{service.description}</p>
+                    <p className="text-ds-muted-foreground text-sm mb-3">{service.description}</p>
                   )}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3 mb-3">
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-sm font-bold truncate">{service.department}</p>
-                      <p className="text-xs text-gray-500">Department</p>
+                      <p className="text-xs text-ds-muted-foreground">Department</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{service.applications_count}</p>
-                      <p className="text-xs text-gray-500">Applications</p>
+                      <p className="text-xs text-ds-muted-foreground">Applications</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-sm font-bold">{service.processing_time}</p>
-                      <p className="text-xs text-gray-500">Processing Time</p>
+                      <p className="text-xs text-ds-muted-foreground">Processing Time</p>
                     </div>
                     {service.fee !== undefined && (
-                      <div className="bg-gray-50 rounded-lg p-3 text-center">
+                      <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                         <p className="text-lg font-bold">{service.currency_code?.toUpperCase()} {(service.fee / 100).toFixed(2)}</p>
-                        <p className="text-xs text-gray-500">Fee</p>
+                        <p className="text-xs text-ds-muted-foreground">Fee</p>
                       </div>
                     )}
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-gray-500">
+                  <div className="flex items-center gap-4 text-sm text-ds-muted-foreground">
                     {service.category && <span>Category: {service.category}</span>}
                     {service.eligibility && <span>Eligibility: {service.eligibility}</span>}
                   </div>

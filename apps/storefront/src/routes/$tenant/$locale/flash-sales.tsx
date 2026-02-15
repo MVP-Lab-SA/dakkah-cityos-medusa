@@ -40,7 +40,7 @@ function FlashSalesPage() {
               <p className="mt-2 opacity-80">Limited time offers — grab them before they're gone!</p>
             </div>
             {nextEnding && (
-              <div className="bg-white/10 rounded-lg px-6 py-4">
+              <div className="bg-ds-card/10 rounded-lg px-6 py-4">
                 <p className="text-xs opacity-80 mb-2 text-center">Next sale ends in</p>
                 <CountdownTimer endsAt={nextEnding.toISOString()} variant="segmented" />
               </div>

@@ -49,7 +49,7 @@ function VendorVolumePricingRoute() {
 
   const statusColors: Record<string, string> = {
     active: "bg-green-100 text-green-800",
-    draft: "bg-gray-100 text-gray-800",
+    draft: "bg-ds-muted text-ds-foreground",
     expired: "bg-red-100 text-red-800",
     scheduled: "bg-blue-100 text-blue-800",
   }
@@ -84,7 +84,7 @@ function VendorVolumePricingRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -93,7 +93,7 @@ function VendorVolumePricingRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No volume pricing tiers yet</p>
           <p className="text-sm">Create pricing tiers to offer bulk discounts.</p>
         </div>
@@ -101,7 +101,7 @@ function VendorVolumePricingRoute() {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="border-b text-left text-sm text-gray-500">
+              <tr className="border-b text-left text-sm text-ds-muted-foreground">
                 <th className="pb-3 pr-4">Product</th>
                 <th className="pb-3 pr-4 text-right">Min Qty</th>
                 <th className="pb-3 pr-4 text-right">Max Qty</th>
@@ -113,7 +113,7 @@ function VendorVolumePricingRoute() {
             </thead>
             <tbody>
               {items.map((tier) => (
-                <tr key={tier.id} className="border-b hover:bg-gray-50 transition">
+                <tr key={tier.id} className="border-b hover:bg-ds-muted/50 transition">
                   <td className="py-4 pr-4 font-medium">{tier.product_name}</td>
                   <td className="py-4 pr-4 text-right">{tier.min_quantity}</td>
                   <td className="py-4 pr-4 text-right">{tier.max_quantity ?? "∞"}</td>
@@ -124,7 +124,7 @@ function VendorVolumePricingRoute() {
                     {tier.discount_percentage}%
                   </td>
                   <td className="py-4 pr-4">
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[tier.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[tier.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {tier.status}
                     </span>
                   </td>

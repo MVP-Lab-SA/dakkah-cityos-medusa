@@ -51,7 +51,7 @@ function VendorInventoryRoute() {
     in_stock: "bg-green-100 text-green-800",
     low_stock: "bg-yellow-100 text-yellow-800",
     out_of_stock: "bg-red-100 text-red-800",
-    discontinued: "bg-gray-100 text-gray-800",
+    discontinued: "bg-ds-muted text-ds-foreground",
   }
 
   if (isLoading) {
@@ -84,7 +84,7 @@ function VendorInventoryRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s ? s.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "All"}
@@ -93,7 +93,7 @@ function VendorInventoryRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No inventory items yet</p>
           <p className="text-sm">Add products to start tracking inventory.</p>
         </div>
@@ -101,7 +101,7 @@ function VendorInventoryRoute() {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="border-b text-left text-sm text-gray-500">
+              <tr className="border-b text-left text-sm text-ds-muted-foreground">
                 <th className="pb-3 pr-4">Product</th>
                 <th className="pb-3 pr-4">SKU</th>
                 <th className="pb-3 pr-4 text-right">Quantity</th>
@@ -114,22 +114,22 @@ function VendorInventoryRoute() {
             </thead>
             <tbody>
               {items.map((item) => (
-                <tr key={item.id} className="border-b hover:bg-gray-50 transition">
+                <tr key={item.id} className="border-b hover:bg-ds-muted/50 transition">
                   <td className="py-4 pr-4 font-medium">{item.product_name}</td>
-                  <td className="py-4 pr-4 text-sm text-gray-500 font-mono">{item.sku}</td>
+                  <td className="py-4 pr-4 text-sm text-ds-muted-foreground font-mono">{item.sku}</td>
                   <td className="py-4 pr-4 text-right">{item.quantity}</td>
                   <td className="py-4 pr-4 text-right">{item.reserved}</td>
                   <td className="py-4 pr-4 text-right font-medium">{item.available}</td>
                   <td className="py-4 pr-4 text-right">{item.reorder_point}</td>
                   <td className="py-4 pr-4">
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[item.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[item.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {item.status?.replace(/_/g, " ")}
                     </span>
                   </td>
                   <td className="py-4">
                     <div className="flex gap-2">
                       <button className="text-sm text-blue-600 hover:underline">Update Stock</button>
-                      <button className="text-sm text-gray-500 hover:underline">View History</button>
+                      <button className="text-sm text-ds-muted-foreground hover:underline">View History</button>
                     </div>
                   </td>
                 </tr>

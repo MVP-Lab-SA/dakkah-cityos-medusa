@@ -76,7 +76,7 @@ function VendorMembershipsRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No membership plans yet</p>
           <p className="text-sm">Create membership tiers to build your community.</p>
         </div>
@@ -96,22 +96,22 @@ function VendorMembershipsRoute() {
               <div className="flex items-center justify-between mb-3">
                 <h3 className="font-semibold text-lg">{tier.name}</h3>
                 <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${
-                  tier.is_active !== false ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
+                  tier.is_active !== false ? "bg-green-100 text-green-800" : "bg-ds-muted text-ds-foreground"
                 }`}>
                   {tier.is_active !== false ? "Active" : "Inactive"}
                 </span>
               </div>
               {tier.description && (
-                <p className="text-sm text-gray-600 mb-4">{tier.description}</p>
+                <p className="text-sm text-ds-muted-foreground mb-4">{tier.description}</p>
               )}
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Tier Level</span>
+                  <span className="text-ds-muted-foreground">Tier Level</span>
                   <span className="font-medium">{tier.tier_level}</span>
                 </div>
                 {tier.annual_fee != null && (
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Annual Fee</span>
+                    <span className="text-ds-muted-foreground">Annual Fee</span>
                     <span className="font-medium">
                       {tier.currency_code?.toUpperCase() || "USD"} {(tier.annual_fee / 100).toFixed(2)}
                     </span>
@@ -119,13 +119,13 @@ function VendorMembershipsRoute() {
                 )}
                 {tier.member_count != null && (
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Members</span>
+                    <span className="text-ds-muted-foreground">Members</span>
                     <span className="font-medium">{tier.member_count}</span>
                   </div>
                 )}
                 {tier.revenue != null && (
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Revenue</span>
+                    <span className="text-ds-muted-foreground">Revenue</span>
                     <span className="font-medium text-green-700">
                       {tier.currency_code?.toUpperCase() || "USD"} {(tier.revenue / 100).toFixed(2)}
                     </span>
@@ -134,15 +134,15 @@ function VendorMembershipsRoute() {
               </div>
               {tier.benefits && tier.benefits.length > 0 && (
                 <div className="mt-4 pt-3 border-t">
-                  <p className="text-xs text-gray-500 mb-2">Benefits</p>
+                  <p className="text-xs text-ds-muted-foreground mb-2">Benefits</p>
                   <ul className="space-y-1">
                     {tier.benefits.slice(0, 3).map((b, i) => (
-                      <li key={i} className="text-xs text-gray-700 flex items-center gap-1">
+                      <li key={i} className="text-xs text-ds-foreground/80 flex items-center gap-1">
                         <span className="text-green-500">✓</span> {b}
                       </li>
                     ))}
                     {tier.benefits.length > 3 && (
-                      <li className="text-xs text-gray-400">+{tier.benefits.length - 3} more</li>
+                      <li className="text-xs text-ds-muted-foreground/70">+{tier.benefits.length - 3} more</li>
                     )}
                   </ul>
                 </div>

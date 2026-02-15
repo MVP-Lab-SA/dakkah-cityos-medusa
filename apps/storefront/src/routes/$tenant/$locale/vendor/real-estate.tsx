@@ -61,12 +61,12 @@ function VendorRealEstateRoute() {
 
   const statusColors: Record<string, string> = {
     active: "bg-green-100 text-green-800",
-    draft: "bg-gray-100 text-gray-800",
+    draft: "bg-ds-muted text-ds-foreground",
     under_offer: "bg-yellow-100 text-yellow-800",
     sold: "bg-purple-100 text-purple-800",
     rented: "bg-blue-100 text-blue-800",
     expired: "bg-red-100 text-red-800",
-    withdrawn: "bg-gray-100 text-gray-600",
+    withdrawn: "bg-ds-muted text-ds-muted-foreground",
   }
 
   if (isLoading) {
@@ -99,7 +99,7 @@ function VendorRealEstateRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {(s || "All").replace("_", " ")}
@@ -108,7 +108,7 @@ function VendorRealEstateRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No property listings yet</p>
           <p className="text-sm">List your first property to start receiving offers.</p>
         </div>
@@ -120,24 +120,24 @@ function VendorRealEstateRoute() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-lg font-semibold">{property.title}</h3>
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[property.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[property.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {property.status.replace("_", " ")}
                     </span>
-                    <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
+                    <span className="px-2 py-0.5 text-xs rounded-full bg-ds-muted text-ds-muted-foreground">
                       {property.property_type}
                     </span>
                     <span className="px-2 py-0.5 text-xs rounded-full bg-blue-50 text-blue-700">
                       For {property.listing_type}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-500 mb-3">
+                  <p className="text-sm text-ds-muted-foreground mb-3">
                     {property.city}{property.state ? `, ${property.state}` : ""} · {property.country_code?.toUpperCase()}
                   </p>
-                  <div className="flex items-center gap-6 text-sm text-gray-500">
-                    <span className="font-medium text-gray-900 text-base">
+                  <div className="flex items-center gap-6 text-sm text-ds-muted-foreground">
+                    <span className="font-medium text-ds-foreground text-base">
                       {property.currency_code?.toUpperCase()} {property.price.toLocaleString()}
                       {property.price_period && property.price_period !== "total" && (
-                        <span className="text-gray-500 text-sm font-normal"> / {property.price_period}</span>
+                        <span className="text-ds-muted-foreground text-sm font-normal"> / {property.price_period}</span>
                       )}
                     </span>
                     {property.bedrooms != null && <span>{property.bedrooms} bed</span>}
@@ -145,7 +145,7 @@ function VendorRealEstateRoute() {
                     {property.area_sqm != null && <span>{property.area_sqm} m²</span>}
                     {property.year_built && <span>Built {property.year_built}</span>}
                   </div>
-                  <div className="flex items-center gap-4 mt-3 text-sm text-gray-500">
+                  <div className="flex items-center gap-4 mt-3 text-sm text-ds-muted-foreground">
                     {property.viewing_count != null && (
                       <span>{property.viewing_count} viewings</span>
                     )}

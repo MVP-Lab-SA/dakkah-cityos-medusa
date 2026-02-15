@@ -65,7 +65,7 @@ function QuotesPage() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute top-3 left-3 text-3xl">{cat.icon}</div>
                   <div className="absolute bottom-3 left-3">
-                    <span className="px-2 py-1 text-xs font-medium bg-white/90 text-gray-800 rounded-md">Avg. response: {cat.avgTime}</span>
+                    <span className="px-2 py-1 text-xs font-medium bg-ds-card/90 text-ds-foreground rounded-md">Avg. response: {cat.avgTime}</span>
                   </div>
                 </div>
                 <div className="p-5">

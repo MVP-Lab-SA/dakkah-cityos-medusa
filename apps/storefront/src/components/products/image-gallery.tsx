@@ -90,7 +90,7 @@ export function ImageGallery({ locale: localeProp, images }: ImageGalleryProps) 
         <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center" onClick={() => setLightboxOpen(false)}>
           <button
             onClick={() => setLightboxOpen(false)}
-            className="absolute top-4 end-4 p-2 text-white hover:text-gray-300 transition-colors z-10"
+            className="absolute top-4 end-4 p-2 text-white hover:text-ds-muted-foreground/50 transition-colors z-10"
             aria-label={t(locale, "common.close")}
           >
             <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -107,7 +107,7 @@ export function ImageGallery({ locale: localeProp, images }: ImageGalleryProps) 
             <>
               <button
                 onClick={(e) => { e.stopPropagation(); goTo(activeIndex - 1) }}
-                className="absolute start-4 top-1/2 -translate-y-1/2 p-3 text-white hover:text-gray-300"
+                className="absolute start-4 top-1/2 -translate-y-1/2 p-3 text-white hover:text-ds-muted-foreground/50"
                 aria-label={t(locale, "blocks.previous_slide")}
               >
                 <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -116,7 +116,7 @@ export function ImageGallery({ locale: localeProp, images }: ImageGalleryProps) 
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); goTo(activeIndex + 1) }}
-                className="absolute end-4 top-1/2 -translate-y-1/2 p-3 text-white hover:text-gray-300"
+                className="absolute end-4 top-1/2 -translate-y-1/2 p-3 text-white hover:text-ds-muted-foreground/50"
                 aria-label={t(locale, "blocks.next_slide")}
               >
                 <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">

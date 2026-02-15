@@ -95,7 +95,7 @@ function VendorHomeRoute() {
     pending: "bg-yellow-100 text-yellow-800",
     processing: "bg-blue-100 text-blue-800",
     cancelled: "bg-red-100 text-red-800",
-    refunded: "bg-gray-100 text-gray-800",
+    refunded: "bg-ds-muted text-ds-foreground",
   }
 
   const quickLinks = [
@@ -113,13 +113,13 @@ function VendorHomeRoute() {
         <h1 className="text-2xl font-bold">
           {data?.vendor_name ? `Welcome back, ${data.vendor_name}` : "Vendor Dashboard"}
         </h1>
-        <p className="text-gray-500 mt-1">Here's an overview of your store performance.</p>
+        <p className="text-ds-muted-foreground mt-1">Here's an overview of your store performance.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {stats.map((stat) => (
           <div key={stat.label} className="border rounded-lg p-6">
-            <p className="text-sm text-gray-500 mb-1">{stat.label}</p>
+            <p className="text-sm text-ds-muted-foreground mb-1">{stat.label}</p>
             <p className="text-2xl font-bold">{stat.value}</p>
           </div>
         ))}
@@ -141,7 +141,7 @@ function VendorHomeRoute() {
         <div className="border rounded-lg p-6">
           <h2 className="text-lg font-semibold mb-4">Recent Orders</h2>
           {recentOrders.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-ds-muted-foreground">
               <p className="text-sm">No recent orders.</p>
             </div>
           ) : (
@@ -150,11 +150,11 @@ function VendorHomeRoute() {
                 <div key={order.id} className="flex items-center justify-between py-2 border-b last:border-0">
                   <div>
                     <span className="font-medium">#{order.display_id || order.id.slice(0, 8)}</span>
-                    <span className="text-sm text-gray-500 ml-3">{new Date(order.created_at).toLocaleDateString()}</span>
+                    <span className="text-sm text-ds-muted-foreground ml-3">{new Date(order.created_at).toLocaleDateString()}</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-sm font-medium">{currency} {(order.total / 100).toFixed(2)}</span>
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[order.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[order.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {order.status?.replace(/_/g, " ")}
                     </span>
                   </div>
@@ -167,7 +167,7 @@ function VendorHomeRoute() {
         <div className="border rounded-lg p-6">
           <h2 className="text-lg font-semibold mb-4">Recent Reviews</h2>
           {recentReviews.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-ds-muted-foreground">
               <p className="text-sm">No recent reviews.</p>
             </div>
           ) : (
@@ -178,17 +178,17 @@ function VendorHomeRoute() {
                     <div className="flex items-center gap-2">
                       <div className="flex">
                         {[...Array(5)].map((_, i) => (
-                          <span key={i} className={`text-sm ${i < review.rating ? "text-yellow-400" : "text-gray-200"}`}>
+                          <span key={i} className={`text-sm ${i < review.rating ? "text-yellow-400" : "text-ds-border"}`}>
                             ★
                           </span>
                         ))}
                       </div>
                       <span className="text-sm font-medium">{review.customer_name}</span>
                     </div>
-                    <span className="text-xs text-gray-400">{new Date(review.created_at).toLocaleDateString()}</span>
+                    <span className="text-xs text-ds-muted-foreground/70">{new Date(review.created_at).toLocaleDateString()}</span>
                   </div>
                   {review.title && <p className="text-sm font-medium">{review.title}</p>}
-                  {review.content && <p className="text-sm text-gray-600 line-clamp-2">{review.content}</p>}
+                  {review.content && <p className="text-sm text-ds-muted-foreground line-clamp-2">{review.content}</p>}
                 </div>
               ))}
             </div>

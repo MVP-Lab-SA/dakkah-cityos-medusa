@@ -121,7 +121,7 @@ function TradeInPage() {
                       )}
                       <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-green-600 text-white rounded-md capitalize">{item.category}</span>
                       {item.trade_in_max && (
-                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-bold bg-white/90 text-green-700 rounded-md">Up to {formatPrice(item.trade_in_max)}</span>
+                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-bold bg-ds-card/90 text-green-700 rounded-md">Up to {formatPrice(item.trade_in_max)}</span>
                       )}
                     </div>
                     <div className="p-4">

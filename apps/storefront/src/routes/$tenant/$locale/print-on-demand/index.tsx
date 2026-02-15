@@ -49,7 +49,7 @@ function PrintOnDemandPage() {
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>No minimums</span><span>|</span><span>100+ products</span><span>|</span><span>Global shipping</span>
           </div>
-          <button className="mt-8 px-8 py-3 bg-white text-pink-700 font-semibold rounded-lg hover:bg-white/90 transition-colors">Start Creating</button>
+          <button className="mt-8 px-8 py-3 bg-ds-card text-pink-700 font-semibold rounded-lg hover:bg-ds-card/90 transition-colors">Start Creating</button>
         </div>
       </div>
 
@@ -82,7 +82,7 @@ function PrintOnDemandPage() {
                 <div className="aspect-[4/3] relative overflow-hidden">
                   <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   <div className="absolute bottom-3 left-3">
-                    <span className="px-2 py-1 text-xs font-medium bg-white/90 text-gray-800 rounded-md">From {p.startingAt}</span>
+                    <span className="px-2 py-1 text-xs font-medium bg-ds-card/90 text-ds-foreground rounded-md">From {p.startingAt}</span>
                   </div>
                 </div>
                 <div className="p-5">

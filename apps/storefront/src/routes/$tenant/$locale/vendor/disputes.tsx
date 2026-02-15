@@ -47,7 +47,7 @@ function VendorDisputesRoute() {
     vendor_responded: "bg-blue-100 text-blue-800",
     escalated: "bg-red-100 text-red-800",
     resolved: "bg-green-100 text-green-800",
-    closed: "bg-gray-100 text-gray-800",
+    closed: "bg-ds-muted text-ds-foreground",
   }
 
   const reasonLabels: Record<string, string> = {
@@ -108,37 +108,37 @@ function VendorDisputesRoute() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white border rounded-lg p-4">
+        <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Total Disputes</p>
           <p className="text-2xl font-bold">{items.length}</p>
         </div>
-        <div className="bg-white border rounded-lg p-4">
+        <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Pending</p>
           <p className="text-2xl font-bold text-yellow-600">{items.filter((d) => d.status === "pending").length}</p>
         </div>
-        <div className="bg-white border rounded-lg p-4">
+        <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Escalated</p>
           <p className="text-2xl font-bold text-red-600">{items.filter((d) => d.status === "escalated").length}</p>
         </div>
-        <div className="bg-white border rounded-lg p-4">
+        <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Resolved</p>
           <p className="text-2xl font-bold text-green-600">{items.filter((d) => d.status === "resolved").length}</p>
         </div>
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-lg border">
+        <div className="text-center py-16 bg-ds-card rounded-lg border">
           <h3 className="text-lg font-medium mb-2">No disputes found</h3>
           <p className="text-muted-foreground">You don't have any disputes matching this filter.</p>
         </div>
       ) : (
         <div className="space-y-4">
           {items.map((dispute) => (
-            <div key={dispute.id} className="bg-white border rounded-lg p-6">
+            <div key={dispute.id} className="bg-ds-card border rounded-lg p-6">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[dispute.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[dispute.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {dispute.status?.replace(/_/g, " ")}
                     </span>
                     <span className="text-xs text-muted-foreground">
@@ -172,7 +172,7 @@ function VendorDisputesRoute() {
 
       {selectedDispute && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-lg w-full mx-4">
+          <div className="bg-ds-card rounded-lg p-6 max-w-lg w-full mx-4">
             <h3 className="text-lg font-semibold mb-4">Respond to Dispute</h3>
             <p className="text-sm text-muted-foreground mb-4">{selectedDispute.description}</p>
             <textarea value={response} onChange={(e) => setResponse(e.target.value)} placeholder="Your response to this dispute..." className="w-full border rounded-lg p-3 text-sm min-h-[120px] mb-4" />

@@ -53,7 +53,7 @@ function VendorB2BRoute() {
   const items = data?.items || []
 
   const statusColors: Record<string, string> = {
-    draft: "bg-gray-100 text-gray-800",
+    draft: "bg-ds-muted text-ds-foreground",
     sent: "bg-blue-100 text-blue-800",
     accepted: "bg-green-100 text-green-800",
     declined: "bg-red-100 text-red-800",
@@ -92,7 +92,7 @@ function VendorB2BRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -101,7 +101,7 @@ function VendorB2BRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No B2B quotes yet</p>
           <p className="text-sm">Create your first quote to start your B2B sales pipeline.</p>
         </div>
@@ -113,34 +113,34 @@ function VendorB2BRoute() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-lg font-semibold">{quote.title}</h3>
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[quote.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[quote.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {quote.status}
                     </span>
                     {quote.quote_number && (
-                      <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
+                      <span className="px-2 py-0.5 text-xs rounded-full bg-ds-muted text-ds-muted-foreground">
                         #{quote.quote_number}
                       </span>
                     )}
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3 mb-3">
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-sm font-bold truncate">{quote.buyer}{quote.buyer_company ? ` (${quote.buyer_company})` : ""}</p>
-                      <p className="text-xs text-gray-500">Buyer</p>
+                      <p className="text-xs text-ds-muted-foreground">Buyer</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{quote.currency_code?.toUpperCase()} {(quote.value / 100).toFixed(2)}</p>
-                      <p className="text-xs text-gray-500">Value</p>
+                      <p className="text-xs text-ds-muted-foreground">Value</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{quote.items_count}</p>
-                      <p className="text-xs text-gray-500">Items</p>
+                      <p className="text-xs text-ds-muted-foreground">Items</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-sm font-bold">{quote.delivery_date ? new Date(quote.delivery_date).toLocaleDateString() : "TBD"}</p>
-                      <p className="text-xs text-gray-500">Delivery Date</p>
+                      <p className="text-xs text-ds-muted-foreground">Delivery Date</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-gray-500">
+                  <div className="flex items-center gap-4 text-sm text-ds-muted-foreground">
                     {quote.valid_until && <span>Valid until {new Date(quote.valid_until).toLocaleDateString()}</span>}
                     {quote.payment_terms && <span>Terms: {quote.payment_terms}</span>}
                     <span>Created {new Date(quote.created_at).toLocaleDateString()}</span>

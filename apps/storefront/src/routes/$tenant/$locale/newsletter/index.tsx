@@ -136,7 +136,7 @@ function NewsletterPage() {
                         <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-blue-600 text-white rounded-md capitalize">{item.topic}</span>
                       )}
                       {item.edition_date && (
-                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-white/90 text-gray-700 rounded-md">
+                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-ds-card/90 text-ds-foreground/80 rounded-md">
                           {new Date(item.edition_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                         </span>
                       )}

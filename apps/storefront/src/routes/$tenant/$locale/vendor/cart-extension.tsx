@@ -50,7 +50,7 @@ function VendorCartExtensionRoute() {
 
   const statusColors: Record<string, string> = {
     active: "bg-green-100 text-green-800",
-    inactive: "bg-gray-100 text-gray-800",
+    inactive: "bg-ds-muted text-ds-foreground",
     draft: "bg-yellow-100 text-yellow-800",
     scheduled: "bg-blue-100 text-blue-800",
   }
@@ -93,7 +93,7 @@ function VendorCartExtensionRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -102,7 +102,7 @@ function VendorCartExtensionRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No cart extension rules yet</p>
           <p className="text-sm">Create upsell, cross-sell, and cart rules to boost conversions.</p>
         </div>
@@ -114,19 +114,19 @@ function VendorCartExtensionRoute() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-lg font-semibold">{rule.name}</h3>
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${typeColors[rule.type] || "bg-gray-50 text-gray-700"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${typeColors[rule.type] || "bg-ds-muted/50 text-ds-foreground/80"}`}>
                       {rule.type?.replace(/_/g, " ")}
                     </span>
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[rule.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[rule.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {rule.status}
                     </span>
                   </div>
-                  <div className="flex items-center gap-6 text-sm text-gray-500 mt-2">
-                    <span><span className="font-medium text-gray-700">Trigger:</span> {rule.trigger_condition}</span>
-                    <span><span className="font-medium text-gray-700">Value:</span> {rule.value}</span>
-                    <span><span className="font-medium text-gray-700">Priority:</span> {rule.priority}</span>
+                  <div className="flex items-center gap-6 text-sm text-ds-muted-foreground mt-2">
+                    <span><span className="font-medium text-ds-foreground/80">Trigger:</span> {rule.trigger_condition}</span>
+                    <span><span className="font-medium text-ds-foreground/80">Value:</span> {rule.value}</span>
+                    <span><span className="font-medium text-ds-foreground/80">Priority:</span> {rule.priority}</span>
                     {rule.free_shipping_threshold && (
-                      <span><span className="font-medium text-gray-700">Free Shipping Above:</span> ${(rule.free_shipping_threshold / 100).toFixed(2)}</span>
+                      <span><span className="font-medium text-ds-foreground/80">Free Shipping Above:</span> ${(rule.free_shipping_threshold / 100).toFixed(2)}</span>
                     )}
                   </div>
                 </div>

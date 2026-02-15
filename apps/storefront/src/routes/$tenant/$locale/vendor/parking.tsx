@@ -53,7 +53,7 @@ function VendorParkingRoute() {
 
   const statusColors: Record<string, string> = {
     active: "bg-green-100 text-green-800",
-    inactive: "bg-gray-100 text-gray-800",
+    inactive: "bg-ds-muted text-ds-foreground",
     maintenance: "bg-yellow-100 text-yellow-800",
     full: "bg-red-100 text-red-800",
   }
@@ -93,7 +93,7 @@ function VendorParkingRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -102,7 +102,7 @@ function VendorParkingRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No parking facilities yet</p>
           <p className="text-sm">Add your first facility to start managing parking.</p>
         </div>
@@ -116,35 +116,35 @@ function VendorParkingRoute() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-lg font-semibold">{facility.name}</h3>
-                      <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[facility.status] || "bg-gray-100 text-gray-800"}`}>
+                      <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[facility.status] || "bg-ds-muted text-ds-foreground"}`}>
                         {facility.status}
                       </span>
                       {facility.type && (
-                        <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
+                        <span className="px-2 py-0.5 text-xs rounded-full bg-ds-muted text-ds-muted-foreground">
                           {facility.type}
                         </span>
                       )}
                     </div>
-                    <p className="text-gray-600 text-sm mb-3">{facility.location}{facility.address ? ` — ${facility.address}` : ""}</p>
+                    <p className="text-ds-muted-foreground text-sm mb-3">{facility.location}{facility.address ? ` — ${facility.address}` : ""}</p>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3 mb-3">
-                      <div className="bg-gray-50 rounded-lg p-3 text-center">
+                      <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                         <p className="text-lg font-bold">{facility.total_spots}</p>
-                        <p className="text-xs text-gray-500">Total Spots</p>
+                        <p className="text-xs text-ds-muted-foreground">Total Spots</p>
                       </div>
-                      <div className="bg-gray-50 rounded-lg p-3 text-center">
+                      <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                         <p className="text-lg font-bold">{facility.available_spots}</p>
-                        <p className="text-xs text-gray-500">Available</p>
+                        <p className="text-xs text-ds-muted-foreground">Available</p>
                       </div>
-                      <div className="bg-gray-50 rounded-lg p-3 text-center">
+                      <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                         <p className="text-lg font-bold">{occupancy}%</p>
-                        <p className="text-xs text-gray-500">Occupancy</p>
+                        <p className="text-xs text-ds-muted-foreground">Occupancy</p>
                       </div>
-                      <div className="bg-gray-50 rounded-lg p-3 text-center">
+                      <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                         <p className="text-lg font-bold">{facility.currency_code?.toUpperCase()} {(facility.hourly_rate / 100).toFixed(2)}</p>
-                        <p className="text-xs text-gray-500">Hourly Rate</p>
+                        <p className="text-xs text-ds-muted-foreground">Hourly Rate</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-gray-500">
+                    <div className="flex items-center gap-4 text-sm text-ds-muted-foreground">
                       {facility.daily_rate && <span>Daily: {facility.currency_code?.toUpperCase()} {(facility.daily_rate / 100).toFixed(2)}</span>}
                       {facility.operating_hours && <span>Hours: {facility.operating_hours}</span>}
                     </div>

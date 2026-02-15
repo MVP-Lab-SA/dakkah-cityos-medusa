@@ -45,7 +45,7 @@ function VendorInvoicesRoute() {
   const items = data?.items || []
 
   const statusColors: Record<string, string> = {
-    draft: "bg-gray-100 text-gray-800",
+    draft: "bg-ds-muted text-ds-foreground",
     sent: "bg-blue-100 text-blue-800",
     paid: "bg-green-100 text-green-800",
     overdue: "bg-red-100 text-red-800",
@@ -96,31 +96,31 @@ function VendorInvoicesRoute() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white border rounded-lg p-4">
+        <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Total Invoices</p>
           <p className="text-2xl font-bold">{items.length}</p>
         </div>
-        <div className="bg-white border rounded-lg p-4">
+        <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Paid</p>
           <p className="text-2xl font-bold text-green-600">{items.filter((i) => i.status === "paid").length}</p>
         </div>
-        <div className="bg-white border rounded-lg p-4">
+        <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Revenue</p>
           <p className="text-2xl font-bold text-green-600">{formatCurrency(totalRevenue, "USD")}</p>
         </div>
-        <div className="bg-white border rounded-lg p-4">
+        <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Outstanding</p>
           <p className="text-2xl font-bold text-orange-600">{formatCurrency(totalOutstanding, "USD")}</p>
         </div>
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-lg border">
+        <div className="text-center py-16 bg-ds-card rounded-lg border">
           <h3 className="text-lg font-medium mb-2">No invoices found</h3>
           <p className="text-muted-foreground">Your invoices will appear here once orders are processed.</p>
         </div>
       ) : (
-        <div className="bg-white border rounded-lg overflow-hidden">
+        <div className="bg-ds-card border rounded-lg overflow-hidden">
           <table className="w-full">
             <thead className="bg-muted/50">
               <tr>
@@ -138,7 +138,7 @@ function VendorInvoicesRoute() {
                   <td className="px-4 py-3 text-sm text-muted-foreground">{new Date(invoice.created_at).toLocaleDateString()}</td>
                   <td className="px-4 py-3 text-sm text-muted-foreground">{invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : "—"}</td>
                   <td className="px-4 py-3">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[invoice.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[invoice.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {invoice.status}
                     </span>
                   </td>

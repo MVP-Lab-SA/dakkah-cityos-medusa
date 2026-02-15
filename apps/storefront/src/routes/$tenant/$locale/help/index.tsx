@@ -53,7 +53,7 @@ function HelpPage() {
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Help Center</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">Find answers to common questions, browse support topics, or contact our team for assistance.</p>
           <div className="mt-6 max-w-lg mx-auto">
-            <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search for help..." className="w-full px-4 py-3 text-sm rounded-lg bg-white/20 backdrop-blur text-white placeholder:text-white/60 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50" />
+            <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search for help..." className="w-full px-4 py-3 text-sm rounded-lg bg-ds-card/20 backdrop-blur text-white placeholder:text-white/60 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50" />
           </div>
         </div>
       </div>

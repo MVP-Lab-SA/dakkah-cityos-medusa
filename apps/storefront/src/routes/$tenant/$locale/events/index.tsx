@@ -174,9 +174,9 @@ function EventsPage() {
                         <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-teal-600 text-white rounded-md capitalize">{item.event_type}</span>
                       )}
                       {item.starts_at && (
-                        <div className="absolute bottom-2 left-2 bg-white/95 rounded-lg px-2 py-1 text-center shadow-sm">
+                        <div className="absolute bottom-2 left-2 bg-ds-card/95 rounded-lg px-2 py-1 text-center shadow-sm">
                           <div className="text-xs font-bold text-teal-600 uppercase">{new Date(item.starts_at).toLocaleDateString("en-US", { month: "short" })}</div>
-                          <div className="text-lg font-bold text-gray-900 leading-tight">{new Date(item.starts_at).getDate()}</div>
+                          <div className="text-lg font-bold text-ds-foreground leading-tight">{new Date(item.starts_at).getDate()}</div>
                         </div>
                       )}
                       {item.images && item.images.length > 1 && (

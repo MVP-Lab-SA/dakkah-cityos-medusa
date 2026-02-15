@@ -53,7 +53,7 @@ function VendorSubscriptionsRoute() {
 
   const statusColors: Record<string, string> = {
     active: "bg-green-100 text-green-800",
-    draft: "bg-gray-100 text-gray-800",
+    draft: "bg-ds-muted text-ds-foreground",
     archived: "bg-red-100 text-red-800",
   }
 
@@ -87,7 +87,7 @@ function VendorSubscriptionsRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -96,7 +96,7 @@ function VendorSubscriptionsRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No subscription plans yet</p>
           <p className="text-sm">Create your first subscription plan to get started.</p>
         </div>
@@ -108,17 +108,17 @@ function VendorSubscriptionsRoute() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-lg font-semibold">{plan.name}</h3>
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[plan.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[plan.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {plan.status}
                     </span>
                   </div>
                   {plan.description && (
-                    <p className="text-gray-600 text-sm mb-3">{plan.description}</p>
+                    <p className="text-ds-muted-foreground text-sm mb-3">{plan.description}</p>
                   )}
-                  <div className="flex items-center gap-6 text-sm text-gray-500">
-                    <span className="font-medium text-gray-900">
+                  <div className="flex items-center gap-6 text-sm text-ds-muted-foreground">
+                    <span className="font-medium text-ds-foreground">
                       {plan.currency_code?.toUpperCase()} {(plan.price / 100).toFixed(2)}
-                      <span className="text-gray-500 font-normal"> / {plan.billing_interval}</span>
+                      <span className="text-ds-muted-foreground font-normal"> / {plan.billing_interval}</span>
                     </span>
                     {plan.trial_period_days && (
                       <span>{plan.trial_period_days}-day trial</span>
@@ -130,10 +130,10 @@ function VendorSubscriptionsRoute() {
                   {plan.features && plan.features.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mt-3">
                       {plan.features.slice(0, 3).map((f, i) => (
-                        <span key={i} className="px-2 py-0.5 bg-gray-100 text-xs rounded">{f}</span>
+                        <span key={i} className="px-2 py-0.5 bg-ds-muted text-xs rounded">{f}</span>
                       ))}
                       {plan.features.length > 3 && (
-                        <span className="text-xs text-gray-400">+{plan.features.length - 3} more</span>
+                        <span className="text-xs text-ds-muted-foreground/70">+{plan.features.length - 3} more</span>
                       )}
                     </div>
                   )}

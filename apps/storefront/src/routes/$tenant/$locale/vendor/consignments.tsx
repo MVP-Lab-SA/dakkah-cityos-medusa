@@ -84,7 +84,7 @@ function VendorConsignmentsRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -93,7 +93,7 @@ function VendorConsignmentsRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No consignment items yet</p>
           <p className="text-sm">Add items to start managing consignment inventory.</p>
         </div>
@@ -101,7 +101,7 @@ function VendorConsignmentsRoute() {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="border-b text-left text-sm text-gray-500">
+              <tr className="border-b text-left text-sm text-ds-muted-foreground">
                 <th className="py-3 px-4">Item Name</th>
                 <th className="py-3 px-4">Consignor</th>
                 <th className="py-3 px-4">Price</th>
@@ -112,15 +112,15 @@ function VendorConsignmentsRoute() {
             </thead>
             <tbody>
               {items.map((item) => (
-                <tr key={item.id} className="border-b hover:bg-gray-50 transition">
+                <tr key={item.id} className="border-b hover:bg-ds-muted/50 transition">
                   <td className="py-4 px-4 font-medium">{item.item_name}</td>
-                  <td className="py-4 px-4 text-gray-600">{item.consignor}</td>
+                  <td className="py-4 px-4 text-ds-muted-foreground">{item.consignor}</td>
                   <td className="py-4 px-4">
                     {item.currency_code?.toUpperCase()} {(item.price / 100).toFixed(2)}
                   </td>
                   <td className="py-4 px-4">{item.commission_percent}%</td>
                   <td className="py-4 px-4">
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[item.sold_status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[item.sold_status] || "bg-ds-muted text-ds-foreground"}`}>
                       {item.sold_status}
                     </span>
                   </td>

@@ -91,7 +91,7 @@ function VendorTradeInRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -100,7 +100,7 @@ function VendorTradeInRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No trade-in offers yet</p>
           <p className="text-sm">Create trade-in offers to accept used items from customers.</p>
         </div>
@@ -108,7 +108,7 @@ function VendorTradeInRoute() {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="border-b text-left text-sm text-gray-500">
+              <tr className="border-b text-left text-sm text-ds-muted-foreground">
                 <th className="pb-3 pr-4">Item</th>
                 <th className="pb-3 pr-4">Condition</th>
                 <th className="pb-3 pr-4 text-right">Offered Value</th>
@@ -119,19 +119,19 @@ function VendorTradeInRoute() {
             </thead>
             <tbody>
               {items.map((offer) => (
-                <tr key={offer.id} className="border-b hover:bg-gray-50 transition">
+                <tr key={offer.id} className="border-b hover:bg-ds-muted/50 transition">
                   <td className="py-4 pr-4 font-medium">{offer.item_name}</td>
                   <td className="py-4 pr-4">
-                    <span className={`text-sm font-medium capitalize ${conditionColors[offer.condition] || "text-gray-600"}`}>
+                    <span className={`text-sm font-medium capitalize ${conditionColors[offer.condition] || "text-ds-muted-foreground"}`}>
                       {offer.condition}
                     </span>
                   </td>
                   <td className="py-4 pr-4 text-right">
                     {offer.currency_code?.toUpperCase()} {(offer.offered_value / 100).toFixed(2)}
                   </td>
-                  <td className="py-4 pr-4 text-sm text-gray-500">{offer.customer_name}</td>
+                  <td className="py-4 pr-4 text-sm text-ds-muted-foreground">{offer.customer_name}</td>
                   <td className="py-4 pr-4">
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[offer.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[offer.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {offer.status}
                     </span>
                   </td>

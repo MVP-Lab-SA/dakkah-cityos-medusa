@@ -49,7 +49,7 @@ function VendorNewsletterRoute() {
 
   const statusColors: Record<string, string> = {
     sent: "bg-green-100 text-green-800",
-    draft: "bg-gray-100 text-gray-800",
+    draft: "bg-ds-muted text-ds-foreground",
     scheduled: "bg-blue-100 text-blue-800",
     sending: "bg-yellow-100 text-yellow-800",
     failed: "bg-red-100 text-red-800",
@@ -85,7 +85,7 @@ function VendorNewsletterRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -94,7 +94,7 @@ function VendorNewsletterRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No newsletter campaigns yet</p>
           <p className="text-sm">Create your first campaign to engage with your audience.</p>
         </div>
@@ -106,29 +106,29 @@ function VendorNewsletterRoute() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-lg font-semibold">{campaign.subject}</h3>
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[campaign.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[campaign.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {campaign.status}
                     </span>
                   </div>
                   {campaign.preview_text && (
-                    <p className="text-gray-600 text-sm mb-3">{campaign.preview_text}</p>
+                    <p className="text-ds-muted-foreground text-sm mb-3">{campaign.preview_text}</p>
                   )}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3 mb-3">
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{campaign.recipients.toLocaleString()}</p>
-                      <p className="text-xs text-gray-500">Recipients</p>
+                      <p className="text-xs text-ds-muted-foreground">Recipients</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{campaign.open_rate.toFixed(1)}%</p>
-                      <p className="text-xs text-gray-500">Open Rate</p>
+                      <p className="text-xs text-ds-muted-foreground">Open Rate</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{campaign.click_rate.toFixed(1)}%</p>
-                      <p className="text-xs text-gray-500">Click Rate</p>
+                      <p className="text-xs text-ds-muted-foreground">Click Rate</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-sm font-medium">{campaign.sent_date ? new Date(campaign.sent_date).toLocaleDateString() : "—"}</p>
-                      <p className="text-xs text-gray-500">Sent Date</p>
+                      <p className="text-xs text-ds-muted-foreground">Sent Date</p>
                     </div>
                   </div>
                 </div>

@@ -103,7 +103,7 @@ export function LoyaltyDashboardPage({
 
   const tierColors: Record<string, string> = {
     Bronze: "text-orange-600",
-    Silver: "text-gray-500",
+    Silver: "text-ds-muted-foreground",
     Gold: "text-yellow-500",
     Platinum: "text-blue-500",
   }

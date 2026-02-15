@@ -55,7 +55,7 @@ function VendorAdvertisingRoute() {
   const statusColors: Record<string, string> = {
     active: "bg-green-100 text-green-800",
     paused: "bg-yellow-100 text-yellow-800",
-    draft: "bg-gray-100 text-gray-800",
+    draft: "bg-ds-muted text-ds-foreground",
     ended: "bg-red-100 text-red-800",
     scheduled: "bg-blue-100 text-blue-800",
   }
@@ -95,7 +95,7 @@ function VendorAdvertisingRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -104,7 +104,7 @@ function VendorAdvertisingRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No ad campaigns yet</p>
           <p className="text-sm">Create your first campaign to start advertising.</p>
         </div>
@@ -116,36 +116,36 @@ function VendorAdvertisingRoute() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-lg font-semibold">{campaign.name}</h3>
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[campaign.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[campaign.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {campaign.status}
                     </span>
-                    <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
+                    <span className="px-2 py-0.5 text-xs rounded-full bg-ds-muted text-ds-muted-foreground">
                       {campaign.type}
                     </span>
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-3 mb-3">
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{campaign.currency_code?.toUpperCase()} {(campaign.budget / 100).toFixed(2)}</p>
-                      <p className="text-xs text-gray-500">Budget</p>
+                      <p className="text-xs text-ds-muted-foreground">Budget</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{campaign.currency_code?.toUpperCase()} {(campaign.spend / 100).toFixed(2)}</p>
-                      <p className="text-xs text-gray-500">Spend</p>
+                      <p className="text-xs text-ds-muted-foreground">Spend</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{campaign.impressions.toLocaleString()}</p>
-                      <p className="text-xs text-gray-500">Impressions</p>
+                      <p className="text-xs text-ds-muted-foreground">Impressions</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{campaign.clicks.toLocaleString()}</p>
-                      <p className="text-xs text-gray-500">Clicks</p>
+                      <p className="text-xs text-ds-muted-foreground">Clicks</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{getCTR(campaign.clicks, campaign.impressions)}%</p>
-                      <p className="text-xs text-gray-500">CTR</p>
+                      <p className="text-xs text-ds-muted-foreground">CTR</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-gray-500">
+                  <div className="flex items-center gap-4 text-sm text-ds-muted-foreground">
                     {campaign.start_date && <span>Started {new Date(campaign.start_date).toLocaleDateString()}</span>}
                     {campaign.end_date && <span>Ends {new Date(campaign.end_date).toLocaleDateString()}</span>}
                     {campaign.target_audience && <span>Audience: {campaign.target_audience}</span>}

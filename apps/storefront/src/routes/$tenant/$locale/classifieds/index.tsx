@@ -188,7 +188,7 @@ function ClassifiedsPage() {
                         <span className={`absolute top-2 left-2 px-2 py-1 text-xs font-medium rounded-md ${conditionColor(item.condition)}`}>{conditionLabel(item.condition)}</span>
                       )}
                       {item.listing_type && (
-                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-white/90 text-gray-700 rounded-md">{listingTypeLabel(item.listing_type)}</span>
+                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-ds-card/90 text-ds-foreground/80 rounded-md">{listingTypeLabel(item.listing_type)}</span>
                       )}
                       {item.images && item.images.length > 1 && (
                         <div className="absolute bottom-2 right-2 px-2 py-0.5 text-xs font-medium bg-black/50 text-white rounded-md flex items-center gap-1">

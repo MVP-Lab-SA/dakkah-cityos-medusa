@@ -54,7 +54,7 @@ function VendorSocialCommerceRoute() {
 
   const statusColors: Record<string, string> = {
     published: "bg-green-100 text-green-800",
-    draft: "bg-gray-100 text-gray-800",
+    draft: "bg-ds-muted text-ds-foreground",
     scheduled: "bg-blue-100 text-blue-800",
     archived: "bg-red-100 text-red-800",
     pending: "bg-yellow-100 text-yellow-800",
@@ -95,7 +95,7 @@ function VendorSocialCommerceRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -104,7 +104,7 @@ function VendorSocialCommerceRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No social posts yet</p>
           <p className="text-sm">Create your first post to start selling on social platforms.</p>
         </div>
@@ -116,41 +116,41 @@ function VendorSocialCommerceRoute() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-lg font-semibold">{post.title}</h3>
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[post.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[post.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {post.status}
                     </span>
-                    <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
+                    <span className="px-2 py-0.5 text-xs rounded-full bg-ds-muted text-ds-muted-foreground">
                       {post.platform}
                     </span>
                     {post.media_type && (
-                      <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
+                      <span className="px-2 py-0.5 text-xs rounded-full bg-ds-muted text-ds-muted-foreground">
                         {post.media_type}
                       </span>
                     )}
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-3 mb-3">
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{post.likes.toLocaleString()}</p>
-                      <p className="text-xs text-gray-500">Likes</p>
+                      <p className="text-xs text-ds-muted-foreground">Likes</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{post.shares.toLocaleString()}</p>
-                      <p className="text-xs text-gray-500">Shares</p>
+                      <p className="text-xs text-ds-muted-foreground">Shares</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{post.comments.toLocaleString()}</p>
-                      <p className="text-xs text-gray-500">Comments</p>
+                      <p className="text-xs text-ds-muted-foreground">Comments</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{post.sales}</p>
-                      <p className="text-xs text-gray-500">Sales</p>
+                      <p className="text-xs text-ds-muted-foreground">Sales</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{getEngagementRate(post.likes, post.shares, post.comments)}</p>
-                      <p className="text-xs text-gray-500">Engagement</p>
+                      <p className="text-xs text-ds-muted-foreground">Engagement</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-gray-500">
+                  <div className="flex items-center gap-4 text-sm text-ds-muted-foreground">
                     {post.published_at && <span>Published {new Date(post.published_at).toLocaleDateString()}</span>}
                     {post.revenue !== undefined && (
                       <span>Revenue: {post.currency_code?.toUpperCase()} {(post.revenue / 100).toFixed(2)}</span>

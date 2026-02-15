@@ -55,7 +55,7 @@ function VendorTravelRoute() {
 
   const statusColors: Record<string, string> = {
     active: "bg-green-100 text-green-800",
-    draft: "bg-gray-100 text-gray-800",
+    draft: "bg-ds-muted text-ds-foreground",
     sold_out: "bg-purple-100 text-purple-800",
     archived: "bg-red-100 text-red-800",
     seasonal: "bg-blue-100 text-blue-800",
@@ -91,7 +91,7 @@ function VendorTravelRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {(s || "All").replace(/_/g, " ")}
@@ -100,7 +100,7 @@ function VendorTravelRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No travel packages yet</p>
           <p className="text-sm">Create your first travel package to start accepting bookings.</p>
         </div>
@@ -112,15 +112,15 @@ function VendorTravelRoute() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-lg font-semibold">{pkg.title}</h3>
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[pkg.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[pkg.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {pkg.status.replace(/_/g, " ")}
                     </span>
                   </div>
                   {pkg.description && (
-                    <p className="text-gray-600 text-sm mb-3">{pkg.description}</p>
+                    <p className="text-ds-muted-foreground text-sm mb-3">{pkg.description}</p>
                   )}
-                  <div className="flex items-center gap-6 text-sm text-gray-500">
-                    <span className="font-medium text-gray-900">
+                  <div className="flex items-center gap-6 text-sm text-ds-muted-foreground">
+                    <span className="font-medium text-ds-foreground">
                       {pkg.currency_code?.toUpperCase()} {(pkg.price / 100).toFixed(2)}
                     </span>
                     <span>{pkg.destination}</span>
@@ -135,7 +135,7 @@ function VendorTravelRoute() {
                         <span key={i} className="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs rounded">{item}</span>
                       ))}
                       {pkg.includes.length > 4 && (
-                        <span className="text-xs text-gray-400">+{pkg.includes.length - 4} more</span>
+                        <span className="text-xs text-ds-muted-foreground/70">+{pkg.includes.length - 4} more</span>
                       )}
                     </div>
                   )}

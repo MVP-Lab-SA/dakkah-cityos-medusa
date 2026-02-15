@@ -73,7 +73,7 @@ function FinancialPage() {
                   <img src={s.image} alt={s.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-3 left-3">
-                    <span className="px-2 py-1 text-xs font-medium bg-white/90 text-gray-800 rounded-md">{s.rate}</span>
+                    <span className="px-2 py-1 text-xs font-medium bg-ds-card/90 text-ds-foreground rounded-md">{s.rate}</span>
                   </div>
                 </div>
                 <div className="p-5">

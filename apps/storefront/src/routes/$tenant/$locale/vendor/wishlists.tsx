@@ -69,7 +69,7 @@ function VendorWishlistsRoute() {
               key={s}
               onClick={() => setSortBy(s)}
               className={`px-3 py-1.5 text-sm rounded-full border transition ${
-                sortBy === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+                sortBy === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
               }`}
             >
               {s === "most_wishlisted" ? "Most Wishlisted" : "Recently Added"}
@@ -79,7 +79,7 @@ function VendorWishlistsRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No wishlist data yet</p>
           <p className="text-sm">Products will appear here when customers add them to wishlists.</p>
         </div>
@@ -87,7 +87,7 @@ function VendorWishlistsRoute() {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="border-b text-left text-sm text-gray-500">
+              <tr className="border-b text-left text-sm text-ds-muted-foreground">
                 <th className="py-3 px-4">Product</th>
                 <th className="py-3 px-4">Wishlist Count</th>
                 <th className="py-3 px-4">Last Added</th>
@@ -95,7 +95,7 @@ function VendorWishlistsRoute() {
             </thead>
             <tbody>
               {items.map((item) => (
-                <tr key={item.id} className="border-b hover:bg-gray-50 transition">
+                <tr key={item.id} className="border-b hover:bg-ds-muted/50 transition">
                   <td className="py-4 px-4">
                     <div className="flex items-center gap-3">
                       {item.thumbnail && (
@@ -110,7 +110,7 @@ function VendorWishlistsRoute() {
                       <span className="font-semibold">{item.wishlist_count.toLocaleString()}</span>
                     </span>
                   </td>
-                  <td className="py-4 px-4 text-gray-500 text-sm">
+                  <td className="py-4 px-4 text-ds-muted-foreground text-sm">
                     {new Date(item.added_date).toLocaleDateString()}
                   </td>
                 </tr>

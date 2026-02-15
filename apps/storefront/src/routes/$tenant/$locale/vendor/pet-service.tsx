@@ -53,7 +53,7 @@ function VendorPetServiceRoute() {
 
   const statusColors: Record<string, string> = {
     active: "bg-green-100 text-green-800",
-    inactive: "bg-gray-100 text-gray-800",
+    inactive: "bg-ds-muted text-ds-foreground",
     draft: "bg-yellow-100 text-yellow-800",
     suspended: "bg-red-100 text-red-800",
   }
@@ -88,7 +88,7 @@ function VendorPetServiceRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -97,7 +97,7 @@ function VendorPetServiceRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No pet services yet</p>
           <p className="text-sm">Add your first pet service to start accepting bookings.</p>
         </div>
@@ -109,39 +109,39 @@ function VendorPetServiceRoute() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-lg font-semibold">{service.name}</h3>
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[service.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[service.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {service.status}
                     </span>
-                    <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
+                    <span className="px-2 py-0.5 text-xs rounded-full bg-ds-muted text-ds-muted-foreground">
                       {service.service_type}
                     </span>
                   </div>
                   {service.description && (
-                    <p className="text-gray-600 text-sm mb-3">{service.description}</p>
+                    <p className="text-ds-muted-foreground text-sm mb-3">{service.description}</p>
                   )}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3 mb-3">
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{service.currency_code?.toUpperCase()} {(service.price / 100).toFixed(2)}</p>
-                      <p className="text-xs text-gray-500">Price</p>
+                      <p className="text-xs text-ds-muted-foreground">Price</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{service.bookings_count}</p>
-                      <p className="text-xs text-gray-500">Bookings</p>
+                      <p className="text-xs text-ds-muted-foreground">Bookings</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{service.rating.toFixed(1)} ★</p>
-                      <p className="text-xs text-gray-500">Rating{service.review_count ? ` (${service.review_count})` : ""}</p>
+                      <p className="text-xs text-ds-muted-foreground">Rating{service.review_count ? ` (${service.review_count})` : ""}</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <div className="flex flex-wrap justify-center gap-1">
                         {service.pet_types.map((pt, i) => (
-                          <span key={i} className="px-1.5 py-0.5 bg-gray-200 text-xs rounded">{pt}</span>
+                          <span key={i} className="px-1.5 py-0.5 bg-ds-border text-xs rounded">{pt}</span>
                         ))}
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">Pet Types</p>
+                      <p className="text-xs text-ds-muted-foreground mt-1">Pet Types</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-gray-500">
+                  <div className="flex items-center gap-4 text-sm text-ds-muted-foreground">
                     {service.duration && <span>Duration: {service.duration}</span>}
                   </div>
                 </div>

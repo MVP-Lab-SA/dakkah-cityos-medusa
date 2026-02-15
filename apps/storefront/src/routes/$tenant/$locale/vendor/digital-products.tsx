@@ -93,7 +93,7 @@ function VendorDigitalProductsRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No digital products yet</p>
           <p className="text-sm">Upload your first digital product to start selling.</p>
         </div>
@@ -108,12 +108,12 @@ function VendorDigitalProductsRoute() {
                     <div className="flex items-center gap-3 mb-1">
                       <h3 className="text-lg font-semibold">{product.title}</h3>
                       <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${
-                        product.is_active !== false ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
+                        product.is_active !== false ? "bg-green-100 text-green-800" : "bg-ds-muted text-ds-foreground"
                       }`}>
                         {product.is_active !== false ? "Active" : "Inactive"}
                       </span>
                     </div>
-                    <div className="flex items-center gap-6 text-sm text-gray-500 mt-2">
+                    <div className="flex items-center gap-6 text-sm text-ds-muted-foreground mt-2">
                       <span className="uppercase">{product.file_type}</span>
                       <span>{formatBytes(product.file_size_bytes)}</span>
                       {product.version && <span>v{product.version}</span>}
@@ -121,7 +121,7 @@ function VendorDigitalProductsRoute() {
                         <span>{product.download_count} downloads</span>
                       )}
                       {product.max_downloads && (
-                        <span className="text-gray-400">/ {product.max_downloads} max</span>
+                        <span className="text-ds-muted-foreground/70">/ {product.max_downloads} max</span>
                       )}
                     </div>
                     {product.revenue != null && (

@@ -72,7 +72,7 @@ export function EventCard({
   const statusStyles: Record<string, string> = {
     upcoming: "bg-blue-100 text-blue-700",
     ongoing: "bg-green-100 text-green-700",
-    ended: "bg-gray-100 text-gray-500",
+    ended: "bg-ds-muted text-ds-muted-foreground",
     cancelled: "bg-red-100 text-red-700",
     "sold-out": "bg-amber-100 text-amber-700",
   }
@@ -123,7 +123,7 @@ export function EventCard({
               <span className="text-[10px] font-bold text-blue-600 uppercase leading-tight tracking-wider">
                 {month}
               </span>
-              <span className="text-xl font-bold text-gray-900 leading-tight">
+              <span className="text-xl font-bold text-ds-foreground leading-tight">
                 {day}
               </span>
             </div>
@@ -141,7 +141,7 @@ export function EventCard({
 
           {category && (
             <div className="absolute bottom-3 start-3">
-              <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-white/90 text-gray-700 backdrop-blur-sm shadow-sm">
+              <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-white/90 text-ds-foreground/80 backdrop-blur-sm shadow-sm">
                 {category}
               </span>
             </div>
@@ -158,7 +158,7 @@ export function EventCard({
 
         {locationText && (
           <div className="flex items-center gap-1.5 text-sm text-ds-muted-foreground">
-            <svg className="w-4 h-4 flex-shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-4 h-4 flex-shrink-0 text-ds-muted-foreground/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
@@ -172,10 +172,10 @@ export function EventCard({
               <svg className="w-4 h-4 text-amber-400 fill-amber-400" viewBox="0 0 20 20">
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
               </svg>
-              <span className="font-medium text-gray-700">{event.rating}</span>
+              <span className="font-medium text-ds-foreground/80">{event.rating}</span>
             </div>
             {event.total_reviews && (
-              <span className="text-gray-400">({event.total_reviews.toLocaleString()})</span>
+              <span className="text-ds-muted-foreground/70">({event.total_reviews.toLocaleString()})</span>
             )}
           </div>
         )}
@@ -188,7 +188,7 @@ export function EventCard({
               </span>
             ) : priceAmount != null ? (
               <div>
-                <span className="text-xs text-gray-400">From</span>
+                <span className="text-xs text-ds-muted-foreground/70">From</span>
                 <span className="text-lg font-bold text-ds-foreground ml-1">
                   {formatPrice(priceAmount, currencyCode)}
                 </span>

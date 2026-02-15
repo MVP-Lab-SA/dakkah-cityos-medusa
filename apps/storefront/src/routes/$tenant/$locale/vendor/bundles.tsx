@@ -51,7 +51,7 @@ function VendorBundlesRoute() {
 
   const statusColors: Record<string, string> = {
     active: "bg-green-100 text-green-800",
-    draft: "bg-gray-100 text-gray-800",
+    draft: "bg-ds-muted text-ds-foreground",
     archived: "bg-red-100 text-red-800",
   }
 
@@ -85,7 +85,7 @@ function VendorBundlesRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -94,7 +94,7 @@ function VendorBundlesRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No product bundles yet</p>
           <p className="text-sm">Create bundles to offer product combinations at a discount.</p>
         </div>
@@ -106,7 +106,7 @@ function VendorBundlesRoute() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-lg font-semibold">{bundle.name}</h3>
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[bundle.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[bundle.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {bundle.status}
                     </span>
                     {bundle.savings_percent > 0 && (
@@ -116,24 +116,24 @@ function VendorBundlesRoute() {
                     )}
                   </div>
                   {bundle.description && (
-                    <p className="text-gray-600 text-sm mb-3">{bundle.description}</p>
+                    <p className="text-ds-muted-foreground text-sm mb-3">{bundle.description}</p>
                   )}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3">
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{bundle.items_count}</p>
-                      <p className="text-xs text-gray-500">Items</p>
+                      <p className="text-xs text-ds-muted-foreground">Items</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{bundle.currency_code?.toUpperCase()} {(bundle.price / 100).toFixed(2)}</p>
-                      <p className="text-xs text-gray-500">Price</p>
+                      <p className="text-xs text-ds-muted-foreground">Price</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{bundle.savings_percent}%</p>
-                      <p className="text-xs text-gray-500">Savings</p>
+                      <p className="text-xs text-ds-muted-foreground">Savings</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{bundle.sold_count.toLocaleString()}</p>
-                      <p className="text-xs text-gray-500">Sold</p>
+                      <p className="text-xs text-ds-muted-foreground">Sold</p>
                     </div>
                   </div>
                 </div>

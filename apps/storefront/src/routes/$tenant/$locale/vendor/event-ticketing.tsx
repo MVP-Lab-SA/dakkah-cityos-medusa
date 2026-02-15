@@ -45,7 +45,7 @@ function VendorEventTicketingRoute() {
 
   const statusColors: Record<string, string> = {
     active: "bg-green-100 text-green-800",
-    draft: "bg-gray-100 text-gray-800",
+    draft: "bg-ds-muted text-ds-foreground",
     sold_out: "bg-red-100 text-red-800",
     expired: "bg-orange-100 text-orange-800",
     cancelled: "bg-red-100 text-red-600",
@@ -99,38 +99,38 @@ function VendorEventTicketingRoute() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white border rounded-lg p-4">
+        <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Ticket Types</p>
           <p className="text-2xl font-bold">{items.length}</p>
         </div>
-        <div className="bg-white border rounded-lg p-4">
+        <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Total Sold</p>
           <p className="text-2xl font-bold text-green-600">{totalSold}</p>
         </div>
-        <div className="bg-white border rounded-lg p-4">
+        <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Revenue</p>
           <p className="text-2xl font-bold text-green-600">{formatCurrency(totalRevenue, "USD")}</p>
         </div>
-        <div className="bg-white border rounded-lg p-4">
+        <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Active</p>
           <p className="text-2xl font-bold text-blue-600">{items.filter((t) => t.status === "active").length}</p>
         </div>
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-lg border">
+        <div className="text-center py-16 bg-ds-card rounded-lg border">
           <h3 className="text-lg font-medium mb-2">No tickets configured</h3>
           <p className="text-muted-foreground">Create ticket types for your events to start selling.</p>
         </div>
       ) : (
         <div className="space-y-4">
           {items.map((ticket) => (
-            <div key={ticket.id} className="bg-white border rounded-lg p-6">
+            <div key={ticket.id} className="bg-ds-card border rounded-lg p-6">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="font-semibold">{ticket.name}</h3>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[ticket.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[ticket.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {ticket.status?.replace(/_/g, " ")}
                     </span>
                     <span className="text-xs bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded">
@@ -146,7 +146,7 @@ function VendorEventTicketingRoute() {
                     {ticket.sale_ends_at && <span>Sale ends: {new Date(ticket.sale_ends_at).toLocaleDateString()}</span>}
                   </div>
                   <div className="mt-3">
-                    <div className="w-full bg-gray-100 rounded-full h-2">
+                    <div className="w-full bg-ds-muted rounded-full h-2">
                       <div className="bg-green-500 h-2 rounded-full" style={{ width: `${ticket.quantity_available > 0 ? Math.min(((ticket.quantity_sold || 0) / ticket.quantity_available) * 100, 100) : 0}%` }} />
                     </div>
                   </div>

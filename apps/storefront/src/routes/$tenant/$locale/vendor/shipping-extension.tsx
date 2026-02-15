@@ -53,7 +53,7 @@ function VendorShippingExtensionRoute() {
 
   const statusColors: Record<string, string> = {
     active: "bg-green-100 text-green-800",
-    inactive: "bg-gray-100 text-gray-800",
+    inactive: "bg-ds-muted text-ds-foreground",
     draft: "bg-yellow-100 text-yellow-800",
   }
 
@@ -87,7 +87,7 @@ function VendorShippingExtensionRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -96,7 +96,7 @@ function VendorShippingExtensionRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No shipping rates configured</p>
           <p className="text-sm">Add custom shipping rates, zones, and rules for your products.</p>
         </div>
@@ -104,7 +104,7 @@ function VendorShippingExtensionRoute() {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="border-b text-left text-sm text-gray-500">
+              <tr className="border-b text-left text-sm text-ds-muted-foreground">
                 <th className="py-3 px-4">Name</th>
                 <th className="py-3 px-4">Zone</th>
                 <th className="py-3 px-4">Region</th>
@@ -119,31 +119,31 @@ function VendorShippingExtensionRoute() {
             </thead>
             <tbody>
               {items.map((rate) => (
-                <tr key={rate.id} className="border-b hover:bg-gray-50 transition">
+                <tr key={rate.id} className="border-b hover:bg-ds-muted/50 transition">
                   <td className="py-4 px-4 font-medium">{rate.name}</td>
-                  <td className="py-4 px-4 text-gray-600">{rate.zone}</td>
-                  <td className="py-4 px-4 text-gray-600">{rate.region}</td>
+                  <td className="py-4 px-4 text-ds-muted-foreground">{rate.zone}</td>
+                  <td className="py-4 px-4 text-ds-muted-foreground">{rate.region}</td>
                   <td className="py-4 px-4">
-                    <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
+                    <span className="px-2 py-0.5 text-xs rounded-full bg-ds-muted text-ds-muted-foreground">
                       {rate.method}
                     </span>
                   </td>
                   <td className="py-4 px-4">
                     {rate.currency_code?.toUpperCase()} {(rate.rate / 100).toFixed(2)}
                   </td>
-                  <td className="py-4 px-4 text-sm text-gray-600">
+                  <td className="py-4 px-4 text-sm text-ds-muted-foreground">
                     {rate.min_weight || rate.max_weight
                       ? `${rate.min_weight || 0}–${rate.max_weight || "∞"} kg`
                       : "—"}
                   </td>
-                  <td className="py-4 px-4 text-gray-600">
+                  <td className="py-4 px-4 text-ds-muted-foreground">
                     {rate.free_above_threshold
                       ? `${rate.currency_code?.toUpperCase()} ${(rate.free_above_threshold / 100).toFixed(2)}`
                       : "—"}
                   </td>
-                  <td className="py-4 px-4 text-sm text-gray-600">{rate.estimated_days || "—"}</td>
+                  <td className="py-4 px-4 text-sm text-ds-muted-foreground">{rate.estimated_days || "—"}</td>
                   <td className="py-4 px-4">
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[rate.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[rate.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {rate.status}
                     </span>
                   </td>

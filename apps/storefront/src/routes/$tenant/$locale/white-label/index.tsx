@@ -59,7 +59,7 @@ function WhiteLabelPage() {
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>Full brand control</span><span>|</span><span>Custom domain</span><span>|</span><span>Mobile apps</span>
           </div>
-          <button className="mt-8 px-8 py-3 bg-white text-slate-800 font-semibold rounded-lg hover:bg-white/90 transition-colors">Schedule a Demo</button>
+          <button className="mt-8 px-8 py-3 bg-ds-card text-slate-800 font-semibold rounded-lg hover:bg-ds-card/90 transition-colors">Schedule a Demo</button>
         </div>
       </div>
 
@@ -132,7 +132,7 @@ function WhiteLabelPage() {
                         {row[tier] === true ? (
                           <svg className="w-5 h-5 text-green-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                         ) : row[tier] === false ? (
-                          <svg className="w-5 h-5 text-gray-300 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                          <svg className="w-5 h-5 text-ds-muted-foreground/50 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                         ) : (
                           <span className="text-ds-muted-foreground">{row[tier]}</span>
                         )}

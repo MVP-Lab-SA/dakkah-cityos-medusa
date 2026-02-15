@@ -31,7 +31,7 @@ export function PromoBar({
   const variantClasses = {
     primary: "bg-ds-primary text-ds-primary-foreground",
     accent: "bg-ds-accent text-ds-text border-b border-ds-border",
-    dark: "bg-gray-900 text-white",
+    dark: "bg-ds-foreground text-white",
   }
 
   return (

@@ -50,7 +50,7 @@ function VendorShippingRulesRoute() {
 
   const statusColors: Record<string, string> = {
     active: "bg-green-100 text-green-800",
-    inactive: "bg-gray-100 text-gray-800",
+    inactive: "bg-ds-muted text-ds-foreground",
     draft: "bg-yellow-100 text-yellow-800",
   }
 
@@ -84,7 +84,7 @@ function VendorShippingRulesRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -93,7 +93,7 @@ function VendorShippingRulesRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No shipping rules configured</p>
           <p className="text-sm">Add shipping rules to define rates and methods for your products.</p>
         </div>
@@ -101,7 +101,7 @@ function VendorShippingRulesRoute() {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="border-b text-left text-sm text-gray-500">
+              <tr className="border-b text-left text-sm text-ds-muted-foreground">
                 <th className="py-3 px-4">Name</th>
                 <th className="py-3 px-4">Region</th>
                 <th className="py-3 px-4">Method</th>
@@ -113,24 +113,24 @@ function VendorShippingRulesRoute() {
             </thead>
             <tbody>
               {items.map((rule) => (
-                <tr key={rule.id} className="border-b hover:bg-gray-50 transition">
+                <tr key={rule.id} className="border-b hover:bg-ds-muted/50 transition">
                   <td className="py-4 px-4 font-medium">{rule.name}</td>
-                  <td className="py-4 px-4 text-gray-600">{rule.region}</td>
+                  <td className="py-4 px-4 text-ds-muted-foreground">{rule.region}</td>
                   <td className="py-4 px-4">
-                    <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
+                    <span className="px-2 py-0.5 text-xs rounded-full bg-ds-muted text-ds-muted-foreground">
                       {rule.method}
                     </span>
                   </td>
                   <td className="py-4 px-4">
                     {rule.currency_code?.toUpperCase()} {(rule.rate / 100).toFixed(2)}
                   </td>
-                  <td className="py-4 px-4 text-gray-600">
+                  <td className="py-4 px-4 text-ds-muted-foreground">
                     {rule.free_above_threshold
                       ? `${rule.currency_code?.toUpperCase()} ${(rule.free_above_threshold / 100).toFixed(2)}`
                       : "—"}
                   </td>
                   <td className="py-4 px-4">
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[rule.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[rule.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {rule.status}
                     </span>
                   </td>

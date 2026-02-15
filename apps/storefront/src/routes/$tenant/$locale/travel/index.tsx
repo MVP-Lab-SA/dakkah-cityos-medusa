@@ -182,7 +182,7 @@ function TravelPage() {
                         <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-sky-500 text-white rounded-md capitalize">{item.property_type}</span>
                       )}
                       {item.star_rating && (
-                        <div className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-white/90 text-gray-700 rounded-md flex items-center gap-0.5">
+                        <div className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-ds-card/90 text-ds-foreground/80 rounded-md flex items-center gap-0.5">
                           {Array.from({ length: item.star_rating }, (_, i) => (
                             <svg key={i} className="w-3 h-3 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
                               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -207,7 +207,7 @@ function TravelPage() {
                         <div className="flex items-center gap-1.5 mt-2">
                           <div className="flex items-center">
                             {[1, 2, 3, 4, 5].map((star) => (
-                              <svg key={star} className={`w-3.5 h-3.5 ${star <= Math.round(item.rating) ? "text-amber-400" : "text-gray-200"}`} fill="currentColor" viewBox="0 0 20 20">
+                              <svg key={star} className={`w-3.5 h-3.5 ${star <= Math.round(item.rating) ? "text-amber-400" : "text-ds-border"}`} fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                               </svg>
                             ))}
@@ -229,7 +229,7 @@ function TravelPage() {
                             <span key={i} className="px-2 py-0.5 text-xs rounded-full bg-sky-50 text-sky-700 border border-sky-200">{a}</span>
                           ))}
                           {item.amenities.length > 3 && (
-                            <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-500">+{item.amenities.length - 3}</span>
+                            <span className="px-2 py-0.5 text-xs rounded-full bg-ds-muted text-ds-muted-foreground">+{item.amenities.length - 3}</span>
                           )}
                         </div>
                       )}

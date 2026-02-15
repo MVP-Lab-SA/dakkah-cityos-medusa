@@ -54,7 +54,7 @@ function VendorInsuranceRoute() {
 
   const statusColors: Record<string, string> = {
     active: "bg-green-100 text-green-800",
-    draft: "bg-gray-100 text-gray-800",
+    draft: "bg-ds-muted text-ds-foreground",
     suspended: "bg-red-100 text-red-800",
     under_review: "bg-yellow-100 text-yellow-800",
     discontinued: "bg-purple-100 text-purple-800",
@@ -90,7 +90,7 @@ function VendorInsuranceRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s ? s.replace(/_/g, " ") : "All"}
@@ -99,7 +99,7 @@ function VendorInsuranceRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No insurance products yet</p>
           <p className="text-sm">Create your first product to start offering coverage.</p>
         </div>
@@ -111,43 +111,43 @@ function VendorInsuranceRoute() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-lg font-semibold">{product.name}</h3>
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[product.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[product.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {product.status.replace(/_/g, " ")}
                     </span>
-                    <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
+                    <span className="px-2 py-0.5 text-xs rounded-full bg-ds-muted text-ds-muted-foreground">
                       {product.coverage_type}
                     </span>
                   </div>
                   {product.description && (
-                    <p className="text-gray-600 text-sm mb-3">{product.description}</p>
+                    <p className="text-ds-muted-foreground text-sm mb-3">{product.description}</p>
                   )}
                   <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-3 mb-3">
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{product.currency_code?.toUpperCase()} {(product.premium / 100).toFixed(2)}</p>
-                      <p className="text-xs text-gray-500">Premium</p>
+                      <p className="text-xs text-ds-muted-foreground">Premium</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{product.policies_sold}</p>
-                      <p className="text-xs text-gray-500">Policies Sold</p>
+                      <p className="text-xs text-ds-muted-foreground">Policies Sold</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{product.claims_count}</p>
-                      <p className="text-xs text-gray-500">Claims</p>
+                      <p className="text-xs text-ds-muted-foreground">Claims</p>
                     </div>
                     {product.coverage_amount !== undefined && (
-                      <div className="bg-gray-50 rounded-lg p-3 text-center">
+                      <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                         <p className="text-lg font-bold">{product.currency_code?.toUpperCase()} {(product.coverage_amount / 100).toFixed(2)}</p>
-                        <p className="text-xs text-gray-500">Coverage</p>
+                        <p className="text-xs text-ds-muted-foreground">Coverage</p>
                       </div>
                     )}
                     {product.deductible !== undefined && (
-                      <div className="bg-gray-50 rounded-lg p-3 text-center">
+                      <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                         <p className="text-lg font-bold">{product.currency_code?.toUpperCase()} {(product.deductible / 100).toFixed(2)}</p>
-                        <p className="text-xs text-gray-500">Deductible</p>
+                        <p className="text-xs text-ds-muted-foreground">Deductible</p>
                       </div>
                     )}
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-gray-500">
+                  <div className="flex items-center gap-4 text-sm text-ds-muted-foreground">
                     {product.term && <span>Term: {product.term}</span>}
                     {product.claims_ratio !== undefined && <span>Claims Ratio: {product.claims_ratio}%</span>}
                   </div>

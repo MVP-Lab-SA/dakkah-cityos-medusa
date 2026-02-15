@@ -188,7 +188,7 @@ function CampaignsPage() {
                         {item.discount_label || item.discount}
                       </span>
                       {item.type && (
-                        <span className={`absolute top-2 right-2 px-2 py-1 text-xs font-medium text-white rounded-md capitalize ${typeColors[item.type] || "bg-gray-500"}`}>{item.type}</span>
+                        <span className={`absolute top-2 right-2 px-2 py-1 text-xs font-medium text-white rounded-md capitalize ${typeColors[item.type] || "bg-ds-muted-foreground"}`}>{item.type}</span>
                       )}
                     </div>
                     <div className="p-4">

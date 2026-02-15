@@ -187,7 +187,7 @@ function AuctionsPage() {
                           <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-purple-600 text-white rounded-md capitalize">{item.auction_type}</span>
                         )}
                         {item.status && (
-                          <span className={`absolute top-2 right-2 px-2 py-1 text-xs font-medium rounded-md ${item.status === "active" ? "bg-green-500 text-white" : item.status === "upcoming" ? "bg-blue-500 text-white" : "bg-gray-500 text-white"}`}>
+                          <span className={`absolute top-2 right-2 px-2 py-1 text-xs font-medium rounded-md ${item.status === "active" ? "bg-green-500 text-white" : item.status === "upcoming" ? "bg-blue-500 text-white" : "bg-ds-muted-foreground text-white"}`}>
                             {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
                           </span>
                         )}

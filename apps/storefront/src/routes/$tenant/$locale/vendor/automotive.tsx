@@ -56,7 +56,7 @@ function VendorAutomotiveRoute() {
     available: "bg-green-100 text-green-800",
     sold: "bg-purple-100 text-purple-800",
     reserved: "bg-yellow-100 text-yellow-800",
-    draft: "bg-gray-100 text-gray-800",
+    draft: "bg-ds-muted text-ds-foreground",
     pending: "bg-blue-100 text-blue-800",
   }
 
@@ -96,7 +96,7 @@ function VendorAutomotiveRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -105,7 +105,7 @@ function VendorAutomotiveRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No vehicles listed yet</p>
           <p className="text-sm">List your first vehicle to start selling.</p>
         </div>
@@ -117,32 +117,32 @@ function VendorAutomotiveRoute() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-lg font-semibold">{vehicle.year} {vehicle.make} {vehicle.model}</h3>
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[vehicle.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[vehicle.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {vehicle.status}
                     </span>
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${conditionColors[vehicle.condition] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${conditionColors[vehicle.condition] || "bg-ds-muted text-ds-foreground"}`}>
                       {vehicle.condition}
                     </span>
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3 mb-3">
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{vehicle.currency_code?.toUpperCase()} {(vehicle.price / 100).toFixed(2)}</p>
-                      <p className="text-xs text-gray-500">Price</p>
+                      <p className="text-xs text-ds-muted-foreground">Price</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{vehicle.mileage.toLocaleString()}</p>
-                      <p className="text-xs text-gray-500">Mileage</p>
+                      <p className="text-xs text-ds-muted-foreground">Mileage</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{vehicle.year}</p>
-                      <p className="text-xs text-gray-500">Year</p>
+                      <p className="text-xs text-ds-muted-foreground">Year</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-sm font-mono font-bold truncate">{vehicle.vin}</p>
-                      <p className="text-xs text-gray-500">VIN</p>
+                      <p className="text-xs text-ds-muted-foreground">VIN</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-gray-500">
+                  <div className="flex items-center gap-4 text-sm text-ds-muted-foreground">
                     {vehicle.color && <span>Color: {vehicle.color}</span>}
                     {vehicle.fuel_type && <span>Fuel: {vehicle.fuel_type}</span>}
                     {vehicle.transmission && <span>{vehicle.transmission}</span>}

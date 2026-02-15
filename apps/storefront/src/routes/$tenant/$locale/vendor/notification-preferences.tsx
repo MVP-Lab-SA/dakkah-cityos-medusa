@@ -80,7 +80,7 @@ function VendorNotificationPreferencesRoute() {
             key={s}
             onClick={() => setChannelFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              channelFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              channelFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s ? `${channelIcons[s] || ""} ${s.toUpperCase()}` : "All Channels"}
@@ -89,7 +89,7 @@ function VendorNotificationPreferencesRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No notification settings configured</p>
           <p className="text-sm">Configure your notification preferences to stay informed.</p>
         </div>
@@ -103,16 +103,16 @@ function VendorNotificationPreferencesRoute() {
                   <div>
                     <h3 className="font-semibold">{setting.event_type}</h3>
                     {setting.description && (
-                      <p className="text-gray-500 text-sm">{setting.description}</p>
+                      <p className="text-ds-muted-foreground text-sm">{setting.description}</p>
                     )}
-                    <span className="text-xs text-gray-400 mt-1 inline-block">
+                    <span className="text-xs text-ds-muted-foreground/70 mt-1 inline-block">
                       Channel: {setting.channel.toUpperCase()}
                     </span>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className={`px-3 py-1 text-sm rounded-full font-medium ${
-                    setting.enabled ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-500"
+                    setting.enabled ? "bg-green-100 text-green-800" : "bg-ds-muted text-ds-muted-foreground"
                   }`}>
                     {setting.enabled ? "Enabled" : "Disabled"}
                   </span>

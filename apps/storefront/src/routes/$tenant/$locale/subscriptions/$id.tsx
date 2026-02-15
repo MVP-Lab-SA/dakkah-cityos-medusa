@@ -82,13 +82,13 @@ function SubscriptionDetailPage() {
                 <img src={plan.thumbnail || plan.image} alt={plan.title || plan.name} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-violet-50 to-purple-100">
-                  <svg className="w-16 h-16 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-16 h-16 text-ds-primary/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
                 </div>
               )}
               {plan.popular && (
-                <span className="absolute top-4 start-4 px-3 py-1 text-xs font-semibold rounded-full bg-violet-600 text-white">
+                <span className="absolute top-4 start-4 px-3 py-1 text-xs font-semibold rounded-full bg-ds-primary text-white">
                   Most Popular
                 </span>
               )}
@@ -228,9 +228,9 @@ function SubscriptionDetailPage() {
                 </div>
               </div>
 
-              <div className="bg-violet-50 border border-violet-200 rounded-xl p-6">
-                <h3 className="font-semibold text-violet-900 mb-2">Cancel Anytime</h3>
-                <p className="text-sm text-violet-700">No long-term contracts. You can cancel, upgrade, or downgrade your plan at any time.</p>
+              <div className="bg-ds-primary/10 border border-ds-primary/30 rounded-xl p-6">
+                <h3 className="font-semibold text-ds-primary mb-2">Cancel Anytime</h3>
+                <p className="text-sm text-ds-primary">No long-term contracts. You can cancel, upgrade, or downgrade your plan at any time.</p>
               </div>
             </div>
           </aside>

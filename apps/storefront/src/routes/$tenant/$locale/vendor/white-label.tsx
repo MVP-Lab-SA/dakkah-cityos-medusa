@@ -49,7 +49,7 @@ function VendorWhiteLabelRoute() {
 
   const statusColors: Record<string, string> = {
     active: "bg-green-100 text-green-800",
-    draft: "bg-gray-100 text-gray-800",
+    draft: "bg-ds-muted text-ds-foreground",
     archived: "bg-red-100 text-red-800",
     pending: "bg-yellow-100 text-yellow-800",
   }
@@ -84,7 +84,7 @@ function VendorWhiteLabelRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -93,7 +93,7 @@ function VendorWhiteLabelRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No white-label products yet</p>
           <p className="text-sm">Add products and customize branding to get started.</p>
         </div>
@@ -101,7 +101,7 @@ function VendorWhiteLabelRoute() {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="border-b text-left text-sm text-gray-500">
+              <tr className="border-b text-left text-sm text-ds-muted-foreground">
                 <th className="pb-3 pr-4">Product</th>
                 <th className="pb-3 pr-4">Brand</th>
                 <th className="pb-3 pr-4">Category</th>
@@ -113,16 +113,16 @@ function VendorWhiteLabelRoute() {
             </thead>
             <tbody>
               {items.map((product) => (
-                <tr key={product.id} className="border-b hover:bg-gray-50 transition">
+                <tr key={product.id} className="border-b hover:bg-ds-muted/50 transition">
                   <td className="py-4 pr-4 font-medium">{product.name}</td>
                   <td className="py-4 pr-4 text-sm">{product.brand}</td>
-                  <td className="py-4 pr-4 text-sm text-gray-500">{product.category}</td>
+                  <td className="py-4 pr-4 text-sm text-ds-muted-foreground">{product.category}</td>
                   <td className="py-4 pr-4 text-right">
                     {product.currency_code?.toUpperCase()} {(product.price / 100).toFixed(2)}
                   </td>
                   <td className="py-4 pr-4 text-right">{product.orders}</td>
                   <td className="py-4 pr-4">
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[product.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[product.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {product.status}
                     </span>
                   </td>

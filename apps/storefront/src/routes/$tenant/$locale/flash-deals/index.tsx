@@ -197,7 +197,7 @@ function FlashDealsPage() {
                               <span>{stockRemaining} remaining</span>
                               <span>{Math.min(Math.round((1 - stockRemaining / 30) * 100), 95)}% claimed</span>
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div className="w-full bg-ds-border rounded-full h-2">
                               <div className="bg-gradient-to-r from-red-500 to-orange-500 h-2 rounded-full" style={{ width: `${Math.min(Math.round((1 - stockRemaining / 30) * 100), 95)}%` }} />
                             </div>
                           </div>

@@ -155,12 +155,12 @@ function MembershipsPage() {
                     >
                       <div className={`bg-gradient-to-br ${gradient} p-6 text-white text-center relative`}>
                         {item.is_popular && (
-                          <span className="absolute top-2 right-2 px-2 py-1 text-xs font-bold bg-white text-amber-600 rounded-full">Popular</span>
+                          <span className="absolute top-2 right-2 px-2 py-1 text-xs font-bold bg-ds-card text-amber-600 rounded-full">Popular</span>
                         )}
                         <div className="text-4xl mb-2">{tierIcons[tierKey] || "⭐"}</div>
                         <h3 className="text-xl font-bold">{item.name}</h3>
                         {item.tier && (
-                          <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-white/20 rounded-full capitalize">{item.tier}</span>
+                          <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-ds-card/20 rounded-full capitalize">{item.tier}</span>
                         )}
                       </div>
                       <div className="p-5">

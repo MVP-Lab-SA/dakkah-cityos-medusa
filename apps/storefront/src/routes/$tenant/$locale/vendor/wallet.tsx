@@ -78,24 +78,24 @@ function VendorWalletRoute() {
     <div className="container mx-auto py-12">
       <div className="mb-8">
         <h1 className="text-2xl font-bold">Wallet</h1>
-        <p className="text-gray-500 text-sm mt-1">Financial overview and transaction history</p>
+        <p className="text-ds-muted-foreground text-sm mt-1">Financial overview and transaction history</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="border rounded-lg p-6 bg-green-50">
-          <p className="text-sm text-gray-600 mb-1">Available Balance</p>
+          <p className="text-sm text-ds-muted-foreground mb-1">Available Balance</p>
           <p className="text-3xl font-bold text-green-700">
             {currency} {((data?.balance || 0) / 100).toFixed(2)}
           </p>
         </div>
         <div className="border rounded-lg p-6 bg-yellow-50">
-          <p className="text-sm text-gray-600 mb-1">Pending</p>
+          <p className="text-sm text-ds-muted-foreground mb-1">Pending</p>
           <p className="text-3xl font-bold text-yellow-700">
             {currency} {((data?.pending || 0) / 100).toFixed(2)}
           </p>
         </div>
         <div className="border rounded-lg p-6 bg-blue-50">
-          <p className="text-sm text-gray-600 mb-1">Total Earned</p>
+          <p className="text-sm text-ds-muted-foreground mb-1">Total Earned</p>
           <p className="text-3xl font-bold text-blue-700">
             {currency} {((data?.total_earned || 0) / 100).toFixed(2)}
           </p>
@@ -105,7 +105,7 @@ function VendorWalletRoute() {
       <h2 className="text-lg font-semibold mb-4">Transaction History</h2>
 
       {transactions.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No transactions yet</p>
           <p className="text-sm">Transactions will appear here once you start earning.</p>
         </div>
@@ -113,7 +113,7 @@ function VendorWalletRoute() {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="border-b text-left text-sm text-gray-500">
+              <tr className="border-b text-left text-sm text-ds-muted-foreground">
                 <th className="pb-3 pr-4">Date</th>
                 <th className="pb-3 pr-4">Type</th>
                 <th className="pb-3 pr-4 text-right">Amount</th>
@@ -122,19 +122,19 @@ function VendorWalletRoute() {
             </thead>
             <tbody>
               {transactions.map((tx) => (
-                <tr key={tx.id} className="border-b hover:bg-gray-50 transition">
-                  <td className="py-4 pr-4 text-sm text-gray-500">
+                <tr key={tx.id} className="border-b hover:bg-ds-muted/50 transition">
+                  <td className="py-4 pr-4 text-sm text-ds-muted-foreground">
                     {new Date(tx.date).toLocaleDateString()}
                   </td>
                   <td className="py-4 pr-4">
-                    <span className="px-2 py-0.5 text-xs rounded-full font-medium bg-gray-100 text-gray-800 capitalize">
+                    <span className="px-2 py-0.5 text-xs rounded-full font-medium bg-ds-muted text-ds-foreground capitalize">
                       {tx.type}
                     </span>
                   </td>
-                  <td className={`py-4 pr-4 text-right font-medium ${typeColors[tx.type] || "text-gray-900"}`}>
+                  <td className={`py-4 pr-4 text-right font-medium ${typeColors[tx.type] || "text-ds-foreground"}`}>
                     {tx.amount >= 0 ? "+" : ""}{currency} {(Math.abs(tx.amount) / 100).toFixed(2)}
                   </td>
-                  <td className="py-4 text-sm text-gray-500 font-mono">{tx.reference}</td>
+                  <td className="py-4 text-sm text-ds-muted-foreground font-mono">{tx.reference}</td>
                 </tr>
               ))}
             </tbody>

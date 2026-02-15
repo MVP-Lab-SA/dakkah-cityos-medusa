@@ -68,7 +68,7 @@ function VendorReviewsRoute() {
 
   function renderStars(rating: number) {
     return Array.from({ length: 5 }, (_, i) => (
-      <span key={i} className={i < rating ? "text-yellow-400" : "text-gray-300"}>&#9733;</span>
+      <span key={i} className={i < rating ? "text-yellow-400" : "text-ds-muted-foreground/50"}>&#9733;</span>
     ))
   }
 
@@ -105,19 +105,19 @@ function VendorReviewsRoute() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white border rounded-lg p-6">
+        <div className="bg-ds-card border rounded-lg p-6">
           <div className="text-center mb-4">
             <p className="text-5xl font-bold">{avgRating}</p>
             <div className="flex items-center justify-center text-xl mt-1">{renderStars(Math.round(Number(avgRating)))}</div>
             <p className="text-sm text-muted-foreground mt-1">{items.length} total reviews</p>
           </div>
         </div>
-        <div className="bg-white border rounded-lg p-6">
+        <div className="bg-ds-card border rounded-lg p-6">
           <h3 className="font-semibold mb-3">Rating Distribution</h3>
           {ratingDistribution.map((r) => (
             <div key={r.stars} className="flex items-center gap-2 mb-2">
               <span className="text-sm w-12">{r.stars} star</span>
-              <div className="flex-1 bg-gray-100 rounded-full h-2">
+              <div className="flex-1 bg-ds-muted rounded-full h-2">
                 <div className="bg-yellow-400 h-2 rounded-full" style={{ width: `${r.pct}%` }} />
               </div>
               <span className="text-xs text-muted-foreground w-8">{r.count}</span>
@@ -127,14 +127,14 @@ function VendorReviewsRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-lg border">
+        <div className="text-center py-16 bg-ds-card rounded-lg border">
           <h3 className="text-lg font-medium mb-2">No reviews yet</h3>
           <p className="text-muted-foreground">Customer reviews for your products will appear here.</p>
         </div>
       ) : (
         <div className="space-y-4">
           {items.map((review) => (
-            <div key={review.id} className="bg-white border rounded-lg p-6">
+            <div key={review.id} className="bg-ds-card border rounded-lg p-6">
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <div className="flex items-center gap-2 mb-1">

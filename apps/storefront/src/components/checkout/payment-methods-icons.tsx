@@ -39,7 +39,7 @@ function PaymentIcon({ method, size }: { method: PaymentMethod; size: string }) 
 
   return (
     <div className={cls} title={methodLabels[method]} aria-label={methodLabels[method]}>
-      <span className="text-gray-700">{abbreviations[method]}</span>
+      <span className="text-ds-foreground/80">{abbreviations[method]}</span>
     </div>
   )
 }

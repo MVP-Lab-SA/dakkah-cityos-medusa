@@ -52,7 +52,7 @@ function VendorCharityRoute() {
 
   const statusColors: Record<string, string> = {
     active: "bg-green-100 text-green-800",
-    draft: "bg-gray-100 text-gray-800",
+    draft: "bg-ds-muted text-ds-foreground",
     completed: "bg-purple-100 text-purple-800",
     ended: "bg-red-100 text-red-800",
     pending: "bg-yellow-100 text-yellow-800",
@@ -93,7 +93,7 @@ function VendorCharityRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -102,7 +102,7 @@ function VendorCharityRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No charity campaigns yet</p>
           <p className="text-sm">Start your first campaign to begin raising donations.</p>
         </div>
@@ -116,28 +116,28 @@ function VendorCharityRoute() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-lg font-semibold">{campaign.name}</h3>
-                      <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[campaign.status] || "bg-gray-100 text-gray-800"}`}>
+                      <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[campaign.status] || "bg-ds-muted text-ds-foreground"}`}>
                         {campaign.status}
                       </span>
                       {campaign.category && (
-                        <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
+                        <span className="px-2 py-0.5 text-xs rounded-full bg-ds-muted text-ds-muted-foreground">
                           {campaign.category}
                         </span>
                       )}
                     </div>
                     {campaign.description && (
-                      <p className="text-gray-600 text-sm mb-3">{campaign.description}</p>
+                      <p className="text-ds-muted-foreground text-sm mb-3">{campaign.description}</p>
                     )}
-                    <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
+                    <div className="w-full bg-ds-border rounded-full h-2 mb-3">
                       <div
                         className="bg-green-600 h-2 rounded-full transition-all"
                         style={{ width: `${progress}%` }}
                       />
                     </div>
-                    <div className="flex items-center gap-6 text-sm text-gray-500">
-                      <span className="font-medium text-gray-900">
+                    <div className="flex items-center gap-6 text-sm text-ds-muted-foreground">
+                      <span className="font-medium text-ds-foreground">
                         {campaign.currency_code?.toUpperCase()} {(campaign.raised / 100).toFixed(2)}
-                        <span className="text-gray-500 font-normal"> / {(campaign.goal / 100).toFixed(2)}</span>
+                        <span className="text-ds-muted-foreground font-normal"> / {(campaign.goal / 100).toFixed(2)}</span>
                       </span>
                       <span className="font-medium text-green-600">{progress}%</span>
                       <span>{campaign.donors_count} donors</span>

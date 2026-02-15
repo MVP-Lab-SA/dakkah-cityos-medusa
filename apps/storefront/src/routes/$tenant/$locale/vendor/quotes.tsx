@@ -42,7 +42,7 @@ function VendorQuotesRoute() {
   const items = data?.items || []
 
   const statusColors: Record<string, string> = {
-    draft: "bg-gray-100 text-gray-800",
+    draft: "bg-ds-muted text-ds-foreground",
     sent: "bg-blue-100 text-blue-800",
     accepted: "bg-green-100 text-green-800",
     rejected: "bg-red-100 text-red-800",
@@ -90,19 +90,19 @@ function VendorQuotesRoute() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white border rounded-lg p-4">
+        <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Total Quotes</p>
           <p className="text-2xl font-bold">{items.length}</p>
         </div>
-        <div className="bg-white border rounded-lg p-4">
+        <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Accepted</p>
           <p className="text-2xl font-bold text-green-600">{items.filter((q) => q.status === "accepted").length}</p>
         </div>
-        <div className="bg-white border rounded-lg p-4">
+        <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Pending</p>
           <p className="text-2xl font-bold text-blue-600">{items.filter((q) => q.status === "sent").length}</p>
         </div>
-        <div className="bg-white border rounded-lg p-4">
+        <div className="bg-ds-card border rounded-lg p-4">
           <p className="text-sm text-muted-foreground">Conversion Rate</p>
           <p className="text-2xl font-bold text-purple-600">
             {items.length > 0 ? Math.round((items.filter((q) => ["accepted", "converted"].includes(q.status)).length / items.length) * 100) : 0}%
@@ -111,19 +111,19 @@ function VendorQuotesRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-lg border">
+        <div className="text-center py-16 bg-ds-card rounded-lg border">
           <h3 className="text-lg font-medium mb-2">No quotes yet</h3>
           <p className="text-muted-foreground">Create your first quote for a customer.</p>
         </div>
       ) : (
         <div className="space-y-4">
           {items.map((quote) => (
-            <div key={quote.id} className="bg-white border rounded-lg p-6">
+            <div key={quote.id} className="bg-ds-card border rounded-lg p-6">
               <div className="flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="font-semibold">{quote.title}</h3>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[quote.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[quote.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {quote.status}
                     </span>
                   </div>

@@ -56,7 +56,7 @@ function VendorGroceryRoute() {
     available: "bg-green-100 text-green-800",
     out_of_stock: "bg-red-100 text-red-800",
     low_stock: "bg-yellow-100 text-yellow-800",
-    draft: "bg-gray-100 text-gray-800",
+    draft: "bg-ds-muted text-ds-foreground",
     expired: "bg-red-100 text-red-800",
   }
 
@@ -91,7 +91,7 @@ function VendorGroceryRoute() {
           <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
             + Add Product
           </button>
-          <button className="px-4 py-2 border rounded-lg hover:bg-gray-50 transition">
+          <button className="px-4 py-2 border rounded-lg hover:bg-ds-muted/50 transition">
             Manage Inventory
           </button>
         </div>
@@ -103,7 +103,7 @@ function VendorGroceryRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {(s || "All").replace(/_/g, " ")}
@@ -112,7 +112,7 @@ function VendorGroceryRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No grocery products yet</p>
           <p className="text-sm">Add your first product to start selling.</p>
         </div>
@@ -126,10 +126,10 @@ function VendorGroceryRoute() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-lg font-semibold">{product.name}</h3>
-                      <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[product.status] || "bg-gray-100 text-gray-800"}`}>
+                      <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[product.status] || "bg-ds-muted text-ds-foreground"}`}>
                         {product.status.replace(/_/g, " ")}
                       </span>
-                      <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
+                      <span className="px-2 py-0.5 text-xs rounded-full bg-ds-muted text-ds-muted-foreground">
                         {product.category}
                       </span>
                       {product.organic && (
@@ -138,10 +138,10 @@ function VendorGroceryRoute() {
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center gap-6 text-sm text-gray-500">
-                      <span className="font-medium text-gray-900">
+                    <div className="flex items-center gap-6 text-sm text-ds-muted-foreground">
+                      <span className="font-medium text-ds-foreground">
                         {product.currency_code?.toUpperCase()} {(product.price / 100).toFixed(2)}
-                        {product.unit && <span className="text-gray-500 font-normal"> / {product.unit}</span>}
+                        {product.unit && <span className="text-ds-muted-foreground font-normal"> / {product.unit}</span>}
                       </span>
                       <span>Stock: {product.stock}</span>
                       <span className={freshness.color}>Freshness: {freshness.label}</span>

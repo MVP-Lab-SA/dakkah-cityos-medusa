@@ -50,7 +50,7 @@ function VendorCreditRoute() {
 
   const statusColors: Record<string, string> = {
     active: "bg-green-100 text-green-800",
-    draft: "bg-gray-100 text-gray-800",
+    draft: "bg-ds-muted text-ds-foreground",
     suspended: "bg-red-100 text-red-800",
     pending: "bg-yellow-100 text-yellow-800",
   }
@@ -85,7 +85,7 @@ function VendorCreditRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -94,7 +94,7 @@ function VendorCreditRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No credit options yet</p>
           <p className="text-sm">Create financing options to offer customers flexible payment plans.</p>
         </div>
@@ -106,28 +106,28 @@ function VendorCreditRoute() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-lg font-semibold">{option.name}</h3>
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[option.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[option.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {option.status}
                     </span>
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3">
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{option.apr}%</p>
-                      <p className="text-xs text-gray-500">APR</p>
+                      <p className="text-xs text-ds-muted-foreground">APR</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{option.term_months}mo</p>
-                      <p className="text-xs text-gray-500">Term</p>
+                      <p className="text-xs text-ds-muted-foreground">Term</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-sm font-bold">
                         {option.currency_code?.toUpperCase()} {(option.min_amount / 100).toFixed(0)} - {(option.max_amount / 100).toFixed(0)}
                       </p>
-                      <p className="text-xs text-gray-500">Amount Range</p>
+                      <p className="text-xs text-ds-muted-foreground">Amount Range</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{option.applications}</p>
-                      <p className="text-xs text-gray-500">Applications</p>
+                      <p className="text-xs text-ds-muted-foreground">Applications</p>
                     </div>
                   </div>
                 </div>

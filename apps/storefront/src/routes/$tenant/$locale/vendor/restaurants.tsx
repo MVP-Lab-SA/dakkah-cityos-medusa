@@ -82,7 +82,7 @@ function VendorRestaurantsRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No restaurants set up yet</p>
           <p className="text-sm">Set up your restaurant profile to start accepting orders.</p>
         </div>
@@ -91,7 +91,7 @@ function VendorRestaurantsRoute() {
           {items.map((restaurant) => (
             <div key={restaurant.id} className="border rounded-lg overflow-hidden hover:shadow-md transition">
               {restaurant.banner_url && (
-                <div className="h-40 bg-gray-200 overflow-hidden">
+                <div className="h-40 bg-ds-border overflow-hidden">
                   <img src={restaurant.banner_url} alt="" className="w-full h-full object-cover" />
                 </div>
               )}
@@ -105,7 +105,7 @@ function VendorRestaurantsRoute() {
                       <div className="flex items-center gap-3">
                         <h2 className="text-xl font-bold">{restaurant.name}</h2>
                         <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${
-                          restaurant.is_active ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
+                          restaurant.is_active ? "bg-green-100 text-green-800" : "bg-ds-muted text-ds-foreground"
                         }`}>
                           {restaurant.is_active ? "Active" : "Inactive"}
                         </span>
@@ -115,7 +115,7 @@ function VendorRestaurantsRoute() {
                           </span>
                         )}
                       </div>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-ds-muted-foreground">
                         {restaurant.address_line1}, {restaurant.city}
                         {restaurant.state ? `, ${restaurant.state}` : ""} {restaurant.postal_code}
                       </p>
@@ -124,7 +124,7 @@ function VendorRestaurantsRoute() {
                 </div>
 
                 {restaurant.description && (
-                  <p className="text-sm text-gray-600 mb-4">{restaurant.description}</p>
+                  <p className="text-sm text-ds-muted-foreground mb-4">{restaurant.description}</p>
                 )}
 
                 {restaurant.cuisine_types && restaurant.cuisine_types.length > 0 && (
@@ -138,29 +138,29 @@ function VendorRestaurantsRoute() {
                 )}
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                  <div className="bg-gray-50 rounded-lg p-3 text-center">
+                  <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                     <p className="text-lg font-bold">{restaurant.menu_item_count ?? "—"}</p>
-                    <p className="text-xs text-gray-500">Menu Items</p>
+                    <p className="text-xs text-ds-muted-foreground">Menu Items</p>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-3 text-center">
+                  <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                     <p className="text-lg font-bold">{restaurant.reservation_count ?? "—"}</p>
-                    <p className="text-xs text-gray-500">Reservations</p>
+                    <p className="text-xs text-ds-muted-foreground">Reservations</p>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-3 text-center">
+                  <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                     <p className="text-lg font-bold">
                       {restaurant.avg_prep_time_minutes ? `${restaurant.avg_prep_time_minutes}m` : "—"}
                     </p>
-                    <p className="text-xs text-gray-500">Avg Prep Time</p>
+                    <p className="text-xs text-ds-muted-foreground">Avg Prep Time</p>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-3 text-center">
+                  <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                     <p className="text-lg font-bold">
                       {restaurant.delivery_radius_km ? `${restaurant.delivery_radius_km}km` : "—"}
                     </p>
-                    <p className="text-xs text-gray-500">Delivery Radius</p>
+                    <p className="text-xs text-ds-muted-foreground">Delivery Radius</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 text-sm text-gray-500">
+                <div className="flex items-center gap-4 text-sm text-ds-muted-foreground">
                   {restaurant.phone && <span>{restaurant.phone}</span>}
                   {restaurant.email && <span>{restaurant.email}</span>}
                   {restaurant.min_order_amount != null && (
@@ -175,7 +175,7 @@ function VendorRestaurantsRoute() {
                   <button className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition">
                     Update Menu
                   </button>
-                  <button className="px-4 py-2 border text-sm rounded-lg hover:bg-gray-50 transition">
+                  <button className="px-4 py-2 border text-sm rounded-lg hover:bg-ds-muted/50 transition">
                     View Reservations
                   </button>
                 </div>

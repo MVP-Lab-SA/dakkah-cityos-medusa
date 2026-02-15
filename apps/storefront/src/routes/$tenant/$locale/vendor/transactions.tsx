@@ -53,7 +53,7 @@ function VendorTransactionsRoute() {
     pending: "bg-yellow-100 text-yellow-800",
     processing: "bg-blue-100 text-blue-800",
     failed: "bg-red-100 text-red-800",
-    refunded: "bg-gray-100 text-gray-800",
+    refunded: "bg-ds-muted text-ds-foreground",
   }
 
   const typeColors: Record<string, string> = {
@@ -87,13 +87,13 @@ function VendorTransactionsRoute() {
 
       <div className="flex gap-4 mb-6 flex-wrap">
         <div className="flex gap-2 items-center">
-          <span className="text-sm text-gray-500">Type:</span>
+          <span className="text-sm text-ds-muted-foreground">Type:</span>
           {["", "sale", "refund", "payout", "fee", "adjustment"].map((t) => (
             <button
               key={t}
               onClick={() => setTypeFilter(t)}
               className={`px-3 py-1.5 text-sm rounded-full border transition ${
-                typeFilter === t ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+                typeFilter === t ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
               }`}
             >
               {t || "All"}
@@ -101,13 +101,13 @@ function VendorTransactionsRoute() {
           ))}
         </div>
         <div className="flex gap-2 items-center">
-          <span className="text-sm text-gray-500">Status:</span>
+          <span className="text-sm text-ds-muted-foreground">Status:</span>
           {["", "completed", "pending", "processing", "failed", "refunded"].map((s) => (
             <button
               key={s}
               onClick={() => setStatusFilter(s)}
               className={`px-3 py-1.5 text-sm rounded-full border transition ${
-                statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+                statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
               }`}
             >
               {s || "All"}
@@ -117,7 +117,7 @@ function VendorTransactionsRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No transactions yet</p>
           <p className="text-sm">Your transaction history will appear here once you start receiving orders.</p>
         </div>
@@ -125,7 +125,7 @@ function VendorTransactionsRoute() {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="border-b text-left text-sm text-gray-500">
+              <tr className="border-b text-left text-sm text-ds-muted-foreground">
                 <th className="pb-3 pr-4">Date</th>
                 <th className="pb-3 pr-4">Type</th>
                 <th className="pb-3 pr-4">Reference</th>
@@ -136,24 +136,24 @@ function VendorTransactionsRoute() {
             </thead>
             <tbody>
               {items.map((txn) => (
-                <tr key={txn.id} className="border-b hover:bg-gray-50 transition">
-                  <td className="py-4 pr-4 text-sm text-gray-600">
+                <tr key={txn.id} className="border-b hover:bg-ds-muted/50 transition">
+                  <td className="py-4 pr-4 text-sm text-ds-muted-foreground">
                     {new Date(txn.created_at).toLocaleDateString()}
                   </td>
                   <td className="py-4 pr-4">
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${typeColors[txn.type] || "bg-gray-50 text-gray-700"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${typeColors[txn.type] || "bg-ds-muted/50 text-ds-foreground/80"}`}>
                       {txn.type?.replace(/_/g, " ")}
                     </span>
                   </td>
-                  <td className="py-4 pr-4 text-sm font-mono text-gray-500">{txn.reference || "—"}</td>
-                  <td className="py-4 pr-4 text-sm text-gray-600">{txn.description || "—"}</td>
+                  <td className="py-4 pr-4 text-sm font-mono text-ds-muted-foreground">{txn.reference || "—"}</td>
+                  <td className="py-4 pr-4 text-sm text-ds-muted-foreground">{txn.description || "—"}</td>
                   <td className="py-4 pr-4 text-right font-medium">
                     <span className={txn.type === "refund" || txn.type === "fee" ? "text-red-600" : "text-green-600"}>
                       {txn.type === "refund" || txn.type === "fee" ? "−" : "+"}{txn.currency_code?.toUpperCase()} {(Math.abs(txn.amount) / 100).toFixed(2)}
                     </span>
                   </td>
                   <td className="py-4">
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[txn.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[txn.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {txn.status?.replace(/_/g, " ")}
                     </span>
                   </td>

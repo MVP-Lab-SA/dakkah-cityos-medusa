@@ -33,9 +33,9 @@ function AffiliatePage() {
     searchQuery ? t.name.toLowerCase().includes(searchQuery.toLowerCase()) : true
   )
 
-  const colorBorder: Record<string, string> = { gray: "border-gray-300", blue: "border-blue-500 ring-2 ring-blue-500/20", purple: "border-purple-500 ring-2 ring-purple-500/20", amber: "border-amber-500" }
+  const colorBorder: Record<string, string> = { gray: "border-ds-border", blue: "border-blue-500 ring-2 ring-blue-500/20", purple: "border-purple-500 ring-2 ring-purple-500/20", amber: "border-amber-500" }
   const colorBg: Record<string, string> = { gray: "from-gray-500 to-gray-600", blue: "from-blue-500 to-blue-600", purple: "from-purple-500 to-purple-600", amber: "from-amber-500 to-amber-600" }
-  const colorBtn: Record<string, string> = { gray: "bg-gray-600 hover:bg-gray-700", blue: "bg-blue-600 hover:bg-blue-700", purple: "bg-purple-600 hover:bg-purple-700", amber: "bg-amber-600 hover:bg-amber-700" }
+  const colorBtn: Record<string, string> = { gray: "bg-ds-muted-foreground hover:bg-ds-foreground/80", blue: "bg-blue-600 hover:bg-blue-700", purple: "bg-purple-600 hover:bg-purple-700", amber: "bg-amber-600 hover:bg-amber-700" }
 
   return (
     <div className="min-h-screen bg-ds-background">

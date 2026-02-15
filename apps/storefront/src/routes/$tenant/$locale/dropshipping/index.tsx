@@ -43,7 +43,7 @@ function DropshippingPage() {
 
   return (
     <div className="min-h-screen bg-ds-background">
-      <div className="bg-gradient-to-r from-violet-500 to-purple-600 text-white py-16">
+      <div className="bg-gradient-to-r from-ds-primary to-purple-600 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 text-sm text-white/70 mb-4">
             <Link to={`${prefix}` as any} className="hover:text-white transition-colors">Home</Link>
@@ -55,14 +55,14 @@ function DropshippingPage() {
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>No upfront costs</span><span>|</span><span>500+ suppliers</span><span>|</span><span>Automated fulfillment</span>
           </div>
-          <button className="mt-8 px-8 py-3 bg-white text-purple-700 font-semibold rounded-lg hover:bg-white/90 transition-colors">Get Started Free</button>
+          <button className="mt-8 px-8 py-3 bg-ds-card text-purple-700 font-semibold rounded-lg hover:bg-ds-card/90 transition-colors">Get Started Free</button>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {stats.map((s: any, i: number) => (
-            <div key={i} className="bg-gradient-to-br from-violet-500/10 to-purple-500/5 border border-violet-500/20 rounded-xl p-4 text-center">
+            <div key={i} className="bg-gradient-to-br from-ds-primary/10 to-purple-500/5 border border-ds-primary/20 rounded-xl p-4 text-center">
               <p className="text-2xl font-bold text-ds-foreground">{s.value}</p>
               <p className="text-xs text-ds-muted-foreground mt-1">{s.label}</p>
             </div>
@@ -70,7 +70,7 @@ function DropshippingPage() {
         </div>
 
         <div className="mb-6">
-          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search features..." className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-violet-500" />
+          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search features..." className="w-full max-w-md px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-primary" />
         </div>
 
         <h2 className="text-2xl font-bold text-ds-foreground mb-6">Why Dropship With Us</h2>
@@ -83,7 +83,7 @@ function DropshippingPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             {filtered.map((f: any) => (
-              <div key={f.id} className="bg-ds-background border border-ds-border rounded-xl p-6 hover:shadow-lg hover:border-violet-300 transition-all duration-200">
+              <div key={f.id} className="bg-ds-background border border-ds-border rounded-xl p-6 hover:shadow-lg hover:border-ds-primary/50 transition-all duration-200">
                 <div className="text-3xl mb-3">{f.icon}</div>
                 <h3 className="font-semibold text-ds-foreground mb-2">{f.title}</h3>
                 <p className="text-sm text-ds-muted-foreground">{f.description}</p>
@@ -95,10 +95,10 @@ function DropshippingPage() {
         <h2 className="text-2xl font-bold text-ds-foreground mb-6">Pricing Plans</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {plans.map((plan: any, i: number) => (
-            <div key={i} className={`relative bg-ds-background border ${plan.popular ? "border-violet-500 ring-2 ring-violet-500/20" : "border-ds-border"} rounded-xl p-6 hover:shadow-lg transition-all duration-200`}>
-              {plan.popular && <span className="absolute -top-3 left-6 px-3 py-1 text-xs font-bold bg-violet-600 text-white rounded-full">Most Popular</span>}
+            <div key={i} className={`relative bg-ds-background border ${plan.popular ? "border-ds-primary ring-2 ring-ds-primary/20" : "border-ds-border"} rounded-xl p-6 hover:shadow-lg transition-all duration-200`}>
+              {plan.popular && <span className="absolute -top-3 left-6 px-3 py-1 text-xs font-bold bg-ds-primary text-white rounded-full">Most Popular</span>}
               <h3 className="text-xl font-bold text-ds-foreground mb-1">{plan.name}</h3>
-              <p className="text-3xl font-bold text-violet-600 mb-4">{plan.price}</p>
+              <p className="text-3xl font-bold text-ds-primary mb-4">{plan.price}</p>
               <ul className="space-y-2 mb-6">
                 {plan.features.map((f: string, j: number) => (
                   <li key={j} className="flex items-center gap-2 text-sm text-ds-foreground">
@@ -107,7 +107,7 @@ function DropshippingPage() {
                   </li>
                 ))}
               </ul>
-              <button className={`w-full py-2.5 rounded-lg font-medium transition-colors ${plan.popular ? "bg-violet-600 text-white hover:bg-violet-700" : "bg-ds-muted text-ds-foreground hover:bg-ds-muted/80"}`}>{plan.cta}</button>
+              <button className={`w-full py-2.5 rounded-lg font-medium transition-colors ${plan.popular ? "bg-ds-primary text-white hover:bg-ds-primary/90" : "bg-ds-muted text-ds-foreground hover:bg-ds-muted/80"}`}>{plan.cta}</button>
             </div>
           ))}
         </div>
@@ -119,7 +119,7 @@ function DropshippingPage() {
           <div className="grid md:grid-cols-4 gap-8">
             {[{ step: "1", title: "Sign Up", desc: "Create your free account and set up your online store." }, { step: "2", title: "Choose Products", desc: "Browse our catalog and add products to your store." }, { step: "3", title: "Sell Online", desc: "Market products to your audience across any channel." }, { step: "4", title: "We Ship", desc: "We handle packaging and shipping directly to your customers." }].map((s) => (
               <div key={s.step} className="text-center">
-                <div className="w-12 h-12 rounded-full bg-violet-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">{s.step}</div>
+                <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">{s.step}</div>
                 <h3 className="font-semibold text-ds-foreground mb-2">{s.title}</h3>
                 <p className="text-sm text-ds-muted-foreground">{s.desc}</p>
               </div>

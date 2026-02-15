@@ -56,7 +56,7 @@ function VendorEventsRoute() {
 
   const statusColors: Record<string, string> = {
     published: "bg-green-100 text-green-800",
-    draft: "bg-gray-100 text-gray-800",
+    draft: "bg-ds-muted text-ds-foreground",
     live: "bg-purple-100 text-purple-800",
     completed: "bg-blue-100 text-blue-800",
     cancelled: "bg-red-100 text-red-800",
@@ -92,7 +92,7 @@ function VendorEventsRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -101,7 +101,7 @@ function VendorEventsRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No events yet</p>
           <p className="text-sm">Create your first event to start selling tickets.</p>
         </div>
@@ -113,17 +113,17 @@ function VendorEventsRoute() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-lg font-semibold">{event.title}</h3>
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[event.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[event.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {event.status}
                     </span>
-                    <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
+                    <span className="px-2 py-0.5 text-xs rounded-full bg-ds-muted text-ds-muted-foreground">
                       {event.event_type}
                     </span>
                     {event.is_online && (
                       <span className="px-2 py-0.5 text-xs rounded-full bg-blue-50 text-blue-700">Online</span>
                     )}
                   </div>
-                  <div className="flex items-center gap-6 text-sm text-gray-500 mt-2">
+                  <div className="flex items-center gap-6 text-sm text-ds-muted-foreground mt-2">
                     <span>
                       {new Date(event.starts_at).toLocaleDateString()} — {new Date(event.ends_at).toLocaleDateString()}
                     </span>
@@ -137,7 +137,7 @@ function VendorEventsRoute() {
                   {event.tags && event.tags.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mt-3">
                       {event.tags.slice(0, 4).map((tag, i) => (
-                        <span key={i} className="px-2 py-0.5 bg-gray-100 text-xs rounded">{tag}</span>
+                        <span key={i} className="px-2 py-0.5 bg-ds-muted text-xs rounded">{tag}</span>
                       ))}
                     </div>
                   )}

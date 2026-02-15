@@ -176,7 +176,7 @@ function RealEstatePage() {
                         </span>
                       )}
                       {item.property_type && (
-                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-white/90 text-gray-700 rounded-md capitalize">{item.property_type}</span>
+                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-ds-card/90 text-ds-foreground/80 rounded-md capitalize">{item.property_type}</span>
                       )}
                       {item.images && item.images.length > 1 && (
                         <div className="absolute bottom-2 right-2 px-2 py-0.5 text-xs font-medium bg-black/50 text-white rounded-md flex items-center gap-1">

@@ -55,8 +55,10 @@ The platform supports 42 CRUD configurations for various manage verticals, utili
 ## Recent Changes (Feb 2026)
 - **Phase 0 Complete**: Fixed auctions bid query (auction_listing_id→auction_id), financial routing (/financial→/financial-products), vendors data extraction. Created 19 new backend detail endpoints. Added social-commerce seed data fallback.
 - **Phase 1 Complete**: RBAC weight lowered to 20, requiredWeight prop added, module registry expanded with CMS/Platform sections and 28 missing modules, sidebar uses actual user role weight, design token migration for role-guard and sidebar.
-- **Phase 2 Complete**: Migrated 130→3 hardcoded gray/violet colors to ds-* design tokens across 29 manage components and 8 manage route files. Total ds-* token usage: 386 instances. Only 3 intentional semantic status colors remain (emerald/amber/red for status indicators in status-badge.tsx and status-workflow.tsx).
-- **Phase 4 Complete**: Converted 5 duplicate page pairs to redirects (crowdfunding→campaigns, consignment-shop→consignment, dropshipping-marketplace→dropshipping, print-on-demand-shop→print-on-demand, white-label-shop→white-label). All 10 redirect files use TanStack Router's beforeLoad redirect pattern.
+- **Phase 2 Complete**: Migrated 130→0 hardcoded gray colors to ds-* design tokens across 29 manage components and 8 manage route files. Total ds-* token usage: 386 instances.
+- **Phase 3 Complete**: Migrated 65 vendor route files from 591 hardcoded gray/violet colors to ds-* tokens. 619 ds-* token usages in vendor section.
+- **Phase 4 Complete**: Migrated 7 storefront components + ~35 storefront vertical index/detail pages. Converted 5 duplicate page pairs to redirects (crowdfunding→campaigns, consignment-shop→consignment, dropshipping-marketplace→dropshipping, print-on-demand-shop→print-on-demand, white-label-shop→white-label).
+- **Phase 5 Complete**: Final audit — zero hardcoded gray colors remain across all routes (0) and all components (0). Only 3 intentional violet semantic status colors remain (shipped/invited dots in status-badge.tsx and status-workflow.tsx). Total ds-* token usage: 11,859 instances (7,106 in components + 4,753 in routes).
 
 ### System Responsibility Split
 - **Medusa (Commerce Engine):** Products, orders, payments, commissions, marketplace listings, vendor management.

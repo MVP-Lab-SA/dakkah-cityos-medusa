@@ -56,7 +56,7 @@ function VendorFreelanceRoute() {
 
   const statusColors: Record<string, string> = {
     active: "bg-green-100 text-green-800",
-    draft: "bg-gray-100 text-gray-800",
+    draft: "bg-ds-muted text-ds-foreground",
     paused: "bg-yellow-100 text-yellow-800",
     completed: "bg-blue-100 text-blue-800",
     suspended: "bg-red-100 text-red-800",
@@ -92,7 +92,7 @@ function VendorFreelanceRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -101,7 +101,7 @@ function VendorFreelanceRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No gig listings yet</p>
           <p className="text-sm">Post your first gig to start receiving proposals.</p>
         </div>
@@ -113,23 +113,23 @@ function VendorFreelanceRoute() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-lg font-semibold">{gig.title}</h3>
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[gig.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[gig.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {gig.status}
                     </span>
-                    <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
+                    <span className="px-2 py-0.5 text-xs rounded-full bg-ds-muted text-ds-muted-foreground">
                       {gig.listing_type.replace("_", " ")}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">{gig.description}</p>
-                  <div className="flex items-center gap-6 text-sm text-gray-500">
+                  <p className="text-sm text-ds-muted-foreground mb-3 line-clamp-2">{gig.description}</p>
+                  <div className="flex items-center gap-6 text-sm text-ds-muted-foreground">
                     {gig.price != null && (
-                      <span className="font-medium text-gray-900">
+                      <span className="font-medium text-ds-foreground">
                         {gig.currency_code?.toUpperCase()} {(gig.price / 100).toFixed(2)}
                         {gig.listing_type === "fixed_price" ? " fixed" : ""}
                       </span>
                     )}
                     {gig.hourly_rate != null && (
-                      <span className="font-medium text-gray-900">
+                      <span className="font-medium text-ds-foreground">
                         {gig.currency_code?.toUpperCase()} {(gig.hourly_rate / 100).toFixed(2)}/hr
                       </span>
                     )}
@@ -147,7 +147,7 @@ function VendorFreelanceRoute() {
                         <span key={i} className="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs rounded">{tag}</span>
                       ))}
                       {gig.skill_tags.length > 5 && (
-                        <span className="text-xs text-gray-400">+{gig.skill_tags.length - 5} more</span>
+                        <span className="text-xs text-ds-muted-foreground/70">+{gig.skill_tags.length - 5} more</span>
                       )}
                     </div>
                   )}

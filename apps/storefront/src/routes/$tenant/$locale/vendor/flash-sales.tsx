@@ -51,7 +51,7 @@ function VendorFlashSalesRoute() {
   const statusColors: Record<string, string> = {
     active: "bg-green-100 text-green-800",
     scheduled: "bg-blue-100 text-blue-800",
-    draft: "bg-gray-100 text-gray-800",
+    draft: "bg-ds-muted text-ds-foreground",
     ended: "bg-red-100 text-red-800",
   }
 
@@ -85,7 +85,7 @@ function VendorFlashSalesRoute() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 text-sm rounded-full border transition ${
-              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+              statusFilter === s ? "bg-blue-600 text-white border-blue-600" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
             {s || "All"}
@@ -94,7 +94,7 @@ function VendorFlashSalesRoute() {
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-ds-muted-foreground">
           <p className="text-lg mb-2">No flash sales yet</p>
           <p className="text-sm">Create your first flash sale to boost sales with limited-time offers.</p>
         </div>
@@ -106,7 +106,7 @@ function VendorFlashSalesRoute() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-lg font-semibold">{sale.name}</h3>
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[sale.status] || "bg-gray-100 text-gray-800"}`}>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[sale.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {sale.status}
                     </span>
                     <span className="px-2 py-0.5 text-xs rounded-full bg-orange-100 text-orange-800 font-medium">
@@ -114,24 +114,24 @@ function VendorFlashSalesRoute() {
                     </span>
                   </div>
                   {sale.description && (
-                    <p className="text-gray-600 text-sm mb-3">{sale.description}</p>
+                    <p className="text-ds-muted-foreground text-sm mb-3">{sale.description}</p>
                   )}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3 mb-3">
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{sale.items_count}</p>
-                      <p className="text-xs text-gray-500">Items</p>
+                      <p className="text-xs text-ds-muted-foreground">Items</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-lg font-bold">{sale.sold_count.toLocaleString()}</p>
-                      <p className="text-xs text-gray-500">Sold</p>
+                      <p className="text-xs text-ds-muted-foreground">Sold</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-sm font-medium">{new Date(sale.start_time).toLocaleDateString()}</p>
-                      <p className="text-xs text-gray-500">Start</p>
+                      <p className="text-xs text-ds-muted-foreground">Start</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-3 text-center">
+                    <div className="bg-ds-muted/50 rounded-lg p-3 text-center">
                       <p className="text-sm font-medium">{new Date(sale.end_time).toLocaleDateString()}</p>
-                      <p className="text-xs text-gray-500">End</p>
+                      <p className="text-xs text-ds-muted-foreground">End</p>
                     </div>
                   </div>
                 </div>

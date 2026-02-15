@@ -190,22 +190,22 @@ function BlogPage() {
                   <a
                     key={item.id}
                     href={`${prefix}/blog/${item.id}`}
-                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-gray-400 transition-all duration-200"
+                    className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-border transition-all duration-200"
                   >
                     <div className="aspect-[16/10] bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
                       {item.image ? (
                         <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <svg className="w-16 h-16 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>
+                          <svg className="w-16 h-16 text-ds-muted-foreground/50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>
                         </div>
                       )}
                       {item.category && (
-                        <span className={`absolute top-2 left-2 px-2 py-1 text-xs font-medium text-white rounded-md capitalize ${categoryColors[item.category] || "bg-gray-500"}`}>{item.category}</span>
+                        <span className={`absolute top-2 left-2 px-2 py-1 text-xs font-medium text-white rounded-md capitalize ${categoryColors[item.category] || "bg-ds-muted-foreground"}`}>{item.category}</span>
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-ds-foreground group-hover:text-gray-600 transition-colors line-clamp-2">{item.title}</h3>
+                      <h3 className="font-semibold text-ds-foreground group-hover:text-ds-muted-foreground transition-colors line-clamp-2">{item.title}</h3>
                       {item.excerpt && (
                         <p className="text-sm text-ds-muted-foreground mt-2 line-clamp-2">{item.excerpt}</p>
                       )}
@@ -221,7 +221,7 @@ function BlogPage() {
                       </div>
                       <div className="flex justify-between items-center pt-3 mt-3 border-t border-ds-border">
                         <span className="text-xs text-ds-muted-foreground">{item.read_time}</span>
-                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-gray-800 rounded-lg group-hover:bg-gray-900 transition-colors">Read More</span>
+                        <span className="px-3 py-1.5 text-xs font-semibold text-white bg-ds-foreground/90 rounded-lg group-hover:bg-ds-foreground transition-colors">Read More</span>
                       </div>
                     </div>
                   </a>
@@ -238,7 +238,7 @@ function BlogPage() {
           <p className="text-ds-muted-foreground mb-6">Subscribe to our newsletter for the latest articles, guides, and marketplace insights.</p>
           <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
             <input type="email" placeholder="Enter your email" className="flex-1 px-4 py-2.5 text-sm rounded-lg border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-ring" />
-            <button className="px-6 py-2.5 text-sm font-semibold text-white bg-gray-800 rounded-lg hover:bg-gray-900 transition-colors">Subscribe</button>
+            <button className="px-6 py-2.5 text-sm font-semibold text-white bg-ds-foreground/90 rounded-lg hover:bg-ds-foreground transition-colors">Subscribe</button>
           </div>
         </div>
       </section>
