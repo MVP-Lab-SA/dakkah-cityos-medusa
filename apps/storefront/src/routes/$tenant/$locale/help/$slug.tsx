@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
+import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { sanitizeHtml } from "@/lib/utils/sanitize-html"
 import { useState } from "react"
 import { useHelpArticle } from "@/lib/hooks/use-content"
@@ -14,6 +15,17 @@ export const Route = createFileRoute("/$tenant/$locale/help/$slug")({
       { name: "description", content: loaderData?.description || loaderData?.excerpt || "" },
     ],
   }),
+  loader: async ({ params }) => {
+    try {
+      const baseUrl = getServerBaseUrl()
+      const resp = await fetchWithTimeout(`${baseUrl}/platform/cms/help/${params.slug}`, {
+        headers: { "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445" },
+      })
+      if (!resp.ok) return { item: null }
+      const data = await resp.json()
+      return { item: data.item || data }
+    } catch { return { item: null } }
+  },
 })
 
 function HelpArticlePage() {

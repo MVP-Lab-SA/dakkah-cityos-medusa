@@ -17,10 +17,6 @@ interface ServiceProvider {
   }
 }
 
-/**
- * GET /store/bookings/services/:serviceId/providers
- * Get available service providers for a specific service
- */
 export async function GET(
   req: MedusaRequest,
   res: MedusaResponse
@@ -29,45 +25,40 @@ export async function GET(
     const { serviceId } = req.params
     const query = req.scope.resolve("query")
 
-    // Query service providers that can provide this service
-    // This would typically join with a service_provider_services table
     const { data: providers } = await query.graph({
       entity: "service_provider",
       fields: [
         "id",
         "name",
-        "avatar",
+        "avatar_url",
         "title",
         "bio",
-        "rating",
-        "review_count",
-        "specialties",
-        "is_active",
+        "average_rating",
+        "total_reviews",
+        "specializations",
+        "status",
+        "service_ids",
         "metadata",
       ],
       filters: {
-        is_active: true,
-        // Filter by service if we have a join table
-        // services: { id: serviceId }
+        status: "active",
       },
     })
 
-    // Transform and filter providers
     const serviceProviders: ServiceProvider[] = (providers || [])
       .filter((p: any) => {
-        // Check if provider offers this service (from metadata or join)
-        const services = p.metadata?.services || []
-        return services.length === 0 || services.includes(serviceId)
+        const serviceIds = p.service_ids || []
+        return serviceIds.includes(serviceId)
       })
       .map((p: any) => ({
         id: p.id,
         name: p.name,
-        avatar: p.avatar,
+        avatar: p.avatar_url,
         title: p.title,
         bio: p.bio,
-        rating: p.rating || 0,
-        review_count: p.review_count || 0,
-        specialties: p.specialties || [],
+        rating: p.average_rating || 0,
+        review_count: p.total_reviews || 0,
+        specialties: p.specializations || [],
         availability: {
           next_available: p.metadata?.next_available,
           slots_today: p.metadata?.slots_today || 0,
@@ -79,11 +70,10 @@ export async function GET(
       count: serviceProviders.length,
     })
   } catch (error: any) {
-    
-    // Return empty list if providers entity doesn't exist yet
     res.json({
       providers: [],
-      count: 0,})
+      count: 0,
+    })
   }
 }
 

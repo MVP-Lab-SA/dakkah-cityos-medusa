@@ -3,7 +3,6 @@ import { useState, useMemo } from "react"
 import { t } from "@/lib/i18n"
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import {
-  useServiceProviders,
   useProviderAvailability,
   useCreateBooking,
 } from "@/lib/hooks/use-bookings"
@@ -53,17 +52,26 @@ export const Route = createFileRoute("/$tenant/$locale/bookings/$serviceHandle")
   loader: async ({ params }) => {
     try {
       const baseUrl = getServerBaseUrl()
-      const resp = await fetchWithTimeout(`${baseUrl}/store/bookings/services`, {
-        headers: { "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445" },
-      })
-      if (!resp.ok) return { service: null }
+      const headers = { "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445" }
+      const resp = await fetchWithTimeout(`${baseUrl}/store/bookings/services`, { headers })
+      if (!resp.ok) return { service: null, providers: [] }
       const data = await resp.json()
       const services = (data.services || []).map(normalizeServiceDetail)
       const service = services.find(
         (s: any) => s.id === params.serviceHandle || s.handle === params.serviceHandle
       ) || null
-      return { service }
-    } catch { return { service: null } }
+      let providers: any[] = []
+      if (service) {
+        try {
+          const provResp = await fetchWithTimeout(`${baseUrl}/store/bookings/services/${service.id}/providers`, { headers })
+          if (provResp.ok) {
+            const provData = await provResp.json()
+            providers = provData.providers || []
+          }
+        } catch {}
+      }
+      return { service, providers }
+    } catch { return { service: null, providers: [] } }
   },
 })
 
@@ -85,9 +93,8 @@ function ServiceBookingPage() {
   const loaderData = Route.useLoaderData()
   const service = loaderData?.service
   const serviceLoading = false
-  const { data: providers, isLoading: providersLoading } = useServiceProviders(
-    service?.id
-  )
+  const providers = loaderData?.providers || []
+  const providersLoading = false
   const createBooking = useCreateBooking()
 
   const [selectedProvider, setSelectedProvider] = useState<string | null>(null)

@@ -1,28 +1,28 @@
 import { AuthGuard } from "@/components/auth/auth-guard"
 import { createFileRoute } from "@tanstack/react-router"
-import { useQuery } from "@tanstack/react-query"
-import { sdk } from "@/lib/utils/sdk"
+import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { VendorProductForm } from "@/components/vendor/vendor-product-form"
 
 export const Route = createFileRoute("/$tenant/$locale/vendor/products/$productId")({
   component: EditProductRoute,
+  loader: async ({ params }) => {
+    try {
+      const baseUrl = getServerBaseUrl()
+      const resp = await fetchWithTimeout(`${baseUrl}/store/products/${params.productId}`, {
+        headers: { "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445" },
+      })
+      if (!resp.ok) return { product: null }
+      const data = await resp.json()
+      return { product: data.product || data.item || null }
+    } catch { return { product: null } }
+  },
 })
 
 function EditProductRoute() {
-  const { productId } = Route.useParams()
+  const loaderData = Route.useLoaderData()
+  const product = loaderData?.product
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["vendor-product", productId],
-    queryFn: async () => {
-      const response = await sdk.client.fetch<{ product: Record<string, unknown> }>(
-        `/vendor/products/${productId}`,
-        { credentials: "include" }
-      )
-      return response.product
-    },
-  })
-
-  if (isLoading) {
+  if (!product) {
     return (
       <div className="container mx-auto py-12">
         <div className="max-w-3xl mx-auto space-y-6">
@@ -42,7 +42,7 @@ function EditProductRoute() {
       <div className="container mx-auto py-12">
         <VendorProductForm
           mode="edit"
-          initialData={data as Parameters<typeof VendorProductForm>[0]["initialData"]}
+          initialData={product as Parameters<typeof VendorProductForm>[0]["initialData"]}
         />
       </div>
     </AuthGuard>
