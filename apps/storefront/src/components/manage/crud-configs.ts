@@ -2050,4 +2050,78 @@ export const crudConfigs: Record<string, CrudConfig> = {
     ],
     defaultValues: { name: "", plan_type: "standard", duration_months: 12, price: 0, currency_code: "USD", coverage: "", exclusions: "", is_active: true },
   },
+
+  "flash-deals": {
+    moduleKey: "flash-deals",
+    apiEndpoint: "/admin/flash-deals",
+    dataKey: "flash_deals",
+    singularKey: "flash_deal",
+    label: "Flash Deals",
+    singularLabel: "Flash Deal",
+    fields: [
+      { key: "title", label: "Title", type: "text", required: true, placeholder: "Deal title" },
+      { key: "description", label: "Description", type: "textarea", placeholder: "Deal description" },
+      { key: "discount_type", label: "Discount Type", type: "select", options: [
+        { value: "percentage", label: "Percentage" },
+        { value: "fixed", label: "Fixed Amount" },
+      ]},
+      { key: "discount_value", label: "Discount Value", type: "number", required: true, placeholder: "0" },
+      { key: "start_date", label: "Start Date", type: "date" },
+      { key: "end_date", label: "End Date", type: "date" },
+      { key: "stock_limit", label: "Stock Limit", type: "number", placeholder: "0" },
+      { key: "status", label: "Status", type: "select", options: [
+        { value: "scheduled", label: "Scheduled" },
+        { value: "active", label: "Active" },
+        { value: "ended", label: "Ended" },
+        { value: "cancelled", label: "Cancelled" },
+      ]},
+    ],
+    defaultValues: { title: "", description: "", discount_type: "percentage", discount_value: 0, start_date: "", end_date: "", stock_limit: 0, status: "scheduled" },
+  },
+
+  "volume-deals": {
+    moduleKey: "volume-deals",
+    apiEndpoint: "/admin/volume-deals",
+    dataKey: "volume_deals",
+    singularKey: "volume_deal",
+    label: "Volume Deals",
+    singularLabel: "Volume Deal",
+    fields: [
+      { key: "name", label: "Name", type: "text", required: true, placeholder: "Deal name" },
+      { key: "description", label: "Description", type: "textarea", placeholder: "Deal description" },
+      { key: "product_id", label: "Product ID", type: "text", placeholder: "Associated product ID" },
+      { key: "min_order_qty", label: "Min Order Quantity", type: "number", required: true, placeholder: "0" },
+      { key: "max_discount_percent", label: "Max Discount %", type: "number", placeholder: "0" },
+      { key: "tiers", label: "Pricing Tiers (JSON)", type: "textarea", placeholder: '[{"qty": 10, "discount": 5}, {"qty": 50, "discount": 10}]' },
+      { key: "status", label: "Status", type: "select", options: [
+        { value: "active", label: "Active" },
+        { value: "draft", label: "Draft" },
+        { value: "expired", label: "Expired" },
+      ]},
+    ],
+    defaultValues: { name: "", description: "", product_id: "", min_order_qty: 0, max_discount_percent: 0, tiers: "", status: "draft" },
+  },
+
+  b2b: {
+    moduleKey: "b2b",
+    apiEndpoint: "/admin/b2b",
+    dataKey: "b2b",
+    singularKey: "b2b_listing",
+    label: "B2B",
+    singularLabel: "B2B Listing",
+    fields: [
+      { key: "name", label: "Name", type: "text", required: true, placeholder: "Listing name" },
+      { key: "description", label: "Description", type: "textarea", placeholder: "Listing description" },
+      { key: "category", label: "Category", type: "text", placeholder: "Category" },
+      { key: "min_order_value", label: "Min Order Value", type: "number", placeholder: "0" },
+      { key: "bulk_pricing", label: "Bulk Pricing (JSON)", type: "textarea", placeholder: '[{"qty": 100, "price": 9.99}]' },
+      { key: "lead_time_days", label: "Lead Time (days)", type: "number", placeholder: "0" },
+      { key: "status", label: "Status", type: "select", options: [
+        { value: "active", label: "Active" },
+        { value: "draft", label: "Draft" },
+        { value: "inactive", label: "Inactive" },
+      ]},
+    ],
+    defaultValues: { name: "", description: "", category: "", min_order_value: 0, bulk_pricing: "", lead_time_days: 0, status: "draft" },
+  },
 }

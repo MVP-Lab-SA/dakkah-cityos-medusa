@@ -98,6 +98,9 @@ export const MODULE_REGISTRY: ModuleDefinition[] = [
   { key: "events", icon: "Calendar", section: "verticals", scope: "tenant", minWeight: 40, path: "/events" },
   { key: "availability", icon: "Calendar", section: "verticals", scope: "tenant", minWeight: 40, path: "/availability" },
   { key: "print-on-demand", icon: "RocketLaunch", section: "verticals", scope: "tenant", minWeight: 40, path: "/print-on-demand" },
+  { key: "flash-deals", icon: "Bolt", section: "verticals", scope: "tenant", minWeight: 40, path: "/flash-deals" },
+  { key: "volume-deals", icon: "Cash", section: "verticals", scope: "tenant", minWeight: 40, path: "/volume-deals" },
+  { key: "b2b", icon: "Buildings", section: "verticals", scope: "tenant", minWeight: 40, path: "/b2b" },
 
   { key: "advertising", icon: "Target", section: "marketing", scope: "tenant", minWeight: 40, path: "/advertising" },
   { key: "promotions", icon: "Bolt", section: "marketing", scope: "tenant", minWeight: 40, path: "/promotions" },

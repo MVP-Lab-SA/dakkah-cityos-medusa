@@ -7,7 +7,7 @@
 
 ## Table of Contents
 1. [Public Storefront Pages](#1-public-storefront-pages)
-2. [Vertical Listing & Detail Pages (45 Verticals)](#2-vertical-listing--detail-pages-45-verticals)
+2. [Vertical Listing & Detail Pages (46 Verticals)](#2-vertical-listing--detail-pages-46-verticals)
 3. [Account Pages (Auth Required)](#3-account-pages-auth-required)
 4. [Vendor Dashboard (Vendor Auth Required)](#4-vendor-dashboard-vendor-auth-required)
 5. [B2B / Business Pages (B2B Auth Required)](#5-b2b--business-pages-b2b-auth-required)
@@ -16,6 +16,7 @@
 8. [Redirect-Only Routes](#8-redirect-only-routes)
 9. [Accessibility Audit — Orphan Routes](#9-accessibility-audit--orphan-routes)
 10. [Broken Links — Pages Linking to Non-Existent Routes](#10-broken-links--pages-linking-to-non-existent-routes)
+11. [Admin API Endpoints](#11-admin-api-endpoints)
 
 ---
 
@@ -51,7 +52,7 @@ These pages are accessible to all users without login.
 
 ---
 
-## 2. Vertical Listing & Detail Pages (45 Verticals)
+## 2. Vertical Listing & Detail Pages (46 Verticals)
 
 All verticals follow the pattern: listing at `/vertical/` and detail at `/vertical/{id}`.
 These are **public storefront pages** showing available services/products.
@@ -72,37 +73,38 @@ These are **public storefront pages** showing available services/products.
 | 12 | Digital | `/digital/` | `/digital/{id}` | `/store/digital-products` |
 | 13 | Dropshipping | `/dropshipping/` | `/dropshipping/{id}` | `/store/dropshipping` |
 | 14 | Education | `/education/` | `/education/{id}` | `/store/education` |
-| 15 | Events | `/events/` | `/events/{id}` | `/store/events` |
-| 16 | Financial | `/financial/` | `/financial/{id}` | `/store/financial-products` |
-| 17 | Fitness | `/fitness/` | `/fitness/{id}` | `/store/fitness` |
-| 18 | Flash Deals | `/flash-deals/` | `/flash-deals/{id}` | `/store/flash-sales` |
-| 19 | Freelance | `/freelance/` | `/freelance/{id}` | `/store/freelance` |
-| 20 | Gift Cards Shop | `/gift-cards-shop/` | `/gift-cards-shop/{id}` | `/store/gift-cards` |
-| 21 | Government | `/government/` | `/government/{id}` | `/store/government` |
-| 22 | Grocery | `/grocery/` | `/grocery/{id}` | `/store/grocery` |
-| 23 | Healthcare | `/healthcare/` | `/healthcare/{id}` | `/store/healthcare` |
-| 24 | Insurance | `/insurance/` | `/insurance/{id}` | `/store/insurance` |
-| 25 | Legal | `/legal/` | `/legal/{id}` | `/store/legal` |
-| 26 | Loyalty Program | `/loyalty-program/` | `/loyalty-program/{id}` | `/store/loyalty` |
-| 27 | Marketplace | `/marketplace/` | — | `/store/products` |
-| 28 | Memberships | `/memberships/` | `/memberships/{id}` | `/store/memberships` |
-| 29 | Newsletter | `/newsletter/` | `/newsletter/{id}` | `/store/newsletter` |
-| 30 | Parking | `/parking/` | `/parking/{id}` | `/store/parking` |
-| 31 | Pet Services | `/pet-services/` | `/pet-services/{id}` | `/store/pet-services` |
-| 32 | Places | `/places/` | `/places/{id}` | `/store/content/pois` |
-| 33 | Print on Demand | `/print-on-demand/` | `/print-on-demand/{id}` | `/store/print-on-demand` |
-| 34 | Quotes | `/quotes/` | `/quotes/{id}` | `/store/quotes` |
-| 35 | Real Estate | `/real-estate/` | `/real-estate/{id}` | `/store/real-estate` |
-| 36 | Rentals | `/rentals/` | `/rentals/{id}` | `/store/rentals` |
-| 37 | Restaurants | `/restaurants/` | `/restaurants/{id}` | `/store/restaurants` |
-| 38 | Social Commerce | `/social-commerce/` | `/social-commerce/{id}` | `/store/social-commerce` |
-| 39 | Subscriptions | `/subscriptions/` | `/subscriptions/{id}` | `/store/subscriptions` |
-| 40 | Trade-in | `/trade-in/` | `/trade-in/{id}` | `/store/trade-ins` |
-| 41 | Travel | `/travel/` | `/travel/{id}` | `/store/travel` |
-| 42 | Try Before You Buy | `/try-before-you-buy/` | `/try-before-you-buy/{id}` | `/store/try-before-you-buy` |
-| 43 | Volume Deals | `/volume-deals/` | `/volume-deals/{id}` | `/store/volume-deals` |
-| 44 | Warranties | `/warranties/` | `/warranties/{id}` | `/store/warranties` |
-| 45 | White Label | `/white-label/` | `/white-label/{id}` | `/store/white-label` |
+| 15 | Event Ticketing | `/event-ticketing/` | `/event-ticketing/{id}` | `/store/event-ticketing` |
+| 16 | Events | `/events/` | `/events/{id}` | `/store/events` |
+| 17 | Financial | `/financial/` | `/financial/{id}` | `/store/financial-products` |
+| 18 | Fitness | `/fitness/` | `/fitness/{id}` | `/store/fitness` |
+| 19 | Flash Deals | `/flash-deals/` | `/flash-deals/{id}` | `/store/flash-sales` |
+| 20 | Freelance | `/freelance/` | `/freelance/{id}` | `/store/freelance` |
+| 21 | Gift Cards Shop | `/gift-cards-shop/` | `/gift-cards-shop/{id}` | `/store/gift-cards` |
+| 22 | Government | `/government/` | `/government/{id}` | `/store/government` |
+| 23 | Grocery | `/grocery/` | `/grocery/{id}` | `/store/grocery` |
+| 24 | Healthcare | `/healthcare/` | `/healthcare/{id}` | `/store/healthcare` |
+| 25 | Insurance | `/insurance/` | `/insurance/{id}` | `/store/insurance` |
+| 26 | Legal | `/legal/` | `/legal/{id}` | `/store/legal` |
+| 27 | Loyalty Program | `/loyalty-program/` | `/loyalty-program/{id}` | `/store/loyalty` |
+| 28 | Marketplace | `/marketplace/` | — | `/store/products` |
+| 29 | Memberships | `/memberships/` | `/memberships/{id}` | `/store/memberships` |
+| 30 | Newsletter | `/newsletter/` | `/newsletter/{id}` | `/store/newsletter` |
+| 31 | Parking | `/parking/` | `/parking/{id}` | `/store/parking` |
+| 32 | Pet Services | `/pet-services/` | `/pet-services/{id}` | `/store/pet-services` |
+| 33 | Places | `/places/` | `/places/{id}` | `/store/content/pois` |
+| 34 | Print on Demand | `/print-on-demand/` | `/print-on-demand/{id}` | `/store/print-on-demand` |
+| 35 | Quotes | `/quotes/` | `/quotes/{id}` | `/store/quotes` |
+| 36 | Real Estate | `/real-estate/` | `/real-estate/{id}` | `/store/real-estate` |
+| 37 | Rentals | `/rentals/` | `/rentals/{id}` | `/store/rentals` |
+| 38 | Restaurants | `/restaurants/` | `/restaurants/{id}` | `/store/restaurants` |
+| 39 | Social Commerce | `/social-commerce/` | `/social-commerce/{id}` | `/store/social-commerce` |
+| 40 | Subscriptions | `/subscriptions/` | `/subscriptions/{id}` | `/store/subscriptions` |
+| 41 | Trade-in | `/trade-in/` | `/trade-in/{id}` | `/store/trade-ins` |
+| 42 | Travel | `/travel/` | `/travel/{id}` | `/store/travel` |
+| 43 | Try Before You Buy | `/try-before-you-buy/` | `/try-before-you-buy/{id}` | `/store/try-before-you-buy` |
+| 44 | Volume Deals | `/volume-deals/` | `/volume-deals/{id}` | `/store/volume-deals` |
+| 45 | Warranties | `/warranties/` | `/warranties/{id}` | `/store/warranties` |
+| 46 | White Label | `/white-label/` | `/white-label/{id}` | `/store/white-label` |
 
 **Additional Vertical Sub-routes:**
 | Route | Description |
@@ -193,7 +195,7 @@ The account sidebar includes a "Business" section for B2B customers with links t
 
 ## 4. Vendor Dashboard (Vendor Auth Required)
 
-Vendor pages require vendor authentication. The vendor dashboard uses the `VendorLayout` component with 7 collapsible sidebar sections containing 65 navigation items.
+Vendor pages require vendor authentication. The vendor dashboard uses the `VendorLayout` component with 7 collapsible sidebar sections containing 67 navigation items.
 
 ### Vendor Sidebar Navigation (7 collapsible sections):
 
@@ -250,22 +252,24 @@ Vendor pages require vendor authentication. The vendor dashboard uses the `Vendo
 | `/vendor/government` | Government |
 | `/vendor/grocery` | Grocery |
 
-**Marketing (6 items):**
+**Marketing (7 items):**
 | Route | Label |
 |---|---|
 | `/vendor/advertising` | Advertising |
 | `/vendor/affiliate` | Affiliate |
 | `/vendor/social-commerce` | Social Commerce |
 | `/vendor/flash-sales` | Flash Sales |
+| `/vendor/flash-deals` | Flash Deals |
 | `/vendor/crowdfunding` | Crowdfunding |
 | `/vendor/charity` | Charity |
 
-**Finance (8 items):**
+**Finance (9 items):**
 | Route | Label |
 |---|---|
 | `/vendor/credit` | Credit |
 | `/vendor/financial-product` | Financial Product |
 | `/vendor/volume-pricing` | Volume Pricing |
+| `/vendor/volume-deals` | Volume Deals |
 | `/vendor/subscriptions` | Subscriptions |
 | `/vendor/loyalty` | Loyalty |
 | `/vendor/memberships` | Memberships |
@@ -329,7 +333,7 @@ These pages require B2B authentication. The `/business` route redirects to `/b2b
 
 ## 6. Manage / Admin Dashboard (RBAC)
 
-All manage pages require RBAC role-based access (minimum weight 40, platform features require 90). Uses `ManageLayout` with a sidebar powered by a module registry containing 95 modules across 9 sections.
+All manage pages require RBAC role-based access (minimum weight 40, platform features require 90). Uses `ManageLayout` with a sidebar powered by a module registry containing 98 modules across 9 sections.
 
 ### Manage Sidebar Sections & Modules:
 
@@ -368,7 +372,7 @@ All manage pages require RBAC role-based access (minimum weight 40, platform fea
 | Affiliates | `/manage/affiliates` | 40 |
 | Commission Rules | `/manage/commission-rules` | 40 |
 
-**Verticals (38 modules):**
+**Verticals (41 modules):**
 | Module | Route | Min Role Weight |
 |---|---|---|
 | Auctions | `/manage/auctions` | 40 |
@@ -408,6 +412,9 @@ All manage pages require RBAC role-based access (minimum weight 40, platform fea
 | Events | `/manage/events` | 40 |
 | Availability | `/manage/availability` | 40 |
 | Print on Demand | `/manage/print-on-demand` | 40 |
+| Flash Deals | `/manage/flash-deals` | 40 |
+| Volume Deals | `/manage/volume-deals` | 40 |
+| B2B | `/manage/b2b` | 40 |
 
 **Marketing (8 modules):**
 | Module | Route | Min Role Weight |
@@ -561,17 +568,42 @@ The module registry now contains 95 modules across 9 sections. Only 4 route file
 
 ---
 
+## 11. Admin API Endpoints
+
+Backend admin API endpoints at `/api/admin/...` for managing platform features. These are used by the Manage dashboard pages.
+
+| # | Endpoint | Methods | Description |
+|---|---|---|---|
+| 1 | `/admin/b2b` | GET, POST | B2B marketplace management |
+| 2 | `/admin/bundles` | GET, POST | Product bundles management |
+| 3 | `/admin/consignments` | GET, POST | Consignment management |
+| 4 | `/admin/credit` | GET, POST | Store credit management |
+| 5 | `/admin/dropshipping` | GET, POST | Dropshipping management |
+| 6 | `/admin/flash-deals` | GET, POST | Flash deals management |
+| 7 | `/admin/flash-sales` | GET, POST | Flash sales management |
+| 8 | `/admin/gift-cards` | GET, POST | Gift cards management |
+| 9 | `/admin/insurance` | GET, POST | Insurance products management |
+| 10 | `/admin/newsletter` | GET, POST | Newsletter management |
+| 11 | `/admin/print-on-demand` | GET, POST | Print on demand management |
+| 12 | `/admin/trade-ins` | GET, POST | Trade-in program management |
+| 13 | `/admin/try-before-you-buy` | GET, POST | Try before you buy management |
+| 14 | `/admin/volume-deals` | GET, POST | Volume deals management |
+| 15 | `/admin/white-label` | GET, POST | White label management |
+
+---
+
 ## Summary Statistics
 
 | Category | Count |
 |---|---|
-| Total route files | 340 |
+| Total route files | 345 |
 | Public storefront pages | 22 (incl. marketplace, cart, checkout, etc.) |
-| Public storefront verticals | 45 listing + 45 detail |
+| Public storefront verticals | 46 listing + 46 detail |
 | Account routes | 30 |
-| Vendor dashboard routes | 76 |
+| Vendor dashboard routes | 78 |
 | Public vendor pages | 3 (directory + profiles) |
-| Manage/Admin routes | 98 |
+| Manage/Admin routes | 101 |
+| Admin API endpoints | 15 |
 | B2B routes | 4 |
 | Business routes | 5 |
 | Auth/Utility routes | 5 |
