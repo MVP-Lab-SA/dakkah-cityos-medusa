@@ -98,7 +98,6 @@ import { Route as TenantLocaleWarrantiesIdRouteImport } from './routes/$tenant/$
 import { Route as TenantLocaleVolumeDealsIdRouteImport } from './routes/$tenant/$locale/volume-deals/$id'
 import { Route as TenantLocaleVerifyAgeRouteImport } from './routes/$tenant/$locale/verify/age'
 import { Route as TenantLocaleVendorsIdRouteImport } from './routes/$tenant/$locale/vendors/$id'
-import { Route as TenantLocaleVendorsHandleRouteImport } from './routes/$tenant/$locale/vendors/$handle'
 import { Route as TenantLocaleVendorWishlistsRouteImport } from './routes/$tenant/$locale/vendor/wishlists'
 import { Route as TenantLocaleVendorWhiteLabelRouteImport } from './routes/$tenant/$locale/vendor/white-label'
 import { Route as TenantLocaleVendorWarrantyRouteImport } from './routes/$tenant/$locale/vendor/warranty'
@@ -839,12 +838,6 @@ const TenantLocaleVendorsIdRoute = TenantLocaleVendorsIdRouteImport.update({
   path: '/vendors/$id',
   getParentRoute: () => TenantLocaleRoute,
 } as any)
-const TenantLocaleVendorsHandleRoute =
-  TenantLocaleVendorsHandleRouteImport.update({
-    id: '/vendors/$handle',
-    path: '/vendors/$handle',
-    getParentRoute: () => TenantLocaleRoute,
-  } as any)
 const TenantLocaleVendorWishlistsRoute =
   TenantLocaleVendorWishlistsRouteImport.update({
     id: '/vendor/wishlists',
@@ -2661,7 +2654,6 @@ export interface FileRoutesByFullPath {
   '/$tenant/$locale/vendor/warranty': typeof TenantLocaleVendorWarrantyRoute
   '/$tenant/$locale/vendor/white-label': typeof TenantLocaleVendorWhiteLabelRoute
   '/$tenant/$locale/vendor/wishlists': typeof TenantLocaleVendorWishlistsRoute
-  '/$tenant/$locale/vendors/$handle': typeof TenantLocaleVendorsHandleRoute
   '/$tenant/$locale/vendors/$id': typeof TenantLocaleVendorsIdRoute
   '/$tenant/$locale/verify/age': typeof TenantLocaleVerifyAgeRoute
   '/$tenant/$locale/volume-deals/$id': typeof TenantLocaleVolumeDealsIdRoute
@@ -3009,7 +3001,6 @@ export interface FileRoutesByTo {
   '/$tenant/$locale/vendor/warranty': typeof TenantLocaleVendorWarrantyRoute
   '/$tenant/$locale/vendor/white-label': typeof TenantLocaleVendorWhiteLabelRoute
   '/$tenant/$locale/vendor/wishlists': typeof TenantLocaleVendorWishlistsRoute
-  '/$tenant/$locale/vendors/$handle': typeof TenantLocaleVendorsHandleRoute
   '/$tenant/$locale/vendors/$id': typeof TenantLocaleVendorsIdRoute
   '/$tenant/$locale/verify/age': typeof TenantLocaleVerifyAgeRoute
   '/$tenant/$locale/volume-deals/$id': typeof TenantLocaleVolumeDealsIdRoute
@@ -3361,7 +3352,6 @@ export interface FileRoutesById {
   '/$tenant/$locale/vendor/warranty': typeof TenantLocaleVendorWarrantyRoute
   '/$tenant/$locale/vendor/white-label': typeof TenantLocaleVendorWhiteLabelRoute
   '/$tenant/$locale/vendor/wishlists': typeof TenantLocaleVendorWishlistsRoute
-  '/$tenant/$locale/vendors/$handle': typeof TenantLocaleVendorsHandleRoute
   '/$tenant/$locale/vendors/$id': typeof TenantLocaleVendorsIdRoute
   '/$tenant/$locale/verify/age': typeof TenantLocaleVerifyAgeRoute
   '/$tenant/$locale/volume-deals/$id': typeof TenantLocaleVolumeDealsIdRoute
@@ -3714,7 +3704,6 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/vendor/warranty'
     | '/$tenant/$locale/vendor/white-label'
     | '/$tenant/$locale/vendor/wishlists'
-    | '/$tenant/$locale/vendors/$handle'
     | '/$tenant/$locale/vendors/$id'
     | '/$tenant/$locale/verify/age'
     | '/$tenant/$locale/volume-deals/$id'
@@ -4062,7 +4051,6 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/vendor/warranty'
     | '/$tenant/$locale/vendor/white-label'
     | '/$tenant/$locale/vendor/wishlists'
-    | '/$tenant/$locale/vendors/$handle'
     | '/$tenant/$locale/vendors/$id'
     | '/$tenant/$locale/verify/age'
     | '/$tenant/$locale/volume-deals/$id'
@@ -4413,7 +4401,6 @@ export interface FileRouteTypes {
     | '/$tenant/$locale/vendor/warranty'
     | '/$tenant/$locale/vendor/white-label'
     | '/$tenant/$locale/vendor/wishlists'
-    | '/$tenant/$locale/vendors/$handle'
     | '/$tenant/$locale/vendors/$id'
     | '/$tenant/$locale/verify/age'
     | '/$tenant/$locale/volume-deals/$id'
@@ -5118,13 +5105,6 @@ declare module '@tanstack/react-router' {
       path: '/vendors/$id'
       fullPath: '/$tenant/$locale/vendors/$id'
       preLoaderRoute: typeof TenantLocaleVendorsIdRouteImport
-      parentRoute: typeof TenantLocaleRoute
-    }
-    '/$tenant/$locale/vendors/$handle': {
-      id: '/$tenant/$locale/vendors/$handle'
-      path: '/vendors/$handle'
-      fullPath: '/$tenant/$locale/vendors/$handle'
-      preLoaderRoute: typeof TenantLocaleVendorsHandleRouteImport
       parentRoute: typeof TenantLocaleRoute
     }
     '/$tenant/$locale/vendor/wishlists': {
@@ -7307,7 +7287,6 @@ interface TenantLocaleRouteChildren {
   TenantLocaleVendorWarrantyRoute: typeof TenantLocaleVendorWarrantyRoute
   TenantLocaleVendorWhiteLabelRoute: typeof TenantLocaleVendorWhiteLabelRoute
   TenantLocaleVendorWishlistsRoute: typeof TenantLocaleVendorWishlistsRoute
-  TenantLocaleVendorsHandleRoute: typeof TenantLocaleVendorsHandleRoute
   TenantLocaleVendorsIdRoute: typeof TenantLocaleVendorsIdRoute
   TenantLocaleVerifyAgeRoute: typeof TenantLocaleVerifyAgeRoute
   TenantLocaleVolumeDealsIdRoute: typeof TenantLocaleVolumeDealsIdRoute
@@ -7670,7 +7649,6 @@ const TenantLocaleRouteChildren: TenantLocaleRouteChildren = {
   TenantLocaleVendorWarrantyRoute: TenantLocaleVendorWarrantyRoute,
   TenantLocaleVendorWhiteLabelRoute: TenantLocaleVendorWhiteLabelRoute,
   TenantLocaleVendorWishlistsRoute: TenantLocaleVendorWishlistsRoute,
-  TenantLocaleVendorsHandleRoute: TenantLocaleVendorsHandleRoute,
   TenantLocaleVendorsIdRoute: TenantLocaleVendorsIdRoute,
   TenantLocaleVerifyAgeRoute: TenantLocaleVerifyAgeRoute,
   TenantLocaleVolumeDealsIdRoute: TenantLocaleVolumeDealsIdRoute,
