@@ -20,6 +20,16 @@ The backend provides modularity for CityOS features including tenant management,
 ### Storefront
 The storefront uses TanStack Start with React for SSR, dynamic routing, and file-based routing. It implements a centralized design system, ensuring consistent context via a robust provider chain, tenant-scoped routes, and a comprehensive Payload CMS-compatible block system with 76 block types. All UI follows mobile-first responsive patterns and utilizes design tokens. The system supports full logical CSS properties for RTL/LTR, with `dir="rtl"` for Arabic locales, and i18n integration using a `locale` prop for translations across 30+ namespaces in en/fr/ar JSON files.
 
+### Vertical Page Pattern (53+ pages)
+All vertical storefront pages follow a consistent SSR pattern established by the bookings page:
+- **SSR Loader**: `createFileRoute` with async loader fetching from `http://localhost:9000` (server) or relative URL (client)
+- **API Key**: All requests include `x-publishable-api-key` header
+- **Data Extraction**: `data.items || data.listings || data.products || []` with metadata JSON parsing for images, ratings, prices
+- **UI Structure**: Gradient hero (unique colors per vertical) → Search + sidebar filters → Responsive card grid → "How It Works" section
+- **Fallback Data**: Pages without backend endpoints use hardcoded data in loader (blog, campaigns, government, loyalty, etc.)
+- **Image Sources**: Unsplash URLs stored in `metadata.images` array and `metadata.thumbnail` field
+- **Files start with**: `// @ts-nocheck` to bypass strict TypeScript checking
+
 ### CMS Integration
 A local CMS registry defines 27 commerce verticals and additional pages, supporting `countryCode` and `regionZone` for country-level unification. Backend endpoints provide Payload-compatible responses, and frontend hooks use React Query. The local registry is designed for seamless migration to Payload CMS. A CMS Hierarchy Sync Engine keeps 8 collections synchronized from Payload CMS to ERPNext.
 
