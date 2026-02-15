@@ -21,7 +21,7 @@ export class IntegrationRegistry {
 
   registerAdapter(adapter: IIntegrationAdapter): void {
     this.adapters.set(adapter.name, adapter)
-    logger.info("[IntegrationOrchestrator] Adapter registered: ${adapter.name} (configured: ${adapter.isConfigured()})")
+    logger.info(`[IntegrationOrchestrator] Adapter registered: ${adapter.name} (configured: ${adapter.isConfigured()})`)
   }
 
   getAdapter(name: string): IIntegrationAdapter | undefined {
@@ -99,7 +99,7 @@ export function createDefaultAdapters(): IIntegrationAdapter[] {
         }
       },
       async handleWebhook(event, payload) {
-        logger.info("[IntegrationOrchestrator] Payload webhook: ${event}")
+        logger.info(`[IntegrationOrchestrator] Payload webhook: ${event}`)
         return { processed: true }
       },
     },
@@ -135,7 +135,7 @@ export function createDefaultAdapters(): IIntegrationAdapter[] {
         }
       },
       async handleWebhook(event, payload) {
-        logger.info("[IntegrationOrchestrator] ERPNext webhook: ${event}")
+        logger.info(`[IntegrationOrchestrator] ERPNext webhook: ${event}`)
         return { processed: true }
       },
     },
@@ -171,7 +171,7 @@ export function createDefaultAdapters(): IIntegrationAdapter[] {
         }
       },
       async handleWebhook(event, payload) {
-        logger.info("[IntegrationOrchestrator] Fleetbase webhook: ${event}")
+        logger.info(`[IntegrationOrchestrator] Fleetbase webhook: ${event}`)
         return { processed: true }
       },
     },
@@ -207,7 +207,7 @@ export function createDefaultAdapters(): IIntegrationAdapter[] {
         }
       },
       async handleWebhook(event, payload) {
-        logger.info("[IntegrationOrchestrator] Walt.id webhook: ${event}")
+        logger.info(`[IntegrationOrchestrator] Walt.id webhook: ${event}`)
         return { processed: true }
       },
     },
@@ -243,7 +243,7 @@ export function createDefaultAdapters(): IIntegrationAdapter[] {
         }
       },
       async handleWebhook(event, payload) {
-        logger.info("[IntegrationOrchestrator] Stripe webhook: ${event}")
+        logger.info(`[IntegrationOrchestrator] Stripe webhook: ${event}`)
         return { processed: true }
       },
     },

@@ -299,7 +299,7 @@ export class MedusaToPayloadSync {
         await this.client.post("/api/governance-policies", policyData);
       }
     } catch (err: any) {
-      logger.info("[PayloadSync] Failed to sync governance policies for tenant ${tenantId}: ${err.message}");
+      logger.info(`[PayloadSync] Failed to sync governance policies for tenant ${tenantId}: ${err.message}`);
       throw err;
     }
   }

@@ -89,9 +89,9 @@ function BundlesPage() {
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>{items.length} bundles available</span>
             <span>|</span>
-            <span>Great savings</span>
+            <span>{t(locale, "bundles.badge_great_savings", "Great savings")}</span>
             <span>|</span>
-            <span>Curated selections</span>
+            <span>{t(locale, "bundles.badge_curated_selections", "Curated selections")}</span>
           </div>
         </div>
       </div>

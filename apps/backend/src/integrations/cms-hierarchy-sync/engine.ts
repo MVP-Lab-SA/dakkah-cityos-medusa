@@ -70,7 +70,7 @@ export class CMSHierarchySyncEngine {
       try {
         const result = await this.syncCollection(entry.collection)
         results.push(result)
-        logger.info("[CMSHierarchySync] ${entry.collection}: ${result.created} created, ${result.updated} updated, ${result.failed} failed")
+        logger.info(`[CMSHierarchySync] ${entry.collection}: ${result.created} created, ${result.updated} updated, ${result.failed} failed`)
       } catch (err: any) {
         console.error(`[CMSHierarchySync] Fatal error syncing ${entry.collection}: ${err.message}`)
         results.push({
@@ -94,7 +94,7 @@ export class CMSHierarchySyncEngine {
       throw new Error(`[CMSHierarchySync] Unknown collection: ${collection}`)
     }
 
-    logger.info("[CMSHierarchySync] Syncing collection: ${collection} → ${entry.doctype}")
+    logger.info(`[CMSHierarchySync] Syncing collection: ${collection} → ${entry.doctype}`)
 
     const docs = await this.fetchPayloadDocs(collection)
     const result: SyncResult = {
@@ -130,7 +130,7 @@ export class CMSHierarchySyncEngine {
         }
 
         await this.syncTracker.updateStatus(syncEntry.id, "completed")
-        logger.info("[CMSHierarchySync] ${created ? "Created" : "Updated"} ${entry.doctype} "${name}" (cms_ref: ${doc.id})")
+        logger.info(`[CMSHierarchySync] ${created ? "Created" : "Updated"} ${entry.doctype} "${name}" (cms_ref: ${doc.id})`)
       } catch (err: any) {
         result.failed++
         result.errors.push(`${doc.id}: ${err.message}`)
@@ -171,7 +171,7 @@ export class CMSHierarchySyncEngine {
       page++
     }
 
-    logger.info("[CMSHierarchySync] Fetched ${allDocs.length} docs from Payload collection "${collection}"")
+    logger.info(`[CMSHierarchySync] Fetched ${allDocs.length} docs from Payload collection "${collection}"`)
     return allDocs
   }
 

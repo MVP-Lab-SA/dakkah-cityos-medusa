@@ -1,5 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework";
-import { handleApiError } from "../../../../lib/api-error-handler"
+import { handleApiError } from "../../../../../lib/api-error-handler"
 
 // POST /store/subscriptions/:id/cancel - Customer cancels their subscription
 export async function POST(req: MedusaRequest, res: MedusaResponse) {

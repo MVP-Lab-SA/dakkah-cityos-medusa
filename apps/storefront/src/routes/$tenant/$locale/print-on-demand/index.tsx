@@ -14,18 +14,18 @@ export const Route = createFileRoute("/$tenant/$locale/print-on-demand/")({
   loader: async () => {
     try {
       const products = [
-        { id: "1", name: "T-Shirts", description: "Premium cotton tees in 20+ colors. Perfect for custom designs, logos, and artwork.", startingAt: "35 SAR", image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=300&fit=crop" },
-        { id: "2", name: "Hoodies", description: "Comfortable fleece hoodies with full-color front and back printing options.", startingAt: "89 SAR", image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=300&fit=crop" },
-        { id: "3", name: "Mugs", description: "Ceramic mugs with vibrant, dishwasher-safe prints. 11oz and 15oz sizes available.", startingAt: "25 SAR", image: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=400&h=300&fit=crop" },
-        { id: "4", name: "Phone Cases", description: "Durable phone cases with high-resolution prints for iPhone and Samsung models.", startingAt: "39 SAR", image: "https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?w=400&h=300&fit=crop" },
-        { id: "5", name: "Tote Bags", description: "Eco-friendly canvas tote bags with all-over print or centered designs.", startingAt: "29 SAR", image: "https://images.unsplash.com/photo-1597633425046-08f5110420b5?w=400&h=300&fit=crop" },
-        { id: "6", name: "Posters & Art", description: "Museum-quality prints on premium paper. Multiple sizes from A4 to A1.", startingAt: "19 SAR", image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=400&h=300&fit=crop" },
+        { id: "1", name: "T-Shirts", description: t(locale, "printOnDemand.description1_premium_cotton_tees", "Premium cotton tees in 20+ colors. Perfect for custom designs, logos, and artwork."), startingAt: "35 SAR", image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=300&fit=crop" },
+        { id: "2", name: "Hoodies", description: t(locale, "printOnDemand.description2_comfortable_fleece_h", "Comfortable fleece hoodies with full-color front and back printing options."), startingAt: "89 SAR", image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=300&fit=crop" },
+        { id: "3", name: "Mugs", description: t(locale, "printOnDemand.description3_ceramic_mugs_with_vi", "Ceramic mugs with vibrant, dishwasher-safe prints. 11oz and 15oz sizes available."), startingAt: "25 SAR", image: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=400&h=300&fit=crop" },
+        { id: "4", name: "Phone Cases", description: t(locale, "printOnDemand.description4_durable_phone_cases", "Durable phone cases with high-resolution prints for iPhone and Samsung models."), startingAt: "39 SAR", image: "https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?w=400&h=300&fit=crop" },
+        { id: "5", name: "Tote Bags", description: t(locale, "printOnDemand.description5_eco_friendly_canvas", "Eco-friendly canvas tote bags with all-over print or centered designs."), startingAt: "29 SAR", image: "https://images.unsplash.com/photo-1597633425046-08f5110420b5?w=400&h=300&fit=crop" },
+        { id: "6", name: "Posters & Art", description: t(locale, "printOnDemand.description6_museum_quality_print", "Museum-quality prints on premium paper. Multiple sizes from A4 to A1."), startingAt: "19 SAR", image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=400&h=300&fit=crop" },
       ]
       const benefits = [
-        { title: "Zero Upfront Costs", description: "No inventory, no minimum orders. Products are printed only when ordered.", icon: "💸" },
-        { title: "Easy Design Tools", description: "Upload your designs or use our built-in editor with templates and mockups.", icon: "🎨" },
-        { title: "Global Shipping", description: "We ship to 30+ countries with tracking on every order.", icon: "🌍" },
-        { title: "Quality Guarantee", description: "Premium materials and printing. Unhappy? We reprint or refund.", icon: "✅" },
+        { title: t(locale, "printOnDemand.title7_zero_upfront_costs", "Zero Upfront Costs"), description: t(locale, "printOnDemand.description8_no_inventory__no_min", "No inventory, no minimum orders. Products are printed only when ordered."), icon: "💸" },
+        { title: t(locale, "printOnDemand.title9_easy_design_tools", "Easy Design Tools"), description: t(locale, "printOnDemand.description10_upload_your_designs", "Upload your designs or use our built-in editor with templates and mockups."), icon: "🎨" },
+        { title: t(locale, "printOnDemand.title11_global_shipping", "Global Shipping"), description: t(locale, "printOnDemand.description12_we_ship_to_30__count", "We ship to 30+ countries with tracking on every order."), icon: "🌍" },
+        { title: t(locale, "printOnDemand.title13_quality_guarantee", "Quality Guarantee"), description: t(locale, "printOnDemand.description14_premium_materials_an", "Premium materials and printing. Unhappy? We reprint or refund."), icon: "✅" },
       ]
       return { products, benefits }
     } catch {

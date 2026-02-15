@@ -169,19 +169,19 @@ function MembershipDetailPage() {
                   <svg className="w-4 h-4 text-ds-success flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
-                  <span>Cancel anytime</span>
+                  <span>{t(locale, "memberships.badge_cancel_anytime", "Cancel anytime")}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-ds-muted-foreground">
                   <svg className="w-4 h-4 text-ds-success flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
-                  <span>Secure payment</span>
+                  <span>{t(locale, "memberships.badge_secure_payment", "Secure payment")}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-ds-muted-foreground">
                   <svg className="w-4 h-4 text-ds-success flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
-                  <span>Instant access</span>
+                  <span>{t(locale, "memberships.badge_instant_access", "Instant access")}</span>
                 </div>
               </div>
             </div>

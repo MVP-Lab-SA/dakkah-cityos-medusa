@@ -1,6 +1,6 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework";
 import { z } from "zod";
-import { handleApiError } from "../../../../lib/api-error-handler"
+import { handleApiError } from "../../../../../lib/api-error-handler"
 
 const approveCompanySchema = z.object({
   credit_limit: z.string().optional(),

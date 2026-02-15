@@ -47,6 +47,12 @@
       "import": "استيراد",
       "download": "تنزيل",
       "upload": "رفع"
+    },
+    "sort": {
+      "default": "الافتراضي",
+      "nameAZ": "الاسم أ-ي",
+      "priceLowHigh": "السعر: من الأقل",
+      "priceHighLow": "السعر: من الأعلى"
     }
   },
   "nav": {
@@ -127,7 +133,23 @@
     "settings": "الإعدادات",
     "subscriptions": "الاشتراكات",
     "bookings": "الحجوزات",
-    "purchase_orders": "أوامر الشراء"
+    "purchase_orders": "أوامر الشراء",
+    "password_min_chars": "8 أحرف على الأقل",
+    "confirm_password": "أكد كلمة المرور الجديدة",
+    "bookings_title": "الحجوزات",
+    "bookings_description": "إدارة مواعيدك المجدولة",
+    "orders_title": "الطلبات",
+    "orders_description": "عرض وتتبع طلباتك",
+    "subscriptions_title": "الاشتراكات",
+    "subscriptions_description": "إدارة اشتراكاتك النشطة",
+    "profile_title": "الملف الشخصي",
+    "profile_description": "إدارة معلوماتك الشخصية",
+    "settings_title": "الإعدادات",
+    "settings_description": "إدارة إعدادات حسابك",
+    "downloads_title": "تنزيلاتي",
+    "downloads_description": "منتجاتك الرقمية المشتراة",
+    "addresses_title": "العناوين",
+    "addresses_description": "إدارة عناوين الشحن والفوترة"
   },
   "footer": {
     "brand_description": "دكة CityOS — منصة تجارية متعددة المستأجرين على مستوى المدينة، تدعم أكثر من 25 قطاعاً عبر منطقة الشرق الأوسط وشمال أفريقيا وخارجها.",
@@ -265,7 +287,8 @@
     "hero_title": "Events & Experiences",
     "hero_subtitle": "Discover concerts, festivals, conferences, and community events near you",
     "badge_instant": "Instant tickets",
-    "badge_categories": "All categories"
+    "badge_categories": "All categories",
+    "search_placeholder": "ابحث عن الفعاليات..."
   },
   "delivery": {
     "title": "التوصيل",
@@ -685,7 +708,37 @@
     "reward_cost": "تكلفة المكافأة",
     "current_balance": "الرصيد الحالي",
     "remaining_balance": "الرصيد المتبقي",
-    "confirm_redeem": "تأكيد واستبدال"
+    "confirm_redeem": "تأكيد واستبدال",
+    "badge_earn_points": "اكسب نقطة واحدة لكل دولار",
+    "badge_up_to_discount": "خصم يصل إلى 20%",
+    "perk_bronze_1": "خصم 5% على جميع المشتريات",
+    "perk_bronze_2": "نقاط إضافية في عيد الميلاد (x2)",
+    "perk_bronze_3": "وصول مبكر للتخفيضات",
+    "perk_bronze_4": "شحن مجاني للطلبات فوق 50$",
+    "perk_silver_1": "خصم 10% على جميع المشتريات",
+    "perk_silver_2": "نقاط إضافية في عيد الميلاد (x3)",
+    "perk_silver_3": "وصول مبكر للمنتجات الجديدة",
+    "perk_silver_4": "شحن مجاني لجميع الطلبات",
+    "perk_silver_5": "عروض حصرية للأعضاء",
+    "perk_silver_6": "دعم عملاء ذو أولوية",
+    "perk_gold_1": "خصم 15% على جميع المشتريات",
+    "perk_gold_2": "نقاط إضافية في عيد الميلاد (x5)",
+    "perk_gold_3": "وصول مبكر للتخفيضات السريعة",
+    "perk_gold_4": "شحن سريع مجاني",
+    "perk_gold_5": "عروض VIP حصرية",
+    "perk_gold_6": "مدير حساب مخصص",
+    "perk_gold_7": "تغليف هدايا مجاني",
+    "perk_gold_8": "فترة إرجاع ممتدة (60 يوماً)",
+    "perk_platinum_1": "خصم 20% على جميع المشتريات",
+    "perk_platinum_2": "نقاط إضافية في عيد الميلاد (x10)",
+    "perk_platinum_3": "أول وصول لجميع الإطلاقات",
+    "perk_platinum_4": "توصيل في نفس اليوم مجاناً",
+    "perk_platinum_5": "خدمة متسوق شخصي",
+    "perk_platinum_6": "فعاليات بدعوة فقط",
+    "perk_platinum_7": "صندوق هدايا فاخر سنوي",
+    "perk_platinum_8": "ضمان السعر مدى الحياة",
+    "perk_platinum_9": "تعديلات مجانية",
+    "perk_platinum_10": "إرجاع مجاني بدون أسئلة"
   },
   "referral": {
     "title": "برنامج الإحالة",
@@ -772,7 +825,30 @@
     "most_popular": "Most Popular",
     "no_results_hint": "Try adjusting your search or filters",
     "pricing_plans": "Pricing Plans",
-    "why_dropship": "Why Dropship?"
+    "why_dropship": "Why Dropship?",
+    "title1": "No Inventory Needed",
+    "description2": "Sell products without stocking them. We handle warehousing and fulfillment for you.",
+    "title3": "Global Supplier Network",
+    "description4": "Access 500+ verified suppliers across electronics, fashion, home goods, and more.",
+    "title5": "Automated Fulfillment",
+    "description6": "Orders are automatically routed to suppliers for fast processing and shipping.",
+    "title7": "Brand Customization",
+    "description8": "Add your branding to packaging, invoices, and shipping labels for a professional look.",
+    "title9": "Real-Time Analytics",
+    "description10": "Track sales, profits, and inventory levels with comprehensive dashboards.",
+    "description11": "Dedicated support team to help with orders, returns, and supplier issues.",
+    "title12": "Sign Up",
+    "title13": "Choose Products",
+    "title14": "Sell Online",
+    "title15": "We Ship",
+    "desc16": "Create your free account and set up your online store.",
+    "desc17": "Browse our catalog and add products to your store.",
+    "desc18": "Market products to your audience across any channel.",
+    "desc19": "We handle packaging and shipping directly to your customers.",
+    "label_active_dropshippers": "Active Dropshippers",
+    "label_verified_suppliers": "Verified Suppliers",
+    "label_products_available": "Products Available",
+    "label_countries_shipped": "Countries Shipped"
   },
   "whiteLabel": {
     "title": "العلامة البيضاء",
@@ -798,7 +874,25 @@
     "min_order": "الحد الأدنى للطلب",
     "customizable": "قابل للتخصيص",
     "no_products": "لا توجد منتجات علامة بيضاء متاحة",
-    "no_products_desc": "عد لاحقاً لمنتجات جديدة"
+    "no_products_desc": "عد لاحقاً لمنتجات جديدة",
+    "badge_brand_control": "تحكم كامل بالعلامة التجارية",
+    "badge_custom_domain": "نطاق مخصص",
+    "badge_mobile_apps": "تطبيقات الجوال",
+    "description1": "Essential white-label tools for small businesses launching their brand.",
+    "description2": "Complete branding solution for growing businesses that need full customization.",
+    "description3": "Fully tailored solution for large organizations with dedicated infrastructure.",
+    "title4": "Complete Brand Control",
+    "description5": "Your logo, colors, domain, and identity — no trace of our platform visible to your customers.",
+    "title6": "Custom Storefront",
+    "description7": "Fully customizable storefront with your branding, layout preferences, and design language.",
+    "title8": "Branded Mobile App",
+    "description9": "Launch your own branded mobile app on iOS and Android app stores.",
+    "title10": "Payment Integration",
+    "description11": "Integrate your preferred payment gateways with your brand's checkout experience.",
+    "title12": "Custom Analytics",
+    "description13": "White-labeled dashboards and reports with your branding for internal and client use.",
+    "title14": "API & Integrations",
+    "description15": "Full API access to integrate with your existing systems, CRM, and ERP tools."
   },
   "printOnDemand": {
     "title": "الطباعة عند الطلب",
@@ -829,7 +923,21 @@
     "print_cost": "تكلفة الطباعة",
     "total": "الإجمالي",
     "no_products": "لا توجد منتجات طباعة عند الطلب متاحة",
-    "no_products_desc": "عد لاحقاً لمنتجات جديدة"
+    "no_products_desc": "عد لاحقاً لمنتجات جديدة",
+    "description1": "Premium cotton tees in 20+ colors. Perfect for custom designs, logos, and artwork.",
+    "description2": "Comfortable fleece hoodies with full-color front and back printing options.",
+    "description3": "Ceramic mugs with vibrant, dishwasher-safe prints. 11oz and 15oz sizes available.",
+    "description4": "Durable phone cases with high-resolution prints for iPhone and Samsung models.",
+    "description5": "Eco-friendly canvas tote bags with all-over print or centered designs.",
+    "description6": "Museum-quality prints on premium paper. Multiple sizes from A4 to A1.",
+    "title7": "Zero Upfront Costs",
+    "description8": "No inventory, no minimum orders. Products are printed only when ordered.",
+    "title9": "Easy Design Tools",
+    "description10": "Upload your designs or use our built-in editor with templates and mockups.",
+    "title11": "Global Shipping",
+    "description12": "We ship to 30+ countries with tracking on every order.",
+    "title13": "Quality Guarantee",
+    "description14": "Premium materials and printing. Unhappy? We reprint or refund."
   },
   "recommerce": {
     "title": "إعادة التجارة",
@@ -929,7 +1037,33 @@
     "badge_verified": "Verified sellers",
     "badge_protection": "Seller protection",
     "no_results": "No results found",
-    "search_placeholder": "Search consignment..."
+    "search_placeholder": "Search consignment...",
+    "badge_earnings": "أرباح تصل إلى 80%",
+    "badge_insured": "مؤمن بالكامل",
+    "badge_fast_payouts": "دفعات سريعة",
+    "description1": "You keep 70% of the sale price. Ideal for everyday items and accessories.",
+    "description2": "You keep 75% of the sale price. Great for designer and branded items.",
+    "description3": "You keep 80% of the sale price. For high-value luxury and collectible items.",
+    "title4": "Earn from Unused Items",
+    "description5": "Turn pre-owned items into cash without the hassle of selling directly.",
+    "title6": "Professional Handling",
+    "description7": "We handle photography, listing, pricing, and customer inquiries.",
+    "title8": "Secure & Insured",
+    "description9": "All consigned items are fully insured while in our care.",
+    "title10": "Wide Audience Reach",
+    "description11": "Access thousands of active buyers on our marketplace.",
+    "title12": "Transparent Tracking",
+    "description13": "Real-time updates on views, inquiries, and sales of your items.",
+    "title14": "Fast Payments",
+    "description15": "Receive your earnings within 3 business days of a completed sale.",
+    "title16": "Submit Items",
+    "title17": "We Evaluate",
+    "title18": "We Sell",
+    "title19": "You Earn",
+    "desc20": "Bring or ship your items to our facility for evaluation.",
+    "desc21": "Our experts assess, authenticate, and price your items.",
+    "desc22": "Items are photographed and listed on our marketplace.",
+    "desc23": "Receive your earnings within 3 days of a completed sale."
   },
   "bnpl": {
     "title": "اشتر الآن وادفع لاحقاً",
@@ -1259,7 +1393,25 @@
     "items": "منتجات",
     "search_placeholder": "Enter return ID or order number...",
     "hero_title": "Returns & Exchanges",
-    "hero_subtitle": "Process returns and exchanges easily"
+    "hero_subtitle": "Process returns and exchanges easily",
+    "badge_30_day": "إرجاع خلال 30 يوماً",
+    "badge_free_return_shipping": "شحن إرجاع مجاني",
+    "badge_fast_refunds": "استرداد سريع",
+    "title1": "Initiate Return",
+    "description2": "Log into your account, go to 'My Orders', select the item, and click 'Return Item'. Fill in the reason for return.",
+    "title3": "Print Label",
+    "description4": "Download and print the prepaid return shipping label. Attach it securely to your package.",
+    "title5": "Ship Item",
+    "description6": "Drop off the package at any authorized shipping location or schedule a free pickup.",
+    "title7": "Get Refund",
+    "description8": "Once we receive and inspect the item, your refund is processed within 5-7 business days.",
+    "description9": "Most items can be returned within 30 days of delivery for a full refund.",
+    "title10": "Free Return Shipping",
+    "description11": "We provide prepaid return labels at no cost for all eligible returns.",
+    "title12": "Original Condition Required",
+    "description13": "Items must be unused, unworn, and in original packaging with all tags attached.",
+    "title14": "Non-Returnable Items",
+    "description15": "Perishable goods, personal care items, and custom orders cannot be returned."
   },
   "blog": {
     "title": "المدونة",
@@ -1280,7 +1432,21 @@
     "subscribe_placeholder": "Enter your email",
     "badge_curated": "Curated content",
     "badge_weekly": "Weekly updates",
-    "subtitle": "Explore our blog offerings"
+    "subtitle": "Explore our blog offerings",
+    "no_results": "لم يتم العثور على مقالات",
+    "read_more": "اقرأ المزيد",
+    "stay_updated": "ابق على اطلاع",
+    "subscribe_description": "احصل على أحدث المقالات في بريدك الإلكتروني",
+    "subscribe": "اشترك",
+    "badge_expert_insights": "رؤى الخبراء",
+    "badge_updated_weekly": "محدث أسبوعياً",
+    "title1": "The Future of E-Commerce: Trends to Watch in 2026",
+    "title2": "How to Build a Loyal Customer Base From Scratch",
+    "title3": "Sustainable Shopping: A Complete Guide for Conscious Consumers",
+    "title4": "Breaking: New Platform Features Launching This Month",
+    "title5": "The Ultimate Guide to Product Photography on a Budget",
+    "title6": "How Local Businesses Are Thriving in the Digital Marketplace",
+    "title7": "Wellness at Work: Creating a Healthy Home Office Setup"
   },
   "faq": {
     "help_center": "مركز المساعدة",
@@ -2045,7 +2211,20 @@
     "used_vehicles": "مركبات مستعملة",
     "parts_accessories": "قطع الغيار والإكسسوارات",
     "service_center": "مركز الخدمة",
-    "loading": "جاري تحميل المركبات..."
+    "loading": "جاري تحميل المركبات...",
+    "label_year": "Year",
+    "label_make": "Make",
+    "label_model": "Model",
+    "label_mileage": "Mileage",
+    "label_fuel_type": "Fuel Type",
+    "label_transmission": "Transmission",
+    "label_color": "Color",
+    "label_vin": "VIN",
+    "label_engine": "Engine",
+    "label_drivetrain": "Drivetrain",
+    "label_body_type": "Body Type",
+    "label_doors": "Doors",
+    "label_lease": "Lease"
   },
   "realEstate": {
     "title": "العقارات",
@@ -2120,7 +2299,8 @@
     "patient_reviews": "تقييمات المرضى",
     "available_slots": "المواعيد المتاحة",
     "consultation_fee": "رسوم الاستشارة",
-    "loading": "جاري تحميل الخدمات الصحية..."
+    "loading": "جاري تحميل الخدمات الصحية...",
+    "hero_subtitle": "ابحث عن متخصصين صحيين موثوقين واحجز مواعيد مع أفضل الأطباء"
   },
   "fitness": {
     "title": "اللياقة البدنية",
@@ -2150,7 +2330,9 @@
     "intermediate": "متوسط",
     "advanced": "متقدم",
     "calories_burned": "السعرات المحروقة",
-    "loading": "جاري تحميل برامج اللياقة..."
+    "loading": "جاري تحميل برامج اللياقة...",
+    "badge_expert_instructors": "مدربون خبراء",
+    "badge_all_levels": "جميع مستويات اللياقة"
   },
   "education": {
     "title": "التعليم",
@@ -2180,7 +2362,10 @@
     "syllabus": "المنهج التفصيلي",
     "reviews": "التقييمات",
     "start_date": "تاريخ البدء",
-    "loading": "جاري تحميل الدورات..."
+    "loading": "جاري تحميل الدورات...",
+    "badge_expert_instructors": "مدربون خبراء",
+    "badge_flexible_learning": "تعلم مرن",
+    "certificate_of_completion": "شهادة إتمام"
   },
   "charity": {
     "title": "الأعمال الخيرية",
@@ -2209,7 +2394,8 @@
     "transparency_report": "تقرير الشفافية",
     "beneficiaries": "المستفيدون",
     "share_campaign": "مشاركة الحملة",
-    "loading": "جاري تحميل الجمعيات الخيرية..."
+    "loading": "جاري تحميل الجمعيات الخيرية...",
+    "badge_every_donation": "كل تبرع مهم"
   },
   "travel": {
     "title": "السفر",
@@ -2347,7 +2533,20 @@
     "step_ship": "أرسله إلينا",
     "step_credit": "استلم رصيدك",
     "my_trade_ins": "عمليات الاستبدال الخاصة بي",
-    "loading": "جاري تحميل خيارات الاستبدال..."
+    "loading": "جاري تحميل خيارات الاستبدال...",
+    "badge_instant_credit": "رصيد فوري",
+    "badge_free_shipping": "شحن مجاني",
+    "title1": "Select Your Item",
+    "description2": "Trade in your MacBook Pro for instant credit. M1, M2, and M3 models accepted.",
+    "title3": "Grade Condition",
+    "description4": "Trade your PS5 console for credit towards new gaming gear.",
+    "title5": "Get Your Estimate",
+    "description6": "Trade in your AirPods Pro for credit. Case and earbuds required.",
+    "title7": "Ship & Get Credit",
+    "description8": "Ship your item to us for free and receive store credit once verified.",
+    "description1": "Trade in your iPhone 15 Pro for store credit. All storage sizes accepted.",
+    "description3": "Get credit for your used iPad. All generations and sizes welcome.",
+    "description5": "Trade in your Galaxy S24 Ultra. Unlocked and carrier models accepted."
   },
   "b2b": {
     "title": "سوق الأعمال",
@@ -2376,7 +2575,13 @@
     "certifications": "الشهادات",
     "company_profile": "ملف الشركة",
     "rfq": "طلب عرض أسعار",
-    "loading": "جاري تحميل المنتجات..."
+    "loading": "جاري تحميل المنتجات...",
+    "description1": "Enterprise software solutions, cloud infrastructure, and IT consulting for businesses of all sizes.",
+    "description2": "Commercial and residential construction, project management, and architectural design services.",
+    "description3": "Premium hotel management, event catering, and hospitality training programs.",
+    "description4": "Wholesale organic food distribution, cold chain logistics, and private label food manufacturing.",
+    "description5": "Medical equipment manufacturing, hospital supply chain, and healthcare technology solutions.",
+    "description6": "Big data analytics, business intelligence dashboards, and AI-powered predictive modeling."
   },
   "flashDeals": {
     "title": "عروض سريعة",
@@ -2406,7 +2611,13 @@
     "active_deals": "عروض نشطة",
     "notify_me": "أبلغني",
     "limited_stock": "مخزون محدود",
-    "loading": "جاري تحميل العروض..."
+    "loading": "جاري تحميل العروض...",
+    "description1": "Premium ANC headphones with 30hr battery life",
+    "description2": "Heart rate, GPS, and sleep tracking",
+    "description3": "Italian genuine leather, limited edition",
+    "description4": "Espresso, cappuccino & latte with built-in grinder",
+    "description5": "Lightweight with responsive cushioning",
+    "description6": "HDR10+, Dolby Vision, built-in streaming"
   },
   "loyaltyProgram": {
     "title": "برنامج الولاء",
@@ -2436,7 +2647,11 @@
     "exclusive_access": "وصول حصري",
     "expiring_points": "نقاط تنتهي قريباً",
     "loading": "جاري تحميل المكافآت...",
-    "subtitle": "Explore our loyaltyProgram offerings"
+    "subtitle": "Explore our loyaltyProgram offerings",
+    "description1": "Start earning rewards from your very first purchase. Every dollar spent earns you 1 point.",
+    "description2": "Reach Silver status with 500 points and unlock premium shopping benefits.",
+    "description3": "Gold members enjoy the best perks with 2,000 points. Shop more, save more.",
+    "description4": "The ultimate tier. Platinum members with 5,000+ points enjoy unmatched luxury benefits."
   },
   "bookings": {
     "title": "الحجوزات",
@@ -2453,7 +2668,9 @@
     "status_cancelled": "ملغى",
     "book_now": "احجز الآن",
     "reschedule": "إعادة جدولة",
-    "cancel_booking": "إلغاء الحجز"
+    "cancel_booking": "إلغاء الحجز",
+    "hero_subtitle": "احجز استشارات ودروس وتجارب وجلسات عافية مع أفضل مقدمي الخدمات",
+    "consultation_topics_placeholder": "هل هناك مواضيع محددة تود مناقشتها؟"
   },
   "rentals": {
     "title": "الإيجارات",
@@ -2470,7 +2687,9 @@
     "status_reserved": "محجوز",
     "rent_now": "استأجر الآن",
     "view_details": "عرض التفاصيل",
-    "check_availability": "تحقق من التوفر"
+    "check_availability": "تحقق من التوفر",
+    "badge_flexible_terms": "شروط مرنة",
+    "badge_easy_returns": "إرجاع سهل"
   },
   "digital_products": {
     "title": "المنتجات الرقمية",
@@ -2521,7 +2740,11 @@
     "status_pending": "قيد الانتظار",
     "join_now": "انضم الآن",
     "view_benefits": "عرض المزايا",
-    "compare_plans": "مقارنة الخطط"
+    "compare_plans": "مقارنة الخطط",
+    "badge_cancel_anytime": "إلغاء في أي وقت",
+    "badge_exclusive_perks": "مزايا حصرية",
+    "badge_secure_payment": "دفع آمن",
+    "badge_instant_access": "وصول فوري"
   },
   "advertising": {
     "title": "الإعلانات",
@@ -2566,7 +2789,25 @@
     "hero_subtitle": "Discover the best affiliate options available",
     "hero_title": "Affiliate",
     "join_now": "Join Now",
-    "no_results_hint": "Try adjusting your search or filters"
+    "no_results_hint": "Try adjusting your search or filters",
+    "title1": "Sign Up",
+    "title2": "Get Links",
+    "title3": "Promote",
+    "title4": "Earn",
+    "desc5": "Create your free affiliate account in minutes.",
+    "desc6": "Generate unique referral links for any product.",
+    "desc7": "Share links on your website, social media, or blog.",
+    "desc8": "Receive commissions for every successful sale.",
+    "label_commission_rate": "Commission Rate",
+    "label_cookie_duration": "Cookie Duration",
+    "label_payout_schedule": "Payout Schedule",
+    "label_minimum_payout": "Minimum Payout",
+    "label_payment_method": "Payment Method",
+    "label_status": "Status",
+    "label_active_affiliates": "Active Affiliates",
+    "label_total_commissions_paid": "Total Commissions Paid",
+    "label_avg__monthly_earning": "Avg. Monthly Earning",
+    "label_products_available": "Products Available"
   },
   "gift_cards": {
     "title": "بطاقات الهدايا",
@@ -2758,7 +2999,11 @@
     "step2_title": "Choose",
     "step3_desc": "Complete your transaction securely",
     "step3_title": "Complete",
-    "used_credit": "Used Credit"
+    "used_credit": "Used Credit",
+    "description1": "Perfect for small purchases with 0% interest for 6 months.",
+    "description2": "Flexible credit for medium-sized purchases with competitive rates.",
+    "description3": "Higher limits for big purchases with premium benefits and lower rates.",
+    "description4": "Enterprise-grade credit line for business procurement and operations."
   },
   "newsletter": {
     "title": "النشرات الإخبارية",
@@ -2794,7 +3039,14 @@
     "step2_title": "Subscribe",
     "step2_desc": "Choose your favorites and subscribe to receive regular updates",
     "step3_title": "Stay Informed",
-    "step3_desc": "Get the latest insights delivered directly to your inbox"
+    "step3_desc": "Get the latest insights delivered directly to your inbox",
+    "email_placeholder": "أدخل بريدك الإلكتروني",
+    "description1": "Stay ahead with the latest technology trends, product launches, and industry insights.",
+    "description2": "Your weekly guide to fashion, home design, and modern living.",
+    "description3": "Comprehensive business intelligence and market analysis for professionals.",
+    "description4": "Environmental news, sustainable living tips, and eco-friendly product reviews.",
+    "description5": "Expert-backed health advice, workout routines, and nutrition guides.",
+    "description6": "Never miss a great deal — curated savings and product recommendations."
   },
   "volume_deals": {
     "title": "عروض الكميات",
@@ -2850,7 +3102,21 @@
     "view_balance": "عرض الرصيد",
     "hero_title": "Digital Wallet",
     "hero_subtitle": "Manage your digital wallet and transactions",
-    "subtitle": "Explore our wallet offerings"
+    "subtitle": "Explore our wallet offerings",
+    "badge_instant_transfers": "تحويلات فورية",
+    "badge_secure_payments": "مدفوعات آمنة",
+    "badge_cashback": "مكافآت استرداد نقدي",
+    "description1": "Add funds to your wallet instantly via card, bank transfer, or Apple Pay.",
+    "description2": "Transfer funds to friends, family, or other wallet users seamlessly.",
+    "description3": "View detailed records of all your deposits, withdrawals, and transfers.",
+    "description4": "Earn cashback and loyalty points on every transaction you make.",
+    "description5": "Connect your debit or credit cards for quick top-ups and payments.",
+    "description6": "Pay utility bills, subscriptions, and services directly from your wallet.",
+    "description7": "Top Up via Visa •••4521",
+    "description8": "Purchase at Electronics Store",
+    "description9": "Cashback Reward",
+    "description10": "Transfer to Ahmed M.",
+    "description11": "Refund - Order #8821"
   },
   "bundles": {
     "title": "حزم المنتجات",
@@ -2870,7 +3136,9 @@
     "customize_bundle": "تخصيص الحزمة",
     "add_bundle": "Add Bundle",
     "subtitle": "Explore our bundles offerings",
-    "why_buy_bundles": "Why Buy Bundles?"
+    "why_buy_bundles": "Why Buy Bundles?",
+    "badge_great_savings": "توفير كبير",
+    "badge_curated_selections": "تشكيلات مختارة"
   },
   "subscriptions": {
     "title": "الاشتراكات",
@@ -2887,7 +3155,9 @@
     "status_cancelled": "ملغى",
     "subscribe_now": "اشترك الآن",
     "manage_subscription": "إدارة الاشتراك",
-    "view_plans": "عرض الخطط"
+    "view_plans": "عرض الخطط",
+    "badge_free_trial": "تجربة مجانية مشمولة",
+    "badge_cancel_anytime": "إلغاء في أي وقت"
   },
   "government": {
     "title": "الخدمات الحكومية",
@@ -2926,7 +3196,13 @@
     "step2_desc": "Select your preferred option",
     "step2_title": "Choose",
     "step3_desc": "Complete your transaction securely",
-    "step3_title": "Complete"
+    "step3_title": "Complete",
+    "description1": "Register and obtain a license to operate your business within the municipality. Required for all commercial activities.",
+    "description2": "Apply for construction or renovation permits for residential and commercial properties.",
+    "description3": "Obtain permission for public events, gatherings, exhibitions, and festivals within city limits.",
+    "description4": "Import/export license for businesses engaged in international trade and commerce activities.",
+    "description5": "Health and safety certification required for food establishments, healthcare facilities, and wellness centers.",
+    "description6": "Environmental impact clearance for construction projects, industrial operations, and land development."
   },
   "grocery": {
     "title": "البقالة",
@@ -2949,7 +3225,23 @@
     "hero_title": "Grocery & Fresh Foods",
     "hero_subtitle": "Shop fresh groceries, produce, and essentials online",
     "badge_fresh": "Fresh daily",
-    "badge_delivery": "Fast delivery"
+    "badge_delivery": "Fast delivery",
+    "breadcrumb": "بقالة",
+    "products_available": "منتجات متاحة",
+    "badge_organic": "خيارات عضوية",
+    "search_label": "بحث",
+    "search_placeholder": "ابحث عن المنتجات...",
+    "category_label": "الفئة",
+    "organic_label": "عضوي",
+    "no_results_hint": "حاول تعديل البحث أو الفلاتر.",
+    "organic_badge": "عضوي",
+    "why_shop_title": "لماذا تتسوق معنا",
+    "step1_title": "تصفح المنتجات الطازجة",
+    "step1_desc": "استكشف مجموعتنا الواسعة من المنتجات الطازجة والأساسيات.",
+    "step2_title": "أضف إلى السلة",
+    "step2_desc": "اختر المنتجات وأضفها إلى سلة التسوق.",
+    "step3_title": "توصيل سريع",
+    "step3_desc": "احصل على مشترياتك بسرعة إلى باب منزلك."
   },
   "legal": {
     "title": "الخدمات القانونية",
@@ -3085,7 +3377,16 @@
     "learn_more": "Learn More",
     "no_results": "No results found",
     "search_placeholder": "Search financial...",
-    "subtitle": "Explore our financial offerings"
+    "subtitle": "Explore our financial offerings",
+    "badge_services": "6 خدمات",
+    "badge_rates": "أسعار تنافسية",
+    "badge_shariah": "متوافق مع الشريعة",
+    "description1": "Flexible personal loans with competitive rates starting from 2.5% APR. Quick approval and disbursement within 24 hours.",
+    "description2": "Tailored financing solutions for SMEs and enterprises. Working capital, equipment financing, and growth funding.",
+    "description3": "Comprehensive insurance products covering health, auto, property, and travel. Protect what matters most.",
+    "description4": "Diversified investment portfolios managed by expert advisors. Grow your wealth with stocks, sukuk, and mutual funds.",
+    "description5": "Split your purchases into easy installments with 0% interest on select plans. Buy now, pay later with flexibility.",
+    "description6": "Real-time currency exchange at competitive rates. Send and receive international transfers with low fees."
   },
   "freelance": {
     "title": "العمل الحر",
@@ -3278,7 +3579,11 @@
     "contract_pricing": "تسعير تعاقدي",
     "volume_commitment": "التزام بالكمية",
     "savings_calculator": "حاسبة التوفير",
-    "quantity_selector": "محدد الكمية"
+    "quantity_selector": "محدد الكمية",
+    "description1": "Smooth-writing metal ballpoint pens with ergonomic grip. Blue ink. Ideal for corporate gifts.",
+    "description2": "Eco-friendly non-woven bags, full-color printing available. Perfect for retail promotions.",
+    "description3": "Compact USB 3.0 flash drives with custom logo area. Bulk pricing for events.",
+    "description4": "Heavy-duty double-wall corrugated boxes. Standard sizes available. Custom sizes on request."
   },
   "flashSales": {
     "title": "التخفيضات السريعة",
@@ -3300,7 +3605,8 @@
     "past_deals": "العروض السابقة",
     "upcoming_deals": "العروض القادمة",
     "exclusive": "حصري",
-    "members_only": "للأعضاء فقط"
+    "members_only": "للأعضاء فقط",
+    "badge_flash_sales": "تخفيضات سريعة"
   },
   "verticals": {
     "services_available": "{count} خدمة متاحة",
@@ -3374,7 +3680,11 @@
   "help": {
     "search_placeholder": "Search for help...",
     "hero_title": "Help Center",
-    "hero_subtitle": "Find answers to your questions"
+    "hero_subtitle": "Find answers to your questions",
+    "description1": "Track orders, order issues, cancellations, and modifications.",
+    "description2": "Payment methods, billing issues, refunds, and invoices.",
+    "description3": "Delivery times, tracking, international shipping, and fees.",
+    "description4": "Profile settings, security, notifications, and preferences."
   },
   "places": {
     "search_placeholder": "Search places...",
@@ -3384,7 +3694,15 @@
     "badge_ratings": "Ratings",
     "breadcrumb": "Places",
     "no_results_hint": "Try adjusting your search or filters",
-    "places_count": "places count"
+    "places_count": "places count",
+    "description1": "The largest mosque in the world, surrounding Islam's holiest place, the Kaaba in Mecca.",
+    "description2": "Historic marketplace in Riyadh known for traditional crafts, antiques, and authentic Arabian goods.",
+    "description3": "Iconic 99-floor skyscraper with a sky bridge offering panoramic views of Riyadh's skyline.",
+    "description4": "Historic clay and mud-brick fortress that played a key role in the founding of Saudi Arabia.",
+    "description5": "Dramatic cliff formation northwest of Riyadh offering breathtaking views of the endless desert.",
+    "description6": "Ancient village with remarkable rock formations and the UNESCO World Heritage site of Hegra.",
+    "description7": "Beautiful waterfront promenade stretching along the Red Sea with parks, sculptures, and dining.",
+    "description8": "Historic seat of the first Saudi state, now a cultural destination with museums and restaurants."
   },
   "quotes": {
     "search_placeholder": "Search service categories...",
@@ -3401,11 +3719,93 @@
     "step2_desc": "Select your preferred option",
     "step2_title": "Choose",
     "step3_desc": "Complete your transaction securely",
-    "step3_title": "Complete"
+    "step3_title": "Complete",
+    "description1": "Building, renovation, and infrastructure projects of any scale.",
+    "description2": "Food services for events, corporate functions, and celebrations.",
+    "description3": "Event planning, venues, entertainment, and production services.",
+    "description4": "Software development, cloud solutions, cybersecurity, and IT support.",
+    "description5": "Digital marketing, branding, social media, and advertising campaigns.",
+    "description6": "Business strategy, management consulting, and professional advisory."
   },
   "categories": {
     "search_placeholder": "Search products...",
     "hero_title": "Browse Categories",
     "hero_subtitle": "Find products across all categories"
+  },
+  "auth": {
+    "passwords_do_not_match": "كلمات المرور غير متطابقة",
+    "password_min_length": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل",
+    "reset_password_failed": "فشل إعادة تعيين كلمة المرور. ربما انتهت صلاحية الرابط.",
+    "reset_password_success": "تمت إعادة تعيين كلمة المرور بنجاح",
+    "reset_password_success_message": "تم تحديث كلمة المرور. يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة.",
+    "set_new_password": "تعيين كلمة مرور جديدة",
+    "enter_new_password": "أدخل كلمة المرور الجديدة أدناه",
+    "reset_password": "إعادة تعيين كلمة المرور",
+    "resetting": "جاري إعادة التعيين...",
+    "new_password_label": "كلمة المرور الجديدة",
+    "confirm_new_password_label": "تأكيد كلمة المرور الجديدة"
+  },
+  "vendors": {
+    "badge_verified_sellers": "بائعون موثوقون",
+    "badge_quality_guaranteed": "جودة مضمونة"
+  },
+  "tryBeforeYouBuy": {
+    "badge_risk_free": "تجارب بدون مخاطر",
+    "badge_free_returns": "إرجاع مجاني",
+    "description1": "Experience world-class ANC with 30hr battery. Try them for 14 days risk-free.",
+    "description2": "Adjustable lumbar support, breathable mesh, and armrests. Perfect for home office.",
+    "description3": "Track steps, heart rate, sleep, and workouts. Water-resistant to 50m.",
+    "description4": "Polarized lenses, UV400 protection. Italian acetate frames.",
+    "description5": "Dual boiler system with PID temperature control. Barista-grade at home."
+  },
+  "warranties": {
+    "badge_full_coverage": "تغطية كاملة",
+    "badge_easy_claims": "مطالبات سهلة"
+  },
+  "campaigns": {
+    "title1": "Summer Mega Sale",
+    "description2": "Enjoy up to 50% off on selected summer essentials. From fashion to electronics, find incredible deals across all categories.",
+    "title3": "Flash Friday Deals",
+    "title4": "End of Season Clearance",
+    "description5": "Last chance to save big on winter inventory. Clearance prices on jackets, boots, accessories, and more while supplies last.",
+    "title6": "Ramadan Special Offers",
+    "description7": "Celebrate the holy month with exclusive offers on groceries, home decor, fashion, and gifting essentials for the whole family.",
+    "title8": "Tech Tuesday Flash Sale",
+    "description9": "Every Tuesday, score amazing deals on laptops, phones, tablets, and smart home gadgets from premium brands.",
+    "title10": "Spring Collection Launch",
+    "description11": "Be the first to shop our brand-new spring collection. Fresh styles, vibrant colors, and exclusive early-bird discounts.",
+    "label_up_to_50__off": "Up to 50% Off",
+    "label_up_to_40__off": "Up to 40% Off",
+    "label_up_to_70__off": "Up to 70% Off",
+    "label_up_to_35__off": "Up to 35% Off",
+    "label_up_to_30__off": "Up to 30% Off"
+  },
+  "giftCardsShop": {
+    "description1": "Colorful birthday-themed gift card with balloons and confetti design",
+    "description2": "Elegant wedding gift card with floral accents",
+    "description3": "Festive holiday design with snowflakes and warm colors",
+    "description4": "Heartfelt thank you card with elegant typography",
+    "description5": "Graduation-themed card celebrating academic achievement",
+    "description6": "Versatile gift card for any occasion"
+  },
+  "track": {
+    "description1": "Order confirmed and being prepared",
+    "description2": "Package picked up by courier",
+    "description3": "Package is on its way",
+    "description4": "Driver is nearby your location",
+    "description5": "Package delivered"
+  },
+  "loyaltyprogram": {
+    "label_points_per_dollar": "Points Per Dollar",
+    "label_point_value": "Point Value",
+    "label_minimum_redemption": "Minimum Redemption",
+    "label_expiration": "Expiration",
+    "label_status": "Status"
+  },
+  "realestate": {
+    "label_bedrooms": "Bedrooms",
+    "label_bathrooms": "Bathrooms",
+    "label_sq_ft": "Sq Ft",
+    "label_type": "Type"
   }
 }

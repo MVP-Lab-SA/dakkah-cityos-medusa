@@ -134,7 +134,7 @@ class PayoutModuleService extends MedusaService({
         processing_completed_at: new Date(),
       })
 
-      logger.info("[Payout] Completed transfer ${transfer.id} for payout ${payoutId}")
+      logger.info(`[Payout] Completed transfer ${transfer.id} for payout ${payoutId}`)
       
       return updatedPayout
     } catch (error: any) {
@@ -175,7 +175,7 @@ class PayoutModuleService extends MedusaService({
         }
       })
 
-      logger.info("[Stripe Connect] Created account ${account.id} for vendor ${vendorId}")
+      logger.info(`[Stripe Connect] Created account ${account.id} for vendor ${vendorId}`)
       
       return account
     } catch (error: any) {

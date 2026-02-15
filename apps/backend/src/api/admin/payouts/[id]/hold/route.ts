@@ -1,5 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { handleApiError } from "../../../../lib/api-error-handler"
+import { handleApiError } from "../../../../../lib/api-error-handler"
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
   try {

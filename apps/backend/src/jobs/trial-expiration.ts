@@ -26,7 +26,7 @@ export default async function trialExpirationJob(container: MedusaContainer) {
       }
     })
     
-    logger.info("[Trial Expiration] Found ${expiringTrials?.length || 0} trials expiring soon")
+    logger.info(`[Trial Expiration] Found ${expiringTrials?.length || 0} trials expiring soon`)
     
     for (const subscription of expiringTrials || []) {
       await eventBus.emit("subscription.trial_ending", {
@@ -46,7 +46,7 @@ export default async function trialExpirationJob(container: MedusaContainer) {
       }
     })
     
-    logger.info("[Trial Expiration] Found ${expiredTrials?.length || 0} expired trials")
+    logger.info(`[Trial Expiration] Found ${expiredTrials?.length || 0} expired trials`)
     
     let convertedCount = 0
     let expiredCount = 0
@@ -67,7 +67,7 @@ export default async function trialExpirationJob(container: MedusaContainer) {
         })
         
         convertedCount++
-        logger.info("[Trial Expiration] Converted trial to active: ${subscription.id}")
+        logger.info(`[Trial Expiration] Converted trial to active: ${subscription.id}`)
       } else {
         await subscriptionService.updateSubscriptions({
           id: subscription.id,
@@ -85,11 +85,11 @@ export default async function trialExpirationJob(container: MedusaContainer) {
         })
         
         expiredCount++
-        logger.info("[Trial Expiration] Expired trial (no payment): ${subscription.id}")
+        logger.info(`[Trial Expiration] Expired trial (no payment): ${subscription.id}`)
       }
     }
     
-    logger.info("[Trial Expiration] Completed - Reminders: ${expiringTrials?.length || 0}, Converted: ${convertedCount}, Expired: ${expiredCount}")
+    logger.info(`[Trial Expiration] Completed - Reminders: ${expiringTrials?.length || 0}, Converted: ${convertedCount}, Expired: ${expiredCount}`)
   } catch (error) {
     console.error("[Trial Expiration] Job failed:", error)
   }

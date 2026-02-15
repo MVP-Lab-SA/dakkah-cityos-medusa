@@ -28,7 +28,7 @@ export default async function temporalEventBridge({
     const result = await dispatchEventToTemporal(eventName, event.data, nodeContext)
 
     if (result.dispatched) {
-      logger.info("[TemporalBridge] Dispatched ${eventName} → runId: ${result.runId}")
+      logger.info(`[TemporalBridge] Dispatched ${eventName} → runId: ${result.runId}`)
     }
   } catch (err: any) {
     console.warn(

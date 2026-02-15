@@ -24,7 +24,7 @@ export class IntegrationSyncScheduler {
         const result = await startWorkflow("xsystem.scheduled-product-sync", {
           timestamp: new Date().toISOString(),
         }, {})
-        logger.info("[SyncScheduler] Dispatched product sync workflow: ${result.runId}")
+        logger.info(`[SyncScheduler] Dispatched product sync workflow: ${result.runId}`)
       } catch (err: any) {
         console.warn(`[SyncScheduler] Failed to dispatch product sync: ${err.message}`)
       }
@@ -40,7 +40,7 @@ export class IntegrationSyncScheduler {
         const result = await startWorkflow("xsystem.retry-failed-syncs", {
           timestamp: new Date().toISOString(),
         }, {})
-        logger.info("[SyncScheduler] Dispatched retry-failed-syncs workflow: ${result.runId}")
+        logger.info(`[SyncScheduler] Dispatched retry-failed-syncs workflow: ${result.runId}`)
       } catch (err: any) {
         console.warn(`[SyncScheduler] Failed to dispatch retry sync: ${err.message}`)
       }
@@ -56,7 +56,7 @@ export class IntegrationSyncScheduler {
         const result = await startWorkflow("xsystem.scheduled-hierarchy-reconciliation", {
           timestamp: new Date().toISOString(),
         }, {})
-        logger.info("[SyncScheduler] Dispatched hierarchy reconciliation workflow: ${result.runId}")
+        logger.info(`[SyncScheduler] Dispatched hierarchy reconciliation workflow: ${result.runId}`)
       } catch (err: any) {
         console.warn(`[SyncScheduler] Failed to dispatch hierarchy reconciliation: ${err.message}`)
       }
@@ -73,9 +73,9 @@ export class IntegrationSyncScheduler {
         const oldEntries = dashboard.recentSyncs.filter(
           (entry) => new Date(entry.created_at) < thirtyDaysAgo
         )
-        logger.info("[SyncScheduler] Cleanup complete: ${oldEntries.length} old log entries identified")
+        logger.info(`[SyncScheduler] Cleanup complete: ${oldEntries.length} old log entries identified`)
       } catch (error: any) {
-        logger.info("[SyncScheduler] Log cleanup error: ${error.message}")
+        logger.info(`[SyncScheduler] Log cleanup error: ${error.message}`)
       }
     })
     this.tasks.push(cleanupTask)
@@ -110,7 +110,7 @@ export default async function integrationSyncSchedulerJob(container: MedusaConta
       const productResult = await startWorkflow("xsystem.scheduled-product-sync", {
         timestamp: new Date().toISOString(),
       }, {})
-      logger.info("[SyncScheduler] Dispatched product sync workflow: ${productResult.runId}")
+      logger.info(`[SyncScheduler] Dispatched product sync workflow: ${productResult.runId}`)
     } catch (err: any) {
       console.warn(`[SyncScheduler] Failed to dispatch product sync: ${err.message}`)
     }
@@ -119,7 +119,7 @@ export default async function integrationSyncSchedulerJob(container: MedusaConta
       const retryResult = await startWorkflow("xsystem.retry-failed-syncs", {
         timestamp: new Date().toISOString(),
       }, {})
-      logger.info("[SyncScheduler] Dispatched retry-failed-syncs workflow: ${retryResult.runId}")
+      logger.info(`[SyncScheduler] Dispatched retry-failed-syncs workflow: ${retryResult.runId}`)
     } catch (err: any) {
       console.warn(`[SyncScheduler] Failed to dispatch retry sync: ${err.message}`)
     }
@@ -128,12 +128,12 @@ export default async function integrationSyncSchedulerJob(container: MedusaConta
       const hierarchyResult = await startWorkflow("xsystem.scheduled-hierarchy-reconciliation", {
         timestamp: new Date().toISOString(),
       }, {})
-      logger.info("[SyncScheduler] Dispatched hierarchy reconciliation workflow: ${hierarchyResult.runId}")
+      logger.info(`[SyncScheduler] Dispatched hierarchy reconciliation workflow: ${hierarchyResult.runId}`)
     } catch (err: any) {
       console.warn(`[SyncScheduler] Failed to dispatch hierarchy reconciliation: ${err.message}`)
     }
   } catch (error: any) {
-    logger.info("[SyncScheduler] Integration sync scheduler error: ${error.message}")
+    logger.info(`[SyncScheduler] Integration sync scheduler error: ${error.message}`)
   }
 }
 

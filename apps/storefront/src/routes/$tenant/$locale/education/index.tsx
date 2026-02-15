@@ -110,9 +110,9 @@ function EducationPage() {
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>{items.length} courses available</span>
             <span>|</span>
-            <span>Expert instructors</span>
+            <span>{t(locale, "education.badge_expert_instructors", "Expert instructors")}</span>
             <span>|</span>
-            <span>Flexible learning</span>
+            <span>{t(locale, "education.badge_flexible_learning", "Flexible learning")}</span>
           </div>
         </div>
       </div>

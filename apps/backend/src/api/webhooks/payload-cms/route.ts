@@ -60,13 +60,13 @@ function isContentCollection(collection: string): boolean {
 
 async function handleHierarchySync(collection: string, data: any, correlationId: string, req: MedusaRequest) {
   const docId = data.id || data.doc?.id
-  logger.info("[Webhook:PayloadCMS] Hierarchy sync for ${collection}, doc=${docId}, correlation: ${correlationId}")
+  logger.info(`[Webhook:PayloadCMS] Hierarchy sync for ${collection}, doc=${docId}, correlation: ${correlationId}`)
 
   try {
     const { createHierarchySyncEngine } = require("../../../integrations/cms-hierarchy-sync/engine")
     const engine = createHierarchySyncEngine()
     const result = await engine.syncCollection(collection)
-    logger.info("[Webhook:PayloadCMS] Hierarchy sync completed for ${collection}: ${result.created} created, ${result.updated} updated, ${result.failed} failed, correlation: ${correlationId}")
+    logger.info(`[Webhook:PayloadCMS] Hierarchy sync completed for ${collection}: ${result.created} created, ${result.updated} updated, ${result.failed} failed, correlation: ${correlationId}`)
   } catch (err: any) {
     console.error(`[Webhook:PayloadCMS] Hierarchy sync error for ${collection}: ${err.message}, correlation: ${correlationId}`)
   }
@@ -74,7 +74,7 @@ async function handleHierarchySync(collection: string, data: any, correlationId:
 
 async function handleContentSync(collection: string, data: any, correlationId: string, req: MedusaRequest) {
   const docId = data.id || data.doc?.id
-  logger.info("[Webhook:PayloadCMS] Content sync for ${collection}, doc=${docId}, correlation: ${correlationId}")
+  logger.info(`[Webhook:PayloadCMS] Content sync for ${collection}, doc=${docId}, correlation: ${correlationId}`)
 
   try {
     const { PayloadToMedusaSync } = require("../../../integrations/payload-sync/payload-to-medusa")
@@ -83,9 +83,9 @@ async function handleContentSync(collection: string, data: any, correlationId: s
     if (payloadUrl && payloadApiKey && docId) {
       const sync = new PayloadToMedusaSync(req.scope, { payloadUrl, payloadApiKey })
       await sync.syncProductContent(docId)
-      logger.info("[Webhook:PayloadCMS] Content synced for ${collection}/${docId}, correlation: ${correlationId}")
+      logger.info(`[Webhook:PayloadCMS] Content synced for ${collection}/${docId}, correlation: ${correlationId}`)
     } else {
-      logger.info("[Webhook:PayloadCMS] Skipping content sync — missing env vars or doc ID, correlation: ${correlationId}")
+      logger.info(`[Webhook:PayloadCMS] Skipping content sync — missing env vars or doc ID, correlation: ${correlationId}`)
     }
   } catch (err: any) {
     console.error(`[Webhook:PayloadCMS] Content sync error for ${collection}: ${err.message}, correlation: ${correlationId}`)
@@ -94,7 +94,7 @@ async function handleContentSync(collection: string, data: any, correlationId: s
 
 async function handleDelete(collection: string, data: any, correlationId: string) {
   const docId = data.id || data.doc?.id
-  logger.info("[Webhook:PayloadCMS] Delete event for ${collection}, doc=${docId}, data=${JSON.stringify(data)}, correlation: ${correlationId}")
+  logger.info(`[Webhook:PayloadCMS] Delete event for ${collection}, doc=${docId}, data=${JSON.stringify(data)}, correlation: ${correlationId}`)
 
   try {
     const { durableSyncTracker } = require("../../../lib/platform/sync-tracker")
@@ -105,9 +105,9 @@ async function handleDelete(collection: string, data: any, correlationId: string
       direction: "inbound",
       tenant_id: data.tenantId || data.tenant || "system",
     })
-    logger.info("[Webhook:PayloadCMS] Deletion recorded for ${collection}/${docId}, correlation: ${correlationId}")
+    logger.info(`[Webhook:PayloadCMS] Deletion recorded for ${collection}/${docId}, correlation: ${correlationId}`)
   } catch (err: any) {
-    logger.info("[Webhook:PayloadCMS] Sync tracker not available for deletion recording: ${err.message}")
+    logger.info(`[Webhook:PayloadCMS] Sync tracker not available for deletion recording: ${err.message}`)
   }
 }
 
@@ -119,13 +119,13 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     if (secret) {
       const signature = req.headers["x-payload-signature"] as string || req.headers["x-webhook-signature"] as string
       if (!signature) {
-        logger.info("[Webhook:PayloadCMS] Missing signature header (correlation: ${correlationId})")
+        logger.info(`[Webhook:PayloadCMS] Missing signature header (correlation: ${correlationId})`)
         return res.status(400).json({ error: "Missing signature" })
       }
 
       const rawBody = typeof req.body === "string" ? req.body : JSON.stringify(req.body)
       if (!verifyPayloadSignature(rawBody, signature, secret)) {
-        logger.info("[Webhook:PayloadCMS] Signature verification failed (correlation: ${correlationId})")
+        logger.info(`[Webhook:PayloadCMS] Signature verification failed (correlation: ${correlationId})`)
         return res.status(400).json({ error: "Invalid signature" })
       }
     }
@@ -135,10 +135,10 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     const collection = body.collection || "unknown"
     const data = body.data || body.doc || body
 
-    logger.info("[Webhook:PayloadCMS] Received event: ${event}, collection: ${collection} (correlation: ${correlationId})")
+    logger.info(`[Webhook:PayloadCMS] Received event: ${event}, collection: ${collection} (correlation: ${correlationId})`)
 
     if (!(SUPPORTED_COLLECTIONS as readonly string[]).includes(collection)) {
-      logger.info("[Webhook:PayloadCMS] Unsupported collection: ${collection}, correlation: ${correlationId}")
+      logger.info(`[Webhook:PayloadCMS] Unsupported collection: ${collection}, correlation: ${correlationId}`)
       return res.status(200).json({ received: true, event, collection, correlation_id: correlationId, status: "unsupported_collection" })
     }
 
@@ -151,7 +151,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     } else if (event.endsWith(".delete")) {
       await handleDelete(collection, data, correlationId)
     } else {
-      logger.info("[Webhook:PayloadCMS] Unhandled event type: ${event} for collection: ${collection}, correlation: ${correlationId}")
+      logger.info(`[Webhook:PayloadCMS] Unhandled event type: ${event} for collection: ${collection}, correlation: ${correlationId}`)
     }
 
     return res.status(200).json({ received: true, event, collection, correlation_id: correlationId })

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Spinner, ExclamationCircle } from "@medusajs/icons"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/account/settings")({
   component: SettingsPage,
@@ -29,7 +30,7 @@ function SettingsPage() {
   }
 
   return (
-    <AccountLayout title="Settings" description="Manage your account settings and preferences">
+    <AccountLayout title={t(locale, "account.settings_title", "Settings")} description={t(locale, "account.settings_description", "Manage your account settings and preferences")}>
       <div className="space-y-6">
         {/* Password Change */}
         <div className="bg-ds-background rounded-lg border border-ds-border p-6">

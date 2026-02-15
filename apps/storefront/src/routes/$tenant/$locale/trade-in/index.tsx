@@ -81,9 +81,9 @@ function TradeInPage() {
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>{items.length} eligible products</span>
             <span>|</span>
-            <span>Instant credit</span>
+            <span>{t(locale, "tradeIn.badge_instant_credit", "Instant credit")}</span>
             <span>|</span>
-            <span>Free shipping</span>
+            <span>{t(locale, "tradeIn.badge_free_shipping", "Free shipping")}</span>
           </div>
         </div>
       </div>

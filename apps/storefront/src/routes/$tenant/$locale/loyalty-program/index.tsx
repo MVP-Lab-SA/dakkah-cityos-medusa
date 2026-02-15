@@ -7,22 +7,22 @@ import { t } from "@/lib/i18n"
 const fallbackItems = [
   {
     id: "tier-1", name: "Bronze", color: "ds-warning", bg: "from-ds-warning to-ds-warning/90", points_required: 0, badge_emoji: "🥉",
-    perks: ["5% discount on all purchases", "Birthday bonus points (2x)", "Early access to sales", "Free standard shipping on orders $50+"],
+    perks: ["loyalty.perk_bronze_1", "loyalty.perk_bronze_2", "loyalty.perk_bronze_3", "loyalty.perk_bronze_4"],
     description: "Start earning rewards from your very first purchase. Every dollar spent earns you 1 point."
   },
   {
     id: "tier-2", name: "Silver", color: "ds-muted-foreground", bg: "from-ds-muted-foreground to-ds-muted-foreground/80", points_required: 500, badge_emoji: "🥈",
-    perks: ["10% discount on all purchases", "Birthday bonus points (3x)", "Early access to new products", "Free standard shipping on all orders", "Exclusive member-only deals", "Priority customer support"],
+    perks: ["loyalty.perk_silver_1", "loyalty.perk_silver_2", "loyalty.perk_silver_3", "loyalty.perk_silver_4", "loyalty.perk_silver_5", "loyalty.perk_silver_6"],
     description: "Reach Silver status with 500 points and unlock premium shopping benefits."
   },
   {
     id: "tier-3", name: "Gold", color: "yellow-500", bg: "from-ds-warning to-ds-warning", points_required: 2000, badge_emoji: "🥇",
-    perks: ["15% discount on all purchases", "Birthday bonus points (5x)", "Early access to flash sales (1hr)", "Free express shipping on all orders", "Exclusive VIP deals", "Dedicated account manager", "Free gift wrapping", "Extended return period (60 days)"],
+    perks: ["loyalty.perk_gold_1", "loyalty.perk_gold_2", "loyalty.perk_gold_3", "loyalty.perk_gold_4", "loyalty.perk_gold_5", "loyalty.perk_gold_6", "loyalty.perk_gold_7", "loyalty.perk_gold_8"],
     description: "Gold members enjoy the best perks with 2,000 points. Shop more, save more."
   },
   {
     id: "tier-4", name: "Platinum", color: "ds-muted-foreground", bg: "from-ds-muted-foreground to-ds-primary", points_required: 5000, badge_emoji: "💎",
-    perks: ["20% discount on all purchases", "Birthday bonus points (10x)", "First access to all new launches", "Free same-day shipping", "Personal shopper service", "Invite-only events", "Annual luxury gift box", "Lifetime price guarantee", "Complimentary alterations", "Free returns, no questions asked"],
+    perks: ["loyalty.perk_platinum_1", "loyalty.perk_platinum_2", "loyalty.perk_platinum_3", "loyalty.perk_platinum_4", "loyalty.perk_platinum_5", "loyalty.perk_platinum_6", "loyalty.perk_platinum_7", "loyalty.perk_platinum_8", "loyalty.perk_platinum_9", "loyalty.perk_platinum_10"],
     description: "The ultimate tier. Platinum members with 5,000+ points enjoy unmatched luxury benefits."
   },
 ]
@@ -76,9 +76,9 @@ function LoyaltyProgramPage() {
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>{items.length} tiers</span>
             <span>|</span>
-            <span>Earn 1 point per $1</span>
+            <span>{t(locale, "loyalty.badge_earn_points", "Earn 1 point per $1")}</span>
             <span>|</span>
-            <span>Up to 20% off</span>
+            <span>{t(locale, "loyalty.badge_up_to_discount", "Up to 20% off")}</span>
           </div>
         </div>
       </div>
@@ -115,7 +115,7 @@ function LoyaltyProgramPage() {
                             <svg className="w-4 h-4 text-ds-warning mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
-                            <span className="text-ds-foreground">{perk}</span>
+                            <span className="text-ds-foreground">{t(locale, perk, perk)}</span>
                           </div>
                         ))}
                       </div>

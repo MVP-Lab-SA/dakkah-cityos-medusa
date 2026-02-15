@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { handleApiError } from "../../../../../lib/api-error-handler"
+import { handleApiError } from "../../../../../../lib/api-error-handler"
 
 // PUT - Update team member role/permissions
 export async function PUT(

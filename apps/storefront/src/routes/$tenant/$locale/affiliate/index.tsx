@@ -20,10 +20,10 @@ export const Route = createFileRoute("/$tenant/$locale/affiliate/")({
         { id: "4", name: "Partner", commission: "20%", requirement: "100+ sales/month", earnings: "Unlimited", color: "amber", features: ["White-label tools", "Custom integrations", "Daily payouts", "Strategic partnership"], icon: "👑" },
       ]
       const stats = [
-        { label: "Active Affiliates", value: "2,500+" },
-        { label: "Total Commissions Paid", value: "4.2M SAR" },
-        { label: "Avg. Monthly Earning", value: "1,680 SAR" },
-        { label: "Products Available", value: "10,000+" },
+        { label: t(locale, "affiliate.label_active_affiliates", "Active Affiliates"), value: "2,500+" },
+        { label: t(locale, "affiliate.label_total_commissions_paid", "Total Commissions Paid"), value: "4.2M SAR" },
+        { label: t(locale, "affiliate.label_avg__monthly_earning", "Avg. Monthly Earning"), value: "1,680 SAR" },
+        { label: t(locale, "affiliate.label_products_available", "Products Available"), value: "10,000+" },
       ]
       return { tiers, stats }
     } catch {
@@ -118,7 +118,7 @@ function AffiliatePage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'verticals.how_it_works')}</h2>
           <div className="grid md:grid-cols-4 gap-8">
-            {[{ step: "1", title: "Sign Up", desc: "Create your free affiliate account in minutes." }, { step: "2", title: "Get Links", desc: "Generate unique referral links for any product." }, { step: "3", title: "Promote", desc: "Share links on your website, social media, or blog." }, { step: "4", title: "Earn", desc: "Receive commissions for every successful sale." }].map((s) => (
+            {[{ step: "1", title: t(locale, "affiliate.title1_sign_up", "Sign Up"), desc: t(locale, "affiliate.desc5_create_your_free_aff", "Create your free affiliate account in minutes.") }, { step: "2", title: t(locale, "affiliate.title2_get_links", "Get Links"), desc: t(locale, "affiliate.desc6_generate_unique_refe", "Generate unique referral links for any product.") }, { step: "3", title: t(locale, "affiliate.title3_promote", "Promote"), desc: t(locale, "affiliate.desc7_share_links_on_your", "Share links on your website, social media, or blog.") }, { step: "4", title: t(locale, "affiliate.title4_earn", "Earn"), desc: t(locale, "affiliate.desc8_receive_commissions", "Receive commissions for every successful sale.") }].map((s) => (
               <div key={s.step} className="text-center">
                 <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">{s.step}</div>
                 <h3 className="font-semibold text-ds-foreground mb-2">{s.title}</h3>

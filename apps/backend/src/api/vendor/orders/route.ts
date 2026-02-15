@@ -1,6 +1,6 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
-import { handleApiError } from "../../lib/api-error-handler"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 // GET /vendor/orders - List vendor's orders
 export async function GET(req: MedusaRequest, res: MedusaResponse) {

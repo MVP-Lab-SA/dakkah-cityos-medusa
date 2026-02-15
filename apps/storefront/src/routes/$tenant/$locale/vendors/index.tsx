@@ -89,9 +89,9 @@ function VendorsPage() {
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>{items.length} vendors</span>
             <span>|</span>
-            <span>Verified sellers</span>
+            <span>{t(locale, "vendors.badge_verified_sellers", "Verified sellers")}</span>
             <span>|</span>
-            <span>Quality guaranteed</span>
+            <span>{t(locale, "vendors.badge_quality_guaranteed", "Quality guaranteed")}</span>
           </div>
         </div>
       </div>

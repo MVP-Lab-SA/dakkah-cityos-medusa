@@ -48,7 +48,7 @@ export default async function failedPaymentRetryJob(container: MedusaContainer) 
         })
         
         cancelledCount++
-        logger.info("[Payment Retry] Cancelled subscription ${subscription.id} - max retries exceeded")
+        logger.info(`[Payment Retry] Cancelled subscription ${subscription.id} - max retries exceeded`)
         continue
       }
       
@@ -79,7 +79,7 @@ export default async function failedPaymentRetryJob(container: MedusaContainer) 
             }
           })
           successCount++
-          logger.info("[Payment Retry] Dispatched to Temporal for subscription ${subscription.id}, runId: ${result.runId}")
+          logger.info(`[Payment Retry] Dispatched to Temporal for subscription ${subscription.id}, runId: ${result.runId}`)
           continue
         }
 
@@ -103,11 +103,11 @@ export default async function failedPaymentRetryJob(container: MedusaContainer) 
         })
         
         failCount++
-        logger.info("[Payment Retry] Failed for subscription ${subscription.id}: ${error.message}")
+        logger.info(`[Payment Retry] Failed for subscription ${subscription.id}: ${error.message}`)
       }
     }
     
-    logger.info("[Payment Retry] Completed - Success: ${successCount}, Failed: ${failCount}, Cancelled: ${cancelledCount}")
+    logger.info(`[Payment Retry] Completed - Success: ${successCount}, Failed: ${failCount}, Cancelled: ${cancelledCount}`)
   } catch (error) {
     console.error("[Payment Retry] Job failed:", error)
   }

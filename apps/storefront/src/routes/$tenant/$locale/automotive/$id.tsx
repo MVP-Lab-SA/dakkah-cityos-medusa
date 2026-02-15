@@ -69,18 +69,18 @@ function AutomotiveDetailPage() {
   const vehicleTitle = [vehicle.year, vehicle.make, vehicle.model].filter(Boolean).join(" ") || vehicle.title || "Vehicle"
 
   const specs = [
-    { label: "Year", value: vehicle.year },
-    { label: "Make", value: vehicle.make },
-    { label: "Model", value: vehicle.model },
-    { label: "Mileage", value: vehicle.mileage ? `${Number(vehicle.mileage || 0).toLocaleString()} mi` : null },
-    { label: "Fuel Type", value: vehicle.fuel_type || vehicle.fuelType },
-    { label: "Transmission", value: vehicle.transmission },
-    { label: "Color", value: vehicle.color || vehicle.exterior_color },
-    { label: "VIN", value: vehicle.vin },
-    { label: "Engine", value: vehicle.engine },
-    { label: "Drivetrain", value: vehicle.drivetrain },
-    { label: "Body Type", value: vehicle.body_type || vehicle.bodyType },
-    { label: "Doors", value: vehicle.doors },
+    { label: t(locale, "automotive.label_year", "Year"), value: vehicle.year },
+    { label: t(locale, "automotive.label_make", "Make"), value: vehicle.make },
+    { label: t(locale, "automotive.label_model", "Model"), value: vehicle.model },
+    { label: t(locale, "automotive.label_mileage", "Mileage"), value: vehicle.mileage ? `${Number(vehicle.mileage || 0).toLocaleString()} mi` : null },
+    { label: t(locale, "automotive.label_fuel_type", "Fuel Type"), value: vehicle.fuel_type || vehicle.fuelType },
+    { label: t(locale, "automotive.label_transmission", "Transmission"), value: vehicle.transmission },
+    { label: t(locale, "automotive.label_color", "Color"), value: vehicle.color || vehicle.exterior_color },
+    { label: t(locale, "automotive.label_vin", "VIN"), value: vehicle.vin },
+    { label: t(locale, "automotive.label_engine", "Engine"), value: vehicle.engine },
+    { label: t(locale, "automotive.label_drivetrain", "Drivetrain"), value: vehicle.drivetrain },
+    { label: t(locale, "automotive.label_body_type", "Body Type"), value: vehicle.body_type || vehicle.bodyType },
+    { label: t(locale, "automotive.label_doors", "Doors"), value: vehicle.doors },
   ].filter((s) => s.value)
 
   return (

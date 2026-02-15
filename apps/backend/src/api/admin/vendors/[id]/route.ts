@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework"
 import { z } from "zod"
-import { handleApiError } from "../../../lib/api-error-handler"
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 const updateVendorSchema = z.object({
   businessName: z.string().min(2).optional(),

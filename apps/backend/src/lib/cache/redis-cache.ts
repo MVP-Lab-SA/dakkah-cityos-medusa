@@ -201,7 +201,7 @@ export class CityOSCache {
       if (keys.length > 0) {
         await this.redis.del(...keys)
       }
-      logger.info("[CityOS Cache] Cleared ${keys.length} keys")
+      logger.info(`[CityOS Cache] Cleared ${keys.length} keys`)
     } catch (error) {
       console.warn("[CityOS Cache] Error clearing cache:", error)
     }

@@ -93,9 +93,9 @@ function FitnessPage() {
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>{items.length} classes available</span>
             <span>|</span>
-            <span>Expert instructors</span>
+            <span>{t(locale, "fitness.badge_expert_instructors", "Expert instructors")}</span>
             <span>|</span>
-            <span>All fitness levels</span>
+            <span>{t(locale, "fitness.badge_all_levels", "All fitness levels")}</span>
           </div>
         </div>
       </div>

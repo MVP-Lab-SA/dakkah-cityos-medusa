@@ -147,9 +147,9 @@ function BlogPage() {
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>{items.length} articles</span>
             <span>|</span>
-            <span>Expert insights</span>
+            <span>{t(locale, "blog.badge_expert_insights", "Expert insights")}</span>
             <span>|</span>
-            <span>Updated weekly</span>
+            <span>{t(locale, "blog.badge_updated_weekly", "Updated weekly")}</span>
           </div>
         </div>
       </div>

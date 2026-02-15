@@ -4,6 +4,7 @@ import { useCustomerBookings } from "@/lib/hooks/use-bookings"
 import { formatPrice } from "@/lib/utils/price"
 import { Calendar, ChevronRight, Clock } from "@medusajs/icons"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/account/bookings/")({
   component: BookingsPage,
@@ -32,7 +33,7 @@ function BookingsPage() {
   })
 
   return (
-    <AccountLayout title="Bookings" description="Manage your scheduled appointments">
+    <AccountLayout title={t(locale, "account.bookings_title", "Bookings")} description={t(locale, "account.bookings_description", "Manage your scheduled appointments")}>
       {/* Filter Tabs */}
       <div className="flex gap-2 mb-6">
         {(["upcoming", "past", "all"] as const).map((f) => (

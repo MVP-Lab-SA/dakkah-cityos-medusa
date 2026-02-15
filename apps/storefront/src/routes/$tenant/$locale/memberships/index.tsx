@@ -102,9 +102,9 @@ function MembershipsPage() {
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>{items.length} plans available</span>
             <span>|</span>
-            <span>Cancel anytime</span>
+            <span>{t(locale, "memberships.badge_cancel_anytime", "Cancel anytime")}</span>
             <span>|</span>
-            <span>Exclusive perks</span>
+            <span>{t(locale, "memberships.badge_exclusive_perks", "Exclusive perks")}</span>
           </div>
         </div>
       </div>

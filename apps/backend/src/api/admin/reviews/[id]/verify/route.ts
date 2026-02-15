@@ -1,5 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { handleApiError } from "../../../../lib/api-error-handler"
+import { handleApiError } from "../../../../../lib/api-error-handler"
 
 // POST /admin/reviews/:id/verify - Mark as verified purchase
 export async function POST(req: MedusaRequest, res: MedusaResponse) {

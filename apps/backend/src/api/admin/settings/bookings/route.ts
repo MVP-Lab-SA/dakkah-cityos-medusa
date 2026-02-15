@@ -1,5 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { handleApiError } from "../../../lib/api-error-handler"
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 // In a real implementation, this would be stored in the database
 // For now, we'll use a simple in-memory store or metadata on a system entity

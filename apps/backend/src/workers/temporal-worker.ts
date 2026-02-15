@@ -63,7 +63,7 @@ function createPayloadClient() {
 
 const activityImplementations = {
   async syncProductToPayload(input: any) {
-    logger.info("[TemporalWorker] Executing syncProductToPayload: ${input.productId}")
+    logger.info(`[TemporalWorker] Executing syncProductToPayload: ${input.productId}`)
     try {
       const client = createPayloadClient()
       const existing = await client.get("/api/product-content", {
@@ -97,7 +97,7 @@ const activityImplementations = {
   },
 
   async deleteProductFromPayload(input: any) {
-    logger.info("[TemporalWorker] Executing deleteProductFromPayload: ${input.productId}")
+    logger.info(`[TemporalWorker] Executing deleteProductFromPayload: ${input.productId}`)
     try {
       const client = createPayloadClient()
       const existing = await client.get("/api/product-content", {
@@ -116,7 +116,7 @@ const activityImplementations = {
   },
 
   async syncGovernanceToPayload(input: any) {
-    logger.info("[TemporalWorker] Executing syncGovernanceToPayload: tenant=${input.tenantId}")
+    logger.info(`[TemporalWorker] Executing syncGovernanceToPayload: tenant=${input.tenantId}`)
     try {
       const client = createPayloadClient()
       const policyData = {
@@ -144,7 +144,7 @@ const activityImplementations = {
   },
 
   async createERPNextInvoice(input: any) {
-    logger.info("[TemporalWorker] Executing createERPNextInvoice: order=${input.orderId}")
+    logger.info(`[TemporalWorker] Executing createERPNextInvoice: order=${input.orderId}`)
     try {
       const service = createERPNextService()
       const result = await service.createInvoice({
@@ -167,7 +167,7 @@ const activityImplementations = {
   },
 
   async syncCustomerToERPNext(input: any) {
-    logger.info("[TemporalWorker] Executing syncCustomerToERPNext: ${input.customerId}")
+    logger.info(`[TemporalWorker] Executing syncCustomerToERPNext: ${input.customerId}`)
     try {
       const service = createERPNextService()
       const result = await service.syncCustomer({
@@ -186,7 +186,7 @@ const activityImplementations = {
   },
 
   async syncProductToERPNext(input: any) {
-    logger.info("[TemporalWorker] Executing syncProductToERPNext: ${input.productId}")
+    logger.info(`[TemporalWorker] Executing syncProductToERPNext: ${input.productId}`)
     try {
       const service = createERPNextService()
       const result = await service.syncProduct({
@@ -206,7 +206,7 @@ const activityImplementations = {
   },
 
   async syncVendorAsSupplier(input: any) {
-    logger.info("[TemporalWorker] Executing syncVendorAsSupplier: ${input.vendorId}")
+    logger.info(`[TemporalWorker] Executing syncVendorAsSupplier: ${input.vendorId}`)
     try {
       const service = createERPNextService()
       const result = await service.syncCustomer({
@@ -225,7 +225,7 @@ const activityImplementations = {
   },
 
   async recordPaymentInERPNext(input: any) {
-    logger.info("[TemporalWorker] Executing recordPaymentInERPNext: order=${input.orderId}")
+    logger.info(`[TemporalWorker] Executing recordPaymentInERPNext: order=${input.orderId}`)
     try {
       const service = createERPNextService()
       const result = await service.recordPayment({
@@ -247,7 +247,7 @@ const activityImplementations = {
   },
 
   async createFleetbaseShipment(input: any) {
-    logger.info("[TemporalWorker] Executing createFleetbaseShipment: order=${input.orderId}")
+    logger.info(`[TemporalWorker] Executing createFleetbaseShipment: order=${input.orderId}`)
     try {
       const service = createFleetbaseService()
       const result = await service.createShipment({
@@ -266,7 +266,7 @@ const activityImplementations = {
   },
 
   async syncPOIToFleetbase(input: any) {
-    logger.info("[TemporalWorker] Executing syncPOIToFleetbase: ${input.poiId}")
+    logger.info(`[TemporalWorker] Executing syncPOIToFleetbase: ${input.poiId}`)
     try {
       const service = createFleetbaseService()
       const result = await service.estimateDelivery({
@@ -282,7 +282,7 @@ const activityImplementations = {
   },
 
   async createDID(input: any) {
-    logger.info("[TemporalWorker] Executing createDID: method=${input.method}")
+    logger.info(`[TemporalWorker] Executing createDID: method=${input.method}`)
     try {
       const service = createWaltIdService()
       const result = await service.createDID(input.method || "key")
@@ -294,7 +294,7 @@ const activityImplementations = {
   },
 
   async issueVendorCredential(input: any) {
-    logger.info("[TemporalWorker] Executing issueVendorCredential: ${input.vendorName}")
+    logger.info(`[TemporalWorker] Executing issueVendorCredential: ${input.vendorName}`)
     try {
       const service = createWaltIdService()
       const result = await service.issueVendorCredential({
@@ -311,7 +311,7 @@ const activityImplementations = {
   },
 
   async issueKYCCredential(input: any) {
-    logger.info("[TemporalWorker] Executing issueKYCCredential: ${input.customerName}")
+    logger.info(`[TemporalWorker] Executing issueKYCCredential: ${input.customerName}`)
     try {
       const service = createWaltIdService()
       const result = await service.issueKYCCredential({
@@ -330,7 +330,7 @@ const activityImplementations = {
   },
 
   async issueMembershipCredential(input: any) {
-    logger.info("[TemporalWorker] Executing issueMembershipCredential: ${input.memberName}")
+    logger.info(`[TemporalWorker] Executing issueMembershipCredential: ${input.memberName}`)
     try {
       const service = createWaltIdService()
       const result = await service.issueMembershipCredential({
@@ -349,7 +349,7 @@ const activityImplementations = {
   },
 
   async syncNodeToAllSystems(input: any) {
-    logger.info("[TemporalWorker] Executing syncNodeToAllSystems: ${input.nodeId}")
+    logger.info(`[TemporalWorker] Executing syncNodeToAllSystems: ${input.nodeId}`)
     const syncedSystems: string[] = []
     const errors: string[] = []
 
@@ -398,7 +398,7 @@ const activityImplementations = {
   },
 
   async deleteNodeFromAllSystems(input: any) {
-    logger.info("[TemporalWorker] Executing deleteNodeFromAllSystems: ${input.nodeId}")
+    logger.info(`[TemporalWorker] Executing deleteNodeFromAllSystems: ${input.nodeId}`)
     const deletedFrom: string[] = []
     const errors: string[] = []
 
@@ -432,7 +432,7 @@ const activityImplementations = {
   },
 
   async scheduledProductSync(input: any) {
-    logger.info("[TemporalWorker] Executing scheduledProductSync: ${input.timestamp}")
+    logger.info(`[TemporalWorker] Executing scheduledProductSync: ${input.timestamp}`)
     try {
       const payloadClient = createPayloadClient()
       const medusaUrl = process.env.MEDUSA_BACKEND_URL || "http://localhost:9000"
@@ -481,7 +481,7 @@ const activityImplementations = {
   },
 
   async retryFailedSyncs(input: any) {
-    logger.info("[TemporalWorker] Executing retryFailedSyncs: ${input.timestamp}")
+    logger.info(`[TemporalWorker] Executing retryFailedSyncs: ${input.timestamp}`)
     try {
       const failedSyncs = await durableSyncTracker.getFailedSyncs(undefined, input.limit || 50)
       let retried = 0
@@ -510,7 +510,7 @@ const activityImplementations = {
   },
 
   async hierarchyReconciliation(input: any) {
-    logger.info("[TemporalWorker] Executing hierarchyReconciliation: ${input.timestamp}")
+    logger.info(`[TemporalWorker] Executing hierarchyReconciliation: ${input.timestamp}`)
     try {
       const payloadClient = createPayloadClient()
       const tenantsResponse = await payloadClient.get("/api/tenants", {
@@ -563,9 +563,9 @@ export async function startWorker(): Promise<void> {
   const taskQueue = "cityos-workflow-queue"
 
   try {
-    logger.info("[TemporalWorker] Connecting to Temporal Cloud at ${endpoint}...")
-    logger.info("[TemporalWorker] Namespace: ${namespace}")
-    logger.info("[TemporalWorker] Task Queue: ${taskQueue}")
+    logger.info(`[TemporalWorker] Connecting to Temporal Cloud at ${endpoint}...`)
+    logger.info(`[TemporalWorker] Namespace: ${namespace}`)
+    logger.info(`[TemporalWorker] Task Queue: ${taskQueue}`)
 
     const { NativeConnection } = workerSDK
     const connection = await NativeConnection.connect({
@@ -577,7 +577,7 @@ export async function startWorker(): Promise<void> {
     logger.info("[TemporalWorker] Connected to Temporal Cloud successfully")
 
     const activityNames = Object.keys(activityImplementations)
-    logger.info("[TemporalWorker] Registering ${activityNames.length} activities: ${activityNames.join(", ")}")
+    logger.info(`[TemporalWorker] Registering ${activityNames.length} activities: ${activityNames.join(", ")}`)
 
     const { Worker } = workerSDK
     workerInstance = await Worker.create({
@@ -587,8 +587,8 @@ export async function startWorker(): Promise<void> {
       activities: activityImplementations,
     })
 
-    logger.info("[TemporalWorker] Worker created and polling on task queue: ${taskQueue}")
-    logger.info("[TemporalWorker] Activity definitions registered: ${Object.keys(ACTIVITY_DEFINITIONS).length}")
+    logger.info(`[TemporalWorker] Worker created and polling on task queue: ${taskQueue}`)
+    logger.info(`[TemporalWorker] Activity definitions registered: ${Object.keys(ACTIVITY_DEFINITIONS).length}`)
 
     const shutdownHandler = async () => {
       if (isShuttingDown) return

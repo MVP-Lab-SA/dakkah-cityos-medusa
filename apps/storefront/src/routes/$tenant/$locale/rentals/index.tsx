@@ -109,9 +109,9 @@ function RentalsPage() {
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>{items.length} items available</span>
             <span>|</span>
-            <span>Flexible terms</span>
+            <span>{t(locale, "rentals.badge_flexible_terms", "Flexible terms")}</span>
             <span>|</span>
-            <span>Easy returns</span>
+            <span>{t(locale, "rentals.badge_easy_returns", "Easy returns")}</span>
           </div>
         </div>
       </div>

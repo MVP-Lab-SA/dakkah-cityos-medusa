@@ -88,7 +88,7 @@ function AutomotivePage() {
   }
 
   const listingTypeBadge = (type: string | null) => {
-    if (type === "lease") return { label: "Lease", color: "bg-ds-primary text-white" }
+    if (type === "lease") return { label: t(locale, "automotive.label_lease", "Lease"), color: "bg-ds-primary text-white" }
     return { label: t(locale, 'verticals.for_sale'), color: "bg-ds-primary text-ds-primary-foreground" }
   }
 

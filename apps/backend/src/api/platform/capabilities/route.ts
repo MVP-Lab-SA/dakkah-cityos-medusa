@@ -1,6 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { PLATFORM_CAPABILITIES } from "../../../lib/platform/index"
-import { handleApiError } from "../../lib/api-error-handler"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 export const AUTHENTICATE = false
 

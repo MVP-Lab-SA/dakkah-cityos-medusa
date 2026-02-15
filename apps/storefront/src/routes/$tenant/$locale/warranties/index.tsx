@@ -105,9 +105,9 @@ function WarrantiesPage() {
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>{items.length} plans available</span>
             <span>|</span>
-            <span>Full coverage</span>
+            <span>{t(locale, "warranties.badge_full_coverage", "Full coverage")}</span>
             <span>|</span>
-            <span>Easy claims</span>
+            <span>{t(locale, "warranties.badge_easy_claims", "Easy claims")}</span>
           </div>
         </div>
       </div>

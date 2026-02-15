@@ -67,10 +67,10 @@ function RealEstateDetailPage() {
   }
 
   const highlights = [
-    { label: "Bedrooms", value: property.bedrooms, icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
-    { label: "Bathrooms", value: property.bathrooms, icon: "M4 6h16M4 10h16M4 14h16M4 18h16" },
-    { label: "Sq Ft", value: property.sqft ? Number(property.sqft || 0).toLocaleString() : property.square_feet ? Number(property.square_feet || 0).toLocaleString() : null, icon: "M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" },
-    { label: "Type", value: property.property_type || property.propertyType, icon: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" },
+    { label: t(locale, "realestate.label_bedrooms", "Bedrooms"), value: property.bedrooms, icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
+    { label: t(locale, "realestate.label_bathrooms", "Bathrooms"), value: property.bathrooms, icon: "M4 6h16M4 10h16M4 14h16M4 18h16" },
+    { label: t(locale, "realestate.label_sq_ft", "Sq Ft"), value: property.sqft ? Number(property.sqft || 0).toLocaleString() : property.square_feet ? Number(property.square_feet || 0).toLocaleString() : null, icon: "M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" },
+    { label: t(locale, "realestate.label_type", "Type"), value: property.property_type || property.propertyType, icon: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" },
   ].filter((h) => h.value)
 
   return (

@@ -29,7 +29,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       configured_count: systems.filter((s) => s.configured).length,
     })
   } catch (error: any) {
-    logger.error("[Integrations] fetching integration overview: ${error.message}")
+    logger.error(`[Integrations] fetching integration overview: ${error.message}`)
     return res.status(500).json({ error: error.message })
   }
 }

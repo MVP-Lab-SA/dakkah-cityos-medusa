@@ -58,7 +58,7 @@ function AddressesPage() {
   const addresses = (customer as any)?.addresses || []
 
   return (
-    <AccountLayout title="Addresses" description="Manage your shipping and billing addresses">
+    <AccountLayout title={t(locale, "account.addresses_title", "Addresses")} description={t(locale, "account.addresses_description", "Manage your shipping and billing addresses")}>
       <div className="space-y-6">
         {/* Add Address Button */}
         {!showForm && !editingAddress && (

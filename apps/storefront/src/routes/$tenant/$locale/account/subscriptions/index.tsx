@@ -3,6 +3,7 @@ import { AccountLayout } from "@/components/account"
 import { useCustomerSubscriptions } from "@/lib/hooks/use-subscriptions"
 import { formatPrice } from "@/lib/utils/price"
 import { CreditCard, ChevronRight, ArrowPath } from "@medusajs/icons"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute("/$tenant/$locale/account/subscriptions/")({
   component: SubscriptionsPage,
@@ -22,7 +23,7 @@ function SubscriptionsPage() {
   const baseHref = `/${tenant}/${locale}`
 
   return (
-    <AccountLayout title="Subscriptions" description="Manage your active subscriptions">
+    <AccountLayout title={t(locale, "account.subscriptions_title", "Subscriptions")} description={t(locale, "account.subscriptions_description", "Manage your active subscriptions")}>
       {isLoading ? (
         <div className="space-y-4">
           {[1, 2].map((i) => (

@@ -125,7 +125,7 @@ function ResetWithToken({
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="new-password">New password</Label>
+              <Label htmlFor="new-password">{t(locale, "auth.new_password_label", "New password")}</Label>
               <Input
                 id="new-password"
                 type="password"
@@ -139,7 +139,7 @@ function ResetWithToken({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirm-new-password">Confirm new password</Label>
+              <Label htmlFor="confirm-new-password">{t(locale, "auth.confirm_new_password_label", "Confirm new password")}</Label>
               <Input
                 id="confirm-new-password"
                 type="password"

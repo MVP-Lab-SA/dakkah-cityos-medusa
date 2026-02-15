@@ -20,7 +20,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     const event = body.event || "unknown"
     const data = body.data || {}
 
-    logger.info("[Webhook:ERPNext] Received: ${doctype} - ${event}")
+    logger.info(`[Webhook:ERPNext] Received: ${doctype} - ${event}`)
 
     let processed = false
 
@@ -49,10 +49,10 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
                   },
                 })
                 processed = true
-                logger.info("[Webhook:ERPNext] Invoice ${data.name} linked to order ${medusaOrderId}")
+                logger.info(`[Webhook:ERPNext] Invoice ${data.name} linked to order ${medusaOrderId}`)
               }
             } catch (err) {
-              logger.error("[Webhook:ERPNext] updating order metadata: ${err instanceof Error ? err.message : err}")
+              logger.error(`[Webhook:ERPNext] updating order metadata: ${err instanceof Error ? err.message : err}`)
             }
           }
         } else if (event === "on_cancel" || event === "cancelled") {
@@ -77,10 +77,10 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
                   },
                 })
                 processed = true
-                logger.info("[Webhook:ERPNext] Invoice ${data.name} cancelled for order ${medusaOrderId}")
+                logger.info(`[Webhook:ERPNext] Invoice ${data.name} cancelled for order ${medusaOrderId}`)
               }
             } catch (err) {
-              logger.error("[Webhook:ERPNext] updating cancelled invoice: ${err instanceof Error ? err.message : err}")
+              logger.error(`[Webhook:ERPNext] updating cancelled invoice: ${err instanceof Error ? err.message : err}`)
             }
           }
         }
@@ -90,7 +90,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       case "Payment Entry": {
         if (event === "on_submit" || event === "submitted") {
           const medusaOrderId = data.custom_medusa_order_id || data.medusa_order_id
-          logger.info("[Webhook:ERPNext] Payment Entry submitted: ${data.name}, order: ${medusaOrderId || "N/A"}")
+          logger.info(`[Webhook:ERPNext] Payment Entry submitted: ${data.name}, order: ${medusaOrderId || "N/A"}`)
           processed = true
         }
         break
@@ -98,10 +98,10 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
       case "Stock Entry": {
         if (event === "on_submit" || event === "posted") {
-          logger.info("[Webhook:ERPNext] Stock Entry posted: ${data.name}, type: ${data.stock_entry_type || "unknown"}")
+          logger.info(`[Webhook:ERPNext] Stock Entry posted: ${data.name}, type: ${data.stock_entry_type || "unknown"}`)
           if (data.items && Array.isArray(data.items)) {
             for (const item of data.items) {
-              logger.info("[Webhook:ERPNext] Inventory change: ${item.item_code} qty: ${item.qty} warehouse: ${item.t_warehouse || item.s_warehouse}")
+              logger.info(`[Webhook:ERPNext] Inventory change: ${item.item_code} qty: ${item.qty} warehouse: ${item.t_warehouse || item.s_warehouse}`)
             }
           }
           processed = true
@@ -111,20 +111,20 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
       case "Customer": {
         if (event === "on_update" || event === "updated") {
-          logger.info("[Webhook:ERPNext] Customer updated: ${data.name}, medusa_id: ${data.custom_medusa_customer_id || "N/A"}")
+          logger.info(`[Webhook:ERPNext] Customer updated: ${data.name}, medusa_id: ${data.custom_medusa_customer_id || "N/A"}`)
           processed = true
         }
         break
       }
 
       default:
-        logger.info("[Webhook:ERPNext] Unhandled doctype: ${doctype}, event: ${event}")
+        logger.info(`[Webhook:ERPNext] Unhandled doctype: ${doctype}, event: ${event}`)
         break
     }
 
     return res.status(200).json({ received: true, doctype, event, processed })
   } catch (error) {
-    logger.error("[Webhook:ERPNext] ${error instanceof Error ? error.message : error}")
+    logger.error(`[Webhook:ERPNext] ${error instanceof Error ? error.message : error}`)
     return res.status(500).json({ error: "Internal server error" })
   }
 }

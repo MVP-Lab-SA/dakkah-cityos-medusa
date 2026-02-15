@@ -115,7 +115,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
     return res.json({ systems: healthChecks })
   } catch (error: any) {
-    logger.error("[IntegrationHealth] checking health: ${error.message}")
+    logger.error(`[IntegrationHealth] checking health: ${error.message}`)
     return res.status(500).json({ error: error.message })
   }
 }

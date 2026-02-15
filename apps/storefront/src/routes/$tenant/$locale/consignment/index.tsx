@@ -14,17 +14,17 @@ export const Route = createFileRoute("/$tenant/$locale/consignment/")({
   loader: async () => {
     try {
       const tiers = [
-        { id: "1", name: "Standard", commission: "70/30", description: "You keep 70% of the sale price. Ideal for everyday items and accessories.", minValue: "50 SAR", features: ["Basic product listing", "Standard photography", "30-day listing period", "Email support"], color: "emerald" },
-        { id: "2", name: "Premium", commission: "75/25", description: "You keep 75% of the sale price. Great for designer and branded items.", minValue: "200 SAR", features: ["Featured listing placement", "Professional photography", "60-day listing period", "Priority support"], color: "teal", popular: true },
-        { id: "3", name: "Luxury", commission: "80/20", description: "You keep 80% of the sale price. For high-value luxury and collectible items.", minValue: "1,000 SAR", features: ["Premium showcase placement", "Studio photography", "90-day listing period", "Dedicated account manager"], color: "amber" },
+        { id: "1", name: "Standard", commission: "70/30", description: t(locale, "consignment.description1_you_keep_70__of_the", "You keep 70% of the sale price. Ideal for everyday items and accessories."), minValue: "50 SAR", features: ["Basic product listing", "Standard photography", "30-day listing period", "Email support"], color: "emerald" },
+        { id: "2", name: "Premium", commission: "75/25", description: t(locale, "consignment.description2_you_keep_75__of_the", "You keep 75% of the sale price. Great for designer and branded items."), minValue: "200 SAR", features: ["Featured listing placement", "Professional photography", "60-day listing period", "Priority support"], color: "teal", popular: true },
+        { id: "3", name: "Luxury", commission: "80/20", description: t(locale, "consignment.description3_you_keep_80__of_the", "You keep 80% of the sale price. For high-value luxury and collectible items."), minValue: "1,000 SAR", features: ["Premium showcase placement", "Studio photography", "90-day listing period", "Dedicated account manager"], color: "amber" },
       ]
       const benefits = [
-        { title: "Earn from Unused Items", description: "Turn pre-owned items into cash without the hassle of selling directly.", icon: "💰" },
-        { title: "Professional Handling", description: "We handle photography, listing, pricing, and customer inquiries.", icon: "📸" },
-        { title: "Secure & Insured", description: "All consigned items are fully insured while in our care.", icon: "🛡️" },
-        { title: "Wide Audience Reach", description: "Access thousands of active buyers on our marketplace.", icon: "🌍" },
-        { title: "Transparent Tracking", description: "Real-time updates on views, inquiries, and sales of your items.", icon: "📊" },
-        { title: "Fast Payments", description: "Receive your earnings within 3 business days of a completed sale.", icon: "⚡" },
+        { title: t(locale, "consignment.title4_earn_from_unused_ite", "Earn from Unused Items"), description: t(locale, "consignment.description5_turn_pre_owned_items", "Turn pre-owned items into cash without the hassle of selling directly."), icon: "💰" },
+        { title: t(locale, "consignment.title6_professional_handlin", "Professional Handling"), description: t(locale, "consignment.description7_we_handle_photograph", "We handle photography, listing, pricing, and customer inquiries."), icon: "📸" },
+        { title: t(locale, "consignment.title8_secure___insured", "Secure & Insured"), description: t(locale, "consignment.description9_all_consigned_items", "All consigned items are fully insured while in our care."), icon: "🛡️" },
+        { title: t(locale, "consignment.title10_wide_audience_reach", "Wide Audience Reach"), description: t(locale, "consignment.description11_access_thousands_of", "Access thousands of active buyers on our marketplace."), icon: "🌍" },
+        { title: t(locale, "consignment.title12_transparent_tracking", "Transparent Tracking"), description: t(locale, "consignment.description13_real_time_updates_on", "Real-time updates on views, inquiries, and sales of your items."), icon: "📊" },
+        { title: t(locale, "consignment.title14_fast_payments", "Fast Payments"), description: t(locale, "consignment.description15_receive_your_earning", "Receive your earnings within 3 business days of a completed sale."), icon: "⚡" },
       ]
       return { tiers, benefits }
     } catch {
@@ -60,7 +60,7 @@ function ConsignmentPage() {
           <h1 className="text-4xl md:text-5xl font-bold mb-4">{t(locale, 'consignment.title')}</h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">{t(locale, 'consignment.subtitle')}</p>
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
-            <span>Up to 80% earnings</span><span>|</span><span>Fully insured</span><span>|</span><span>Fast payouts</span>
+            <span>{t(locale, "consignment.badge_earnings", "Up to 80% earnings")}</span><span>|</span><span>{t(locale, "consignment.badge_insured", "Fully insured")}</span><span>|</span><span>{t(locale, "consignment.badge_fast_payouts", "Fast payouts")}</span>
           </div>
         </div>
       </div>
@@ -122,7 +122,7 @@ function ConsignmentPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'verticals.how_it_works')}</h2>
           <div className="grid md:grid-cols-4 gap-8">
-            {[{ step: "1", title: "Submit Items", desc: "Bring or ship your items to our facility for evaluation." }, { step: "2", title: "We Evaluate", desc: "Our experts assess, authenticate, and price your items." }, { step: "3", title: "We Sell", desc: "Items are photographed and listed on our marketplace." }, { step: "4", title: "You Earn", desc: "Receive your earnings within 3 days of a completed sale." }].map((s) => (
+            {[{ step: "1", title: t(locale, "consignment.title16_submit_items", "Submit Items"), desc: t(locale, "consignment.desc20_bring_or_ship_your_i", "Bring or ship your items to our facility for evaluation.") }, { step: "2", title: t(locale, "consignment.title17_we_evaluate", "We Evaluate"), desc: t(locale, "consignment.desc21_our_experts_assess", "Our experts assess, authenticate, and price your items.") }, { step: "3", title: t(locale, "consignment.title18_we_sell", "We Sell"), desc: t(locale, "consignment.desc22_items_are_photograph", "Items are photographed and listed on our marketplace.") }, { step: "4", title: t(locale, "consignment.title19_you_earn", "You Earn"), desc: t(locale, "consignment.desc23_receive_your_earning", "Receive your earnings within 3 days of a completed sale.") }].map((s) => (
               <div key={s.step} className="text-center">
                 <div className="w-12 h-12 rounded-full bg-ds-success text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">{s.step}</div>
                 <h3 className="font-semibold text-ds-foreground mb-2">{s.title}</h3>

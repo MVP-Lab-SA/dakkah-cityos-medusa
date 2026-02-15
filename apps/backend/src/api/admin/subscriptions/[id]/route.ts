@@ -1,6 +1,6 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework";
 import { z } from "zod";
-import { handleApiError } from "../../../lib/api-error-handler"
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const updateSubscriptionSchema = z.object({

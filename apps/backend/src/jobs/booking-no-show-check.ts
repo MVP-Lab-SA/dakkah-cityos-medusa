@@ -48,13 +48,13 @@ export default async function bookingNoShowCheckJob(container: MedusaContainer) 
         })
         
         noShowCount++
-        logger.info("[No-Show Check] Marked booking ${booking.id} as no-show")
+        logger.info(`[No-Show Check] Marked booking ${booking.id} as no-show`)
       } catch (error) {
         console.error(`[No-Show Check] Failed to mark booking ${booking.id}:`, error)
       }
     }
     
-    logger.info("[No-Show Check] Marked ${noShowCount} bookings as no-show")
+    logger.info(`[No-Show Check] Marked ${noShowCount} bookings as no-show`)
   } catch (error) {
     console.error("[No-Show Check] Job failed:", error)
   }

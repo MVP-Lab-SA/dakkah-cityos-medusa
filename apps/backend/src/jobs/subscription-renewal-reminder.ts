@@ -49,11 +49,11 @@ export default async function subscriptionRenewalReminderJob(container: MedusaCo
         })
         
         totalReminders++
-        logger.info("[Renewal Reminder] ${days}-day reminder sent for subscription ${subscription.id}")
+        logger.info(`[Renewal Reminder] ${days}-day reminder sent for subscription ${subscription.id}`)
       }
     }
     
-    logger.info("[Renewal Reminder] Sent ${totalReminders} reminders")
+    logger.info(`[Renewal Reminder] Sent ${totalReminders} reminders`)
   } catch (error) {
     console.error("[Renewal Reminder] Job failed:", error)
   }

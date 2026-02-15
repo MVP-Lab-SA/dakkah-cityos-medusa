@@ -14,18 +14,18 @@ export const Route = createFileRoute("/$tenant/$locale/dropshipping/")({
   loader: async () => {
     try {
       const features = [
-        { id: "1", title: "No Inventory Needed", description: "Sell products without stocking them. We handle warehousing and fulfillment for you.", icon: "📦", color: "violet" },
-        { id: "2", title: "Global Supplier Network", description: "Access 500+ verified suppliers across electronics, fashion, home goods, and more.", icon: "🌐", color: "purple" },
-        { id: "3", title: "Automated Fulfillment", description: "Orders are automatically routed to suppliers for fast processing and shipping.", icon: "⚡", color: "blue" },
-        { id: "4", title: "Brand Customization", description: "Add your branding to packaging, invoices, and shipping labels for a professional look.", icon: "🎨", color: "pink" },
-        { id: "5", title: "Real-Time Analytics", description: "Track sales, profits, and inventory levels with comprehensive dashboards.", icon: "📊", color: "green" },
-        { id: "6", title: "24/7 Support", description: "Dedicated support team to help with orders, returns, and supplier issues.", icon: "🛟", color: "amber" },
+        { id: "1", title: t(locale, "dropshipping.title1_no_inventory_needed", "No Inventory Needed"), description: t(locale, "dropshipping.description2_sell_products_withou", "Sell products without stocking them. We handle warehousing and fulfillment for you."), icon: "📦", color: "violet" },
+        { id: "2", title: t(locale, "dropshipping.title3_global_supplier_netw", "Global Supplier Network"), description: t(locale, "dropshipping.description4_access_500__verified", "Access 500+ verified suppliers across electronics, fashion, home goods, and more."), icon: "🌐", color: "purple" },
+        { id: "3", title: t(locale, "dropshipping.title5_automated_fulfillmen", "Automated Fulfillment"), description: t(locale, "dropshipping.description6_orders_are_automatic", "Orders are automatically routed to suppliers for fast processing and shipping."), icon: "⚡", color: "blue" },
+        { id: "4", title: t(locale, "dropshipping.title7_brand_customization", "Brand Customization"), description: t(locale, "dropshipping.description8_add_your_branding_to", "Add your branding to packaging, invoices, and shipping labels for a professional look."), icon: "🎨", color: "pink" },
+        { id: "5", title: t(locale, "dropshipping.title9_real_time_analytics", "Real-Time Analytics"), description: t(locale, "dropshipping.description10_track_sales__profits", "Track sales, profits, and inventory levels with comprehensive dashboards."), icon: "📊", color: "green" },
+        { id: "6", title: "24/7 Support", description: t(locale, "dropshipping.description11_dedicated_support_te", "Dedicated support team to help with orders, returns, and supplier issues."), icon: "🛟", color: "amber" },
       ]
       const stats = [
-        { label: "Active Dropshippers", value: "5,000+" },
-        { label: "Verified Suppliers", value: "500+" },
-        { label: "Products Available", value: "50,000+" },
-        { label: "Countries Shipped", value: "30+" },
+        { label: t(locale, "dropshipping.label_active_dropshippers", "Active Dropshippers"), value: "5,000+" },
+        { label: t(locale, "dropshipping.label_verified_suppliers", "Verified Suppliers"), value: "500+" },
+        { label: t(locale, "dropshipping.label_products_available", "Products Available"), value: "50,000+" },
+        { label: t(locale, "dropshipping.label_countries_shipped", "Countries Shipped"), value: "30+" },
       ]
       const plans = [
         { name: "Starter", price: "Free", features: ["Up to 50 products", "Basic analytics", "Standard shipping", "Email support"], cta: "Start Free" },
@@ -128,7 +128,7 @@ function DropshippingPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold text-ds-foreground text-center mb-12">{t(locale, 'verticals.how_it_works')}</h2>
           <div className="grid md:grid-cols-4 gap-8">
-            {[{ step: "1", title: "Sign Up", desc: "Create your free account and set up your online store." }, { step: "2", title: "Choose Products", desc: "Browse our catalog and add products to your store." }, { step: "3", title: "Sell Online", desc: "Market products to your audience across any channel." }, { step: "4", title: "We Ship", desc: "We handle packaging and shipping directly to your customers." }].map((s) => (
+            {[{ step: "1", title: t(locale, "dropshipping.title12_sign_up", "Sign Up"), desc: t(locale, "dropshipping.desc16_create_your_free_acc", "Create your free account and set up your online store.") }, { step: "2", title: t(locale, "dropshipping.title13_choose_products", "Choose Products"), desc: t(locale, "dropshipping.desc17_browse_our_catalog_a", "Browse our catalog and add products to your store.") }, { step: "3", title: t(locale, "dropshipping.title14_sell_online", "Sell Online"), desc: t(locale, "dropshipping.desc18_market_products_to_y", "Market products to your audience across any channel.") }, { step: "4", title: t(locale, "dropshipping.title15_we_ship", "We Ship"), desc: t(locale, "dropshipping.desc19_we_handle_packaging", "We handle packaging and shipping directly to your customers.") }].map((s) => (
               <div key={s.step} className="text-center">
                 <div className="w-12 h-12 rounded-full bg-ds-primary text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">{s.step}</div>
                 <h3 className="font-semibold text-ds-foreground mb-2">{s.title}</h3>

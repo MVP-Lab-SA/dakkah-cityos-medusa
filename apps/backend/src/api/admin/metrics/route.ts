@@ -1,6 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { metrics } from "../../../lib/monitoring/metrics"
-import { handleApiError } from "../../lib/api-error-handler"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 /**
  * Prometheus-compatible metrics endpoint

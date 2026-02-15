@@ -106,7 +106,7 @@ function CharityPage() {
             <span>|</span>
             <span>100% transparent</span>
             <span>|</span>
-            <span>Every donation counts</span>
+            <span>{t(locale, "charity.badge_every_donation", "Every donation counts")}</span>
           </div>
         </div>
       </div>

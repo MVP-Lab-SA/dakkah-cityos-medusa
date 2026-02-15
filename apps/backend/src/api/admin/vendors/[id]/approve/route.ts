@@ -1,7 +1,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework"
 import { z } from "zod"
 import { approveVendorWorkflow } from "../../../../../workflows/vendor/approve-vendor-workflow"
-import { handleApiError } from "../../../../lib/api-error-handler"
+import { handleApiError } from "../../../../../lib/api-error-handler"
 
 const approveVendorSchema = z.object({
   notes: z.string().optional(),

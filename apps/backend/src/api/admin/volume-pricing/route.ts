@@ -1,7 +1,7 @@
 // @ts-nocheck
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
-import { handleApiError } from "../../lib/api-error-handler"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 // GET /admin/volume-pricing - List all volume pricing rules
 export async function GET(req: MedusaRequest, res: MedusaResponse) {

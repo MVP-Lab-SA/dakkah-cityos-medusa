@@ -14,7 +14,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     const syncMode = mode || (process.env.TEMPORAL_API_KEY ? "temporal" : "direct")
 
     if (syncMode === "temporal" && process.env.TEMPORAL_API_KEY) {
-      logger.info("[NodeHierarchySync] Dispatching hierarchy sync to Temporal for tenant: ${tenant_id}")
+      logger.info(`[NodeHierarchySync] Dispatching hierarchy sync to Temporal for tenant: ${tenant_id}`)
 
       const { startWorkflow } = require("../../../../../lib/temporal-client")
       const result = await startWorkflow("xsystem.scheduled-hierarchy-reconciliation", {
@@ -34,7 +34,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       })
     }
 
-    logger.info("[NodeHierarchySync] Running direct hierarchy sync for tenant: ${tenant_id}")
+    logger.info(`[NodeHierarchySync] Running direct hierarchy sync for tenant: ${tenant_id}`)
     const syncService = new NodeHierarchySyncService(req.scope)
     const result = await syncService.syncFullHierarchy(tenant_id)
 
@@ -45,7 +45,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       result,
     })
   } catch (error: any) {
-    logger.error("[NodeHierarchySync] in hierarchy sync: ${error.message}")
+    logger.error(`[NodeHierarchySync] in hierarchy sync: ${error.message}`)
     return res.status(500).json({ error: error.message })
   }
 }
@@ -66,7 +66,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       hierarchy,
     })
   } catch (error: any) {
-    logger.error("[NodeHierarchySync] fetching hierarchy: ${error.message}")
+    logger.error(`[NodeHierarchySync] fetching hierarchy: ${error.message}`)
     return res.status(500).json({ error: error.message })
   }
 }

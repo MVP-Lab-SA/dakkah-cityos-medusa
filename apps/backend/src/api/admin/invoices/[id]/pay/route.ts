@@ -1,5 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { handleApiError } from "../../../../lib/api-error-handler"
+import { handleApiError } from "../../../../../lib/api-error-handler"
 
 // POST /admin/invoices/:id/pay - Record payment on invoice
 export async function POST(req: MedusaRequest, res: MedusaResponse) {

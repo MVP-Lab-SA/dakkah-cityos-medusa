@@ -17,11 +17,11 @@ export const Route = createFileRoute("/$tenant/$locale/track")({
 })
 
 const demoEvents = [
-  { id: "e1", status: "preparing", description: "Order confirmed and being prepared", timestamp: "2026-02-11T09:00:00Z", location: "Warehouse" },
-  { id: "e2", status: "picked-up", description: "Package picked up by courier", timestamp: "2026-02-11T11:30:00Z", location: "Distribution Center" },
-  { id: "e3", status: "in-transit", description: "Package is on its way", timestamp: "2026-02-11T14:00:00Z", location: "In Transit" },
-  { id: "e4", status: "nearby", description: "Driver is nearby your location", timestamp: "2026-02-11T16:30:00Z" },
-  { id: "e5", status: "delivered", description: "Package delivered", timestamp: "2026-02-11T17:00:00Z" },
+  { id: "e1", status: "preparing", description: t(locale, "track.description1_order_confirmed_and", "Order confirmed and being prepared"), timestamp: "2026-02-11T09:00:00Z", location: "Warehouse" },
+  { id: "e2", status: "picked-up", description: t(locale, "track.description2_package_picked_up_by", "Package picked up by courier"), timestamp: "2026-02-11T11:30:00Z", location: "Distribution Center" },
+  { id: "e3", status: "in-transit", description: t(locale, "track.description3_package_is_on_its_wa", "Package is on its way"), timestamp: "2026-02-11T14:00:00Z", location: "In Transit" },
+  { id: "e4", status: "nearby", description: t(locale, "track.description4_driver_is_nearby_you", "Driver is nearby your location"), timestamp: "2026-02-11T16:30:00Z" },
+  { id: "e5", status: "delivered", description: t(locale, "track.description5_package_delivered", "Package delivered"), timestamp: "2026-02-11T17:00:00Z" },
 ]
 
 function TrackPage() {

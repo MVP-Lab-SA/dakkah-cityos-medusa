@@ -1,5 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework";
-import { handleApiError } from "../../../lib/api-error-handler"
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 // GET /store/subscriptions/me - List customer's subscriptions
 export async function GET(req: MedusaRequest, res: MedusaResponse) {

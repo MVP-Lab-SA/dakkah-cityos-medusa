@@ -51,11 +51,11 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
     let results
     if (collection) {
-      logger.info("[CMSSyncAPI] Manual sync triggered for collection: ${collection} (force: ${!!force})")
+      logger.info(`[CMSSyncAPI] Manual sync triggered for collection: ${collection} (force: ${!!force})`)
       const result = await engine.syncCollection(collection)
       results = [result]
     } else {
-      logger.info("[CMSSyncAPI] Manual sync triggered for all collections (force: ${!!force})")
+      logger.info(`[CMSSyncAPI] Manual sync triggered for all collections (force: ${!!force})`)
       results = await engine.syncAll()
     }
 

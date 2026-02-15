@@ -46,11 +46,11 @@ export default async function payloadCmsPollJob(container: MedusaContainer) {
       totalFailed += result.failed
 
       if (result.total > 0 || result.failed > 0) {
-        logger.info("[PayloadCMSPoll] ${result.collection}: ${result.total} synced, ${result.created} created, ${result.updated} updated, ${result.failed} failed")
+        logger.info(`[PayloadCMSPoll] ${result.collection}: ${result.total} synced, ${result.created} created, ${result.updated} updated, ${result.failed} failed`)
       }
     }
 
-    logger.info("[PayloadCMSPoll] Poll complete: ${totalSynced} total, ${totalCreated} created, ${totalUpdated} updated, ${totalFailed} failed")
+    logger.info(`[PayloadCMSPoll] Poll complete: ${totalSynced} total, ${totalCreated} created, ${totalUpdated} updated, ${totalFailed} failed`)
   } catch (error: any) {
     console.error(`[PayloadCMSPoll] Error during hierarchy sync: ${error.message}`)
   }

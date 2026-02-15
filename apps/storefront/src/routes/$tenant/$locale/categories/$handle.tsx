@@ -203,10 +203,10 @@ function CategoryPage() {
                 onChange={(e) => setSortBy(e.target.value)}
                 className="w-full px-3 py-2 border border-ds-border rounded-md text-sm bg-ds-background focus:outline-none focus:ring-2 focus:ring-ds-ring"
               >
-                <option value="default">Default</option>
-                <option value="name">Name A-Z</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
+                <option value="default">{t(locale, "common.sort.default", "Default")}</option>
+                <option value="name">{t(locale, "common.sort.nameAZ", "Name A-Z")}</option>
+                <option value="price-asc">{t(locale, "common.sort.priceLowHigh", "Price: Low to High")}</option>
+                <option value="price-desc">{t(locale, "common.sort.priceHighLow", "Price: High to Low")}</option>
               </select>
 
               {allCategories.length > 0 && (

@@ -46,7 +46,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       has_more: offset + limit < total,
     })
   } catch (error: any) {
-    logger.error("[IntegrationLogs] fetching sync logs: ${error.message}")
+    logger.error(`[IntegrationLogs] fetching sync logs: ${error.message}`)
     return res.status(500).json({ error: error.message })
   }
 }

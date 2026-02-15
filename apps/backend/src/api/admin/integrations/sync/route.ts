@@ -31,7 +31,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       })
     }
 
-    logger.info("[IntegrationSync] Manual sync triggered: ${system}/${entity_type}/${entity_id || "all"}")
+    logger.info(`[IntegrationSync] Manual sync triggered: ${system}/${entity_type}/${entity_id || "all"}`)
 
     const { startWorkflow } = await import("../../../../lib/temporal-client.js")
 
@@ -52,14 +52,14 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         source: "admin-manual-sync",
       })
 
-      logger.info("[IntegrationSync] Manual sync dispatched to Temporal: ${result.runId}")
+      logger.info(`[IntegrationSync] Manual sync dispatched to Temporal: ${result.runId}`)
       return res.json({ triggered: true, system, entity_type, entity_id: entity_id || "all", workflow_run_id: result.runId })
     } catch (err: any) {
-      logger.error("[IntegrationSync] dispatching manual sync: ${err.message}")
+      logger.error(`[IntegrationSync] dispatching manual sync: ${err.message}`)
       return res.status(500).json({ error: `Failed to dispatch sync: ${err.message}` })
     }
   } catch (error: any) {
-    logger.error("[IntegrationSync] triggering sync: ${error.message}")
+    logger.error(`[IntegrationSync] triggering sync: ${error.message}`)
     return res.status(500).json({ error: error.message })
   }
 }
@@ -89,7 +89,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       stats: dashboard.stats,
     })
   } catch (error: any) {
-    logger.error("[IntegrationSync] fetching sync operations: ${error.message}")
+    logger.error(`[IntegrationSync] fetching sync operations: ${error.message}`)
     return res.status(500).json({ error: error.message })
   }
 }

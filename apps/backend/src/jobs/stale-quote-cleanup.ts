@@ -51,7 +51,7 @@ export default async function staleQuoteCleanupJob(container: MedusaContainer) {
       }
     }
     
-    logger.info("[Quote Cleanup] Expired ${expiredCount} quotes")
+    logger.info(`[Quote Cleanup] Expired ${expiredCount} quotes`)
   } catch (error) {
     console.error("[Quote Cleanup] Job failed:", error)
   }

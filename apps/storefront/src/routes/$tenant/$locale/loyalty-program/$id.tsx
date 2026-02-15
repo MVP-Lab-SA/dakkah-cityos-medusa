@@ -67,11 +67,11 @@ function LoyaltyProgramDetailPage() {
   }
 
   const details = [
-    { label: "Points Per Dollar", value: program.points_per_dollar || program.pointsPerDollar },
-    { label: "Point Value", value: program.point_value || program.pointValue ? `$${program.point_value || program.pointValue}` : null },
-    { label: "Minimum Redemption", value: program.minimum_redemption || program.minimumRedemption ? `${program.minimum_redemption || program.minimumRedemption} points` : null },
-    { label: "Expiration", value: program.expiration || program.points_expiration },
-    { label: "Status", value: program.status },
+    { label: t(locale, "loyaltyprogram.label_points_per_dollar", "Points Per Dollar"), value: program.points_per_dollar || program.pointsPerDollar },
+    { label: t(locale, "loyaltyprogram.label_point_value", "Point Value"), value: program.point_value || program.pointValue ? `$${program.point_value || program.pointValue}` : null },
+    { label: t(locale, "loyaltyprogram.label_minimum_redemption", "Minimum Redemption"), value: program.minimum_redemption || program.minimumRedemption ? `${program.minimum_redemption || program.minimumRedemption} points` : null },
+    { label: t(locale, "loyaltyprogram.label_expiration", "Expiration"), value: program.expiration || program.points_expiration },
+    { label: t(locale, "loyaltyprogram.label_status", "Status"), value: program.status },
   ].filter((d) => d.value)
 
   return (

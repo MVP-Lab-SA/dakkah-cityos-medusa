@@ -97,9 +97,9 @@ function SubscriptionsPage() {
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>{items.length} plans available</span>
             <span>|</span>
-            <span>Free trial included</span>
+            <span>{t(locale, "subscriptions.badge_free_trial", "Free trial included")}</span>
             <span>|</span>
-            <span>Cancel anytime</span>
+            <span>{t(locale, "subscriptions.badge_cancel_anytime", "Cancel anytime")}</span>
           </div>
         </div>
       </div>

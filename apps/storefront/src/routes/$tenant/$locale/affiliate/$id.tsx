@@ -67,12 +67,12 @@ function AffiliateDetailPage() {
   }
 
   const details = [
-    { label: "Commission Rate", value: program.commission_rate ? `${program.commission_rate}%` : program.commissionRate ? `${program.commissionRate}%` : null },
-    { label: "Cookie Duration", value: program.cookie_duration || program.cookieDuration ? `${program.cookie_duration || program.cookieDuration} days` : null },
-    { label: "Payout Schedule", value: program.payout_schedule || program.payoutSchedule },
-    { label: "Minimum Payout", value: program.minimum_payout != null ? `$${Number(program.minimum_payout || 0).toLocaleString()}` : program.minimumPayout != null ? `$${Number(program.minimumPayout || 0).toLocaleString()}` : null },
-    { label: "Payment Method", value: program.payment_method || program.paymentMethod },
-    { label: "Status", value: program.status },
+    { label: t(locale, "affiliate.label_commission_rate", "Commission Rate"), value: program.commission_rate ? `${program.commission_rate}%` : program.commissionRate ? `${program.commissionRate}%` : null },
+    { label: t(locale, "affiliate.label_cookie_duration", "Cookie Duration"), value: program.cookie_duration || program.cookieDuration ? `${program.cookie_duration || program.cookieDuration} days` : null },
+    { label: t(locale, "affiliate.label_payout_schedule", "Payout Schedule"), value: program.payout_schedule || program.payoutSchedule },
+    { label: t(locale, "affiliate.label_minimum_payout", "Minimum Payout"), value: program.minimum_payout != null ? `$${Number(program.minimum_payout || 0).toLocaleString()}` : program.minimumPayout != null ? `$${Number(program.minimumPayout || 0).toLocaleString()}` : null },
+    { label: t(locale, "affiliate.label_payment_method", "Payment Method"), value: program.payment_method || program.paymentMethod },
+    { label: t(locale, "affiliate.label_status", "Status"), value: program.status },
   ].filter((d) => d.value)
 
   return (

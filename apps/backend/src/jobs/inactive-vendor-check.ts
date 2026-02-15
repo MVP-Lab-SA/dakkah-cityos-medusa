@@ -63,7 +63,7 @@ export default async function inactiveVendorCheckJob(container: MedusaContainer)
         })
         
         deactivatedCount++
-        logger.info("[Inactive Vendor Check] Deactivated vendor: ${vendor.business_name}")
+        logger.info(`[Inactive Vendor Check] Deactivated vendor: ${vendor.business_name}`)
       } else {
         await vendorService.updateVendors({
           id: vendor.id,
@@ -80,11 +80,11 @@ export default async function inactiveVendorCheckJob(container: MedusaContainer)
         })
         
         warningCount++
-        logger.info("[Inactive Vendor Check] Warning ${warningsSent + 1} sent to: ${vendor.business_name}")
+        logger.info(`[Inactive Vendor Check] Warning ${warningsSent + 1} sent to: ${vendor.business_name}`)
       }
     }
     
-    logger.info("[Inactive Vendor Check] Completed - Warnings: ${warningCount}, Deactivated: ${deactivatedCount}")
+    logger.info(`[Inactive Vendor Check] Completed - Warnings: ${warningCount}, Deactivated: ${deactivatedCount}`)
   } catch (error) {
     console.error("[Inactive Vendor Check] Job failed:", error)
   }

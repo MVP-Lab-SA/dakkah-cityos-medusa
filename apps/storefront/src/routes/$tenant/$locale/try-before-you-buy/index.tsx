@@ -81,9 +81,9 @@ function TryBeforeYouBuyPage() {
           <div className="mt-6 flex items-center justify-center gap-4 text-sm text-white/60">
             <span>{items.length} products available</span>
             <span>|</span>
-            <span>Risk-free trials</span>
+            <span>{t(locale, "tryBeforeYouBuy.badge_risk_free", "Risk-free trials")}</span>
             <span>|</span>
-            <span>Free returns</span>
+            <span>{t(locale, "tryBeforeYouBuy.badge_free_returns", "Free returns")}</span>
           </div>
         </div>
       </div>

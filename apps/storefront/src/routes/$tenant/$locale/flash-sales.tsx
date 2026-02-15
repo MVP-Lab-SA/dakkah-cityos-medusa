@@ -33,7 +33,7 @@ function FlashSalesPage() {
               {t(locale, "common.home")}
             </Link>
             <span>/</span>
-            <span>Flash Sales</span>
+            <span>{t(locale, "flashSales.badge_flash_sales", "Flash Sales")}</span>
           </div>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div>
