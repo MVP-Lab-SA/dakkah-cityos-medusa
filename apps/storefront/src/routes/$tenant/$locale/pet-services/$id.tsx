@@ -3,7 +3,8 @@ import { createFileRoute, Link } from "@tanstack/react-router"
 
 function normalizeDetail(item: any) {
   if (!item) return null
-  const meta = typeof item.metadata === 'string' ? JSON.parse(item.metadata) : (item.metadata || {})
+  let meta = {}
+  try { meta = typeof item.metadata === 'string' ? JSON.parse(item.metadata) : (item.metadata || {}) } catch { meta = {} }
   return {
     ...meta,
     ...item,
