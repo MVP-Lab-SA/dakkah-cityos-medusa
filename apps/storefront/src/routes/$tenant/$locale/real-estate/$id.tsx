@@ -102,7 +102,7 @@ function RealEstateDetailPage() {
               )}
               {property.listing_type && (
                 <span className="absolute top-4 start-4 px-3 py-1 text-xs font-semibold rounded-full bg-ds-primary text-ds-primary-foreground">
-                  {property.listing_type === "sale" ? "For Sale" : "For Rent"}
+                  {property.listing_type === "sale" ? t(locale, 'verticals.for_sale') : t(locale, 'verticals.for_rent')}
                 </span>
               )}
             </div>

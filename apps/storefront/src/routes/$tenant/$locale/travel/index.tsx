@@ -107,7 +107,7 @@ function TravelPage() {
           <aside className="w-full lg:w-72 flex-shrink-0">
             <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'verticals.search_label')}</label>
                 <input
                   type="text"
                   value={searchQuery}
@@ -126,7 +126,7 @@ function TravelPage() {
                       onClick={() => setPropertyFilter(opt)}
                       className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${propertyFilter === opt ? "bg-ds-info text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
-                      {opt === "all" ? "All Types" : opt.charAt(0).toUpperCase() + opt.slice(1)}
+                      {opt === "all" ? t(locale, 'verticals.all_types') : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
                   ))}
                 </div>
@@ -165,7 +165,7 @@ function TravelPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'travel.no_results')}</h3>
-                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
+                <p className="text-ds-muted-foreground text-sm">{t(locale, 'verticals.try_adjusting')}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">

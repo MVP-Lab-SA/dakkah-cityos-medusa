@@ -122,7 +122,7 @@ function EducationPage() {
           <aside className="w-full lg:w-72 flex-shrink-0">
             <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'verticals.search_label')}</label>
                 <input
                   type="text"
                   value={searchQuery}
@@ -133,7 +133,7 @@ function EducationPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Category</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'verticals.category_label')}</label>
                 <div className="space-y-1">
                   {categoryOptions.map((opt) => (
                     <button
@@ -141,14 +141,14 @@ function EducationPage() {
                       onClick={() => setCategoryFilter(opt)}
                       className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${categoryFilter === opt ? "bg-ds-primary text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
-                      {opt === "all" ? "All Categories" : opt.charAt(0).toUpperCase() + opt.slice(1)}
+                      {opt === "all" ? t(locale, 'verticals.all_categories') : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
                   ))}
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Level</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'verticals.level_label')}</label>
                 <div className="space-y-1">
                   {levelOptions.map((opt) => (
                     <button
@@ -156,14 +156,14 @@ function EducationPage() {
                       onClick={() => setLevelFilter(opt)}
                       className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${levelFilter === opt ? "bg-ds-primary text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
-                      {opt === "all" ? "All Levels" : opt.charAt(0).toUpperCase() + opt.slice(1)}
+                      {opt === "all" ? t(locale, 'verticals.all_levels') : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
                   ))}
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Format</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'verticals.format_label')}</label>
                 <div className="space-y-1">
                   {formatOptions.map((opt) => (
                     <button
@@ -171,7 +171,7 @@ function EducationPage() {
                       onClick={() => setFormatFilter(opt)}
                       className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${formatFilter === opt ? "bg-ds-primary text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
-                      {opt === "all" ? "All Formats" : formatLabels[opt] || opt.charAt(0).toUpperCase() + opt.slice(1)}
+                      {opt === "all" ? t(locale, 'verticals.all_formats') : formatLabels[opt] || opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
                   ))}
                 </div>
@@ -186,7 +186,7 @@ function EducationPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
                 <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'education.no_results')}</h3>
-                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
+                <p className="text-ds-muted-foreground text-sm">{t(locale, 'verticals.try_adjusting')}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">

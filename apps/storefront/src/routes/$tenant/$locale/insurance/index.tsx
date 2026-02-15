@@ -114,7 +114,7 @@ function InsurancePage() {
           <aside className="w-full lg:w-72 flex-shrink-0">
             <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'verticals.search_label')}</label>
                 <input
                   type="text"
                   value={searchQuery}
@@ -133,7 +133,7 @@ function InsurancePage() {
                       onClick={() => setTypeFilter(opt)}
                       className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${typeFilter === opt ? "bg-ds-info text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
-                      {opt === "all" ? "All Types" : `${typeIcon(opt)} ${opt.charAt(0).toUpperCase() + opt.slice(1)}`}
+                      {opt === "all" ? t(locale, 'verticals.all_types') : `${typeIcon(opt)} ${opt.charAt(0).toUpperCase() + opt.slice(1)}`}
                     </button>
                   ))}
                 </div>
@@ -148,7 +148,7 @@ function InsurancePage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
                 <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'insurance.no_results')}</h3>
-                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
+                <p className="text-ds-muted-foreground text-sm">{t(locale, 'verticals.try_adjusting')}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">

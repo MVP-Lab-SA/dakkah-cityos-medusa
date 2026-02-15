@@ -89,7 +89,7 @@ function AutomotivePage() {
 
   const listingTypeBadge = (type: string | null) => {
     if (type === "lease") return { label: "Lease", color: "bg-ds-primary text-white" }
-    return { label: "For Sale", color: "bg-ds-primary text-ds-primary-foreground" }
+    return { label: t(locale, 'verticals.for_sale'), color: "bg-ds-primary text-ds-primary-foreground" }
   }
 
   return (
@@ -120,7 +120,7 @@ function AutomotivePage() {
           <aside className="w-full lg:w-72 flex-shrink-0">
             <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'verticals.search_label')}</label>
                 <input
                   type="text"
                   value={searchQuery}
@@ -131,7 +131,7 @@ function AutomotivePage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Body Type</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'verticals.body_type_label')}</label>
                 <div className="space-y-1">
                   {bodyTypeOptions.map((opt) => (
                     <button
@@ -139,14 +139,14 @@ function AutomotivePage() {
                       onClick={() => setBodyTypeFilter(opt)}
                       className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${bodyTypeFilter === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
-                      {opt === "all" ? "All Body Types" : opt.charAt(0).toUpperCase() + opt.slice(1)}
+                      {opt === "all" ? t(locale, 'verticals.all_body_types') : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
                   ))}
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Fuel Type</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'verticals.fuel_type_label')}</label>
                 <div className="space-y-1">
                   {fuelTypeOptions.map((opt) => (
                     <button
@@ -154,7 +154,7 @@ function AutomotivePage() {
                       onClick={() => setFuelTypeFilter(opt)}
                       className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${fuelTypeFilter === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
-                      {opt === "all" ? "All Fuel Types" : opt.charAt(0).toUpperCase() + opt.slice(1)}
+                      {opt === "all" ? t(locale, 'verticals.all_fuel_types') : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
                   ))}
                 </div>
@@ -169,7 +169,7 @@ function AutomotivePage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                 </svg>
                 <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'automotive.no_results')}</h3>
-                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
+                <p className="text-ds-muted-foreground text-sm">{t(locale, 'verticals.try_adjusting')}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">

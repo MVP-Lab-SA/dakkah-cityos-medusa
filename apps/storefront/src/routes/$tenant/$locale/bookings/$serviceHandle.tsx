@@ -273,7 +273,7 @@ function ServiceBookingPage() {
           className="flex items-center gap-2 text-ds-muted-foreground hover:text-ds-foreground mb-8"
         >
           <ArrowLeft className="w-4 h-4" />
-          {step === "provider" ? "All Services" : "Back"}
+          {step === "provider" ? t(locale, 'verticals.all_services') : "Back"}
         </button>
 
         <div className="grid lg:grid-cols-3 gap-8">

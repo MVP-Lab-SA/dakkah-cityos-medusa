@@ -129,7 +129,7 @@ function FreelancePage() {
                       onClick={() => setCategoryFilter(opt)}
                       className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${categoryFilter === opt ? "bg-ds-primary text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
-                      {opt === "all" ? "All Categories" : categoryLabel(opt)}
+                      {opt === "all" ? t(locale, 'verticals.all_categories') : categoryLabel(opt)}
                     </button>
                   ))}
                 </div>

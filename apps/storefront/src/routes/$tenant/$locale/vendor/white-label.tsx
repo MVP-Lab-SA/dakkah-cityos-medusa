@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query"
 import { sdk } from "@/lib/utils/sdk"
 import { useAuth } from "@/lib/context/auth-context"
 import { useState, useMemo } from "react"
+import { t } from "@/lib/i18n"
 
 interface WhiteLabelProduct {
   id: string
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/$tenant/$locale/vendor/white-label")({
 })
 
 function VendorWhiteLabelRoute() {
+  const { locale } = Route.useParams()
   const auth = useAuth()
   const [statusFilter, setStatusFilter] = useState<string>("")
 
@@ -104,7 +106,7 @@ function VendorWhiteLabelRoute() {
               <tr className="border-b text-left text-sm text-ds-muted-foreground">
                 <th className="pb-3 pr-4">Product</th>
                 <th className="pb-3 pr-4">Brand</th>
-                <th className="pb-3 pr-4">Category</th>
+                <th className="pb-3 pr-4">{t(locale, 'verticals.category_label')}</th>
                 <th className="pb-3 pr-4 text-right">Price</th>
                 <th className="pb-3 pr-4 text-right">Orders</th>
                 <th className="pb-3 pr-4">Status</th>

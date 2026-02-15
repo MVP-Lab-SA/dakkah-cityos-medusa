@@ -103,7 +103,7 @@ function WalletPage() {
           <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
             <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'wallet.no_results')}</h3>
-            <p className="text-ds-muted-foreground text-sm">Try adjusting your search.</p>
+            <p className="text-ds-muted-foreground text-sm">{t(locale, 'verticals.try_adjusting')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">

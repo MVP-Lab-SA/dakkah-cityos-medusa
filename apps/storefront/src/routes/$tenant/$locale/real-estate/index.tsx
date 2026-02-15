@@ -127,7 +127,7 @@ function RealEstatePage() {
                       onClick={() => setListingFilter(opt)}
                       className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${listingFilter === opt ? "bg-ds-success text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
-                      {opt === "all" ? "All Listings" : opt === "sale" ? "For Sale" : "For Rent"}
+                      {opt === "all" ? t(locale, 'verticals.all_listings') : opt === "sale" ? t(locale, 'verticals.for_sale') : t(locale, 'verticals.for_rent')}
                     </button>
                   ))}
                 </div>
@@ -142,7 +142,7 @@ function RealEstatePage() {
                       onClick={() => setPropertyFilter(opt)}
                       className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${propertyFilter === opt ? "bg-ds-success text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
-                      {opt === "all" ? "All Types" : opt.charAt(0).toUpperCase() + opt.slice(1)}
+                      {opt === "all" ? t(locale, 'verticals.all_types') : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
                   ))}
                 </div>
@@ -179,7 +179,7 @@ function RealEstatePage() {
                       )}
                       {item.listing_type && (
                         <span className={`absolute top-2 left-2 px-2 py-1 text-xs font-medium rounded-md ${item.listing_type === "sale" ? "bg-ds-success text-white" : "bg-ds-primary text-white"}`}>
-                          {item.listing_type === "sale" ? "For Sale" : "For Rent"}
+                          {item.listing_type === "sale" ? t(locale, 'verticals.for_sale') : t(locale, 'verticals.for_rent')}
                         </span>
                       )}
                       {item.property_type && (

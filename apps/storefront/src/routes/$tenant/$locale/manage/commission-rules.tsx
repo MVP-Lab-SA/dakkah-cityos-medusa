@@ -23,7 +23,7 @@ const config = {
   fields: [
     { key: "name", label: "Name", type: "text" as const, required: true, placeholder: "Rule name" },
     { key: "vendor_type", label: "Vendor Type", type: "select" as const, options: [
-      { value: "all", label: "All Vendors" },
+      { value: "all", label: t(locale, 'verticals.all_vendors') },
       { value: "standard", label: "Standard" },
       { value: "premium", label: "Premium" },
       { value: "enterprise", label: "Enterprise" },

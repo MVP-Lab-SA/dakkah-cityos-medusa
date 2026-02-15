@@ -2,6 +2,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { withAuth } from "@/components/auth/auth-guard"
 import { useState } from "react"
+import { t } from "@/lib/i18n"
 
 export const Route = createFileRoute(
   "/$tenant/$locale/vendor/onboarding/complete"
@@ -164,7 +165,7 @@ function VendorOnboardingStep3() {
                   <p className="font-medium text-ds-text-primary">—</p>
                 </div>
                 <div>
-                  <p className="text-ds-text-secondary">Category</p>
+                  <p className="text-ds-text-secondary">{t(locale, 'verticals.category_label')}</p>
                   <p className="font-medium text-ds-text-primary">—</p>
                 </div>
                 <div>

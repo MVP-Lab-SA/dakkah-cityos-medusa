@@ -125,7 +125,7 @@ function LegalServicesPage() {
                       onClick={() => setSpecFilter(opt)}
                       className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${specFilter === opt ? "bg-ds-primary text-ds-primary-foreground" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
-                      {opt === "all" ? "All Specializations" : formatSpec(opt)}
+                      {opt === "all" ? t(locale, 'verticals.all_specializations') : formatSpec(opt)}
                     </button>
                   ))}
                 </div>

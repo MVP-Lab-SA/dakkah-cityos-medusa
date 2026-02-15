@@ -237,7 +237,7 @@ function CharityDetailPage() {
                   )}
                   {campaign.category && (
                     <div className="flex justify-between">
-                      <span className="text-ds-muted-foreground">Category</span>
+                      <span className="text-ds-muted-foreground">{t(locale, 'verticals.category_label')}</span>
                       <span className="text-ds-foreground font-medium">{campaign.category}</span>
                     </div>
                   )}

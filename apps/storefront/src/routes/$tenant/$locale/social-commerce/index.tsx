@@ -135,7 +135,7 @@ function SocialCommercePage() {
                       onClick={() => setPlatformFilter(opt)}
                       className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${platformFilter === opt ? "bg-ds-destructive text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
-                      {opt === "all" ? "All Platforms" : `${platformIcons[opt] || ""} ${opt.charAt(0).toUpperCase() + opt.slice(1)}`}
+                      {opt === "all" ? t(locale, 'verticals.all_platforms') : `${platformIcons[opt] || ""} ${opt.charAt(0).toUpperCase() + opt.slice(1)}`}
                     </button>
                   ))}
                 </div>
@@ -150,7 +150,7 @@ function SocialCommercePage() {
                       onClick={() => setCategoryFilter(opt)}
                       className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${categoryFilter === opt ? "bg-ds-destructive text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
-                      {opt === "all" ? "All Categories" : opt.charAt(0).toUpperCase() + opt.slice(1)}
+                      {opt === "all" ? t(locale, 'verticals.all_categories') : opt.charAt(0).toUpperCase() + opt.slice(1)}
                     </button>
                   ))}
                 </div>

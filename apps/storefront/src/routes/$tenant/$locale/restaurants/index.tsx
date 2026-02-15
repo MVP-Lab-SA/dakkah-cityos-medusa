@@ -120,7 +120,7 @@ function RestaurantsPage() {
                       onClick={() => setCuisineFilter(opt)}
                       className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${cuisineFilter === opt ? "bg-ds-warning text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
-                      {opt === "all" ? "All Cuisines" : opt.split("_").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
+                      {opt === "all" ? t(locale, 'verticals.all_cuisines') : opt.split("_").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
                     </button>
                   ))}
                 </div>

@@ -84,7 +84,7 @@ function WhiteLabelPage() {
           <div className="bg-ds-background border border-ds-border rounded-xl p-12 text-center">
             <svg className="w-16 h-16 text-ds-muted-foreground/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" /></svg>
             <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'white_label.no_results')}</h3>
-            <p className="text-ds-muted-foreground text-sm">Try adjusting your search.</p>
+            <p className="text-ds-muted-foreground text-sm">{t(locale, 'verticals.try_adjusting')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">

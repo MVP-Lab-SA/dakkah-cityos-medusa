@@ -118,7 +118,7 @@ function PetServicesPage() {
                       onClick={() => setSpeciesFilter(opt)}
                       className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${speciesFilter === opt ? "bg-ds-destructive text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
-                      {opt === "all" ? "All Species" : `${speciesEmoji(opt)} ${opt.charAt(0).toUpperCase() + opt.slice(1)}`}
+                      {opt === "all" ? t(locale, 'verticals.all_species') : `${speciesEmoji(opt)} ${opt.charAt(0).toUpperCase() + opt.slice(1)}`}
                     </button>
                   ))}
                 </div>

@@ -186,7 +186,7 @@ function CategoryPage() {
         <div className="flex flex-col lg:flex-row gap-8">
           <aside className="w-full lg:w-64 flex-shrink-0">
             <div className="bg-ds-background rounded-lg border border-ds-border p-5 sticky top-24">
-              <h3 className="font-semibold text-ds-foreground mb-3">Search</h3>
+              <h3 className="font-semibold text-ds-foreground mb-3">{t(locale, 'verticals.search_label')}</h3>
               <input
                 type="text"
                 placeholder={t(locale, 'categories.search_placeholder')}
@@ -259,7 +259,7 @@ function CategoryPage() {
                 </h3>
                 <p className="text-ds-muted-foreground text-sm">
                   {searchQuery
-                    ? "Try adjusting your search terms."
+                    ? t(locale, 'verticals.try_adjusting')
                     : "Products in this category will appear here soon."}
                 </p>
               </div>

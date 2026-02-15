@@ -110,7 +110,7 @@ function GiftCardsShopPage() {
                       onClick={() => setThemeFilter(opt)}
                       className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${themeFilter === opt ? "bg-ds-destructive text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
-                      {opt === "all" ? "All Themes" : themeLabel(opt)}
+                      {opt === "all" ? t(locale, 'verticals.all_themes') : themeLabel(opt)}
                     </button>
                   ))}
                 </div>

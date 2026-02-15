@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query"
 import { sdk } from "@/lib/utils/sdk"
 import { useAuth } from "@/lib/context/auth-context"
 import { useState, useMemo } from "react"
+import { t } from "@/lib/i18n"
 
 interface NotificationSetting {
   id: string
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/$tenant/$locale/vendor/notification-prefe
 })
 
 function VendorNotificationPreferencesRoute() {
+  const { locale } = Route.useParams()
   const auth = useAuth()
   const [channelFilter, setChannelFilter] = useState<string>("")
 
@@ -83,7 +85,7 @@ function VendorNotificationPreferencesRoute() {
               channelFilter === s ? "bg-ds-primary text-white border-ds-primary" : "bg-ds-card hover:bg-ds-muted/50"
             }`}
           >
-            {s ? `${channelIcons[s] || ""} ${s.toUpperCase()}` : "All Channels"}
+            {s ? `${channelIcons[s] || ""} ${s.toUpperCase()}` : t(locale, 'verticals.all_channels')}
           </button>
         ))}
       </div>

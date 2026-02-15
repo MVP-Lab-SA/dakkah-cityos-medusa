@@ -90,7 +90,7 @@ function ClassifiedsPage() {
   }
 
   const listingTypeLabel = (t: string) => {
-    const map: Record<string, string> = { sale: "For Sale", wanted: "Wanted", trade: "Trade" }
+    const map: Record<string, string> = { sale: t(locale, 'verticals.for_sale'), wanted: "Wanted", trade: "Trade" }
     return map[t] || t
   }
 
@@ -122,7 +122,7 @@ function ClassifiedsPage() {
           <aside className="w-full lg:w-72 flex-shrink-0">
             <div className="bg-ds-background border border-ds-border rounded-xl p-4 space-y-6 sticky top-4">
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Search</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'verticals.search_label')}</label>
                 <input
                   type="text"
                   value={searchQuery}
@@ -133,7 +133,7 @@ function ClassifiedsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Condition</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'verticals.condition_label')}</label>
                 <div className="space-y-1">
                   {conditionOptions.map((opt) => (
                     <button
@@ -141,14 +141,14 @@ function ClassifiedsPage() {
                       onClick={() => setConditionFilter(opt)}
                       className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${conditionFilter === opt ? "bg-ds-warning text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
-                      {opt === "all" ? "All Conditions" : conditionLabel(opt)}
+                      {opt === "all" ? t(locale, 'verticals.all_conditions') : conditionLabel(opt)}
                     </button>
                   ))}
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-ds-foreground mb-2">Listing Type</label>
+                <label className="block text-sm font-medium text-ds-foreground mb-2">{t(locale, 'verticals.listing_type_label')}</label>
                 <div className="space-y-1">
                   {listingTypeOptions.map((opt) => (
                     <button
@@ -156,7 +156,7 @@ function ClassifiedsPage() {
                       onClick={() => setListingTypeFilter(opt)}
                       className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${listingTypeFilter === opt ? "bg-ds-warning text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
-                      {opt === "all" ? "All Types" : listingTypeLabel(opt)}
+                      {opt === "all" ? t(locale, 'verticals.all_types') : listingTypeLabel(opt)}
                     </button>
                   ))}
                 </div>
@@ -171,7 +171,7 @@ function ClassifiedsPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
                 <h3 className="text-lg font-semibold text-ds-foreground mb-2">{t(locale, 'classifieds.no_results')}</h3>
-                <p className="text-ds-muted-foreground text-sm">Try adjusting your search or filters.</p>
+                <p className="text-ds-muted-foreground text-sm">{t(locale, 'verticals.try_adjusting')}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">

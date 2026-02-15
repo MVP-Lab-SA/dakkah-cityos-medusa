@@ -140,7 +140,7 @@ function ParkingPage() {
                       onClick={() => setZoneTypeFilter(opt)}
                       className={`block w-full text-start px-3 py-2 text-sm rounded-lg transition-colors ${zoneTypeFilter === opt ? "bg-ds-primary text-white" : "text-ds-foreground hover:bg-ds-muted"}`}
                     >
-                      {opt === "all" ? "All Zone Types" : zoneLabel(opt)}
+                      {opt === "all" ? t(locale, 'verticals.all_zone_types') : zoneLabel(opt)}
                     </button>
                   ))}
                 </div>
