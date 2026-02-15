@@ -1,4 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   try {
@@ -18,6 +19,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     } catch {}
     return res.status(404).json({ message: "Not found" })
   } catch (error: any) {
-    res.status(500).json({ message: "Failed to fetch fitness item", error: error.message })
+    handleApiError(res, error, "STORE-FITNESS-ID")
   }
 }

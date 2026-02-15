@@ -126,28 +126,28 @@ function VendorTransactionsRoute() {
           <table className="w-full border-collapse">
             <thead>
               <tr className="border-b text-left text-sm text-ds-muted-foreground">
-                <th className="pb-3 pr-4">Date</th>
-                <th className="pb-3 pr-4">Type</th>
-                <th className="pb-3 pr-4">Reference</th>
-                <th className="pb-3 pr-4">Description</th>
-                <th className="pb-3 pr-4 text-right">Amount</th>
+                <th className="pb-3 pe-4">Date</th>
+                <th className="pb-3 pe-4">Type</th>
+                <th className="pb-3 pe-4">Reference</th>
+                <th className="pb-3 pe-4">Description</th>
+                <th className="pb-3 pe-4 text-right">Amount</th>
                 <th className="pb-3">Status</th>
               </tr>
             </thead>
             <tbody>
               {items.map((txn) => (
                 <tr key={txn.id} className="border-b hover:bg-ds-muted/50 transition">
-                  <td className="py-4 pr-4 text-sm text-ds-muted-foreground">
+                  <td className="py-4 pe-4 text-sm text-ds-muted-foreground">
                     {new Date(txn.created_at).toLocaleDateString()}
                   </td>
-                  <td className="py-4 pr-4">
+                  <td className="py-4 pe-4">
                     <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${typeColors[txn.type] || "bg-ds-muted/50 text-ds-foreground/80"}`}>
                       {txn.type?.replace(/_/g, " ")}
                     </span>
                   </td>
-                  <td className="py-4 pr-4 text-sm font-mono text-ds-muted-foreground">{txn.reference || "—"}</td>
-                  <td className="py-4 pr-4 text-sm text-ds-muted-foreground">{txn.description || "—"}</td>
-                  <td className="py-4 pr-4 text-right font-medium">
+                  <td className="py-4 pe-4 text-sm font-mono text-ds-muted-foreground">{txn.reference || "—"}</td>
+                  <td className="py-4 pe-4 text-sm text-ds-muted-foreground">{txn.description || "—"}</td>
+                  <td className="py-4 pe-4 text-right font-medium">
                     <span className={txn.type === "refund" || txn.type === "fee" ? "text-ds-destructive" : "text-ds-success"}>
                       {txn.type === "refund" || txn.type === "fee" ? "−" : "+"}{txn.currency_code?.toUpperCase()} {(Math.abs(txn.amount) / 100).toFixed(2)}
                     </span>

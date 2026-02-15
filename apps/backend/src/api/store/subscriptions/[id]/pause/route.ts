@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import { handleApiError } from "../../../../../lib/api-error-handler"
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const { id } = req.params
@@ -52,7 +53,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     
     res.json({ subscription: updated })
   } catch (error: any) {
-    console.error("[Subscription Pause] Error:", error)
-    res.status(500).json({ message: error.message || "Failed to pause subscription" })
+    handleApiError(res, error, "STORE-SUBSCRIPTIONS-ID-PAUSE")
   }
 }

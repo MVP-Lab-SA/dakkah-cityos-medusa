@@ -1,4 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 /**
  * GET /store/bookings/availability
@@ -53,9 +54,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       count: formattedSlots.length,
     })
   } catch (error: any) {
-    res.status(500).json({
-      message: "Failed to fetch availability",
-      error: error.message,
-    })
+    handleApiError(res, error, "STORE-BOOKINGS-AVAILABILITY")
   }
 }

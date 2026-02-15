@@ -135,7 +135,7 @@ function VendorFlashSalesRoute() {
                     </div>
                   </div>
                 </div>
-                <button className="text-sm text-ds-primary hover:underline ml-4">
+                <button className="text-sm text-ds-primary hover:underline ms-4">
                   View Details
                 </button>
               </div>

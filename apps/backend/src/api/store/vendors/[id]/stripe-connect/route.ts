@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../../../lib/api-error-handler"
 
 // GET - Get Stripe Connect status for vendor
 export async function GET(
@@ -107,6 +108,6 @@ export async function POST(
       stripe_account_id: stripeAccountId
     })
   } catch (error: any) {
-    res.status(500).json({ message: error.message })
+    handleApiError(res, error, "STORE-VENDORS-ID-STRIPE-CONNECT")
   }
 }

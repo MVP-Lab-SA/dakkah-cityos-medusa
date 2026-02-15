@@ -1,4 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   const storeModuleService = req.scope.resolve("cityosStoreService") as any
@@ -10,9 +11,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     res.json({ stores })
   } catch (error: any) {
-    res.status(500).json({
-      message: "Failed to fetch stores",
-      error: error.message,
-    })
+    handleApiError(res, error, "STORE-STORES")
   }
 }

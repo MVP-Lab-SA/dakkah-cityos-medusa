@@ -172,18 +172,18 @@ function VendorAnalyticsRoute() {
             <table className="w-full border-collapse">
               <thead>
                 <tr className="border-b text-left text-sm text-ds-muted-foreground">
-                  <th className="pb-3 pr-4">Order</th>
-                  <th className="pb-3 pr-4 text-right">Total</th>
-                  <th className="pb-3 pr-4">Status</th>
+                  <th className="pb-3 pe-4">Order</th>
+                  <th className="pb-3 pe-4 text-right">Total</th>
+                  <th className="pb-3 pe-4">Status</th>
                   <th className="pb-3">Date</th>
                 </tr>
               </thead>
               <tbody>
                 {recentOrders.map((order) => (
                   <tr key={order.id} className="border-b hover:bg-ds-muted/50 transition">
-                    <td className="py-4 pr-4 font-medium">#{order.display_id || order.id.slice(0, 8)}</td>
-                    <td className="py-4 pr-4 text-right">{currency} {(order.total / 100).toFixed(2)}</td>
-                    <td className="py-4 pr-4">
+                    <td className="py-4 pe-4 font-medium">#{order.display_id || order.id.slice(0, 8)}</td>
+                    <td className="py-4 pe-4 text-right">{currency} {(order.total / 100).toFixed(2)}</td>
+                    <td className="py-4 pe-4">
                       <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[order.status] || "bg-ds-muted text-ds-foreground"}`}>
                         {order.status?.replace(/_/g, " ")}
                       </span>

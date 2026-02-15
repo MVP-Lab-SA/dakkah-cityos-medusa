@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import { handleApiError } from "../../../../../lib/api-error-handler"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const { id } = req.params
@@ -49,15 +50,13 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
           }
         })
       } catch (stripeError) {
-        console.error("[Payment Method] Stripe error:", stripeError)
         res.json({ payment_method: { id: subscription.payment_method_id } })
       }
     } else {
       res.json({ payment_method: null })
     }
   } catch (error: any) {
-    console.error("[Payment Method GET] Error:", error)
-    res.status(500).json({ message: error.message || "Failed to get payment method" })
+    handleApiError(res, error, "STORE-SUBSCRIPTIONS-ID-PAYMENT-METHOD")
   }
 }
 
@@ -112,7 +111,6 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
           return res.status(400).json({ message: "Payment method does not belong to customer" })
         }
       } catch (stripeError: any) {
-        console.error("[Payment Method] Stripe verification error:", stripeError)
         return res.status(400).json({ message: "Invalid payment method" })
       }
     }
@@ -128,7 +126,6 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
     
     res.json({ subscription: updated })
   } catch (error: any) {
-    console.error("[Payment Method PUT] Error:", error)
-    res.status(500).json({ message: error.message || "Failed to update payment method" })
+    handleApiError(res, error, "STORE-SUBSCRIPTIONS-ID-PAYMENT-METHOD")
   }
 }

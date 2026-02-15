@@ -1,4 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const { email, tenant_id } = req.body as { email: string; tenant_id: string }
@@ -33,6 +34,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       },
     })
   } catch (error: any) {
-    res.status(500).json({ message: "Failed to subscribe to newsletter", error: error.message })
+    handleApiError(res, error, "STORE-NEWSLETTER")
   }
 }

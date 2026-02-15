@@ -1,4 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   try {
@@ -12,6 +13,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     return res.json({ items, count: Array.isArray(items) ? items.length : 0, limit: Number(limit), offset: Number(offset) })
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to fetch utility accounts"
-    return res.status(500).json({ message, error: process.env.NODE_ENV === "development" ? error : undefined })
+    return handleApiError(res, error, "STORE-UTILITIES")
   }
 }

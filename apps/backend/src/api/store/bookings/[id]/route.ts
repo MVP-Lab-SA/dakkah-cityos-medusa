@@ -1,4 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 /**
  * GET /store/bookings/:id

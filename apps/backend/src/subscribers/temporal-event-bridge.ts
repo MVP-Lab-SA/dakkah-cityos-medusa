@@ -31,7 +31,7 @@ export default async function temporalEventBridge({
       logger.info(`[TemporalBridge] Dispatched ${eventName} → runId: ${result.runId}`)
     }
   } catch (err: any) {
-    console.warn(
+    logger.warn(
       `[TemporalBridge] Failed to dispatch ${eventName}:`,
       err.message
     )

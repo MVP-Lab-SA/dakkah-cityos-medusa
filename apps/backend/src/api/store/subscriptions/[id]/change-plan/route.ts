@@ -4,6 +4,7 @@ import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
 import { z } from "zod"
 import { apiLogger } from "../../../../../lib/logger"
 import { formatZodErrors } from "../../../../../lib/validation"
+import { handleApiError } from "../../../../../lib/api-error-handler"
 
 const logger = apiLogger
 
@@ -142,6 +143,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     })
   } catch (error) {
     logger.error("Failed to change subscription plan", error, { subscriptionId: id })
-    res.status(500).json({ message: "Failed to change plan" })
+    handleApiError(res, error, "STORE-SUBSCRIPTIONS-ID-CHANGE-PLAN")
   }
 }

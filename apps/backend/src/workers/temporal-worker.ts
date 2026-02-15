@@ -91,7 +91,7 @@ const activityImplementations = {
 
       return { success: true, payloadDocId: existing?.id || input.productId }
     } catch (error: any) {
-      console.error(`[TemporalWorker] syncProductToPayload failed: ${error.message}`)
+      logger.error(`[TemporalWorker] syncProductToPayload failed: ${error.message}`)
       throw error
     }
   },
@@ -110,7 +110,7 @@ const activityImplementations = {
 
       return { success: true }
     } catch (error: any) {
-      console.error(`[TemporalWorker] deleteProductFromPayload failed: ${error.message}`)
+      logger.error(`[TemporalWorker] deleteProductFromPayload failed: ${error.message}`)
       throw error
     }
   },
@@ -138,7 +138,7 @@ const activityImplementations = {
 
       return { success: true }
     } catch (error: any) {
-      console.error(`[TemporalWorker] syncGovernanceToPayload failed: ${error.message}`)
+      logger.error(`[TemporalWorker] syncGovernanceToPayload failed: ${error.message}`)
       throw error
     }
   },
@@ -161,7 +161,7 @@ const activityImplementations = {
       })
       return { success: true, invoiceName: result.name, status: result.status }
     } catch (error: any) {
-      console.error(`[TemporalWorker] createERPNextInvoice failed: ${error.message}`)
+      logger.error(`[TemporalWorker] createERPNextInvoice failed: ${error.message}`)
       throw error
     }
   },
@@ -180,7 +180,7 @@ const activityImplementations = {
       })
       return { success: true, erpCustomerName: result.name }
     } catch (error: any) {
-      console.error(`[TemporalWorker] syncCustomerToERPNext failed: ${error.message}`)
+      logger.error(`[TemporalWorker] syncCustomerToERPNext failed: ${error.message}`)
       throw error
     }
   },
@@ -200,7 +200,7 @@ const activityImplementations = {
       })
       return { success: true, erpItemName: result.name }
     } catch (error: any) {
-      console.error(`[TemporalWorker] syncProductToERPNext failed: ${error.message}`)
+      logger.error(`[TemporalWorker] syncProductToERPNext failed: ${error.message}`)
       throw error
     }
   },
@@ -219,7 +219,7 @@ const activityImplementations = {
       })
       return { success: true, supplierName: result.name }
     } catch (error: any) {
-      console.error(`[TemporalWorker] syncVendorAsSupplier failed: ${error.message}`)
+      logger.error(`[TemporalWorker] syncVendorAsSupplier failed: ${error.message}`)
       throw error
     }
   },
@@ -241,7 +241,7 @@ const activityImplementations = {
       })
       return { success: true, paymentEntryName: result.name }
     } catch (error: any) {
-      console.error(`[TemporalWorker] recordPaymentInERPNext failed: ${error.message}`)
+      logger.error(`[TemporalWorker] recordPaymentInERPNext failed: ${error.message}`)
       throw error
     }
   },
@@ -260,7 +260,7 @@ const activityImplementations = {
       })
       return { success: true, trackingNumber: result.tracking_number, shipmentId: result.id, trackingUrl: result.tracking_url }
     } catch (error: any) {
-      console.error(`[TemporalWorker] createFleetbaseShipment failed: ${error.message}`)
+      logger.error(`[TemporalWorker] createFleetbaseShipment failed: ${error.message}`)
       throw error
     }
   },
@@ -276,7 +276,7 @@ const activityImplementations = {
       })
       return { success: true, fleetbasePlaceId: input.poiId, estimate: result }
     } catch (error: any) {
-      console.error(`[TemporalWorker] syncPOIToFleetbase failed: ${error.message}`)
+      logger.error(`[TemporalWorker] syncPOIToFleetbase failed: ${error.message}`)
       throw error
     }
   },
@@ -288,7 +288,7 @@ const activityImplementations = {
       const result = await service.createDID(input.method || "key")
       return { success: true, did: result.did, document: result.document }
     } catch (error: any) {
-      console.error(`[TemporalWorker] createDID failed: ${error.message}`)
+      logger.error(`[TemporalWorker] createDID failed: ${error.message}`)
       throw error
     }
   },
@@ -305,7 +305,7 @@ const activityImplementations = {
       })
       return { success: true, credentialId: result.credentialId, credential: result.credential }
     } catch (error: any) {
-      console.error(`[TemporalWorker] issueVendorCredential failed: ${error.message}`)
+      logger.error(`[TemporalWorker] issueVendorCredential failed: ${error.message}`)
       throw error
     }
   },
@@ -324,7 +324,7 @@ const activityImplementations = {
       })
       return { success: true, credentialId: result.credentialId, credential: result.credential }
     } catch (error: any) {
-      console.error(`[TemporalWorker] issueKYCCredential failed: ${error.message}`)
+      logger.error(`[TemporalWorker] issueKYCCredential failed: ${error.message}`)
       throw error
     }
   },
@@ -343,7 +343,7 @@ const activityImplementations = {
       })
       return { success: true, credentialId: result.credentialId, credential: result.credential }
     } catch (error: any) {
-      console.error(`[TemporalWorker] issueMembershipCredential failed: ${error.message}`)
+      logger.error(`[TemporalWorker] issueMembershipCredential failed: ${error.message}`)
       throw error
     }
   },
@@ -475,7 +475,7 @@ const activityImplementations = {
 
       return { success: true, synced, failed, errors }
     } catch (error: any) {
-      console.error(`[TemporalWorker] scheduledProductSync failed: ${error.message}`)
+      logger.error(`[TemporalWorker] scheduledProductSync failed: ${error.message}`)
       throw error
     }
   },
@@ -504,7 +504,7 @@ const activityImplementations = {
 
       return { success: true, retried, succeeded, failed, errors }
     } catch (error: any) {
-      console.error(`[TemporalWorker] retryFailedSyncs failed: ${error.message}`)
+      logger.error(`[TemporalWorker] retryFailedSyncs failed: ${error.message}`)
       throw error
     }
   },
@@ -534,7 +534,7 @@ const activityImplementations = {
 
       return { success: true, tenantsProcessed: tenants.length, nodesReconciled, errors }
     } catch (error: any) {
-      console.error(`[TemporalWorker] hierarchyReconciliation failed: ${error.message}`)
+      logger.error(`[TemporalWorker] hierarchyReconciliation failed: ${error.message}`)
       throw error
     }
   },
@@ -542,19 +542,19 @@ const activityImplementations = {
 
 export async function startWorker(): Promise<void> {
   if (!process.env.TEMPORAL_API_KEY) {
-    console.warn("[TemporalWorker] TEMPORAL_API_KEY not set — skipping worker startup (graceful degradation)")
+    logger.warn("[TemporalWorker] TEMPORAL_API_KEY not set — skipping worker startup (graceful degradation)")
     return
   }
 
   const workerSDK = await loadWorkerSDK()
   if (!workerSDK) {
-    console.warn("[TemporalWorker] @temporalio/worker not installed — skipping worker startup")
+    logger.warn("[TemporalWorker] @temporalio/worker not installed — skipping worker startup")
     return
   }
 
   const connectionSDK = await loadConnectionSDK()
   if (!connectionSDK) {
-    console.warn("[TemporalWorker] @temporalio/client not installed — skipping worker startup")
+    logger.warn("[TemporalWorker] @temporalio/client not installed — skipping worker startup")
     return
   }
 
@@ -606,7 +606,7 @@ export async function startWorker(): Promise<void> {
     await workerInstance.run()
     logger.info("[TemporalWorker] Worker stopped")
   } catch (err: any) {
-    console.error(`[TemporalWorker] Failed to start worker: ${err.message}`)
+    logger.error(`[TemporalWorker] Failed to start worker: ${err.message}`)
     throw err
   }
 }

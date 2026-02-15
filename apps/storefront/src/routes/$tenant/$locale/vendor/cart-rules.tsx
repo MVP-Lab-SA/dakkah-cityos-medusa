@@ -124,7 +124,7 @@ function VendorCartRulesRoute() {
                     <span><span className="font-medium text-ds-foreground/80">Used:</span> {rule.usage_count} times</span>
                   </div>
                 </div>
-                <button className="text-sm text-ds-primary hover:underline ml-4">
+                <button className="text-sm text-ds-primary hover:underline ms-4">
                   Edit
                 </button>
               </div>

@@ -1,4 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   try {
@@ -30,9 +31,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       offset: Number(offset),
     })
   } catch (error: any) {
-    res.status(500).json({
-      message: "Failed to fetch warranty plans",
-      error: error.message,
-    })
+    handleApiError(res, error, "STORE-WARRANTIES")
   }
 }

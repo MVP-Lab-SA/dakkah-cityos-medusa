@@ -55,7 +55,7 @@ export default async function subscriptionRenewalReminderJob(container: MedusaCo
     
     logger.info(`[Renewal Reminder] Sent ${totalReminders} reminders`)
   } catch (error) {
-    console.error("[Renewal Reminder] Job failed:", error)
+    logger.error("[Renewal Reminder] Job failed:", error)
   }
 }
 

@@ -1,4 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const { limit = "20", offset = "0", tenant_id, code } = req.query as Record<string, string | undefined>
@@ -28,7 +29,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       offset: Number(offset),
     })
   } catch (error: any) {
-    res.status(500).json({ message: "Failed to fetch gift cards", error: error.message })
+    handleApiError(res, error, "STORE-GIFT-CARDS")
   }
 }
 
@@ -109,6 +110,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
     return res.status(400).json({ message: "Provide a code to redeem, or recipient_email, amount, and tenant_id to purchase" })
   } catch (error: any) {
-    res.status(500).json({ message: "Failed to process gift card", error: error.message })
+    handleApiError(res, error, "STORE-GIFT-CARDS")
   }
 }

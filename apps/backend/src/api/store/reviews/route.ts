@@ -1,4 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 // POST /store/reviews - Create a new review
 export async function POST(req: MedusaRequest, res: MedusaResponse) {

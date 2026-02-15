@@ -21,11 +21,11 @@ export default async function syncSchedulerInitJob(container: MedusaContainer) {
       logger.info("[SyncSchedulerInit] Integration sync scheduler started successfully")
       logger.info("[SyncSchedulerInit] Schedules: product sync (hourly), retry failed (30min), hierarchy reconciliation (6hr), cleanup (daily)")
     } catch (startError: any) {
-      console.warn(`[SyncSchedulerInit] Failed to start scheduler instance: ${startError.message}`)
+      logger.warn(`[SyncSchedulerInit] Failed to start scheduler instance: ${startError.message}`)
       throw startError
     }
   } catch (error: any) {
-    console.warn(`[SyncSchedulerInit] Failed to initialize sync scheduler: ${error.message}`)
+    logger.warn(`[SyncSchedulerInit] Failed to initialize sync scheduler: ${error.message}`)
   }
 }
 

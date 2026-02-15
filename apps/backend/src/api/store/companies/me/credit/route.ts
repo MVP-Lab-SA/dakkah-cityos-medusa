@@ -1,4 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../../../lib/api-error-handler"
 
 /**
  * GET /store/companies/me/credit
@@ -63,9 +64,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       },
     })
   } catch (error: any) {
-    res.status(500).json({
-      message: "Failed to fetch credit information",
-      error: error.message,
-    })
+    handleApiError(res, error, "STORE-COMPANIES-ME-CREDIT")
   }
 }

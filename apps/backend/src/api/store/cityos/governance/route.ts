@@ -1,4 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const tenantId = req.nodeContext?.tenantId || req.query?.tenant_id as string
@@ -24,7 +25,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       effective_policies: effectivePolicies,
     })
   } catch (error: any) {
-    console.error("Governance error:", error)
-    return res.status(500).json({ message: "Internal server error" })
+    return handleApiError(res, error, "STORE-CITYOS-GOVERNANCE")
   }
 }

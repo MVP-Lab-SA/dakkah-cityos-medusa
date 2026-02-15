@@ -26,7 +26,7 @@ export class IntegrationSyncScheduler {
         }, {})
         logger.info(`[SyncScheduler] Dispatched product sync workflow: ${result.runId}`)
       } catch (err: any) {
-        console.warn(`[SyncScheduler] Failed to dispatch product sync: ${err.message}`)
+        logger.warn(`[SyncScheduler] Failed to dispatch product sync: ${err.message}`)
       }
     })
     this.tasks.push(productSyncTask)
@@ -42,7 +42,7 @@ export class IntegrationSyncScheduler {
         }, {})
         logger.info(`[SyncScheduler] Dispatched retry-failed-syncs workflow: ${result.runId}`)
       } catch (err: any) {
-        console.warn(`[SyncScheduler] Failed to dispatch retry sync: ${err.message}`)
+        logger.warn(`[SyncScheduler] Failed to dispatch retry sync: ${err.message}`)
       }
     })
     this.tasks.push(retryTask)
@@ -58,7 +58,7 @@ export class IntegrationSyncScheduler {
         }, {})
         logger.info(`[SyncScheduler] Dispatched hierarchy reconciliation workflow: ${result.runId}`)
       } catch (err: any) {
-        console.warn(`[SyncScheduler] Failed to dispatch hierarchy reconciliation: ${err.message}`)
+        logger.warn(`[SyncScheduler] Failed to dispatch hierarchy reconciliation: ${err.message}`)
       }
     })
     this.tasks.push(hierarchyTask)
@@ -112,7 +112,7 @@ export default async function integrationSyncSchedulerJob(container: MedusaConta
       }, {})
       logger.info(`[SyncScheduler] Dispatched product sync workflow: ${productResult.runId}`)
     } catch (err: any) {
-      console.warn(`[SyncScheduler] Failed to dispatch product sync: ${err.message}`)
+      logger.warn(`[SyncScheduler] Failed to dispatch product sync: ${err.message}`)
     }
 
     try {
@@ -121,7 +121,7 @@ export default async function integrationSyncSchedulerJob(container: MedusaConta
       }, {})
       logger.info(`[SyncScheduler] Dispatched retry-failed-syncs workflow: ${retryResult.runId}`)
     } catch (err: any) {
-      console.warn(`[SyncScheduler] Failed to dispatch retry sync: ${err.message}`)
+      logger.warn(`[SyncScheduler] Failed to dispatch retry sync: ${err.message}`)
     }
 
     try {
@@ -130,7 +130,7 @@ export default async function integrationSyncSchedulerJob(container: MedusaConta
       }, {})
       logger.info(`[SyncScheduler] Dispatched hierarchy reconciliation workflow: ${hierarchyResult.runId}`)
     } catch (err: any) {
-      console.warn(`[SyncScheduler] Failed to dispatch hierarchy reconciliation: ${err.message}`)
+      logger.warn(`[SyncScheduler] Failed to dispatch hierarchy reconciliation: ${err.message}`)
     }
   } catch (error: any) {
     logger.info(`[SyncScheduler] Integration sync scheduler error: ${error.message}`)

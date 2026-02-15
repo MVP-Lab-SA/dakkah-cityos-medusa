@@ -1,4 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const slug = req.query?.slug as string
@@ -41,7 +42,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       },
     })
   } catch (error: any) {
-    console.error("Tenant resolution error:", error)
-    return res.status(500).json({ message: "Internal server error" })
+    return handleApiError(res, error, "STORE-CITYOS-TENANT")
   }
 }

@@ -109,7 +109,7 @@ export default async function failedPaymentRetryJob(container: MedusaContainer) 
     
     logger.info(`[Payment Retry] Completed - Success: ${successCount}, Failed: ${failCount}, Cancelled: ${cancelledCount}`)
   } catch (error) {
-    console.error("[Payment Retry] Job failed:", error)
+    logger.error("[Payment Retry] Job failed:", error)
   }
 }
 

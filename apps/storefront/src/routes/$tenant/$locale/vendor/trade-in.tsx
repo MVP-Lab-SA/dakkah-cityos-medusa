@@ -109,28 +109,28 @@ function VendorTradeInRoute() {
           <table className="w-full border-collapse">
             <thead>
               <tr className="border-b text-left text-sm text-ds-muted-foreground">
-                <th className="pb-3 pr-4">Item</th>
-                <th className="pb-3 pr-4">Condition</th>
-                <th className="pb-3 pr-4 text-right">Offered Value</th>
-                <th className="pb-3 pr-4">Customer</th>
-                <th className="pb-3 pr-4">Status</th>
+                <th className="pb-3 pe-4">Item</th>
+                <th className="pb-3 pe-4">Condition</th>
+                <th className="pb-3 pe-4 text-right">Offered Value</th>
+                <th className="pb-3 pe-4">Customer</th>
+                <th className="pb-3 pe-4">Status</th>
                 <th className="pb-3">Actions</th>
               </tr>
             </thead>
             <tbody>
               {items.map((offer) => (
                 <tr key={offer.id} className="border-b hover:bg-ds-muted/50 transition">
-                  <td className="py-4 pr-4 font-medium">{offer.item_name}</td>
-                  <td className="py-4 pr-4">
+                  <td className="py-4 pe-4 font-medium">{offer.item_name}</td>
+                  <td className="py-4 pe-4">
                     <span className={`text-sm font-medium capitalize ${conditionColors[offer.condition] || "text-ds-muted-foreground"}`}>
                       {offer.condition}
                     </span>
                   </td>
-                  <td className="py-4 pr-4 text-right">
+                  <td className="py-4 pe-4 text-right">
                     {offer.currency_code?.toUpperCase()} {(offer.offered_value / 100).toFixed(2)}
                   </td>
-                  <td className="py-4 pr-4 text-sm text-ds-muted-foreground">{offer.customer_name}</td>
-                  <td className="py-4 pr-4">
+                  <td className="py-4 pe-4 text-sm text-ds-muted-foreground">{offer.customer_name}</td>
+                  <td className="py-4 pe-4">
                     <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[offer.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {offer.status}
                     </span>

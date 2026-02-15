@@ -1,4 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 /**
  * GET /store/vendors/featured
@@ -43,9 +44,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       count: featuredVendors.length,
     })
   } catch (error: any) {
-    res.status(500).json({
-      message: "Failed to fetch featured vendors",
-      error: error.message,
-    })
+    handleApiError(res, error, "STORE-VENDORS-FEATURED")
   }
 }

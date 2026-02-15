@@ -1,4 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   try {
@@ -20,6 +21,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
     return res.status(404).json({ message: "Loyalty item not found" })
   } catch (error: any) {
-    res.status(500).json({ message: "Failed to fetch loyalty item", error: error.message })
+    handleApiError(res, error, "STORE-LOYALTY-ID")
   }
 }

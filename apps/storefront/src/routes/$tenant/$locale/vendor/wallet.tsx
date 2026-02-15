@@ -114,24 +114,24 @@ function VendorWalletRoute() {
           <table className="w-full border-collapse">
             <thead>
               <tr className="border-b text-left text-sm text-ds-muted-foreground">
-                <th className="pb-3 pr-4">Date</th>
-                <th className="pb-3 pr-4">Type</th>
-                <th className="pb-3 pr-4 text-right">Amount</th>
+                <th className="pb-3 pe-4">Date</th>
+                <th className="pb-3 pe-4">Type</th>
+                <th className="pb-3 pe-4 text-right">Amount</th>
                 <th className="pb-3">Reference</th>
               </tr>
             </thead>
             <tbody>
               {transactions.map((tx) => (
                 <tr key={tx.id} className="border-b hover:bg-ds-muted/50 transition">
-                  <td className="py-4 pr-4 text-sm text-ds-muted-foreground">
+                  <td className="py-4 pe-4 text-sm text-ds-muted-foreground">
                     {new Date(tx.date).toLocaleDateString()}
                   </td>
-                  <td className="py-4 pr-4">
+                  <td className="py-4 pe-4">
                     <span className="px-2 py-0.5 text-xs rounded-full font-medium bg-ds-muted text-ds-foreground capitalize">
                       {tx.type}
                     </span>
                   </td>
-                  <td className={`py-4 pr-4 text-right font-medium ${typeColors[tx.type] || "text-ds-foreground"}`}>
+                  <td className={`py-4 pe-4 text-right font-medium ${typeColors[tx.type] || "text-ds-foreground"}`}>
                     {tx.amount >= 0 ? "+" : ""}{currency} {(Math.abs(tx.amount) / 100).toFixed(2)}
                   </td>
                   <td className="py-4 text-sm text-ds-muted-foreground font-mono">{tx.reference}</td>

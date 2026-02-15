@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 // POST /store/vendors/register - Register as a new vendor
 export async function POST(req: MedusaRequest, res: MedusaResponse) {

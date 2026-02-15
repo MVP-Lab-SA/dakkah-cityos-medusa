@@ -1,4 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../../../lib/api-error-handler"
 
 // POST /store/reviews/:id/helpful - Mark a review as helpful
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -9,6 +10,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     await reviewService.markHelpful(id)
     res.json({ success: true })
   } catch (error: any) {
-    res.status(500).json({ message: error.message })
+    handleApiError(res, error, "STORE-REVIEWS-ID-HELPFUL")
   }
 }

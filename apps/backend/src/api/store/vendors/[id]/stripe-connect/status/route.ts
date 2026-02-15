@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../../../../lib/api-error-handler"
 
 // GET - Check and update Stripe Connect onboarding status
 export async function GET(
@@ -58,6 +59,6 @@ export async function GET(
       requirements: account.requirements
     })
   } catch (error: any) {
-    res.status(500).json({ message: error.message })
+    handleApiError(res, error, "STORE-VENDORS-ID-STRIPE-CONNECT-STATUS")
   }
 }

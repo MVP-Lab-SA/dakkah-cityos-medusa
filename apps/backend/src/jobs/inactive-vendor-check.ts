@@ -86,7 +86,7 @@ export default async function inactiveVendorCheckJob(container: MedusaContainer)
     
     logger.info(`[Inactive Vendor Check] Completed - Warnings: ${warningCount}, Deactivated: ${deactivatedCount}`)
   } catch (error) {
-    console.error("[Inactive Vendor Check] Job failed:", error)
+    logger.error("[Inactive Vendor Check] Job failed:", error)
   }
 }
 

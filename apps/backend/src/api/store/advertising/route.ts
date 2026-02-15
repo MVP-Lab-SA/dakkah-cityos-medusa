@@ -1,4 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   try {
@@ -11,7 +12,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     const items = await mod.listAdPlacements(filters, { skip: Number(offset), take: Number(limit) })
     return res.json({ items, count: Array.isArray(items) ? items.length : 0, limit: Number(limit), offset: Number(offset) })
   } catch (error: any) {
-    res.status(500).json({ message: "Failed to fetch ad placements", error: error.message })
+    handleApiError(res, error, "STORE-ADVERTISING")
   }
 }
 

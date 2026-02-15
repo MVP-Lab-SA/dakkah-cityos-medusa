@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const tenantModule = req.scope.resolve("tenant") as any
@@ -56,6 +57,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       offset: parseInt(offset),
     })
   } catch (error: any) {
-    res.status(500).json({ message: "Failed to fetch POIs", error: error.message })
+    handleApiError(res, error, "STORE-CONTENT-POIS")
   }
 }

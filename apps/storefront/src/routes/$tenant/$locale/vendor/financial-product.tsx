@@ -151,7 +151,7 @@ function VendorFinancialProductRoute() {
                     {product.risk_level && <span>Risk: {product.risk_level}</span>}
                   </div>
                 </div>
-                <button className="text-sm text-ds-primary hover:underline ml-4">
+                <button className="text-sm text-ds-primary hover:underline ms-4">
                   View Applications
                 </button>
               </div>

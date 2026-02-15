@@ -47,13 +47,13 @@ export default async function staleQuoteCleanupJob(container: MedusaContainer) {
         
         expiredCount++
       } catch (error) {
-        console.error(`[Quote Cleanup] Failed to expire quote ${quote.id}:`, error)
+        logger.error(`[Quote Cleanup] Failed to expire quote ${quote.id}:`, error)
       }
     }
     
     logger.info(`[Quote Cleanup] Expired ${expiredCount} quotes`)
   } catch (error) {
-    console.error("[Quote Cleanup] Job failed:", error)
+    logger.error("[Quote Cleanup] Job failed:", error)
   }
 }
 

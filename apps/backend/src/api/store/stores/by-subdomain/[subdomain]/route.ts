@@ -1,4 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework"
+import { handleApiError } from "../../../../../lib/api-error-handler"
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   const { subdomain } = req.params
@@ -18,9 +19,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     res.json({ store: stores[0] })
   } catch (error: any) {
-    res.status(500).json({
-      message: "Failed to fetch store by subdomain",
-      error: error.message,
-    })
+    handleApiError(res, error, "STORE-STORES-BY-SUBDOMAIN-SUBDOMAIN")
   }
 }

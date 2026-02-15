@@ -144,7 +144,7 @@ function VendorCharityRoute() {
                       <span>Ends {new Date(campaign.end_date).toLocaleDateString()}</span>
                     </div>
                   </div>
-                  <button className="text-sm text-ds-primary hover:underline ml-4">
+                  <button className="text-sm text-ds-primary hover:underline ms-4">
                     View Donations
                   </button>
                 </div>

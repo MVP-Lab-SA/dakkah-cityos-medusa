@@ -151,7 +151,7 @@ function VendorEventTicketingRoute() {
                     </div>
                   </div>
                 </div>
-                <div className="text-right ml-4">
+                <div className="text-right ms-4">
                   <p className="text-lg font-bold">{formatCurrency(ticket.price, ticket.currency_code)}</p>
                   <p className="text-xs text-muted-foreground">per ticket</p>
                 </div>

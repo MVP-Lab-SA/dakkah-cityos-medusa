@@ -146,7 +146,7 @@ function VendorB2BRoute() {
                     <span>Created {new Date(quote.created_at).toLocaleDateString()}</span>
                   </div>
                 </div>
-                <button className="text-sm text-ds-primary hover:underline ml-4">
+                <button className="text-sm text-ds-primary hover:underline ms-4">
                   View Contracts
                 </button>
               </div>

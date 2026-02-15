@@ -1,4 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../../../lib/api-error-handler"
 
 // GET /store/reviews/products/:id - Get reviews for a product
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
@@ -26,6 +27,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       offset: parseInt(offset),
     })
   } catch (error: any) {
-    res.status(500).json({ message: error.message })
+    handleApiError(res, error, "STORE-REVIEWS-PRODUCTS-ID")
   }
 }

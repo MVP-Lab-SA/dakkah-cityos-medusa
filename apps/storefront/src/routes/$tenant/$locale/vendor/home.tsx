@@ -150,7 +150,7 @@ function VendorHomeRoute() {
                 <div key={order.id} className="flex items-center justify-between py-2 border-b last:border-0">
                   <div>
                     <span className="font-medium">#{order.display_id || order.id.slice(0, 8)}</span>
-                    <span className="text-sm text-ds-muted-foreground ml-3">{new Date(order.created_at).toLocaleDateString()}</span>
+                    <span className="text-sm text-ds-muted-foreground ms-3">{new Date(order.created_at).toLocaleDateString()}</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-sm font-medium">{currency} {(order.total / 100).toFixed(2)}</span>

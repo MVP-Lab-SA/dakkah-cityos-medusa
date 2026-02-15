@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../../../../lib/api-error-handler"
 
 interface ServiceProvider {
   id: string
@@ -78,7 +79,6 @@ export async function GET(
       count: serviceProviders.length,
     })
   } catch (error) {
-    console.error("Error fetching service providers:", error)
     
     // Return empty list if providers entity doesn't exist yet
     res.json({

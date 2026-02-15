@@ -130,7 +130,7 @@ function VendorCartExtensionRoute() {
                     )}
                   </div>
                 </div>
-                <button className="text-sm text-ds-primary hover:underline ml-4">Edit</button>
+                <button className="text-sm text-ds-primary hover:underline ms-4">Edit</button>
               </div>
             </div>
           ))}

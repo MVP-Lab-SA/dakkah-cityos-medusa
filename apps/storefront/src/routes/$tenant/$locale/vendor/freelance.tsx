@@ -152,7 +152,7 @@ function VendorFreelanceRoute() {
                     </div>
                   )}
                 </div>
-                <button className="text-sm text-ds-primary hover:underline ml-4">
+                <button className="text-sm text-ds-primary hover:underline ms-4">
                   View Proposals
                 </button>
               </div>

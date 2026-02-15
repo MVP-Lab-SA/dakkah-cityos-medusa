@@ -145,7 +145,7 @@ function VendorPetServiceRoute() {
                     {service.duration && <span>Duration: {service.duration}</span>}
                   </div>
                 </div>
-                <button className="text-sm text-ds-primary hover:underline ml-4">
+                <button className="text-sm text-ds-primary hover:underline ms-4">
                   View Bookings
                 </button>
               </div>

@@ -1,4 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 const SOCIAL_COMMERCE_SEED = [
   {
@@ -163,6 +164,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
     res.json({ items: paged, listings: paged, count: items.length, limit: Number(limit), offset: start })
   } catch (error: any) {
-    res.status(500).json({ message: "Failed to fetch social commerce listings", error: error.message })
+    handleApiError(res, error, "STORE-SOCIAL-COMMERCE")
   }
 }

@@ -1,4 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   try {
@@ -11,6 +12,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     if (error.type === "not_found" || error.message?.includes("not found")) {
       return res.status(404).json({ message: "Try-before-you-buy product not found" })
     }
-    res.status(500).json({ message: "Failed to fetch product", error: error.message })
+    handleApiError(res, error, "STORE-TRY-BEFORE-YOU-BUY-ID")
   }
 }

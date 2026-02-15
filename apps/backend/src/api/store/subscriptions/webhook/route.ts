@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 // POST - Handle Stripe subscription webhooks
 export async function POST(
@@ -144,7 +145,6 @@ export async function POST(
 
     res.json({ received: true })
   } catch (error: any) {
-    console.error("Webhook processing error:", error)
-    res.status(500).json({ message: error.message })
+    handleApiError(res, error, "STORE-SUBSCRIPTIONS-WEBHOOK")
   }
 }

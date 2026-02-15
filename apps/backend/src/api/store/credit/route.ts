@@ -1,4 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const customerId = req.auth_context?.actor_id
@@ -73,7 +74,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       },
     })
   } catch (error: any) {
-    res.status(500).json({ message: "Failed to fetch credit balance", error: error.message })
+    handleApiError(res, error, "STORE-CREDIT")
   }
 }
 
@@ -121,6 +122,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       cart_id,
     })
   } catch (error: any) {
-    res.status(500).json({ message: "Failed to apply credit", error: error.message })
+    handleApiError(res, error, "STORE-CREDIT")
   }
 }

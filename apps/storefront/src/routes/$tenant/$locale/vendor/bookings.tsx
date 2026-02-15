@@ -108,29 +108,29 @@ function VendorBookingsRoute() {
           <table className="w-full border-collapse">
             <thead>
               <tr className="border-b text-left text-sm text-ds-muted-foreground">
-                <th className="pb-3 pr-4">Booking</th>
-                <th className="pb-3 pr-4">Customer</th>
-                <th className="pb-3 pr-4">Date & Time</th>
-                <th className="pb-3 pr-4">Status</th>
-                <th className="pb-3 pr-4">Total</th>
+                <th className="pb-3 pe-4">Booking</th>
+                <th className="pb-3 pe-4">Customer</th>
+                <th className="pb-3 pe-4">Date & Time</th>
+                <th className="pb-3 pe-4">Status</th>
+                <th className="pb-3 pe-4">Total</th>
                 <th className="pb-3">Payment</th>
               </tr>
             </thead>
             <tbody>
               {items.map((booking) => (
                 <tr key={booking.id} className="border-b hover:bg-ds-muted/50 transition">
-                  <td className="py-4 pr-4">
+                  <td className="py-4 pe-4">
                     <span className="font-medium text-sm">
                       {booking.booking_number || booking.id.slice(0, 8)}
                     </span>
                   </td>
-                  <td className="py-4 pr-4">
+                  <td className="py-4 pe-4">
                     <div>
                       <p className="text-sm font-medium">{booking.customer_name || "—"}</p>
                       <p className="text-xs text-ds-muted-foreground">{booking.customer_email}</p>
                     </div>
                   </td>
-                  <td className="py-4 pr-4">
+                  <td className="py-4 pe-4">
                     <div className="text-sm">
                       <p>{new Date(booking.start_time).toLocaleDateString()}</p>
                       <p className="text-xs text-ds-muted-foreground">
@@ -140,12 +140,12 @@ function VendorBookingsRoute() {
                       </p>
                     </div>
                   </td>
-                  <td className="py-4 pr-4">
+                  <td className="py-4 pe-4">
                     <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${statusColors[booking.status] || "bg-ds-muted text-ds-foreground"}`}>
                       {booking.status}
                     </span>
                   </td>
-                  <td className="py-4 pr-4 text-sm">
+                  <td className="py-4 pe-4 text-sm">
                     {booking.total != null
                       ? `${booking.currency_code?.toUpperCase() || "USD"} ${(booking.total / 100).toFixed(2)}`
                       : "—"}

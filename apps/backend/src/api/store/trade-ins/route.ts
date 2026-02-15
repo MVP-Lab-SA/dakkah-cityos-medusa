@@ -1,4 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../lib/api-error-handler"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   try {
@@ -35,9 +36,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       offset: Number(offset),
     })
   } catch (error: any) {
-    return res.status(500).json({
-      message: "Failed to fetch trade-in items",
-      error: error.message,
-    })
+    return handleApiError(res, error, "STORE-TRADE-INS")
   }
 }

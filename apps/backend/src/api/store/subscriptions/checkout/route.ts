@@ -1,4 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 // POST - Create Stripe Checkout session for subscription
 export async function POST(
@@ -113,6 +114,6 @@ export async function POST(
       session_id: session.id
     })
   } catch (error: any) {
-    res.status(500).json({ message: error.message })
+    handleApiError(res, error, "STORE-SUBSCRIPTIONS-CHECKOUT")
   }
 }

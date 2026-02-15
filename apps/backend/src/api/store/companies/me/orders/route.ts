@@ -1,4 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../../../lib/api-error-handler"
 
 /**
  * GET /store/companies/me/orders
@@ -105,9 +106,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       limit: Number(limit),
     })
   } catch (error: any) {
-    res.status(500).json({
-      message: "Failed to fetch company orders",
-      error: error.message,
-    })
+    handleApiError(res, error, "STORE-COMPANIES-ME-ORDERS")
   }
 }

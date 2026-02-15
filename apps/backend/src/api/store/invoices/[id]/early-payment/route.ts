@@ -1,5 +1,6 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import { handleApiError } from "../../../../../lib/api-error-handler"
 
 /**
  * Customer-facing Early Payment Discount API
@@ -117,7 +118,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       }
     })
   } catch (error) {
-    console.error("Store early payment error:", error)
-    res.status(500).json({ error: "Failed to fetch early payment details" })
+    handleApiError(res, error, "STORE-INVOICES-ID-EARLY-PAYMENT")
   }
 }

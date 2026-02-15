@@ -91,7 +91,7 @@ export default async function trialExpirationJob(container: MedusaContainer) {
     
     logger.info(`[Trial Expiration] Completed - Reminders: ${expiringTrials?.length || 0}, Converted: ${convertedCount}, Expired: ${expiredCount}`)
   } catch (error) {
-    console.error("[Trial Expiration] Job failed:", error)
+    logger.error("[Trial Expiration] Job failed:", error)
   }
 }
 

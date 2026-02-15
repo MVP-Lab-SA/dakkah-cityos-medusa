@@ -1,4 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework"
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   const storeModuleService = req.scope.resolve("cityosStoreService") as any
@@ -18,9 +19,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     // Return the first store (or you could have an is_default flag)
     res.json({ store: stores[0] })
   } catch (error: any) {
-    res.status(500).json({
-      message: "Failed to fetch default store",
-      error: error.message,
-    })
+    handleApiError(res, error, "STORE-STORES-DEFAULT")
   }
 }
