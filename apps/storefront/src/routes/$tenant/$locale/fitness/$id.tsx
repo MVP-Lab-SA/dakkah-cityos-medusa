@@ -1,6 +1,8 @@
 // @ts-nocheck
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
+import { FitnessClassScheduleBlock } from '@/components/blocks/fitness-class-schedule-block'
+import { ReviewListBlock } from '@/components/blocks/review-list-block'
 
 function normalizeDetail(item: any) {
   if (!item) return null
@@ -228,6 +230,11 @@ function FitnessDetailPage() {
             </div>
           </aside>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <FitnessClassScheduleBlock facilityId={item.facility_id || item.id} />
+        <ReviewListBlock productId={item.id} />
       </div>
     </div>
   )

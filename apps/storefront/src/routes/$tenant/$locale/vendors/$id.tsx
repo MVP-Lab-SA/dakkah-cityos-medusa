@@ -2,6 +2,8 @@
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
+import { VendorProfileBlock } from "@/components/blocks/vendor-profile-block"
+import { VendorProductsBlock } from "@/components/blocks/vendor-products-block"
 
 function normalizeDetail(item: any) {
   if (!item) return null
@@ -293,6 +295,11 @@ function VendorDetailPage() {
             </div>
           </aside>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <VendorProfileBlock />
+        <VendorProductsBlock />
       </div>
     </div>
   )

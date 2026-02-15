@@ -1,6 +1,8 @@
 // @ts-nocheck
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
+import { BulkPricingTableBlock } from "@/components/blocks/bulk-pricing-table-block"
+import { CompanyDashboardBlock } from "@/components/blocks/company-dashboard-block"
 
 function normalizeDetail(item: any) {
   if (!item) return null
@@ -242,6 +244,11 @@ function B2BDetailPage() {
             </div>
           </aside>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <BulkPricingTableBlock productId={item.id} />
+        <CompanyDashboardBlock />
       </div>
     </div>
   )

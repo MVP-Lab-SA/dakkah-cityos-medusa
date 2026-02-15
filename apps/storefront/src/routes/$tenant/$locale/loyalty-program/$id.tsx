@@ -1,6 +1,8 @@
 // @ts-nocheck
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
+import { LoyaltyPointsDisplayBlock } from "@/components/blocks/loyalty-points-display-block"
+import { LoyaltyDashboardBlock } from "@/components/blocks/loyalty-dashboard-block"
 
 function normalizeDetail(item: any) {
   if (!item) return null
@@ -199,6 +201,11 @@ function LoyaltyProgramDetailPage() {
             </div>
           </aside>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <LoyaltyPointsDisplayBlock />
+        <LoyaltyDashboardBlock />
       </div>
     </div>
   )

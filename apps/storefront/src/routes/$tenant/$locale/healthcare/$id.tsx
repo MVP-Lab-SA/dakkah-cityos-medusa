@@ -1,6 +1,8 @@
 // @ts-nocheck
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
+import { HealthcareProviderBlock } from '@/components/blocks/healthcare-provider-block'
+import { AppointmentSlotsBlock } from '@/components/blocks/appointment-slots-block'
 
 function normalizeDetail(item: any) {
   if (!item) return null
@@ -220,6 +222,11 @@ function HealthcareDetailPage() {
             </div>
           </aside>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <HealthcareProviderBlock providerId={provider.id} />
+        <AppointmentSlotsBlock providerId={provider.id} />
       </div>
     </div>
   )

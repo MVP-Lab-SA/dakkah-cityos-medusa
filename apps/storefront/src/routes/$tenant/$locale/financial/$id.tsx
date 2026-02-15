@@ -1,6 +1,8 @@
 // @ts-nocheck
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
+import { ComparisonTableBlock } from "@/components/blocks/comparison-table-block"
+import { StatsBlock } from "@/components/blocks/stats-block"
 
 function normalizeDetail(item: any) {
   if (!item) return null
@@ -245,6 +247,11 @@ function FinancialDetailPage() {
             </div>
           </aside>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <ComparisonTableBlock />
+        <StatsBlock />
       </div>
     </div>
   )

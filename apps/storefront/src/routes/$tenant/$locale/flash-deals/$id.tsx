@@ -1,6 +1,8 @@
 // @ts-nocheck
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
+import { FlashSaleCountdownBlock } from "@/components/blocks/flash-sale-countdown-block"
+import { ReviewListBlock } from "@/components/blocks/review-list-block"
 import { useState, useEffect } from "react"
 
 function normalizeDetail(item: any) {
@@ -216,6 +218,11 @@ function FlashDealDetailPage() {
             </div>
           </aside>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <FlashSaleCountdownBlock />
+        <ReviewListBlock productId={deal.id} />
       </div>
     </div>
   )

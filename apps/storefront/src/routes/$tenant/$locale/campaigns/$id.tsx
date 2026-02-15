@@ -5,6 +5,7 @@ import { t, formatCurrency, formatDate, type SupportedLocale } from "@/lib/i18n"
 import { CampaignProgressBar } from "@/components/campaigns/campaign-progress-bar"
 import { RewardTier } from "@/components/campaigns/reward-tier"
 import { CountdownTimer } from "@/components/campaigns/countdown-timer"
+import { CrowdfundingProgressBlock } from "@/components/blocks/crowdfunding-progress-block"
 
 function normalizeDetail(item: any) {
   if (!item) return null
@@ -181,6 +182,10 @@ function CampaignDetailPage() {
             )}
           </div>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <CrowdfundingProgressBlock />
       </div>
     </div>
   )

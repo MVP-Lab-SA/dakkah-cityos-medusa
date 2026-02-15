@@ -1,6 +1,9 @@
 // @ts-nocheck
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
+import { MenuDisplayBlock } from "@/components/blocks/menu-display-block"
+import { MapBlock } from "@/components/blocks/map-block"
+import { ReviewListBlock } from "@/components/blocks/review-list-block"
 
 function normalizeDetail(item: any) {
   if (!item) return null
@@ -228,6 +231,14 @@ function RestaurantDetailPage() {
               )}
             </div>
           </aside>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <MenuDisplayBlock restaurantId={restaurant.id} />
+          {restaurant.location && (
+            <MapBlock locations={[{ id: restaurant.id, name: restaurant.name || restaurant.title, address: restaurant.address || restaurant.location, lat: 0, lng: 0 }]} />
+          )}
+          <ReviewListBlock productId={restaurant.id} />
         </div>
       </div>
     </div>

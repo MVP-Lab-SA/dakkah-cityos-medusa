@@ -1,6 +1,8 @@
 // @ts-nocheck
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
+import { ParkingSpotFinderBlock } from "@/components/blocks/parking-spot-finder-block"
+import { MapBlock } from "@/components/blocks/map-block"
 
 function normalizeDetail(item: any) {
   if (!item) return null
@@ -245,6 +247,13 @@ function ParkingDetailPage() {
             </div>
           </aside>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <ParkingSpotFinderBlock spotId={spot.id} />
+        {(spot.latitude || spot.lat || (spot.coordinates && spot.coordinates.lat)) && (
+          <MapBlock />
+        )}
       </div>
     </div>
   )

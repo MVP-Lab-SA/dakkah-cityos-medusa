@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
+import { NewsletterBlock } from "@/components/blocks/newsletter-block"
 import { useState } from "react"
 
 function normalizeDetail(item: any) {
@@ -259,6 +260,10 @@ function NewsletterDetailPage() {
             </div>
           </aside>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <NewsletterBlock />
       </div>
     </div>
   )

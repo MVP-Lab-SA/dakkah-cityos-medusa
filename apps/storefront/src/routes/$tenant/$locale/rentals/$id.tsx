@@ -6,6 +6,8 @@ import type { SupportedLocale } from "@/lib/i18n"
 import { RentalCalendar } from "@/components/rentals/rental-calendar"
 import { RentalPricingTable } from "@/components/rentals/rental-pricing-table"
 import { useState, useMemo } from "react"
+import { ReviewListBlock } from "@/components/blocks/review-list-block"
+import { MapBlock } from "@/components/blocks/map-block"
 
 function normalizeDetail(item: any) {
   if (!item) return null
@@ -288,6 +290,11 @@ function RentalDetailPage() {
             )}
           </div>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <ReviewListBlock productId={rental.id} />
+        <MapBlock />
       </div>
     </div>
   )

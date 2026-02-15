@@ -7,6 +7,7 @@ import { useAuctionBids } from "@/lib/hooks/use-auctions"
 import { AuctionCountdown } from "@/components/auctions/auction-countdown"
 import { BidPanel } from "@/components/auctions/bid-panel"
 import { BidHistory } from "@/components/auctions/bid-history"
+import { ReviewListBlock } from "@/components/blocks/review-list-block"
 
 function normalizeDetail(item: any) {
   if (!item) return null
@@ -262,6 +263,10 @@ function AuctionDetailPage() {
             </div>
           </aside>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <ReviewListBlock productId={auction.id} />
       </div>
     </div>
   )

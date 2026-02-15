@@ -2,6 +2,7 @@
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute } from "@tanstack/react-router";
 import { QuoteDetails } from "@/components/quotes/quote-details";
+import { TimelineBlock } from "@/components/blocks/timeline-block"
 
 interface QuoteItem {
   id: string;
@@ -75,6 +76,10 @@ function QuoteDetailPage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-5xl">
       {quote && <QuoteDetails quote={quote} />}
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <TimelineBlock />
+      </div>
     </div>
   );
 }

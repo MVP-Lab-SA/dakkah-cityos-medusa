@@ -1,6 +1,8 @@
 // @ts-nocheck
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
+import { BookingCalendarBlock } from "@/components/blocks/booking-calendar-block"
+import { ResourceAvailabilityBlock } from "@/components/blocks/resource-availability-block"
 
 function normalizeDetail(item: any) {
   if (!item) return null
@@ -248,6 +250,11 @@ function BookingDetailPage() {
               </div>
             </div>
           </aside>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <BookingCalendarBlock bookingId={booking.id} />
+          <ResourceAvailabilityBlock resourceId={booking.id} />
         </div>
       </div>
     </div>

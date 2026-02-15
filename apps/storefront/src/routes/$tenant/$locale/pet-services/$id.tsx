@@ -1,6 +1,9 @@
 // @ts-nocheck
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
+import { PetProfileCardBlock } from "@/components/blocks/pet-profile-card-block"
+import { ReviewListBlock } from "@/components/blocks/review-list-block"
+import { AppointmentSlotsBlock } from "@/components/blocks/appointment-slots-block"
 
 function normalizeDetail(item: any) {
   if (!item) return null
@@ -246,6 +249,12 @@ function PetServiceDetailPage() {
             </div>
           </aside>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <PetProfileCardBlock />
+        <AppointmentSlotsBlock providerId={service.id} />
+        <ReviewListBlock productId={service.id} />
       </div>
     </div>
   )

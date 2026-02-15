@@ -6,6 +6,8 @@ import { formatCurrency } from "@/lib/i18n"
 import { TicketSelector } from "@/components/events/ticket-selector"
 import { EventCountdown } from "@/components/events/event-countdown"
 import { useState } from "react"
+import { EventScheduleBlock } from "@/components/blocks/event-schedule-block"
+import { ReviewListBlock } from "@/components/blocks/review-list-block"
 
 function normalizeDetail(item: any) {
   if (!item) return null
@@ -319,6 +321,11 @@ function EventDetailPage() {
             </div>
           </aside>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <EventScheduleBlock eventId={event.id} />
+        <ReviewListBlock productId={event.id} />
       </div>
     </div>
   )

@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
+import { ReviewListBlock } from "@/components/blocks/review-list-block"
 import { t, formatCurrency, type SupportedLocale } from "@/lib/i18n"
 import { Star } from "@medusajs/icons"
 
@@ -181,6 +182,10 @@ function DigitalProductDetailPage() {
             </button>
           </div>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <ReviewListBlock productId={product.id} />
       </div>
     </div>
   )
