@@ -28,6 +28,8 @@ export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
   columns = 3,
   showRating = true,
 }) => {
+  if (!testimonials || !testimonials.length) return null
+
   const [activeIndex, setActiveIndex] = React.useState(0)
 
   const gridCols = {

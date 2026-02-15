@@ -23,6 +23,8 @@ export const ImageGalleryBlock: React.FC<ImageGalleryBlockProps> = ({
   columns = 3,
   aspectRatio = 'auto',
 }) => {
+  if (!images || !images.length) return null
+
   const [lightboxIndex, setLightboxIndex] = React.useState<number | null>(null)
 
   const gridCols = {

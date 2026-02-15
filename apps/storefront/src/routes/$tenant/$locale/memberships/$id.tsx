@@ -10,11 +10,21 @@ import { FaqBlock } from "@/components/blocks/faq-block"
 function normalizeDetail(item: any) {
   if (!item) return null
   const meta = typeof item.metadata === 'string' ? JSON.parse(item.metadata) : (item.metadata || {})
+  const rawPrice = item.price ?? meta.price ?? null
+  const currency = item.currency || item.currency_code || meta.currency || meta.currency_code || "USD"
+  const priceObj = rawPrice != null
+    ? (typeof rawPrice === 'object' && rawPrice.amount != null ? rawPrice : { amount: Number(rawPrice), currencyCode: currency })
+    : null
   return { ...meta, ...item,
     thumbnail: item.thumbnail || item.photo_url || item.banner_url || item.logo_url || meta.thumbnail || (meta.images && meta.images[0]) || null,
     images: meta.images || [item.photo_url || item.banner_url || item.logo_url].filter(Boolean),
     description: item.description || meta.description || "",
-    price: item.price ?? meta.price ?? null,
+    price: priceObj,
+    currency,
+    billingPeriod: item.billingPeriod || item.billing_period || meta.billingPeriod || meta.billing_period || "monthly",
+    trialDays: item.trialDays ?? item.trial_days ?? meta.trialDays ?? meta.trial_days ?? null,
+    isPopular: item.isPopular ?? item.is_popular ?? meta.isPopular ?? meta.is_popular ?? false,
+    benefits: item.benefits || meta.benefits || [],
     rating: item.rating ?? item.avg_rating ?? meta.rating ?? null,
     review_count: item.review_count ?? meta.review_count ?? null,
     location: item.location || item.city || item.address || meta.location || null,

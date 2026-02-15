@@ -20,6 +20,7 @@ export const FaqBlock: React.FC<FaqBlockProps> = ({
   items,
   layout = 'accordion',
 }) => {
+  if (!items || !items.length) return null
   const toAccordionItems = (faqItems: FaqItem[]) =>
     faqItems.map((item, index) => ({
       key: `faq-${index}`,

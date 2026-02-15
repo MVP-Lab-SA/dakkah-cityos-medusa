@@ -9,14 +9,28 @@ import { BidPanel } from "@/components/auctions/bid-panel"
 import { BidHistory } from "@/components/auctions/bid-history"
 import { ReviewListBlock } from "@/components/blocks/review-list-block"
 
+function normalizePriceField(val: any, currency: string) {
+  if (val == null) return null
+  if (typeof val === 'object' && val.amount != null) return val
+  return { amount: Number(val), currencyCode: currency }
+}
+
 function normalizeDetail(item: any) {
   if (!item) return null
   const meta = typeof item.metadata === 'string' ? JSON.parse(item.metadata) : (item.metadata || {})
+  const currency = item.currency || item.currency_code || meta.currency || meta.currency_code || "USD"
   return { ...meta, ...item,
     thumbnail: item.thumbnail || item.photo_url || item.banner_url || item.logo_url || meta.thumbnail || (meta.images && meta.images[0]) || null,
     images: meta.images || [item.photo_url || item.banner_url || item.logo_url].filter(Boolean),
     description: item.description || meta.description || "",
     price: item.price ?? meta.price ?? null,
+    currency,
+    startingPrice: normalizePriceField(item.startingPrice ?? item.starting_price ?? item.price ?? meta.starting_price, currency),
+    currentPrice: normalizePriceField(item.currentPrice ?? item.current_price ?? meta.current_price, currency),
+    buyNowPrice: normalizePriceField(item.buyNowPrice ?? item.buy_now_price ?? meta.buy_now_price, currency),
+    endsAt: item.endsAt || item.ends_at || item.end_date || meta.ends_at || meta.end_date || null,
+    auctionType: item.auctionType || item.auction_type || meta.auction_type || "english",
+    totalBids: item.totalBids ?? item.total_bids ?? item.bid_count ?? meta.total_bids ?? 0,
     rating: item.rating ?? item.avg_rating ?? meta.rating ?? null,
     review_count: item.review_count ?? meta.review_count ?? null,
     location: item.location || item.city || item.address || meta.location || null,

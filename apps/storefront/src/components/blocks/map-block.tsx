@@ -39,6 +39,8 @@ export const MapBlock: React.FC<MapBlockProps> = ({
   showList = true,
   locale = 'en',
 }) => {
+  if (!locations || !locations.length) return null
+
   const [selectedId, setSelectedId] = React.useState<string | null>(null)
 
   const selected = locations.find((l) => l.id === selectedId)

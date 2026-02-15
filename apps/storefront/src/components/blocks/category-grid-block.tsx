@@ -40,6 +40,9 @@ export const CategoryGridBlock: React.FC<CategoryGridBlockProps> = ({
   tenantPrefix = '',
 }) => {
   const { locale } = useTenant()
+
+  if (!categories || !categories.length) return null
+
   const buildLink = (slug: string) =>
     tenantPrefix ? `${tenantPrefix}/categories/${slug}` : `/categories/${slug}`
 

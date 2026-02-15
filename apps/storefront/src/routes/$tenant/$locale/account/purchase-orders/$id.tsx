@@ -6,6 +6,18 @@ import { useAuth } from "@/lib/context/auth-context"
 import { ArrowLeft } from "@medusajs/icons"
 
 export const Route = createFileRoute("/$tenant/$locale/account/purchase-orders/$id")({
+  loader: async ({ params }) => {
+    try {
+      const { getServerBaseUrl, fetchWithTimeout } = await import("@/lib/utils/env")
+      const baseUrl = getServerBaseUrl()
+      const resp = await fetchWithTimeout(`${baseUrl}/store/purchase-orders/${params.id}`, {
+        headers: { "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445" },
+      })
+      if (!resp.ok) return { item: null }
+      const data = await resp.json()
+      return { item: data.item || data.purchase_order || data }
+    } catch { return { item: null } }
+  },
   component: PurchaseOrderDetailPage,
 })
 

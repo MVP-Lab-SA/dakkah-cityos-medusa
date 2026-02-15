@@ -8,13 +8,21 @@ import { Star } from "@medusajs/icons"
 function normalizeDetail(item: any) {
   if (!item) return null
   const meta = typeof item.metadata === 'string' ? JSON.parse(item.metadata) : (item.metadata || {})
+  const rawRating = item.rating ?? item.avg_rating ?? meta.rating ?? null
+  const rawReviewCount = item.review_count ?? meta.review_count ?? null
+  const ratingObj = rawRating != null
+    ? (typeof rawRating === 'object' && rawRating.average != null ? rawRating : { average: Number(rawRating), count: Number(rawReviewCount || 0) })
+    : null
   return { ...meta, ...item,
     thumbnail: item.thumbnail || item.photo_url || item.banner_url || item.logo_url || meta.thumbnail || (meta.images && meta.images[0]) || null,
     images: meta.images || [item.photo_url || item.banner_url || item.logo_url].filter(Boolean),
     description: item.description || meta.description || "",
     price: item.price ?? meta.price ?? null,
-    rating: item.rating ?? item.avg_rating ?? meta.rating ?? null,
-    review_count: item.review_count ?? meta.review_count ?? null,
+    currency_code: item.currency_code || item.currency || meta.currency_code || meta.currency || "USD",
+    file_type: item.file_type || meta.file_type || null,
+    file_size: item.file_size || meta.file_size || null,
+    rating: ratingObj,
+    review_count: rawReviewCount,
     location: item.location || item.city || item.address || meta.location || null,
   }
 }
@@ -111,9 +119,9 @@ function DigitalProductDetailPage() {
 
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <span className="inline-block px-2 py-1 text-xs font-medium rounded bg-ds-muted text-ds-muted-foreground">
+              {product.file_type && <span className="inline-block px-2 py-1 text-xs font-medium rounded bg-ds-muted text-ds-muted-foreground">
                 {product.file_type.toUpperCase()}
-              </span>
+              </span>}
               {product.category && (
                 <span className="inline-block px-2 py-1 text-xs font-medium rounded bg-ds-muted text-ds-muted-foreground">
                   {product.category}
@@ -162,7 +170,7 @@ function DigitalProductDetailPage() {
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div>
                   <span className="text-ds-muted-foreground">Type</span>
-                  <p className="font-medium text-ds-foreground">{product.file_type.toUpperCase()}</p>
+                  <p className="font-medium text-ds-foreground">{product.file_type ? product.file_type.toUpperCase() : "—"}</p>
                 </div>
                 <div>
                   <span className="text-ds-muted-foreground">Size</span>

@@ -69,6 +69,8 @@ export const EventListBlock: React.FC<EventListBlockProps> = ({
   showPastEvents = true,
   locale = 'en',
 }) => {
+  if (!events || !events.length) return null
+
   const filteredEvents = showPastEvents
     ? events
     : events.filter((e) => !isPast(e.endDate || e.date))

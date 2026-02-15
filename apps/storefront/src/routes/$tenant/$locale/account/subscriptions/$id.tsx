@@ -7,6 +7,18 @@ import { ArrowLeft, Spinner, ArrowPath, Pause, TriangleRightMini, XMark, CheckCi
 import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/account/subscriptions/$id")({
+  loader: async ({ params }) => {
+    try {
+      const { getServerBaseUrl, fetchWithTimeout } = await import("@/lib/utils/env")
+      const baseUrl = getServerBaseUrl()
+      const resp = await fetchWithTimeout(`${baseUrl}/store/subscriptions/${params.id}`, {
+        headers: { "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445" },
+      })
+      if (!resp.ok) return { item: null }
+      const data = await resp.json()
+      return { item: data.item || data.subscription || data }
+    } catch { return { item: null } }
+  },
   component: SubscriptionDetailPage,
 })
 

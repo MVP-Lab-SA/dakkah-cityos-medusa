@@ -36,6 +36,9 @@ export const VendorShowcaseBlock: React.FC<VendorShowcaseBlockProps> = ({
   showProducts = false,
 }) => {
   const { locale } = useTenant()
+
+  if (!vendors || !vendors.length) return null
+
   const gridClass =
     layout === 'featured'
       ? 'grid grid-cols-1 md:grid-cols-2 gap-6'

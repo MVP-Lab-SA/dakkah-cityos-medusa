@@ -9,17 +9,39 @@ import { useState, useMemo } from "react"
 import { ReviewListBlock } from "@/components/blocks/review-list-block"
 import { MapBlock } from "@/components/blocks/map-block"
 
+function normalizePriceField(val: any, currency: string) {
+  if (val == null) return null
+  if (typeof val === 'object' && val.amount != null) return val
+  return { amount: Number(val), currencyCode: currency }
+}
+
+function normalizeRating(val: any, reviewCount: any) {
+  if (val == null) return null
+  if (typeof val === 'object' && val.average != null) return val
+  return { average: Number(val), count: Number(reviewCount || 0) }
+}
+
 function normalizeDetail(item: any) {
   if (!item) return null
   const meta = typeof item.metadata === 'string' ? JSON.parse(item.metadata) : (item.metadata || {})
+  const currency = item.currency || item.currency_code || meta.currency || meta.currency_code || "USD"
+  const rawRating = item.rating ?? item.avg_rating ?? meta.rating ?? null
+  const rawReviewCount = item.review_count ?? meta.review_count ?? null
   return { ...meta, ...item,
     thumbnail: item.thumbnail || item.photo_url || item.banner_url || item.logo_url || meta.thumbnail || (meta.images && meta.images[0]) || null,
     images: meta.images || [item.photo_url || item.banner_url || item.logo_url].filter(Boolean),
     description: item.description || meta.description || "",
     price: item.price ?? meta.price ?? null,
-    rating: item.rating ?? item.avg_rating ?? meta.rating ?? null,
-    review_count: item.review_count ?? meta.review_count ?? null,
+    currency,
+    pricePerDay: normalizePriceField(item.pricePerDay ?? item.price_per_day ?? item.price ?? meta.price_per_day, currency),
+    pricePerWeek: normalizePriceField(item.pricePerWeek ?? item.price_per_week ?? meta.price_per_week, currency),
+    pricePerMonth: normalizePriceField(item.pricePerMonth ?? item.price_per_month ?? meta.price_per_month, currency),
+    deposit: normalizePriceField(item.deposit ?? meta.deposit, currency),
+    insurance: normalizePriceField(item.insurance ?? meta.insurance, currency),
+    rating: normalizeRating(rawRating, rawReviewCount),
+    review_count: rawReviewCount,
     location: item.location || item.city || item.address || meta.location || null,
+    bookedDates: item.bookedDates || item.booked_dates || meta.booked_dates || [],
   }
 }
 

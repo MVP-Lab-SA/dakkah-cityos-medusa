@@ -17,6 +17,8 @@ export const FeaturesBlock: React.FC<FeaturesBlockProps> = ({
   features,
   columns = 3,
 }) => {
+  if (!features || !features.length) return null
+
   const gridCols = {
     2: 'md:grid-cols-2',
     3: 'md:grid-cols-3',

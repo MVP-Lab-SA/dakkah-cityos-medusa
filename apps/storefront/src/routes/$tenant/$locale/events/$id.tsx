@@ -12,14 +12,22 @@ import { ReviewListBlock } from "@/components/blocks/review-list-block"
 function normalizeDetail(item: any) {
   if (!item) return null
   const meta = typeof item.metadata === 'string' ? JSON.parse(item.metadata) : (item.metadata || {})
+  const rawPrice = item.price ?? meta.price ?? null
+  const currency = item.currency || item.currency_code || meta.currency || meta.currency_code || "USD"
   return { ...meta, ...item,
     thumbnail: item.thumbnail || item.photo_url || item.banner_url || item.logo_url || meta.thumbnail || (meta.images && meta.images[0]) || null,
     images: meta.images || [item.photo_url || item.banner_url || item.logo_url].filter(Boolean),
     description: item.description || meta.description || "",
-    price: item.price ?? meta.price ?? null,
+    price: rawPrice,
+    currency,
+    date: item.start_date || item.event_date || item.date || meta.start_date || meta.event_date || meta.date || null,
+    end_date: item.end_date || meta.end_date || null,
+    isFree: item.isFree ?? item.is_free ?? meta.isFree ?? meta.is_free ?? false,
     rating: item.rating ?? item.avg_rating ?? meta.rating ?? null,
     review_count: item.review_count ?? meta.review_count ?? null,
     location: item.location || item.city || item.address || meta.location || null,
+    venue: item.venue || meta.venue || null,
+    ticketTypes: item.ticketTypes || item.ticket_types || meta.ticketTypes || meta.ticket_types || null,
   }
 }
 
@@ -96,15 +104,16 @@ function EventDetailPage() {
     )
   }
 
-  const eventDate = new Date(event.date)
-  const formattedDate = eventDate.toLocaleDateString(
-    locale === "ar" ? "ar-SA" : locale === "fr" ? "fr-FR" : "en-US",
-    { weekday: "long", year: "numeric", month: "long", day: "numeric" }
-  )
-  const formattedTime = eventDate.toLocaleTimeString(
-    locale === "ar" ? "ar-SA" : locale === "fr" ? "fr-FR" : "en-US",
-    { hour: "numeric", minute: "2-digit" }
-  )
+  const eventDateRaw = event.date || event.start_date || event.event_date
+  const eventDate = eventDateRaw ? new Date(eventDateRaw) : null
+  const validDate = eventDate && !isNaN(eventDate.getTime())
+  const dateLocale = locale === "ar" ? "ar-SA" : locale === "fr" ? "fr-FR" : "en-US"
+  const formattedDate = validDate
+    ? eventDate.toLocaleDateString(dateLocale, { weekday: "long", year: "numeric", month: "long", day: "numeric" })
+    : ""
+  const formattedTime = validDate
+    ? eventDate.toLocaleTimeString(dateLocale, { hour: "numeric", minute: "2-digit" })
+    : ""
 
   return (
     <div className="min-h-screen bg-ds-background">
@@ -199,7 +208,9 @@ function EventDetailPage() {
                       {t(locale, "product.price")}:
                     </span>
                     <span className="text-sm font-medium text-ds-foreground">
-                      {formatCurrency(event.price.amount, event.price.currencyCode, locale as any)}
+                      {typeof event.price === 'object' && event.price !== null
+                        ? formatCurrency(event.price.amount, event.price.currencyCode, locale as any)
+                        : formatCurrency(Number(event.price), event.currency || "USD", locale as any)}
                     </span>
                   </div>
                 ) : null}
@@ -212,7 +223,7 @@ function EventDetailPage() {
                   {t(locale, "events.upcoming_events")}
                 </h2>
                 <EventCountdown
-                  date={event.date}
+                  date={event.date || event.start_date}
                   locale={locale}
                   size="md"
                 />
@@ -300,7 +311,7 @@ function EventDetailPage() {
                     {t(locale, "events.date_time")}
                   </h3>
                   <EventCountdown
-                    date={event.date}
+                    date={event.date || event.start_date}
                     locale={locale}
                     size="sm"
                   />

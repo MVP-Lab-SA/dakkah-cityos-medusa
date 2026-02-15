@@ -44,6 +44,8 @@ export const ServiceListBlock: React.FC<ServiceListBlockProps> = ({
   showPricing = true,
   locale = 'en',
 }) => {
+  if (!services || !services.length) return null
+
   const formatPrice = (price: Service['price']) => {
     if (!price) return null
     const currency = price.currency || 'USD'
