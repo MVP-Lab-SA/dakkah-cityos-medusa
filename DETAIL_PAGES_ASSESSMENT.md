@@ -6997,3 +6997,622 @@ start-0 / end-0                  left-0 / right-0
 | **Component library size** | 64 total (36+28) | ~48 unified | ~48 unified |
 | **enterprise-* classes** | ~30 definitions | ~30 (unchanged) | 0 (removed) |
 | **Design system types used** | 0% | 0% | ~60% |
+
+---
+
+# PHASED IMPLEMENTATION ROADMAP
+
+## Roadmap Overview
+
+This roadmap maps ALL 34 assessment sections into 6 sequential phases. Each phase has:
+- **Clear scope** — what gets built or migrated
+- **Section coverage** — which assessment sections each task resolves
+- **Cleanup steps** — what old code/files get removed after migration
+- **Exit criteria** — what must be true before moving to next phase
+- **Dependency chain** — phases must execute in order (later phases depend on earlier ones)
+
+```
+PHASE DEPENDENCY CHAIN:
+
+Phase 0 ──→ Phase 1 ──→ Phase 2 ──→ Phase 3 ──→ Phase 4 ──→ Phase 5
+(Foundation)  (RBAC &     (Design     (Content &    (Data &      (Polish &
+              Navigation)  System)     CMS)          Verticals)   Production)
+
+Total estimated effort: ~180 hours across ~120 tasks
+```
+
+### Section-to-Phase Mapping (Complete)
+
+| Section | Title | Primary Phase | Secondary Phase |
+|---|---|---|---|
+| S1 | Database Schema Analysis | Phase 4 | — |
+| S2 | Backend Route Handler Analysis | Phase 4 | — |
+| S3 | Per-Vertical Deep Assessment | Phase 4 | Phase 5 |
+| S4 | Cross-Cutting Issues | Phase 0 | Phase 4 |
+| S5 | Priority Action Matrix | Phase 0, 4 | — |
+| S6 | Quick Wins | Phase 0 | — |
+| S7 | Payload CMS Blocks — Structural Analysis | Phase 3 | — |
+| S8 | CMS Integration Points Summary | Phase 3 | — |
+| S9 | Architecture Decision — Hardcoded vs Block-Based | Phase 3 | Phase 5 |
+| S10 | Complete Block Catalog — All 77 Blocks | Phase 3 | — |
+| S11 | Block Assignment per Detail Page | Phase 3 | Phase 5 |
+| S12 | Block Coverage Statistics | Phase 3 | — |
+| S13 | Missing Blocks — Design Specifications | Phase 3 | — |
+| S14 | Current vs Targeted State — Centralization | Phase 3 | Phase 5 |
+| S15 | Complete Page Inventory — 336 Routes | Phase 1 | — |
+| S16 | Missing Pages & Structural Gaps | Phase 1 | Phase 4 |
+| S17 | Vertical Completeness Matrix | Phase 4 | — |
+| S18 | Summary Statistics | — (tracking) | — |
+| S19 | Admin Role Hierarchy — Deep Assessment | Phase 1 | — |
+| S20 | Payload CMS Block Gap Analysis | Phase 3 | — |
+| S21 | Manage Page Architecture — Complete Analysis | Phase 1 | — |
+| S22 | Content-Editor — Page Builder Architecture Gap | Phase 3 | — |
+| S23 | Summary — Admin Architecture Gaps | Phase 1, 3 | — |
+| S24 | Complete Route Architecture — Current vs Target | Phase 1 | — |
+| S25 | Target Route Architecture — Complete Definition | Phase 1 | — |
+| S26 | Navigation Components — Current vs Target | Phase 1 | — |
+| S27 | Route Migration Plan — Reorganizing 96 Manage Pages | Phase 1 | — |
+| S28 | Complete Navigation Architecture Summary | Phase 1 | — |
+| S29 | Centralized Design System Architecture | Phase 2 | — |
+| S30 | Component Library Architecture | Phase 2 | — |
+| S31 | Target Design System Architecture | Phase 2 | — |
+| S32 | Theme and Branding Architecture | Phase 2 | Phase 5 |
+| S33 | Style and Layout Patterns | Phase 2 | Phase 5 |
+| S34 | Design System Implementation Checklist | Phase 2 | — |
+
+---
+
+## PHASE 0: Foundation & Quick Wins
+**Goal:** Fix blocking bugs, establish contracts, prepare infrastructure for all later phases.
+**Sections resolved:** S4 (partial), S5 (P0 items), S6 (all quick wins)
+**Estimated effort:** ~8 hours
+
+### Phase 0 Tasks
+
+| # | Task | Section | Files | Effort | Priority |
+|---|---|---|---|---|---|
+| 0.1 | Fix auctions detail bug — change `auction_listing_id` to `auction_id` in bid query | S5 #1, S6 #1 | 1 backend file | 5 min | P0 |
+| 0.2 | Fix financial routing mismatch — align page URL with backend route | S5 #5, S6 #5 | 1 route file | 5 min | P0 |
+| 0.3 | Fix vendors routing — change page to use handle or add ID lookup | S5 #6, S6 #9 | 1 route file | 15 min | P0 |
+| 0.4 | Fix charity detail bug — debug `retrieveCharityOrg` method | S5 #2 | 1 backend file | 15 min | P0 |
+| 0.5 | Fix social-commerce listing/detail mismatch | S5 #3 | 1 route file + 1 backend | 30 min | P0 |
+| 0.6 | Create 6 high-priority detail endpoints (education, healthcare, restaurants, real-estate, events, insurance) | S5 #4, S6 #3-8 | 6 backend files | 1h | P0 |
+| 0.7 | Fix 5 broken listing endpoints (affiliate, financial, print-on-demand, volume-deals, white-label) | S5 #9 | 5 backend files | 2h | P1 |
+| 0.8 | Create remaining 13 detail endpoints for verticals with some data | S5 #7 | 13 backend files | 2h | P1 |
+| 0.9 | Fix 5 data model mismatches (memberships→tiers, subscriptions→plans, etc.) | S5 #8 | 5 backend files | 2h | P1 |
+
+### Phase 0 Cleanup
+- None — Phase 0 only fixes bugs in existing files, no new architecture introduced.
+
+### Phase 0 Exit Criteria
+- [ ] All 27 verticals return data from listing endpoints without errors
+- [ ] All 27 verticals have detail endpoints that resolve correctly
+- [ ] Zero 500 errors from vertical API calls
+- [ ] No routing mismatches between frontend route paths and backend endpoints
+
+---
+
+## PHASE 1: RBAC, Navigation & Route Architecture
+**Goal:** Establish proper role-based access, reorganize routes, create navigation hierarchy, build missing layouts.
+**Sections resolved:** S15, S16 (partial), S19, S21, S23 (role gaps), S24, S25, S26, S27, S28
+**Depends on:** Phase 0 (bugs fixed so pages can be tested after reorganization)
+**Estimated effort:** ~40 hours
+
+### Phase 1A: RBAC Infrastructure (Prerequisites for everything else)
+
+| # | Task | Section | Files | Effort |
+|---|---|---|---|---|
+| 1.1 | Fix `manage-sidebar.tsx` — remove hardcoded `userWeight=100`, read actual weight from auth context | S19, S21, S23 #1, S28 #1 | `manage-sidebar.tsx` | 1h |
+| 1.2 | Fix `role-guard.tsx` — implement per-route weight support instead of global `MIN_MANAGE_WEIGHT=40` | S19, S22, S23 #1, S28 #2 | `role-guard.tsx` | 2h |
+| 1.3 | Update RBAC contracts — ensure all 10 roles have correct weights and map to Payload CMS roles | S19 §19.2, S23 #4 | `packages/cityos-contracts/src/rbac.ts` | 2h |
+
+### Phase 1A Cleanup
+- Remove hardcoded `const userWeight = 100` from `manage-sidebar.tsx`
+- Remove `MIN_MANAGE_WEIGHT = 40` constant from `role-guard.tsx` (replaced by per-route config)
+
+---
+
+### Phase 1B: Module Registry & Sidebar Expansion
+
+| # | Task | Section | Files | Effort |
+|---|---|---|---|---|
+| 1.4 | Add CMS section to Module Registry with `minWeight: 30` (17 CMS modules) | S21, S22, S23 #2, S28 #3, #20 | `module-registry.ts` | 2h |
+| 1.5 | Add Platform section to Module Registry with `minWeight: 90` (18 platform modules) | S21, S23 #3, S28 #3, #20 | `module-registry.ts` | 2h |
+| 1.6 | Add remaining 49 missing modules across all sections (commerce, marketplace, verticals, marketing, organization) | S21, S28 #20 | `module-registry.ts` | 3h |
+| 1.7 | Implement `getModulesBySection(userWeight)` filtering — sidebar shows only modules user can access | S21, S26, S28 #3 | `manage-sidebar.tsx` | 1h |
+
+### Phase 1B Cleanup
+- Remove any inline module lists in sidebar that are now in registry
+- Verify sidebar sections respect weight filtering — `content-editor` (30) sees CMS only, `vendor-admin` (40) sees commerce+verticals+CMS
+
+---
+
+### Phase 1C: Route Reorganization
+
+| # | Task | Section | Files | Effort |
+|---|---|---|---|---|
+| 1.8 | Create `manage/platform/` directory structure | S24, S25, S27 #5 | 18 new route files | 2h |
+| 1.9 | Move 17 platform pages from `manage/` to `manage/platform/` | S24, S25, S27 #7 | 17 file moves | 1h |
+| 1.10 | Create `manage/cms/` directory structure | S24, S25, S27 #6 | 17 new route files | 2h |
+| 1.11 | Move 2 existing CMS pages from `manage/` to `manage/cms/` (`cms.tsx` → `cms/pages.tsx`, `cms-content.tsx` → `cms/editor.tsx`) | S22, S27 #8 | 2 file moves | 30 min |
+| 1.12 | Delete 5 duplicate manage page pairs | S21 §21.4, S27 #9 | 5 file deletes | 30 min |
+
+### Phase 1C Cleanup
+- **DELETE** old `manage/cms.tsx` and `manage/cms-content.tsx` after move to `manage/cms/`
+- **DELETE** 5 duplicate manage pages:
+  - `manage/page-builder.tsx` (duplicate of `manage/cms-content.tsx`)
+  - `manage/policies.tsx` (duplicate of `manage/governance.tsx`)
+  - `manage/tenants.tsx` (duplicate of `manage/multi-tenancy.tsx`)
+  - `manage/branding.tsx` (duplicate of `manage/theme.tsx`)
+  - `manage/settings.tsx` (duplicate of `manage/store-settings.tsx`)
+- **DELETE** original files from `manage/` root that were moved to `manage/platform/`:
+  - `manage/tenants.tsx`, `manage/multi-tenancy.tsx`, `manage/super-admin.tsx`, `manage/system-health.tsx`
+  - `manage/api-keys.tsx`, `manage/webhooks.tsx`, `manage/audit-trail.tsx`, `manage/feature-flags.tsx`
+  - `manage/rate-limiting.tsx`, `manage/backup-recovery.tsx`, `manage/deployment.tsx`
+  - `manage/integrations.tsx`, `manage/monitoring.tsx`, `manage/data-migration.tsx`
+  - `manage/localization.tsx`, `manage/revenue-sharing.tsx`, `manage/compliance.tsx`
+- Verify total manage route count is still ~96 (just reorganized, not lost)
+
+---
+
+### Phase 1D: Navigation Components & User Menu
+
+| # | Task | Section | Files | Effort |
+|---|---|---|---|---|
+| 1.13 | Update `user-menu.tsx` — add role-aware links (Vendor Dashboard, Content Studio, Analytics, Store Dashboard, Platform Admin) | S26, S28 #4 | `user-menu.tsx` | 2h |
+| 1.14 | Update `account-sidebar.tsx` — add 13 missing account page links | S16, S28 #10 | `account-sidebar.tsx` | 1h |
+| 1.15 | Update `layout.tsx` — detect `/vendor/`, `/analytics/`, `/manage/cms/`, `/manage/platform/` routes and select correct layout | S24, S28 #16 | `layout.tsx` | 2h |
+
+### Phase 1D Cleanup
+- Remove any hardcoded navigation arrays in `user-menu.tsx` (replaced by role-based logic)
+- Remove any hardcoded account sidebar items (replaced by registry or config)
+
+---
+
+### Phase 1E: New Layout Components
+
+| # | Task | Section | Files | Effort |
+|---|---|---|---|---|
+| 1.16 | Create `VendorLayout` + `VendorSidebar` components | S25, S28 #11 | 2 new files | 4h |
+| 1.17 | Wrap all 56 vendor pages with `VendorLayout` | S28 #12 | 56 file edits | 3h |
+| 1.18 | Create `BusinessLayout` for B2B portal | S25, S28 #15 | 1 new file | 2h |
+| 1.19 | Create `AnalyticsLayout` + `AnalyticsSidebar` | S25, S28 #14 | 2 new files | 3h |
+| 1.20 | Create `analytics/` route section + 8 route files | S25, S28 #13 | 8 new files | 3h |
+| 1.21 | Create 8 missing public pages (about, contact, terms, privacy, FAQ, search, sitemap, 404) | S16 §16.1, S28 #19 | 8 new files / CMS entries | 4h |
+
+### Phase 1E Cleanup
+- Remove any inline vendor layout wrappers from individual vendor pages (replaced by `VendorLayout`)
+- Remove any vendor navigation that was inline in vendor pages
+
+### Phase 1 Exit Criteria
+- [ ] `content-editor` (weight 30) can access `/manage/cms/*` pages
+- [ ] `analyst` (weight 20) can access `/analytics/*` pages
+- [ ] `vendor-admin` (weight 40) sees commerce+verticals+CMS in sidebar, NOT platform pages
+- [ ] `super-admin` (weight 100) sees ALL sections including platform
+- [ ] All 56 vendor pages wrapped in `VendorLayout` with sidebar
+- [ ] User menu shows role-appropriate dashboard links
+- [ ] `manage/platform/` contains 17-18 platform-admin pages
+- [ ] `manage/cms/` contains 2+ CMS pages
+- [ ] 5 duplicate manage pages deleted
+- [ ] Account sidebar shows all 26 account page links
+- [ ] 8 missing public pages accessible
+
+---
+
+## PHASE 2: Design System Unification
+**Goal:** Merge dual design systems into single token-based system. All components use `ds-` tokens. Dark mode and tenant theming work everywhere.
+**Sections resolved:** S29, S30, S31, S32, S33, S34
+**Depends on:** Phase 1 (layouts exist so we know which components to theme)
+**Estimated effort:** ~45 hours
+
+### Phase 2A: Token Foundation
+
+| # | Task | Section | Files | Effort |
+|---|---|---|---|---|
+| 2.1 | Create vertical color tokens — `VerticalColorTokens.ts` with 27 vertical palettes (3 tokens each = 81 tokens) | S29 §29.7, S31 §31.2, S34 #2 | New file in `design-tokens/` + `theme.css` | 3h |
+| 2.2 | Add admin-specific tokens to `theme.css` — sidebar-bg, sidebar-border, sidebar-active, page-bg, accent (12 tokens) | S29, S31 §31.2, S34 #1 | `theme.css` | 1h |
+| 2.3 | Add status color tokens — standardize success/warning/error/info across both systems (10 tokens) | S31 §31.2 | `theme.css` | 30 min |
+| 2.4 | Add z-index scale tokens — dropdown(50), sticky(100), fixed(200), sidebar(300), modal(400/500), popover(600), toast(700) | S31 §31.2, S34 #3 | `theme.css` | 30 min |
+| 2.5 | Add layout dimension tokens — sidebar widths, header heights, content max-widths (6 tokens) | S31 §31.2, §31.4 | `theme.css` | 30 min |
+
+### Phase 2A Cleanup
+- None yet — tokens are additive, no removal needed until Phase 2B uses them
+
+---
+
+### Phase 2B: Manage Component Migration (28 files → ds-tokens)
+
+| # | Task | Section | Files | Effort |
+|---|---|---|---|---|
+| 2.6 | Convert `manage/ui/button.tsx` — replace `bg-violet-600` → `bg-ds-admin-accent`, `bg-white` → `bg-ds-card`, `text-gray-700` → `text-ds-foreground`, etc. | S30 §30.2, S34 #4-5 | `manage/ui/button.tsx` | 30 min |
+| 2.7 | Convert `manage/ui/input.tsx` — replace `border-gray-200` → `border-ds-border`, `text-gray-900` → `text-ds-foreground` | S30, S34 #5 | `manage/ui/input.tsx` | 15 min |
+| 2.8 | Convert `manage/ui/select.tsx` — same pattern as input | S30, S34 #5 | `manage/ui/select.tsx` | 15 min |
+| 2.9 | Convert `manage/ui/label.tsx`, `textarea.tsx` — same pattern | S30, S34 #5 | 2 files | 15 min |
+| 2.10 | Convert `manage/ui/badge.tsx`, `status-badge.tsx` — hardcoded green/yellow/red → `ds-success`/`ds-warning`/`ds-destructive` | S30, S34 #5 | 2 files | 30 min |
+| 2.11 | Convert `manage/ui/tabs.tsx` — `border-gray-200` → `border-ds-border`, `text-violet-600` → `text-ds-admin-accent` | S30, S34 #5 | 1 file | 15 min |
+| 2.12 | Convert `manage/ui/drawer.tsx`, `focus-modal.tsx` — gray backgrounds → `ds-card`, `ds-background` | S30, S34 #5 | 2 files | 30 min |
+| 2.13 | Convert `manage/ui/dropdown-menu.tsx` — gray → ds-tokens | S30, S34 #5 | 1 file | 15 min |
+| 2.14 | Convert `manage/ui/toast.tsx` — gray/violet → ds-tokens | S30, S34 #5 | 1 file | 15 min |
+| 2.15 | Convert `manage/ui/data-table.tsx` — full token conversion (largest manage component) | S30, S34 #5 | 1 file | 1h |
+| 2.16 | Convert `manage/ui/table.tsx`, `stats-grid.tsx` | S30, S34 #5 | 2 files | 30 min |
+| 2.17 | Convert `manage/ui/page-header.tsx`, `section-card.tsx`, `container.tsx` | S30, S34 #5 | 3 files | 30 min |
+| 2.18 | Convert `manage/ui/form-drawer.tsx`, `confirm-dialog.tsx`, `empty-state.tsx` | S30, S34 #5 | 3 files | 30 min |
+| 2.19 | Convert `manage/ui/heading.tsx`, `text.tsx`, `tooltip.tsx`, `icon-button.tsx`, `skeleton.tsx`, `crud-page.tsx` | S30, S34 #5 | 6 files | 1h |
+
+**Total: All 28 manage UI components converted to ds-tokens.**
+
+### Phase 2B Cleanup
+- After all 28 files converted: Verify zero remaining instances of `bg-violet-600`, `bg-white`, `text-gray-700`, `border-gray-200` in `manage/ui/`
+- Run: `grep -rn "bg-white\|bg-gray-\|text-gray-\|border-gray-\|bg-violet-\|text-violet-" apps/storefront/src/components/manage/ui/` → should return 0
+
+---
+
+### Phase 2C: Component Unification (Delete duplicates, promote unique manage components)
+
+| # | Task | Section | Files | Effort |
+|---|---|---|---|---|
+| 2.20 | Delete 12 duplicate manage UI components — update all imports to use `@/components/ui/` versions | S30 §30.2, S31 §31.3, S34 #8 | Delete 12 `manage/ui/*.tsx` files, update ~96 manage route imports | 6h |
+| 2.21 | Move 12 manage-only components to `ui/` — data-table, table, stats-grid, page-header, form-drawer, crud-page, status-badge, confirm-dialog, section-card, focus-modal, icon-button, tooltip | S30 §30.2, S31 §31.3, S34 #9 | Move 12 files `manage/ui/` → `ui/`, update imports | 4h |
+| 2.22 | Merge `manage/ui/skeleton.tsx` variants (SkeletonText, SkeletonTable, SkeletonCard) into `ui/skeleton.tsx` | S30 §30.2 | `ui/skeleton.tsx` | 1h |
+| 2.23 | Delete `manage/ui/heading.tsx`, `manage/ui/text.tsx`, `manage/ui/container.tsx` — trivial wrappers, replace with standard Tailwind | S30, S31 §31.3 | 3 deletes + import updates | 1h |
+| 2.24 | Update `manage/ui/index.ts` — re-export from `@/components/ui/` for backward compatibility during transition | S30 | `manage/ui/index.ts` | 30 min |
+| 2.25 | Update all manage page imports from `@/components/manage/ui` to `@/components/ui` | S34 #10 | ~96 manage route files | 3h |
+
+### Phase 2C Cleanup
+- **DELETE** entire `manage/ui/` directory after all imports updated (or keep as re-export shim temporarily)
+- **DELETE** these 12 duplicated files from `manage/ui/`:
+  - `button.tsx`, `input.tsx`, `select.tsx`, `label.tsx`, `textarea.tsx`, `badge.tsx`
+  - `tabs.tsx`, `drawer.tsx`, `dropdown-menu.tsx`, `toast.tsx`, `empty-state.tsx`
+  - `skeleton.tsx` (after merge)
+- **DELETE** these 3 trivial files: `heading.tsx`, `text.tsx`, `container.tsx`
+- Verify: `ls apps/storefront/src/components/manage/ui/` contains only `index.ts` (re-export shim) or is empty/deleted
+- Verify: `ui/` now contains ~48 unified components
+- Run: `grep -rn "from.*manage/ui" apps/storefront/src/routes/` → should return 0 direct imports (only through shim or migrated)
+
+---
+
+### Phase 2D: Manage Layout & Sidebar Theming
+
+| # | Task | Section | Files | Effort |
+|---|---|---|---|---|
+| 2.26 | Convert `manage-sidebar.tsx` — replace hardcoded `bg-white`, `text-gray-*`, `bg-violet-*` with `ds-admin-*` tokens | S26, S29 §29.5 | `manage-sidebar.tsx` | 1h |
+| 2.27 | Convert `manage-header.tsx` / `manage-layout.tsx` — replace raw gray/white with ds-admin tokens | S26, S29 §29.5 | 2 files | 1h |
+| 2.28 | Fix manage sidebar logo — read from tenant branding instead of hardcoded "Dakkah" + violet icon | S29 §29.5, S32 §32.2, S34 #7 | `manage-sidebar.tsx`, `branding-context.tsx` | 1h |
+| 2.29 | Fix ThemeProvider/BrandingProvider race condition — BrandingProvider should call ThemeProvider's merge API instead of raw DOM manipulation | S29 §29.4, S32 §32.1, S34 #6 | `branding-context.tsx`, `ThemeContext.ts` | 2h |
+
+### Phase 2D Cleanup
+- Remove hardcoded "Dakkah" logo text from `manage-sidebar.tsx`
+- Remove duplicate `document.documentElement.style.setProperty('--color-primary', ...)` from `BrandingProvider` (replaced by theme merge)
+- Verify: `grep -rn "bg-white\|text-gray-\|border-gray-\|bg-violet-\|text-violet-" apps/storefront/src/components/manage/manage-sidebar.tsx` → 0
+
+---
+
+### Phase 2E: Hardcoded Color Migration in Route Files
+
+| # | Task | Section | Files | Effort |
+|---|---|---|---|---|
+| 2.30 | Convert manage route pages — replace `bg-white` → `bg-ds-card`, `text-gray-*` → `text-ds-foreground`/`text-ds-muted-foreground`, `bg-gray-*` → `bg-ds-muted` across 96 manage pages | S29 §29.6, S33 | ~96 manage route files | 4h |
+| 2.31 | Convert vertical page hero gradients to use vertical tokens (27 verticals × gradient classes) | S29 §29.7, S34 #11 | ~51 vertical route files | 4h |
+| 2.32 | Convert hardcoded status colors in components — `bg-green-*` → `bg-ds-success`, `bg-red-*` → `bg-ds-destructive`, `bg-yellow-*` → `bg-ds-warning` across components | S29 §29.6 | ~50 component files | 3h |
+| 2.33 | Remove `enterprise-*` CSS classes from `app.css` and convert usage sites to ds-token classes | S33 §33.1, S34 #15 | `app.css` + usage sites | 2h |
+
+### Phase 2E Cleanup
+- Verify: `grep -rn "bg-white" apps/storefront/src/routes/\$tenant/\$locale/manage/` → 0
+- Verify: `grep -rn "bg-gray-\|text-gray-\|border-gray-" apps/storefront/src/routes/\$tenant/\$locale/manage/` → 0
+- Verify: `grep -rn "from-blue-\|from-violet-\|from-green-\|from-orange-" apps/storefront/src/routes/\$tenant/\$locale/` → 0 (all replaced with vertical tokens)
+- Verify: `grep -rn "enterprise-" apps/storefront/src/` → 0 (all enterprise classes removed)
+- Run full count: hardcoded colors across storefront → target < 20 (only intentional exceptions)
+
+---
+
+### Phase 2F: RTL & Logical Properties
+
+| # | Task | Section | Files | Effort |
+|---|---|---|---|---|
+| 2.34 | Replace `ml-*`/`mr-*` → `ms-*`/`me-*` across all components and routes (~340 instances) | S33 §33.3, S34 #12 | All component + route files | 3h |
+| 2.35 | Replace `pl-*`/`pr-*` → `ps-*`/`pe-*` across all components and routes (~280 instances) | S33 §33.3, S34 #12 | All component + route files | 2h |
+| 2.36 | Replace `left-*`/`right-*` → `start-*`/`end-*` in positioning (~90 instances) | S33 §33.3, S34 #12 | All component + route files | 1h |
+| 2.37 | Replace `text-left`/`text-right` → `text-start`/`text-end` (~25 instances) | S33 §33.3, S34 #12 | All component + route files | 30 min |
+
+### Phase 2F Cleanup
+- Verify: `grep -rn "ml-[0-9]\|mr-[0-9]\|pl-[0-9]\|pr-[0-9]" apps/storefront/src/` → target < 10 (only intentional exceptions like centering with `mx-auto`)
+- Verify: `grep -rn "\bleft-\|\bright-" apps/storefront/src/components/` → 0 (position props use start/end)
+- Note: `ml-auto`/`mr-auto` MAY remain as `ms-auto`/`me-auto` equivalents exist but some frameworks handle them differently
+
+### Phase 2 Exit Criteria
+- [ ] Zero hardcoded `bg-violet-*`, `text-violet-*` in manage components
+- [ ] Zero hardcoded `bg-white`, `bg-gray-*`, `text-gray-*` in manage routes and components
+- [ ] `manage/ui/` directory deleted or contains only backward-compat shim
+- [ ] `ui/` directory contains ~48 unified components
+- [ ] All 27 vertical hero gradients use vertical color tokens
+- [ ] Zero `enterprise-*` CSS classes in codebase
+- [ ] RTL-safe logical properties at 90%+ (< 30 physical direction instances remain)
+- [ ] Manage sidebar reads tenant branding for logo/name
+- [ ] ThemeProvider/BrandingProvider race condition resolved
+- [ ] Dark mode toggle renders correctly in manage and storefront (basic support)
+- [ ] `ds-admin-*` tokens defined and used in all manage layouts
+
+---
+
+## PHASE 3: CMS & Content Editor Architecture
+**Goal:** Enable content-editor (weight 30) to use Payload CMS page builder with all 77 blocks. Build page builder UI. Register blocks in Payload.
+**Sections resolved:** S7, S8, S9, S10, S11, S12, S13, S14 (partial), S20, S22, S23 (CMS gaps)
+**Depends on:** Phase 1 (RBAC lets content-editor access CMS pages), Phase 2 (components use unified design system)
+**Estimated effort:** ~40 hours
+
+### Phase 3A: Payload CMS Block Registration
+
+| # | Task | Section | Files | Effort |
+|---|---|---|---|---|
+| 3.1 | Register top-20 content blocks in Payload Pages collection — featureGrid, cta, productGrid, testimonial, stats, imageGallery, faq, pricing, vendorShowcase, categoryGrid, newsletter, trustBadges, divider, videoEmbed, bannerCarousel, contactForm, map, reviewList, blogPost, promotionBanner | S7, S10, S20, S22 §22.3 | Payload Pages collection config | 4h |
+| 3.2 | Register remaining 30 content blocks — all blocks from S10 catalog not covered in 3.1 | S10, S12, S20 | Payload Pages collection config | 4h |
+| 3.3 | Register 15 admin blocks — dataTableBlock, chartBlock, statCardBlock, formBlock, wizardBlock, etc. | S13, S20 | Payload admin block definitions | 3h |
+| 3.4 | Create block field specifications — define all Payload field types for each block's configuration panel | S22 §22.3 | Block config files | 3h |
+
+### Phase 3A Cleanup
+- Remove the 3 placeholder blocks that were insufficient
+- Verify: Payload Pages collection now lists 50+ blocks in its layout field definition
+
+---
+
+### Phase 3B: Block Renderer Implementation
+
+| # | Task | Section | Files | Effort |
+|---|---|---|---|---|
+| 3.5 | Implement BlockRenderer for top-20 content blocks — each block renders with ds-tokens, responsive, RTL-safe | S7 §7.4, S9, S11 | 20 block component files | 6h |
+| 3.6 | Implement BlockRenderer for remaining 30 content blocks | S10, S11 | 30 block component files | 6h |
+| 3.7 | Implement admin block renderers — dataTableBlock, chartBlock, etc. | S13 | 15 block component files | 4h |
+| 3.8 | Create `BlockRenderer` master component — dispatches blockType → component, handles unknown blocks gracefully | S7 §7.4, S14 | 1 new component | 2h |
+
+### Phase 3B Cleanup
+- After block renderers created: verify each block uses `ds-` tokens and logical CSS properties
+- Remove any inline block rendering logic from route files (replaced by BlockRenderer)
+
+---
+
+### Phase 3C: Page Builder UI for Content-Editor
+
+| # | Task | Section | Files | Effort |
+|---|---|---|---|---|
+| 3.9 | Create `manage/cms/page-builder.tsx` — visual block editor with block palette, drag-and-drop, property panel, live preview | S22 §22.1, §22.4 #4 | 1 new route + supporting components | 8h |
+| 3.10 | Create `manage/cms/media-library.tsx` — upload, browse, search media assets | S22 §22.4 #6 | 1 new route | 4h |
+| 3.11 | Create `manage/cms/dashboard.tsx` — CMS overview: page count, drafts, published, recent edits | S22 §22.4 #1 | 1 new route | 2h |
+| 3.12 | Create `manage/cms/blog.tsx` — blog post CRUD with categories | S22 §22.4 #7 | 1 new route | 2h |
+| 3.13 | Create `manage/cms/navigation.tsx` — visual menu builder | S22 §22.4 #8 | 1 new route | 2h |
+| 3.14 | Create `manage/cms/templates.tsx` — pre-built page templates for quick creation | S22 §22.4 #12 | 1 new route | 2h |
+
+### Phase 3C Cleanup
+- Verify all CMS routes registered in module registry with `minWeight: 30`
+- Verify content-editor can navigate to each CMS page via sidebar
+
+---
+
+### Phase 3D: CMS Integration Points
+
+| # | Task | Section | Files | Effort |
+|---|---|---|---|---|
+| 3.15 | Create Payload-compatible API responses for block data (local stand-in until Payload migration) | S8, S14 | Backend API endpoints | 3h |
+| 3.16 | Create `useBlocks` hook — fetches page blocks from CMS API, renders via BlockRenderer | S8, S14 | New hook + page integration | 2h |
+| 3.17 | Create `$slug.tsx` catch-all route — renders CMS-managed pages using BlockRenderer | S9, S14, S16 §16.1 | 1 new route file | 2h |
+
+### Phase 3D Cleanup
+- After CMS catch-all route works: verify static CMS pages (about, contact, etc.) can be rendered from CMS data
+- Remove hardcoded fallback pages for about/contact/etc. if CMS versions exist
+
+### Phase 3 Exit Criteria
+- [ ] Payload Pages collection registers 50+ blocks (not just 3)
+- [ ] Content-editor (weight 30) can access `/manage/cms/` pages
+- [ ] Page builder UI renders block palette with 50+ blocks
+- [ ] Blocks can be added/removed/reordered in page builder
+- [ ] Each block has a property configuration panel
+- [ ] Block preview renders in storefront context
+- [ ] Media library allows image upload and browsing
+- [ ] `$slug.tsx` renders CMS-managed pages
+- [ ] Blog manager allows post CRUD
+- [ ] All CMS pages use unified ds-token design system
+
+---
+
+## PHASE 4: Data Layer, Vertical Completion & Backend Hardening
+**Goal:** Seed missing data, customize generic templates, fix data model mismatches, complete vertical depth.
+**Sections resolved:** S1, S2, S3, S4 (remaining), S5 (P1-P2), S16 (remaining), S17
+**Depends on:** Phase 0 (endpoints fixed), Phase 2 (design tokens in templates)
+**Estimated effort:** ~30 hours
+
+### Phase 4A: Data Seeding & Model Fixes
+
+| # | Task | Section | Files | Effort |
+|---|---|---|---|---|
+| 4.1 | Seed data for 14 empty verticals (affiliate, b2b, bookings, consignment, credit, financial, loyalty, places, print-on-demand, quotes, trade-in, volume-deals, white-label, parking) | S5 #10, S17 | Seed scripts | 4h |
+| 4.2 | Fix memberships endpoint to serve tiers (not products) | S5 #8 | 1 backend file | 30 min |
+| 4.3 | Fix subscriptions endpoint to serve plans (not products) | S5 #8 | 1 backend file | 30 min |
+| 4.4 | Fix dropshipping/try-before-buy endpoints to serve correct entity types | S5 #8 | 2 backend files | 1h |
+| 4.5 | Fix flash-deals endpoint to serve deals (not products) | S5 #8 | 1 backend file | 30 min |
+
+### Phase 4A Cleanup
+- Remove any hardcoded fallback data from route loaders (replaced by real seed data)
+- Verify: all 27 verticals return real data from API
+
+---
+
+### Phase 4B: Template Customization
+
+| # | Task | Section | Files | Effort |
+|---|---|---|---|---|
+| 4.6 | Customize 38 generic list page templates — use each vertical's actual API fields instead of generic product fields | S5 #11 | 38 route files | 8h |
+| 4.7 | Rebuild `places` page (83 → ~250 lines) with proper POI rendering | S5 #12 | 1 route file | 1h |
+| 4.8 | Rebuild `quotes` page (74 → ~250 lines) with proper quote flow | S5 #13 | 1 route file | 1h |
+| 4.9 | Resolve 5 duplicate storefront page pairs — merge or differentiate | S5 #15 | 5 route files | 3h |
+| 4.10 | Add breadcrumbs to pages missing them (~8 pages) | S5 #14, S6 #10 | 8 route files | 1h |
+| 4.11 | Add not-found states to 6 pages missing them | S5 #14 | 6 route files | 1h |
+| 4.12 | Add sidebar filters to 5 list pages missing them | S5 #14 | 5 route files | 2h |
+| 4.13 | Add CTAs to 7 pages missing them | S5 #14 | 7 route files | 1h |
+
+### Phase 4B Cleanup
+- After customizing templates: remove `@ts-nocheck` from files that have been properly typed
+- Remove generic fallback card rendering logic from customized pages
+- Verify each vertical page renders its actual data fields (not generic product card)
+
+---
+
+### Phase 4C: Missing Manage CRUD Configs
+
+| # | Task | Section | Files | Effort |
+|---|---|---|---|---|
+| 4.14 | Add 47 missing CRUD configurations — form fields, API endpoints, validation | S21 §21.3, S23 #8 | `crud-configs.ts` or per-module configs | 4h |
+| 4.15 | Create 10 missing platform-admin pages (platform-dashboard, system-overview, tenant-provisioning, etc.) | S23 §23.4 | 10 new route files | 4h |
+| 4.16 | Create 10 missing tenant-admin pages (vendor-onboarding-review, commission-rules, etc.) | S23 §23.4 | 10 new route files | 4h |
+
+### Phase 4C Cleanup
+- Verify: all manage pages with forms have matching CRUD configs
+- Verify: no form submission silently fails due to missing config
+
+### Phase 4 Exit Criteria
+- [ ] All 27 verticals have seed data in database
+- [ ] All 38 generic templates customized for their vertical
+- [ ] 47 missing CRUD configs added
+- [ ] 10 platform-admin pages created
+- [ ] 10 tenant-admin pages created
+- [ ] 5 duplicate storefront page pairs resolved
+- [ ] Zero `@ts-nocheck` directives in customized pages (stretch goal)
+- [ ] All list pages show vertical-specific fields, not generic product cards
+
+---
+
+## PHASE 5: Production Polish & Quality
+**Goal:** Complete remaining polish, image handling, sharing, cross-cutting UX improvements, type safety.
+**Sections resolved:** S3 (remaining), S5 (P3), S9 (remaining), S11 (remaining), S14 (remaining), S32 (remaining), S33 (remaining), S34 (P2-P3)
+**Depends on:** All prior phases
+**Estimated effort:** ~35 hours
+
+### Phase 5A: Image & Media Handling
+
+| # | Task | Section | Files | Effort |
+|---|---|---|---|---|
+| 5.1 | Create reusable `ImageGallery` component — zoom, carousel, thumbnails | S5 #16 | 1 component (already exists in `ui/`) — enhance | 3h |
+| 5.2 | Standardize image storage — migrate `metadata.images` to dedicated columns across 10 verticals | S5 #18 | 10 backend models | 4h |
+| 5.3 | Add share/bookmark functionality to 38 pages missing it | S5 #19 | 38 route files | 2h |
+| 5.4 | Add related/similar items sections to detail pages | S5 #17 | ~27 detail page files | 2h |
+
+### Phase 5A Cleanup
+- After image migration: remove `JSON.parse(metadata).images` patterns from route files
+- Replace with direct column access: `item.images` instead of `JSON.parse(item.metadata)?.images`
+
+---
+
+### Phase 5B: Dark Mode & Advanced Theming
+
+| # | Task | Section | Files | Effort |
+|---|---|---|---|---|
+| 5.5 | Add dark mode toggle to user menu / settings | S32 §32.4, S34 #13 | `user-menu.tsx`, `account/settings.tsx` | 2h |
+| 5.6 | Add dark mode color set for admin tokens | S34 #20 | `theme.css`, `ColorTokens.ts` | 2h |
+| 5.7 | Expand BrandingProvider to support full theme config (border-radius, font, mode, admin accent) | S32 §32.3, S34 #19 | `branding-context.tsx` | 3h |
+| 5.8 | Add per-vertical dark mode color palettes | S34 #24 | `VerticalColorTokens.ts`, `theme.css` | 3h |
+
+### Phase 5B Cleanup
+- After dark mode works: verify no component has hardcoded `bg-white` or `text-black` that breaks dark mode
+- Run visual regression test: toggle dark mode across storefront, manage, vendor, analytics sections
+
+---
+
+### Phase 5C: Type Safety & Design System Types
+
+| # | Task | Section | Files | Effort |
+|---|---|---|---|---|
+| 5.9 | Implement `@dakkah-cityos/design-system` types in storefront UI components — Button, Input, Select, Badge, etc. | S30 §30.4, S34 #14 | ~20 `ui/*.tsx` files | 4h |
+| 5.10 | Implement design-system types in layout components — Container, Card, Sidebar types | S30 §30.4 | ~10 component files | 2h |
+| 5.11 | Implement design-system types in feedback components — Toast, Alert, Dialog | S30 §30.4 | ~6 component files | 2h |
+| 5.12 | Deduplicate `ShadowTokens` and `ElevationTokens` — merge into single scale | S34 #22 | Token files | 1h |
+
+### Phase 5C Cleanup
+- After type implementation: remove `any` types from component props where design-system types now apply
+- Verify: component props match their design-system type definitions
+
+---
+
+### Phase 5D: Remaining Polish
+
+| # | Task | Section | Files | Effort |
+|---|---|---|---|---|
+| 5.13 | Migrate hardcoded social-commerce data to database | S5 #20 | 1 backend + 1 route | 1h |
+| 5.14 | Add analyst read-only views (weight 20) — analytics dashboard, reports | S23 §23.4 | Analytics routes | 4h |
+| 5.15 | Implement responsive spacing tokens in layout components | S34 #25 | Layout component files | 2h |
+| 5.16 | Create remaining CMS pages — SEO manager, URL redirects, content scheduler, form submissions, CMS analytics | S22 §22.4 #9-14 | 5 new route files | 5h |
+
+### Phase 5D Cleanup
+- Final cleanup pass: search for any remaining hardcoded colors, physical CSS properties, raw Tailwind in manage
+- Remove any temporary backward-compat shims from Phase 2 (`manage/ui/index.ts` re-exports)
+
+### Phase 5 Exit Criteria
+- [ ] Dark mode toggle works across all sections (storefront, manage, vendor, analytics)
+- [ ] Image gallery component used across all detail pages
+- [ ] Share/bookmark on all applicable pages
+- [ ] ~60% of components implement design-system type definitions
+- [ ] Analyst (weight 20) has read-only analytics dashboard
+- [ ] BrandingProvider supports full theme config (not just 3 properties)
+- [ ] ShadowTokens/ElevationTokens deduplicated
+- [ ] Zero remaining `manage/ui/` backward-compat shims
+
+---
+
+## ROADMAP SUMMARY
+
+### Phase Metrics
+
+| Phase | Tasks | Effort | Sections Covered | Key Deliverable |
+|---|---|---|---|---|
+| **Phase 0** | 9 | ~8h | S4, S5, S6 | All vertical endpoints working |
+| **Phase 1** | 21 | ~40h | S15-S28 | RBAC, navigation, route architecture |
+| **Phase 2** | 37 | ~45h | S29-S34 | Unified design system, ds-tokens everywhere |
+| **Phase 3** | 17 | ~40h | S7-S14, S20, S22 | CMS page builder with 77 blocks |
+| **Phase 4** | 16 | ~30h | S1-S3, S5, S16-S17 | Data seeding, template customization |
+| **Phase 5** | 16 | ~35h | S3, S5, S9, S11, S14, S32-S34 | Dark mode, types, polish |
+| **TOTAL** | **116** | **~198h** | **All 34 sections** | **Production-ready platform** |
+
+### Cleanup Verification Checklist (Run After Each Phase)
+
+```
+AFTER PHASE 0:
+□ grep -rn "500\|error\|undefined" across vertical API responses → 0 errors
+
+AFTER PHASE 1:
+□ ls apps/storefront/src/routes/$tenant/$locale/manage/platform/ → 17+ files
+□ ls apps/storefront/src/routes/$tenant/$locale/manage/cms/ → 5+ files
+□ 5 duplicate manage pages deleted
+□ Module registry has 90+ modules across all sections
+
+AFTER PHASE 2:
+□ grep "bg-white\|bg-gray-\|text-gray-\|bg-violet-\|text-violet-" manage/ui/ → 0
+□ grep "bg-white\|bg-gray-\|text-gray-" manage routes → 0
+□ grep "enterprise-" app.css → 0
+□ grep "ml-[0-9]\|mr-[0-9]\|pl-[0-9]\|pr-[0-9]" components/ → < 10
+□ ls manage/ui/ → empty or only index.ts shim
+□ ls ui/ → 48 unified components
+
+AFTER PHASE 3:
+□ Payload Pages collection blocks count → 50+
+□ Content-editor (weight 30) CMS page access → verified
+□ Page builder renders block palette → verified
+
+AFTER PHASE 4:
+□ All 27 verticals return real data → verified
+□ grep "@ts-nocheck" customized pages → decreasing
+□ 47 CRUD configs exist → verified
+
+AFTER PHASE 5:
+□ Dark mode toggle works everywhere → verified
+□ grep "bg-white\|bg-gray-\|text-gray-" entire codebase → < 20
+□ manage/ui/index.ts shim removed → verified
+□ 0 unused files/components remaining
+```
+
+### Risk Register
+
+| Risk | Impact | Mitigation |
+|---|---|---|
+| Phase 2 import changes break manage pages | HIGH | Use backward-compat shim in `manage/ui/index.ts` during transition |
+| Block renderers don't match Payload field schemas | HIGH | Test each block against Payload API response format in Phase 3A before building UI |
+| RTL property replacement breaks non-Arabic layouts | MEDIUM | Test all 3 locales (en, fr, ar) after Phase 2F |
+| Vertical token colors clash with tenant branding | MEDIUM | Vertical tokens should use `var()` fallback pattern so tenant can override |
+| Dark mode reveals missed hardcoded colors | MEDIUM | Phase 5B includes visual regression sweep |
+| CRUD config additions trigger API errors | LOW | Test each config against actual backend endpoint before deploying |
