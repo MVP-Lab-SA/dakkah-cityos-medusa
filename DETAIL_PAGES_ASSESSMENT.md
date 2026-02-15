@@ -1714,3 +1714,1315 @@ If properly connected, the block system would allow:
 **Option C (Hybrid)** is the fastest path to production readiness. It preserves the existing page structure (breadcrumbs, hero, sidebar with CTAs) while immediately adding the rich vertical-specific features that are currently missing (menus, bid forms, class schedules, donation forms, etc.). Since both blocks and pages use identical `ds-` design tokens, visual integration will be seamless with zero style conflicts.
 
 **Option B (Block-Based)** should be the follow-up architectural refactor once Option C proves the blocks work correctly with real data.
+
+---
+
+## Section 10: Complete Block Catalog — All 77 Payload CMS Blocks
+
+### Block Catalog Key
+
+Each block entry includes:
+- **Registry Key:** The `blockType` string used in `BLOCK_REGISTRY` and `BlockRenderer`
+- **File:** Source file path
+- **Lines:** Total lines of code
+- **Design:** Visual layout description
+- **Content:** What data/content the block displays
+- **Props:** TypeScript interface (all accepted parameters)
+- **Data Status:** Whether it uses props or hardcoded placeholder data
+- **Use Cases:** Where this block should appear
+- **Design Tokens:** Count of `ds-` token references (style consistency score)
+
+---
+
+### 10.1 Content & Layout Blocks
+
+#### Block #1: `hero`
+- **File:** `hero-block.tsx` (86 lines)
+- **Design:** Full-width section with optional background image/video, text overlay with configurable alignment (start/center/end), CTA buttons, optional badge. Min-height variants: sm (200px), md (300px), lg (400px), xl (500px), full (100vh). Overlay options: none, light, dark, gradient.
+- **Content:** Heading text, subheading text, background media, CTA button array, badge text
+- **Props:** `heading?: string`, `subheading?: string`, `backgroundImage?: {url, alt}`, `backgroundVideo?: {url}`, `overlay?: 'none'|'light'|'dark'|'gradient'`, `alignment?: 'start'|'center'|'end'`, `minHeight?: 'sm'|'md'|'lg'|'xl'|'full'`, `cta?: {label, href}[]`, `badge?: string`
+- **Data Status:** PROPS-DRIVEN — renders from props, no hardcoded data
+- **Design Tokens:** 5 (bg-ds-background, text-ds-foreground, bg-ds-primary, text-ds-primary-foreground, text-ds-muted-foreground)
+- **Use Cases:** Top of every page (list + detail), landing pages, campaign headers
+
+#### Block #2: `richText` (content)
+- **File:** `content-block.tsx` (27 lines)
+- **Design:** Prose-styled rich text container with configurable max-width and column count. Clean typographic layout with responsive text sizing.
+- **Content:** HTML string rendered as rich text
+- **Props:** `content: string`, `columns?: 1|2`, `maxWidth?: 'sm'|'md'|'lg'|'xl'|'full'`, `textAlign?: 'start'|'center'|'end'`
+- **Data Status:** PROPS-DRIVEN
+- **Design Tokens:** 1 (text-ds-foreground)
+- **Use Cases:** About pages, policy pages, blog content, long descriptions
+
+#### Block #3: `cta`
+- **File:** `cta-block.tsx` (66 lines)
+- **Design:** Call-to-action banner with heading, description, and button array. Variants: banner (full-width colored), card (bordered container), inline (minimal), split (text + image side by side). Background styles: primary, secondary, muted, accent, custom.
+- **Content:** Heading, description, button labels and URLs
+- **Props:** `heading?: string`, `description?: string`, `buttons?: {label, href, variant}[]`, `variant?: 'banner'|'card'|'inline'|'split'`, `backgroundStyle?: 'primary'|'secondary'|'muted'|'accent'|'custom'`, `backgroundImage?: {url, alt}`
+- **Data Status:** PROPS-DRIVEN
+- **Design Tokens:** 5 (bg-ds-primary, text-ds-primary-foreground, bg-ds-card, border-ds-border, text-ds-foreground)
+- **Use Cases:** Bottom of detail pages, conversion sections, newsletter sign-up prompts
+
+#### Block #4: `featureGrid` (features)
+- **File:** `features-block.tsx` (47 lines)
+- **Design:** Grid of feature cards with icon + title + description. Configurable column count (2/3/4). Variants: icon-top (icon above text), icon-left (icon beside text), card (bordered containers), minimal (no borders).
+- **Content:** Array of feature items with icons, titles, descriptions
+- **Props:** `heading?: string`, `subtitle?: string`, `features: {icon, title, description}[]`, `columns?: 2|3|4`, `variant?: 'icon-top'|'icon-left'|'card'|'minimal'`
+- **Data Status:** PROPS-DRIVEN
+- **Design Tokens:** 3 (text-ds-foreground, text-ds-muted-foreground, bg-ds-card)
+- **Use Cases:** Service features, membership benefits, product highlights, "Why Choose Us"
+
+#### Block #5: `stats`
+- **File:** `stats-block.tsx` (130 lines)
+- **Design:** Horizontal/grid display of key statistics with large numbers and labels. Optional trend indicators (up/down arrows with percentage). Variants: default (simple numbers), card (bordered cards), highlighted (accent background), minimal.
+- **Content:** Array of stat items: value, label, optional trend data
+- **Props:** `heading?: string`, `stats: {value, label, trend?, trendDirection?}[]`, `columns?: 2|3|4`, `variant?: 'default'|'card'|'highlighted'|'minimal'`, `showTrend?: boolean`
+- **Data Status:** PROPS-DRIVEN
+- **Design Tokens:** 14
+- **Use Cases:** Campaign progress metrics, vendor statistics, service counters, impact numbers
+
+#### Block #6: `imageGallery`
+- **File:** `image-gallery-block.tsx` (209 lines)
+- **Design:** Multi-image display with three layouts: grid (equal cells), masonry (Pinterest-style), carousel (single image with nav arrows). Built-in lightbox with keyboard navigation (arrow keys, escape). Configurable aspect ratio (square/video/portrait) and column count (2/3/4).
+- **Content:** Array of images with URLs, alt text, optional captions
+- **Props:** `heading?: string`, `images: {image: {url, alt}, caption?}[]`, `layout?: 'grid'|'masonry'|'carousel'`, `columns?: 2|3|4`, `aspectRatio?: 'square'|'video'|'portrait'`
+- **Data Status:** PROPS-DRIVEN — requires images array
+- **Design Tokens:** 14 (bg-ds-background, text-ds-foreground, bg-ds-muted, border-ds-border, etc.)
+- **Use Cases:** Product photos, property galleries, restaurant ambiance, event photos, portfolio showcases
+
+#### Block #7: `divider`
+- **File:** `divider-block.tsx` (46 lines)
+- **Design:** Visual separator between sections. Variants: line (thin horizontal rule), dotted (dot pattern), label (line with centered text), space (whitespace only). Configurable spacing (sm/md/lg/xl).
+- **Content:** Optional label text
+- **Props:** `variant?: 'line'|'dotted'|'label'|'space'`, `label?: string`, `spacing?: 'sm'|'md'|'lg'|'xl'`
+- **Data Status:** PROPS-DRIVEN
+- **Design Tokens:** 4
+- **Use Cases:** Between page sections, visual breaks in long content
+
+#### Block #8: `bannerCarousel`
+- **File:** `banner-carousel-block.tsx` (185 lines)
+- **Design:** Auto-rotating promotional banner slider with navigation dots and arrow buttons. Each slide has background image, heading, description, and CTA button. Configurable auto-play interval and transition effects.
+- **Content:** Array of banner slides with images, text, CTAs
+- **Props:** `heading?: string`, `banners: {image: {url, alt}, heading, description, cta: {label, href}}[]`, `autoPlayInterval?: number`, `showDots?: boolean`, `showArrows?: boolean`, `height?: 'sm'|'md'|'lg'`
+- **Data Status:** PROPS-DRIVEN
+- **Design Tokens:** 11
+- **Use Cases:** Homepage hero rotation, promotional campaigns, seasonal offers
+
+#### Block #9: `videoEmbed`
+- **File:** `video-embed-block.tsx` (114 lines)
+- **Design:** Responsive video player embed with optional poster image and play button overlay. Supports YouTube, Vimeo, and direct video URLs. Aspect ratio configurable (16:9, 4:3, 1:1).
+- **Content:** Video URL, optional poster image, title
+- **Props:** `url: string`, `title?: string`, `poster?: {url, alt}`, `aspectRatio?: '16:9'|'4:3'|'1:1'`, `autoplay?: boolean`
+- **Data Status:** PROPS-DRIVEN
+- **Design Tokens:** 3
+- **Use Cases:** Product demos, course previews, property virtual tours, event recordings
+
+#### Block #10: `timeline`
+- **File:** `timeline-block.tsx` (194 lines)
+- **Design:** Vertical timeline with connected nodes. Each entry has date, title, description, and optional icon. Left/right alternating layout on desktop, stacked on mobile. Color-coded nodes for different statuses.
+- **Content:** Array of timeline entries with dates, titles, descriptions
+- **Props:** `heading?: string`, `items: {date, title, description, icon?, status?}[]`, `layout?: 'vertical'|'horizontal'|'alternating'`, `showConnectors?: boolean`
+- **Data Status:** PROPS-DRIVEN
+- **Design Tokens:** 27
+- **Use Cases:** Order tracking, project milestones, government service processing steps, company history
+
+#### Block #11: `trustBadges`
+- **File:** `trust-badges-block.tsx` (92 lines)
+- **Design:** Horizontal row of trust/security badges with icons and labels. Common badges: secure payment, money-back guarantee, free shipping, verified sellers. Optional description under each badge.
+- **Content:** Array of badge items with icons and labels
+- **Props:** `badges?: {icon, label, description?}[]`, `layout?: 'horizontal'|'grid'`, `variant?: 'icon-only'|'with-text'|'card'`
+- **Data Status:** PROPS-DRIVEN with defaults
+- **Design Tokens:** 8
+- **Use Cases:** Footer trust indicators, checkout page reassurance, product detail confidence builders
+
+#### Block #12: `socialProof`
+- **File:** `social-proof-block.tsx` (234 lines)
+- **Design:** Real-time social proof notifications showing recent purchases, reviews, and activity. Variants: feed (continuous scroll), toast (popup notifications), banner (summary bar), widget (sidebar card). Shows buyer name, location, product, and timestamp.
+- **Content:** Recent purchases, reviews with ratings, activity data
+- **Props:** `variant?: 'feed'|'toast'|'banner'|'widget'`, `showPurchases?: boolean`, `showReviews?: boolean`, `autoRotate?: boolean`, `heading?: string`, `maxItems?: number`
+- **Data Status:** HARDCODED — uses placeholder purchases and reviews
+- **Design Tokens:** 42
+- **Use Cases:** Homepage social proof, product detail page urgency, checkout conversion
+
+#### Block #13: `blogPost`
+- **File:** `blog-post-block.tsx` (182 lines)
+- **Design:** Full blog article layout with featured image, category badge, title, author info (avatar + name + bio), reading time, publication date, rich HTML content body, tags, and related posts sidebar.
+- **Content:** Article content (HTML), author data, category, tags, related posts
+- **Props:** `heading?: string`, `content?: string`, `author?: {name, avatar?, bio?}`, `publishedAt?: string`, `category?: string`, `tags?: string[]`, `featuredImage?: string`, `readingTime?: number`
+- **Data Status:** HARDCODED — defaults to "Future of B2B Commerce" article
+- **Design Tokens:** 28
+- **Use Cases:** Blog detail pages, news articles, knowledge base entries
+
+---
+
+### 10.2 Navigation & Discovery Blocks
+
+#### Block #14: `categoryGrid`
+- **File:** `category-grid-block.tsx` (164 lines)
+- **Design:** Grid of category cards with images, names, and item counts. Configurable columns (2/3/4/6). Variants: card (bordered with image), image-overlay (full image with text overlay), icon (centered icon with label), minimal (text only). Links to category pages.
+- **Content:** Array of categories with images, names, item counts, URLs
+- **Props:** `heading?: string`, `categories: {name, image?, itemCount?, href}[]`, `columns?: 2|3|4|6`, `variant?: 'card'|'image-overlay'|'icon'|'minimal'`
+- **Data Status:** PROPS-DRIVEN
+- **Design Tokens:** 16
+- **Use Cases:** Homepage category browsing, vertical landing pages, storefront navigation
+
+#### Block #15: `collectionList`
+- **File:** `collection-list-block.tsx` (123 lines)
+- **Design:** Curated collection cards with images, titles, and descriptions. Layouts: grid, carousel (horizontal scroll), list (vertical stack). Links to collection detail pages.
+- **Content:** Array of product collections
+- **Props:** `heading?: string`, `description?: string`, `collections?: {id, title, handle, image?}[]`, `layout?: 'grid'|'carousel'|'list'`, `columns?: 2|3|4|6`
+- **Data Status:** PROPS-DRIVEN
+- **Design Tokens:** 9
+- **Use Cases:** Curated collections, seasonal picks, editor's choice, "Shop the Look"
+
+#### Block #16: `comparisonTable`
+- **File:** `comparison-table-block.tsx` (148 lines)
+- **Design:** Feature comparison matrix with product/plan columns and feature rows. Checkmarks for included features, X for excluded. Highlighted column for recommended option. Sticky header for scrolling.
+- **Content:** Products/plans with feature lists
+- **Props:** `heading?: string`, `items: {name, features: Record<string, boolean|string>}[]`, `features: string[]`, `highlightedItem?: string`, `layout?: 'table'|'cards'`
+- **Data Status:** PROPS-DRIVEN — requires items and features arrays
+- **Design Tokens:** 18
+- **Use Cases:** Membership tier comparison, insurance plan comparison, subscription plan features, vehicle spec comparison
+
+#### Block #17: `contactForm`
+- **File:** `contact-form-block.tsx` (163 lines)
+- **Design:** Multi-field contact form with name, email, phone, subject, and message fields. Optional map embed below form. Success/error state feedback. Configurable field list.
+- **Content:** Form fields, recipient email, heading
+- **Props:** `heading?: string`, `recipientEmail?: string`, `showMap?: boolean`, `fields?: string[]`
+- **Data Status:** PARTIALLY HARDCODED — form fields hardcoded but layout is prop-driven
+- **Design Tokens:** 10
+- **Use Cases:** Contact pages, vendor inquiry, property inquiry, service request
+
+#### Block #18: `faq`
+- **File:** `faq-block.tsx` (90 lines)
+- **Design:** Accordion-style FAQ list with expandable question/answer pairs. Layouts: accordion (one open at a time), two-column (side by side), categorized (grouped by category). Smooth expand/collapse animation.
+- **Content:** Array of question-answer pairs
+- **Props:** `heading?: string`, `description?: string`, `items: {question, answer}[]`, `layout?: 'accordion'|'two-column'|'categorized'`
+- **Data Status:** PROPS-DRIVEN — requires items array
+- **Design Tokens:** 3
+- **Use Cases:** Product FAQ, service information, legal disclaimers, healthcare information
+
+#### Block #19: `pricing`
+- **File:** `pricing-block.tsx` (171 lines)
+- **Design:** Pricing tier cards with plan names, prices, feature lists, and CTA buttons. Highlighted/recommended plan with accent border. Optional billing toggle (monthly/annual). Responsive: stacks on mobile, side by side on desktop.
+- **Content:** Array of pricing plans
+- **Props:** `heading?: string`, `description?: string`, `plans: {name, price, currency, interval, features, highlighted?, cta?}[]`, `billingToggle?: boolean`, `highlightedPlan?: string`
+- **Data Status:** PROPS-DRIVEN — requires plans array
+- **Design Tokens:** 17
+- **Use Cases:** Subscription pricing, membership tiers, service packages, SaaS plans
+
+#### Block #20: `newsletter`
+- **File:** `newsletter-block.tsx` (128 lines)
+- **Design:** Email subscription form with heading, description, email input, and submit button. Optional benefits list. Variants: inline (single row), card (bordered container), full-width (accent background).
+- **Content:** Heading, description, benefit items
+- **Props:** `heading?: string`, `description?: string`, `variant?: 'inline'|'card'|'full-width'`, `showBenefits?: boolean`
+- **Data Status:** PARTIALLY HARDCODED — benefits list hardcoded
+- **Design Tokens:** 8
+- **Use Cases:** Footer newsletter sign-up, event updates subscription, blog subscription
+
+#### Block #21: `reviewList`
+- **File:** `review-list-block.tsx` (180 lines)
+- **Design:** Customer review cards with star ratings, reviewer name, date, and review text. Optional summary header showing average rating and total count. Optional "Write a Review" form. Filterable by star count.
+- **Content:** Array of reviews with ratings, text, author info
+- **Props:** `heading?: string`, `entityId?: string`, `showSummary?: boolean`, `allowSubmit?: boolean`
+- **Data Status:** HARDCODED — uses 4 placeholder reviews
+- **Design Tokens:** 17
+- **Use Cases:** Product reviews, service reviews, vendor reviews, course reviews, restaurant reviews
+
+#### Block #22: `map`
+- **File:** `map-block.tsx` (198 lines)
+- **Design:** Interactive map placeholder with location markers, search input, and location list panel. Shows pin markers with name, address, and phone. Sidebar list of locations with click-to-select. Map renders as styled placeholder (no actual map API).
+- **Content:** Center coordinates, zoom level, array of location markers
+- **Props:** `heading?: string`, `center?: {lat, lng}`, `markers?: {id, name, address, phone?, image?}[]`, `zoom?: number`, `showSearch?: boolean`
+- **Data Status:** HARDCODED — uses 5 placeholder markers
+- **Design Tokens:** 21
+- **Use Cases:** Store locator, restaurant locations, parking zones, property locations, event venues
+
+---
+
+### 10.3 Commerce Core Blocks
+
+#### Block #23: `productGrid` (products)
+- **File:** `products-block.tsx` (95 lines)
+- **Design:** Responsive product card grid with image, title, price, rating. Hover effect reveals "Add to Cart" button. Configurable columns (2/3/4). Sort dropdown (newest, price asc/desc, popular). Category filter tabs.
+- **Content:** Product array (can be fetched via useQuery or passed as props)
+- **Props:** `heading?: string`, `source?: 'latest'|'featured'|'category'|'vendor'|'manual'`, `productIds?: string[]`, `categoryId?: string`, `vendorId?: string`, `limit?: number`, `columns?: 2|3|4`, `showFilters?: boolean`, `showSort?: boolean`
+- **Data Status:** **ONLY BLOCK WITH `useQuery`** — fetches its own product data
+- **Design Tokens:** 6
+- **Use Cases:** Product listings, featured products, category products, vendor products
+
+#### Block #24: `productDetail`
+- **File:** `product-detail-block.tsx` (201 lines)
+- **Design:** Full product detail layout with image gallery (main + thumbnails), title, price, description, variant selector (size/color), quantity picker, "Add to Cart" button, product specs table. Tabs for description/specs/reviews.
+- **Content:** Complete product data
+- **Props:** `productId?: string`, `showReviews?: boolean`, `showRelated?: boolean`, `variant?: 'default'|'compact'|'gallery'`
+- **Data Status:** HARDCODED — "Premium Wireless Headphones" placeholder
+- **Design Tokens:** 40
+- **Use Cases:** Standard product detail page, quick view modal
+
+#### Block #25: `cartSummary`
+- **File:** `cart-summary-block.tsx` (142 lines)
+- **Design:** Shopping cart display with item list (image, name, quantity, price), subtotal, shipping estimate, coupon code input, and checkout button. Variants: mini (dropdown), full (page), sidebar (sticky).
+- **Content:** Cart items, pricing summary
+- **Props:** `variant?: 'mini'|'full'|'sidebar'`, `showCoupon?: boolean`, `showEstimatedShipping?: boolean`
+- **Data Status:** HARDCODED — 3 placeholder cart items
+- **Design Tokens:** 28
+- **Use Cases:** Cart page, cart sidebar, checkout flow
+
+#### Block #26: `checkoutSteps`
+- **File:** `checkout-steps-block.tsx` (204 lines)
+- **Design:** Multi-step checkout wizard with progress bar. Steps: Contact Info → Shipping → Payment → Review. Each step has form fields with validation states. Back/Next navigation buttons. Order summary sidebar.
+- **Content:** Checkout form data, order summary
+- **Props:** `showOrderSummary?: boolean`, `initialStep?: number`, `allowGuestCheckout?: boolean`, `paymentMethods?: string[]`, `shippingMethods?: string[]`
+- **Data Status:** HARDCODED — placeholder form data
+- **Design Tokens:** 49
+- **Use Cases:** Checkout flow, booking confirmation, subscription signup
+
+#### Block #27: `orderConfirmation`
+- **File:** `order-confirmation-block.tsx` (132 lines)
+- **Design:** Order success page with confirmation number, order summary, shipping details, estimated delivery, and "Continue Shopping" CTA. Green checkmark icon header. Line items with images and prices.
+- **Content:** Order data, confirmation number, shipping info
+- **Props:** `orderId?: string`, `showTracking?: boolean`, `showRelated?: boolean`, `variant?: 'full'|'compact'`
+- **Data Status:** HARDCODED — placeholder order #ORD-2026-1234
+- **Design Tokens:** 42
+- **Use Cases:** Post-purchase confirmation, booking confirmation
+
+#### Block #28: `wishlistGrid`
+- **File:** `wishlist-grid-block.tsx` (94 lines)
+- **Design:** Saved items grid with product cards, remove button, and "Move to Cart" action. Empty state with illustration and CTA.
+- **Content:** Saved product array
+- **Props:** `heading?: string`, `products?: any[]`, `layout?: 'grid'|'list'`
+- **Data Status:** HARDCODED — 3 placeholder items
+- **Design Tokens:** 12
+- **Use Cases:** Wishlist page, saved items section
+
+#### Block #29: `recentlyViewed`
+- **File:** `recently-viewed-block.tsx` (61 lines)
+- **Design:** Horizontal scrollable row of recently viewed product thumbnails with titles and prices. Compact card format. Carousel-style with overflow scroll.
+- **Content:** Recently viewed product array
+- **Props:** `heading?: string`, `products?: any[]`, `layout?: 'carousel'|'grid'`
+- **Data Status:** HARDCODED — 3 placeholder products
+- **Design Tokens:** 10
+- **Use Cases:** Bottom of every detail page, shopping continuity
+
+#### Block #30: `flashSaleCountdown`
+- **File:** `flash-sale-countdown-block.tsx` (117 lines)
+- **Design:** Countdown timer display with days:hours:minutes:seconds blocks. Featured sale products below timer. Urgency-colored design (red/orange tones). Animated countdown digits.
+- **Content:** End time, sale products
+- **Props:** `heading?: string`, `endTime?: Date`, `products?: any[]`, `variant?: 'banner'|'card'|'inline'`
+- **Data Status:** HARDCODED — endTime = now + 24 hours, placeholder products
+- **Design Tokens:** 14
+- **Use Cases:** Flash deals detail, promotional pages, seasonal sales
+
+#### Block #31: `giftCardDisplay`
+- **File:** `gift-card-display-block.tsx` (137 lines)
+- **Design:** Gift card selector with denomination buttons ($25/$50/$100/$250/$500), visual card template preview, recipient email input, personal message textarea. Card design templates with color variations.
+- **Content:** Denominations, card templates, recipient info
+- **Props:** `heading?: string`, `denominations?: number[]`, `customizable?: boolean`, `variant?: 'selector'|'preview'|'checkout'`
+- **Data Status:** HARDCODED — 5 default denominations, hardcoded templates
+- **Design Tokens:** 19
+- **Use Cases:** Gift card purchase page, gift card detail
+
+---
+
+### 10.4 Vendor & Marketplace Blocks
+
+#### Block #32: `vendorProfile`
+- **File:** `vendor-profile-block.tsx` (101 lines)
+- **Design:** Vendor information card with logo, name, description, rating, product count, verified badge. Optional sections: about, contact info, social links, policies.
+- **Content:** Vendor data from API
+- **Props:** `vendorId?: string`, `showProducts?: boolean`, `showReviews?: boolean`, `variant?: 'full'|'card'|'sidebar'`
+- **Data Status:** PROPS-DRIVEN — accepts vendorId
+- **Design Tokens:** 16
+- **Use Cases:** Vendor storefront page, vendor detail, marketplace vendor listing
+
+#### Block #33: `vendorProducts`
+- **File:** `vendor-products-block.tsx` (111 lines)
+- **Design:** Product grid filtered by vendor with vendor header info. Standard product card format with image, title, price, rating. "View All" link to vendor store.
+- **Content:** Vendor's product array
+- **Props:** `vendorId?: string`, `limit?: number`, `heading?: string`
+- **Data Status:** PARTIALLY HARDCODED — placeholder products
+- **Design Tokens:** 11
+- **Use Cases:** Vendor detail page "Products" section, vendor storefront
+
+#### Block #34: `vendorShowcase`
+- **File:** `vendor-showcase-block.tsx` (109 lines)
+- **Design:** Featured vendor cards in grid/carousel/featured layout. Each card shows logo, name, description, rating, product count, verified badge. "View Store" CTA link.
+- **Content:** Array of vendor data
+- **Props:** `heading?: string`, `description?: string`, `vendors: Vendor[]`, `layout?: 'grid'|'carousel'|'featured'`, `showRating?: boolean`, `showProducts?: boolean`
+- **Data Status:** PROPS-DRIVEN — requires vendors array
+- **Design Tokens:** 8
+- **Use Cases:** Homepage vendor showcase, marketplace landing, vendor directory
+
+#### Block #35: `vendorRegisterForm`
+- **File:** `vendor-register-form-block.tsx` (193 lines)
+- **Design:** Multi-section registration form with business info (name, type, description), contact details, document upload, terms acceptance, and submit button. Progress indicator for multi-step flow.
+- **Content:** Form configuration, required fields
+- **Props:** `heading?: string`, `showBusinessType?: boolean`, `requireDocuments?: boolean`
+- **Data Status:** PARTIALLY HARDCODED — form structure hardcoded
+- **Design Tokens:** 34
+- **Use Cases:** Vendor registration page, seller onboarding
+
+#### Block #36: `commissionDashboard`
+- **File:** `commission-dashboard-block.tsx` (143 lines)
+- **Design:** Vendor earnings dashboard with total earnings, pending payouts, commission rate card, and monthly earnings chart placeholder. Summary cards in 3-column grid.
+- **Content:** Commission data, earnings history
+- **Props:** `vendorId?: string`, `showChart?: boolean`
+- **Data Status:** HARDCODED — placeholder earnings data
+- **Design Tokens:** 30
+- **Use Cases:** Vendor dashboard, admin vendor management
+
+#### Block #37: `payoutHistory`
+- **File:** `payout-history-block.tsx` (180 lines)
+- **Design:** Table of past payouts with date, amount, status badge (paid/pending/failed), method. Pagination at bottom. Filter by status.
+- **Content:** Payout records array
+- **Props:** `vendorId?: string`
+- **Data Status:** HARDCODED — placeholder payout records
+- **Design Tokens:** 29
+- **Use Cases:** Vendor payout history page, vendor dashboard section
+
+---
+
+### 10.5 Booking & Service Blocks
+
+#### Block #38: `bookingCalendar`
+- **File:** `booking-calendar-block.tsx` (256 lines)
+- **Design:** Full month calendar view with day cells (colored: available=green, unavailable=gray, selected=primary). Time slot picker grid below calendar for selected date showing available times with prices. Confirm booking button with selected date+time summary. Variants: monthly (full calendar), weekly (7-day strip), daily (single day time slots). Optional multi-day range selection.
+- **Content:** Available dates, time slots with prices, booked dates
+- **Props:** `serviceId?: string`, `variant?: 'monthly'|'weekly'|'daily'`, `showPricing?: boolean`, `allowMultiDay?: boolean`
+- **Data Status:** HARDCODED — defaultTimeSlots ($50-$70), hardcoded unavailable days (5,12,19,25)
+- **Design Tokens:** 23
+- **Use Cases:** Booking detail pages, appointment scheduling, rental availability, travel check-in
+
+#### Block #39: `bookingCta`
+- **File:** `booking-cta-block.tsx` (134 lines)
+- **Design:** Compact booking prompt with service summary (name, duration, price), availability indicator, and "Book Now" CTA button. Variants: inline (text + button), card (bordered container), full-width (accent background).
+- **Content:** Service info, availability, pricing
+- **Props:** `heading?: string`, `description?: string`, `serviceId?: string`, `providerId?: string`, `variant?: 'inline'|'card'|'full-width'`, `showAvailability?: boolean`, `showPricing?: boolean`
+- **Data Status:** PROPS-DRIVEN
+- **Design Tokens:** 18
+- **Use Cases:** Service detail sidebar CTA, bottom of service pages, promotional booking prompts
+
+#### Block #40: `bookingConfirmation`
+- **File:** `booking-confirmation-block.tsx` (105 lines)
+- **Design:** Booking success page with confirmation number, service details, date/time, provider info, and action buttons (add to calendar, get directions, cancel booking).
+- **Content:** Booking confirmation data
+- **Props:** `bookingId?: string`, `showDetails?: boolean`, `showActions?: boolean`
+- **Data Status:** HARDCODED — placeholder confirmation template
+- **Design Tokens:** 26
+- **Use Cases:** Post-booking confirmation, appointment confirmed
+
+#### Block #41: `serviceCardGrid`
+- **File:** `service-card-grid-block.tsx` (134 lines)
+- **Design:** Grid of service cards with image, name, description, pricing, duration, and "Book" button. Configurable columns (2/3/4). Optional category filter.
+- **Content:** Array of services
+- **Props:** `heading?: string`, `services?: Service[]`, `columns?: 2|3|4`, `showBookingCta?: boolean`, `categoryFilter?: string`
+- **Data Status:** HARDCODED — 6 placeholder services
+- **Design Tokens:** 12
+- **Use Cases:** Service listing, restaurant services, healthcare services, fitness classes
+
+#### Block #42: `serviceList`
+- **File:** `service-list-block.tsx` (188 lines)
+- **Design:** Detailed service listing with image, name, description, pricing (with currency and unit), duration, rating, and booking URL. Layouts: grid (cards), list (horizontal rows), carousel (horizontal scroll). Responsive column count.
+- **Content:** Array of services with full details
+- **Props:** `heading?: string`, `description?: string`, `services: Service[]`, `layout?: 'grid'|'list'|'carousel'`, `columns?: 2|3|4`, `showBooking?: boolean`, `showPricing?: boolean`
+- **Data Status:** PROPS-DRIVEN — requires services array
+- **Design Tokens:** 14
+- **Use Cases:** Legal services, insurance plans, government services, utilities, any service-based vertical
+
+#### Block #43: `appointmentSlots`
+- **File:** `appointment-slots-block.tsx` (213 lines)
+- **Design:** 7-day date picker strip at top, time slot grid below. Each slot shows time, availability status (green=available, gray=taken). Selected slot highlights in primary color. Duration display. Variants: list (vertical), grid (button grid), timeline (visual timeline).
+- **Content:** Available time slots per day
+- **Props:** `providerId?: string`, `date?: string`, `duration?: string`, `variant?: 'list'|'grid'|'timeline'`
+- **Data Status:** HARDCODED — 18 default slots with hardcoded availability
+- **Design Tokens:** 29
+- **Use Cases:** Healthcare appointment booking, legal consultation scheduling, fitness class booking
+
+#### Block #44: `providerSchedule`
+- **File:** `provider-schedule-block.tsx` (188 lines)
+- **Design:** Weekly schedule grid showing provider availability. Time slots in rows, days in columns. Color-coded: available (green), busy (red), tentative (yellow). View modes: calendar, list, timeline.
+- **Content:** Provider's weekly schedule
+- **Props:** `providerId?: string`, `viewMode?: 'calendar'|'list'|'timeline'`, `showCapacity?: boolean`
+- **Data Status:** HARDCODED — placeholder weekly schedule
+- **Design Tokens:** 22
+- **Use Cases:** Provider detail page, staff scheduling, resource availability
+
+#### Block #45: `resourceAvailability`
+- **File:** `resource-availability-block.tsx` (199 lines)
+- **Design:** Resource availability checker with calendar view, time windows, and status indicators. Shows multiple resources (rooms, equipment) with their availability. Variants: calendar (month view), list (time slots), hybrid (calendar + time slots).
+- **Content:** Resources with availability data
+- **Props:** `resourceType?: string`, `resourceId?: string`, `dateRange?: {start, end}`, `variant?: 'calendar'|'list'|'hybrid'`
+- **Data Status:** HARDCODED — 4 placeholder meeting rooms
+- **Design Tokens:** ~20
+- **Use Cases:** Meeting room booking, equipment rental, facility reservation
+
+---
+
+### 10.6 Subscription & Loyalty Blocks
+
+#### Block #46: `subscriptionPlans`
+- **File:** `subscription-plans-block.tsx` (238 lines)
+- **Design:** Pricing comparison cards with plan name, price/interval, feature list (checkmarks), and "Subscribe" CTA. Highlighted plan with accent border and "Popular" badge. Optional billing toggle (monthly/yearly with discount). Variants: cards (side by side), table (comparison matrix), minimal (compact list).
+- **Content:** Array of subscription plan data
+- **Props:** `heading?: string`, `plans?: PlanData[]`, `billingToggle?: boolean`, `highlightedPlan?: string`, `variant?: 'cards'|'table'|'minimal'`
+- **Data Status:** PROPS-DRIVEN — uses `plans` prop with `defaultPlans` fallback (Starter $9/mo, Professional $29/mo, Enterprise $79/mo)
+- **Design Tokens:** 33
+- **Use Cases:** Subscription pricing page, SaaS plans, membership upgrades
+
+#### Block #47: `membershipTiers`
+- **File:** `membership-tiers-block.tsx` (220 lines)
+- **Design:** Tiered membership cards with color-coded headers (Bronze=#CD7F32, Silver=#C0C0C0, Gold=#FFD700). Each card shows tier name, price/month, benefit checklist with colored checkmark icons, and "Join" button in tier color. Variants: cards (vertical), horizontal (single row), vertical (stacked).
+- **Content:** Array of membership tier data
+- **Props:** `heading?: string`, `tiers?: TierData[]`, `showComparison?: boolean`, `variant?: 'cards'|'horizontal'|'vertical'`
+- **Data Status:** PROPS-DRIVEN — uses `tiers` prop with `defaultTiers` fallback (Bronze $19, Silver $39, Gold $79)
+- **Design Tokens:** 21
+- **Use Cases:** Membership pricing, loyalty program tiers, gym membership, club memberships
+
+#### Block #48: `loyaltyDashboard`
+- **File:** `loyalty-dashboard-block.tsx` (224 lines)
+- **Design:** Member dashboard with points balance (large number), tier progress bar, transaction history table (earned/redeemed), and rewards catalog grid. Variants: full (all sections), compact (summary only), widget (mini card).
+- **Content:** Points balance, tier info, transactions, available rewards
+- **Props:** `showTierProgress?: boolean`, `showHistory?: boolean`, `showRewards?: boolean`, `variant?: 'full'|'compact'|'widget'`
+- **Data Status:** HARDCODED — 1,850 points, Silver tier, 5 transactions, 4 rewards
+- **Design Tokens:** 54
+- **Use Cases:** Loyalty program member dashboard, rewards page
+
+#### Block #49: `loyaltyPointsDisplay`
+- **File:** `loyalty-points-display-block.tsx` (253 lines)
+- **Design:** Points display with tier badge, points balance, earning rate visualization, and quick actions (earn more, redeem, history). Animated point counter.
+- **Content:** Points data, tier info, earning rates
+- **Props:** `showTierBadge?: boolean`, `showEarningRate?: boolean`, `showQuickActions?: boolean`, `variant?: 'full'|'compact'|'badge'`
+- **Data Status:** HARDCODED — placeholder points and tier data
+- **Design Tokens:** 55
+- **Use Cases:** Account header, sidebar widget, loyalty page
+
+#### Block #50: `subscriptionManage`
+- **File:** `subscription-manage-block.tsx` (201 lines)
+- **Design:** Subscription management panel with current plan details, usage meters (bookings, storage, users, API calls), billing history table, and action buttons (upgrade, pause, cancel). Usage bars with color coding (green <70%, yellow 70-90%, red >90%).
+- **Content:** Current subscription, usage data, billing records
+- **Props:** `subscriptionId?: string`, `showUsage?: boolean`, `allowPause?: boolean`, `allowUpgrade?: boolean`
+- **Data Status:** HARDCODED — Professional plan $29/mo, 5 billing records, 4 usage metrics
+- **Design Tokens:** 29
+- **Use Cases:** Subscription management page, account settings
+
+#### Block #51: `referralProgram`
+- **File:** `referral-program-block.tsx` (258 lines)
+- **Design:** Referral dashboard with unique referral link (with copy button), referral stats (invited, joined, earned), sharing buttons (email, social), and referral history table. Tiered reward display.
+- **Content:** Referral code, stats, history, reward tiers
+- **Props:** `heading?: string`, `showStats?: boolean`, `showHistory?: boolean`, `showRewards?: boolean`, `shareChannels?: string[]`
+- **Data Status:** HARDCODED — "DAKKAH-REFER-2026" code, placeholder stats
+- **Design Tokens:** 60
+- **Use Cases:** Referral program page, affiliate dashboard, "Invite Friends" section
+
+---
+
+### 10.7 Vertical-Specific Blocks
+
+#### Block #52: `auctionBidding`
+- **File:** `auction-bidding-block.tsx` (198 lines)
+- **Design:** Live auction interface with current bid display (large number), countdown timer (D:H:M:S), bid input with quick-increment buttons (+$50/+$100/+$250), "Place Bid" button, and recent bid history table (bidder, amount, time). Variants: full (all sections), compact (bid + timer only), live (real-time feed).
+- **Content:** Current bid, bid history, auction end time
+- **Props:** `auctionId?: string`, `showHistory?: boolean`, `showCountdown?: boolean`, `variant?: 'full'|'compact'|'live'`
+- **Data Status:** HARDCODED — currentBid: $1,250, 5 placeholder bids, hardcoded countdown
+- **Design Tokens:** 47
+- **Use Cases:** Auction detail page main content, live auction widget
+
+#### Block #53: `rentalCalendar`
+- **File:** `rental-calendar-block.tsx` (124 lines)
+- **Design:** Date range picker for rental periods with calendar month view, start/end date selection, pricing unit display (hourly/daily/weekly/monthly), optional deposit display, and total calculation. Min duration enforcement.
+- **Content:** Availability data, pricing per unit
+- **Props:** `itemId?: string`, `pricingUnit?: 'hourly'|'daily'|'weekly'|'monthly'`, `showDeposit?: boolean`, `minDuration?: number`
+- **Data Status:** HARDCODED — generated dates from current month
+- **Design Tokens:** 25
+- **Use Cases:** Rental item detail, equipment rental, property rental, vehicle rental
+
+#### Block #54: `propertyListing`
+- **File:** `property-listing-block.tsx` (158 lines)
+- **Design:** Property cards with image placeholder, title, address, price, type badge (apartment/house/condo/commercial), specs row (bedrooms, bathrooms, sqft), and "View Details" CTA. Grid layout.
+- **Content:** Array of property listings
+- **Props:** `heading?: string`, `propertyType?: string`, `showMap?: boolean`, `layout?: 'grid'|'list'`
+- **Data Status:** HARDCODED — placeholder properties with addresses and prices
+- **Design Tokens:** 21
+- **Use Cases:** Real estate listing page, property search results
+
+#### Block #55: `vehicleListing`
+- **File:** `vehicle-listing-block.tsx` (206 lines)
+- **Design:** Vehicle cards with hero image, fuel type badge, price (prominent), title (year + make + model), specs row (year, mileage, transmission), and optional comparison checkbox. Make filter dropdown. Grid/list layout toggle.
+- **Content:** Array of vehicle listings
+- **Props:** `heading?: string`, `vehicleType?: string`, `layout?: 'grid'|'list'|'detailed'`, `showComparison?: boolean`
+- **Data Status:** HARDCODED — 6 placeholder vehicles (Tesla Model 3, Toyota Camry, BMW X5, etc.)
+- **Design Tokens:** 29
+- **Use Cases:** Automotive listing page, vehicle search, comparison shopping
+
+#### Block #56: `menuDisplay`
+- **File:** `menu-display-block.tsx` (161 lines)
+- **Design:** Restaurant menu with sidebar category tabs (Starters, Main Courses, Desserts, Drinks), item cards with name, description, price (formatted per currency), dietary badges (Vegetarian, Vegan, Gluten-Free, Halal, Kosher with emoji icons), "Popular" badge, and "Add to Order" button. Variants: grid (2-column), list (single column), visual (with food image thumbnails).
+- **Content:** Array of menu categories with items
+- **Props:** `heading?: string`, `categories?: MenuCategory[]`, `variant?: 'grid'|'list'|'visual'`, `showPrices?: boolean`, `showDietaryIcons?: boolean`, `currency?: string`
+- **Data Status:** PROPS-DRIVEN with fallback — uses `categories` prop, falls back to `defaultCategories` (4 categories, 13 items)
+- **Design Tokens:** 12
+- **Use Cases:** Restaurant detail page, food ordering, café menu
+
+#### Block #57: `courseCurriculum`
+- **File:** `course-curriculum-block.tsx` (245 lines)
+- **Design:** Expandable module tree with sections and lessons. Each module shows title, lesson count, total duration, and progress bar. Lessons show type icon (video/text/quiz), title, duration, and lock/unlock state. Expand/collapse animation. Variants: full (sidebar + content), accordion (stacked), sidebar (compact).
+- **Content:** Array of course modules with lessons
+- **Props:** `courseId?: string`, `showProgress?: boolean`, `expandAll?: boolean`, `variant?: 'full'|'accordion'|'sidebar'`
+- **Data Status:** HARDCODED — 3 placeholder modules with 9 lessons
+- **Design Tokens:** 39
+- **Use Cases:** Course detail page, learning path, training program
+
+#### Block #58: `eventSchedule`
+- **File:** `event-schedule-block.tsx` (203 lines)
+- **Design:** Multi-day event agenda with day tab switcher at top. Each day shows timeline of sessions with time, title, speaker, room, and track tag. Sessions color-coded by track (Engineering, Design, AI, Product, General). Optional bookmark button per session. Views: timeline (vertical flow), grid (room × time matrix), agenda (list format).
+- **Content:** Array of event days with session data
+- **Props:** `eventId?: string`, `view?: 'timeline'|'grid'|'agenda'`, `showSpeakers?: boolean`, `allowBookmark?: boolean`, `days?: EventDay[]`
+- **Data Status:** HARDCODED — 2 default days with 12 sessions total
+- **Design Tokens:** 24
+- **Use Cases:** Conference/event detail page, workshop schedule, multi-day event program
+
+#### Block #59: `eventList`
+- **File:** `event-list-block.tsx` (210 lines)
+- **Design:** Event cards with image, title, date (formatted by locale), location, category badge, and price. Layouts: timeline (vertical with date markers), grid (card grid), list (horizontal rows), calendar (month view placeholder). Supports past event filtering. Links to event detail pages.
+- **Content:** Array of events with full metadata
+- **Props:** `heading?: string`, `description?: string`, `events: EventItem[]`, `layout?: 'timeline'|'grid'|'list'|'calendar'`, `showPastEvents?: boolean`
+- **Data Status:** PROPS-DRIVEN — requires events array (no default)
+- **Design Tokens:** 18
+- **Use Cases:** Event listing page, upcoming events section, event category page
+
+#### Block #60: `healthcareProvider`
+- **File:** `healthcare-provider-block.tsx` (160 lines)
+- **Design:** Provider cards with avatar placeholder, name, specialty, location, star rating, review count, next availability ("Tomorrow, 10:00 AM"), insurance acceptance tags, and "Book Appointment" CTA button. Specialty filter tabs at top (All, Family Medicine, Cardiology, etc.). Layouts: grid (card grid), list (horizontal rows), cards (detailed cards).
+- **Content:** Array of healthcare providers
+- **Props:** `heading?: string`, `specialties?: string[]`, `showAvailability?: boolean`, `showRating?: boolean`, `layout?: 'grid'|'list'|'cards'`
+- **Data Status:** HARDCODED — 6 placeholder providers (Dr. Sarah Johnson, Dr. Michael Chen, etc.)
+- **Design Tokens:** 21
+- **Use Cases:** Healthcare listing page, provider directory, find-a-doctor
+
+#### Block #61: `fitnessClassSchedule`
+- **File:** `fitness-class-schedule-block.tsx` (204 lines)
+- **Design:** Weekly class schedule with day tab switcher, class cards showing time, class name, instructor, level badge (Beginner/Intermediate/Advanced), spots remaining counter, and "Join Class" button. Level filter at top.
+- **Content:** Array of fitness classes per day
+- **Props:** `heading?: string`, `showInstructor?: boolean`, `showLevel?: boolean`, `allowBooking?: boolean`
+- **Data Status:** HARDCODED — 6 placeholder classes (Yoga Flow, HIIT Blast, etc.)
+- **Design Tokens:** 27
+- **Use Cases:** Fitness/gym listing page, class schedule, studio timetable
+
+#### Block #62: `petProfileCard`
+- **File:** `pet-profile-card-block.tsx` (223 lines)
+- **Design:** Pet profile cards with photo placeholder, name, breed, age, weight, vaccination status badge, service history, and vet info section. Layouts: grid (card grid), list (horizontal rows), detailed (expanded with full info).
+- **Content:** Array of pets with profiles
+- **Props:** `heading?: string`, `showServices?: boolean`, `showVetInfo?: boolean`, `layout?: 'grid'|'list'|'detailed'`
+- **Data Status:** HARDCODED — 3 placeholder pets (Luna/Golden Retriever, Milo/Tabby Cat, Rocky/German Shepherd)
+- **Design Tokens:** 60
+- **Use Cases:** Pet services listing, vet patient directory, pet store profiles
+
+#### Block #63: `classifiedAdCard`
+- **File:** `classified-ad-card-block.tsx` (187 lines)
+- **Design:** Classified ad cards with image, title, price, location, posted date, condition badge, and seller info. Category filter. Layouts: grid (card grid), list (horizontal rows). Contact seller button.
+- **Content:** Array of classified ads
+- **Props:** `heading?: string`, `category?: string`, `layout?: 'grid'|'list'`, `showContactInfo?: boolean`
+- **Data Status:** HARDCODED — 6 placeholder ads with prices and locations
+- **Design Tokens:** 25
+- **Use Cases:** Classifieds listing page, used items marketplace, community board
+
+#### Block #64: `crowdfundingProgress`
+- **File:** `crowdfunding-progress-block.tsx` (197 lines)
+- **Design:** Campaign progress widget with animated progress bar, percentage funded label, stats row (raised amount, backer count, days left), preset donation amount buttons ($25/$50/$100/$250/$500), custom amount input, and "Back This Project" CTA. Variants: full (complete detail), widget (sidebar card), minimal (single-line progress).
+- **Content:** Campaign progress data (goal, raised, backers, days)
+- **Props:** `campaignId?: string`, `showBackers?: boolean`, `showUpdates?: boolean`, `variant?: 'full'|'widget'|'minimal'`
+- **Data Status:** HARDCODED — placeholderCampaign (goal: $50,000, raised: $37,500, 842 backers, 18 days)
+- **Design Tokens:** 43
+- **Use Cases:** Crowdfunding campaign detail, campaign widget sidebar, campaign list cards
+
+#### Block #65: `donationCampaign`
+- **File:** `donation-campaign-block.tsx` (229 lines)
+- **Design:** Charity donation interface with campaign title, description, progress bar with percentage, impact statistics grid (Wells Built, People Served, Communities, Countries), preset donation buttons ($10/$25/$50/$100/$250), custom amount input, recurring donation toggle, and "Donate Now" CTA. Variants: full (all sections), compact (form + progress), widget (minimal card).
+- **Content:** Campaign data, impact stats, donation form
+- **Props:** `campaignId?: string`, `showImpact?: boolean`, `presetAmounts?: number[]`, `allowRecurring?: boolean`, `variant?: 'full'|'compact'|'widget'`
+- **Data Status:** HARDCODED — placeholderCampaign (goal: $200,000, raised: $128,500, 3,240 donors), 4 impact stats
+- **Design Tokens:** 41
+- **Use Cases:** Charity campaign detail, donation page, nonprofit landing
+
+#### Block #66: `freelancerProfile`
+- **File:** `freelancer-profile-block.tsx` (247 lines)
+- **Design:** Freelancer portfolio page with hero section (name, title, hourly rate, availability badge), skill tags grid, portfolio project grid (title + category), client reviews with star ratings, and key stats (completed projects, rating, review count). Layouts: full (page layout), card (compact card), sidebar (narrow profile).
+- **Content:** Freelancer profile data, portfolio items, reviews
+- **Props:** `heading?: string`, `showPortfolio?: boolean`, `showReviews?: boolean`, `showAvailability?: boolean`, `layout?: 'full'|'card'|'sidebar'`
+- **Data Status:** HARDCODED — "Jordan Rivera, Senior Full-Stack Developer" with $95/hr, 8 skills, 6 portfolio items, 3 reviews
+- **Design Tokens:** 60
+- **Use Cases:** Freelancer detail page, talent directory, skill marketplace
+
+#### Block #67: `parkingSpotFinder`
+- **File:** `parking-spot-finder-block.tsx` (220 lines)
+- **Design:** Parking spot browser with type filter buttons (All, Covered, Open Air, Valet, EV Charging), spot cards with spot number, type badge, floor info, rate display (hourly/daily/monthly), availability status indicator (green/red), and "Reserve" button. Variants: map (with map view), list (card list), hybrid (split view).
+- **Content:** Array of parking spots with rates and availability
+- **Props:** `locationId?: string`, `showMap?: boolean`, `showPricing?: boolean`, `filterByType?: ('covered'|'open'|'valet'|'ev_charging')[]`, `variant?: 'map'|'list'|'hybrid'`
+- **Data Status:** HARDCODED — 6 placeholder parking spots with rates ($4-$8/hr)
+- **Design Tokens:** 23
+- **Use Cases:** Parking zone detail page, parking search, facility parking section
+
+---
+
+### 10.8 B2B Blocks
+
+#### Block #68: `purchaseOrderForm`
+- **File:** `purchase-order-form-block.tsx` (278 lines)
+- **Design:** B2B purchase order creation form with line item table (product, quantity, unit price, total), add/remove item buttons, shipping address section, notes field, budget limit display, approval required checkbox, and submit button. Total calculation with tax.
+- **Content:** Product catalog for selection, shipping addresses, budget limits
+- **Props:** `heading?: string`, `requiresApproval?: boolean`, `showBudget?: boolean`, `defaultShipping?: string`
+- **Data Status:** PARTIALLY HARDCODED — form structure + 3 placeholder line items
+- **Design Tokens:** 45
+- **Use Cases:** B2B ordering page, wholesale purchase, procurement form
+
+#### Block #69: `bulkPricingTable`
+- **File:** `bulk-pricing-table-block.tsx` (277 lines)
+- **Design:** Volume discount table showing quantity tiers (1-9, 10-49, 50-99, 100+), unit price per tier, savings percentage, and order form. Calculator tool to estimate total based on quantity input. Request-a-quote CTA for custom quantities.
+- **Content:** Pricing tier data with quantity breaks
+- **Props:** `heading?: string`, `productId?: string`, `tiers?: {minQty, maxQty, unitPrice, savings}[]`, `showCalculator?: boolean`, `showQuoteRequest?: boolean`, `currency?: string`
+- **Data Status:** PROPS-DRIVEN — accepts tiers array
+- **Design Tokens:** 47
+- **Use Cases:** B2B product detail, wholesale pricing, volume deals page
+
+#### Block #70: `companyDashboard`
+- **File:** `company-dashboard-block.tsx` (185 lines)
+- **Design:** B2B company overview dashboard with company info card, spending summary, recent orders list, team member count, and budget utilization meter. Quick action buttons.
+- **Content:** Company data, spending data, team info
+- **Props:** `showSpending?: boolean`, `showTeam?: boolean`, `showOrders?: boolean`, `showBudget?: boolean`, `variant?: 'full'|'summary'`
+- **Data Status:** HARDCODED — placeholder company data
+- **Design Tokens:** 46
+- **Use Cases:** B2B company dashboard, procurement overview
+
+#### Block #71: `approvalWorkflow`
+- **File:** `approval-workflow-block.tsx` (287 lines)
+- **Design:** Multi-stage approval pipeline with status indicator per stage (pending/approved/rejected), approver info, comments, timestamps, and action buttons (approve/reject/escalate). Visual workflow diagram.
+- **Content:** Approval stages, approver data, comments
+- **Props:** `workflowId?: string`, `showTimeline?: boolean`, `allowComments?: boolean`, `stages?: Stage[]`
+- **Data Status:** HARDCODED — 4-stage placeholder workflow
+- **Design Tokens:** 63
+- **Use Cases:** B2B purchase approval, vendor application review, content approval
+
+---
+
+### 10.9 Admin/Manage Blocks
+
+#### Block #72: `manageStats`
+- **File:** `manage-stats-block.tsx` (61 lines)
+- **Design:** Summary stat cards in a row — each card shows metric label, value, and optional trend indicator. Compact admin-style layout.
+- **Content:** Array of stat items
+- **Props:** `heading?: string`, `stats?: {label, value, trend?}[]`
+- **Data Status:** PROPS-DRIVEN
+- **Design Tokens:** 1
+- **Use Cases:** Admin dashboard header, manage page summary
+
+#### Block #73: `manageRecentOrders`
+- **File:** `manage-recent-orders-block.tsx` (107 lines)
+- **Design:** Recent orders table with order ID, customer name, date, total, status badge (pending/processing/shipped/delivered), and action button. Compact admin format.
+- **Content:** Array of recent orders
+- **Props:** `heading?: string`, `orders?: Order[]`, `limit?: number`, `showStatus?: boolean`
+- **Data Status:** PROPS-DRIVEN
+- **Design Tokens:** 15
+- **Use Cases:** Admin dashboard, order management overview
+
+#### Block #74: `manageActivity`
+- **File:** `manage-activity-block.tsx` (74 lines)
+- **Design:** Activity feed with icon-coded entries (order=cart, product=tag, team=users, setting=gear). Each entry shows description, actor name, and relative timestamp. Color-coded icons per type.
+- **Content:** Array of activity entries
+- **Props:** `heading?: string`, `activities?: {type, description, actor?, timestamp}[]`, `limit?: number`
+- **Data Status:** PROPS-DRIVEN
+- **Design Tokens:** 9
+- **Use Cases:** Admin dashboard activity log, team activity feed
+
+#### Block #75: `promotionBanner`
+- **File:** `promotion-banner-block.tsx` (169 lines)
+- **Design:** Promotional banner with heading, description, discount code (with copy button), expiry date, and "Shop Now" CTA. Variants: bar (top/bottom sticky), card (inline container), floating (fixed position overlay). Dismissible with X button.
+- **Content:** Promotion details, discount code, expiry
+- **Props:** `heading?: string`, `description?: string`, `code?: string`, `expiresAt?: string`, `variant?: 'bar'|'card'|'floating'`, `dismissible?: boolean`, `ctaLabel?: string`, `ctaUrl?: string`
+- **Data Status:** PROPS-DRIVEN with defaults
+- **Design Tokens:** 11
+- **Use Cases:** Site-wide promotion, seasonal sale, new user discount
+
+#### Block #76: `testimonial`
+- **File:** `testimonial-block.tsx` (—)
+- **Design:** Customer testimonial cards with quote text, author name, title, company, avatar, and star rating. Layouts: grid (card grid), carousel (horizontal scroll), stacked (vertical).
+- **Content:** Array of testimonials
+- **Props:** `heading?: string`, `testimonials: {quote, author, title?, company?, avatar?, rating?}[]`, `layout?: 'grid'|'carousel'|'stacked'`, `columns?: 1|2|3`, `showRating?: boolean`
+- **Data Status:** PROPS-DRIVEN
+- **Use Cases:** Landing pages, service pages, course reviews, member stories
+
+#### Block #77: (Block registry count includes all 77 mapped entries including `testimonial`)
+
+---
+
+## Section 11: Block Assignment per Detail Page — Complete Mapping
+
+For each of the 50 detail pages, the following defines exactly which existing blocks should be imported and which new blocks are needed (marked as `[NEW]`).
+
+### Legend
+- **E** = Existing block, ready to use (Tier A)
+- **R** = Existing block, needs refactoring to accept real data (Tier B)
+- **N** = New block needed (does not exist yet)
+- **Breadcrumbs** = Every page needs a `[NEW] breadcrumbNav` block or keeps inline breadcrumb JSX
+
+---
+
+### 11.1 High-Value Verticals (Rich vertical-specific blocks available)
+
+#### Page 1: `auctions/$id.tsx` (262 lines)
+| Section | Block | Registry Key | Status | Notes |
+|---|---|---|---|---|
+| Hero image/banner | `hero` | hero | **E** | Pass item thumbnail as backgroundImage |
+| Image gallery | `imageGallery` | imageGallery | **E** | Pass item.images array |
+| Bidding interface | `auctionBidding` | auctionBidding | **R** | Needs: currentBid, bids[], endTime props |
+| Item description | `richText` | richText | **E** | Pass item.description |
+| Review section | `reviewList` | reviewList | **R** | Needs: reviews[] prop |
+| Recently viewed | `recentlyViewed` | recentlyViewed | **R** | Needs: products[] prop |
+| Seller info | `vendorProfile` | vendorProfile | **E** | Pass seller data |
+| **Missing:** | Bid notification toast | — | **N** | `[NEW] bidNotification` for real-time bid alerts |
+
+#### Page 2: `restaurants/$id.tsx` (229 lines)
+| Section | Block | Registry Key | Status | Notes |
+|---|---|---|---|---|
+| Hero image | `hero` | hero | **E** | Restaurant banner image |
+| Restaurant menu | `menuDisplay` | menuDisplay | **E** | categories prop — BEST integration target |
+| Image gallery | `imageGallery` | imageGallery | **E** | Ambiance photos |
+| Reviews | `reviewList` | reviewList | **R** | Customer reviews |
+| Map/location | `map` | map | **R** | Restaurant location |
+| Recently viewed | `recentlyViewed` | recentlyViewed | **R** | Recently browsed restaurants |
+| **Missing:** | Hours display | — | **N** | `[NEW] businessHours` block |
+| **Missing:** | Reservation form | — | **N** | `[NEW] reservationForm` block |
+
+#### Page 3: `healthcare/$id.tsx` (220 lines)
+| Section | Block | Registry Key | Status | Notes |
+|---|---|---|---|---|
+| Hero | `hero` | hero | **E** | Provider banner |
+| Provider list/detail | `healthcareProvider` | healthcareProvider | **R** | Needs: providers[] prop |
+| Appointment booking | `appointmentSlots` | appointmentSlots | **R** | Needs: timeSlots from API |
+| Booking calendar | `bookingCalendar` | bookingCalendar | **R** | Needs: timeSlots, bookedDates |
+| Reviews | `reviewList` | reviewList | **R** | Patient reviews |
+| FAQ | `faq` | faq | **E** | Healthcare FAQ items |
+| **Missing:** | Insurance checker | — | **N** | `[NEW] insuranceChecker` block |
+| **Missing:** | Credentials display | — | **N** | `[NEW] credentialsList` block (or use existing inline) |
+
+#### Page 4: `education/$id.tsx` (263 lines)
+| Section | Block | Registry Key | Status | Notes |
+|---|---|---|---|---|
+| Hero | `hero` | hero | **E** | Course banner |
+| Curriculum | `courseCurriculum` | courseCurriculum | **R** | Needs: modules[] prop |
+| Subscription plans | `subscriptionPlans` | subscriptionPlans | **E** | Learning plans |
+| Reviews | `reviewList` | reviewList | **R** | Student reviews |
+| Testimonials | `testimonial` | testimonial | **E** | Student success stories |
+| **Missing:** | Enrollment form | — | **N** | `[NEW] enrollmentForm` or use `bookingCta` |
+| **Missing:** | Instructor profile | — | **N** | `[NEW] instructorProfile` or adapt `freelancerProfile` |
+
+#### Page 5: `crowdfunding/$id.tsx` (248 lines)
+| Section | Block | Registry Key | Status | Notes |
+|---|---|---|---|---|
+| Hero | `hero` | hero | **E** | Campaign banner |
+| Progress + backing | `crowdfundingProgress` | crowdfundingProgress | **R** | Needs: campaign data prop |
+| Image gallery | `imageGallery` | imageGallery | **E** | Campaign images |
+| Description | `richText` | richText | **E** | Campaign description |
+| Reviews | `reviewList` | reviewList | **R** | Backer comments |
+| Stats | `stats` | stats | **E** | Campaign metrics |
+| Recently viewed | `recentlyViewed` | recentlyViewed | **R** | Other campaigns |
+
+#### Page 6: `charity/$id.tsx` (243 lines)
+| Section | Block | Registry Key | Status | Notes |
+|---|---|---|---|---|
+| Hero | `hero` | hero | **E** | Campaign banner |
+| Donation form | `donationCampaign` | donationCampaign | **R** | Needs: campaign data prop |
+| Impact stats | `stats` | stats | **E** | Impact numbers |
+| Progress bar | `crowdfundingProgress` | crowdfundingProgress | **R** | Donation progress |
+| Reviews | `reviewList` | reviewList | **R** | Donor testimonials |
+| FAQ | `faq` | faq | **E** | Donation FAQ |
+
+#### Page 7: `events/$id.tsx` (319 lines)
+| Section | Block | Registry Key | Status | Notes |
+|---|---|---|---|---|
+| Hero | `hero` | hero | **E** | Event banner |
+| Schedule | `eventSchedule` | eventSchedule | **R** | Needs: days/sessions prop |
+| Event list | `eventList` | eventList | **E** | Related events |
+| Map/venue | `map` | map | **R** | Venue location |
+| Reviews | `reviewList` | reviewList | **R** | Attendee reviews |
+| Newsletter | `newsletter` | newsletter | **R** | Event updates signup |
+| **Missing:** | Ticket selector | — | **N** | `[NEW] ticketSelector` block |
+
+#### Page 8: `fitness/$id.tsx` (228 lines)
+| Section | Block | Registry Key | Status | Notes |
+|---|---|---|---|---|
+| Hero | `hero` | hero | **E** | Gym/studio banner |
+| Class schedule | `fitnessClassSchedule` | fitnessClassSchedule | **R** | Needs: classes[] prop |
+| Membership tiers | `membershipTiers` | membershipTiers | **E** | Gym membership plans |
+| Testimonials | `testimonial` | testimonial | **E** | Member stories |
+| Reviews | `reviewList` | reviewList | **R** | Gym reviews |
+| Booking CTA | `bookingCta` | bookingCTA | **E** | "Book a Trial" |
+
+#### Page 9: `freelance/$id.tsx` (246 lines)
+| Section | Block | Registry Key | Status | Notes |
+|---|---|---|---|---|
+| Hero | `hero` | hero | **E** | Freelancer banner |
+| Profile | `freelancerProfile` | freelancerProfile | **R** | Needs: freelancer data prop |
+| Reviews | `reviewList` | reviewList | **R** | Client reviews |
+| **Missing:** | Hire form / contact | — | **N** | `[NEW] hireForm` or use `contactForm` |
+| **Missing:** | Service packages | — | **N** | Adapt `pricing` block |
+
+#### Page 10: `automotive/$id.tsx` (205 lines)
+| Section | Block | Registry Key | Status | Notes |
+|---|---|---|---|---|
+| Hero | `hero` | hero | **E** | Vehicle banner |
+| Vehicle specs | `vehicleListing` | vehicleListing | **R** | Needs: vehicles[] prop (single item) |
+| Image gallery | `imageGallery` | imageGallery | **E** | Vehicle photos |
+| Comparison | `comparisonTable` | comparisonTable | **E** | Spec comparison |
+| Reviews | `reviewList` | reviewList | **R** | Vehicle reviews |
+| **Missing:** | Financing calculator | — | **N** | `[NEW] financingCalculator` block |
+
+#### Page 11: `real-estate/$id.tsx` (213 lines)
+| Section | Block | Registry Key | Status | Notes |
+|---|---|---|---|---|
+| Hero | `hero` | hero | **E** | Property banner |
+| Property details | `propertyListing` | propertyListing | **R** | Needs: properties[] prop |
+| Image gallery | `imageGallery` | imageGallery | **E** | Property photos |
+| Map | `map` | map | **R** | Property location |
+| Contact form | `contactForm` | contactForm | **R** | Inquiry form |
+| **Missing:** | Mortgage calculator | — | **N** | `[NEW] mortgageCalculator` block |
+| **Missing:** | Virtual tour | — | **N** | Use `videoEmbed` block |
+
+#### Page 12: `parking/$id.tsx` (245 lines)
+| Section | Block | Registry Key | Status | Notes |
+|---|---|---|---|---|
+| Hero | `hero` | hero | **E** | Parking zone banner |
+| Spot finder | `parkingSpotFinder` | parkingSpotFinder | **R** | Needs: spots[] prop |
+| Map | `map` | map | **R** | Parking location |
+| Pricing | `pricing` | pricing | **E** | Parking rates |
+| Reviews | `reviewList` | reviewList | **R** | User reviews |
+
+#### Page 13: `classifieds/$id.tsx` (222 lines)
+| Section | Block | Registry Key | Status | Notes |
+|---|---|---|---|---|
+| Hero | `hero` | hero | **E** | Ad image |
+| Ad detail | `classifiedAdCard` | classifiedAdCard | **R** | Needs: ads[] prop |
+| Image gallery | `imageGallery` | imageGallery | **E** | Item photos |
+| Contact form | `contactForm` | contactForm | **R** | Seller contact |
+| Map | `map` | map | **R** | Item location |
+| **Missing:** | Safety tips | — | **N** | Use `faq` block |
+
+#### Page 14: `pet-services/$id.tsx` (246 lines)
+| Section | Block | Registry Key | Status | Notes |
+|---|---|---|---|---|
+| Hero | `hero` | hero | **E** | Pet service banner |
+| Pet profile | `petProfileCard` | petProfileCard | **R** | Needs: pets[] prop |
+| Service list | `serviceList` | serviceList | **E** | Available pet services |
+| Booking CTA | `bookingCta` | bookingCTA | **E** | "Book Service" |
+| Reviews | `reviewList` | reviewList | **R** | Pet owner reviews |
+
+#### Page 15: `rentals/$id.tsx` (288 lines)
+| Section | Block | Registry Key | Status | Notes |
+|---|---|---|---|---|
+| Hero | `hero` | hero | **E** | Rental item banner |
+| Rental calendar | `rentalCalendar` | rentalCalendar | **R** | Needs: availability prop |
+| Pricing | `pricing` | pricing | **E** | Rental rates |
+| Image gallery | `imageGallery` | imageGallery | **E** | Item photos |
+| Reviews | `reviewList` | reviewList | **R** | Renter reviews |
+
+---
+
+### 11.2 Service-Based Verticals
+
+#### Page 16: `bookings/$id.tsx` (249 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `bookingCalendar` | bookingCalendar | **R** |
+| `appointmentSlots` | appointmentSlots | **R** |
+| `bookingCta` | bookingCTA | **E** |
+| `reviewList` | reviewList | **R** |
+| `serviceList` | serviceList | **E** |
+
+#### Page 17: `legal/$id.tsx` (249 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `serviceList` | serviceList | **E** — Practice areas |
+| `bookingCalendar` | bookingCalendar | **R** — Consultation scheduling |
+| `faq` | faq | **E** — Legal FAQ |
+| `contactForm` | contactForm | **R** |
+| `reviewList` | reviewList | **R** |
+
+#### Page 18: `insurance/$id.tsx` (237 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `serviceList` | serviceList | **E** — Insurance plans |
+| `comparisonTable` | comparisonTable | **E** — Plan comparison |
+| `faq` | faq | **E** |
+| `contactForm` | contactForm | **R** |
+| `reviewList` | reviewList | **R** |
+
+#### Page 19: `government/$id.tsx` (247 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `serviceList` | serviceList | **E** — Government services |
+| `timeline` | timeline | **E** — Processing steps |
+| `contactForm` | contactForm | **R** |
+| `faq` | faq | **E** |
+
+#### Page 20: `travel/$id.tsx` (286 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `imageGallery` | imageGallery | **E** — Destination photos |
+| `bookingCalendar` | bookingCalendar | **R** — Check availability |
+| `reviewList` | reviewList | **R** |
+| `map` | map | **R** — Destination location |
+| `pricing` | pricing | **E** — Package prices |
+
+---
+
+### 11.3 Commerce Verticals
+
+#### Page 21: `subscriptions/$id.tsx` (241 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `subscriptionPlans` | subscriptionPlans | **E** |
+| `comparisonTable` | comparisonTable | **E** |
+| `faq` | faq | **E** |
+| `reviewList` | reviewList | **R** |
+
+#### Page 22: `memberships/$id.tsx` (185 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `membershipTiers` | membershipTiers | **E** |
+| `featureGrid` | featureGrid | **E** — Member benefits |
+| `testimonial` | testimonial | **E** |
+| `faq` | faq | **E** |
+
+#### Page 23: `loyalty-program/$id.tsx` (199 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `loyaltyDashboard` | loyaltyDashboard | **R** — Needs user data |
+| `loyaltyPointsDisplay` | loyaltyPointsDisplay | **R** |
+| `membershipTiers` | membershipTiers | **E** — Tier overview |
+| `referralProgram` | referralProgram | **R** |
+
+#### Page 24: `flash-deals/$id.tsx` (216 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `flashSaleCountdown` | flashSaleCountdown | **R** — Needs endTime, products |
+| `productDetail` | productDetail | **R** |
+| `reviewList` | reviewList | **R** |
+
+#### Page 25: `gift-cards-shop/$id.tsx` (191 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `giftCardDisplay` | giftCardDisplay | **R** — Needs denominations |
+| `reviewList` | reviewList | **R** |
+
+#### Page 26: `bundles/$id.tsx` (210 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `productGrid` | productGrid | **E** — Bundle items |
+| `pricing` | pricing | **E** — Bundle vs individual |
+| `reviewList` | reviewList | **R** |
+
+#### Page 27: `digital/$id.tsx` (181 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `productDetail` | productDetail | **R** — Digital product detail |
+| `reviewList` | reviewList | **R** |
+| **Missing:** | Download/license info | **N** | `[NEW] digitalDelivery` block |
+
+#### Page 28: `grocery/$id.tsx` (249 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `productDetail` | productDetail | **R** |
+| `categoryGrid` | categoryGrid | **E** — Related categories |
+| `reviewList` | reviewList | **R** |
+
+---
+
+### 11.4 Marketplace Variants
+
+#### Page 29: `vendors/$id.tsx` (293 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `vendorProfile` | vendorProfile | **E** |
+| `vendorProducts` | vendorProducts | **R** — Needs vendor products |
+| `reviewList` | reviewList | **R** |
+| `contactForm` | contactForm | **R** |
+
+#### Page 30: `affiliate/$id.tsx` (180 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `referralProgram` | referralProgram | **R** |
+| `stats` | stats | **E** — Program stats |
+| `faq` | faq | **E** |
+
+#### Page 31: `social-commerce/$id.tsx` (225 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `socialProof` | socialProof | **R** — Social commerce feed |
+| `productGrid` | productGrid | **E** |
+| `reviewList` | reviewList | **R** |
+
+---
+
+### 11.5 Financial & Credit Verticals
+
+#### Page 32: `financial/$id.tsx` (245 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `serviceList` | serviceList | **E** |
+| `comparisonTable` | comparisonTable | **E** |
+| `faq` | faq | **E** |
+| `contactForm` | contactForm | **R** |
+
+#### Page 33: `credit/$id.tsx` (259 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `pricing` | pricing | **E** — Credit plans |
+| `comparisonTable` | comparisonTable | **E** |
+| `faq` | faq | **E** |
+| `timeline` | timeline | **E** — Application process |
+| `reviewList` | reviewList | **R** |
+
+#### Page 34: `warranties/$id.tsx` (257 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `serviceList` | serviceList | **E** — Warranty options |
+| `comparisonTable` | comparisonTable | **E** — Coverage comparison |
+| `faq` | faq | **E** |
+| `reviewList` | reviewList | **R** |
+
+---
+
+### 11.6 B2B & Wholesale Verticals
+
+#### Page 35: `b2b/$id.tsx` (242 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `purchaseOrderForm` | purchaseOrderForm | **R** |
+| `bulkPricingTable` | bulkPricingTable | **E** |
+| `companyDashboard` | companyDashboard | **R** |
+| `reviewList` | reviewList | **R** |
+
+#### Page 36: `volume-deals/$id.tsx` (225 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `bulkPricingTable` | bulkPricingTable | **E** |
+| `productDetail` | productDetail | **R** |
+| `reviewList` | reviewList | **R** |
+
+#### Page 37: `white-label/$id.tsx` (213 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `pricing` | pricing | **E** |
+| `featureGrid` | featureGrid | **E** |
+| `faq` | faq | **E** |
+| `contactForm` | contactForm | **R** |
+
+#### Page 38: `white-label-shop/$id.tsx` (239 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `productDetail` | productDetail | **R** |
+| `reviewList` | reviewList | **R** |
+
+---
+
+### 11.7 Remaining Detail Pages
+
+#### Page 39: `campaigns/$id.tsx` (181 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `crowdfundingProgress` | crowdfundingProgress | **R** |
+| `richText` | richText | **E** |
+| `reviewList` | reviewList | **R** |
+
+#### Page 40: `consignment/$id.tsx` (213 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `productDetail` | productDetail | **R** |
+| `pricing` | pricing | **E** |
+| `reviewList` | reviewList | **R** |
+
+#### Page 41: `consignment-shop/$id.tsx` (212 lines)
+Same as consignment — duplicate page, recommend merging.
+
+#### Page 42: `dropshipping/$id.tsx` (205 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `productDetail` | productDetail | **R** |
+| `vendorProfile` | vendorProfile | **E** |
+| `reviewList` | reviewList | **R** |
+
+#### Page 43: `dropshipping-marketplace/$id.tsx` (211 lines)
+Same blocks as dropshipping — duplicate page, recommend merging.
+
+#### Page 44: `newsletter/$id.tsx` (259 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `newsletter` | newsletter | **R** |
+| `blogPost` | blogPost | **R** — Newsletter content |
+| `reviewList` | reviewList | **R** |
+
+#### Page 45: `print-on-demand/$id.tsx` (217 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `productDetail` | productDetail | **R** |
+| `imageGallery` | imageGallery | **E** — Design previews |
+| `reviewList` | reviewList | **R** |
+| **Missing:** | Design customizer | **N** | `[NEW] designCustomizer` block |
+
+#### Page 46: `print-on-demand-shop/$id.tsx` (207 lines)
+Same as print-on-demand — duplicate page.
+
+#### Page 47: `trade-in/$id.tsx` (219 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `productDetail` | productDetail | **R** — Item being traded |
+| `pricing` | pricing | **E** — Trade-in value |
+| `timeline` | timeline | **E** — Trade-in process |
+| `faq` | faq | **E** |
+
+#### Page 48: `try-before-you-buy/$id.tsx` (201 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `productDetail` | productDetail | **R** |
+| `timeline` | timeline | **E** — Trial process |
+| `faq` | faq | **E** |
+| `reviewList` | reviewList | **R** |
+
+#### Page 49: `quotes/$id.tsx` (74 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `contactForm` | contactForm | **R** — Quote request form |
+| `serviceList` | serviceList | **E** — Available services |
+| **Missing:** | Quote calculator | **N** | `[NEW] quoteCalculator` block |
+
+#### Page 50: `places/$id.tsx` (83 lines)
+| Block | Registry Key | Status |
+|---|---|---|
+| `hero` | hero | **E** |
+| `imageGallery` | imageGallery | **E** — Place photos |
+| `map` | map | **R** — Place location |
+| `reviewList` | reviewList | **R** |
+| `contactForm` | contactForm | **R** |
+
+---
+
+## Section 12: Summary — Block Coverage Statistics
+
+### Existing Blocks Coverage
+
+| Metric | Count |
+|---|---|
+| **Total detail pages** | 50 |
+| **Existing blocks that can serve detail pages** | 42 of 77 |
+| **Blocks ready to use immediately (Tier A)** | 15 |
+| **Blocks needing refactoring (Tier B)** | 27 |
+| **Admin-only blocks (Tier C, not for detail pages)** | 11 |
+| **Pages fully coverable with existing blocks** | 50 (all pages) |
+| **New blocks needed** | 8 specialized blocks |
+
+### New Blocks Needed
+
+| New Block | For Vertical(s) | Priority |
+|---|---|---|
+| `[NEW] breadcrumbNav` | All 50 pages (or keep inline) | P2 |
+| `[NEW] businessHours` | restaurants, fitness, healthcare | P1 |
+| `[NEW] reservationForm` | restaurants, travel | P1 |
+| `[NEW] ticketSelector` | events | P1 |
+| `[NEW] insuranceChecker` | healthcare | P2 |
+| `[NEW] financingCalculator` | automotive, real-estate | P2 |
+| `[NEW] designCustomizer` | print-on-demand | P3 |
+| `[NEW] quoteCalculator` | quotes | P3 |
+
+### Refactoring Priority by Impact
+
+| Priority | Block Count | Impact |
+|---|---|---|
+| **P0 — Critical (used on 5+ pages)** | `reviewList`, `recentlyViewed`, `productDetail` | 3 blocks → unblocks 40+ pages |
+| **P1 — High (vertical-specific)** | `auctionBidding`, `crowdfundingProgress`, `donationCampaign`, `menuDisplay`, `bookingCalendar`, `healthcareProvider`, `courseCurriculum`, `eventSchedule` | 8 blocks → unblocks 8 key verticals |
+| **P2 — Medium** | `freelancerProfile`, `vehicleListing`, `fitnessClassSchedule`, `parkingSpotFinder`, `petProfileCard`, `classifiedAdCard`, `propertyListing`, `rentalCalendar` | 8 blocks → unblocks 8 more verticals |
+| **P3 — Low** | `appointmentSlots`, `providerSchedule`, `resourceAvailability`, `flashSaleCountdown`, `giftCardDisplay`, `socialProof`, `map`, `contactForm`, `newsletter` | 9 blocks → polish and completeness |
+
+### Block Import Count per Page
+
+| Pages with this many blocks | Count | Example |
+|---|---|---|
+| 6+ blocks | 15 pages | healthcare (6), restaurants (6), events (6) |
+| 4-5 blocks | 25 pages | crowdfunding (5), fitness (5), legal (5) |
+| 3 blocks | 10 pages | campaigns (3), digital (3) |
+
+---
+
+## Section 13: Missing Blocks — Design Specifications
+
+### `[NEW] breadcrumbNav` Block
+- **Design:** Horizontal path: Home > Vertical > Item Name, with separator chevrons, truncation on long names
+- **Props:** `items: {label, href}[]`, `separator?: '/'|'>'|'·'`
+- **Lines estimate:** ~40 lines
+- **Design tokens:** `text-ds-muted-foreground`, `hover:text-ds-foreground`, `bg-ds-card`, `border-ds-border`
+
+### `[NEW] businessHours` Block
+- **Design:** Day-of-week list with hours, current status indicator (Open/Closed with green/red dot)
+- **Props:** `hours: {day, open, close}[]`, `showCurrentStatus?: boolean`
+- **Lines estimate:** ~60 lines
+- **Design tokens:** `text-ds-foreground`, `text-ds-muted-foreground`, `bg-ds-success`, `bg-ds-destructive`
+
+### `[NEW] reservationForm` Block
+- **Design:** Date picker, party size selector, time slot selector, name/email/phone fields, "Reserve" button
+- **Props:** `availableSlots?: TimeSlot[]`, `maxPartySize?: number`, `restaurantId?: string`
+- **Lines estimate:** ~120 lines
+
+### `[NEW] ticketSelector` Block
+- **Design:** Ticket type cards (General, VIP, Early Bird) with price, quantity picker, and "Buy Tickets" button
+- **Props:** `tickets: {type, price, available, description}[]`, `eventId?: string`, `maxPerOrder?: number`
+- **Lines estimate:** ~100 lines
+
+### `[NEW] insuranceChecker` Block
+- **Design:** Dropdown to select insurance provider, verification status display
+- **Props:** `acceptedInsurance: string[]`, `providerId?: string`
+- **Lines estimate:** ~50 lines
+
+### `[NEW] financingCalculator` Block
+- **Design:** Sliders for price/down-payment/term, monthly payment calculation display
+- **Props:** `price: number`, `minDown?: number`, `rates?: {term, apr}[]`
+- **Lines estimate:** ~100 lines
+
+### `[NEW] designCustomizer` Block
+- **Design:** Canvas preview area, color picker, text input, upload button, product template selector
+- **Props:** `templates: {id, name, preview}[]`, `productId?: string`
+- **Lines estimate:** ~150 lines
+
+### `[NEW] quoteCalculator` Block
+- **Design:** Service selection checkboxes, quantity inputs, estimated total display, "Request Quote" button
+- **Props:** `services: {id, name, basePrice}[]`, `allowCustom?: boolean`
+- **Lines estimate:** ~100 lines
