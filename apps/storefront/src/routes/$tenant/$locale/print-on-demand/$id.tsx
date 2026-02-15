@@ -2,6 +2,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
 import { sdk } from "@/lib/utils/sdk"
+import { normalizeItem } from "@/lib/utils/normalize-item"
 import { useState } from "react"
 
 export const Route = createFileRoute("/$tenant/$locale/print-on-demand/$id")({
@@ -20,7 +21,7 @@ function PrintOnDemandDetailPage() {
         `/store/print-on-demand/${id}`,
         { method: "GET", credentials: "include" }
       )
-      return response.product || response
+      return normalizeItem(response.product || response)
     },
   })
 

@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { sdk } from "@/lib/utils/sdk";
 import { QuoteDetails } from "@/components/quotes/quote-details";
+import { normalizeItem } from "@/lib/utils/normalize-item";
 
 interface QuoteItem {
   id: string;
@@ -44,7 +45,7 @@ function QuoteDetailPage() {
       const response = await sdk.client.fetch<{ quote: Quote }>(`/store/quotes/${id}`, {
         credentials: "include",
       });
-      return response;
+      return { ...response, quote: response.quote ? normalizeItem(response.quote) : undefined };
     },
   });
 

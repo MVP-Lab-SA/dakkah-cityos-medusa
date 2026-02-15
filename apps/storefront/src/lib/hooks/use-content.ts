@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
+import { normalizeItem } from "@/lib/utils/normalize-item"
 
 export interface BlogPost {
   id: string
@@ -180,7 +181,7 @@ export function usePOI(id: string) {
     queryKey: [...contentKeys.all, "poi", id],
     queryFn: async () => {
       const response = await fetchApi<{ poi: POI }>(`/store/content/pois/${id}`)
-      return response.poi
+      return normalizeItem(response.poi)
     },
     enabled: !!id,
     staleTime: 5 * 60 * 1000,

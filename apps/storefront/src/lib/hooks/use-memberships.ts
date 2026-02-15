@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
+import { normalizeItem } from "@/lib/utils/normalize-item"
 
 export interface MembershipBenefit {
   id: string
@@ -67,7 +68,7 @@ export function useMembership(membershipId: string) {
       const response = await fetchApi<{ item: MembershipTier }>(
         `/store/memberships/${membershipId}`
       )
-      return response.item
+      return normalizeItem(response.item)
     },
     enabled: !!membershipId,
   })

@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
+import { normalizeItem } from "@/lib/utils/normalize-item"
 
 export interface AuctionItem {
   id: string
@@ -42,7 +43,7 @@ export function useAuction(auctionId: string) {
   return useQuery({
     queryKey: ["auction", auctionId],
     queryFn: async () => {
-      return null as AuctionItem | null
+      return normalizeItem(null) as AuctionItem | null
     },
     enabled: !!auctionId,
   })

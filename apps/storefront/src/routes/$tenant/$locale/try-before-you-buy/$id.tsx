@@ -2,6 +2,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
 import { sdk } from "@/lib/utils/sdk"
+import { normalizeItem } from "@/lib/utils/normalize-item"
 
 export const Route = createFileRoute("/$tenant/$locale/try-before-you-buy/$id")({
   component: TryBeforeYouBuyDetailPage,
@@ -18,7 +19,7 @@ function TryBeforeYouBuyDetailPage() {
         `/store/products/${id}`,
         { method: "GET", credentials: "include" }
       )
-      return response.product || response
+      return normalizeItem(response.product || response)
     },
   })
 

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { queryKeys } from "@/lib/utils/query-keys"
+import { normalizeItem } from "@/lib/utils/normalize-item"
 
 export interface Campaign {
   id: string
@@ -142,7 +143,7 @@ export function useCampaign(id: string) {
       const response = await fetchApi<{ campaign: Campaign }>(
         `/store/crowdfunding/${id}`
       )
-      return response.campaign
+      return normalizeItem(response.campaign)
     },
     enabled: !!id,
   })

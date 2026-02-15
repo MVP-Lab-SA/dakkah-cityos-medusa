@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
+import { normalizeItem } from "@/lib/utils/normalize-item"
 
 export interface RentalItem {
   id: string
@@ -58,7 +59,7 @@ export function useRental(rentalId: string) {
     queryKey: ["rental", rentalId],
     queryFn: async () => {
       const response = await fetchApi<{ item: RentalItem }>(`/store/rentals/${rentalId}`)
-      return response.item
+      return normalizeItem(response.item)
     },
     enabled: !!rentalId,
   })

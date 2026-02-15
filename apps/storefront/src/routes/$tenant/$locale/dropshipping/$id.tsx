@@ -2,6 +2,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
 import { sdk } from "@/lib/utils/sdk"
+import { normalizeItem } from "@/lib/utils/normalize-item"
 
 export const Route = createFileRoute("/$tenant/$locale/dropshipping/$id")({
   component: DropshippingDetailPage,
@@ -18,7 +19,7 @@ function DropshippingDetailPage() {
         `/store/dropshipping/${id}`,
         { method: "GET", credentials: "include" }
       )
-      return response.supplier || response
+      return normalizeItem(response.supplier || response)
     },
   })
 

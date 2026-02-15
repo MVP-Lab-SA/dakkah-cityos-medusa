@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { queryKeys } from "@/lib/utils/query-keys"
+import { normalizeItem } from "@/lib/utils/normalize-item"
 
 export interface DigitalProduct {
   id: string
@@ -89,7 +90,7 @@ export function useDigitalProduct(id: string) {
       const response = await fetchApi<{ digital_product: DigitalProduct }>(
         `/store/digital-products/${id}`
       )
-      return response.digital_product
+      return normalizeItem(response.digital_product)
     },
     enabled: !!id,
   })

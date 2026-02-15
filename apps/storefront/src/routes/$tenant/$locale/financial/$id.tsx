@@ -2,6 +2,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useQuery } from "@tanstack/react-query"
 import { sdk } from "@/lib/utils/sdk"
+import { normalizeItem } from "@/lib/utils/normalize-item"
 
 export const Route = createFileRoute("/$tenant/$locale/financial/$id")({
   component: FinancialDetailPage,
@@ -18,7 +19,7 @@ function FinancialDetailPage() {
         `/store/financial-products/${id}`,
         { method: "GET", credentials: "include" }
       )
-      return response.item || response
+      return normalizeItem(response.item || response)
     },
   })
 

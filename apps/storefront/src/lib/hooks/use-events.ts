@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
+import { normalizeItem } from "@/lib/utils/normalize-item"
 
 async function fetchEvents(filters?: Record<string, unknown>) {
   const params = new URLSearchParams()
@@ -50,7 +51,7 @@ export function useEvent(eventId: string) {
       })
       if (!resp.ok) throw new Error(`Event API error: ${resp.status}`)
       const data = await resp.json()
-      return data
+      return normalizeItem(data)
     },
     enabled: !!eventId,
   })
