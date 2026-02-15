@@ -29,11 +29,7 @@ const typeColors: Record<string, string> = {
   setting: "bg-ds-accent text-ds-muted-foreground",
 }
 
-export const ManageActivityBlock: React.FC<ManageActivityBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const ManageActivityBlock: React.FC<ManageActivityBlockProps> = ({
   heading,
   activities = [],
   limit = 10,

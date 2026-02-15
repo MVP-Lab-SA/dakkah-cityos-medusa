@@ -44,11 +44,7 @@ const nextTier = 'Gold'
 const pointsToNext = 650
 const tierProgress = 74
 
-export const LoyaltyDashboardBlock: React.FC<LoyaltyDashboardBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const LoyaltyDashboardBlock: React.FC<LoyaltyDashboardBlockProps> = ({
   showTierProgress = true,
   showHistory = true,
   showRewards = true,

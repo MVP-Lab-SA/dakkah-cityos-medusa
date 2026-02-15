@@ -34,11 +34,7 @@ interface PricingBlockProps {
   locale?: string
 }
 
-export const PricingBlock: React.FC<PricingBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const PricingBlock: React.FC<PricingBlockProps> = ({
   heading,
   description,
   plans,
@@ -47,6 +43,8 @@ export const PricingBlock: React.FC<PricingBlockProps> = (props) => {
   locale = 'en',
 }) => {
   const [isYearly, setIsYearly] = React.useState(false)
+
+  if (!plans || !plans.length) return null
 
   const gridCols: Record<number, string> = {
     1: 'grid-cols-1 max-w-md',

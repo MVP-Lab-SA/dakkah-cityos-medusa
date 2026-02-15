@@ -61,11 +61,7 @@ function isPast(dateStr: string): boolean {
   }
 }
 
-export const EventListBlock: React.FC<EventListBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const EventListBlock: React.FC<EventListBlockProps> = ({
   heading,
   description,
   events,

@@ -32,11 +32,7 @@ const placeholderAds: ClassifiedAd[] = [
 
 const categories = ['All', 'Furniture', 'Electronics', 'Housing', 'Sports', 'Services', 'Pets', 'General']
 
-export const ClassifiedAdCardBlock: React.FC<ClassifiedAdCardBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const ClassifiedAdCardBlock: React.FC<ClassifiedAdCardBlockProps> = ({
   heading = 'Classifieds',
   category: initialCategory,
   layout: initialLayout = 'grid',

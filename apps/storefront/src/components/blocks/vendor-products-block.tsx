@@ -8,11 +8,7 @@ interface VendorProductsBlockProps {
   sortBy?: 'newest' | 'price-asc' | 'price-desc' | 'popular'
 }
 
-export const VendorProductsBlock: React.FC<VendorProductsBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const VendorProductsBlock: React.FC<VendorProductsBlockProps> = ({
   vendorId,
   limit = 12,
   showFilters = true,

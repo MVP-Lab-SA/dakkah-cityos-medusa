@@ -35,16 +35,14 @@ const gridColsMap: Record<number, string> = {
   4: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4",
 }
 
-export const ManageStatsBlock: React.FC<ManageStatsBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const ManageStatsBlock: React.FC<ManageStatsBlockProps> = ({
   heading,
   stats,
   columns = 4,
   locale = "en",
 }) => {
+  if (!stats || !stats.length) return null
+
   const mappedStats = stats.map((stat) => ({
     icon: stat.icon ? iconMap[stat.icon] || null : null,
     label: stat.label,

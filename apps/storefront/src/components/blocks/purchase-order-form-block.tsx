@@ -26,11 +26,7 @@ const approvalChain = [
   { name: 'VP of Operations', status: 'pending' as const },
 ]
 
-export const PurchaseOrderFormBlock: React.FC<PurchaseOrderFormBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const PurchaseOrderFormBlock: React.FC<PurchaseOrderFormBlockProps> = ({
   heading = 'Create Purchase Order',
   requiresApproval = true,
   showBudget = true,

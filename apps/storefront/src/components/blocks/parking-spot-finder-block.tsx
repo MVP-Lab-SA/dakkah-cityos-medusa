@@ -45,11 +45,7 @@ const typeIcons: Record<string, string> = {
 
 const typeFilters = ['All', 'covered', 'open', 'valet', 'ev_charging']
 
-export const ParkingSpotFinderBlock: React.FC<ParkingSpotFinderBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const ParkingSpotFinderBlock: React.FC<ParkingSpotFinderBlockProps> = ({
   locationId,
   showMap = true,
   showPricing = true,

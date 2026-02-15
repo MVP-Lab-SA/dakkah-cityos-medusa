@@ -7,11 +7,7 @@ interface ContentBlockProps {
   backgroundColor?: string
 }
 
-export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const ContentBlock: React.FC<ContentBlockProps> = ({
   content,
   layout = 'single',
   backgroundColor,

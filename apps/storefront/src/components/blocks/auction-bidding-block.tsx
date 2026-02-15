@@ -21,11 +21,7 @@ const placeholderBids: BidHistoryEntry[] = [
   { bidder: 'User***33', amount: 950, time: '25 min ago' },
 ]
 
-export const AuctionBiddingBlock: React.FC<AuctionBiddingBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const AuctionBiddingBlock: React.FC<AuctionBiddingBlockProps> = ({
   auctionId,
   showHistory = true,
   showCountdown = true,

@@ -7,11 +7,7 @@ interface PayoutHistoryBlockProps {
   columns?: string[]
 }
 
-export const PayoutHistoryBlock: React.FC<PayoutHistoryBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const PayoutHistoryBlock: React.FC<PayoutHistoryBlockProps> = ({
   vendorId,
   limit = 10,
   showFilters = true,

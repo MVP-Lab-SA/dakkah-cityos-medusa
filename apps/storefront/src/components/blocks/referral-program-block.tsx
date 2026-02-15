@@ -25,11 +25,7 @@ const leaderboard = [
 
 const referralLink = 'https://store.example.com/ref/ABC123XYZ'
 
-export const ReferralProgramBlock: React.FC<ReferralProgramBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const ReferralProgramBlock: React.FC<ReferralProgramBlockProps> = ({
   heading = 'Refer & Earn',
   description = 'Share the love with your business partners. When they sign up and make their first purchase, you both earn rewards!',
   rewardType = 'credit',

@@ -46,11 +46,7 @@ const statusColors: Record<string, string> = {
   'overdue': 'bg-ds-destructive/15 text-ds-destructive',
 }
 
-export const PetProfileCardBlock: React.FC<PetProfileCardBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const PetProfileCardBlock: React.FC<PetProfileCardBlockProps> = ({
   heading = 'Pet Profile',
   showServices = true,
   showVetInfo = true,

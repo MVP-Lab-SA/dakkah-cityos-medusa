@@ -11,11 +11,7 @@ interface ManageRecentOrdersBlockProps {
   locale?: string
 }
 
-export const ManageRecentOrdersBlock: React.FC<ManageRecentOrdersBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const ManageRecentOrdersBlock: React.FC<ManageRecentOrdersBlockProps> = ({
   heading,
   limit = 5,
   showStatus = true,

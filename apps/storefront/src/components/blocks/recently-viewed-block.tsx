@@ -6,11 +6,7 @@ interface RecentlyViewedBlockProps {
   layout?: 'grid' | 'carousel'
 }
 
-export const RecentlyViewedBlock: React.FC<RecentlyViewedBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const RecentlyViewedBlock: React.FC<RecentlyViewedBlockProps> = ({
   heading = 'Recently Viewed',
   limit = 8,
   layout = 'carousel',

@@ -6,11 +6,7 @@ interface CartSummaryBlockProps {
   showEstimatedShipping?: boolean
 }
 
-export const CartSummaryBlock: React.FC<CartSummaryBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const CartSummaryBlock: React.FC<CartSummaryBlockProps> = ({
   variant = 'full',
   showCoupon = true,
   showEstimatedShipping = true,

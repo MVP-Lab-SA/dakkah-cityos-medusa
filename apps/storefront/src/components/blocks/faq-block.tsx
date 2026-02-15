@@ -14,11 +14,7 @@ interface FaqBlockProps {
   layout?: 'accordion' | 'two-column' | 'categorized'
 }
 
-export const FaqBlock: React.FC<FaqBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const FaqBlock: React.FC<FaqBlockProps> = ({
   heading,
   description,
   items,

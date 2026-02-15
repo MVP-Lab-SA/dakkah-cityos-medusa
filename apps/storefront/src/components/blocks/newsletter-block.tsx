@@ -17,11 +17,7 @@ const bgStyles: Record<string, string> = {
   muted: 'bg-ds-muted text-ds-muted-foreground',
 }
 
-export const NewsletterBlock: React.FC<NewsletterBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const NewsletterBlock: React.FC<NewsletterBlockProps> = ({
   heading,
   description,
   placeholder,

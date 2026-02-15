@@ -35,17 +35,15 @@ const statusColors: Record<string, { dot: string; line: string; text: string }> 
   },
 }
 
-export const TimelineBlock: React.FC<TimelineBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const TimelineBlock: React.FC<TimelineBlockProps> = ({
   heading,
   steps,
   variant = 'vertical',
   numbered = false,
   locale = 'en',
 }) => {
+  if (!steps || !steps.length) return null
+
   const getStatus = (step: TimelineStep) => step.status || 'upcoming'
 
   const renderVertical = () => (

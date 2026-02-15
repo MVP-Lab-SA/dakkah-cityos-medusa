@@ -7,11 +7,7 @@ interface WishlistGridBlockProps {
   emptyMessage?: string
 }
 
-export const WishlistGridBlock: React.FC<WishlistGridBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const WishlistGridBlock: React.FC<WishlistGridBlockProps> = ({
   heading = 'My Wishlist',
   columns = 3,
   showMoveToCart = true,

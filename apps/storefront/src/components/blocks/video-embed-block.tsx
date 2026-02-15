@@ -31,11 +31,7 @@ const aspectRatioClasses: Record<string, string> = {
   '1:1': 'aspect-square',
 }
 
-export const VideoEmbedBlock: React.FC<VideoEmbedBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const VideoEmbedBlock: React.FC<VideoEmbedBlockProps> = ({
   heading,
   description,
   url,

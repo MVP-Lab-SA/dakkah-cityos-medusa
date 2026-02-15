@@ -67,11 +67,7 @@ const dietaryLabels: Record<string, string> = {
   kosher: '✡ Kosher',
 }
 
-export const MenuDisplayBlock: React.FC<MenuDisplayBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const MenuDisplayBlock: React.FC<MenuDisplayBlockProps> = ({
   heading = 'Our Menu',
   categories = defaultCategories,
   variant = 'list',

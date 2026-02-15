@@ -36,11 +36,7 @@ const defaultPlans: PlanData[] = [
   },
 ]
 
-export const SubscriptionPlansBlock: React.FC<SubscriptionPlansBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const SubscriptionPlansBlock: React.FC<SubscriptionPlansBlockProps> = ({
   heading = 'Choose Your Plan',
   plans,
   billingToggle = true,

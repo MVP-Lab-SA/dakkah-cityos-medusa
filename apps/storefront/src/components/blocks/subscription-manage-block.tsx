@@ -30,11 +30,7 @@ const usageData = {
   apiCalls: { used: 8500, limit: 50000, label: 'API Calls' },
 }
 
-export const SubscriptionManageBlock: React.FC<SubscriptionManageBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const SubscriptionManageBlock: React.FC<SubscriptionManageBlockProps> = ({
   subscriptionId,
   showUsage = true,
   allowPause = true,

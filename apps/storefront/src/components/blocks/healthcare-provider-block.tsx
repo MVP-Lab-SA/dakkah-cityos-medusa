@@ -30,11 +30,7 @@ const placeholderProviders: Provider[] = [
 
 const allSpecialties = ['All', 'Family Medicine', 'Cardiology', 'Dermatology', 'Orthopedics', 'Pediatrics']
 
-export const HealthcareProviderBlock: React.FC<HealthcareProviderBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const HealthcareProviderBlock: React.FC<HealthcareProviderBlockProps> = ({
   heading = 'Find a Provider',
   specialties,
   showAvailability = true,

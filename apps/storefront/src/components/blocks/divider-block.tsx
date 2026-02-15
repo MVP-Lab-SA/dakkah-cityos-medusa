@@ -12,11 +12,7 @@ const spacingMap = {
   xl: 'py-16',
 }
 
-export const DividerBlock: React.FC<DividerBlockProps> = (props) => {
-  const { heading, description, ...rest } = props;
-  const itemsKey = Object.keys(props).find(k => Array.isArray(props[k]));
-  const items = itemsKey ? props[itemsKey] : [];
-  if ((!items || !items.length) && !heading && !description) return null;
+export const DividerBlock: React.FC<DividerBlockProps> = ({
   style = 'line',
   spacing = 'md',
 }) => {
