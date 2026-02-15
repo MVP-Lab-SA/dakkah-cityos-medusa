@@ -43,7 +43,7 @@ export function OrderFilters({ onSearch, onFilterChange }: OrderFiltersProps) {
     <div className="space-y-4">
       {/* Search & Filter Toggle */}
       <div className="flex gap-3">
-        <form onSubmit={handleSearch} className="flex-1 relative">
+        <form aria-label="Order search form" onSubmit={handleSearch} className="flex-1 relative">
           <MagnifyingGlass className="absolute start-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ds-muted-foreground" />
           <Input
             placeholder="Search orders by ID or product..."

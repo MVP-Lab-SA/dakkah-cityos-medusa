@@ -107,7 +107,7 @@ export function ArticleSidebar({
           {subscribed ? (
             <p className="text-sm font-medium">{t(locale, "blocks.subscribe_success")}</p>
           ) : (
-            <form onSubmit={handleSubscribe} className="space-y-2">
+            <form aria-label="Newsletter signup form" onSubmit={handleSubscribe} className="space-y-2">
               <input
                 type="email"
                 value={email}

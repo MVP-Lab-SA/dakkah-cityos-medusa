@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { getServerBaseUrl } from "@/lib/utils/env"
+import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState, useEffect } from "react"
 
@@ -28,7 +28,7 @@ export const Route = createFileRoute("/$tenant/$locale/flash-deals/$id")({
   loader: async ({ params }) => {
     try {
       const baseUrl = getServerBaseUrl()
-      const resp = await fetch(`${baseUrl}/store/flash-sales/${params.id}`, {
+      const resp = await fetchWithTimeout(`${baseUrl}/store/flash-sales/${params.id}`, {
         headers: { "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445" },
       })
       if (!resp.ok) return { item: null }

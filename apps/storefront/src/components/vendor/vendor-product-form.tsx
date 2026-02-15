@@ -177,7 +177,7 @@ export function VendorProductForm({ initialData, mode = "create" }: VendorProduc
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form aria-label="Product form" onSubmit={handleSubmit} className="space-y-8">
         {/* Basic Information */}
         <div className="border rounded-lg p-6 space-y-4">
           <h2 className="text-lg font-semibold">Basic Information</h2>

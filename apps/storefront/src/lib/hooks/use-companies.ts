@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Company, CompanyMember, CreditInfo } from "@/lib/types/companies"
-import { getBackendUrl } from "@/lib/utils/env"
+import { getBackendUrl, fetchWithTimeout } from "@/lib/utils/env"
 
 export function useMyCompany() {
   const backendUrl = getBackendUrl()
@@ -8,7 +8,7 @@ export function useMyCompany() {
   return useQuery({
     queryKey: ["my-company"],
     queryFn: async () => {
-      const response = await fetch(
+      const response = await fetchWithTimeout(
         `${backendUrl}/store/companies/me`,
         { credentials: "include" }
       )
@@ -29,7 +29,7 @@ export function useCompanyTeam() {
   return useQuery({
     queryKey: ["company-team"],
     queryFn: async () => {
-      const response = await fetch(
+      const response = await fetchWithTimeout(
         `${backendUrl}/store/companies/me/team`,
         { credentials: "include" }
       )
@@ -47,7 +47,7 @@ export function useCompanyCredit() {
   return useQuery({
     queryKey: ["company-credit"],
     queryFn: async () => {
-      const response = await fetch(
+      const response = await fetchWithTimeout(
         `${backendUrl}/store/companies/me/credit`,
         { credentials: "include" }
       )
@@ -65,7 +65,7 @@ export function useCompanyOrders() {
   return useQuery({
     queryKey: ["company-orders"],
     queryFn: async () => {
-      const response = await fetch(
+      const response = await fetchWithTimeout(
         `${backendUrl}/store/companies/me/orders`,
         { credentials: "include" }
       )
@@ -83,7 +83,7 @@ export function useInviteTeamMember() {
   
   return useMutation({
     mutationFn: async (data: { email: string; role: CompanyMember["role"]; spending_limit?: number }) => {
-      const response = await fetch(
+      const response = await fetchWithTimeout(
         `${backendUrl}/store/companies/me/team/invite`,
         {
           method: "POST",
@@ -108,7 +108,7 @@ export function useUpdateTeamMember() {
   
   return useMutation({
     mutationFn: async ({ memberId, data }: { memberId: string; data: Partial<CompanyMember> }) => {
-      const response = await fetch(
+      const response = await fetchWithTimeout(
         `${backendUrl}/store/companies/me/team/${memberId}`,
         {
           method: "PUT",
@@ -133,7 +133,7 @@ export function useRemoveTeamMember() {
   
   return useMutation({
     mutationFn: async (memberId: string) => {
-      const response = await fetch(
+      const response = await fetchWithTimeout(
         `${backendUrl}/store/companies/me/team/${memberId}`,
         {
           method: "DELETE",

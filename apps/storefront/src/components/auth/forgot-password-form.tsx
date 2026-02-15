@@ -54,7 +54,7 @@ export function ForgotPasswordForm({ onBack }: ForgotPasswordFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form aria-label="Forgot password form" onSubmit={handleSubmit} className="space-y-4">
       <div className="text-center space-y-2">
         <h3 className="text-lg font-semibold text-ds-foreground">Reset your password</h3>
         <p className="text-sm text-ds-muted-foreground">

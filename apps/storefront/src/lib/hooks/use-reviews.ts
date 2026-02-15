@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { getBackendUrl } from "@/lib/utils/env"
+import { getBackendUrl, fetchWithTimeout } from "@/lib/utils/env"
 
 const BACKEND_URL = getBackendUrl()
 
@@ -40,7 +40,7 @@ export function useProductReviews(productId: string, options?: { limit?: number;
       if (options?.limit) params.set("limit", options.limit.toString())
       if (options?.offset) params.set("offset", options.offset.toString())
 
-      const response = await fetch(
+      const response = await fetchWithTimeout(
         `${BACKEND_URL}/store/reviews/products/${productId}?${params}`,
         { credentials: "include" }
       )
@@ -59,7 +59,7 @@ export function useVendorReviews(vendorId: string, options?: { limit?: number; o
       if (options?.limit) params.set("limit", options.limit.toString())
       if (options?.offset) params.set("offset", options.offset.toString())
 
-      const response = await fetch(
+      const response = await fetchWithTimeout(
         `${BACKEND_URL}/store/reviews/vendors/${vendorId}?${params}`,
         { credentials: "include" }
       )
@@ -82,7 +82,7 @@ export function useCreateReview() {
       vendor_id?: string
       order_id?: string
     }) => {
-      const response = await fetch(`${BACKEND_URL}/store/reviews`, {
+      const response = await fetchWithTimeout(`${BACKEND_URL}/store/reviews`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -110,7 +110,7 @@ export function useMarkReviewHelpful() {
 
   return useMutation({
     mutationFn: async (reviewId: string) => {
-      const response = await fetch(`${BACKEND_URL}/store/reviews/${reviewId}/helpful`, {
+      const response = await fetchWithTimeout(`${BACKEND_URL}/store/reviews/${reviewId}/helpful`, {
         method: "POST",
         credentials: "include",
       })

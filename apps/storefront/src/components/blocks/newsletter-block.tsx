@@ -53,7 +53,7 @@ export const NewsletterBlock: React.FC<NewsletterBlockProps> = ({
   }
 
   const formContent = (
-    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
+    <form aria-label="Newsletter signup form" onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
       <input
         type="email"
         value={email}

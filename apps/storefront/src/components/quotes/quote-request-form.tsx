@@ -100,7 +100,7 @@ export function QuoteRequestForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form aria-label="Quote request form" onSubmit={handleSubmit} className="space-y-6">
       <div className="border rounded-lg p-6 bg-muted/20">
         <h2 className="text-xl font-semibold mb-4">Cart Items</h2>
         {!cart?.items || cart.items.length === 0 ? (

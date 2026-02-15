@@ -36,7 +36,7 @@ export function ConsignmentSubmitForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-ds-background border border-ds-border rounded-xl p-6 space-y-5">
+    <form aria-label="Consignment submission form" onSubmit={handleSubmit} className="bg-ds-background border border-ds-border rounded-xl p-6 space-y-5">
       <h3 className="text-lg font-semibold text-ds-foreground">
         {t(locale, "consignment.submit_item")}
       </h3>

@@ -227,7 +227,7 @@ export function CompanyRegistrationForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <form aria-label="Company registration form" onSubmit={handleSubmit} className="space-y-8">
       <div className="border rounded-lg p-6 space-y-4">
         <h2 className="text-xl font-semibold mb-4">Company Information</h2>
         

@@ -4,7 +4,7 @@ import { AccountLayout } from "@/components/account"
 import { ApprovalQueue } from "@/components/business"
 import { Spinner } from "@medusajs/icons"
 import { useToast } from "@/components/ui/toast"
-import { getBackendUrl } from "@/lib/utils/env"
+import { getBackendUrl, fetchWithTimeout } from "@/lib/utils/env"
 
 export const Route = createFileRoute("/$tenant/$locale/business/approvals")({
   component: ApprovalsPage,
@@ -28,10 +28,10 @@ function ApprovalsPage() {
     queryFn: async () => {
       // Fetch pending purchase orders
       const [poResponse, quotesResponse] = await Promise.all([
-        fetch(`${backendUrl}/store/purchase-orders?status=pending_approval`, {
+        fetchWithTimeout(`${backendUrl}/store/purchase-orders?status=pending_approval`, {
           credentials: "include",
         }),
-        fetch(`${backendUrl}/store/quotes?status=pending_approval`, {
+        fetchWithTimeout(`${backendUrl}/store/quotes?status=pending_approval`, {
           credentials: "include",
         }),
       ])
@@ -80,7 +80,7 @@ function ApprovalsPage() {
           ? `${backendUrl}/store/purchase-orders/${id}/approve`
           : `${backendUrl}/store/quotes/${id}/approve`
 
-      const response = await fetch(endpoint, {
+      const response = await fetchWithTimeout(endpoint, {
         method: "POST",
         credentials: "include",
       })
@@ -105,7 +105,7 @@ function ApprovalsPage() {
           ? `${backendUrl}/store/purchase-orders/${id}/reject`
           : `${backendUrl}/store/quotes/${id}/decline`
 
-      const response = await fetch(endpoint, {
+      const response = await fetchWithTimeout(endpoint, {
         method: "POST",
         credentials: "include",
       })

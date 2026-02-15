@@ -3,6 +3,7 @@ import { TemplateRenderer } from '@/components/cms/template-renderer'
 import type { CMSPage } from '@/lib/types/cityos'
 import ProductCard from '@/components/product-card'
 import { getServerBaseUrl } from '@/lib/utils/env'
+import { fetchWithTimeout } from "@/lib/utils/env"
 
 const DEFAULT_TENANT_ID = "01KGZ2JRYX607FWMMYQNQRKVWS"
 
@@ -35,7 +36,7 @@ async function resolvePageFromServer(tenantId: string, path: string, locale?: st
     const baseUrl = getBaseUrl()
     const params = new URLSearchParams({ path, tenant_id: tenantId })
     if (locale) params.set("locale", locale)
-    const response = await fetch(`${baseUrl}/platform/cms/resolve?${params}`)
+    const response = await fetchWithTimeout(`${baseUrl}/platform/cms/resolve?${params}`)
     if (!response.ok) return null
     const data = await response.json()
     return data.payload?.docs?.[0] || data.data?.page || null
@@ -52,7 +53,7 @@ async function fetchStoreData(locale: string) {
   if (publishableKey) headers["x-publishable-api-key"] = publishableKey
 
   try {
-    const regionsRes = await fetch(`${baseUrl}/store/regions`, { headers })
+    const regionsRes = await fetchWithTimeout(`${baseUrl}/store/regions`, { headers })
     if (!regionsRes.ok) return { region: null, products: [], count: 0 }
     const regionsData = await regionsRes.json()
     const regions = regionsData.regions || []
@@ -62,7 +63,7 @@ async function fetchStoreData(locale: string) {
 
     if (!region) return { region: null, products: [], count: 0 }
 
-    const productsRes = await fetch(
+    const productsRes = await fetchWithTimeout(
       `${baseUrl}/store/products?limit=100&offset=0&region_id=${region.id}&fields=*variants.calculated_price`,
       { headers }
     )

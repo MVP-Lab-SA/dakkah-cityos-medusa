@@ -57,7 +57,7 @@ export function BulkOrderForm({ locale: localeProp, onSubmit }: BulkOrderFormPro
         </h3>
       </div>
 
-      <form onSubmit={handleSubmit} className="p-4 space-y-3">
+      <form aria-label="Bulk order form" onSubmit={handleSubmit} className="p-4 space-y-3">
         <div className="grid grid-cols-[1fr_100px_40px] sm:grid-cols-[1fr_120px_40px] gap-2 items-center">
           <span className="text-xs font-medium text-ds-muted-foreground uppercase tracking-wider">
             {t(locale, "wholesale.sku")}

@@ -1,4 +1,4 @@
-import { getBackendUrl } from "@/lib/utils/env"
+import { getBackendUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { useQuery } from "@tanstack/react-query"
 import { normalizeItem } from "@/lib/utils/normalize-item"
 
@@ -81,7 +81,7 @@ export interface POIFilters {
 const baseUrl = getBackendUrl()
 
 async function fetchApi<T>(path: string): Promise<T> {
-  const response = await fetch(`${baseUrl}${path}`, {
+  const response = await fetchWithTimeout(`${baseUrl}${path}`, {
     headers: { "Content-Type": "application/json" },
     credentials: "include",
   })

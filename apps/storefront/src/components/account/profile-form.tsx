@@ -43,7 +43,7 @@ export function ProfileForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form aria-label="Profile form" onSubmit={handleSubmit} className="space-y-6">
       {error && (
         <div className="bg-ds-destructive border border-ds-destructive text-ds-destructive px-4 py-3 rounded-md text-sm">
           {error}

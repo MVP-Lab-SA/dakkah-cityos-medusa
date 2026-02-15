@@ -32,7 +32,7 @@ export function InviteFriendForm({
         {t(locale, "referral.invite_description")}
       </p>
 
-      <form onSubmit={handleSubmit} className="space-y-3">
+      <form aria-label="Invite friend form" onSubmit={handleSubmit} className="space-y-3">
         <div className="flex gap-2">
           <input
             type="email"

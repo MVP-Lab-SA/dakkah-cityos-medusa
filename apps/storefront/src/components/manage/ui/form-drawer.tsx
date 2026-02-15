@@ -128,7 +128,7 @@ export function FormDrawer({
       description={description}
       footer={footer}
     >
-      <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
+      <form aria-label="Record form" onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
         {fields.map((field) => (
           <div
             key={field.key}

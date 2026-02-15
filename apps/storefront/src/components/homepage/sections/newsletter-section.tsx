@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { ArrowRightMini } from "@medusajs/icons"
+import { fetchWithTimeout } from "@/lib/utils/env"
 
 interface NewsletterSectionProps {
   config: Record<string, any>
@@ -19,7 +20,7 @@ export function NewsletterSection({ config }: NewsletterSectionProps) {
     
     try {
       // Call newsletter signup API
-      const response = await fetch('/store/newsletter/subscribe', {
+      const response = await fetchWithTimeout('/store/newsletter/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
@@ -55,7 +56,7 @@ export function NewsletterSection({ config }: NewsletterSectionProps) {
               <p className="text-ds-success">{message}</p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+            <form aria-label="Newsletter subscription form" onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
               <input
                 type="email"
                 value={email}

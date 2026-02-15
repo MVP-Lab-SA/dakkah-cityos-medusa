@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { useState, useEffect } from "react"
 import { TemplateRenderer } from "@/components/cms/template-renderer"
 import type { CMSPage } from "@/lib/types/cityos"
-import { getServerBaseUrl } from "@/lib/utils/env"
+import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 
 const DEFAULT_TENANT_ID = "01KGZ2JRYX607FWMMYQNQRKVWS"
 
@@ -15,7 +15,7 @@ async function resolvePageFromServer(tenantId: string, path: string, locale?: st
     const baseUrl = getServerBaseUrl()
     const params = new URLSearchParams({ path, tenant_id: tenantId })
     if (locale) params.set("locale", locale)
-    const response = await fetch(`${baseUrl}/platform/cms/resolve?${params}`)
+    const response = await fetchWithTimeout(`${baseUrl}/platform/cms/resolve?${params}`)
     if (!response.ok) return null
     const data = await response.json()
     return data.payload?.docs?.[0] || data.data?.page || null
@@ -65,7 +65,7 @@ function CMSPageComponent() {
     const params = new URLSearchParams({ path: splatPath, tenant_id: tenantId })
     if (locale) params.set("locale", locale)
 
-    fetch(`/platform/cms/resolve?${params}`)
+    fetchWithTimeout(`/platform/cms/resolve?${params}`)
       .then((res) => {
         if (!res.ok) throw new Error("Not found")
         return res.json()

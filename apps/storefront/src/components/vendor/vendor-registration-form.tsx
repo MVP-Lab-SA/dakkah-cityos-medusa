@@ -378,7 +378,7 @@ export function VendorRegistrationForm() {
         ))}
       </div>
 
-      <form onSubmit={handleSubmit}>
+      <form aria-label="Vendor registration form" onSubmit={handleSubmit}>
         {/* Step 1: Business Information */}
         {step === 1 && (
           <div className="space-y-6">

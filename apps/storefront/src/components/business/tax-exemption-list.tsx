@@ -103,7 +103,7 @@ function TaxExemptionForm({ onSubmit, isPending }: { onSubmit: (data: Partial<Ta
   }
 
   return (
-    <form onSubmit={handleSubmit} className="border rounded-lg p-6 bg-muted/20 space-y-4">
+    <form aria-label="Tax exemption form" onSubmit={handleSubmit} className="border rounded-lg p-6 bg-muted/20 space-y-4">
       <h3 className="font-semibold">New Tax Exemption</h3>
       <div className="grid grid-cols-2 gap-4">
         <Input placeholder="Certificate Number" value={formData.certificate_number} onChange={(e) => setFormData({ ...formData, certificate_number: e.target.value })} required />

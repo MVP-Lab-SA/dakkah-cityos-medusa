@@ -96,7 +96,7 @@ export function NewsletterPopup({
             <p className="text-sm font-medium text-ds-success">{t(locale, "blocks.subscribe_success")}</p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-3">
+          <form aria-label="Newsletter popup form" onSubmit={handleSubmit} className="space-y-3">
             <input
               type="email"
               value={email}

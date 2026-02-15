@@ -146,7 +146,7 @@ function DisputesPage() {
         {filteredDisputes.length > 0 && (
           <div className="space-y-4">
             {filteredDisputes.map((dispute) => (
-              <div key={dispute.id} onClick={() => handleDisputeCardClick(dispute.id)} className="cursor-pointer">
+              <div key={dispute.id} role="button" tabIndex={0} onClick={() => handleDisputeCardClick(dispute.id)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleDisputeCardClick(dispute.id) } }} className="cursor-pointer">
                 <DisputeCard
                   dispute={dispute}
                   onViewDetails={handleDisputeCardClick}

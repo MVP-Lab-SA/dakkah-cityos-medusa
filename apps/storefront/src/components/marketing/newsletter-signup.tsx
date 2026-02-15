@@ -59,7 +59,7 @@ export function NewsletterSignup({
 
   if (variant === "minimal") {
     return (
-      <form onSubmit={handleSubmit} className={`flex gap-2 ${className}`}>
+      <form aria-label="Newsletter signup form" onSubmit={handleSubmit} className={`flex gap-2 ${className}`}>
         <input
           type="email"
           value={email}
@@ -103,7 +103,7 @@ export function NewsletterSignup({
           )}
         </div>
 
-        <form onSubmit={handleSubmit} className={`flex gap-2 ${isInline ? "flex-shrink-0" : "mt-4 max-w-sm mx-auto"}`}>
+        <form aria-label="Newsletter signup form" onSubmit={handleSubmit} className={`flex gap-2 ${isInline ? "flex-shrink-0" : "mt-4 max-w-sm mx-auto"}`}>
           <input
             type="email"
             value={email}

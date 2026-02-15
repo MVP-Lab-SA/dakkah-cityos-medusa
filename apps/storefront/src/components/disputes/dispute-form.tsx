@@ -49,6 +49,7 @@ export default function DisputeForm({
 
   return (
     <form
+      aria-label="File dispute form"
       onSubmit={handleSubmit}
       className="bg-ds-card rounded-xl border border-ds-border p-6 space-y-6"
     >

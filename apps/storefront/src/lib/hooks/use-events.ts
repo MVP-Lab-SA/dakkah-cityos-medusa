@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { normalizeItem } from "@/lib/utils/normalize-item"
-import { getServerBaseUrl } from "@/lib/utils/env"
+import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 
 async function fetchEvents(filters?: Record<string, unknown>) {
   const params = new URLSearchParams()
@@ -17,7 +17,7 @@ async function fetchEvents(filters?: Record<string, unknown>) {
   const baseUrl = getServerBaseUrl()
   const fullUrl = `${baseUrl}${url}`
 
-  const resp = await fetch(fullUrl, {
+  const resp = await fetchWithTimeout(fullUrl, {
     headers: {
       "Content-Type": "application/json",
       "x-publishable-api-key": import.meta.env?.VITE_MEDUSA_PUBLISHABLE_KEY || "",
@@ -42,7 +42,7 @@ export function useEvent(eventId: string) {
     queryKey: ["event", eventId],
     queryFn: async () => {
       const baseUrl = getServerBaseUrl()
-      const resp = await fetch(`${baseUrl}/store/events/${eventId}`, {
+      const resp = await fetchWithTimeout(`${baseUrl}/store/events/${eventId}`, {
         headers: {
           "Content-Type": "application/json",
           "x-publishable-api-key": import.meta.env?.VITE_MEDUSA_PUBLISHABLE_KEY || "",

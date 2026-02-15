@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { queryKeys } from "@/lib/utils/query-keys"
+import { fetchWithTimeout } from "@/lib/utils/env"
 
 interface VerticalDefinition {
   slug: string
@@ -34,7 +35,7 @@ export function useCMSVerticals() {
   return useQuery<VerticalDefinition[]>({
     queryKey: queryKeys.cms.verticals("default"),
     queryFn: async () => {
-      const response = await fetch("/platform/cms/verticals?limit=50")
+      const response = await fetchWithTimeout("/platform/cms/verticals?limit=50")
       if (!response.ok) throw new Error("Failed to fetch verticals")
       const json = await response.json()
       return json.docs
@@ -50,7 +51,7 @@ export function useCMSNavigation(location: "header" | "footer" | "sidebar" | "mo
     queryKey: queryKeys.cms.navigation("default", location),
     queryFn: async () => {
       const where = JSON.stringify({ location: { equals: location } })
-      const response = await fetch(`/platform/cms/navigations?where=${encodeURIComponent(where)}&limit=1`)
+      const response = await fetchWithTimeout(`/platform/cms/navigations?where=${encodeURIComponent(where)}&limit=1`)
       if (!response.ok) throw new Error("Failed to fetch navigation")
       const json = await response.json()
       return json.docs?.[0] || null

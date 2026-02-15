@@ -117,7 +117,7 @@ const AddressStep = ({ cart, onNext }: AddressStepProps) => {
 
   return (
     <div className="flex flex-col gap-8">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+      <form aria-label="Checkout address form" onSubmit={handleSubmit} className="flex flex-col gap-8">
         <div className="flex flex-col gap-2">
           <h3 className="text-ds-foreground !text-base font-semibold">
             Shipping Address

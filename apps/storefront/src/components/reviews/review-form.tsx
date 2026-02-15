@@ -58,7 +58,7 @@ export function ReviewForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form aria-label="Product review form" onSubmit={handleSubmit} className="space-y-4">
       {/* Rating */}
       <div>
         <label className="block text-sm font-medium text-ui-fg-base mb-2">

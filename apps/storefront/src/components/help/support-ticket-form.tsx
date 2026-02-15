@@ -62,7 +62,7 @@ export function SupportTicketForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-ds-background rounded-lg border border-ds-border p-6 space-y-4">
+    <form aria-label="Support ticket form" onSubmit={handleSubmit} className="bg-ds-background rounded-lg border border-ds-border p-6 space-y-4">
       <h3 className="text-lg font-semibold text-ds-foreground mb-2">
         {t(locale, "faq.submit_ticket")}
       </h3>

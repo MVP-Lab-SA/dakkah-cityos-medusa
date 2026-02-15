@@ -31,7 +31,7 @@ export function GiftCardRedeem({
         {t(locale, "giftCards.redeem_description")}
       </p>
 
-      <form onSubmit={handleSubmit} className="space-y-3">
+      <form aria-label="Gift card redeem form" onSubmit={handleSubmit} className="space-y-3">
         <div>
           <input
             type="text"

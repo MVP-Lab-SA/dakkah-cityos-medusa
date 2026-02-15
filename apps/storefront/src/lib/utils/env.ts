@@ -58,3 +58,19 @@ export function isDevelopment(): boolean {
 export function isProduction(): boolean {
   return import.meta.env.PROD
 }
+
+const DEFAULT_TIMEOUT_MS = 10000
+
+export function fetchWithTimeout(
+  url: string,
+  options?: RequestInit & { timeoutMs?: number }
+): Promise<Response> {
+  const { timeoutMs = DEFAULT_TIMEOUT_MS, ...fetchOptions } = options || {}
+  const controller = new AbortController()
+  const existingSignal = fetchOptions.signal
+  if (existingSignal) {
+    existingSignal.addEventListener("abort", () => controller.abort(existingSignal.reason))
+  }
+  const timeoutId = setTimeout(() => controller.abort("Request timeout"), timeoutMs)
+  return fetch(url, { ...fetchOptions, signal: controller.signal }).finally(() => clearTimeout(timeoutId))
+}

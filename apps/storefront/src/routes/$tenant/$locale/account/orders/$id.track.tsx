@@ -4,7 +4,7 @@ import { AccountLayout } from "@/components/account"
 import { TrackingTimeline } from "@/components/delivery/tracking-timeline"
 import { TrackingMap } from "@/components/delivery/tracking-map"
 import { t } from "@/lib/i18n"
-import { getBackendUrl } from "@/lib/utils/env"
+import { getBackendUrl, fetchWithTimeout } from "@/lib/utils/env"
 
 export const Route = createFileRoute("/$tenant/$locale/account/orders/$id/track")({
   component: TrackOrderPage,
@@ -17,7 +17,7 @@ function TrackOrderPage() {
   const { data: order, isLoading, error } = useQuery({
     queryKey: ["order-tracking", id],
     queryFn: async () => {
-      const response = await fetch(
+      const response = await fetchWithTimeout(
         `${backendUrl}/store/orders/${id}?fields=*fulfillments,*fulfillments.labels,*fulfillments.items`,
         { credentials: "include" }
       )

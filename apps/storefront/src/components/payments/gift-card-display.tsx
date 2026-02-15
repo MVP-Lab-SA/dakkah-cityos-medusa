@@ -151,7 +151,7 @@ export function GiftCardPurchaseForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-ds-background rounded-xl border border-ds-border p-6 space-y-6">
+    <form aria-label="Gift card form" onSubmit={handleSubmit} className="bg-ds-background rounded-xl border border-ds-border p-6 space-y-6">
       <h3 className="text-lg font-semibold text-ds-foreground">{t(locale, "payment.purchase_gift_card")}</h3>
 
       <div>

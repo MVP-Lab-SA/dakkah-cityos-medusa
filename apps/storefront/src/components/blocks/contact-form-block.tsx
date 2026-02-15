@@ -126,7 +126,7 @@ export const ContactFormBlock: React.FC<ContactFormBlockProps> = ({
           <p className="text-ds-muted-foreground mb-8 text-center">{description}</p>
         )}
 
-        <form
+        <form aria-label="Contact form"
           onSubmit={handleSubmit}
           className="bg-ds-card border border-ds-border rounded-xl p-6 md:p-8"
         >

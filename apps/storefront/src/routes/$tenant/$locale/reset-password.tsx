@@ -116,7 +116,7 @@ function ResetWithToken({
         </div>
 
         <div className="bg-ds-background border border-ds-border rounded-lg p-6 shadow-sm">
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form aria-label="Reset password form" onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="bg-ds-destructive border border-ds-destructive text-ds-destructive px-4 py-3 rounded-md text-sm">
                 {error}

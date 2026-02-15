@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState, useMemo } from "react"
 import ProductCard from "@/components/product-card"
-import { getServerBaseUrl } from "@/lib/utils/env"
+import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 
 const LOCALE_TO_COUNTRY: Record<string, string> = {
   en: "us",
@@ -30,7 +30,7 @@ export const Route = createFileRoute("/$tenant/$locale/categories/$handle")({
     if (publishableKey) headers["x-publishable-api-key"] = publishableKey
 
     try {
-      const catRes = await fetch(
+      const catRes = await fetchWithTimeout(
         `${baseUrl}/store/product-categories?handle=${handle}&fields=id,name,handle,description`,
         { headers }
       )
@@ -42,7 +42,7 @@ export const Route = createFileRoute("/$tenant/$locale/categories/$handle")({
       }
 
       const countryCode = LOCALE_TO_COUNTRY[locale?.toLowerCase()] || "us"
-      const regionsRes = await fetch(`${baseUrl}/store/regions`, { headers })
+      const regionsRes = await fetchWithTimeout(`${baseUrl}/store/regions`, { headers })
       const regionsData = regionsRes.ok ? await regionsRes.json() : { regions: [] }
       const regions = regionsData.regions || []
       const region =
@@ -52,7 +52,7 @@ export const Route = createFileRoute("/$tenant/$locale/categories/$handle")({
 
       let products: any[] = []
       if (region) {
-        const prodRes = await fetch(
+        const prodRes = await fetchWithTimeout(
           `${baseUrl}/store/products?category_id[]=${category.id}&region_id=${region.id}&fields=*variants.calculated_price&limit=50`,
           { headers }
         )
@@ -60,7 +60,7 @@ export const Route = createFileRoute("/$tenant/$locale/categories/$handle")({
         products = prodData.products || []
       }
 
-      const allCatRes = await fetch(
+      const allCatRes = await fetchWithTimeout(
         `${baseUrl}/store/product-categories?fields=id,name,handle&limit=50`,
         { headers }
       )

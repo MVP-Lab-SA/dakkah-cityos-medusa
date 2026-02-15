@@ -62,7 +62,7 @@ export function AddressForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form aria-label="Address form" onSubmit={handleSubmit} className="space-y-4">
       {error && (
         <div className="bg-ds-destructive border border-ds-destructive text-ds-destructive px-4 py-3 rounded-md text-sm">
           {error}

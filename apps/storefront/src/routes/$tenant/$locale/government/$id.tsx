@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { getServerBaseUrl } from "@/lib/utils/env"
+import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 
 function normalizeDetail(item: any) {
@@ -27,7 +27,7 @@ export const Route = createFileRoute("/$tenant/$locale/government/$id")({
   loader: async ({ params }) => {
     try {
       const baseUrl = getServerBaseUrl()
-      const resp = await fetch(`${baseUrl}/store/government/${params.id}`, {
+      const resp = await fetchWithTimeout(`${baseUrl}/store/government/${params.id}`, {
         headers: { "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445" },
       })
       if (!resp.ok) return { item: null }

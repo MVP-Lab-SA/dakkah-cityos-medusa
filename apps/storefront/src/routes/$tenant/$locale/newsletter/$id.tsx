@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { getServerBaseUrl } from "@/lib/utils/env"
+import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
 
@@ -21,7 +21,7 @@ export const Route = createFileRoute("/$tenant/$locale/newsletter/$id")({
   loader: async ({ params }) => {
     try {
       const baseUrl = getServerBaseUrl()
-      const resp = await fetch(`${baseUrl}/store/newsletters/${params.id}`, {
+      const resp = await fetchWithTimeout(`${baseUrl}/store/newsletters/${params.id}`, {
         headers: { "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445" },
       })
       if (!resp.ok) return { item: null }
@@ -205,7 +205,7 @@ function NewsletterDetailPage() {
                     <p className="text-sm text-ds-muted-foreground mt-1">Check your inbox for confirmation.</p>
                   </div>
                 ) : (
-                  <form onSubmit={handleSubscribe} className="space-y-3">
+                  <form aria-label="Newsletter subscription form" onSubmit={handleSubscribe} className="space-y-3">
                     <input
                       type="email"
                       value={email}

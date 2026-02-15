@@ -33,7 +33,7 @@ export function SearchInput({
   }
 
   return (
-    <form onSubmit={handleSubmit} className={clx("relative", className)}>
+    <form aria-label="Search form" onSubmit={handleSubmit} className={clx("relative", className)}>
       <div className="relative">
         <MagnifyingGlass className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-ui-fg-muted" />
         <input

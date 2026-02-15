@@ -73,7 +73,7 @@ export const FormWizard: React.FC<FormWizardProps> = ({
             const isCompleted = i < currentStep
             return (
               <React.Fragment key={s.id}>
-                <div className="flex items-center gap-2 cursor-pointer" onClick={() => goTo(i)}>
+                <div className="flex items-center gap-2 cursor-pointer" role="button" tabIndex={0} onClick={() => goTo(i)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); goTo(i) } }}>
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors ${
                       isActive

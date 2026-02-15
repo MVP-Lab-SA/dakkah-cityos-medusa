@@ -70,7 +70,7 @@ export function RFQForm({ locale: localeProp, onSubmit }: RFQFormProps) {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="p-4 space-y-4">
+      <form aria-label="Request for quote form" onSubmit={handleSubmit} className="p-4 space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-ds-foreground mb-1">
