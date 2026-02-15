@@ -169,7 +169,7 @@ function InsurancePage() {
                           </div>
                         )}
                         {item.insurance_type && (
-                          <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-ds-info text-white rounded-md capitalize">
+                          <span className="absolute top-2 start-2 px-2 py-1 text-xs font-medium bg-ds-info text-white rounded-md capitalize">
                             {typeIcon(item.insurance_type)} {item.insurance_type}
                           </span>
                         )}

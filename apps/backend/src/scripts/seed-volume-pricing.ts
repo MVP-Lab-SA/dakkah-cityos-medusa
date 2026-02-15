@@ -79,7 +79,7 @@ export default async function seedVolumePricing({ container }: ExecArgs) {
 
       logger.info(`  - Created volume pricing for: ${product.title}`)
     } catch (error: any) {
-      console.error(`  - Failed to create volume pricing for ${product.handle}: ${error.message}`)
+      logger.error(`  - Failed to create volume pricing for ${product.handle}: ${error.message}`)
     }
   }
 

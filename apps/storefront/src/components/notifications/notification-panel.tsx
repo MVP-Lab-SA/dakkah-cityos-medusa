@@ -78,7 +78,7 @@ export function NotificationPanel({
   }
 
   return (
-    <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-ds-card border border-ds-border rounded-xl shadow-xl z-50 overflow-hidden">
+    <div className="absolute end-0 top-full mt-2 w-80 sm:w-96 bg-ds-card border border-ds-border rounded-xl shadow-xl z-50 overflow-hidden">
       <div className="flex items-center justify-between px-4 py-3 border-b border-ds-border">
         <h3 className="text-sm font-semibold text-ds-foreground">Notifications</h3>
         <div className="flex items-center gap-2">

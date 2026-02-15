@@ -40,7 +40,7 @@ export function BulkActionsBar({
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-ds-border-primary bg-ds-bg-primary shadow-lg">
+    <div className="fixed bottom-0 start-0 end-0 z-50 border-t border-ds-border-primary bg-ds-bg-primary shadow-lg">
       <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">

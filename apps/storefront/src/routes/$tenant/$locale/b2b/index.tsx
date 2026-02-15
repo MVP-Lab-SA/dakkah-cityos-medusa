@@ -123,10 +123,10 @@ function B2BMarketplacePage() {
                         <div className="w-full h-full flex items-center justify-center"><svg className="w-16 h-16 text-ds-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21" /></svg></div>
                       )}
                       {item.industry && (
-                        <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-ds-primary text-ds-primary-foreground rounded-md capitalize">{item.industry}</span>
+                        <span className="absolute top-2 start-2 px-2 py-1 text-xs font-medium bg-ds-primary text-ds-primary-foreground rounded-md capitalize">{item.industry}</span>
                       )}
                       {item.established && (
-                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-ds-card/90 text-ds-foreground/80 rounded-md">Est. {item.established}</span>
+                        <span className="absolute top-2 end-2 px-2 py-1 text-xs font-medium bg-ds-card/90 text-ds-foreground/80 rounded-md">Est. {item.established}</span>
                       )}
                     </div>
                     <div className="p-4">

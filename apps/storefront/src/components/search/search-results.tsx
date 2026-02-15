@@ -102,7 +102,7 @@ export function SearchResults({
         <p className="text-sm text-ds-muted-foreground">
           {displayCount} result{displayCount !== 1 ? "s" : ""} for &ldquo;{query}&rdquo;
           {filters?.category && (
-            <span className="ml-1">
+            <span className="ms-1">
               in <span className="font-medium text-ds-foreground">{filters.category}</span>
             </span>
           )}

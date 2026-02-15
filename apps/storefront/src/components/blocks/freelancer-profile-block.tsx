@@ -97,7 +97,7 @@ export const FreelancerProfileBlock: React.FC<FreelancerProfileBlockProps> = ({
                 )}
                 <div className="text-center mb-3">
                   <span className="text-ds-warning text-sm">{renderStars(placeholderFreelancer.rating)}</span>
-                  <span className="text-sm ml-1 text-ds-foreground">{placeholderFreelancer.rating}</span>
+                  <span className="text-sm ms-1 text-ds-foreground">{placeholderFreelancer.rating}</span>
                 </div>
                 <p className="text-center text-2xl font-bold text-ds-foreground mb-1">${placeholderFreelancer.hourlyRate}/hr</p>
                 <p className="text-center text-xs text-ds-muted-foreground mb-4">{placeholderFreelancer.completedProjects} projects completed</p>

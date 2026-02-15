@@ -133,8 +133,8 @@ function TravelDetailPage() {
                 <h2 className="font-semibold text-ds-foreground mb-4">Itinerary</h2>
                 <div className="space-y-4">
                   {pkg.itinerary.map((day: any, idx: number) => (
-                    <div key={idx} className="relative pl-6 pb-4 border-l-2 border-ds-primary/30 last:pb-0">
-                      <div className="absolute -left-[9px] top-0 w-4 h-4 bg-ds-primary rounded-full flex items-center justify-center">
+                    <div key={idx} className="relative ps-6 pb-4 border-l-2 border-ds-primary/30 last:pb-0">
+                      <div className="absolute -start-[9px] top-0 w-4 h-4 bg-ds-primary rounded-full flex items-center justify-center">
                         <span className="text-[10px] text-ds-primary-foreground font-bold">{idx + 1}</span>
                       </div>
                       <h3 className="font-medium text-ds-foreground text-sm">{day.title || day.name || `Day ${idx + 1}`}</h3>

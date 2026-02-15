@@ -151,7 +151,7 @@ function VolumeDealsDetailPage() {
                           <tr key={idx} className={`border-b border-ds-border last:border-0 ${isActive ? "bg-ds-primary/5" : ""}`}>
                             <td className="py-3 text-ds-foreground">
                               {tier.min_quantity || tier.min || 0}{tier.max_quantity || tier.max ? `-${tier.max_quantity || tier.max}` : "+"} units
-                              {isActive && <span className="ml-2 text-xs text-ds-primary font-medium">Current</span>}
+                              {isActive && <span className="ms-2 text-xs text-ds-primary font-medium">Current</span>}
                             </td>
                             <td className="py-3 text-ds-foreground font-medium">${Number(tier.price || 0).toLocaleString()}</td>
                             <td className="py-3 text-ds-success font-medium">{tierSavings > 0 ? `${tierSavings}% off` : "-"}</td>

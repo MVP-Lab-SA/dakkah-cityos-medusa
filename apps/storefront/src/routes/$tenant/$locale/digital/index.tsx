@@ -188,7 +188,7 @@ function DigitalProductsPage() {
                         </div>
                       )}
                       {(item.file_type || item.category) && (
-                        <span className={`absolute top-2 left-2 px-2 py-1 text-xs font-medium rounded-md uppercase ${fileTypeColors[(item.file_type || item.category)?.toLowerCase()] || "bg-ds-muted text-ds-foreground/80"}`}>
+                        <span className={`absolute top-2 start-2 px-2 py-1 text-xs font-medium rounded-md uppercase ${fileTypeColors[(item.file_type || item.category)?.toLowerCase()] || "bg-ds-muted text-ds-foreground/80"}`}>
                           {item.file_type || item.category}
                         </span>
                       )}

@@ -214,7 +214,7 @@ export const CourseCurriculumBlock: React.FC<CourseCurriculumBlockProps> = ({
                   <p className="text-xs text-ds-muted-foreground mt-0.5">{mod.lessons.length} lessons</p>
                 </div>
                 {showProgress && mod.progress !== undefined && (
-                  <div className="w-20 mr-4">
+                  <div className="w-20 me-4">
                     <div className="w-full bg-ds-muted rounded-full h-1.5">
                       <div className="bg-ds-primary h-1.5 rounded-full transition-all" style={{ width: `${mod.progress}%` }} />
                     </div>

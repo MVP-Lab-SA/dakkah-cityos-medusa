@@ -102,7 +102,7 @@ function WhiteLabelPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {packages.map((pkg: any) => (
             <div key={pkg.id} className={`relative bg-ds-background border ${pkg.popular ? "border-ds-primary ring-2 ring-ds-primary/20" : "border-ds-border"} rounded-xl p-6 hover:shadow-lg transition-all duration-200`}>
-              {pkg.popular && <span className="absolute -top-3 left-6 px-3 py-1 text-xs font-bold bg-ds-primary text-ds-primary-foreground rounded-full">Most Popular</span>}
+              {pkg.popular && <span className="absolute -top-3 start-6 px-3 py-1 text-xs font-bold bg-ds-primary text-ds-primary-foreground rounded-full">Most Popular</span>}
               <h3 className="text-xl font-bold text-ds-foreground mb-1">{pkg.name}</h3>
               <div className="flex items-baseline gap-1 mb-2">
                 <span className="text-3xl font-bold text-ds-foreground">{pkg.price}</span>

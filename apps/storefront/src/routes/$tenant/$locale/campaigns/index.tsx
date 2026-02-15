@@ -195,11 +195,11 @@ function CampaignsPage() {
                           <svg className="w-16 h-16 text-ds-destructive/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                         </div>
                       )}
-                      <span className="absolute top-2 left-2 px-3 py-1.5 text-sm font-bold bg-ds-destructive text-white rounded-lg shadow-md">
+                      <span className="absolute top-2 start-2 px-3 py-1.5 text-sm font-bold bg-ds-destructive text-white rounded-lg shadow-md">
                         {item.discount_label || item.discount}
                       </span>
                       {item.type && (
-                        <span className={`absolute top-2 right-2 px-2 py-1 text-xs font-medium text-white rounded-md capitalize ${typeColors[item.type] || "bg-ds-muted-foreground"}`}>{item.type}</span>
+                        <span className={`absolute top-2 end-2 px-2 py-1 text-xs font-medium text-white rounded-md capitalize ${typeColors[item.type] || "bg-ds-muted-foreground"}`}>{item.type}</span>
                       )}
                     </div>
                     <div className="p-4">

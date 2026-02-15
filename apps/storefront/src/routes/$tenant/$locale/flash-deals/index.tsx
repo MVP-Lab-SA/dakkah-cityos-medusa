@@ -170,16 +170,16 @@ function FlashDealsPage() {
                           </div>
                         )}
                         {discount > 0 && (
-                          <span className="absolute top-2 left-2 px-2.5 py-1 text-xs font-bold bg-ds-destructive text-white rounded-md">SALE -{discount}%</span>
+                          <span className="absolute top-2 start-2 px-2.5 py-1 text-xs font-bold bg-ds-destructive text-white rounded-md">SALE -{discount}%</span>
                         )}
                         {timeLeft && (
-                          <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-black/70 text-white rounded-md flex items-center gap-1">
+                          <span className="absolute top-2 end-2 px-2 py-1 text-xs font-medium bg-black/70 text-white rounded-md flex items-center gap-1">
                             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                             {timeLeft}
                           </span>
                         )}
                         {stockRemaining > 0 && stockRemaining <= 10 && (
-                          <span className="absolute bottom-2 left-2 px-2 py-1 text-xs font-medium bg-ds-warning text-white rounded-md">Only {stockRemaining} left!</span>
+                          <span className="absolute bottom-2 start-2 px-2 py-1 text-xs font-medium bg-ds-warning text-white rounded-md">Only {stockRemaining} left!</span>
                         )}
                       </div>
                       <div className="p-4">

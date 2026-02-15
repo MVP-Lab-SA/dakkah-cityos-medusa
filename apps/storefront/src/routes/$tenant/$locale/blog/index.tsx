@@ -212,7 +212,7 @@ function BlogPage() {
                         </div>
                       )}
                       {item.category && (
-                        <span className={`absolute top-2 left-2 px-2 py-1 text-xs font-medium text-white rounded-md capitalize ${categoryColors[item.category] || "bg-ds-muted-foreground"}`}>{item.category}</span>
+                        <span className={`absolute top-2 start-2 px-2 py-1 text-xs font-medium text-white rounded-md capitalize ${categoryColors[item.category] || "bg-ds-muted-foreground"}`}>{item.category}</span>
                       )}
                     </div>
                     <div className="p-4">

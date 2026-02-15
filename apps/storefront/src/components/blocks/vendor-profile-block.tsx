@@ -28,7 +28,7 @@ export const VendorProfileBlock: React.FC<VendorProfileBlockProps> = ({
         <div className={layout === 'hero' ? '' : 'max-w-4xl mx-auto'}>
           <div className="relative rounded-xl overflow-hidden mb-6">
             <div className="h-32 md:h-48 bg-gradient-to-r from-ds-primary/20 to-ds-primary/5" />
-            <div className="absolute -bottom-12 left-6 md:left-8">
+            <div className="absolute -bottom-12 start-6 md:start-8">
               <div className="w-24 h-24 rounded-full border-4 border-ds-background bg-ds-muted flex items-center justify-center">
                 <span className="text-2xl font-bold text-ds-muted-foreground">V</span>
               </div>

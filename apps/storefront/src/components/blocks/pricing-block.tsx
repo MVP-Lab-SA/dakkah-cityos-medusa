@@ -105,7 +105,7 @@ export const PricingBlock: React.FC<PricingBlockProps> = ({
                 }`}
               >
                 {plan.badge && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                  <div className="absolute -top-3 start-1/2 -translate-x-1/2">
                     <Badge variant="default" size="sm">{plan.badge}</Badge>
                   </div>
                 )}

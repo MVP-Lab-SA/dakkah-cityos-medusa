@@ -1,5 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import {
+import { handleApiError } from "../../../lib/api-error-handler"
   DEFAULT_TENANT_SLUG,
   PLATFORM_CAPABILITIES,
   CONTEXT_HEADERS,
@@ -78,7 +79,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       },
     })
   } catch (error: any) {
-    console.error("Platform context error:", error)
-    return res.status(500).json({ success: false, message: "Internal server error" })
+return handleApiError(res, error, "PLATFORM-CONTEXT")
   }
 }

@@ -115,7 +115,7 @@ function CharityDetailPage() {
               <div className="flex items-end justify-between mb-2">
                 <div>
                   <span className="text-2xl font-bold text-ds-primary">${Number(raised || 0).toLocaleString()}</span>
-                  <span className="text-sm text-ds-muted-foreground ml-1">raised of ${Number(goal || 0).toLocaleString()} goal</span>
+                  <span className="text-sm text-ds-muted-foreground ms-1">raised of ${Number(goal || 0).toLocaleString()} goal</span>
                 </div>
                 <span className="text-sm font-medium text-ds-foreground">{Math.round(progress)}%</span>
               </div>
@@ -144,8 +144,8 @@ function CharityDetailPage() {
                 <h2 className="font-semibold text-ds-foreground mb-4">Updates</h2>
                 <div className="space-y-4">
                   {campaign.updates.map((update: any, idx: number) => (
-                    <div key={idx} className="relative pl-6 pb-4 border-l-2 border-ds-border last:pb-0">
-                      <div className="absolute -left-[5px] top-1 w-2 h-2 bg-ds-primary rounded-full" />
+                    <div key={idx} className="relative ps-6 pb-4 border-l-2 border-ds-border last:pb-0">
+                      <div className="absolute -start-[5px] top-1 w-2 h-2 bg-ds-primary rounded-full" />
                       <div className="mb-1">
                         <span className="text-xs text-ds-muted-foreground">
                           {update.date ? new Date(update.date).toLocaleDateString() : `Update ${idx + 1}`}

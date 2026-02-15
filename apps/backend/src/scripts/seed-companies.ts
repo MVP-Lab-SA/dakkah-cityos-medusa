@@ -169,7 +169,7 @@ export default async function seedCompanies({ container }: ExecArgs) {
       await companyModule.createCompanies({ ...companyData, tenant_id: tenantId })
       logger.info(`  - Created company: ${companyData.name}`)
     } catch (error: any) {
-      console.error(`  - Failed to create company ${companyData.name}: ${error.message}`)
+      logger.error(`  - Failed to create company ${companyData.name}: ${error.message}`)
     }
   }
 

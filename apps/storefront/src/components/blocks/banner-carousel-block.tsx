@@ -165,7 +165,7 @@ export const BannerCarouselBlock: React.FC<BannerCarouselBlockProps> = ({
       )}
 
       {showDots && slides.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 flex gap-2">
+        <div className="absolute bottom-4 start-1/2 -translate-x-1/2 z-30 flex gap-2">
           {slides.map((_, index) => (
             <button
               key={index}

@@ -87,7 +87,7 @@ function PlacesPage() {
               <div key={place.id} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-success/40 transition-all duration-200">
                 <div className="aspect-[4/3] relative overflow-hidden">
                   <img loading="lazy" src={place.image} alt={place.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                  <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-ds-success text-white rounded-md">{place.category}</span>
+                  <span className="absolute top-2 start-2 px-2 py-1 text-xs font-medium bg-ds-success text-white rounded-md">{place.category}</span>
                 </div>
                 <div className="p-4">
                   <h3 className="font-semibold text-ds-foreground group-hover:text-ds-success transition-colors line-clamp-1">{place.name}</h3>

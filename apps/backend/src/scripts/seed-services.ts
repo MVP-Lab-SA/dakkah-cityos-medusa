@@ -212,7 +212,7 @@ export default async function seedServices({ container }: ExecArgs) {
       await bookingModule.createServiceProducts({ ...serviceData, tenant_id: tenantId })
       logger.info(`  - Created service: ${serviceData.name}`)
     } catch (error: any) {
-      console.error(`  - Failed to create service ${serviceData.handle}: ${error.message}`)
+      logger.error(`  - Failed to create service ${serviceData.handle}: ${error.message}`)
     }
   }
 
@@ -255,7 +255,7 @@ export default async function seedServices({ container }: ExecArgs) {
       })
       logger.info(`  - Created availability for: ${service.name}`)
     } catch (error: any) {
-      console.error(`  - Failed to create availability for ${service.name}: ${error.message}`)
+      logger.error(`  - Failed to create availability for ${service.name}: ${error.message}`)
     }
   }
 

@@ -86,7 +86,7 @@ export function AdvancedFilters({
                 {filter.type === "search" && (
                   <div className="relative">
                     <svg
-                      className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ds-text-secondary"
+                      className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ds-text-secondary"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -98,7 +98,7 @@ export function AdvancedFilters({
                       value={values[filter.key] || ""}
                       onChange={(e) => onChange(filter.key, e.target.value)}
                       placeholder={`Search ${filter.label.toLowerCase()}...`}
-                      className="w-full rounded-lg border border-ds-border-primary bg-ds-bg-primary py-2 pl-9 pr-3 text-sm text-ds-text-primary placeholder:text-ds-text-secondary focus:border-ds-border-accent focus:outline-none focus:ring-1 focus:ring-ds-border-accent"
+                      className="w-full rounded-lg border border-ds-border-primary bg-ds-bg-primary py-2 ps-9 pe-3 text-sm text-ds-text-primary placeholder:text-ds-text-secondary focus:border-ds-border-accent focus:outline-none focus:ring-1 focus:ring-ds-border-accent"
                     />
                   </div>
                 )}

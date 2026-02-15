@@ -138,7 +138,7 @@ class PayoutModuleService extends MedusaService({
       
       return updatedPayout
     } catch (error: any) {
-      console.error(`[Payout] Failed for ${payoutId}:`, error)
+      logger.error(`[Payout] Failed for ${payoutId}:`, error)
       
       // Update payout with failure details
       await (this as any).updatePayouts({
@@ -179,7 +179,7 @@ class PayoutModuleService extends MedusaService({
       
       return account
     } catch (error: any) {
-      console.error(`[Stripe Connect] Failed to create account for vendor ${vendorId}:`, error)
+      logger.error(`[Stripe Connect] Failed to create account for vendor ${vendorId}:`, error)
       throw error
     }
   }
@@ -198,7 +198,7 @@ class PayoutModuleService extends MedusaService({
 
       return accountLink.url
     } catch (error: any) {
-      console.error(`[Stripe Connect] Failed to create onboarding link:`, error)
+      logger.error(`[Stripe Connect] Failed to create onboarding link:`, error)
       throw error
     }
   }
@@ -211,7 +211,7 @@ class PayoutModuleService extends MedusaService({
       const loginLink = await stripe.accounts.createLoginLink(stripeAccountId)
       return loginLink.url
     } catch (error: any) {
-      console.error(`[Stripe Connect] Failed to create dashboard link:`, error)
+      logger.error(`[Stripe Connect] Failed to create dashboard link:`, error)
       throw error
     }
   }
@@ -232,7 +232,7 @@ class PayoutModuleService extends MedusaService({
         capabilities: account.capabilities,
       }
     } catch (error: any) {
-      console.error(`[Stripe Connect] Failed to check account status:`, error)
+      logger.error(`[Stripe Connect] Failed to check account status:`, error)
       throw error
     }
   }

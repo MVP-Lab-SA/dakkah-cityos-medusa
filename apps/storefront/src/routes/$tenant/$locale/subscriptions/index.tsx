@@ -154,7 +154,7 @@ function SubscriptionsPage() {
                   >
                     <div className="bg-gradient-to-br from-ds-primary to-ds-primary p-6 text-white text-center relative">
                       {item.is_popular && (
-                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-bold bg-ds-card text-ds-primary rounded-full">Popular</span>
+                        <span className="absolute top-2 end-2 px-2 py-1 text-xs font-bold bg-ds-card text-ds-primary rounded-full">Popular</span>
                       )}
                       <div className="text-3xl mb-2">
                         <svg className="w-10 h-10 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>

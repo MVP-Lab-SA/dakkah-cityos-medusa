@@ -83,7 +83,7 @@ export const MapComponent: React.FC<MapComponentProps> = ({
             </div>
 
             {interactive && (
-              <div className="absolute right-3 top-3 flex flex-col gap-1">
+              <div className="absolute end-3 top-3 flex flex-col gap-1">
                 <button
                   type="button"
                   onClick={() => setZoom(Math.min(zoom + 1, 20))}

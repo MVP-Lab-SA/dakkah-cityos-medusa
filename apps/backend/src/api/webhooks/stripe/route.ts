@@ -2,6 +2,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import crypto from "crypto"
 import { createLogger } from "../../../lib/logger"
+import { handleApiError } from "../../../lib/api-error-handler"
 const logger = createLogger("api:webhooks/stripe")
 
 async function handlePaymentIntentSucceeded(data: any, correlationId: string, req: MedusaRequest) {
@@ -24,8 +25,7 @@ async function handlePaymentIntentSucceeded(data: any, correlationId: string, re
         source: "stripe-webhook",
       })
     } catch (err: any) {
-      console.error(`[Webhook:Stripe] Error dispatching payment.completed: ${err.message}`)
-    }
+}
   }
 }
 
@@ -115,7 +115,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
     return res.status(200).json({ received: true, type: stripeEvent.type, correlation_id: correlationId })
   } catch (error: any) {
-    console.error(`[Webhook:Stripe] Error (correlation: ${correlationId}): ${error.message}`)
-    return res.status(500).json({ error: "Internal server error" })
+: ${error.message}`)
+    return handleApiError(res, error, "WEBHOOKS-STRIPE")
   }
 }

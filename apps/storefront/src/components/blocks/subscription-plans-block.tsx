@@ -65,7 +65,7 @@ export const SubscriptionPlansBlock: React.FC<SubscriptionPlansBlockProps> = ({
             }`}
           >
             {isHighlighted && (
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+              <div className="absolute -top-3 start-1/2 -translate-x-1/2">
                 <span className="px-3 py-1 bg-ds-primary text-ds-primary-foreground text-xs font-semibold rounded-full">
                   Most Popular
                 </span>
@@ -224,7 +224,7 @@ export const SubscriptionPlansBlock: React.FC<SubscriptionPlansBlockProps> = ({
             </button>
             <span className={`text-sm font-medium ${isYearly ? 'text-ds-foreground' : 'text-ds-muted-foreground'}`}>
               Yearly
-              <span className="ml-1 text-xs text-ds-success">(Save 17%)</span>
+              <span className="ms-1 text-xs text-ds-success">(Save 17%)</span>
             </span>
           </div>
         )}

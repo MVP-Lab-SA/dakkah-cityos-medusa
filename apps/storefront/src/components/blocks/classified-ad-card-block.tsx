@@ -54,13 +54,13 @@ export const ClassifiedAdCardBlock: React.FC<ClassifiedAdCardBlockProps> = ({
   const AdCard = ({ ad }: { ad: ClassifiedAd }) => (
     <div className="bg-ds-card border border-ds-border rounded-lg overflow-hidden hover:shadow-md transition-shadow relative">
       {ad.featured && (
-        <div className="absolute top-2 left-2 z-10">
+        <div className="absolute top-2 start-2 z-10">
           <span className="text-xs font-semibold px-2 py-1 rounded-full bg-ds-primary text-ds-primary-foreground">Featured</span>
         </div>
       )}
       <button
         onClick={() => toggleFavorite(ad.id)}
-        className="absolute top-2 right-2 z-10 text-lg hover:scale-110 transition-transform"
+        className="absolute top-2 end-2 z-10 text-lg hover:scale-110 transition-transform"
       >
         {favoriteIds.includes(ad.id) ? '❤️' : '🤍'}
       </button>
@@ -93,7 +93,7 @@ export const ClassifiedAdCardBlock: React.FC<ClassifiedAdCardBlockProps> = ({
     <div className="bg-ds-card border border-ds-border rounded-lg overflow-hidden hover:shadow-md transition-shadow flex">
       <div className="w-40 md:w-56 bg-ds-muted animate-pulse flex-shrink-0 relative">
         {ad.featured && (
-          <span className="absolute top-2 left-2 text-xs font-semibold px-2 py-1 rounded-full bg-ds-primary text-ds-primary-foreground">Featured</span>
+          <span className="absolute top-2 start-2 text-xs font-semibold px-2 py-1 rounded-full bg-ds-primary text-ds-primary-foreground">Featured</span>
         )}
       </div>
       <div className="p-4 flex-1 flex flex-col justify-between">

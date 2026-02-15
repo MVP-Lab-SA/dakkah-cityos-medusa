@@ -61,7 +61,7 @@ export const BulkPricingTableBlock: React.FC<BulkPricingTableBlockProps> = ({
                   }`}
                 >
                   {isBest && (
-                    <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2 py-0.5 text-[10px] font-bold uppercase rounded-full bg-ds-primary text-ds-primary-foreground">
+                    <span className="absolute -top-2.5 start-1/2 -translate-x-1/2 px-2 py-0.5 text-[10px] font-bold uppercase rounded-full bg-ds-primary text-ds-primary-foreground">
                       Best Value
                     </span>
                   )}
@@ -124,7 +124,7 @@ export const BulkPricingTableBlock: React.FC<BulkPricingTableBlockProps> = ({
                   <div className="flex-1 relative">
                     <div className="w-full h-8 bg-ds-muted rounded-md overflow-hidden">
                       <div
-                        className={`h-full rounded-md transition-all flex items-center justify-end pr-2 ${
+                        className={`h-full rounded-md transition-all flex items-center justify-end pe-2 ${
                           isBest ? 'bg-ds-primary' : 'bg-ds-primary/60'
                         }`}
                         style={{ width: `${barWidth}%` }}
@@ -135,7 +135,7 @@ export const BulkPricingTableBlock: React.FC<BulkPricingTableBlockProps> = ({
                       </div>
                     </div>
                     {isBest && (
-                      <span className="absolute -top-1 -right-1 px-1.5 py-0.5 text-[9px] font-bold uppercase rounded bg-ds-primary text-ds-primary-foreground">
+                      <span className="absolute -top-1 -end-1 px-1.5 py-0.5 text-[9px] font-bold uppercase rounded bg-ds-primary text-ds-primary-foreground">
                         Best
                       </span>
                     )}

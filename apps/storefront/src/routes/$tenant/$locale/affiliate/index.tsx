@@ -90,7 +90,7 @@ function AffiliatePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             {filteredTiers.map((tier: any) => (
               <div key={tier.id} className={`relative bg-ds-background border ${tier.popular ? colorBorder[tier.color] : "border-ds-border"} rounded-xl p-6 hover:shadow-lg transition-all duration-200`}>
-                {tier.popular && <span className="absolute -top-3 left-6 px-3 py-1 text-xs font-bold bg-ds-primary text-white rounded-full">{t(locale, 'affiliate.best_value')}</span>}
+                {tier.popular && <span className="absolute -top-3 start-6 px-3 py-1 text-xs font-bold bg-ds-primary text-white rounded-full">{t(locale, 'affiliate.best_value')}</span>}
                 <div className="text-3xl mb-3">{tier.icon}</div>
                 <h3 className="text-xl font-bold text-ds-foreground mb-1">{tier.name}</h3>
                 <div className="flex items-baseline gap-1 mb-2">

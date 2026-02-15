@@ -128,9 +128,9 @@ function TryBeforeYouBuyPage() {
                       ) : (
                         <div className="w-full h-full flex items-center justify-center"><svg className="w-16 h-16 text-ds-success/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5" /></svg></div>
                       )}
-                      <span className="absolute top-2 left-2 px-2.5 py-1 text-xs font-bold bg-ds-success text-white rounded-md">Try Free</span>
+                      <span className="absolute top-2 start-2 px-2.5 py-1 text-xs font-bold bg-ds-success text-white rounded-md">Try Free</span>
                       {item.trial_period && (
-                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-black/70 text-white rounded-md">{item.trial_period}-day trial</span>
+                        <span className="absolute top-2 end-2 px-2 py-1 text-xs font-medium bg-black/70 text-white rounded-md">{item.trial_period}-day trial</span>
                       )}
                     </div>
                     <div className="p-4">

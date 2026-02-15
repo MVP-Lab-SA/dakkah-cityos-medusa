@@ -74,7 +74,7 @@ export const GiftCardDisplayBlock: React.FC<GiftCardDisplayBlockProps> = ({
               <div>
                 <label className="block text-sm font-medium text-ds-foreground mb-1">Custom Amount</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ds-muted-foreground">$</span>
+                  <span className="absolute start-3 top-1/2 -translate-y-1/2 text-ds-muted-foreground">$</span>
                   <input
                     type="number"
                     value={customAmount}
@@ -84,7 +84,7 @@ export const GiftCardDisplayBlock: React.FC<GiftCardDisplayBlockProps> = ({
                     }}
                     placeholder="Enter amount"
                     min="1"
-                    className="w-full pl-8 pr-3 py-2 rounded-md border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-primary"
+                    className="w-full ps-8 pe-3 py-2 rounded-md border border-ds-border bg-ds-background text-ds-foreground placeholder:text-ds-muted-foreground focus:outline-none focus:ring-2 focus:ring-ds-primary"
                   />
                 </div>
               </div>

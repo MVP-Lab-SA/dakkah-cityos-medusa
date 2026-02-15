@@ -191,11 +191,11 @@ function RentalsPage() {
                         </div>
                       )}
                       {item.rental_type && (
-                        <span className={`absolute top-2 left-2 px-2 py-1 text-xs font-medium rounded-md capitalize ${rentalTypeColors[item.rental_type?.toLowerCase()] || "bg-ds-muted text-ds-foreground/80"}`}>
+                        <span className={`absolute top-2 start-2 px-2 py-1 text-xs font-medium rounded-md capitalize ${rentalTypeColors[item.rental_type?.toLowerCase()] || "bg-ds-muted text-ds-foreground/80"}`}>
                           {item.rental_type}
                         </span>
                       )}
-                      <span className={`absolute top-2 right-2 px-2 py-1 text-xs font-medium rounded-md ${item.is_available ? "bg-ds-success/15 text-ds-success" : "bg-ds-destructive/15 text-ds-destructive"}`}>
+                      <span className={`absolute top-2 end-2 px-2 py-1 text-xs font-medium rounded-md ${item.is_available ? "bg-ds-success/15 text-ds-success" : "bg-ds-destructive/15 text-ds-destructive"}`}>
                         {item.is_available ? "Available" : "Unavailable"}
                       </span>
                     </div>

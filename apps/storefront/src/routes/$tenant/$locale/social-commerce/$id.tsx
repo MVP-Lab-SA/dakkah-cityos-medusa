@@ -201,7 +201,7 @@ function SocialCommerceDetailPage() {
                 {product.original_price && Number(product.original_price) > Number(product.price) && (
                   <div className="text-center">
                     <span className="text-sm text-ds-muted-foreground line-through">${Number(product.original_price || 0).toLocaleString()}</span>
-                    <span className="ml-2 text-sm font-medium text-ds-success">{Math.round((1 - Number(product.price) / Number(product.original_price)) * 100)}% off</span>
+                    <span className="ms-2 text-sm font-medium text-ds-success">{Math.round((1 - Number(product.price) / Number(product.original_price)) * 100)}% off</span>
                   </div>
                 )}
 

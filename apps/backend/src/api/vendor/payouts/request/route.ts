@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 // POST /vendor/payouts/request - Request a payout
 export async function POST(req: MedusaRequest, res: MedusaResponse) {

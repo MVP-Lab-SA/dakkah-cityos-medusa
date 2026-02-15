@@ -74,7 +74,7 @@ export const SocialProofBlock: React.FC<SocialProofBlockProps> = ({
     const item = purchases[currentIndex]
     return (
       <div
-        className={`fixed bottom-4 left-4 z-50 max-w-xs border border-ds-border rounded-lg p-4 bg-ds-card shadow-lg transition-all duration-300 ${
+        className={`fixed bottom-4 start-4 z-50 max-w-xs border border-ds-border rounded-lg p-4 bg-ds-card shadow-lg transition-all duration-300 ${
           visible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
         }`}
       >
@@ -130,7 +130,7 @@ export const SocialProofBlock: React.FC<SocialProofBlockProps> = ({
     return (
       <>
         <div
-          className={`fixed bottom-4 right-4 z-50 w-72 border border-ds-border rounded-lg bg-ds-card shadow-lg overflow-hidden transition-all duration-300 ${
+          className={`fixed bottom-4 end-4 z-50 w-72 border border-ds-border rounded-lg bg-ds-card shadow-lg overflow-hidden transition-all duration-300 ${
             visible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
           }`}
         >

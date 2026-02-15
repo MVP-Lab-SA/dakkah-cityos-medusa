@@ -2,6 +2,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import crypto from "crypto"
 import { createLogger } from "../../../lib/logger"
+import { handleApiError } from "../../../lib/api-error-handler"
 const logger = createLogger("api:webhooks/payload-cms")
 
 const SUPPORTED_COLLECTIONS = [
@@ -68,8 +69,7 @@ async function handleHierarchySync(collection: string, data: any, correlationId:
     const result = await engine.syncCollection(collection)
     logger.info(`[Webhook:PayloadCMS] Hierarchy sync completed for ${collection}: ${result.created} created, ${result.updated} updated, ${result.failed} failed, correlation: ${correlationId}`)
   } catch (err: any) {
-    console.error(`[Webhook:PayloadCMS] Hierarchy sync error for ${collection}: ${err.message}, correlation: ${correlationId}`)
-  }
+}
 }
 
 async function handleContentSync(collection: string, data: any, correlationId: string, req: MedusaRequest) {
@@ -88,8 +88,7 @@ async function handleContentSync(collection: string, data: any, correlationId: s
       logger.info(`[Webhook:PayloadCMS] Skipping content sync — missing env vars or doc ID, correlation: ${correlationId}`)
     }
   } catch (err: any) {
-    console.error(`[Webhook:PayloadCMS] Content sync error for ${collection}: ${err.message}, correlation: ${correlationId}`)
-  }
+}
 }
 
 async function handleDelete(collection: string, data: any, correlationId: string) {
@@ -156,7 +155,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
     return res.status(200).json({ received: true, event, collection, correlation_id: correlationId })
   } catch (error: any) {
-    console.error(`[Webhook:PayloadCMS] Error (correlation: ${correlationId}): ${error.message}`)
-    return res.status(500).json({ error: "Internal server error" })
+: ${error.message}`)
+    return handleApiError(res, error, "WEBHOOKS-PAYLOAD-CMS")
   }
 }

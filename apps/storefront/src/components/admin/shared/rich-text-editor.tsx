@@ -152,7 +152,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       </div>
       <div className="relative">
         {isEmpty && (
-          <div className="absolute top-3 left-4 text-sm text-ds-muted-foreground pointer-events-none">
+          <div className="absolute top-3 start-4 text-sm text-ds-muted-foreground pointer-events-none">
             {placeholder}
           </div>
         )}

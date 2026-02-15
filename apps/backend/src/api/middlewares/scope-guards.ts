@@ -1,4 +1,6 @@
 import type { MedusaNextFunction, MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { createLogger } from "../../lib/logger"
+const logger = createLogger("middlewares-scope-guards")
 
 /**
  * Admin Tenant Scope Guard
@@ -42,7 +44,7 @@ export function scopeToTenantMiddleware(
 
     next()
   } catch (error) {
-    console.error("Tenant scope guard error:", error)
+    logger.error("Tenant scope guard error:", error)
     res.status(500).json({
       error: "Authorization Error",
       message: "Failed to verify tenant scope",
@@ -79,7 +81,7 @@ export function scopeToVendorMiddleware(
 
     next()
   } catch (error) {
-    console.error("Vendor scope guard error:", error)
+    logger.error("Vendor scope guard error:", error)
     res.status(500).json({
       error: "Authorization Error",
       message: "Failed to verify vendor scope",
@@ -116,7 +118,7 @@ export function scopeToCompanyMiddleware(
 
     next()
   } catch (error) {
-    console.error("Company scope guard error:", error)
+    logger.error("Company scope guard error:", error)
     res.status(500).json({
       error: "Authorization Error",
       message: "Failed to verify company scope",

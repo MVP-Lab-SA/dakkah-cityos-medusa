@@ -169,7 +169,7 @@ function VendorsPage() {
                         </div>
                       )}
                       {item.is_verified && (
-                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-ds-success text-white rounded-md flex items-center gap-1">
+                        <span className="absolute top-2 end-2 px-2 py-1 text-xs font-medium bg-ds-success text-white rounded-md flex items-center gap-1">
                           <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                           Verified
                         </span>

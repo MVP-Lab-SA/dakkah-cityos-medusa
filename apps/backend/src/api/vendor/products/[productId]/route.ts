@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 // GET /vendor/products/:productId - Get vendor product details
 export async function GET(req: MedusaRequest, res: MedusaResponse) {

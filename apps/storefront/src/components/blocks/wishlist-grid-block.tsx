@@ -60,7 +60,7 @@ export const WishlistGridBlock: React.FC<WishlistGridBlockProps> = ({
                   <div className="bg-ds-muted aspect-square" />
                   <button
                     type="button"
-                    className="absolute top-2 right-2 w-8 h-8 rounded-full bg-ds-background/80 text-ds-destructive hover:bg-ds-background flex items-center justify-center transition-colors"
+                    className="absolute top-2 end-2 w-8 h-8 rounded-full bg-ds-background/80 text-ds-destructive hover:bg-ds-background flex items-center justify-center transition-colors"
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />

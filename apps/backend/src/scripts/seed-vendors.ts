@@ -143,7 +143,7 @@ export default async function seedVendors({ container }: ExecArgs) {
       await vendorModule.createVendors({ ...vendorData, tenant_id: tenantId })
       logger.info(`  - Created vendor: ${vendorData.business_name}`)
     } catch (error: any) {
-      console.error(`  - Failed to create vendor ${vendorData.handle}: ${error.message}`)
+      logger.error(`  - Failed to create vendor ${vendorData.handle}: ${error.message}`)
     }
   }
 

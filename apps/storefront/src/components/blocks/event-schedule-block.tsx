@@ -139,11 +139,11 @@ export const EventScheduleBlock: React.FC<EventScheduleBlockProps> = ({
 
         {view === 'timeline' && (
           <div className="relative">
-            <div className="absolute left-4 md:left-8 top-0 bottom-0 w-0.5 bg-ds-border" />
+            <div className="absolute start-4 md:start-8 top-0 bottom-0 w-0.5 bg-ds-border" />
             <div className="space-y-6">
               {currentDay?.sessions.map((session) => (
-                <div key={session.id} className="relative pl-12 md:pl-20">
-                  <div className="absolute left-3 md:left-7 top-4 w-3 h-3 rounded-full bg-ds-primary border-2 border-ds-background" />
+                <div key={session.id} className="relative ps-12 md:ps-20">
+                  <div className="absolute start-3 md:start-7 top-4 w-3 h-3 rounded-full bg-ds-primary border-2 border-ds-background" />
                   <div className="text-sm font-medium text-ds-muted-foreground mb-2">{session.time}</div>
                   <SessionCard session={session} />
                 </div>

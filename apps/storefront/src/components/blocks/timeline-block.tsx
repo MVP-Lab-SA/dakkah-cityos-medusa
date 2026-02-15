@@ -131,7 +131,7 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
 
   const renderAlternating = () => (
     <div className="relative">
-      <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-ds-border -translate-x-1/2 hidden md:block" />
+      <div className="absolute start-1/2 top-0 bottom-0 w-0.5 bg-ds-border -translate-x-1/2 hidden md:block" />
       {steps.map((step, index) => {
         const status = getStatus(step)
         const colors = statusColors[status]
@@ -151,7 +151,7 @@ export const TimelineBlock: React.FC<TimelineBlockProps> = ({
               </div>
             </div>
 
-            <div className="md:absolute md:left-1/2 md:-translate-x-1/2 z-10 flex-shrink-0">
+            <div className="md:absolute md:start-1/2 md:-translate-x-1/2 z-10 flex-shrink-0">
               <div
                 className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${colors.dot}`}
               >

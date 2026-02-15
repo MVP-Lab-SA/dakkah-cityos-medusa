@@ -1,5 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { getLocalCMSNavigation } from "../../../../lib/platform/cms-registry"
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   try {
@@ -126,8 +127,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       })
     }
   } catch (error) {
-    console.error("[Platform:CMS:Navigation] Error:", error)
-    return res.status(500).json({
+return res.status(500).json({
       success: false,
       error: error instanceof Error ? error.message : "Internal server error",
       errors: [{ message: error instanceof Error ? error.message : "Internal server error" }],

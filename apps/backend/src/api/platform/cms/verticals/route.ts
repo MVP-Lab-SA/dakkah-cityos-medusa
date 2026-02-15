@@ -1,5 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { VERTICAL_TEMPLATES } from "../../../../lib/platform/cms-registry"
+import { handleApiError } from "../../../../lib/api-error-handler"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   try {
@@ -34,8 +35,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       nextPage: page < totalPages ? page + 1 : null,
     })
   } catch (error) {
-    console.error("[Platform:CMS:Verticals] Error:", error)
-    return res.status(500).json({
+return res.status(500).json({
       errors: [{ message: error instanceof Error ? error.message : "Internal server error" }],
     })
   }

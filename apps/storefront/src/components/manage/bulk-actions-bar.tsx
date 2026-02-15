@@ -47,7 +47,7 @@ export function BulkActionsBar({
   return (
     <>
       <div
-        className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-ds-card border border-ds-border rounded-xl shadow-xl px-5 py-3 flex items-center gap-4 animate-[slideUp_0.2s_ease-out]"
+        className="fixed bottom-6 start-1/2 -translate-x-1/2 z-40 bg-ds-card border border-ds-border rounded-xl shadow-xl px-5 py-3 flex items-center gap-4 animate-[slideUp_0.2s_ease-out]"
         style={{ minWidth: 420 }}
       >
         <span className="text-sm font-medium text-ds-foreground whitespace-nowrap">
@@ -71,7 +71,7 @@ export function BulkActionsBar({
             </svg>
           </button>
           {showStatusDropdown && (
-            <div className="absolute bottom-full mb-2 left-0 bg-ds-card border border-ds-border rounded-lg shadow-lg py-1 min-w-[160px] z-50">
+            <div className="absolute bottom-full mb-2 start-0 bg-ds-card border border-ds-border rounded-lg shadow-lg py-1 min-w-[160px] z-50">
               {availableStatuses.map((status) => (
                 <button
                   key={status}

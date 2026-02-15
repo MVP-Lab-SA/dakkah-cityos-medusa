@@ -2,6 +2,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import crypto from "crypto"
 import { createLogger } from "../../../lib/logger"
+import { handleApiError } from "../../../lib/api-error-handler"
 const logger = createLogger("api:webhooks/fleetbase")
 
 async function handleDeliveryStatusUpdate(data: any, correlationId: string) {
@@ -75,7 +76,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
     return res.status(200).json({ received: true, event, correlation_id: correlationId })
   } catch (error: any) {
-    console.error(`[Webhook:Fleetbase] Error (correlation: ${correlationId}): ${error.message}`)
-    return res.status(500).json({ error: "Internal server error" })
+: ${error.message}`)
+    return handleApiError(res, error, "WEBHOOKS-FLEETBASE")
   }
 }

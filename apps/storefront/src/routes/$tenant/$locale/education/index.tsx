@@ -207,10 +207,10 @@ function EducationPage() {
                         </div>
                       )}
                       {item.level && (
-                        <span className={`absolute top-2 left-2 px-2 py-1 text-xs font-medium rounded-md capitalize ${levelColors[item.level?.toLowerCase()] || "bg-ds-muted text-ds-foreground/80"}`}>{item.level}</span>
+                        <span className={`absolute top-2 start-2 px-2 py-1 text-xs font-medium rounded-md capitalize ${levelColors[item.level?.toLowerCase()] || "bg-ds-muted text-ds-foreground/80"}`}>{item.level}</span>
                       )}
                       {item.format && (
-                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-ds-card/90 text-ds-foreground/80 rounded-md">
+                        <span className="absolute top-2 end-2 px-2 py-1 text-xs font-medium bg-ds-card/90 text-ds-foreground/80 rounded-md">
                           {formatLabels[item.format?.toLowerCase()] || item.format}
                         </span>
                       )}

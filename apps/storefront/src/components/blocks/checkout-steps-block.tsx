@@ -54,7 +54,7 @@ export const CheckoutStepsBlock: React.FC<CheckoutStepsBlockProps> = ({
                   <div className={`flex-1 h-0.5 mx-4 ${index < activeStep ? 'bg-ds-primary' : 'bg-ds-muted'}`} />
                 )}
                 {!isHorizontal && index < steps.length - 1 && (
-                  <div className={`ml-4 w-0.5 h-8 ${index < activeStep ? 'bg-ds-primary' : 'bg-ds-muted'}`} />
+                  <div className={`ms-4 w-0.5 h-8 ${index < activeStep ? 'bg-ds-primary' : 'bg-ds-muted'}`} />
                 )}
               </React.Fragment>
             ))}

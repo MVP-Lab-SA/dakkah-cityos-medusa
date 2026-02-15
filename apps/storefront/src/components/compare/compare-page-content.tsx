@@ -148,7 +148,7 @@ export function ComparePageContent() {
                           </div>
                           <button
                             onClick={() => removeProduct(product.productId)}
-                            className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-ds-destructive text-white text-xs flex items-center justify-center hover:opacity-80"
+                            className="absolute -top-2 -end-2 w-6 h-6 rounded-full bg-ds-destructive text-white text-xs flex items-center justify-center hover:opacity-80"
                           >
                             ✕
                           </button>

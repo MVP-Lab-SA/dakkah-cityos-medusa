@@ -106,7 +106,7 @@ export const CalendarComponent: React.FC<CalendarComponentProps> = ({
           <button type="button" onClick={() => navigate(1)} className="p-1.5 rounded-md hover:bg-ds-muted text-ds-foreground transition-colors">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
           </button>
-          <button type="button" onClick={goToday} className="ml-2 px-3 py-1 text-sm font-medium rounded-md border border-ds-border text-ds-foreground hover:bg-ds-muted transition-colors">
+          <button type="button" onClick={goToday} className="ms-2 px-3 py-1 text-sm font-medium rounded-md border border-ds-border text-ds-foreground hover:bg-ds-muted transition-colors">
             Today
           </button>
         </div>

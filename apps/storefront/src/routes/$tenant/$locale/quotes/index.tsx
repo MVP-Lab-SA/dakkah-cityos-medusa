@@ -74,8 +74,8 @@ function QuotesPage() {
                 <div className="aspect-[4/3] relative overflow-hidden">
                   <img loading="lazy" src={cat.image} alt={cat.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <div className="absolute top-3 left-3 text-3xl">{cat.icon}</div>
-                  <div className="absolute bottom-3 left-3">
+                  <div className="absolute top-3 start-3 text-3xl">{cat.icon}</div>
+                  <div className="absolute bottom-3 start-3">
                     <span className="px-2 py-1 text-xs font-medium bg-ds-card/90 text-ds-foreground rounded-md">Avg. response: {cat.avgTime}</span>
                   </div>
                 </div>

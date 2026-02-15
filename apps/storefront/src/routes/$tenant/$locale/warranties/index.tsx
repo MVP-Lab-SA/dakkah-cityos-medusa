@@ -172,12 +172,12 @@ function WarrantiesPage() {
                         </div>
                       )}
                       {item.plan_type && (
-                        <span className={`absolute top-2 left-2 px-2.5 py-1 text-xs font-semibold rounded-md capitalize ${planTypeColors[item.plan_type?.toLowerCase()]?.badge || "bg-ds-muted text-ds-foreground/80"}`}>
+                        <span className={`absolute top-2 start-2 px-2.5 py-1 text-xs font-semibold rounded-md capitalize ${planTypeColors[item.plan_type?.toLowerCase()]?.badge || "bg-ds-muted text-ds-foreground/80"}`}>
                           {item.plan_type}
                         </span>
                       )}
                       {formatDuration(item.duration_months) && (
-                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-ds-card/90 text-ds-foreground/80 rounded-md">
+                        <span className="absolute top-2 end-2 px-2 py-1 text-xs font-medium bg-ds-card/90 text-ds-foreground/80 rounded-md">
                           {formatDuration(item.duration_months)}
                         </span>
                       )}

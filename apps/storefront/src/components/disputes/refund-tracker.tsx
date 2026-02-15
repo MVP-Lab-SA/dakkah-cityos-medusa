@@ -69,7 +69,7 @@ export default function RefundTracker({
               >
                 {index < steps.length - 1 && (
                   <div
-                    className={`absolute top-4 left-1/2 w-full h-0.5 ${
+                    className={`absolute top-4 start-1/2 w-full h-0.5 ${
                       isCompleted ? "bg-ds-success" : "bg-ds-border"
                     }`}
                   />

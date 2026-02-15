@@ -138,7 +138,7 @@ export default async function seedSubscriptions({ container }: ExecArgs) {
       await subscriptionModule.createSubscriptionPlans({ ...planData, tenant_id: tenantId })
       logger.info(`  - Created plan: ${planData.name}`)
     } catch (error: any) {
-      console.error(`  - Failed to create plan ${planData.handle}: ${error.message}`)
+      logger.error(`  - Failed to create plan ${planData.handle}: ${error.message}`)
     }
   }
 

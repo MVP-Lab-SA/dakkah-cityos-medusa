@@ -189,7 +189,7 @@ export function EventCard({
             ) : priceAmount != null ? (
               <div>
                 <span className="text-xs text-ds-muted-foreground/70">From</span>
-                <span className="text-lg font-bold text-ds-foreground ml-1">
+                <span className="text-lg font-bold text-ds-foreground ms-1">
                   {formatPrice(priceAmount, currencyCode)}
                 </span>
               </div>

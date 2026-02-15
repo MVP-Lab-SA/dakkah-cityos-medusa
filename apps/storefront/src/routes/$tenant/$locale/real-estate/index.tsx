@@ -178,15 +178,15 @@ function RealEstatePage() {
                         </div>
                       )}
                       {item.listing_type && (
-                        <span className={`absolute top-2 left-2 px-2 py-1 text-xs font-medium rounded-md ${item.listing_type === "sale" ? "bg-ds-success text-white" : "bg-ds-primary text-white"}`}>
+                        <span className={`absolute top-2 start-2 px-2 py-1 text-xs font-medium rounded-md ${item.listing_type === "sale" ? "bg-ds-success text-white" : "bg-ds-primary text-white"}`}>
                           {item.listing_type === "sale" ? t(locale, 'verticals.for_sale') : t(locale, 'verticals.for_rent')}
                         </span>
                       )}
                       {item.property_type && (
-                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-ds-card/90 text-ds-foreground/80 rounded-md capitalize">{item.property_type}</span>
+                        <span className="absolute top-2 end-2 px-2 py-1 text-xs font-medium bg-ds-card/90 text-ds-foreground/80 rounded-md capitalize">{item.property_type}</span>
                       )}
                       {item.images && item.images.length > 1 && (
-                        <div className="absolute bottom-2 right-2 px-2 py-0.5 text-xs font-medium bg-black/50 text-white rounded-md flex items-center gap-1">
+                        <div className="absolute bottom-2 end-2 px-2 py-0.5 text-xs font-medium bg-black/50 text-white rounded-md flex items-center gap-1">
                           <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                           {item.images.length}
                         </div>

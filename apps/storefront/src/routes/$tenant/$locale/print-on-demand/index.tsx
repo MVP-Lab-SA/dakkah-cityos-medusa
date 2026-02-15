@@ -92,7 +92,7 @@ function PrintOnDemandPage() {
               <div key={p.id} className="group bg-ds-background border border-ds-border rounded-xl overflow-hidden hover:shadow-lg hover:border-ds-destructive/40 transition-all duration-200">
                 <div className="aspect-[4/3] relative overflow-hidden">
                   <img loading="lazy" src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                  <div className="absolute bottom-3 left-3">
+                  <div className="absolute bottom-3 start-3">
                     <span className="px-2 py-1 text-xs font-medium bg-ds-card/90 text-ds-foreground rounded-md">From {p.startingAt}</span>
                   </div>
                 </div>

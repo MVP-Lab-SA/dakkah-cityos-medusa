@@ -90,7 +90,7 @@ export const FlashSaleCountdownBlock: React.FC<FlashSaleCountdownBlockProps> = (
               <div key={product.id} className="bg-ds-card border border-ds-border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                 <div className="relative">
                   <div className="bg-ds-muted aspect-square" />
-                  <span className="absolute top-2 left-2 px-2 py-0.5 rounded text-xs font-bold bg-ds-destructive text-ds-destructive-foreground">
+                  <span className="absolute top-2 start-2 px-2 py-0.5 rounded text-xs font-bold bg-ds-destructive text-ds-destructive-foreground">
                     -{discount}%
                   </span>
                 </div>

@@ -47,10 +47,10 @@ export default async function seedAll(args: ExecArgs) {
     logger.info("Data seeding completed successfully!")
     logger.info("========================================")
   } catch (error: any) {
-    console.error("\n========================================")
-    console.error("Data seeding failed!")
-    console.error("Error:", error.message)
-    console.error("========================================")
+    logger.error("\n========================================")
+    logger.error("Data seeding failed!")
+    logger.error("Error:", error.message)
+    logger.error("========================================")
     throw error
   }
 }

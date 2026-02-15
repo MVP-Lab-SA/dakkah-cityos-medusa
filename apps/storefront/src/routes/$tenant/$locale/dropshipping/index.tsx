@@ -107,7 +107,7 @@ function DropshippingPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {plans.map((plan: any, i: number) => (
             <div key={i} className={`relative bg-ds-background border ${plan.popular ? "border-ds-primary ring-2 ring-ds-primary/20" : "border-ds-border"} rounded-xl p-6 hover:shadow-lg transition-all duration-200`}>
-              {plan.popular && <span className="absolute -top-3 left-6 px-3 py-1 text-xs font-bold bg-ds-primary text-white rounded-full">{t(locale, 'dropshipping.most_popular')}</span>}
+              {plan.popular && <span className="absolute -top-3 start-6 px-3 py-1 text-xs font-bold bg-ds-primary text-white rounded-full">{t(locale, 'dropshipping.most_popular')}</span>}
               <h3 className="text-xl font-bold text-ds-foreground mb-1">{plan.name}</h3>
               <p className="text-3xl font-bold text-ds-primary mb-4">{plan.price}</p>
               <ul className="space-y-2 mb-6">

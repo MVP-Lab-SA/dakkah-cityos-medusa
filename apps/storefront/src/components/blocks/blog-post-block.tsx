@@ -105,9 +105,9 @@ export const BlogPostBlock: React.FC<BlogPostBlockProps> = ({
             className="prose prose-sm md:prose-base max-w-none mb-8
               [&_p]:text-ds-foreground [&_p]:leading-relaxed [&_p]:mb-4
               [&_h3]:text-lg [&_h3]:md:text-xl [&_h3]:font-bold [&_h3]:text-ds-foreground [&_h3]:mt-8 [&_h3]:mb-4
-              [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-4 [&_ul]:space-y-1
+              [&_ul]:list-disc [&_ul]:ps-6 [&_ul]:mb-4 [&_ul]:space-y-1
               [&_li]:text-ds-foreground [&_li]:text-sm [&_li]:md:text-base
-              [&_blockquote]:border-l-4 [&_blockquote]:border-ds-primary [&_blockquote]:pl-4 [&_blockquote]:py-2 [&_blockquote]:my-6 [&_blockquote]:italic [&_blockquote]:text-ds-muted-foreground [&_blockquote]:bg-ds-muted/30 [&_blockquote]:rounded-r-md [&_blockquote]:pr-4"
+              [&_blockquote]:border-l-4 [&_blockquote]:border-ds-primary [&_blockquote]:ps-4 [&_blockquote]:py-2 [&_blockquote]:my-6 [&_blockquote]:italic [&_blockquote]:text-ds-muted-foreground [&_blockquote]:bg-ds-muted/30 [&_blockquote]:rounded-r-md [&_blockquote]:pe-4"
             dangerouslySetInnerHTML={{ __html: sanitizeHtml(content || '') }}
           />
 

@@ -66,7 +66,7 @@ export const Navbar = () => {
       <div className="sticky top-0 inset-x-0 z-40">
         <header className="relative h-16 mx-auto border-b bg-ds-background border-ds-border">
           <nav className="content-container text-sm font-medium text-ds-muted-foreground flex items-center justify-between w-full h-full">
-            <div className="flex items-center h-full absolute left-1/2 transform -translate-x-1/2">
+            <div className="flex items-center h-full absolute start-1/2 transform -translate-x-1/2">
               <span className="text-xl font-bold uppercase">Dakkah CityOS</span>
             </div>
           </nav>
@@ -309,7 +309,7 @@ export const Navbar = () => {
             </DrawerContent>
           </Drawer>
 
-          <div className="flex items-center h-full absolute left-1/2 transform -translate-x-1/2">
+          <div className="flex items-center h-full absolute start-1/2 transform -translate-x-1/2">
             <Link
               to={baseHref || "/"}
               className="text-xl font-bold hover:text-ds-muted-foreground uppercase"

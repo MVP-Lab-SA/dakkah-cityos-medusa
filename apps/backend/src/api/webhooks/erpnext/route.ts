@@ -2,6 +2,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import crypto from "crypto"
 import { createLogger } from "../../../lib/logger"
+import { handleApiError } from "../../../lib/api-error-handler"
 const logger = createLogger("api:webhooks/erpnext")
 
 function verifyHMAC(payload: string, signature: string, secret: string): boolean {
@@ -85,7 +86,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
     return res.status(200).json({ received: true, event, correlation_id: correlationId })
   } catch (error: any) {
-    console.error(`[Webhook:ERPNext] Error (correlation: ${correlationId}): ${error.message}`)
-    return res.status(500).json({ error: "Internal server error" })
+: ${error.message}`)
+    return handleApiError(res, error, "WEBHOOKS-ERPNEXT")
   }
 }

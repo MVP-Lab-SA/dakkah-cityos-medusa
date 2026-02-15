@@ -64,11 +64,11 @@ export const AppointmentSlotsBlock: React.FC<AppointmentSlotsBlockProps> = ({
   const availableSlots = defaultSlots.filter((s) => s.available)
 
   const renderTimelineVariant = () => (
-    <div className="relative pl-8">
-      <div className="absolute left-3 top-0 bottom-0 w-0.5 bg-ds-border" />
+    <div className="relative ps-8">
+      <div className="absolute start-3 top-0 bottom-0 w-0.5 bg-ds-border" />
       {defaultSlots.map((slot, i) => (
         <div key={i} className="relative mb-3">
-          <div className={`absolute left-[-22px] top-3 w-3 h-3 rounded-full border-2 ${
+          <div className={`absolute start-[-22px] top-3 w-3 h-3 rounded-full border-2 ${
             slot.available
               ? selectedSlot === slot.time
                 ? 'bg-ds-primary border-ds-primary'
@@ -88,10 +88,10 @@ export const AppointmentSlotsBlock: React.FC<AppointmentSlotsBlockProps> = ({
           >
             <span className="text-sm font-medium">{slot.time}</span>
             {slot.available && (
-              <span className="text-xs text-ds-muted-foreground ml-2">({duration})</span>
+              <span className="text-xs text-ds-muted-foreground ms-2">({duration})</span>
             )}
             {!slot.available && (
-              <span className="text-xs ml-2">Unavailable</span>
+              <span className="text-xs ms-2">Unavailable</span>
             )}
           </button>
         </div>

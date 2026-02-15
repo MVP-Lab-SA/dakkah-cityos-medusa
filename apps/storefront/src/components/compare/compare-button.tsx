@@ -103,7 +103,7 @@ export function CompareButton({
       </button>
 
       {toastMessage && (
-        <div className="absolute top-full left-0 mt-2 px-3 py-2 bg-ds-foreground text-ds-background text-sm rounded-lg shadow-lg whitespace-nowrap z-50">
+        <div className="absolute top-full start-0 mt-2 px-3 py-2 bg-ds-foreground text-ds-background text-sm rounded-lg shadow-lg whitespace-nowrap z-50">
           {toastMessage}
         </div>
       )}

@@ -1,4 +1,6 @@
 import type { MedusaNextFunction, MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { createLogger } from "../../lib/logger"
+const logger = createLogger("middlewares-node-context")
 
 export interface NodeContextData {
   tenantId: string
@@ -62,7 +64,7 @@ export async function nodeContextMiddleware(
       residencyZone: tenant.residency_zone,
     }
   } catch (error) {
-    console.error("NodeContext middleware error:", error)
+    logger.error("NodeContext middleware error:", error)
   }
 
   return next()

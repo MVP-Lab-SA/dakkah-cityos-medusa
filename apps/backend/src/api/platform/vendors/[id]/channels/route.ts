@@ -1,4 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../../../../lib/api-error-handler"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const vendorModule = req.scope.resolve("vendor") as any
@@ -16,6 +17,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
     res.json({ channels, count: channels.length })
   } catch (error: any) {
-    res.status(500).json({ message: "Failed to fetch channels", error: error.message })
+    handleApiError(res, error, "PLATFORM-VENDORS-ID-CHANNELS")
   }
 }

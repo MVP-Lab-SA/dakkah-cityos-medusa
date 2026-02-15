@@ -101,7 +101,7 @@ export function POTimeline({ purchaseOrder: po }: POTimelineProps) {
                 {!isLast && (
                   <div
                     className={cn(
-                      "absolute left-1/2 top-10 w-0.5 h-full -translate-x-1/2",
+                      "absolute start-1/2 top-10 w-0.5 h-full -translate-x-1/2",
                       step.completed ? "bg-ds-success" : "bg-ds-muted"
                     )}
                   />

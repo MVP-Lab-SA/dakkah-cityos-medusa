@@ -93,7 +93,7 @@ export function TrackingInfo({
                 <div className="relative">
                   <div className="w-3 h-3 rounded-full bg-ds-muted mt-1.5" />
                   {index < events.length - 1 && (
-                    <div className="absolute left-1/2 top-4 w-0.5 h-full -translate-x-1/2 bg-ds-muted" />
+                    <div className="absolute start-1/2 top-4 w-0.5 h-full -translate-x-1/2 bg-ds-muted" />
                   )}
                 </div>
                 <div className="flex-1 pb-4">

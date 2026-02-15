@@ -54,7 +54,7 @@ export const VehicleListingBlock: React.FC<VehicleListingBlockProps> = ({
     <div className="bg-ds-card border border-ds-border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
       <div className="aspect-video bg-ds-muted animate-pulse relative">
         {showComparison && (
-          <label className="absolute top-2 right-2 flex items-center gap-1 bg-ds-background/80 rounded px-2 py-1 cursor-pointer">
+          <label className="absolute top-2 end-2 flex items-center gap-1 bg-ds-background/80 rounded px-2 py-1 cursor-pointer">
             <input
               type="checkbox"
               checked={compareIds.includes(vehicle.id)}
@@ -86,7 +86,7 @@ export const VehicleListingBlock: React.FC<VehicleListingBlockProps> = ({
     <div className="bg-ds-card border border-ds-border rounded-lg overflow-hidden hover:shadow-md transition-shadow flex">
       <div className="w-48 md:w-64 bg-ds-muted animate-pulse flex-shrink-0 relative">
         {showComparison && (
-          <label className="absolute top-2 left-2 flex items-center gap-1 bg-ds-background/80 rounded px-2 py-1 cursor-pointer">
+          <label className="absolute top-2 start-2 flex items-center gap-1 bg-ds-background/80 rounded px-2 py-1 cursor-pointer">
             <input
               type="checkbox"
               checked={compareIds.includes(vehicle.id)}

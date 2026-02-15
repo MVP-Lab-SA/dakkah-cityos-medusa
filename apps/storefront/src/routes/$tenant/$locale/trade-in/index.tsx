@@ -126,9 +126,9 @@ function TradeInPage() {
                       ) : (
                         <div className="w-full h-full flex items-center justify-center"><svg className="w-16 h-16 text-ds-success/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182" /></svg></div>
                       )}
-                      <span className="absolute top-2 left-2 px-2 py-1 text-xs font-medium bg-ds-success text-white rounded-md capitalize">{item.category}</span>
+                      <span className="absolute top-2 start-2 px-2 py-1 text-xs font-medium bg-ds-success text-white rounded-md capitalize">{item.category}</span>
                       {item.trade_in_max && (
-                        <span className="absolute top-2 right-2 px-2 py-1 text-xs font-bold bg-ds-card/90 text-ds-success rounded-md">Up to {formatPrice(item.trade_in_max)}</span>
+                        <span className="absolute top-2 end-2 px-2 py-1 text-xs font-bold bg-ds-card/90 text-ds-success rounded-md">Up to {formatPrice(item.trade_in_max)}</span>
                       )}
                     </div>
                     <div className="p-4">

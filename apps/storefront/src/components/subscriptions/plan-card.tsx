@@ -39,7 +39,7 @@ export function PlanCard({ plan, isCurrentPlan }: PlanCardProps) {
       `}
     >
       {plan.is_popular && (
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+        <div className="absolute -top-4 start-1/2 -translate-x-1/2">
           <span className="inline-flex items-center px-4 py-1.5 bg-ds-primary text-ds-primary-foreground text-xs font-semibold rounded-full uppercase tracking-wide">
             Most Popular
           </span>

@@ -173,12 +173,12 @@ function CharityPage() {
                           </div>
                         )}
                         {item.campaign_type && (
-                          <span className={`absolute top-2 left-2 px-2 py-1 text-xs font-medium text-white rounded-md ${typeColors[item.campaign_type] || "bg-ds-success"}`}>
+                          <span className={`absolute top-2 start-2 px-2 py-1 text-xs font-medium text-white rounded-md ${typeColors[item.campaign_type] || "bg-ds-success"}`}>
                             {typeLabels[item.campaign_type] || item.campaign_type}
                           </span>
                         )}
                         {item.is_urgent && (
-                          <span className="absolute top-2 right-2 px-2 py-1 text-xs font-bold bg-ds-destructive text-white rounded-md">Urgent</span>
+                          <span className="absolute top-2 end-2 px-2 py-1 text-xs font-bold bg-ds-destructive text-white rounded-md">Urgent</span>
                         )}
                       </div>
                       <div className="p-4">

@@ -1,5 +1,7 @@
 import type { MedusaNextFunction, MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { Modules } from "@medusajs/framework/utils"
+import { createLogger } from "../../lib/logger"
+const logger = createLogger("middlewares-tenant-context")
 
 /**
  * Tenant Context Interface
@@ -95,7 +97,7 @@ export async function detectTenantMiddleware(
           }
         } catch (error) {
           // Log but don't fail - will handle missing tenant below
-          console.error("Error resolving tenant from publishable key:", error)
+          logger.error("Error resolving tenant from publishable key:", error)
         }
       }
     }
@@ -151,7 +153,7 @@ export async function detectTenantMiddleware(
 
     next()
   } catch (error) {
-    console.error("Tenant detection middleware error:", error)
+    logger.error("Tenant detection middleware error:", error)
     res.status(500).json({
       error: "Tenant Resolution Error",
       message: "Failed to resolve tenant context",

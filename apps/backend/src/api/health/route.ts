@@ -1,5 +1,6 @@
 // @ts-nocheck
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { handleApiError } from "../../lib/api-error-handler"
 
 const ENV_CHECKS = {
   temporal: {
