@@ -7,3 +7,9 @@ node_modules
 # Local Netlify folder
 .netlify
 .vite
+.env
+.env.*
+!.env.example
+dist/
+build/
+.DS_Store
