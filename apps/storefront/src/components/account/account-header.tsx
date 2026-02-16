@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react"
 import { useAuth } from "@/lib/context/auth-context"
 
 interface AccountHeaderProps {
@@ -7,13 +8,14 @@ interface AccountHeaderProps {
 
 export function AccountHeader({ title, description }: AccountHeaderProps) {
   const { customer, isB2B } = useAuth()
+  const [greetingText, setGreetingText] = useState("Hello")
 
-  const greeting = () => {
+  useEffect(() => {
     const hour = new Date().getHours()
-    if (hour < 12) return "Good morning"
-    if (hour < 18) return "Good afternoon"
-    return "Good evening"
-  }
+    if (hour < 12) setGreetingText("Good morning")
+    else if (hour < 18) setGreetingText("Good afternoon")
+    else setGreetingText("Good evening")
+  }, [])
 
   const displayName = customer?.first_name || "there"
 
@@ -27,7 +29,7 @@ export function AccountHeader({ title, description }: AccountHeaderProps) {
       ) : (
         <>
           <h1 className="text-2xl font-bold text-ds-foreground">
-            {greeting()}, {displayName}
+            {greetingText}, {displayName}
           </h1>
           <p className="mt-1 text-ds-muted-foreground">
             {isB2B 

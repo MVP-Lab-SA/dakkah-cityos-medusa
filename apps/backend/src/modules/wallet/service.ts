@@ -1,7 +1,8 @@
-// @ts-nocheck
 import { MedusaService } from "@medusajs/framework/utils"
+import Wallet from "./models/wallet"
+import WalletTransaction from "./models/wallet-transaction"
 
-class WalletModuleService extends MedusaService({}) {
+class WalletModuleService extends MedusaService({ Wallet, WalletTransaction }) {
   async createWallet(customerId: string, currency: string = "usd"): Promise<any> {
     const existing = await this.listWallets({ customer_id: customerId, currency })
     const list = Array.isArray(existing) ? existing : [existing].filter(Boolean)

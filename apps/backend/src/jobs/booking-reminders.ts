@@ -30,6 +30,7 @@ export default async function bookingRemindersJob(container: MedusaContainer) {
     logger.info(`[booking-reminders] Found ${bookings.length} bookings needing reminders`)
 
     let sentCount = 0
+    let notificationsDisabled = false
 
     for (const booking of bookings) {
       if (!booking.customer_email) {
@@ -38,36 +39,52 @@ export default async function bookingRemindersJob(container: MedusaContainer) {
       }
 
       try {
-        // Send reminder email
-        await notificationService.createNotifications({
-          to: booking.customer_email,
-          channel: "email",
-          template: "booking-reminder",
-          data: {
-            booking_id: booking.id,
-            service_name: "Your appointment",
-            provider_id: booking.provider_id,
-            start_time: booking.start_time,
-            location: booking.location_address,
-            customer_name: booking.customer_name,
-          },
-        })
+        let notificationSent = false
 
-        // Mark reminder as sent in metadata
+        if (!notificationsDisabled) {
+          try {
+            await notificationService.createNotifications({
+              to: booking.customer_email,
+              channel: "email",
+              template: "booking-reminder",
+              data: {
+                booking_id: booking.id,
+                service_name: "Your appointment",
+                provider_id: booking.provider_id,
+                start_time: booking.start_time,
+                location: booking.location_address,
+                customer_name: booking.customer_name,
+              },
+            })
+            notificationSent = true
+          } catch (notifError: any) {
+            const msg = (notifError.message || "").toLowerCase()
+            if (msg.includes("401") || msg.includes("authorization")) {
+              logger.warn("[booking-reminders] Email notifications disabled - invalid SendGrid credentials")
+              notificationsDisabled = true
+            } else {
+              logger.error(`[booking-reminders] Notification error for ${booking.id}: ${notifError.message}`)
+            }
+          }
+        }
+
         await bookingService.updateBookings(
           { id: booking.id },
           { 
             metadata: {
               ...booking.metadata,
-              reminder_sent_at: new Date().toISOString()
+              reminder_sent_at: new Date().toISOString(),
+              ...(notificationsDisabled ? { reminder_email_skipped: true } : {})
             }
           }
         )
 
-        sentCount++
-        logger.info(`[booking-reminders] Sent reminder for booking ${booking.id}`)
+        if (notificationSent) {
+          sentCount++
+          logger.info(`[booking-reminders] Sent reminder for booking ${booking.id}`)
+        }
       } catch (error: any) {
-        logger.error(`[booking-reminders] Failed to send reminder for ${booking.id}:`, error)
+        logger.error(`[booking-reminders] Failed to process reminder for ${booking.id}:`, error)
       }
     }
 

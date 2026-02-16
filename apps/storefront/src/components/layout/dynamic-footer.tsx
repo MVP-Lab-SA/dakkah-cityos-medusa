@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router"
+import { useState, useEffect } from "react"
 import { useFeatures } from "../../lib/context/feature-context"
 import { useTenantPrefix } from "@/lib/context/tenant-context"
 
@@ -11,6 +12,10 @@ export function DynamicFooter({ categories = [] }: DynamicFooterProps) {
   const prefix = useTenantPrefix()
   const navigation = getNavigation()
   const { footer } = navigation
+  const [year, setYear] = useState<string>("")
+  useEffect(() => {
+    setYear(new Date().getFullYear().toString())
+  }, [])
 
   const sections: Array<{ title: string; links: Array<{ label: string; href: string }> }> = []
 
@@ -123,7 +128,7 @@ export function DynamicFooter({ categories = [] }: DynamicFooterProps) {
         <div className="mt-12 pt-8 border-t border-ds-border">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-ds-muted-foreground text-sm">
-              {new Date().getFullYear()} Store. All rights reserved.
+              {year || ""} Store. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <Link to={`${prefix}/privacy` as any} className="text-ds-muted-foreground hover:text-ds-primary-foreground text-sm">

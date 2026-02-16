@@ -1,7 +1,12 @@
 // @ts-nocheck
 import { MedusaService } from "@medusajs/framework/utils"
+import TradeInRequest from "./models/trade-in-request"
+import TradeInOffer from "./models/trade-in-offer"
 
-class TradeInModuleService extends MedusaService({}) {
+class TradeInModuleService extends MedusaService({
+  TradeInRequest,
+  TradeInOffer,
+}) {
   async submitTradeIn(data: {
     customerId: string
     productId: string
@@ -19,7 +24,7 @@ class TradeInModuleService extends MedusaService({}) {
       throw new Error("Description is required")
     }
 
-    const tradeIn = await (this as any).createTradeIns({
+    const tradeIn = await (this as any).createTradeInRequests({
       customer_id: data.customerId,
       product_id: data.productId,
       condition: data.condition,
@@ -39,13 +44,13 @@ class TradeInModuleService extends MedusaService({}) {
       throw new Error("Estimated value cannot be negative")
     }
 
-    const tradeIn = await this.retrieveTradeIn(tradeInId)
+    const tradeIn = await this.retrieveTradeInRequest(tradeInId)
 
     if (tradeIn.status !== "submitted") {
       throw new Error("Trade-in is not in submitted status")
     }
 
-    const updated = await (this as any).updateTradeIns({
+    const updated = await (this as any).updateTradeInRequests({
       id: tradeInId,
       status: "evaluated",
       estimated_value: estimatedValue,
@@ -61,13 +66,13 @@ class TradeInModuleService extends MedusaService({}) {
       throw new Error("Final value cannot be negative")
     }
 
-    const tradeIn = await this.retrieveTradeIn(tradeInId)
+    const tradeIn = await this.retrieveTradeInRequest(tradeInId)
 
     if (tradeIn.status !== "evaluated") {
       throw new Error("Trade-in must be evaluated before approval")
     }
 
-    const updated = await (this as any).updateTradeIns({
+    const updated = await (this as any).updateTradeInRequests({
       id: tradeInId,
       status: "approved",
       final_value: finalValue,
@@ -78,13 +83,13 @@ class TradeInModuleService extends MedusaService({}) {
   }
 
   async rejectTradeIn(tradeInId: string, reason: string): Promise<any> {
-    const tradeIn = await this.retrieveTradeIn(tradeInId)
+    const tradeIn = await this.retrieveTradeInRequest(tradeInId)
 
     if (!["submitted", "evaluated"].includes(tradeIn.status)) {
       throw new Error("Trade-in cannot be rejected from current status")
     }
 
-    const updated = await (this as any).updateTradeIns({
+    const updated = await (this as any).updateTradeInRequests({
       id: tradeInId,
       status: "rejected",
       rejection_reason: reason,
@@ -95,13 +100,13 @@ class TradeInModuleService extends MedusaService({}) {
   }
 
   async completeTradeIn(tradeInId: string, creditAmount: number): Promise<any> {
-    const tradeIn = await this.retrieveTradeIn(tradeInId)
+    const tradeIn = await this.retrieveTradeInRequest(tradeInId)
 
     if (tradeIn.status !== "approved") {
       throw new Error("Trade-in must be approved before completion")
     }
 
-    const updated = await (this as any).updateTradeIns({
+    const updated = await (this as any).updateTradeInRequests({
       id: tradeInId,
       status: "completed",
       credit_amount: creditAmount,
@@ -112,7 +117,7 @@ class TradeInModuleService extends MedusaService({}) {
   }
 
   async getCustomerTradeIns(customerId: string): Promise<any[]> {
-    const tradeIns = await this.listTradeIns({ customer_id: customerId })
+    const tradeIns = await this.listTradeInRequests({ customer_id: customerId })
     return Array.isArray(tradeIns) ? tradeIns : [tradeIns].filter(Boolean)
   }
 }

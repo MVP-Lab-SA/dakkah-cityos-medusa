@@ -38,6 +38,7 @@ export class CMSHierarchySyncEngine {
   private erpnextClient: AxiosInstance
   private syncTracker: DurableSyncTracker
   private config: CMSSyncConfig
+  private static consecutiveFailures = 0
 
   constructor(config: CMSSyncConfig) {
     this.config = config
@@ -62,7 +63,36 @@ export class CMSHierarchySyncEngine {
     })
   }
 
+  private async checkPayloadHealth(): Promise<boolean> {
+    try {
+      await this.payloadClient.get("/api/countries", {
+        params: { limit: 1 },
+        timeout: 5000,
+      })
+      CMSHierarchySyncEngine.consecutiveFailures = 0
+      return true
+    } catch {
+      CMSHierarchySyncEngine.consecutiveFailures++
+      const failures = CMSHierarchySyncEngine.consecutiveFailures
+
+      if (failures <= 3) {
+        logger.info("[CMSHierarchySync] Payload CMS unreachable, skipping sync cycle")
+      } else if (failures === 4) {
+        logger.warn(`[CMSHierarchySync] Payload CMS unreachable for ${failures} consecutive checks`)
+      } else if (failures % 10 === 0) {
+        logger.warn(`[CMSHierarchySync] Payload CMS still unreachable (${failures} consecutive failures)`)
+      }
+
+      return false
+    }
+  }
+
   async syncAll(): Promise<SyncResult[]> {
+    const healthy = await this.checkPayloadHealth()
+    if (!healthy) {
+      return []
+    }
+
     logger.info("[CMSHierarchySync] Starting full hierarchy sync...")
     const results: SyncResult[] = []
 

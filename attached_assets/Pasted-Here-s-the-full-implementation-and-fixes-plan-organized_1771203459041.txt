@@ -1,0 +1,85 @@
+Here's the full implementation and fixes plan, organized by priority:
+
+Full Implementation & Fixes Plan — Dakkah CityOS Commerce Platform
+Phase 0: Stability & Error Silencing (1-2 days)
+Stop the noise, fix what's broken right now
+
+#	Task	What's Wrong	Fix	Effort
+0.1	CMS Hierarchy Sync — add health check & backoff	Payload CMS is unavailable, causing 502/503 errors every 15 minutes across 8 collections (64 error lines per hour)	Add a health-check ping before syncing. If Payload is unreachable, skip the cycle with a single INFO log instead of 8 ERROR lines. Add exponential backoff for retries.	3-4 hrs
+0.2	SendGrid 401 — graceful degradation	Notification sending fails with "invalid/expired authorization grant", causing error stack traces in logs	Wrap notification sends with a try/catch that logs a single warning instead of a full stack trace. Flag to disable email in dev when no valid key is present.	2-3 hrs
+0.3	Hydration mismatch — fix SSR/client divergence	Date formatting and potentially locale-sensitive rendering differs between server and client	Audit SSR components for Date.now(), new Date(), Math.random() usage. Replace with stable values from the SSR loader or wrap in useEffect.	3-4 hrs
+0.4	"Invalid hook call" React error	Likely caused by duplicate React copies in the monorepo (TanStack Start + dependencies)	Run pnpm why react to find duplicates. Deduplicate via pnpm overrides or Vite resolve aliases to ensure a single React instance.	2-3 hrs
+0.5	TanStack "stream already closed" warnings	Streaming queries are being accessed after their lifecycle ends (navigation/component unmount race)	Add cleanup/abort handling in SSR loaders and route components that use streaming queries.	2-3 hrs
+Phase 1: Stub Module Implementation (6-10 days)
+The 3 modules that have business logic but no data models — this is the biggest functional gap
+
+Each module needs: models (DML), index.ts (Module registration), migration, medusa-config.ts entry, defineLink connections, and subscriber hooks.
+
+1.1 Wallet Module (3-4 days)
+Step	Details
+Models	Wallet (customer_id, currency, balance, status, version for optimistic locking) + WalletTransaction (wallet_id, type, amount, balance_after, reference_id)
+Unique constraints	[customer_id, currency] on Wallet, preventing duplicate wallets
+Module registration	index.ts with Module(), register in medusa-config.ts
+Links	defineLink(Customer → Wallet)
+Transactional safety	Optimistic locking with version field to prevent race conditions on balance updates (double-spend prevention)
+Subscribers	order.placed → debit wallet; payment.refunded → credit wallet; order.cancelled → restore balance; customer.created → auto-create wallet
+Existing code	127-line service with createWallet, creditWallet, debitWallet, getBalance, freezeWallet, getTransactionHistory — needs to reference new models
+1.2 Trade-In Module (2-3 days)
+Step	Details
+Models	TradeInRequest (customer_id, product_id, condition, status, trade_in_number, estimated/final value) + TradeInOffer (request_id, offer_amount, credit_type, expires_at, status)
+Unique constraints	trade_in_number unique index
+Module registration	index.ts with Module(), register in medusa-config.ts
+Links	defineLink(Customer → TradeInRequest), defineLink(Product → TradeInRequest)
+Workflow	Existing trade-in-evaluation.ts (4 steps) — update to create/update actual model records
+Subscribers	trade-in.approved → create wallet credit; trade-in.completed → update inventory
+Existing code	120-line service with submitTradeIn, evaluateTradeIn, approveTradeIn, rejectTradeIn, completeTradeIn
+1.3 Insurance Module (2-3 days)
+Step	Details
+Models	InsurancePolicy (customer_id, product_id, order_id, plan_type, coverage_amount, premium, status, policy_number) + InsuranceClaim (policy_id, claim_type, claim_amount, status, claim_number)
+Unique constraints	policy_number and claim_number unique indexes
+Module registration	index.ts with Module(), register in medusa-config.ts
+Links	defineLink(Customer → InsurancePolicy), defineLink(Order → InsurancePolicy)
+Subscribers	order.placed → auto-create policy if insurance product purchased; insurance.claim_approved → trigger payout
+Existing code	123-line service with createPolicy, fileInsuranceClaim, processInsuranceClaim, cancelPolicy
+Phase 2: Integration Hardening (3-5 days)
+Make external service connections resilient
+
+#	Task	Details	Effort
+2.1	Integration health checks	Add health-check endpoints for Payload CMS, ERPNext, Fleetbase, Temporal, and SendGrid. Surface status in an admin dashboard widget.	1-2 days
+2.2	Circuit breaker for external calls	The outbox processor already has circuit breakers — extend this pattern to CMS sync, ERPNext sync, and webhook handlers. Prevent cascading failures.	1 day
+2.3	Environment variable validation	Add startup validation that checks all required env vars (STRIPE_, SENDGRID_, TEMPORAL_, PAYLOAD_, etc.) and logs clear warnings for missing ones instead of failing silently later.	3-4 hrs
+2.4	Webhook signature verification audit	Verify that all webhook endpoints (Stripe, ERPNext, Fleetbase, Payload CMS) properly validate signatures. Document any gaps.	3-4 hrs
+Phase 3: Storefront Stability (2-3 days)
+Fix the user-facing issues
+
+#	Task	Details	Effort
+3.1	React deduplication	Ensure single React instance across the monorepo. Fix the "Invalid hook call" error permanently.	3-4 hrs
+3.2	SSR loader cleanup	Audit all 65 SSR loaders for proper error handling, abort signals, and streaming lifecycle management.	1 day
+3.3	Commission LSP type errors	Fix the 2 non-blocking type errors in CommissionModule service to clean up the build.	1-2 hrs
+3.4	Cache-Control headers	Ensure all backend responses include proper cache headers to prevent stale data in the iframe proxy.	2-3 hrs
+Phase 4: Testing & CI/CD (3-5 days)
+~180 test files exist but aren't running anywhere
+
+#	Task	Details	Effort
+4.1	Run existing test suite	Execute all ~180 tests, triage failures, fix broken ones. Establish a baseline pass rate.	1-2 days
+4.2	CI pipeline setup	Configure automated test runs (backend unit, integration, storefront unit). Run on every push.	1 day
+4.3	Smoke tests for critical paths	Create API smoke tests for: checkout flow, wallet operations, booking creation, vendor order split, multi-tenant isolation.	1-2 days
+4.4	Database migration testing	Ensure migrations run cleanly on a fresh database. Add this to CI.	3-4 hrs
+Phase 5: Production Deployment Prep (2-3 days)
+Final steps before going live
+
+#	Task	Details	Effort
+5.1	Pin Medusa version	Lock exact Medusa version (no ranges) in package.json. Document upgrade procedure.	1 hr
+5.2	Deployment configuration	Set up production build, environment-specific configs, and deployment target.	3-4 hrs
+5.3	Performance baseline	Profile API response times for key endpoints. Identify and address any queries >500ms.	1 day
+5.4	Security audit	Verify no secrets in code, all env vars use secrets management, RBAC enforcement on all admin/vendor routes.	1 day
+5.5	Documentation finalize	Update module-audit.md and replit.md with any changes from implementation phases.	2-3 hrs
+Summary
+Phase	Focus	Effort	Priority
+Phase 0	Stop error noise, fix runtime issues	1-2 days	Immediate
+Phase 1	Build wallet, trade-in, insurance modules	6-10 days	High
+Phase 2	Harden external integrations	3-5 days	Medium-High
+Phase 3	Fix storefront bugs	2-3 days	Medium
+Phase 4	Testing & CI/CD	3-5 days	Medium
+Phase 5	Production deployment prep	2-3 days	Before launch
+Total		17-28 days	

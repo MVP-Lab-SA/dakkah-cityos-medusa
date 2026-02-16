@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from "react"
+import React, { createContext, useContext, useState, useEffect } from "react"
 import { usePlatformContext } from "@/lib/hooks/use-platform-context"
 import type { PlatformContextData, PlatformCapabilities, PlatformGovernanceChain, PlatformNodeHierarchy } from "@/lib/types/cityos"
 
@@ -41,6 +41,17 @@ export function PlatformContextProvider({
   children: React.ReactNode
   tenantSlug: string
 }) {
+  const [isClient, setIsClient] = useState(false)
+  useEffect(() => { setIsClient(true) }, [])
+
+  if (!isClient) {
+    return (
+      <PlatformContext.Provider value={defaultValue}>
+        {children}
+      </PlatformContext.Provider>
+    )
+  }
+
   return <ClientPlatformProvider tenantSlug={tenantSlug}>{children}</ClientPlatformProvider>
 }
 

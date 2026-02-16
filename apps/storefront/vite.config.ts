@@ -77,7 +77,14 @@ export default defineConfig(({ mode }) => {
 
     ssr: {
       noExternal: ["@medusajs/js-sdk", "@medusajs/types"],
-      external: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime"],
+      external: [
+        "react",
+        "react-dom",
+        "react/jsx-runtime",
+        "react/jsx-dev-runtime",
+        "@tanstack/react-query",
+        "@tanstack/react-router",
+      ],
       optimizeDeps: {
         noDiscovery: true,
         include: [],

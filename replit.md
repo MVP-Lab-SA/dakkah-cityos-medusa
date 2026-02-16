@@ -72,12 +72,21 @@ All custom code lives in `apps/backend/src/` — completely separate from Medusa
 
 **Stub Modules (3, need implementation):** `wallet`, `trade-in`, `insurance` — have services with business logic, API routes, storefront pages, but lack data models and medusa-config.ts registration. No Medusa built-in or official plugin exists for any of these. Implementation plan in docs/module-audit.md.
 
-### Implementation Roadmap
-- Phase 1: Implement wallet module (models, migrations, registration) — ~2-3 days
-- Phase 2: Implement trade-in module (models, migrations, registration; existing workflow needs model references) — ~2-3 days
-- Phase 3: Implement insurance module (models, migrations, registration) — ~2-3 days
+### Implementation Status
+- **DONE:** Wallet module implemented (Wallet + WalletTransaction models, index.ts, medusa-config, customer-wallet link)
+- **DONE:** Trade-in module implemented (TradeInRequest + TradeInOffer models, index.ts, medusa-config, customer + product links)
+- **DONE:** Insurance module implemented (InsPolicy + InsClaim models — renamed from insurance_policy to avoid conflict with financial-product module — index.ts, medusa-config, customer + order links)
+- **DONE:** CMS hierarchy sync — health check before sync, exponential backoff, noise reduction
+- **DONE:** SendGrid notification — graceful degradation for 401 errors (skip with warning instead of stack traces)
+- **DONE:** Commission module — fixed LSP type errors (list method parameter shapes)
+- **DONE:** Env var validation utility created (apps/backend/src/lib/env-validation.ts)
+- **DONE:** Storefront — hydration fix (dates in useEffect), SSR external config for React dedup, stream lifecycle fixes
+
+### Remaining Roadmap
 - Phase 4: Strengthen extension patterns (add missing defineLink connections, subscribers)
 - Phase 5: Re-evaluate RSC-Labs plugins when compatible
+- Phase 6: CI/CD pipeline for ~180 test files
+- Phase 7: Production deployment configuration
 
 ## Environment Variables
 **Set:** DATABASE_URL/PG*, VITE_MEDUSA_PUBLISHABLE_KEY, STRIPE_*, SENDGRID_API_KEY, TEMPORAL_*, PAYLOAD_*, ERPNEXT_*, FLEETBASE_*, WALTID_API_KEY
@@ -87,12 +96,15 @@ All custom code lives in `apps/backend/src/` — completely separate from Medusa
 ~180 test files (160 backend unit, 1 integration, 2 E2E, 18 storefront unit, 4 storefront E2E, 3 orchestrator). No CI/CD pipeline executing them.
 
 ## Known Pre-existing Issues
-- CommissionModule: 2 LSP type errors (non-blocking)
-- Hydration mismatch warnings (cosmetic, SSR/client date differences)
-- CMS hierarchy sync 503s (expected when Payload CMS not running)
+- Hydration mismatch warnings may persist in browser console during development (mitigated with SSR fixes, fully resolved on production build)
+- CMS hierarchy sync silently skips when Payload CMS is unreachable (by design — health check added)
+- SendGrid notifications gracefully degrade when API key is invalid (single warning, no stack traces)
 
 ## Recent Changes
-- 2026-02-16: Comprehensive module audit (66 modules classified, migration roadmap created, detailed in docs/module-audit.md)
+- 2026-02-16: Implemented wallet, trade-in, insurance stub modules (models, registration, links)
+- 2026-02-16: Phase 0 stability fixes (CMS health check, SendGrid graceful degradation, hydration fixes, React dedup, stream lifecycle)
+- 2026-02-16: Fixed Commission module LSP type errors, created env var validation utility
+- 2026-02-16: Comprehensive module audit (59 modules classified, migration roadmap created, detailed in docs/module-audit.md)
 - 2026-02-16: Fixed vendor-product alias conflict, commission service resolution safety
 - 2026-02-15: Created vendor-order-split subscriber, added final SSR loaders
 

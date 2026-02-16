@@ -49,11 +49,11 @@ export const Route = createFileRoute("/$tenant/$locale/bookings/$serviceHandle")
       { name: "description", content: loaderData?.service?.description || "" },
     ],
   }),
-  loader: async ({ params }) => {
+  loader: async ({ params, abortController }) => {
     try {
       const baseUrl = getServerBaseUrl()
       const headers = { "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445" }
-      const resp = await fetchWithTimeout(`${baseUrl}/store/bookings/services`, { headers })
+      const resp = await fetchWithTimeout(`${baseUrl}/store/bookings/services`, { headers, signal: abortController.signal })
       if (!resp.ok) return { service: null, providers: [] }
       const data = await resp.json()
       const services = (data.services || []).map(normalizeServiceDetail)
@@ -63,7 +63,7 @@ export const Route = createFileRoute("/$tenant/$locale/bookings/$serviceHandle")
       let providers: any[] = []
       if (service) {
         try {
-          const provResp = await fetchWithTimeout(`${baseUrl}/store/bookings/services/${service.id}/providers`, { headers })
+          const provResp = await fetchWithTimeout(`${baseUrl}/store/bookings/services/${service.id}/providers`, { headers, signal: abortController.signal })
           if (provResp.ok) {
             const provData = await provResp.json()
             providers = provData.providers || []

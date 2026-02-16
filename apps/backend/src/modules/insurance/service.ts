@@ -1,7 +1,12 @@
 // @ts-nocheck
 import { MedusaService } from "@medusajs/framework/utils"
+import InsurancePolicy from "./models/insurance-policy"
+import InsuranceClaim from "./models/insurance-claim"
 
-class InsuranceModuleService extends MedusaService({}) {
+class InsuranceModuleService extends MedusaService({
+  InsurancePolicy,
+  InsuranceClaim,
+}) {
   async createPolicy(data: {
     customerId: string
     productId: string
@@ -21,7 +26,7 @@ class InsuranceModuleService extends MedusaService({}) {
     const endDate = new Date(data.startDate)
     endDate.setFullYear(endDate.getFullYear() + 1)
 
-    const policy = await (this as any).createInsurancePolicys({
+    const policy = await (this as any).createInsPolicys({
       customer_id: data.customerId,
       product_id: data.productId,
       plan_type: data.planType,
@@ -44,7 +49,7 @@ class InsuranceModuleService extends MedusaService({}) {
       throw new Error("Claim amount must be greater than zero")
     }
 
-    const policy = await this.retrieveInsurancePolicy(policyId)
+    const policy = await this.retrieveInsPolicy(policyId)
 
     if (policy.status !== "active") {
       throw new Error("Policy is not active")
@@ -54,7 +59,7 @@ class InsuranceModuleService extends MedusaService({}) {
       throw new Error("Claim amount exceeds coverage limit")
     }
 
-    const claim = await (this as any).createInsuranceClaims({
+    const claim = await (this as any).createInsClaims({
       policy_id: policyId,
       description: description.trim(),
       claim_amount: claimAmount,
@@ -67,13 +72,13 @@ class InsuranceModuleService extends MedusaService({}) {
   }
 
   async processInsuranceClaim(claimId: string, decision: "approved" | "rejected", notes?: string): Promise<any> {
-    const claim = await this.retrieveInsuranceClaim(claimId)
+    const claim = await this.retrieveInsClaim(claimId)
 
     if (claim.status !== "pending" && claim.status !== "under_review") {
       throw new Error("Claim is not in a reviewable state")
     }
 
-    const updated = await (this as any).updateInsuranceClaims({
+    const updated = await (this as any).updateInsClaims({
       id: claimId,
       status: decision,
       decision_notes: notes || null,
@@ -85,13 +90,13 @@ class InsuranceModuleService extends MedusaService({}) {
   }
 
   async cancelPolicy(policyId: string, reason?: string): Promise<any> {
-    const policy = await this.retrieveInsurancePolicy(policyId)
+    const policy = await this.retrieveInsPolicy(policyId)
 
     if (policy.status === "cancelled") {
       throw new Error("Policy is already cancelled")
     }
 
-    const updated = await (this as any).updateInsurancePolicys({
+    const updated = await (this as any).updateInsPolicys({
       id: policyId,
       status: "cancelled",
       cancellation_reason: reason || null,
@@ -102,8 +107,8 @@ class InsuranceModuleService extends MedusaService({}) {
   }
 
   async getPolicyDetails(policyId: string): Promise<any> {
-    const policy = await this.retrieveInsurancePolicy(policyId)
-    const claims = await this.listInsuranceClaims({ policy_id: policyId })
+    const policy = await this.retrieveInsPolicy(policyId)
+    const claims = await this.listInsClaims({ policy_id: policyId })
     const claimList = Array.isArray(claims) ? claims : [claims].filter(Boolean)
 
     const now = new Date()

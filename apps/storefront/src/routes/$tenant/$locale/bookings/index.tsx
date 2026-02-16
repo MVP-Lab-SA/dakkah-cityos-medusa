@@ -12,13 +12,14 @@ export const Route = createFileRoute("/$tenant/$locale/bookings/")({
       { name: "description", content: "Browse and book services on Dakkah CityOS" },
     ],
   }),
-  loader: async () => {
+  loader: async ({ abortController }) => {
     try {
       const baseUrl = getServerBaseUrl()
       const resp = await fetchWithTimeout(`${baseUrl}/store/bookings/services`, {
         headers: {
           "x-publishable-api-key": import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY || "pk_56377e90449a39fc4585675802137b09577cd6e17f339eba6dc923eaf22e3445",
         },
+        signal: abortController.signal,
       })
       if (!resp.ok) return { items: [], count: 0 }
       const data = await resp.json()

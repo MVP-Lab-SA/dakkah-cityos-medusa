@@ -626,5 +626,20 @@ module.exports = defineConfig({
         }
       }
     },
+    {
+      resolve: "./src/modules/wallet",
+      key: "wallet",
+      options: {},
+    },
+    {
+      resolve: "./src/modules/trade-in",
+      key: "tradeIn",
+      options: {},
+    },
+    {
+      resolve: "./src/modules/insurance",
+      key: "insurance",
+      options: {},
+    },
   ],
 });

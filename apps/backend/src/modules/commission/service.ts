@@ -25,8 +25,8 @@ class CommissionModuleService extends MedusaService({
     storeId?: string | null
   }) {
     // Find applicable commission rule (highest priority)
-    const rules = await this.listCommissionRules({
-      filters: {
+    const rules = await this.listCommissionRules(
+      {
         $or: [
           { vendor_id: vendorId },
           { vendor_id: null }
@@ -34,13 +34,13 @@ class CommissionModuleService extends MedusaService({
         tenant_id: tenantId,
         status: "active",
       },
-      config: {
+      {
         relations: [],
         select: ["id", "commission_type", "commission_percentage", "commission_flat_amount", "priority", "tiers"],
         take: 1,
         order: { priority: "DESC" }
       }
-    })
+    )
 
     const rule = rules[0]
     
@@ -153,12 +153,12 @@ class CommissionModuleService extends MedusaService({
       }
     }
 
-    const transactions = await this.listCommissionTransactions({
+    const transactions = await this.listCommissionTransactions(
       filters,
-      config: {
+      {
         select: ["id", "commission_amount", "status", "payout_status", "transaction_date"],
       }
-    })
+    )
 
     let totalEarned = 0
     let totalPending = 0
@@ -187,14 +187,14 @@ class CommissionModuleService extends MedusaService({
   async processCommissionPayout(transactionIds: string[]) {
     const now = new Date()
 
-    const transactions = await this.listCommissionTransactions({
-      filters: {
+    const transactions = await this.listCommissionTransactions(
+      {
         id: { $in: transactionIds }
       },
-      config: {
+      {
         select: ["id"],
       }
-    })
+    )
 
     if (transactions.length === 0) {
       return { processed_count: 0 }
@@ -227,12 +227,12 @@ class CommissionModuleService extends MedusaService({
       filters.status = status
     }
 
-    return await this.listCommissionRules({
+    return await this.listCommissionRules(
       filters,
-      config: {
+      {
         order: { priority: "DESC" }
       }
-    })
+    )
   }
 
   // Adjust commission for a transaction
@@ -246,14 +246,14 @@ class CommissionModuleService extends MedusaService({
     reason: string
   }) {
     // Find the original transaction
-    const transactions = await this.listCommissionTransactions({
-      filters: {
+    const transactions = await this.listCommissionTransactions(
+      {
         id: transactionId,
       },
-      config: {
+      {
         select: ["id", "vendor_id", "tenant_id", "order_id", "line_item_id", "commission_amount", "net_amount", "order_total"],
       }
-    })
+    )
 
     const originalTransaction = transactions[0]
     if (!originalTransaction) {
@@ -323,12 +323,12 @@ class CommissionModuleService extends MedusaService({
       }
     }
 
-    const transactions = await this.listCommissionTransactions({
+    const transactions = await this.listCommissionTransactions(
       filters,
-      config: {
+      {
         select: ["vendor_id", "commission_amount"],
       }
-    })
+    )
 
     // Group by vendor_id and aggregate
     const vendorMap = new Map<string, { total_commission: number; transaction_count: number }>()
