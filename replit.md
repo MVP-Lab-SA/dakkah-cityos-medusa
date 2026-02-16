@@ -82,18 +82,31 @@ All custom code lives in `apps/backend/src/` — completely separate from Medusa
 - **DONE:** Env var validation utility created (apps/backend/src/lib/env-validation.ts)
 - **DONE:** Storefront — hydration fix (dates in useEffect), SSR external config for React dedup, stream lifecycle fixes
 
+- **DONE:** Phase 4.1 — Local Notification provider for admin feed channel, env-validation wired to startup
+- **DONE:** Phase 4.2 — 6 new defineLink connections (cart-metadata, notification-preference, product-bundle, referral, tax-exemption, stock-alert)
+- **DONE:** Phase 4.3 — 4 new event subscribers (inventory-stock-alert, product-updated-analytics, cart-metadata-sync, customer-notification-preferences)
+- **DONE:** Phase 5 — RSC-Labs plugin evaluation (3 NOT NEEDED, medusa-documents-v2 is CANDIDATE for future use)
+- **DONE:** Phase 6 — CI/CD test runner (scripts/run-tests.sh, turbo tasks, package.json scripts)
+- **DONE:** Phase 7 — Production deployment (scripts/build-production.sh, scripts/start-production.sh, Replit deploy config)
+
+### Notification Provider
+- **Email channel**: SendGrid via `@medusajs/medusa/notification-sendgrid` (conditional on SENDGRID_API_KEY)
+- **Feed channel**: Local Notification via `@medusajs/medusa/notification-local` (always active for admin dashboard notifications)
+- 29 subscribers send admin feed notifications, all subscribers use the Medusa Notification Module pattern
+
 ### Remaining Roadmap
-- Phase 4: Strengthen extension patterns (add missing defineLink connections, subscribers)
-- Phase 5: Re-evaluate RSC-Labs plugins when compatible
-- Phase 6: CI/CD pipeline for ~180 test files
-- Phase 7: Production deployment configuration
+- Enable medusa-documents-v2 plugin when PDF invoice generation is needed
+- Add more subscribers for remaining isolated modules as business logic requires
+- Configure Redis for production (replace in-memory fallback)
+- Set up Meilisearch for product search
+- Configure Sentry for error monitoring
 
 ## Environment Variables
 **Set:** DATABASE_URL/PG*, VITE_MEDUSA_PUBLISHABLE_KEY, STRIPE_*, SENDGRID_API_KEY, TEMPORAL_*, PAYLOAD_*, ERPNEXT_*, FLEETBASE_*, WALTID_API_KEY
 **Not set (with fallbacks):** MEILISEARCH_HOST (search disabled), SENTRY_DSN (monitoring disabled), REDIS_URL (in-memory fallback)
 
 ## Testing Status
-~180 test files (160 backend unit, 1 integration, 2 E2E, 18 storefront unit, 4 storefront E2E, 3 orchestrator). No CI/CD pipeline executing them.
+~180 test files (147 backend unit, 1 integration, 27 storefront, 3 orchestrator). CI/CD runner: `pnpm test:ci` or `bash scripts/run-tests.sh`. Turbo tasks: `turbo test`, `turbo test:unit`.
 
 ## Known Pre-existing Issues
 - Hydration mismatch warnings may persist in browser console during development (mitigated with SSR fixes, fully resolved on production build)
@@ -101,6 +114,10 @@ All custom code lives in `apps/backend/src/` — completely separate from Medusa
 - SendGrid notifications gracefully degrade when API key is invalid (single warning, no stack traces)
 
 ## Recent Changes
+- 2026-02-16: Phase 7 — Production deployment config (build/start scripts, Replit deploy config as VM)
+- 2026-02-16: Phase 6 — CI/CD test runner (scripts/run-tests.sh, turbo tasks)
+- 2026-02-16: Phase 5 — RSC-Labs plugin evaluation (3 NOT NEEDED, documents CANDIDATE)
+- 2026-02-16: Phase 4 — Extension hardening (Local Notification, 6 defineLinks, 4 event subscribers, env-validation at boot)
 - 2026-02-16: Implemented wallet, trade-in, insurance stub modules (models, registration, links)
 - 2026-02-16: Phase 0 stability fixes (CMS health check, SendGrid graceful degradation, hydration fixes, React dedup, stream lifecycle)
 - 2026-02-16: Fixed Commission module LSP type errors, created env var validation utility

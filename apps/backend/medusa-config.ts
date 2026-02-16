@@ -1,7 +1,10 @@
 import { defineConfig, loadEnv } from "@medusajs/framework/utils";
 import path from "path";
+import { validateEnvironment } from "./src/lib/env-validation";
 
 loadEnv(process.env.NODE_ENV || "development", process.cwd());
+
+validateEnvironment();
 
 const iconsPath = path.resolve(__dirname, "node_modules/@medusajs/icons/dist/esm/index.js");
 
@@ -52,35 +55,38 @@ module.exports = defineConfig({
     },
   },
   plugins: [
-    // NOTE: RSC-Labs plugins disabled due to installation issues
-    // Re-enable when properly installed:
-    // - @rsc-labs/medusa-store-analytics-v2
-    // - @rsc-labs/medusa-documents-v2
-    // - @rsc-labs/medusa-wishlist
-    // - @rsc-labs/medusa-rbac
+    // RSC-Labs plugins — evaluated 2026-02-16
+    // @rsc-labs/medusa-store-analytics-v2 (v0.1.3) — NOT NEEDED: custom analytics module provides BI with Report/Dashboard models beyond Medusa Analytics
+    // @rsc-labs/medusa-documents-v2 (v0.2.11) — CANDIDATE: PDF invoice generation. Can be enabled when needed. Requires: @emotion/react, @mui/material, react-table
+    // @rsc-labs/medusa-wishlist (v0.0.3) — NOT NEEDED: custom wishlist module already implemented with tenant scoping
+    // @rsc-labs/medusa-rbac — NOT NEEDED: custom 10-role RBAC system already implemented via governance module
   ],
   modules: [
-    // Notification Module (SendGrid) - only enabled if API key is set
-    ...(process.env.SENDGRID_API_KEY
-      ? [
+    {
+      resolve: "@medusajs/medusa/notification",
+      options: {
+        providers: [
           {
-            resolve: "@medusajs/medusa/notification",
+            resolve: "@medusajs/medusa/notification-local",
+            id: "local",
             options: {
-              providers: [
-                {
-                  resolve: "@medusajs/medusa/notification-sendgrid",
-                  id: "sendgrid",
-                  options: {
-                    channels: ["email"],
-                    api_key: process.env.SENDGRID_API_KEY,
-                    from: process.env.SENDGRID_FROM,
-                  },
-                },
-              ],
+              channels: ["feed"],
             },
           },
-        ]
-      : []),
+          ...(process.env.SENDGRID_API_KEY
+            ? [{
+                resolve: "@medusajs/medusa/notification-sendgrid",
+                id: "sendgrid",
+                options: {
+                  channels: ["email"],
+                  api_key: process.env.SENDGRID_API_KEY,
+                  from: process.env.SENDGRID_FROM,
+                },
+              }]
+            : []),
+        ],
+      },
+    },
     // Payment Module (Stripe) - only enabled if API key is set
     ...(process.env.STRIPE_API_KEY
       ? [

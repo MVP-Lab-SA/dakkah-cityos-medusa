@@ -8,8 +8,12 @@
     "start": "turbo start",
     "lint": "turbo lint",
     "test": "turbo test",
+    "test:unit": "turbo test:unit",
+    "test:ci": "bash scripts/run-tests.sh",
     "backend:dev": "turbo dev --filter=backend",
-    "storefront:dev": "turbo dev --filter=storefront"
+    "storefront:dev": "turbo dev --filter=storefront",
+    "build:prod": "bash scripts/build-production.sh",
+    "start:prod": "bash scripts/start-production.sh"
   },
   "devDependencies": {
     "prettier": "^3.2.5",
