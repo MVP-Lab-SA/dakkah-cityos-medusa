@@ -1,0 +1,433 @@
+// @ts-nocheck
+import { ExecArgs } from "@medusajs/framework/types"
+import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import { SeedContext, getImage, getThumb, sarPrice, randomSaudiCity, saudiPhone } from "./seed-utils.js"
+
+export default async function seedVerticals({ container }: ExecArgs, ctx: SeedContext): Promise<void> {
+  const logger = container.resolve(ContainerRegistrationKeys.LOGGER)
+  const T = "dakkah"
+
+  const log = (msg: string) => logger.info(msg)
+  const logError = (section: string, err: any) => logger.warn(`  ❌ ${section} failed: ${err.message}`)
+
+  const resolveService = (key: string) => {
+    try { return container.resolve(key) as any }
+    catch { return null }
+  }
+
+  const resolveAny = (...keys: string[]) => {
+    for (const k of keys) {
+      const s = resolveService(k)
+      if (s) return s
+    }
+    return null
+  }
+
+  const tryCreate = async (svc: any, data: any[], methods: string[]) => {
+    for (const method of methods) {
+      if (typeof svc[method] === "function") {
+        return await svc[method](data)
+      }
+    }
+    const results = []
+    for (const item of data) {
+      for (const method of methods) {
+        const singular = method.replace(/s$/, "")
+        if (typeof svc[singular] === "function") {
+          results.push(await svc[singular](item))
+          break
+        }
+      }
+    }
+    return results
+  }
+
+  log("━━━ SEED VERTICALS (27 modules) ━━━")
+
+  // ── 1. BOOKING ──
+  try {
+    const svc = resolveService("booking")
+    if (!svc) { log("  ⚠ Booking service not found, skipping"); } else {
+      const data = [
+        { tenant_id: T, name: "Spa & Wellness Session", description: "Full body relaxation spa treatment", price: sarPrice(350), duration_minutes: 90, category: "wellness", is_active: true, thumbnail: getThumb("booking", 0), metadata: { seeded: true } },
+        { tenant_id: T, name: "Personal Trainer Session", description: "One-on-one fitness coaching session", price: sarPrice(200), duration_minutes: 60, category: "fitness", is_active: true, thumbnail: getThumb("booking", 1), metadata: { seeded: true } },
+        { tenant_id: T, name: "Photography Shoot", description: "Professional portrait or event photography", price: sarPrice(800), duration_minutes: 120, category: "photography", is_active: true, thumbnail: getThumb("booking", 2), metadata: { seeded: true } },
+        { tenant_id: T, name: "Legal Consultation", description: "30-min consultation with licensed attorney", price: sarPrice(500), duration_minutes: 30, category: "legal", is_active: true, thumbnail: getThumb("booking", 3), metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createBookingServices", "createBookings", "create"])
+      log("  ✓ Booking: 4 services seeded")
+    }
+  } catch (err: any) { logError("Booking", err) }
+
+  // ── 2. HEALTHCARE ──
+  try {
+    const svc = resolveService("healthcare")
+    if (!svc) { log("  ⚠ Healthcare service not found, skipping"); } else {
+      const data = [
+        { tenant_id: T, name: "King Faisal Specialist Hospital", type: "hospital", city: "Riyadh", specialties: ["cardiology", "oncology", "neurology"], rating: 4.8, is_active: true, metadata: { seeded: true } },
+        { tenant_id: T, name: "Saudi German Hospital", type: "hospital", city: "Jeddah", specialties: ["orthopedics", "pediatrics", "dermatology"], rating: 4.5, is_active: true, metadata: { seeded: true } },
+        { tenant_id: T, name: "Dr. Sulaiman Al Habib Medical Group", type: "clinic", city: "Riyadh", specialties: ["general", "dentistry", "ophthalmology"], rating: 4.7, is_active: true, metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createHealthcareProviders", "createHealthcares", "create"])
+      log("  ✓ Healthcare: 3 providers seeded")
+    }
+  } catch (err: any) { logError("Healthcare", err) }
+
+  // ── 3. RESTAURANT ──
+  try {
+    const svc = resolveService("restaurant")
+    if (!svc) { log("  ⚠ Restaurant service not found, skipping"); } else {
+      const data = [
+        { tenant_id: T, name: "Al Baik", cuisine_type: "fast_food", city: "Jeddah", address: "King Abdul Aziz Road", rating: 4.9, price_range: "$", is_active: true, logo_url: getThumb("restaurant", 0), banner_url: getImage("restaurant", 0), metadata: { seeded: true } },
+        { tenant_id: T, name: "Nusret Steakhouse", cuisine_type: "steakhouse", city: "Riyadh", address: "KAFD District", rating: 4.6, price_range: "$$$$", is_active: true, logo_url: getThumb("restaurant", 1), banner_url: getImage("restaurant", 1), metadata: { seeded: true } },
+        { tenant_id: T, name: "The Globe", cuisine_type: "fine_dining", city: "Riyadh", address: "Al Faisaliah Tower", rating: 4.7, price_range: "$$$", is_active: true, logo_url: getThumb("restaurant", 2), banner_url: getImage("restaurant", 2), metadata: { seeded: true } },
+        { tenant_id: T, name: "Mama Noura", cuisine_type: "shawarma", city: "Riyadh", address: "Olaya Street", rating: 4.5, price_range: "$", is_active: true, logo_url: getThumb("restaurant", 3), banner_url: getImage("restaurant", 3), metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createRestaurants", "create"])
+      log("  ✓ Restaurant: 4 restaurants seeded")
+    }
+  } catch (err: any) { logError("Restaurant", err) }
+
+  // ── 4. TRAVEL ──
+  try {
+    const svc = resolveService("travel")
+    if (!svc) { log("  ⚠ Travel service not found, skipping"); } else {
+      const data = [
+        { tenant_id: T, name: "Umrah Premium Package", description: "5-star Umrah with hotel and transport", destination: "Mecca", duration_days: 7, price: sarPrice(8500), includes: ["flights", "hotel", "transport", "guided_tours"], thumbnail: getThumb("travel", 0), metadata: { seeded: true } },
+        { tenant_id: T, name: "Riyadh City Tour", description: "Full day tour of Riyadh landmarks", destination: "Riyadh", duration_days: 1, price: sarPrice(450), includes: ["transport", "lunch", "guide"], thumbnail: getThumb("travel", 1), metadata: { seeded: true } },
+        { tenant_id: T, name: "Red Sea Beach Resort", description: "Luxury beachfront resort getaway", destination: "NEOM", duration_days: 4, price: sarPrice(5200), includes: ["resort", "meals", "water_sports"], thumbnail: getThumb("travel", 2), metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createTravelPackages", "createTravels", "create"])
+      log("  ✓ Travel: 3 packages seeded")
+    }
+  } catch (err: any) { logError("Travel", err) }
+
+  // ── 5. EVENT TICKETING ──
+  try {
+    const svc = resolveAny("eventTicketing", "event_ticketing", "event-ticketing")
+    if (!svc) { log("  ⚠ Event Ticketing service not found, skipping"); } else {
+      const data = [
+        { tenant_id: T, name: "Riyadh Season Festival", description: "Annual entertainment mega-event", venue: "Boulevard Riyadh City", city: "Riyadh", date: "2026-10-15T18:00:00Z", capacity: 50000, ticket_price: sarPrice(150), thumbnail: getThumb("events", 0), metadata: { seeded: true } },
+        { tenant_id: T, name: "Jeddah Art Week", description: "Contemporary art exhibition and workshops", venue: "Jeddah Corniche", city: "Jeddah", date: "2026-03-20T10:00:00Z", capacity: 5000, ticket_price: sarPrice(75), thumbnail: getThumb("events", 1), metadata: { seeded: true } },
+        { tenant_id: T, name: "Saudi Cup Horse Race", description: "World's richest horse race event", venue: "King Abdulaziz Racecourse", city: "Riyadh", date: "2026-02-22T14:00:00Z", capacity: 20000, ticket_price: sarPrice(500), thumbnail: getThumb("events", 2), metadata: { seeded: true } },
+        { tenant_id: T, name: "MDL Beast Music Festival", description: "Mega electronic music festival", venue: "MDL Beast Venue", city: "Riyadh", date: "2026-12-19T16:00:00Z", capacity: 100000, ticket_price: sarPrice(350), thumbnail: getThumb("events", 3), metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createEventTicketings", "createEvents", "create"])
+      log("  ✓ Event Ticketing: 4 events seeded")
+    }
+  } catch (err: any) { logError("Event Ticketing", err) }
+
+  // ── 6. FREELANCE ──
+  try {
+    const svc = resolveService("freelance")
+    if (!svc) { log("  ⚠ Freelance service not found, skipping"); } else {
+      const data = [
+        { tenant_id: T, title: "Web Development", description: "Full-stack web application development", category: "development", price_from: sarPrice(2000), delivery_days: 14, freelancer_name: "Ahmed Al-Rashid", metadata: { seeded: true } },
+        { tenant_id: T, title: "Arabic Translation", description: "Professional Arabic-English translation", category: "translation", price_from: sarPrice(300), delivery_days: 3, freelancer_name: "Fatima Al-Harbi", metadata: { seeded: true } },
+        { tenant_id: T, title: "Graphic Design", description: "Brand identity and marketing materials", category: "design", price_from: sarPrice(800), delivery_days: 7, freelancer_name: "Omar Badr", metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createFreelanceGigs", "createFreelances", "create"])
+      log("  ✓ Freelance: 3 gigs seeded")
+    }
+  } catch (err: any) { logError("Freelance", err) }
+
+  // ── 7. GROCERY ──
+  try {
+    const svc = resolveService("grocery")
+    if (!svc) { log("  ⚠ Grocery service not found, skipping"); } else {
+      const data = [
+        { tenant_id: T, name: "Panda Supermarket", type: "supermarket", city: "Riyadh", delivery_radius_km: 15, min_order: sarPrice(50), logo_url: getThumb("grocery", 0), metadata: { seeded: true } },
+        { tenant_id: T, name: "Danube", type: "supermarket", city: "Jeddah", delivery_radius_km: 20, min_order: sarPrice(75), logo_url: getThumb("grocery", 1), metadata: { seeded: true } },
+        { tenant_id: T, name: "Tamimi Markets", type: "supermarket", city: "Dammam", delivery_radius_km: 12, min_order: sarPrice(60), logo_url: getThumb("grocery", 2), metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createGroceryStores", "createGrocerys", "create"])
+      log("  ✓ Grocery: 3 stores seeded")
+    }
+  } catch (err: any) { logError("Grocery", err) }
+
+  // ── 8. AUTOMOTIVE ──
+  try {
+    const svc = resolveService("automotive")
+    if (!svc) { log("  ⚠ Automotive service not found, skipping"); } else {
+      const data = [
+        { tenant_id: T, name: "Oil Change Service", type: "service", price: sarPrice(120), duration_minutes: 30, description: "Full synthetic oil change with filter", metadata: { seeded: true } },
+        { tenant_id: T, name: "Tire Replacement", type: "service", price: sarPrice(800), duration_minutes: 45, description: "Set of 4 tires with balancing and alignment", metadata: { seeded: true } },
+        { tenant_id: T, name: "Car Detailing Premium", type: "service", price: sarPrice(350), duration_minutes: 120, description: "Interior and exterior deep cleaning and polish", metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createAutomotiveServices", "createAutomotives", "create"])
+      log("  ✓ Automotive: 3 services seeded")
+    }
+  } catch (err: any) { logError("Automotive", err) }
+
+  // ── 9. FITNESS ──
+  try {
+    const svc = resolveService("fitness")
+    if (!svc) { log("  ⚠ Fitness service not found, skipping"); } else {
+      const data = [
+        { tenant_id: T, name: "Fitness Time Gym", type: "gym", city: "Riyadh", membership_price: sarPrice(250), facilities: ["weights", "cardio", "pool", "sauna"], metadata: { seeded: true } },
+        { tenant_id: T, name: "Leejam Sports", type: "gym", city: "Jeddah", membership_price: sarPrice(300), facilities: ["weights", "cardio", "group_classes", "spa"], metadata: { seeded: true } },
+        { tenant_id: T, name: "Body Masters", type: "gym", city: "Dammam", membership_price: sarPrice(200), facilities: ["weights", "cardio", "boxing", "yoga"], metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createFitnessFacilities", "createFitnesss", "create"])
+      log("  ✓ Fitness: 3 facilities seeded")
+    }
+  } catch (err: any) { logError("Fitness", err) }
+
+  // ── 10. FINANCIAL PRODUCT ──
+  try {
+    const svc = resolveAny("financialProduct", "financial_product")
+    if (!svc) { log("  ⚠ Financial Product service not found, skipping"); } else {
+      const data = [
+        { tenant_id: T, name: "Murabaha Personal Finance", type: "personal_finance", min_amount: 5000, max_amount: 500000, currency_code: "sar", rate_min: 3.5, rate_max: 7.0, metadata: { seeded: true } },
+        { tenant_id: T, name: "SME Business Financing", type: "business_finance", min_amount: 50000, max_amount: 5000000, currency_code: "sar", rate_min: 4.0, rate_max: 8.5, metadata: { seeded: true } },
+        { tenant_id: T, name: "Home Ijara", type: "mortgage", min_amount: 200000, max_amount: 3000000, currency_code: "sar", rate_min: 2.5, rate_max: 5.0, metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createFinancialProducts", "create"])
+      log("  ✓ Financial Product: 3 products seeded")
+    }
+  } catch (err: any) { logError("Financial Product", err) }
+
+  // ── 11. ADVERTISING ──
+  try {
+    const svc = resolveService("advertising")
+    if (!svc) { log("  ⚠ Advertising service not found, skipping"); } else {
+      const data = [
+        { tenant_id: T, name: "Homepage Banner", type: "banner", placement: "homepage_hero", price_per_day: sarPrice(500), is_active: true, metadata: { seeded: true } },
+        { tenant_id: T, name: "Category Spotlight", type: "sponsored", placement: "category_top", price_per_day: sarPrice(250), is_active: true, metadata: { seeded: true } },
+        { tenant_id: T, name: "Flash Sale Promo", type: "banner", placement: "flash_sale_banner", price_per_day: sarPrice(750), is_active: true, metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createAdvertisings", "createAdCampaigns", "create"])
+      log("  ✓ Advertising: 3 campaigns seeded")
+    }
+  } catch (err: any) { logError("Advertising", err) }
+
+  // ── 12. PARKING ──
+  try {
+    const svc = resolveService("parking")
+    if (!svc) { log("  ⚠ Parking service not found, skipping"); } else {
+      const data = [
+        { tenant_id: T, name: "King Fahd Road Parking", city: "Riyadh", capacity: 500, hourly_rate: sarPrice(10), type: "covered", metadata: { seeded: true } },
+        { tenant_id: T, name: "Olaya Towers Parking", city: "Riyadh", capacity: 300, hourly_rate: sarPrice(15), type: "covered", metadata: { seeded: true } },
+        { tenant_id: T, name: "Mall of Dhahran Parking", city: "Dhahran", capacity: 1200, hourly_rate: sarPrice(5), type: "open", metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createParkingLocations", "createParkings", "create"])
+      log("  ✓ Parking: 3 locations seeded")
+    }
+  } catch (err: any) { logError("Parking", err) }
+
+  // ── 13. UTILITIES ──
+  try {
+    const svc = resolveService("utilities")
+    if (!svc) { log("  ⚠ Utilities service not found, skipping"); } else {
+      const data = [
+        { tenant_id: T, name: "Electricity Bill Payment", provider: "Saudi Electricity Company", type: "electricity", is_active: true, metadata: { seeded: true } },
+        { tenant_id: T, name: "Water Bill Payment", provider: "National Water Company", type: "water", is_active: true, metadata: { seeded: true } },
+        { tenant_id: T, name: "Internet Subscription", provider: "STC", type: "internet", is_active: true, metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createUtilityServices", "createUtilitiess", "create"])
+      log("  ✓ Utilities: 3 services seeded")
+    }
+  } catch (err: any) { logError("Utilities", err) }
+
+  // ── 14. LEGAL ──
+  try {
+    const svc = resolveService("legal")
+    if (!svc) { log("  ⚠ Legal service not found, skipping"); } else {
+      const data = [
+        { tenant_id: T, name: "Contract Review", type: "review", price: sarPrice(1500), description: "Comprehensive legal contract review", estimated_days: 3, metadata: { seeded: true } },
+        { tenant_id: T, name: "Business Registration", type: "registration", price: sarPrice(3000), description: "Saudi CR and business license registration", estimated_days: 14, metadata: { seeded: true } },
+        { tenant_id: T, name: "Trademark Filing", type: "trademark", price: sarPrice(2500), description: "Saudi and GCC trademark filing and protection", estimated_days: 30, metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createLegalServices", "createLegals", "create"])
+      log("  ✓ Legal: 3 services seeded")
+    }
+  } catch (err: any) { logError("Legal", err) }
+
+  // ── 15. GOVERNMENT ──
+  try {
+    const svc = resolveService("government")
+    if (!svc) { log("  ⚠ Government service not found, skipping"); } else {
+      const data = [
+        { tenant_id: T, name: "Business License Application", type: "license", department: "Ministry of Commerce", processing_days: 7, fee: sarPrice(1000), metadata: { seeded: true } },
+        { tenant_id: T, name: "Visa Processing", type: "visa", department: "Ministry of Interior", processing_days: 14, fee: sarPrice(2000), metadata: { seeded: true } },
+        { tenant_id: T, name: "Vehicle Registration", type: "registration", department: "Muroor Traffic Department", processing_days: 1, fee: sarPrice(150), metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createGovernmentServices", "createGovernments", "create"])
+      log("  ✓ Government: 3 services seeded")
+    }
+  } catch (err: any) { logError("Government", err) }
+
+  // ── 16. CROWDFUNDING ──
+  try {
+    const svc = resolveService("crowdfunding")
+    if (!svc) { log("  ⚠ Crowdfunding service not found, skipping"); } else {
+      const endDate = new Date()
+      endDate.setMonth(endDate.getMonth() + 3)
+      const data = [
+        { tenant_id: T, title: "Tech Startup Fund", description: "Supporting Saudi tech entrepreneurs", goal_amount: 500000, raised_amount: 125000, currency_code: "sar", end_date: endDate.toISOString(), thumbnail: getThumb("charity", 0), metadata: { seeded: true } },
+        { tenant_id: T, title: "Community Garden Project", description: "Green spaces for Riyadh neighborhoods", goal_amount: 75000, raised_amount: 32000, currency_code: "sar", end_date: endDate.toISOString(), thumbnail: getThumb("charity", 1), metadata: { seeded: true } },
+        { tenant_id: T, title: "Youth Education Initiative", description: "STEM education for underprivileged youth", goal_amount: 200000, raised_amount: 89000, currency_code: "sar", end_date: endDate.toISOString(), thumbnail: getThumb("charity", 2), metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createCrowdfundingCampaigns", "createCrowdfundings", "create"])
+      log("  ✓ Crowdfunding: 3 campaigns seeded")
+    }
+  } catch (err: any) { logError("Crowdfunding", err) }
+
+  // ── 17. AUCTION ──
+  try {
+    const svc = resolveService("auction")
+    if (!svc) { log("  ⚠ Auction service not found, skipping"); } else {
+      const endDate = new Date()
+      endDate.setDate(endDate.getDate() + 30)
+      const data = [
+        { tenant_id: T, title: "Vintage Arabian Sword", description: "Antique Saudi ceremonial sword circa 1850", starting_price: sarPrice(15000), current_bid: sarPrice(22000), end_date: endDate.toISOString(), thumbnail: getThumb("auction", 0), metadata: { seeded: true } },
+        { tenant_id: T, title: "Classic Car 1970 Mercedes", description: "Restored 1970 Mercedes-Benz 280SL", starting_price: sarPrice(120000), current_bid: sarPrice(185000), end_date: endDate.toISOString(), thumbnail: getThumb("auction", 1), metadata: { seeded: true } },
+        { tenant_id: T, title: "Rare Arabic Manuscript", description: "13th century Islamic calligraphy manuscript", starting_price: sarPrice(50000), current_bid: sarPrice(73000), end_date: endDate.toISOString(), thumbnail: getThumb("auction", 2), metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createAuctionItems", "createAuctions", "create"])
+      log("  ✓ Auction: 3 items seeded")
+    }
+  } catch (err: any) { logError("Auction", err) }
+
+  // ── 18. CLASSIFIED ──
+  try {
+    const svc = resolveService("classified")
+    if (!svc) { log("  ⚠ Classified service not found, skipping"); } else {
+      const data = [
+        { tenant_id: T, title: "Used Toyota Camry 2022", description: "Single owner, 35k km, excellent condition", category: "automotive", price: sarPrice(85000), city: "Riyadh", contact_phone: saudiPhone(), thumbnail: getThumb("automotive", 0), metadata: { seeded: true } },
+        { tenant_id: T, title: "3BR Apartment in Jeddah", description: "Spacious apartment near corniche, furnished", category: "real_estate", price: sarPrice(450000), city: "Jeddah", contact_phone: saudiPhone(), thumbnail: getThumb("real_estate", 0), metadata: { seeded: true } },
+        { tenant_id: T, title: "MacBook Pro 2024 M3", description: "Like new, 16GB RAM, 512GB SSD", category: "electronics", price: sarPrice(6500), city: "Riyadh", contact_phone: saudiPhone(), thumbnail: getThumb("electronics", 0), metadata: { seeded: true } },
+        { tenant_id: T, title: "Office Furniture Set", description: "Complete office set: desk, chair, shelves", category: "furniture", price: sarPrice(3200), city: "Dammam", contact_phone: saudiPhone(), thumbnail: getThumb("home", 0), metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createClassifiedListings", "createClassifieds", "create"])
+      log("  ✓ Classified: 4 listings seeded")
+    }
+  } catch (err: any) { logError("Classified", err) }
+
+  // ── 19. CHARITY ──
+  try {
+    const svc = resolveService("charity")
+    if (!svc) { log("  ⚠ Charity service not found, skipping"); } else {
+      const data = [
+        { tenant_id: T, name: "Ramadan Food Drive", description: "Providing iftar meals to families in need", goal_amount: 100000, raised_amount: 67000, currency_code: "sar", is_active: true, metadata: { seeded: true } },
+        { tenant_id: T, name: "Orphan Support Program", description: "Education and care for orphaned children", goal_amount: 250000, raised_amount: 142000, currency_code: "sar", is_active: true, metadata: { seeded: true } },
+        { tenant_id: T, name: "Mosque Renovation Fund", description: "Restoring historic mosques across Saudi Arabia", goal_amount: 500000, raised_amount: 210000, currency_code: "sar", is_active: true, metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createCharityCampaigns", "createCharitys", "create"])
+      log("  ✓ Charity: 3 campaigns seeded")
+    }
+  } catch (err: any) { logError("Charity", err) }
+
+  // ── 20. EDUCATION ──
+  try {
+    const svc = resolveService("education")
+    if (!svc) { log("  ⚠ Education service not found, skipping"); } else {
+      const data = [
+        { tenant_id: T, title: "Arabic Calligraphy Masterclass", description: "Learn traditional Arabic calligraphy styles", instructor: "Sheikh Ibrahim Al-Khattat", duration_hours: 24, price: sarPrice(1200), level: "beginner", thumbnail: getThumb("education", 0), metadata: { seeded: true } },
+        { tenant_id: T, title: "Business Management Diploma", description: "Comprehensive business management program", instructor: "Dr. Sarah Al-Mahmoud", duration_hours: 120, price: sarPrice(5000), level: "intermediate", thumbnail: getThumb("education", 1), metadata: { seeded: true } },
+        { tenant_id: T, title: "Data Science Bootcamp", description: "Intensive data science and ML training", instructor: "Eng. Khalid Hassan", duration_hours: 200, price: sarPrice(8000), level: "advanced", thumbnail: getThumb("education", 2), metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createEducationCourses", "createEducations", "create"])
+      log("  ✓ Education: 3 courses seeded")
+    }
+  } catch (err: any) { logError("Education", err) }
+
+  // ── 21. REAL ESTATE ──
+  try {
+    const svc = resolveAny("realEstate", "real_estate", "real-estate")
+    if (!svc) { log("  ⚠ Real Estate service not found, skipping"); } else {
+      const data = [
+        { tenant_id: T, title: "Luxury Villa in Al Narjis", type: "villa", city: "Riyadh", bedrooms: 5, area_sqm: 450, price: sarPrice(3500000), thumbnail: getThumb("real_estate", 0), metadata: { seeded: true } },
+        { tenant_id: T, title: "Modern Apartment in Al Olaya", type: "apartment", city: "Riyadh", bedrooms: 3, area_sqm: 180, price: sarPrice(850000), thumbnail: getThumb("real_estate", 1), metadata: { seeded: true } },
+        { tenant_id: T, title: "Office Space in KAFD Tower", type: "office", city: "Riyadh", bedrooms: 0, area_sqm: 120, price: sarPrice(1200000), thumbnail: getThumb("real_estate", 2), metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createRealEstateListings", "createRealEstates", "create"])
+      log("  ✓ Real Estate: 3 properties seeded")
+    }
+  } catch (err: any) { logError("Real Estate", err) }
+
+  // ── 22. PET SERVICE ──
+  try {
+    const svc = resolveAny("petService", "pet_service", "pet-service")
+    if (!svc) { log("  ⚠ Pet Service not found, skipping"); } else {
+      const data = [
+        { tenant_id: T, name: "Pet Grooming", type: "grooming", price: sarPrice(150), duration_minutes: 60, description: "Full grooming: bath, haircut, nail trim", metadata: { seeded: true } },
+        { tenant_id: T, name: "Veterinary Checkup", type: "veterinary", price: sarPrice(200), duration_minutes: 30, description: "Comprehensive pet health examination", metadata: { seeded: true } },
+        { tenant_id: T, name: "Pet Boarding", type: "boarding", price: sarPrice(100), duration_minutes: 1440, description: "Overnight pet boarding with care and feeding", metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createPetServices", "create"])
+      log("  ✓ Pet Service: 3 services seeded")
+    }
+  } catch (err: any) { logError("Pet Service", err) }
+
+  // ── 23. AFFILIATE ──
+  try {
+    const svc = resolveService("affiliate")
+    if (!svc) { log("  ⚠ Affiliate service not found, skipping"); } else {
+      const data = [
+        { tenant_id: T, name: "Dakkah Referral Program", commission_rate: 5, type: "referral", is_active: true, metadata: { seeded: true } },
+        { tenant_id: T, name: "Influencer Partner Program", commission_rate: 10, type: "influencer", is_active: true, metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createAffiliatePrograms", "createAffiliates", "create"])
+      log("  ✓ Affiliate: 2 programs seeded")
+    }
+  } catch (err: any) { logError("Affiliate", err) }
+
+  // ── 24. WARRANTY ──
+  try {
+    const svc = resolveService("warranty")
+    if (!svc) { log("  ⚠ Warranty service not found, skipping"); } else {
+      const data = [
+        { tenant_id: T, name: "Electronics 2-Year Extended", duration_months: 24, price: sarPrice(299), coverage_type: "electronics", description: "Extended warranty for all electronics", metadata: { seeded: true } },
+        { tenant_id: T, name: "Home Appliance 3-Year", duration_months: 36, price: sarPrice(499), coverage_type: "appliance", description: "Full coverage for home appliances", metadata: { seeded: true } },
+        { tenant_id: T, name: "Premium All-in-One", duration_months: 24, price: sarPrice(799), coverage_type: "comprehensive", description: "Premium coverage for all product categories", metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createWarrantyPlans", "createWarrantys", "create"])
+      log("  ✓ Warranty: 3 plans seeded")
+    }
+  } catch (err: any) { logError("Warranty", err) }
+
+  // ── 25. RENTAL ──
+  try {
+    const svc = resolveService("rental")
+    if (!svc) { log("  ⚠ Rental service not found, skipping"); } else {
+      const data = [
+        { tenant_id: T, name: "Luxury Car Rental", type: "vehicle", daily_rate: sarPrice(500), deposit: sarPrice(5000), description: "Premium sedan or SUV daily rental", thumbnail: getThumb("rental", 0), metadata: { seeded: true } },
+        { tenant_id: T, name: "Camera Equipment Rental", type: "equipment", daily_rate: sarPrice(200), deposit: sarPrice(2000), description: "Professional DSLR and lens kit rental", thumbnail: getThumb("rental", 1), metadata: { seeded: true } },
+        { tenant_id: T, name: "Party Tent Rental", type: "event", daily_rate: sarPrice(1000), deposit: sarPrice(3000), description: "Large event tent with setup and teardown", thumbnail: getThumb("rental", 2), metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createRentalItems", "createRentals", "create"])
+      log("  ✓ Rental: 3 items seeded")
+    }
+  } catch (err: any) { logError("Rental", err) }
+
+  // ── 26. INSURANCE ──
+  try {
+    const svc = resolveService("insurance")
+    if (!svc) { log("  ⚠ Insurance service not found, skipping"); } else {
+      const data = [
+        { tenant_id: T, name: "Vehicle Insurance", type: "vehicle", premium_monthly: sarPrice(250), coverage_amount: 500000, description: "Comprehensive vehicle insurance with roadside assistance", metadata: { seeded: true } },
+        { tenant_id: T, name: "Health Insurance", type: "health", premium_monthly: sarPrice(400), coverage_amount: 1000000, description: "Family health insurance with dental and vision", metadata: { seeded: true } },
+        { tenant_id: T, name: "Home Insurance", type: "property", premium_monthly: sarPrice(150), coverage_amount: 2000000, description: "Property and contents coverage with natural disaster protection", metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createInsurancePolicies", "createInsurances", "create"])
+      log("  ✓ Insurance: 3 policies seeded")
+    }
+  } catch (err: any) { logError("Insurance", err) }
+
+  // ── 27. SOCIAL COMMERCE ──
+  try {
+    const svc = resolveAny("socialCommerce", "social_commerce", "social-commerce")
+    if (!svc) { log("  ⚠ Social Commerce service not found, skipping"); } else {
+      const data = [
+        { tenant_id: T, title: "Fashion Show Live", description: "Live showcase of latest Saudi fashion trends", platform: "internal", status: "scheduled", thumbnail: getThumb("events", 0), metadata: { seeded: true } },
+        { tenant_id: T, title: "Electronics Flash Sale", description: "Live deals on electronics and gadgets", platform: "internal", status: "scheduled", thumbnail: getThumb("events", 1), metadata: { seeded: true } },
+        { tenant_id: T, title: "Cooking Class Live", description: "Traditional Saudi cuisine cooking demonstration", platform: "internal", status: "scheduled", thumbnail: getThumb("events", 2), metadata: { seeded: true } },
+      ]
+      await tryCreate(svc, data, ["createSocialCommerceStreams", "createSocialCommerces", "create"])
+      log("  ✓ Social Commerce: 3 live streams seeded")
+    }
+  } catch (err: any) { logError("Social Commerce", err) }
+
+  log("━━━ SEED VERTICALS COMPLETE ━━━")
+}
