@@ -2,7 +2,7 @@
 import { ExecArgs } from "@medusajs/framework/types"
 import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils"
 import { createProductsWorkflow } from "@medusajs/medusa/core-flows"
-import { SeedContext, getImage, getThumb, sarPrice } from "./seed-utils.js"
+const { SeedContext, getImage, getThumb, sarPrice } = require("./seed-utils")
 
 export default async function seedCatalog({ container }: ExecArgs, ctx: SeedContext): Promise<void> {
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER)

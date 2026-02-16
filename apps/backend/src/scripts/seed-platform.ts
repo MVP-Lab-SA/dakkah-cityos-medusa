@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { ExecArgs } from "@medusajs/framework/types"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
-import { SeedContext, getImage, sarPrice } from "./seed-utils.js"
+const { SeedContext, getImage, sarPrice } = require("./seed-utils")
 
 export default async function seedPlatform({ container }: ExecArgs, ctx: SeedContext): Promise<void> {
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER)

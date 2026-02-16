@@ -16,7 +16,7 @@ import {
   linkSalesChannelsToStockLocationWorkflow,
   updateStoresWorkflow,
 } from "@medusajs/medusa/core-flows"
-import { SeedContext } from "./seed-utils.js"
+const { SeedContext } = require("./seed-utils")
 
 export default async function seedCore({ container }: ExecArgs): Promise<SeedContext> {
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER)

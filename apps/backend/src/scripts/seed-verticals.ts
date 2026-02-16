@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { ExecArgs } from "@medusajs/framework/types"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
-import { SeedContext, getImage, getThumb, sarPrice, randomSaudiCity, saudiPhone } from "./seed-utils.js"
+const { SeedContext, getImage, getThumb, sarPrice, randomSaudiCity, saudiPhone } = require("./seed-utils")
 
 export default async function seedVerticals({ container }: ExecArgs, ctx: SeedContext): Promise<void> {
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER)
@@ -294,10 +294,10 @@ export default async function seedVerticals({ container }: ExecArgs, ctx: SeedCo
     const svc = resolveService("classified")
     if (!svc) { log("  ⚠ Classified service not found, skipping"); } else {
       const data = [
-        { tenant_id: T, title: "Used Toyota Camry 2022", description: "Single owner, 35k km, excellent condition", category: "automotive", price: sarPrice(85000), city: "Riyadh", contact_phone: saudiPhone(), thumbnail: getThumb("automotive", 0), metadata: { seeded: true } },
-        { tenant_id: T, title: "3BR Apartment in Jeddah", description: "Spacious apartment near corniche, furnished", category: "real_estate", price: sarPrice(450000), city: "Jeddah", contact_phone: saudiPhone(), thumbnail: getThumb("real_estate", 0), metadata: { seeded: true } },
-        { tenant_id: T, title: "MacBook Pro 2024 M3", description: "Like new, 16GB RAM, 512GB SSD", category: "electronics", price: sarPrice(6500), city: "Riyadh", contact_phone: saudiPhone(), thumbnail: getThumb("electronics", 0), metadata: { seeded: true } },
-        { tenant_id: T, title: "Office Furniture Set", description: "Complete office set: desk, chair, shelves", category: "furniture", price: sarPrice(3200), city: "Dammam", contact_phone: saudiPhone(), thumbnail: getThumb("home", 0), metadata: { seeded: true } },
+        { tenant_id: T, seller_id: ctx.customerIds?.[0] || "cus_placeholder", title: "Used Toyota Camry 2022", description: "Single owner, 35k km, excellent condition", category: "automotive", price: sarPrice(85000), city: "Riyadh", contact_phone: saudiPhone(), thumbnail: getThumb("automotive", 0), metadata: { seeded: true } },
+        { tenant_id: T, seller_id: ctx.customerIds?.[0] || "cus_placeholder", title: "3BR Apartment in Jeddah", description: "Spacious apartment near corniche, furnished", category: "real_estate", price: sarPrice(450000), city: "Jeddah", contact_phone: saudiPhone(), thumbnail: getThumb("real_estate", 0), metadata: { seeded: true } },
+        { tenant_id: T, seller_id: ctx.customerIds?.[0] || "cus_placeholder", title: "MacBook Pro 2024 M3", description: "Like new, 16GB RAM, 512GB SSD", category: "electronics", price: sarPrice(6500), city: "Riyadh", contact_phone: saudiPhone(), thumbnail: getThumb("electronics", 0), metadata: { seeded: true } },
+        { tenant_id: T, seller_id: ctx.customerIds?.[0] || "cus_placeholder", title: "Office Furniture Set", description: "Complete office set: desk, chair, shelves", category: "furniture", price: sarPrice(3200), city: "Dammam", contact_phone: saudiPhone(), thumbnail: getThumb("home", 0), metadata: { seeded: true } },
       ]
       await tryCreate(svc, data, ["createClassifiedListings", "createClassifieds", "create"])
       log("  ✓ Classified: 4 listings seeded")
@@ -365,8 +365,8 @@ export default async function seedVerticals({ container }: ExecArgs, ctx: SeedCo
     const svc = resolveService("affiliate")
     if (!svc) { log("  ⚠ Affiliate service not found, skipping"); } else {
       const data = [
-        { tenant_id: T, name: "Dakkah Referral Program", commission_rate: 5, type: "referral", is_active: true, metadata: { seeded: true } },
-        { tenant_id: T, name: "Influencer Partner Program", commission_rate: 10, type: "influencer", is_active: true, metadata: { seeded: true } },
+        { tenant_id: T, name: "Dakkah Referral Program", email: "referrals@dakkah.com", affiliate_type: "partner", commission_rate: 5, commission_type: "percentage", payout_method: "bank_transfer", status: "active", metadata: { seeded: true } },
+        { tenant_id: T, name: "Influencer Partner Program", email: "influencers@dakkah.com", affiliate_type: "influencer", commission_rate: 10, commission_type: "percentage", payout_method: "bank_transfer", status: "active", metadata: { seeded: true } },
       ]
       await tryCreate(svc, data, ["createAffiliatePrograms", "createAffiliates", "create"])
       log("  ✓ Affiliate: 2 programs seeded")
@@ -378,9 +378,9 @@ export default async function seedVerticals({ container }: ExecArgs, ctx: SeedCo
     const svc = resolveService("warranty")
     if (!svc) { log("  ⚠ Warranty service not found, skipping"); } else {
       const data = [
-        { tenant_id: T, name: "Electronics 2-Year Extended", duration_months: 24, price: sarPrice(299), coverage_type: "electronics", description: "Extended warranty for all electronics", metadata: { seeded: true } },
-        { tenant_id: T, name: "Home Appliance 3-Year", duration_months: 36, price: sarPrice(499), coverage_type: "appliance", description: "Full coverage for home appliances", metadata: { seeded: true } },
-        { tenant_id: T, name: "Premium All-in-One", duration_months: 24, price: sarPrice(799), coverage_type: "comprehensive", description: "Premium coverage for all product categories", metadata: { seeded: true } },
+        { tenant_id: T, name: "Electronics 2-Year Extended", plan_type: "extended", duration_months: 24, price: sarPrice(299), currency_code: "sar", coverage: { type: "electronics", parts: true, labor: true }, description: "Extended warranty for all electronics", metadata: { seeded: true } },
+        { tenant_id: T, name: "Home Appliance 3-Year", plan_type: "extended", duration_months: 36, price: sarPrice(499), currency_code: "sar", coverage: { type: "appliance", parts: true, labor: true }, description: "Full coverage for home appliances", metadata: { seeded: true } },
+        { tenant_id: T, name: "Premium All-in-One", plan_type: "premium", duration_months: 24, price: sarPrice(799), currency_code: "sar", coverage: { type: "comprehensive", parts: true, labor: true, accidental: true }, description: "Premium coverage for all product categories", metadata: { seeded: true } },
       ]
       await tryCreate(svc, data, ["createWarrantyPlans", "createWarrantys", "create"])
       log("  ✓ Warranty: 3 plans seeded")
@@ -392,11 +392,11 @@ export default async function seedVerticals({ container }: ExecArgs, ctx: SeedCo
     const svc = resolveService("rental")
     if (!svc) { log("  ⚠ Rental service not found, skipping"); } else {
       const data = [
-        { tenant_id: T, name: "Luxury Car Rental", type: "vehicle", daily_rate: sarPrice(500), deposit: sarPrice(5000), description: "Premium sedan or SUV daily rental", thumbnail: getThumb("rental", 0), metadata: { seeded: true } },
-        { tenant_id: T, name: "Camera Equipment Rental", type: "equipment", daily_rate: sarPrice(200), deposit: sarPrice(2000), description: "Professional DSLR and lens kit rental", thumbnail: getThumb("rental", 1), metadata: { seeded: true } },
-        { tenant_id: T, name: "Party Tent Rental", type: "event", daily_rate: sarPrice(1000), deposit: sarPrice(3000), description: "Large event tent with setup and teardown", thumbnail: getThumb("rental", 2), metadata: { seeded: true } },
+        { tenant_id: T, product_id: ctx.productIds?.[0] || "prod_placeholder", rental_type: "daily", base_price: sarPrice(500), currency_code: "sar", deposit_amount: sarPrice(5000), min_duration: 1, max_duration: 30, is_available: true, metadata: { seeded: true } },
+        { tenant_id: T, product_id: ctx.productIds?.[1] || "prod_placeholder", rental_type: "daily", base_price: sarPrice(200), currency_code: "sar", deposit_amount: sarPrice(2000), min_duration: 1, max_duration: 14, is_available: true, metadata: { seeded: true } },
+        { tenant_id: T, product_id: ctx.productIds?.[2] || "prod_placeholder", rental_type: "daily", base_price: sarPrice(1000), currency_code: "sar", deposit_amount: sarPrice(3000), min_duration: 1, max_duration: 7, is_available: true, metadata: { seeded: true } },
       ]
-      await tryCreate(svc, data, ["createRentalItems", "createRentals", "create"])
+      await tryCreate(svc, data, ["createRentalProducts", "createRentals", "create"])
       log("  ✓ Rental: 3 items seeded")
     }
   } catch (err: any) { logError("Rental", err) }
@@ -406,11 +406,11 @@ export default async function seedVerticals({ container }: ExecArgs, ctx: SeedCo
     const svc = resolveService("insurance")
     if (!svc) { log("  ⚠ Insurance service not found, skipping"); } else {
       const data = [
-        { tenant_id: T, name: "Vehicle Insurance", type: "vehicle", premium_monthly: sarPrice(250), coverage_amount: 500000, description: "Comprehensive vehicle insurance with roadside assistance", metadata: { seeded: true } },
-        { tenant_id: T, name: "Health Insurance", type: "health", premium_monthly: sarPrice(400), coverage_amount: 1000000, description: "Family health insurance with dental and vision", metadata: { seeded: true } },
-        { tenant_id: T, name: "Home Insurance", type: "property", premium_monthly: sarPrice(150), coverage_amount: 2000000, description: "Property and contents coverage with natural disaster protection", metadata: { seeded: true } },
+        { customer_id: ctx.customerIds?.[0] || "cus_placeholder", product_id: ctx.productIds?.[0] || "prod_placeholder", plan_type: "vehicle", coverage_amount: sarPrice(5000), premium: sarPrice(250), status: "active", metadata: { seeded: true } },
+        { customer_id: ctx.customerIds?.[0] || "cus_placeholder", product_id: ctx.productIds?.[1] || "prod_placeholder", plan_type: "health", coverage_amount: sarPrice(10000), premium: sarPrice(400), status: "active", metadata: { seeded: true } },
+        { customer_id: ctx.customerIds?.[0] || "cus_placeholder", product_id: ctx.productIds?.[2] || "prod_placeholder", plan_type: "property", coverage_amount: sarPrice(20000), premium: sarPrice(150), status: "active", metadata: { seeded: true } },
       ]
-      await tryCreate(svc, data, ["createInsurancePolicies", "createInsurances", "create"])
+      await tryCreate(svc, data, ["createInsPolicys", "createInsurances", "create"])
       log("  ✓ Insurance: 3 policies seeded")
     }
   } catch (err: any) { logError("Insurance", err) }

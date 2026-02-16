@@ -2,7 +2,7 @@
 import { ExecArgs } from "@medusajs/framework/types"
 import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils"
 import { createCustomersWorkflow } from "@medusajs/medusa/core-flows"
-import { SeedContext, getImage, getThumb, saudiPhone, randomSaudiCity, sarPrice } from "./seed-utils.js"
+const { SeedContext, getImage, getThumb, saudiPhone, randomSaudiCity, sarPrice } = require("./seed-utils")
 
 export default async function seedCommerce({ container }: ExecArgs, ctx: SeedContext): Promise<void> {
   const resolveService = (key: string) => {
