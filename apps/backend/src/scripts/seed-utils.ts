@@ -275,3 +275,231 @@ export function log(section: string, msg: string): string {
   const formatted = `[${section}] ${msg}`
   return formatted
 }
+
+let _gcsStorage: any = null
+let _bucketUploadAvailable: boolean | null = null
+
+function getGcsStorage() {
+  if (_gcsStorage) return _gcsStorage
+  try {
+    const { Storage } = require("@google-cloud/storage")
+    const REPLIT_SIDECAR_ENDPOINT = "http://127.0.0.1:1106"
+    _gcsStorage = new Storage({
+      credentials: {
+        audience: "replit",
+        subject_token_type: "access_token",
+        token_url: `${REPLIT_SIDECAR_ENDPOINT}/token`,
+        type: "external_account",
+        credential_source: {
+          url: `${REPLIT_SIDECAR_ENDPOINT}/credential`,
+          format: { type: "json", subject_token_field_name: "access_token" },
+        },
+        universe_domain: "googleapis.com",
+      },
+      projectId: "",
+    })
+    return _gcsStorage
+  } catch (e) {
+    return null
+  }
+}
+
+export async function uploadImageToBucket(buffer: Buffer, path: string, contentType: string): Promise<boolean> {
+  try {
+    const storage = getGcsStorage()
+    if (!storage) return false
+    const bucketName = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID
+    if (!bucketName) return false
+    const bucket = storage.bucket(bucketName)
+    const file = bucket.file(path)
+    await file.save(buffer, { contentType, resumable: false })
+    return true
+  } catch (e: any) {
+    console.error(`[storage] Upload failed for ${path}: ${e.message}`)
+    return false
+  }
+}
+
+export async function checkBucketAvailable(): Promise<boolean> {
+  if (_bucketUploadAvailable !== null) return _bucketUploadAvailable
+  try {
+    const storage = getGcsStorage()
+    if (!storage) {
+      _bucketUploadAvailable = false
+      return false
+    }
+    const bucketName = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID
+    if (!bucketName) {
+      _bucketUploadAvailable = false
+      return false
+    }
+    const bucket = storage.bucket(bucketName)
+    const testFile = bucket.file("_health_check.txt")
+    await testFile.save(Buffer.from("ok"), { contentType: "text/plain", resumable: false })
+    _bucketUploadAvailable = true
+    return true
+  } catch (e) {
+    _bucketUploadAvailable = false
+    return false
+  }
+}
+
+async function downloadImageBuffer(unsplashId: string, width: number = 800): Promise<Buffer | null> {
+  try {
+    const url = `https://images.unsplash.com/photo-${unsplashId}?w=${width}&q=80&fit=crop`
+    const response = await fetch(url)
+    if (!response.ok) return null
+    const arrayBuffer = await response.arrayBuffer()
+    return Buffer.from(arrayBuffer)
+  } catch (e) {
+    return null
+  }
+}
+
+export function getBucketImageUrl(category: string, index: number, isThumb: boolean = false): string {
+  const images = IMAGE_CATALOG[category] || IMAGE_CATALOG.electronics
+  const safeIdx = index % images.length
+  const suffix = isThumb ? "-thumb" : ""
+  const objectPath = `media/products/${category}/${category}-${safeIdx}${suffix}.jpg`
+  return `/platform/storage/serve?path=${encodeURIComponent(objectPath)}`
+}
+
+export function getBucketThumb(category: string, index: number): string {
+  return getBucketImageUrl(category, index, true)
+}
+
+export function getBucketImages(category: string, indices: number[]): { url: string }[] {
+  return indices.map(i => ({ url: getBucketImageUrl(category, i, false) }))
+}
+
+export async function downloadAndUploadImage(
+  unsplashId: string,
+  category: string,
+  index: number,
+  productHandle?: string,
+  width: number = 800
+): Promise<string> {
+  const fallbackUrl = `https://images.unsplash.com/photo-${unsplashId}?w=${width}&q=80&fit=crop`
+
+  const available = await checkBucketAvailable()
+  if (!available) return fallbackUrl
+
+  const filename = productHandle
+    ? `${productHandle}-${index}.jpg`
+    : `${category}-${index}.jpg`
+  const objectPath = `media/products/${category}/${filename}`
+
+  const buffer = await downloadImageBuffer(unsplashId, width)
+  if (!buffer) return fallbackUrl
+
+  const success = await uploadImageToBucket(buffer, objectPath, "image/jpeg")
+  if (!success) return fallbackUrl
+
+  return `/platform/storage/serve?path=${encodeURIComponent(objectPath)}`
+}
+
+export async function getStoredThumb(
+  category: string,
+  index: number,
+  productHandle: string
+): Promise<string> {
+  const images = IMAGE_CATALOG[category] || IMAGE_CATALOG.electronics
+  const id = images[index % images.length]
+  return downloadAndUploadImage(id, category, index, `${productHandle}-thumb`, 400)
+}
+
+export async function getStoredImages(
+  category: string,
+  indices: number[],
+  productHandle: string
+): Promise<{ url: string }[]> {
+  const images = IMAGE_CATALOG[category] || IMAGE_CATALOG.electronics
+  const results: { url: string }[] = []
+
+  for (const idx of indices) {
+    const id = images[idx % images.length]
+    const url = await downloadAndUploadImage(id, category, idx, productHandle, 800)
+    results.push({ url })
+  }
+
+  return results
+}
+
+export function getMultipleImages(
+  category: string,
+  startIndex: number,
+  count: number
+): { url: string }[] {
+  const results: { url: string }[] = []
+  for (let i = 0; i < count; i++) {
+    results.push({ url: getImage(category, startIndex + i) })
+  }
+  return results
+}
+
+export async function preUploadCategoryImages(
+  logger: { info: (msg: string) => void; error: (msg: string) => void }
+): Promise<Map<string, string[]>> {
+  const uploadedPaths = new Map<string, string[]>()
+  const available = await checkBucketAvailable()
+
+  if (!available) {
+    logger.info("  Bucket not available, will use Unsplash URLs as fallback")
+    return uploadedPaths
+  }
+
+  logger.info("  Bucket available, pre-uploading category images...")
+
+  const categoriesToUpload = [
+    "electronics", "fashion", "food", "grocery", "home",
+    "beauty", "automotive", "healthcare", "fitness",
+    "education", "pets", "digital",
+  ]
+
+  let uploaded = 0
+  let failed = 0
+
+  for (const category of categoriesToUpload) {
+    const images = IMAGE_CATALOG[category] || []
+    const paths: string[] = []
+
+    for (let i = 0; i < Math.min(images.length, 6); i++) {
+      const id = images[i]
+      const objectPath = `media/products/${category}/${category}-${i}.jpg`
+      const buffer = await downloadImageBuffer(id, 800)
+      if (buffer) {
+        const success = await uploadImageToBucket(buffer, objectPath, "image/jpeg")
+        if (success) {
+          paths.push(`/platform/storage/serve?path=${encodeURIComponent(objectPath)}`)
+          uploaded++
+        } else {
+          failed++
+        }
+      } else {
+        failed++
+      }
+    }
+
+    if (images.length > 0) {
+      const thumbId = images[0]
+      const thumbPath = `media/products/${category}/${category}-thumb-0.jpg`
+      const thumbBuffer = await downloadImageBuffer(thumbId, 400)
+      if (thumbBuffer) {
+        const success = await uploadImageToBucket(thumbBuffer, thumbPath, "image/jpeg")
+        if (success) {
+          paths.push(`/platform/storage/serve?path=${encodeURIComponent(thumbPath)}`)
+
+          uploaded++
+        }
+      }
+    }
+
+    uploadedPaths.set(category, paths)
+    logger.info(`  ${category}: ${paths.length} images uploaded`)
+  }
+
+  logger.info(`  Pre-upload complete: ${uploaded} uploaded, ${failed} failed`)
+  return uploadedPaths
+}
+
+export { IMAGE_CATALOG }

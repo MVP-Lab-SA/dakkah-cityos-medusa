@@ -1,0 +1,133 @@
+This is a solid strategy that aligns well with what we've already started building. Let me evaluate it against our current setup and then implement the key pieces.
+
+What we already have:
+
+Replit Object Storage (GCS-backed) as centralized storage
+96 organized prefixes (public/private separation)
+Cloud storage plugin wired into Payload for media
+Storage adapter with upload/download/serve capabilities
+What we need to add:
+
+Storage Gateway API for external systems (Medusa, ERPNext, Fleetbase, Temporal)
+Signed URL generation for private files
+Proper public/private path organization
+Thumbnail presets in Media collection
+API key authentication for external access
+Configuration documentation for each system
+Let me plan and implement this:
+
+Let me check the existing infrastructure and then implement everything:
+
+There are already some storage API routes. Let me check what exists and then build on top of it:
+
+Excellent! We already have a comprehensive storage gateway API infrastructure in place. The existing routes use MinIO/S3 client, but they need to be updated to work with our Replit Object Storage (GCS sidecar). Let me also check the auth middleware and MinIO client:
+
+Now I have a complete picture. The existing storage gateway uses MinIO/S3 client, but our primary storage is Replit Object Storage (GCS sidecar). I need to:
+
+Create a unified storage client that uses GCS (Replit) primary, S3 (MinIO) fallback
+Add storage policies per system
+Add signed URL generation
+Update all gateway routes to use the unified client
+Create external system configuration reference
+Let me delegate this implementation:
+
+The gateway is built. Let me update the task list, verify the endpoint works, then proceed with the remaining tasks:
+
+Let me check if the app is running on the right port and try again:
+
+The app is running. It seems like it's still compiling. Let me wait a moment and try again:
+
+The gateway info endpoint is returning complete JSON with all system configurations. Let me also test auth enforcement:
+
+Auth enforcement is working correctly - both upload and list reject requests without API keys. Now let me test the download endpoint for a public prefix (which should not require auth):
+
+All the security checks are working correctly:
+
+Public prefix download (media/test.txt) - no auth needed, returns 404 or the file (correct behavior)
+Private prefix download (governance/secret.pdf) - correctly requires API key
+Upload without auth - correctly rejected with 401
+List without auth - correctly rejected with 401
+Now let me update replit.md with the storage gateway details and do the architect review:
+
+Now let me update replit.md with the new Storage Gateway section:
+
+Now let me do the architect review:
+
+Good - the architect found 3 critical issues. Let me fix them:
+
+All 3 critical issues have been fixed. Let me verify the fixes and run the final review:
+
+The app is still compiling. Let me wait and try once more:
+
+The fixes are working. The private download correctly requires API key auth. Let me do the final architect review:
+
+Now let me verify the fix works and run the final architect review:
+
+The API key validation correctly rejects the fake key (as expected). The X-System-Id check would be hit after API key validation succeeds. Now let me finalize the review:
+
+All reviews pass. Let me mark everything as complete:
+
+Here's a summary of what was built and all the details you need for connecting external systems:
+
+The strategy you shared is a great fit for CityOS. I've implemented the Centralized Object Storage Gateway aligned with it. Here's everything:
+
+What Was Built
+Storage Gateway (/api/storage/gateway/*) — A unified REST API that lets all your external systems (Medusa, ERPNext, Fleetbase, Temporal) upload, download, and manage files in your centralized Replit Object Storage bucket.
+
+Key design decisions matching your strategy:
+
+Single Source of Truth: All systems share one GCS-backed bucket instead of isolated local storage
+Public vs Private separation: Public prefixes (product images, media) serve without auth; private prefixes (invoices, fleet docs) require API key + system identification
+Pre-generated thumbnails: 3 sizes (thumbnail 200x200, card 640x480, hero 1920x1080) created automatically on upload for fast frontend delivery
+On-the-fly optimization: Admin/analytics uses Next.js Image Optimization for custom sizes
+Gateway Endpoints
+Endpoint	Method	Auth	Purpose
+/api/storage/gateway	GET	None	Full API documentation & system configs
+/api/storage/gateway/upload	POST	API Key	Upload files with policy enforcement
+/api/storage/gateway/download/{key}	GET	Public: None / Private: API Key + System ID	Download files
+/api/storage/gateway/signed-url	POST	API Key	Generate time-limited access URLs
+/api/storage/gateway/delete	POST	API Key	Delete files with policy checks
+/api/storage/gateway/list	GET	API Key	List objects by prefix
+External System Configuration
+Medusa Commerce
+CITYOS_STORAGE_URL = https://<your-domain>/api/storage/gateway
+CITYOS_API_KEY     = <your-api-key>
+CITYOS_SYSTEM_ID   = medusa
+Upload prefix: domains/commerce/products
+Allowed files: Images only, up to 20MB
+Operations: read, write, delete, list
+Access: Public (product images served via CDN-cached download)
+ERPNext
+CITYOS_STORAGE_URL = https://<your-domain>/api/storage/gateway
+CITYOS_API_KEY     = <your-api-key>
+CITYOS_SYSTEM_ID   = erpnext
+Upload prefix: governance/policies, governance/compliance, system/logs
+Allowed files: PDF, images, Office docs, CSV — up to 50MB
+Operations: read, write, list, signed-url
+Access: Private (invoices/docs accessible only via signed URLs)
+Fleetbase
+CITYOS_STORAGE_URL = https://<your-domain>/api/storage/gateway
+CITYOS_API_KEY     = <your-api-key>
+CITYOS_SYSTEM_ID   = fleetbase
+Upload prefix: domains/fleet-logistics, domains/transportation
+Allowed files: Images, PDF — up to 30MB
+Operations: read, write, signed-url
+Access: Private (drivers upload POD photos, dispatchers access via signed URLs)
+Temporal
+CITYOS_STORAGE_URL = https://<your-domain>/api/storage/gateway
+CITYOS_API_KEY     = <your-api-key>
+CITYOS_SYSTEM_ID   = temporal
+Upload prefix: workflows, system
+Allowed files: Any type — up to 500MB
+Operations: read, write, delete, list
+Access: Private (workers read source → process → write results)
+Auth Headers (for all systems)
+X-API-Key: <your-api-key>          # Required for all writes + private reads
+X-System-Id: medusa                 # Required for private access
+X-Storage-Prefix: domains/commerce/products  # Required for uploads
+X-Filename: product-photo.jpg       # Required for uploads
+Content-Type: image/jpeg            # File MIME type
+How to Get an API Key
+Create API keys in the Payload admin panel under Security > API Keys. Each key gets scopes (read/write/admin), tenant binding, and role-based access. The raw key is shown once at creation — save it securely.
+
+Visit GET /api/storage/gateway on your live deployment to get the full interactive API documentation with your actual base URL.

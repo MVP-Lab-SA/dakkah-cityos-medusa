@@ -8,6 +8,8 @@ export default async function seedMaster(args: ExecArgs) {
   logger.info("╔══════════════════════════════════════════════════════════════╗")
   logger.info("║     DAKKAH CITYOS — MASTER SEED                            ║")
   logger.info("╚══════════════════════════════════════════════════════════════╝")
+  logger.info("  Note: Run 'npx medusa exec ./src/scripts/upload-media.ts'")
+  logger.info("  separately to upload images to cloud storage bucket")
 
   const startTime = Date.now()
 

@@ -25,6 +25,7 @@
     "seed:master": "medusa exec ./src/scripts/seed-master.ts"
   },
   "dependencies": {
+    "@google-cloud/storage": "^7.19.0",
     "@medusajs/admin-sdk": "2.11.4-snapshot-20251107212527",
     "@medusajs/admin-shared": "2.11.4-snapshot-20251107212527",
     "@medusajs/cli": "2.11.4-snapshot-20251107212527",
