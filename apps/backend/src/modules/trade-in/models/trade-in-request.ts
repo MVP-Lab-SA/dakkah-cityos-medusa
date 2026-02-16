@@ -6,7 +6,7 @@ const TradeInRequest = model.define("trade_in_request", {
   product_id: model.text(),
   condition: model.enum(["excellent", "good", "fair", "poor"]),
   description: model.text(),
-  photos: model.json().default([]),
+  photos: model.json().default({}),
   status: model.enum(["submitted", "evaluated", "approved", "rejected", "completed"]).default("submitted"),
   trade_in_number: model.text(),
   estimated_value: model.bigNumber().nullable(),

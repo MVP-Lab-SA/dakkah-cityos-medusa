@@ -71,7 +71,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         source: "fleetbase-webhook",
       })
     } catch (error: any) {
-      logger.info(`[Webhook:Fleetbase] Temporal dispatch skipped: ${err.message}`)}
+      logger.info(`[Webhook:Fleetbase] Temporal dispatch skipped: ${error.message}`)
+    }
 
     return res.status(200).json({ received: true, event, correlation_id: correlationId })
   } catch (error: any) {

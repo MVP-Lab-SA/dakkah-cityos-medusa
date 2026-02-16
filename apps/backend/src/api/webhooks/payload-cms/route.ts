@@ -104,7 +104,8 @@ async function handleDelete(collection: string, data: any, correlationId: string
     })
     logger.info(`[Webhook:PayloadCMS] Deletion recorded for ${collection}/${docId}, correlation: ${correlationId}`)
   } catch (error: any) {
-    logger.info(`[Webhook:PayloadCMS] Sync tracker not available for deletion recording: ${err.message}`)}
+    logger.info(`[Webhook:PayloadCMS] Sync tracker not available for deletion recording: ${error.message}`)
+  }
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {

@@ -335,9 +335,9 @@ export default async function ({ container }: ExecArgs) {
 
   logger.info("\n7. Inventory is managed automatically for products")
 
-  logger.info(`\n${String("=".repeat(60)}`))
+  logger.info(`\n${"=".repeat(60)}`)
   logger.info("✓ SEEDING COMPLETE!")
-  logger.info(String("=".repeat(60)))
+  logger.info("=".repeat(60))
   logger.info(`
 Categories: ${parentCategories.length}
 Collections: ${collections.length}

@@ -17,7 +17,7 @@ describe("Booking Confirmation Workflow", () => {
   let scheduleReminderStep: any
 
   beforeAll(async () => {
-    await import("../../../src/workflows/booking-confirmation")
+    await import("../../../src/workflows/booking-confirmation.js")
     const { createStep } = require("@medusajs/framework/workflows-sdk")
     const calls = createStep.mock.calls
     reserveSlotStep = calls.find((c: any) => c[0] === "reserve-booking-slot-step")?.[1]
@@ -75,7 +75,7 @@ describe("Event Ticketing Workflow", () => {
   let issueTicketsStep: any
 
   beforeAll(async () => {
-    await import("../../../src/workflows/event-ticketing")
+    await import("../../../src/workflows/event-ticketing.js")
     const { createStep } = require("@medusajs/framework/workflows-sdk")
     const calls = createStep.mock.calls
     selectTicketsStep = calls.find((c: any) => c[0] === "select-event-tickets-step")?.[1]

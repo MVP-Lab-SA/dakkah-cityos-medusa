@@ -12,11 +12,11 @@ async function gracefulShutdown(signal: string) {
   isShuttingDown = true
 
   logger.info(String(JSON.stringify({
-      timestamp: new Date()).toISOString(),
+      timestamp: new Date().toISOString(),
       level: "info",
       message: `Received ${signal}. Starting graceful shutdown...`,
       type: "lifecycle",
-    })
+    }))
   )
 
   const shutdownTimeout = setTimeout(() => {
@@ -50,11 +50,11 @@ async function gracefulShutdown(signal: string) {
   clearTimeout(shutdownTimeout)
 
   logger.info(String(JSON.stringify({
-      timestamp: new Date()).toISOString(),
+      timestamp: new Date().toISOString(),
       level: "info",
       message: "Graceful shutdown complete.",
       type: "lifecycle",
-    })
+    }))
   )
 
   process.exit(0)

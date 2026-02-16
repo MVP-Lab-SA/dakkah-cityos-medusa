@@ -53,7 +53,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
                 logger.info(`[Webhook:ERPNext] Invoice ${data.name} linked to order ${medusaOrderId}`)
               }
             } catch (error: any) {
-              logger.error(`[Webhook:ERPNext] updating order metadata: ${err instanceof Error ? err.message : err}`)}
+              logger.error(`[Webhook:ERPNext] updating order metadata: ${error instanceof Error ? error.message : error}`)}
           }
         } else if (event === "on_cancel" || event === "cancelled") {
           const medusaOrderId = data.custom_medusa_order_id || data.medusa_order_id
@@ -80,7 +80,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
                 logger.info(`[Webhook:ERPNext] Invoice ${data.name} cancelled for order ${medusaOrderId}`)
               }
             } catch (error: any) {
-              logger.error(`[Webhook:ERPNext] updating cancelled invoice: ${err instanceof Error ? err.message : err}`)}
+              logger.error(`[Webhook:ERPNext] updating cancelled invoice: ${error instanceof Error ? error.message : error}`)}
           }
         }
         break

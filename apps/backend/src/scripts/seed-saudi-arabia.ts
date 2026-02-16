@@ -738,9 +738,9 @@ export default async function ({ container }: ExecArgs) {
   logger.info(`✓ Set inventory levels for ${inventoryItems.length} items`)
 
   // Summary
-  logger.info(`\n${String("=".repeat(60)}`))
+  logger.info(`\n${"=".repeat(60)}`)
   logger.info("✓ SEEDING COMPLETE!")
-  logger.info(String("=".repeat(60)))
+  logger.info("=".repeat(60))
   logger.info(`
 Region: ${saudiRegion.name} (${saudiRegion.currency_code.toUpperCase()})
 Tax: 15% VAT

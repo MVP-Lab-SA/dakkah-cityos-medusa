@@ -401,13 +401,7 @@ export class NodeHierarchySyncService {
       }
     }
 
-    logger.info(String(`[NodeHierarchySync] Full hierarchy sync completed for tenant ${tenantId}`, {
-      totalNodes: nodes.length,
-      payload: `${stats.payload.synced}/${nodes.length}`,
-      erpnext: `${stats.erpnext.synced}/${nodes.length}`,
-      fleetbase: `${stats.fleetbase.synced}/${nodes.length}`,
-      waltid: `${stats.waltid.synced}/${nodes.length}`,
-    }));
+    logger.info(`[NodeHierarchySync] Full hierarchy sync completed for tenant ${tenantId} - totalNodes: ${nodes.length}, payload: ${stats.payload.synced}/${nodes.length}, erpnext: ${stats.erpnext.synced}/${nodes.length}, fleetbase: ${stats.fleetbase.synced}/${nodes.length}, waltid: ${stats.waltid.synced}/${nodes.length}`);
 
     return stats;
   }

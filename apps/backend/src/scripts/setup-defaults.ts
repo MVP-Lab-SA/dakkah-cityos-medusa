@@ -36,7 +36,7 @@ export default async function({ container }: ExecArgs) {
     });
     logger.info(`✓ Created ${customerGroups.length} customer groups`);
   } catch (error) {
-    logger.info(String("Customer groups may already exist or error occurred:", error.message));
+    logger.info(`Customer groups may already exist or error occurred: ${(error as any).message}`);
   }
 
   // Create Additional Sales Channels
@@ -65,7 +65,7 @@ export default async function({ container }: ExecArgs) {
     });
     logger.info(`✓ Created ${salesChannels.length} sales channels`);
   } catch (error) {
-    logger.info(String("Sales channels may already exist or error occurred:", error.message));
+    logger.info(`Sales channels may already exist or error occurred: ${(error as any).message}`);
   }
 
   logger.info("\n✓ Default setup complete!");

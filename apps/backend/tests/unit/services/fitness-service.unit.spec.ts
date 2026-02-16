@@ -75,7 +75,7 @@ describe("FitnessModuleService", () => {
         duration_months: 3,
         status: "active",
       }))
-      const callArgs = createSpy.mock.calls[0][0]
+      const callArgs = createSpy.mock.calls[0][0] as any
       const endDate = new Date(callArgs.end_date)
       expect(endDate.getMonth()).toBe(3)
     })

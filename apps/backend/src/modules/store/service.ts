@@ -88,7 +88,7 @@ class StoreModuleService extends MedusaService({
     if (store.status === "suspended") {
       throw new Error("Store is already suspended")
     }
-    return await this.updateStores({
+    return await (this as any).updateStores({
       id: storeId,
       status: "suspended",
       suspension_reason: reason,
@@ -126,7 +126,7 @@ class StoreModuleService extends MedusaService({
       }
     }
     await this.retrieveStore(storeId)
-    return await this.updateStores({
+    return await (this as any).updateStores({
       id: storeId,
       operating_hours: hours,
     })

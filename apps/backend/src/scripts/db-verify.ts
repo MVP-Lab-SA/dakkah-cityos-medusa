@@ -28,9 +28,9 @@ export default async function verifyDatabase({ container }: ExecArgs) {
   const results: VerificationResult[] = []
   const duplicates: DuplicateInfo[] = []
 
-  logger.info(`\n${String("=".repeat(60)}`))
+  logger.info(`\n${"=".repeat(60)}`)
   logger.info("DATABASE VERIFICATION SCRIPT")
-  logger.info(String("=".repeat(60)) + "\n")
+  logger.info("=".repeat(60) + "\n")
 
   // ============================================================
   // 1. ADMIN USER
@@ -521,9 +521,9 @@ export default async function verifyDatabase({ container }: ExecArgs) {
   // ============================================================
   // PRINT SUMMARY REPORT
   // ============================================================
-  logger.info(`\n${String("=".repeat(60)}`))
+  logger.info(`\n${"=".repeat(60)}`)
   logger.info("VERIFICATION SUMMARY REPORT")
-  logger.info(String("=".repeat(60)) + "\n")
+  logger.info("=".repeat(60) + "\n")
 
   const statusCounts = {
     OK: results.filter((r) => r.status === "OK").length,
@@ -560,9 +560,9 @@ export default async function verifyDatabase({ container }: ExecArgs) {
   // DUPLICATES REPORT
   // ============================================================
   if (duplicates.length > 0) {
-    logger.info(String("=".repeat(60)))
+    logger.info("=".repeat(60))
     logger.info("DUPLICATES FOUND")
-    logger.info(String("=".repeat(60)) + "\n")
+    logger.info("=".repeat(60) + "\n")
 
     duplicates.forEach((dup, idx) => {
       logger.info(`${idx + 1}. ${dup.type}`)

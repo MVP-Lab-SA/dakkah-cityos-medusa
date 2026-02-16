@@ -38,7 +38,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       paused_at: new Date(),
       metadata: {
         ...subscription.metadata,
-        pause_reason: req.body.reason || "customer_requested",
+        pause_reason: (req.body as Record<string, any>).reason || "customer_requested",
         paused_by: customerId,
       }
     })
@@ -48,7 +48,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     await eventBus.emit("subscription.paused", { 
       id, 
       customer_id: customerId,
-      reason: req.body.reason 
+      reason: (req.body as Record<string, any>).reason 
     })
     
     res.json({ subscription: updated })

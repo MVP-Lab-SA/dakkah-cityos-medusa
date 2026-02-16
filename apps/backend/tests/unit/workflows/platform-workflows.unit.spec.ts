@@ -18,7 +18,7 @@ describe("Tenant Provisioning Workflow", () => {
   let configureTenantStep: any
 
   beforeAll(async () => {
-    await import("../../../src/workflows/tenant-provisioning")
+    await import("../../../src/workflows/tenant-provisioning.js")
     const { createStep } = require("@medusajs/framework/workflows-sdk")
     const calls = createStep.mock.calls
     createTenantStep = calls.find((c: any) => c[0] === "create-tenant-record-step")?.[1]
@@ -67,7 +67,7 @@ describe("Hierarchy Sync Workflow", () => {
   let auditHierarchyChangeStep: any
 
   beforeAll(async () => {
-    await import("../../../src/workflows/hierarchy-sync")
+    await import("../../../src/workflows/hierarchy-sync.js")
     const { createStep } = require("@medusajs/framework/workflows-sdk")
     const calls = createStep.mock.calls
     detectChangeStep = calls.find((c: any) => c[0] === "detect-hierarchy-change-step")?.[1]
@@ -111,7 +111,7 @@ describe("Content Moderation Workflow", () => {
   let publishContentStep: any
 
   beforeAll(async () => {
-    await import("../../../src/workflows/content-moderation")
+    await import("../../../src/workflows/content-moderation.js")
     const { createStep } = require("@medusajs/framework/workflows-sdk")
     const calls = createStep.mock.calls
     submitContentStep = calls.find((c: any) => c[0] === "submit-content-for-moderation-step")?.[1]

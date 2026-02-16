@@ -6,10 +6,10 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     const service = req.scope.resolve("dispute") as any
     const dispute = await service.resolve({
       disputeId: req.params.id,
-      resolution: req.body?.resolution,
-      resolutionAmount: req.body?.resolution_amount,
-      resolvedBy: req.body?.resolved_by || "admin",
-      notes: req.body?.notes,
+      resolution: (req.body as any)?.resolution,
+      resolutionAmount: (req.body as any)?.resolution_amount,
+      resolvedBy: (req.body as any)?.resolved_by || "admin",
+      notes: (req.body as any)?.notes,
     })
     res.json({ dispute })
   } catch (error: any) {

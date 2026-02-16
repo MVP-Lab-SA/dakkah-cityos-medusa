@@ -18,7 +18,7 @@ describe("Fleet Dispatch Workflow", () => {
   let initializeTrackingStep: any
 
   beforeAll(async () => {
-    await import("../../../src/workflows/fleet-dispatch")
+    await import("../../../src/workflows/fleet-dispatch.js")
     const { createStep } = require("@medusajs/framework/workflows-sdk")
     const calls = createStep.mock.calls
     prepareOrderForDispatchStep = calls.find((c: any) => c[0] === "prepare-order-dispatch-step")?.[1]
@@ -61,7 +61,7 @@ describe("Inventory Replenishment Workflow", () => {
   let createPurchaseOrderStep: any
 
   beforeAll(async () => {
-    await import("../../../src/workflows/inventory-replenishment")
+    await import("../../../src/workflows/inventory-replenishment.js")
     const { createStep } = require("@medusajs/framework/workflows-sdk")
     const calls = createStep.mock.calls
     checkStockAlertStep = calls.find((c: any) => c[0] === "check-stock-alert-step")?.[1]
@@ -115,7 +115,7 @@ describe("Dispute Resolution Workflow", () => {
   let resolveDisputeStep: any
 
   beforeAll(async () => {
-    await import("../../../src/workflows/dispute-resolution")
+    await import("../../../src/workflows/dispute-resolution.js")
     const { createStep } = require("@medusajs/framework/workflows-sdk")
     const calls = createStep.mock.calls
     openDisputeStep = calls.find((c: any) => c[0] === "open-dispute-step")?.[1]

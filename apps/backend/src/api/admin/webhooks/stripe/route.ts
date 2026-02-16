@@ -22,7 +22,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         const rawBody = typeof req.body === "string" ? req.body : JSON.stringify(req.body)
         stripeEvent = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret)
       } catch (error: any) {
-        logger.info(`[Webhook:Stripe] Signature verification failed: ${err instanceof Error ? err.message : err}`)
+        logger.info(`[Webhook:Stripe] Signature verification failed: ${error instanceof Error ? error.message : error}`)
         return handleApiError(res, error, "ADMIN-WEBHOOKS-STRIPE")}
     } else {
       stripeEvent = {
@@ -63,7 +63,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
               })
             }
           } catch (error: any) {
-            logger.error(`[Webhook:Stripe] updating order payment status: ${err instanceof Error ? err.message : err}`)}
+            logger.error(`[Webhook:Stripe] updating order payment status: ${error instanceof Error ? error.message : error}`)}
 
           try {
             const { dispatchEventToTemporal } = await import("../../../../lib/event-dispatcher.js")
@@ -79,7 +79,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
             })
             logger.info(`[Webhook:Stripe] Dispatched invoice creation to Temporal for order ${orderId}`)
           } catch (error: any) {
-            logger.error(`[Webhook:Stripe] dispatching invoice creation: ${err instanceof Error ? err.message : err}`)}
+            logger.error(`[Webhook:Stripe] dispatching invoice creation: ${error instanceof Error ? error.message : error}`)}
         }
         processed = true
         break
@@ -112,7 +112,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
               })
             }
           } catch (error: any) {
-            logger.error(`[Webhook:Stripe] updating failed payment status: ${err instanceof Error ? err.message : err}`)}
+            logger.error(`[Webhook:Stripe] updating failed payment status: ${error instanceof Error ? error.message : error}`)}
         }
         processed = true
         break
@@ -145,7 +145,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
               })
             }
           } catch (error: any) {
-            logger.error(`[Webhook:Stripe] updating refund status: ${err instanceof Error ? err.message : err}`)}
+            logger.error(`[Webhook:Stripe] updating refund status: ${error instanceof Error ? error.message : error}`)}
         }
         processed = true
         break
@@ -182,7 +182,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
               logger.info(`[Webhook:Stripe] Vendor ${vendors[0].id} Stripe account status updated`)
             }
           } catch (error: any) {
-            logger.error(`[Webhook:Stripe] updating vendor Stripe status: ${err instanceof Error ? err.message : err}`)}
+            logger.error(`[Webhook:Stripe] updating vendor Stripe status: ${error instanceof Error ? error.message : error}`)}
         }
         processed = true
         break

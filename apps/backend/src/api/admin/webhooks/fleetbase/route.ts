@@ -67,7 +67,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
               logger.info(`[Webhook:Fleetbase] Order ${orderId} marked as delivered`)
             }
           } catch (error: any) {
-            logger.error(`[Webhook:Fleetbase] updating order fulfillment: ${err instanceof Error ? err.message : err}`)}
+            logger.error(`[Webhook:Fleetbase] updating order fulfillment: ${error instanceof Error ? error.message : error}`)}
         }
         processed = true
         break
@@ -99,7 +99,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
               })
             }
           } catch (error: any) {
-            logger.error(`[Webhook:Fleetbase] updating driver assignment: ${err instanceof Error ? err.message : err}`)}
+            logger.error(`[Webhook:Fleetbase] updating driver assignment: ${error instanceof Error ? error.message : error}`)}
         }
         processed = true
         break
@@ -133,7 +133,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
               logger.info(`[Webhook:Fleetbase] Tracking updated for order ${orderId}`)
             }
           } catch (error: any) {
-            logger.error(`[Webhook:Fleetbase] updating tracking: ${err instanceof Error ? err.message : err}`)}
+            logger.error(`[Webhook:Fleetbase] updating tracking: ${error instanceof Error ? error.message : error}`)}
         }
         processed = true
         break

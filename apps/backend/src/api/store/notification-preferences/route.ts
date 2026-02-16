@@ -23,7 +23,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     if (!customerId) {
       return res.status(401).json({ message: "Authentication required" })
     }
-    const item = await service.createNotificationPreferences({ ...req.body, customer_id: customerId })
+    const item = await service.createNotificationPreferences({ ...(req.body as any), customer_id: customerId })
     res.status(201).json({ item })
   } catch (error: any) {
     return handleApiError(res, error, "STORE-NOTIFICATION-PREFERENCES")}

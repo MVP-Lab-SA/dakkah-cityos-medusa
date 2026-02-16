@@ -1,5 +1,7 @@
 import type { MedusaNextFunction, MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import crypto from "crypto"
+import { createLogger } from "../logger"
+const logger = createLogger("middleware:request-logger")
 
 function getClientIp(req: MedusaRequest): string {
   const forwarded = req.headers["x-forwarded-for"]

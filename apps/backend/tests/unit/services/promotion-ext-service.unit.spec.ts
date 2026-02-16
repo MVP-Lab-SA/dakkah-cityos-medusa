@@ -40,7 +40,7 @@ describe("PromotionExtModuleService", () => {
       const listSpy = jest.spyOn(service, "listGiftCardExts" as any).mockResolvedValue([])
 
       await service.getActivePromotions("t1", { includeExpired: true })
-      const calledFilters = listSpy.mock.calls[0][0]
+      const calledFilters = listSpy.mock.calls[0][0] as any
       expect(calledFilters.expires_at).toBeUndefined()
     })
   })

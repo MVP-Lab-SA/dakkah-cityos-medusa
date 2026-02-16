@@ -74,8 +74,9 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         const rawBody = typeof req.body === "string" ? req.body : JSON.stringify(req.body)
         stripeEvent = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret)
       } catch (error: any) {
-        logger.info(`[Webhook:Stripe] Signature verification failed (correlation: ${correlationId}): ${err.message}`)
-        return handleApiError(res, error, "WEBHOOKS-STRIPE")}
+        logger.info(`[Webhook:Stripe] Signature verification failed (correlation: ${correlationId}): ${error.message}`)
+        return handleApiError(res, error, "WEBHOOKS-STRIPE")
+      }
     } else {
       stripeEvent = {
         type: (req.body as any)?.type || "unknown",

@@ -17,7 +17,7 @@ describe("Vendor Onboarding Workflow", () => {
   let setupVendorStoreStep: any
 
   beforeAll(async () => {
-    await import("../../../src/workflows/vendor-onboarding")
+    await import("../../../src/workflows/vendor-onboarding.js")
     const { createStep } = require("@medusajs/framework/workflows-sdk")
     const calls = createStep.mock.calls
     submitApplicationStep = calls.find((c: any) => c[0] === "submit-vendor-application-step")?.[1]
@@ -63,7 +63,7 @@ describe("KYC Verification Workflow", () => {
   let decideKycStep: any
 
   beforeAll(async () => {
-    await import("../../../src/workflows/kyc-verification")
+    await import("../../../src/workflows/kyc-verification.js")
     const { createStep } = require("@medusajs/framework/workflows-sdk")
     const calls = createStep.mock.calls
     submitDocumentsStep = calls.find((c: any) => c[0] === "submit-kyc-documents-step")?.[1]
@@ -116,7 +116,7 @@ describe("Product Sync Workflow", () => {
   let verifySyncStep: any
 
   beforeAll(async () => {
-    await import("../../../src/workflows/product-sync")
+    await import("../../../src/workflows/product-sync.js")
     const { createStep } = require("@medusajs/framework/workflows-sdk")
     const calls = createStep.mock.calls
     fetchProductsStep = calls.find((c: any) => c[0] === "fetch-source-products-step")?.[1]

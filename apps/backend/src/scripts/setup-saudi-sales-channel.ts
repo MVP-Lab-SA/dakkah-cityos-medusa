@@ -22,7 +22,7 @@ export default async function({ container }: ExecArgs) {
     },
   })
   
-  logger.info(String("✅ Created sales channel:", channels[0].id, channels[0].name))
+  logger.info(`✅ Created sales channel: ${channels[0].id} ${channels[0].name}`)
   
   // Step 2: Create Publishable API Key for Saudi Store
   const { result: apiKeys } = await createApiKeysWorkflow(container).run({

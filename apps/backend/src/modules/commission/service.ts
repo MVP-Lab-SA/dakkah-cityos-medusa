@@ -200,7 +200,7 @@ class CommissionModuleService extends MedusaService({
       return { processed_count: 0 }
     }
 
-    await this.updateCommissionTransactions(
+    await (this as any).updateCommissionTransactions(
       transactionIds,
       {
         payout_status: "paid",
@@ -264,7 +264,7 @@ class CommissionModuleService extends MedusaService({
     const newCommissionAmount = Number(originalTransaction.commission_amount || 0) + adjustmentAmount
     const newNetAmount = Number(originalTransaction.order_total || 0) - newCommissionAmount
 
-    await this.updateCommissionTransactions(
+    await (this as any).updateCommissionTransactions(
       [transactionId],
       {
         commission_amount: newCommissionAmount,

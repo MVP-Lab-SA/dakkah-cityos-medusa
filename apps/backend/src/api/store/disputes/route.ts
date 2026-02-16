@@ -6,10 +6,10 @@ const createDisputeSchema = z.object({
   order_id: z.string().min(1, "Order ID is required"),
   reason: z.string().min(1, "Reason is required"),
   description: z.string().min(1, "Description is required"),
-  type: z.string().optional().default("general"),
-  priority: z.string().optional().default("medium"),
+  type: z.string().default("general"),
+  priority: z.string().default("medium"),
   attachments: z.array(z.any()).optional(),
-  metadata: z.record(z.unknown()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 })
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
@@ -54,7 +54,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     if (!parsed.success) {
       return res.status(400).json({
         message: "Validation failed",
-        errors: parsed.error.errors,
+        errors: parsed.error.issues,
       })
     }
 

@@ -16,7 +16,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       return res.json({ item: { ...charity, campaigns } })
     }
   } catch (error: any) {
-    const isNotFound = e?.type === "not_found" || e?.code === "NOT_FOUND" || e?.message?.includes("not found") || e?.message?.includes("does not exist")
+    const isNotFound = error?.type === "not_found" || error?.code === "NOT_FOUND" || error?.message?.includes("not found") || error?.message?.includes("does not exist")
     if (!isNotFound) {
       return handleApiError(res, error, "STORE-CHARITY-ID")}
   }
@@ -31,7 +31,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       return res.json({ item: { ...campaign, organization: org } })
     }
   } catch (error: any) {
-    const isNotFound = e?.type === "not_found" || e?.code === "NOT_FOUND" || e?.message?.includes("not found") || e?.message?.includes("does not exist")
+    const isNotFound = error?.type === "not_found" || error?.code === "NOT_FOUND" || error?.message?.includes("not found") || error?.message?.includes("does not exist")
     if (!isNotFound) {
       return handleApiError(res, error, "STORE-CHARITY-ID")}
   }

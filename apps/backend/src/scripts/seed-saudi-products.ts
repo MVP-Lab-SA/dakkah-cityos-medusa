@@ -291,7 +291,7 @@ export default async function ({ container }: ExecArgs) {
       if (error.message?.includes("already exists")) {
         logger.info(`  Skipped (exists): ${product.title}`)
       } else {
-        logger.info(String(`  Error creating ${product.title}:`, error.message))
+        logger.info(`  Error creating ${product.title}: ${error.message}`)
       }
     }
   }
@@ -307,7 +307,7 @@ export default async function ({ container }: ExecArgs) {
       })
       logger.info(`Linked ${createdProductIds.length} products to ${defaultChannel.name}`)
     } catch (error: any) {
-      logger.info(String(`Error linking products to sales channel:`, error.message))
+      logger.info(`Error linking products to sales channel: ${error.message}`)
     }
   }
   

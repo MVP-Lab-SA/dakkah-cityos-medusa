@@ -258,8 +258,8 @@ class ChannelModuleService extends MedusaService({
         throw new Error("Channel is not active")
       }
 
-      const existingConfig = channel.config || {}
-      const syncedProducts = existingConfig.synced_products || []
+      const existingConfig = (channel.config || {}) as Record<string, any>
+      const syncedProducts = (existingConfig.synced_products || []) as string[]
 
       const newProducts = productIds.filter((id: string) => !syncedProducts.includes(id))
       const updatedSyncedProducts = [...syncedProducts, ...newProducts]
@@ -268,7 +268,7 @@ class ChannelModuleService extends MedusaService({
         ...existingConfig,
         synced_products: updatedSyncedProducts,
         last_inventory_sync: new Date().toISOString(),
-        sync_count: (existingConfig.sync_count || 0) + 1,
+        sync_count: ((existingConfig.sync_count as number) || 0) + 1,
       }
 
       await (this as any).updateSalesChannelMappings({

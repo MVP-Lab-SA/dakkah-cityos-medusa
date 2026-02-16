@@ -17,7 +17,7 @@ describe("Loyalty Reward Workflow", () => {
   let notifyRewardStep: any
 
   beforeAll(async () => {
-    await import("../../../src/workflows/loyalty-reward")
+    await import("../../../src/workflows/loyalty-reward.js")
     const { createStep } = require("@medusajs/framework/workflows-sdk")
     const calls = createStep.mock.calls
     calculatePointsStep = calls.find((c: any) => c[0] === "calculate-loyalty-points-step")?.[1]
@@ -54,7 +54,7 @@ describe("Subscription Renewal Workflow", () => {
   let updateSubscriptionStep: any
 
   beforeAll(async () => {
-    await import("../../../src/workflows/subscription-renewal")
+    await import("../../../src/workflows/subscription-renewal.js")
     const { createStep } = require("@medusajs/framework/workflows-sdk")
     const calls = createStep.mock.calls
     checkSubscriptionStep = calls.find((c: any) => c[0] === "check-subscription-status-step")?.[1]
@@ -97,7 +97,7 @@ describe("Auction Lifecycle Workflow", () => {
   let closeAuctionStep: any
 
   beforeAll(async () => {
-    await import("../../../src/workflows/auction-lifecycle")
+    await import("../../../src/workflows/auction-lifecycle.js")
     const { createStep } = require("@medusajs/framework/workflows-sdk")
     const calls = createStep.mock.calls
     createAuctionStep = calls.find((c: any) => c[0] === "create-auction-step")?.[1]
@@ -136,7 +136,7 @@ describe("Campaign Activation Workflow", () => {
   let activateCampaignStep: any
 
   beforeAll(async () => {
-    await import("../../../src/workflows/campaign-activation")
+    await import("../../../src/workflows/campaign-activation.js")
     const { createStep } = require("@medusajs/framework/workflows-sdk")
     const calls = createStep.mock.calls
     createCampaignStep = calls.find((c: any) => c[0] === "create-campaign-step")?.[1]
@@ -180,7 +180,7 @@ describe("Trade-In Evaluation Workflow", () => {
   let generateOfferStep: any
 
   beforeAll(async () => {
-    await import("../../../src/workflows/trade-in-evaluation")
+    await import("../../../src/workflows/trade-in-evaluation.js")
     const { createStep } = require("@medusajs/framework/workflows-sdk")
     const calls = createStep.mock.calls
     submitTradeInStep = calls.find((c: any) => c[0] === "submit-trade-in-step")?.[1]

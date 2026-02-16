@@ -1,5 +1,5 @@
 import { initGracefulShutdown } from "./lib/middleware/graceful-shutdown"
-import { createLogger } from "lib/logger"
+import { createLogger } from "./lib/logger"
 const logger = createLogger("instrumentation")
 
 initGracefulShutdown()

@@ -639,7 +639,7 @@ export default async function ({ container }: ExecArgs) {
       createdProducts++
       logger.info(`  ✅ Created product: ${product.title}`)
     } catch (error) {
-      logger.info(String(`  ⚠️  Error creating ${product.title}:`, error.message))
+      logger.info(`  ⚠️  Error creating ${product.title}: ${(error as any).message}`)
     }
   }
   

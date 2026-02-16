@@ -72,7 +72,7 @@ describe("WarrantyModuleService", () => {
         status: "registered",
         extension_fee: 50,
       }))
-      const callArgs = updateSpy.mock.calls[0][0]
+      const callArgs = updateSpy.mock.calls[0][0] as any
       const newExpiry = new Date(callArgs.expiry_date)
       expect(newExpiry.getMonth()).toBe(new Date("2025-12-01").getMonth())
     })

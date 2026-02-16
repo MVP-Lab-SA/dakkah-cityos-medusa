@@ -17,7 +17,7 @@ describe("Order Fulfillment Workflow", () => {
   let createShipmentStep: any
 
   beforeAll(async () => {
-    const mod = await import("../../../src/workflows/order-fulfillment")
+    const mod = await import("../../../src/workflows/order-fulfillment.js")
     const { createStep } = require("@medusajs/framework/workflows-sdk")
     const calls = createStep.mock.calls
     validateOrderStep = calls.find((c: any) => c[0] === "validate-order-step")?.[1]
@@ -64,7 +64,7 @@ describe("Commission Calculation Workflow", () => {
   let recordPayoutStep: any
 
   beforeAll(async () => {
-    const mod = await import("../../../src/workflows/commission-calculation")
+    const mod = await import("../../../src/workflows/commission-calculation.js")
     const { createStep } = require("@medusajs/framework/workflows-sdk")
     const calls = createStep.mock.calls
     calculateCommissionStep = calls.find((c: any) => c[0] === "calculate-vendor-commission-step")?.[1]
@@ -118,7 +118,7 @@ describe("Payment Reconciliation Workflow", () => {
   let generateReportStep: any
 
   beforeAll(async () => {
-    const mod = await import("../../../src/workflows/payment-reconciliation")
+    const mod = await import("../../../src/workflows/payment-reconciliation.js")
     const { createStep } = require("@medusajs/framework/workflows-sdk")
     const calls = createStep.mock.calls
     fetchPaymentRecordsStep = calls.find((c: any) => c[0] === "fetch-payment-records-step")?.[1]
@@ -162,7 +162,7 @@ describe("Return Processing Workflow", () => {
   let restockItemsStep: any
 
   beforeAll(async () => {
-    const mod = await import("../../../src/workflows/return-processing")
+    const mod = await import("../../../src/workflows/return-processing.js")
     const { createStep } = require("@medusajs/framework/workflows-sdk")
     const calls = createStep.mock.calls
     requestReturnStep = calls.find((c: any) => c[0] === "request-return-step")?.[1]

@@ -114,7 +114,7 @@ export class PayloadToMedusaSync {
 
     // Store endpoint config in Medusa
     // This could be used for dynamic API routing or configuration
-    logger.info(String("Processing integration endpoint:", endpoint));
+    logger.info(`Processing integration endpoint: ${JSON.stringify(endpoint)}`);
 
     // Example: Store in a configuration service
     // const configService = this.container.resolve("configService");
@@ -171,8 +171,7 @@ export class PayloadToMedusaSync {
           status: "success",
           processedAt: new Date().toISOString(),
         });
-      } catch (error) {
-        // Increment retry count
+      } catch (error: any) {
         await this.client.patch(`/api/webhook-logs/${logId}`, {
           retryCount: log.retryCount + 1,
           lastError: error.message,
@@ -215,7 +214,7 @@ export class PayloadToMedusaSync {
         });
 
         success++;
-      } catch (error) {
+      } catch (error: any) {
         failed++;
         errors.push(`${content.id}: ${error.message}`);
       }

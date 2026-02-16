@@ -41,7 +41,7 @@
     "crypto-js": "^4.2.0",
     "meilisearch": "^0.55.0",
     "node-cron": "^4.2.1",
-    "react-router-dom": "^7.12.0",
+    "react-router-dom": "6.20.1",
     "zod": "^4.3.5"
   },
   "devDependencies": {
