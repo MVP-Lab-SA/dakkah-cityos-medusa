@@ -273,3 +273,30 @@
 2026-02-16 15:41:35.764 UTC [7157] FATAL:  database "heliumdb" does not exist
 2026-02-16 15:43:55.291 UTC [7865] FATAL:  database "heliumdb" does not exist
 2026-02-16 16:13:19.683 UTC [13360] FATAL:  database "heliumdb" does not exist
+2026-02-16 16:44:15.228 UTC [14201] FATAL:  database "heliumdb" does not exist
+2026-02-16 16:44:41.768 UTC [261] FATAL:  lock file "postmaster.pid" already exists
+2026-02-16 16:44:41.768 UTC [261] HINT:  Is another postmaster (PID 109) running in data directory "/home/runner/workspace/.pgdata"?
+2026-02-16 16:57:37.287 UTC [2081] LOG:  starting PostgreSQL 16.10 on x86_64-pc-linux-gnu, compiled by clang version 19.1.7, 64-bit
+2026-02-16 16:57:37.289 UTC [2081] LOG:  listening on IPv6 address "::1", port 5433
+2026-02-16 16:57:37.290 UTC [2081] LOG:  listening on IPv4 address "127.0.0.1", port 5433
+2026-02-16 16:57:37.299 UTC [2081] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5433"
+2026-02-16 16:57:37.312 UTC [2084] LOG:  database system was interrupted; last known up at 2026-02-16 14:58:30 UTC
+2026-02-16 16:57:38.102 UTC [2084] LOG:  database system was not properly shut down; automatic recovery in progress
+2026-02-16 16:57:38.239 UTC [2084] LOG:  redo starts at 0/2856220
+2026-02-16 16:57:38.239 UTC [2084] LOG:  invalid record length at 0/2856258: expected at least 24, got 0
+2026-02-16 16:57:38.239 UTC [2084] LOG:  redo done at 0/2856220 system usage: CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.00 s
+2026-02-16 16:57:38.250 UTC [2082] LOG:  checkpoint starting: end-of-recovery immediate wait
+2026-02-16 16:57:38.520 UTC [2082] LOG:  checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.002 s, sync=0.177 s, total=0.273 s; sync files=2, longest=0.174 s, average=0.089 s; distance=0 kB, estimate=0 kB; lsn=0/2856258, redo lsn=0/2856258
+2026-02-16 16:57:38.616 UTC [2081] LOG:  database system is ready to accept connections
+2026-02-16 16:57:41.715 UTC [2091] FATAL:  database "heliumdb" does not exist
+2026-02-16 16:57:48.259 UTC [2120] LOG:  starting PostgreSQL 16.10 on x86_64-pc-linux-gnu, compiled by clang version 19.1.7, 64-bit
+2026-02-16 16:57:48.260 UTC [2120] LOG:  listening on IPv6 address "::1", port 5433
+2026-02-16 16:57:48.261 UTC [2120] LOG:  listening on IPv4 address "127.0.0.1", port 5433
+2026-02-16 16:57:48.265 UTC [2120] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5433"
+2026-02-16 16:57:48.270 UTC [2123] LOG:  database system was interrupted; last known up at 2026-02-16 16:57:38 UTC
+2026-02-16 16:57:48.391 UTC [2123] LOG:  database system was not properly shut down; automatic recovery in progress
+2026-02-16 16:57:48.396 UTC [2123] LOG:  invalid record length at 0/28562D0: expected at least 24, got 0
+2026-02-16 16:57:48.396 UTC [2123] LOG:  redo is not required
+2026-02-16 16:57:48.402 UTC [2121] LOG:  checkpoint starting: end-of-recovery immediate wait
+2026-02-16 16:57:48.486 UTC [2121] LOG:  checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.075 s, total=0.088 s; sync files=2, longest=0.072 s, average=0.038 s; distance=0 kB, estimate=0 kB; lsn=0/28562D0, redo lsn=0/28562D0
+2026-02-16 16:57:48.490 UTC [2120] LOG:  database system is ready to accept connections
