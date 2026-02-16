@@ -46,30 +46,38 @@ The platform supports 45 CRUD configurations for various verticals using shared 
 - **Temporal Cloud (Workflow Orchestration):** Workflow execution, task queues, dynamic AI agent workflows, event outbox.
 - **Walt.id (Decentralized Digital Identity):** DID management, verifiable credentials, wallet integration.
 
-## Module Audit (2026-02-16)
+## Module Audit (2026-02-16, revised 2026-02-16)
 
-Full detailed audit with classification matrix, migration roadmap, and maturity assessment: **docs/module-audit.md**
+Full detailed audit: **docs/module-audit.md** (architecture, code inventory, classification matrix, gap analysis, upgrade risks, implementation plans)
 
-### Summary: 66 custom modules classified against Medusa v2 built-in capabilities
+### Code Separation from Medusa
+All custom code lives in `apps/backend/src/` — completely separate from Medusa's `node_modules/@medusajs/`. No patches, no forks, no modifications to Medusa source code. All modules use Medusa's official extension pattern (`MedusaService`, `model.define`, `Module()`, `defineLink`). Future Medusa upgrades will not break custom modules unless Medusa changes its extension APIs.
 
-**Duplicates (3):** `analytics`, `i18n`, `notification-preferences` have Medusa equivalents. Migration conditional on Medusa module capability fit and configuration status.
+### Custom Backend Code Inventory
+59 module directories, 486 API route files (237 admin, 163 store, 68 vendor, 18 other), 34 subscribers, 30 workflows, 27 links, 17 jobs, 29 scripts, 134 admin UI files, 8 integrations, 1 worker
 
-**Hybrid-Overlap (5):** `cart-extension`, `promotion-ext`, `shipping-extension`, `tax-config`, `inventory-extension` partially overlap with Medusa core. Require gap analysis before migration decisions.
+### Module Classification (59 modules, all justified — 0 requiring immediate migration)
 
-**Extensions (16):** `cityosStore`, `volume-pricing`, `vendor`, `commission`, `payout`, `subscription`, `company`, `quote`, `review`, `digital-product`, `invoice`, `dispute`, `loyalty`, `wishlist`, `social-commerce`, `membership` extend Medusa with unique marketplace/B2B/consumer features. KEEP.
+**Reclassified from Duplicate/Hybrid to Extension (8):** After deep comparison with Medusa v2 built-in capabilities:
+- `analytics` — NOT a duplicate: Medusa Analytics (v2.8.3+) only forwards events to external providers (track/identify). Our module is a self-contained BI system with persistent storage (AnalyticsEvent, Report, Dashboard models). Report/Dashboard have NO Medusa equivalent.
+- `i18n` — NOT a duplicate: Medusa Translation (experimental) is entity-field-level translation. Our module is a tenant-scoped key-value translation store for UI strings/labels with namespace support and draft/published workflow. Complementary, not duplicative.
+- `notification-preferences` — NOT a duplicate: Medusa Notification handles sending. Our module handles customer consent/preference management. Medusa docs explicitly recommend building this as a custom module.
+- `cart-extension`, `promotion-ext`, `shipping-extension`, `tax-config`, `inventory-extension` — All add unique capabilities beyond Medusa core (tenant-scoped rules, typed queryable fields, unique domain models).
 
-**Infrastructure/CityOS (8):** `tenant`, `node`, `governance`, `persona`, `channel`, `region-zone`, `audit`, `cms-content` are unique platform infrastructure with no Medusa equivalents. KEEP.
+**Extensions (24 total):** `analytics`, `i18n`, `notification-preferences`, `cart-extension`, `promotion-ext`, `shipping-extension`, `tax-config`, `inventory-extension`, `cityosStore`, `volume-pricing`, `vendor`, `commission`, `payout`, `subscription`, `company`, `quote`, `review`, `digital-product`, `invoice`, `dispute`, `loyalty`, `wishlist`, `social-commerce`, `membership`
 
-**Vertical/Domain-Specific (27):** `booking`, `healthcare`, `restaurant`, `travel`, `event-ticketing`, `freelance`, `grocery`, `automotive`, `fitness`, `financial-product`, `advertising`, `parking`, `utilities`, `legal`, `government`, `crowdfunding`, `auction`, `classified`, `charity`, `education`, `real-estate`, `pet-service`, `affiliate`, `warranty`, `rental`, `social-commerce`, `membership`. KEEP.
+**Infrastructure/CityOS (8):** `tenant`, `node`, `governance`, `persona`, `channel`, `region-zone`, `audit`, `cms-content`
 
-**Stub Modules (3, NOT registered in medusa-config.ts):** `wallet`, `trade-in`, `insurance` have no models and have orphaned API routes (wallet: 2, trade-in: 4, insurance: 4 route files). Removal requires deleting both module dirs and route files.
+**Vertical/Domain-Specific (27):** `booking`, `healthcare`, `restaurant`, `travel`, `event-ticketing`, `freelance`, `grocery`, `automotive`, `fitness`, `financial-product`, `advertising`, `parking`, `utilities`, `legal`, `government`, `crowdfunding`, `auction`, `classified`, `charity`, `education`, `real-estate`, `pet-service`, `affiliate`, `warranty`, `rental`, `membership`, `social-commerce`
 
-### Migration Roadmap
-- Phase 1: Remove stubs + orphaned routes (immediate, no risk)
-- Phase 2: Migrate confirmed duplicates (analytics, notification-preferences)
-- Phase 3: Evaluate i18n feasibility + gap analysis on 5 hybrid modules
-- Phase 4: Strengthen extension patterns (links, subscribers)
-- Phase 5: Re-evaluate RSC-Labs plugins
+**Stub Modules (3, need implementation):** `wallet`, `trade-in`, `insurance` — have services with business logic, API routes, storefront pages, but lack data models and medusa-config.ts registration. No Medusa built-in or official plugin exists for any of these. Implementation plan in docs/module-audit.md.
+
+### Implementation Roadmap
+- Phase 1: Implement wallet module (models, migrations, registration) — ~2-3 days
+- Phase 2: Implement trade-in module (models, migrations, registration; existing workflow needs model references) — ~2-3 days
+- Phase 3: Implement insurance module (models, migrations, registration) — ~2-3 days
+- Phase 4: Strengthen extension patterns (add missing defineLink connections, subscribers)
+- Phase 5: Re-evaluate RSC-Labs plugins when compatible
 
 ## Environment Variables
 **Set:** DATABASE_URL/PG*, VITE_MEDUSA_PUBLISHABLE_KEY, STRIPE_*, SENDGRID_API_KEY, TEMPORAL_*, PAYLOAD_*, ERPNEXT_*, FLEETBASE_*, WALTID_API_KEY
