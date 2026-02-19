@@ -3,79 +3,79 @@ import { useQuery } from "@tanstack/react-query"
 import { normalizeItem } from "@/lib/utils/normalize-item"
 
 export interface BlogPost {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt?: string;
-  content?: string;
-  thumbnail?: string;
-  author?: { name: string; avatar?: string; bio?: string };
-  publishedAt: string;
-  updatedAt?: string;
-  category?: string;
-  tags?: string[];
-  readingTime?: string;
+  id: string
+  title: string
+  slug: string
+  excerpt?: string
+  content?: string
+  thumbnail?: string
+  author?: { name: string; avatar?: string; bio?: string }
+  publishedAt: string
+  updatedAt?: string
+  category?: string
+  tags?: string[]
+  readingTime?: string
 }
 
 export interface HelpCategory {
-  id: string;
-  title: string;
-  description?: string;
-  icon?: string;
-  articleCount: number;
-  slug: string;
+  id: string
+  title: string
+  description?: string
+  icon?: string
+  articleCount: number
+  slug: string
 }
 
 export interface HelpArticle {
-  id: string;
-  title: string;
-  excerpt?: string;
-  content?: string;
-  category: string;
-  slug: string;
-  helpful?: { yes: number; no: number };
-  updatedAt?: string;
-  relatedArticles?: HelpArticle[];
+  id: string
+  title: string
+  excerpt?: string
+  content?: string
+  category: string
+  slug: string
+  helpful?: { yes: number; no: number }
+  updatedAt?: string
+  relatedArticles?: HelpArticle[]
 }
 
 export interface POI {
-  id: string;
-  name: string;
-  description?: string;
-  thumbnail?: string;
-  category?: string;
-  address: string;
-  lat: number;
-  lng: number;
-  rating?: { average: number; count: number };
-  phone?: string;
-  hours?: string;
-  distance?: string;
+  id: string
+  name: string
+  description?: string
+  thumbnail?: string
+  category?: string
+  address: string
+  lat: number
+  lng: number
+  rating?: { average: number; count: number }
+  phone?: string
+  hours?: string
+  distance?: string
 }
 
 export interface Announcement {
-  id: string;
-  title: string;
-  content: string;
-  type: "info" | "warning" | "critical" | "promotion";
-  publishedAt: string;
-  expiresAt?: string;
-  pinned?: boolean;
+  id: string
+  title: string
+  content: string
+  type: "info" | "warning" | "critical" | "promotion"
+  publishedAt: string
+  expiresAt?: string
+  pinned?: boolean
 }
 
 export interface BlogFilters {
-  category?: string;
-  tag?: string;
-  search?: string;
-  page?: number;
-  limit?: number;
+  category?: string
+  tag?: string
+  search?: string
+  page?: number
+  limit?: number
 }
 
 export interface POIFilters {
-  category?: string;
-  search?: string;
-  page?: number;
-  limit?: number;
+  category?: string
+  search?: string
+  page?: number
+  limit?: number
 }
 
 const baseUrl = getServerBaseUrl()
@@ -142,8 +142,8 @@ export function useHelpCategories() {
     queryKey: contentKeys.helpCategories(),
     queryFn: async () => {
       const response = await fetchApi<{
-        categories: HelpCategory[];
-        featuredArticles: HelpArticle[];
+        categories: HelpCategory[]
+        featuredArticles: HelpArticle[]
       }>("/store/content/help")
       return response
     },
@@ -188,9 +188,7 @@ export function usePOI(id: string) {
   return useQuery({
     queryKey: [...contentKeys.all, "poi", id],
     queryFn: async () => {
-      const response = await fetchApi<{ poi: POI }>(
-        `/store/content/pois/${id}`,
-      )
+      const response = await fetchApi<{ poi: POI }>(`/store/content/pois/${id}`)
       return normalizeItem(response.poi)
     },
     enabled: !!id,

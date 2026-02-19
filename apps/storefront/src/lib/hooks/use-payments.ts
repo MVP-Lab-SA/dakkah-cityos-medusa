@@ -2,40 +2,40 @@ import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 
 export interface WalletBalance {
-  available: number;
-  pending: number;
-  currency: string;
-  lastUpdated: string;
+  available: number
+  pending: number
+  currency: string
+  lastUpdated: string
 }
 
 export interface WalletTransaction {
-  id: string;
-  type: "credit" | "debit" | "transfer" | "refund" | "top-up";
-  amount: number;
-  currency: string;
-  description: string;
-  timestamp: string;
-  status: "completed" | "pending" | "failed";
-  counterparty?: string;
-  reference?: string;
+  id: string
+  type: "credit" | "debit" | "transfer" | "refund" | "top-up"
+  amount: number
+  currency: string
+  description: string
+  timestamp: string
+  status: "completed" | "pending" | "failed"
+  counterparty?: string
+  reference?: string
 }
 
 export interface GiftCard {
-  id: string;
-  code: string;
-  balance: number;
-  originalAmount: number;
-  currency: string;
-  expiresAt?: string;
-  status: "active" | "redeemed" | "expired" | "disabled";
-  recipientEmail?: string;
-  senderName?: string;
-  message?: string;
+  id: string
+  code: string
+  balance: number
+  originalAmount: number
+  currency: string
+  expiresAt?: string
+  status: "active" | "redeemed" | "expired" | "disabled"
+  recipientEmail?: string
+  senderName?: string
+  message?: string
 }
 
 export interface StoreCreditBalance {
-  available: number;
-  currency: string;
+  available: number
+  currency: string
 }
 
 async function fetchApi<T>(path: string, options?: RequestInit): Promise<T> {
@@ -97,9 +97,9 @@ export function useWalletTransactions(page: number = 1) {
     queryFn: async () => {
       try {
         const response = await fetchApi<{
-          transactions: WalletTransaction[];
-          hasMore: boolean;
-          total: number;
+          transactions: WalletTransaction[]
+          hasMore: boolean
+          total: number
         }>(`/store/wallet/transactions?page=${page}&limit=10`)
         return response
       } catch {
@@ -153,10 +153,10 @@ export function usePurchaseGiftCard() {
 
   return useMutation({
     mutationFn: async (data: {
-      amount: number;
-      recipientEmail: string;
-      message?: string;
-      senderName?: string;
+      amount: number
+      recipientEmail: string
+      message?: string
+      senderName?: string
     }) => {
       return fetchApi<{ giftCard: GiftCard }>("/store/gift-cards", {
         method: "POST",
@@ -173,7 +173,7 @@ export function useApplyCoupon() {
   return useMutation({
     mutationFn: async (code: string) => {
       return fetchApi<{
-        discount: { amount: number; type: string; code: string };
+        discount: { amount: number; type: string; code: string }
       }>("/store/cart/coupons", {
         method: "POST",
         body: JSON.stringify({ code }),

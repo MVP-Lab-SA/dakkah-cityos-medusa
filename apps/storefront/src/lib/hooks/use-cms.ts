@@ -35,7 +35,9 @@ export function useCMSVerticals() {
   return useQuery<VerticalDefinition[]>({
     queryKey: queryKeys.cms.verticals("default"),
     queryFn: async () => {
-      const response = await fetchWithTimeout("/platform/cms/verticals?limit=50")
+      const response = await fetchWithTimeout(
+        "/platform/cms/verticals?limit=50",
+      )
       if (!response.ok) throw new Error("Failed to fetch verticals")
       const json = await response.json()
       return json.docs
@@ -46,12 +48,16 @@ export function useCMSVerticals() {
   })
 }
 
-export function useCMSNavigation(location: "header" | "footer" | "sidebar" | "mobile") {
+export function useCMSNavigation(
+  location: "header" | "footer" | "sidebar" | "mobile",
+) {
   return useQuery<NavigationEntry | null>({
     queryKey: queryKeys.cms.navigation("default", location),
     queryFn: async () => {
       const where = JSON.stringify({ location: { equals: location } })
-      const response = await fetchWithTimeout(`/platform/cms/navigations?where=${encodeURIComponent(where)}&limit=1`)
+      const response = await fetchWithTimeout(
+        `/platform/cms/navigations?where=${encodeURIComponent(where)}&limit=1`,
+      )
       if (!response.ok) throw new Error("Failed to fetch navigation")
       const json = await response.json()
       return json.docs?.[0] || null

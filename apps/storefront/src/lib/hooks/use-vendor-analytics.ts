@@ -1,9 +1,15 @@
 import { useQuery } from "@tanstack/react-query"
 import { sdk } from "@/lib/utils/sdk"
 import { queryKeys } from "@/lib/utils/query-keys"
-import type { VendorAnalyticsSnapshot, VendorPerformanceMetric } from "@/lib/types/vendors"
+import type {
+  VendorAnalyticsSnapshot,
+  VendorPerformanceMetric,
+} from "@/lib/types/vendors"
 
-export function useVendorAnalytics(options?: { period?: "daily" | "weekly" | "monthly"; limit?: number }) {
+export function useVendorAnalytics(options?: {
+  period?: "daily" | "weekly" | "monthly"
+  limit?: number
+}) {
   return useQuery({
     queryKey: queryKeys.vendorAnalytics.snapshots(options),
     queryFn: async () => {

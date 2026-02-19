@@ -47,7 +47,10 @@ export function useSuppliers(filters?: Record<string, unknown>) {
   })
 }
 
-export function useSupplierProducts(supplierId: string, filters?: Record<string, unknown>) {
+export function useSupplierProducts(
+  supplierId: string,
+  filters?: Record<string, unknown>,
+) {
   return useQuery({
     queryKey: ["supplier-products", supplierId, filters],
     queryFn: async () => {

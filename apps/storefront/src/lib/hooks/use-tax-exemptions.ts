@@ -9,7 +9,7 @@ export function useTaxExemptions() {
     queryFn: async () => {
       const response = await sdk.client.fetch<{ exemptions: TaxExemption[] }>(
         "/store/companies/me/tax-exemptions",
-        { credentials: "include" }
+        { credentials: "include" },
       )
       return response.exemptions || []
     },
@@ -22,7 +22,7 @@ export function useTaxExemption(exemptionId: string) {
     queryFn: async () => {
       const response = await sdk.client.fetch<{ exemption: TaxExemption }>(
         `/store/companies/me/tax-exemptions/${exemptionId}`,
-        { credentials: "include" }
+        { credentials: "include" },
       )
       return response.exemption
     },
@@ -52,10 +52,13 @@ export function useDeleteTaxExemption() {
 
   return useMutation({
     mutationFn: async (exemptionId: string) => {
-      return sdk.client.fetch(`/store/companies/me/tax-exemptions/${exemptionId}`, {
-        method: "DELETE",
-        credentials: "include",
-      })
+      return sdk.client.fetch(
+        `/store/companies/me/tax-exemptions/${exemptionId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        },
+      )
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.taxExemptions.all })

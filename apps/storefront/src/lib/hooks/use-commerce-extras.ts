@@ -11,7 +11,8 @@ async function fetchApi<T>(path: string, options?: RequestInit): Promise<T> {
 
 export const commerceExtrasKeys = {
   all: ["commerce-extras"] as const,
-  tradeIn: (productId: string) => [...commerceExtrasKeys.all, "trade-in", productId] as const,
+  tradeIn: (productId: string) =>
+    [...commerceExtrasKeys.all, "trade-in", productId] as const,
   consignments: () => [...commerceExtrasKeys.all, "consignments"] as const,
   loyalty: () => [...commerceExtrasKeys.all, "loyalty"] as const,
   referral: () => [...commerceExtrasKeys.all, "referral"] as const,
@@ -86,7 +87,7 @@ export function useTradeInEstimate(productId: string) {
     queryKey: commerceExtrasKeys.tradeIn(productId),
     queryFn: async () => {
       const response = await fetchApi<{ trade_in: TradeInEstimate }>(
-        `/store/trade-in/estimate/${productId}`
+        `/store/trade-in/estimate/${productId}`,
       )
       return response.trade_in
     },
@@ -100,7 +101,7 @@ export function useConsignmentListings() {
     queryKey: commerceExtrasKeys.consignments(),
     queryFn: async () => {
       const response = await fetchApi<{ consignments: ConsignmentListing[] }>(
-        "/store/consignments"
+        "/store/consignments",
       )
       return response.consignments
     },
@@ -113,7 +114,7 @@ export function useLoyaltyPoints() {
     queryKey: commerceExtrasKeys.loyalty(),
     queryFn: async () => {
       const response = await fetchApi<{ loyalty: LoyaltyPoints }>(
-        "/store/loyalty"
+        "/store/loyalty",
       )
       return response.loyalty
     },
@@ -126,7 +127,7 @@ export function useReferralInfo() {
     queryKey: commerceExtrasKeys.referral(),
     queryFn: async () => {
       const response = await fetchApi<{ referral: ReferralInfo }>(
-        "/store/referrals/me"
+        "/store/referrals/me",
       )
       return response.referral
     },

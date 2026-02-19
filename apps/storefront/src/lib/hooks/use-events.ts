@@ -20,7 +20,8 @@ async function fetchEvents(filters?: Record<string, unknown>) {
   const resp = await fetchWithTimeout(fullUrl, {
     headers: {
       "Content-Type": "application/json",
-      "x-publishable-api-key": import.meta.env?.VITE_MEDUSA_PUBLISHABLE_KEY || "",
+      "x-publishable-api-key":
+        import.meta.env?.VITE_MEDUSA_PUBLISHABLE_KEY || "",
     },
   })
   if (!resp.ok) throw new Error(`Events API error: ${resp.status}`)
@@ -42,12 +43,16 @@ export function useEvent(eventId: string) {
     queryKey: ["event", eventId],
     queryFn: async () => {
       const baseUrl = getServerBaseUrl()
-      const resp = await fetchWithTimeout(`${baseUrl}/store/events/${eventId}`, {
-        headers: {
-          "Content-Type": "application/json",
-          "x-publishable-api-key": import.meta.env?.VITE_MEDUSA_PUBLISHABLE_KEY || "",
+      const resp = await fetchWithTimeout(
+        `${baseUrl}/store/events/${eventId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "x-publishable-api-key":
+              import.meta.env?.VITE_MEDUSA_PUBLISHABLE_KEY || "",
+          },
         },
-      })
+      )
       if (!resp.ok) throw new Error(`Event API error: ${resp.status}`)
       const data = await resp.json()
       return normalizeItem(data)

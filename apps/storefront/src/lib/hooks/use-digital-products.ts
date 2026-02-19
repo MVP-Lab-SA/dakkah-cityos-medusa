@@ -4,44 +4,44 @@ import { queryKeys } from "@/lib/utils/query-keys"
 import { normalizeItem } from "@/lib/utils/normalize-item"
 
 export interface DigitalProduct {
-  id: string;
-  title: string;
-  description?: string;
-  thumbnail?: string;
-  price: number;
-  currency_code: string;
-  file_type: string;
-  file_size: string;
-  format?: string;
-  preview_url?: string;
-  rating?: { average: number; count: number };
-  category?: string;
-  vendor_id?: string;
-  vendor_name?: string;
-  created_at: string;
-  metadata?: Record<string, unknown>;
+  id: string
+  title: string
+  description?: string
+  thumbnail?: string
+  price: number
+  currency_code: string
+  file_type: string
+  file_size: string
+  format?: string
+  preview_url?: string
+  rating?: { average: number; count: number }
+  category?: string
+  vendor_id?: string
+  vendor_name?: string
+  created_at: string
+  metadata?: Record<string, unknown>
 }
 
 export interface DownloadItem {
-  id: string;
-  product_id: string;
-  title: string;
-  thumbnail?: string;
-  purchase_date: string;
-  file_type: string;
-  file_size: string;
-  download_url: string;
-  downloads_remaining?: number;
-  expires_at?: string;
-  license_key?: string;
+  id: string
+  product_id: string
+  title: string
+  thumbnail?: string
+  purchase_date: string
+  file_type: string
+  file_size: string
+  download_url: string
+  downloads_remaining?: number
+  expires_at?: string
+  license_key?: string
 }
 
 export interface DigitalProductFilters {
-  category?: string;
-  search?: string;
-  sort?: string;
-  limit?: number;
-  offset?: number;
+  category?: string
+  search?: string
+  sort?: string
+  limit?: number
+  offset?: number
 }
 
 async function fetchApi<T>(path: string, options?: RequestInit): Promise<T> {
@@ -78,8 +78,8 @@ export function useDigitalProducts(filters?: DigitalProductFilters) {
 
       const qs = params.toString()
       const response = await fetchApi<{
-        digital_products: DigitalProduct[];
-        count: number;
+        digital_products: DigitalProduct[]
+        count: number
       }>(`/store/digital-products${qs ? `?${qs}` : ""}`)
       return response
     },

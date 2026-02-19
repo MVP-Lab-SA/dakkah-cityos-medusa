@@ -17,16 +17,20 @@ export const useRegion = ({
   country_code,
   fields,
 }: {
-  country_code: string;
-  fields?: string;
+  country_code: string
+  fields?: string
 }) => {
   return useQuery({
     queryKey: queryKeys.regions.detail(country_code),
     queryFn: async () => {
       const { regions } = await sdk.store.region.list({ fields })
-      return regions.find(region =>
-        region.countries?.some(country => country.iso_2 === country_code.toLowerCase())
-      ) || null
+      return (
+        regions.find((region) =>
+          region.countries?.some(
+            (country) => country.iso_2 === country_code.toLowerCase(),
+          ),
+        ) || null
+      )
     },
   })
 }

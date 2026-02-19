@@ -42,7 +42,7 @@ export function useVolumePricing(productId: string) {
     queryKey: queryKeys.volumePricing.forProduct(productId),
     queryFn: async () => {
       const response = await sdk.client.fetch<{ rules: VolumePricingRule[] }>(
-        `/store/volume-pricing/${productId}`
+        `/store/volume-pricing/${productId}`,
       )
       return response
     },
@@ -50,7 +50,10 @@ export function useVolumePricing(productId: string) {
   })
 }
 
-export function getActiveTier(tiers: VolumePricingTier[], quantity: number): VolumePricingTier | undefined {
+export function getActiveTier(
+  tiers: VolumePricingTier[],
+  quantity: number,
+): VolumePricingTier | undefined {
   return tiers.find((tier) => {
     const inRange = tier.min_quantity <= quantity
     const noMax = tier.max_quantity === null || tier.max_quantity === undefined
@@ -62,6 +65,7 @@ export function getActiveTier(tiers: VolumePricingTier[], quantity: number): Vol
 export function getTierDiscount(tier: VolumePricingTier): string {
   if (tier.discount_percentage) return `${tier.discount_percentage}% off`
   if (tier.fixed_price) return `$${Number(tier.fixed_price).toFixed(2)} each`
-  if (tier.discount_amount) return `$${Number(tier.discount_amount).toFixed(2)} off`
+  if (tier.discount_amount)
+    return `$${Number(tier.discount_amount).toFixed(2)} off`
   return ""
 }

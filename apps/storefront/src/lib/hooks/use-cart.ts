@@ -27,7 +27,7 @@ export const useCart = ({ fields }: { fields?: string } = {}) => {
       })
       return cart
     },
-    staleTime: 0
+    staleTime: 0,
   })
 }
 
@@ -45,7 +45,7 @@ export const useUpdateCart = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ predicate: queryKeys.cart.predicate })
-    }
+    },
   })
 }
 
@@ -56,8 +56,8 @@ export const useCreateCart = () => {
       region_id,
       fields = DEFAULT_CART_FIELDS,
     }: {
-      region_id: string;
-      fields?: string;
+      region_id: string
+      fields?: string
     }) => {
       const { cart } = await sdk.store.cart.create({ region_id }, { fields })
       setStoredCart(cart.id)
@@ -74,28 +74,37 @@ export const useAddToCart = ({ fields }: { fields?: string } = {}) => {
 
   return useMutation({
     mutationFn: async (variables: {
-      variant_id: string;
-      quantity: number;
-      country_code: string;
-      fields?: string;
-      product?: HttpTypes.StoreProduct;
-      variant?: HttpTypes.StoreProductVariant;
-      region?: HttpTypes.StoreRegion;
+      variant_id: string
+      quantity: number
+      country_code: string
+      fields?: string
+      product?: HttpTypes.StoreProduct
+      variant?: HttpTypes.StoreProductVariant
+      region?: HttpTypes.StoreRegion
     }) => {
-      const { variant_id, quantity, country_code, fields: requestFields } = variables
+      const {
+        variant_id,
+        quantity,
+        country_code,
+        fields: requestFields,
+      } = variables
       if (!variant_id) throw new Error("Missing variant ID when adding to cart")
 
       let cartId = getStoredCart()
 
       if (!cartId) {
         const { regions } = await sdk.store.region.list({})
-        const region = regions.find(r =>
-          r.countries?.some(c => c.iso_2 === country_code.toLowerCase())
+        const region = regions.find((r) =>
+          r.countries?.some((c) => c.iso_2 === country_code.toLowerCase()),
         )
-        if (!region) throw new Error(`Region not found for country code: ${country_code}`)
-        const { cart } = await sdk.store.cart.create({ region_id: region.id }, {
-          fields: requestFields || fields || DEFAULT_CART_FIELDS,
-        })
+        if (!region)
+          throw new Error(`Region not found for country code: ${country_code}`)
+        const { cart } = await sdk.store.cart.create(
+          { region_id: region.id },
+          {
+            fields: requestFields || fields || DEFAULT_CART_FIELDS,
+          },
+        )
         setStoredCart(cart.id)
         cartId = cart.id
       }
@@ -103,7 +112,7 @@ export const useAddToCart = ({ fields }: { fields?: string } = {}) => {
       const response = await sdk.store.cart.createLineItem(
         cartId,
         { variant_id, quantity },
-        { fields: requestFields || fields || DEFAULT_CART_FIELDS }
+        { fields: requestFields || fields || DEFAULT_CART_FIELDS },
       )
       return response.cart
     },
@@ -121,7 +130,7 @@ export const useAddToCart = ({ fields }: { fields?: string } = {}) => {
         const optimisticItem = createOptimisticCartItem(
           variables.variant,
           variables.product,
-          variables.quantity
+          variables.quantity,
         )
         addItemOptimistically(queryClient, optimisticItem, previousCart, fields)
       }
@@ -135,7 +144,11 @@ export const useAddToCart = ({ fields }: { fields?: string } = {}) => {
     },
     onSettled: (data) => {
       queryClient.invalidateQueries({
-        predicate: (query) => queryKeys.cart.predicate(query, fields && data ? [fields] : undefined)
+        predicate: (query) =>
+          queryKeys.cart.predicate(
+            query,
+            fields && data ? [fields] : undefined,
+          ),
       })
       if (data) {
         queryClient.setQueryData(queryKeys.cart.current(fields), data)
@@ -155,17 +168,23 @@ export const useUpdateLineItem = ({ fields }: { fields?: string } = {}) => {
         cartId,
         variables.line_id,
         { quantity: variables.quantity },
-        { fields: fields || DEFAULT_CART_FIELDS }
+        { fields: fields || DEFAULT_CART_FIELDS },
       )
       return cart
     },
     onMutate: async (variables) => {
       await queryClient.cancelQueries({
-        predicate: (query) => queryKeys.cart.predicate(query, fields ? [fields] : undefined)
+        predicate: (query) =>
+          queryKeys.cart.predicate(query, fields ? [fields] : undefined),
       })
       const previousCart = getCurrentCart(queryClient, fields)
       if (previousCart) {
-        updateLineItemOptimistically(queryClient, variables.line_id, variables.quantity, fields)
+        updateLineItemOptimistically(
+          queryClient,
+          variables.line_id,
+          variables.quantity,
+          fields,
+        )
       }
       return { previousCart }
     },
@@ -176,7 +195,11 @@ export const useUpdateLineItem = ({ fields }: { fields?: string } = {}) => {
     },
     onSettled: (data) => {
       queryClient.invalidateQueries({
-        predicate: (query) => queryKeys.cart.predicate(query, fields && data ? [fields] : undefined)
+        predicate: (query) =>
+          queryKeys.cart.predicate(
+            query,
+            fields && data ? [fields] : undefined,
+          ),
       })
       if (data) {
         queryClient.setQueryData(queryKeys.cart.current(fields), data)
@@ -196,7 +219,8 @@ export const useDeleteLineItem = ({ fields }: { fields?: string } = {}) => {
     },
     onMutate: async (variables) => {
       await queryClient.cancelQueries({
-        predicate: (query) => queryKeys.cart.predicate(query, fields ? [fields] : undefined)
+        predicate: (query) =>
+          queryKeys.cart.predicate(query, fields ? [fields] : undefined),
       })
       const previousCart = getCurrentCart(queryClient, fields)
       if (previousCart) {
@@ -211,7 +235,11 @@ export const useDeleteLineItem = ({ fields }: { fields?: string } = {}) => {
     },
     onSettled: (data) => {
       queryClient.invalidateQueries({
-        predicate: (query) => queryKeys.cart.predicate(query, fields && data ? [fields] : undefined)
+        predicate: (query) =>
+          queryKeys.cart.predicate(
+            query,
+            fields && data ? [fields] : undefined,
+          ),
       })
       if (data) {
         queryClient.setQueryData(queryKeys.cart.current(fields), data)
@@ -232,7 +260,7 @@ export const useApplyPromoCode = () => {
         {
           method: "POST",
           body: { promo_codes: [code] },
-        }
+        },
       )
       return cart
     },
@@ -254,7 +282,7 @@ export const useRemovePromoCode = () => {
         {
           method: "DELETE",
           body: { promo_codes: [code] },
-        }
+        },
       )
       return cart
     },

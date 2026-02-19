@@ -17,7 +17,7 @@ import type {
 
 async function adminFetch<T>(path: string, options?: RequestInit): Promise<T> {
   const response = await sdk.client.fetch<T>(path, {
-    ...options,
+    ...(options as any),
     credentials: "include",
   })
   return response
@@ -38,19 +38,31 @@ export function useCreateTenantUser() {
         method: "POST",
         body: JSON.stringify(data),
       }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.tenantAdmin.users() }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.tenantAdmin.users(),
+      }),
   })
 }
 
 export function useUpdateTenantUser() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ userId, data }: { userId: string; data: Partial<TenantUser> }) =>
+    mutationFn: ({
+      userId,
+      data,
+    }: {
+      userId: string
+      data: Partial<TenantUser>
+    }) =>
       adminFetch(`/admin/tenant-users/${userId}`, {
         method: "PUT",
         body: JSON.stringify(data),
       }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.tenantAdmin.users() }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.tenantAdmin.users(),
+      }),
   })
 }
 
@@ -59,14 +71,18 @@ export function useDeleteTenantUser() {
   return useMutation({
     mutationFn: (userId: string) =>
       adminFetch(`/admin/tenant-users/${userId}`, { method: "DELETE" }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.tenantAdmin.users() }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.tenantAdmin.users(),
+      }),
   })
 }
 
 export function useTenantSettings() {
   return useQuery({
     queryKey: queryKeys.tenantAdmin.settings(),
-    queryFn: () => adminFetch<{ settings: TenantSettings }>("/admin/tenant-settings"),
+    queryFn: () =>
+      adminFetch<{ settings: TenantSettings }>("/admin/tenant-settings"),
   })
 }
 
@@ -78,25 +94,35 @@ export function useUpdateTenantSettings() {
         method: "PUT",
         body: JSON.stringify(data),
       }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.tenantAdmin.settings() }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.tenantAdmin.settings(),
+      }),
   })
 }
 
 export function useTenantBilling() {
   return useQuery({
     queryKey: queryKeys.tenantAdmin.billing(),
-    queryFn: () => adminFetch<{ billing: TenantBilling }>("/admin/tenant-billing"),
+    queryFn: () =>
+      adminFetch<{ billing: TenantBilling }>("/admin/tenant-billing"),
   })
 }
 
-export function useTenantUsage(options?: { period_start?: string; period_end?: string }) {
+export function useTenantUsage(options?: {
+  period_start?: string
+  period_end?: string
+}) {
   return useQuery({
     queryKey: queryKeys.tenantAdmin.usage(options),
     queryFn: async () => {
       const params = new URLSearchParams()
-      if (options?.period_start) params.set("period_start", options.period_start)
+      if (options?.period_start)
+        params.set("period_start", options.period_start)
       if (options?.period_end) params.set("period_end", options.period_end)
-      return adminFetch<{ records: TenantUsageRecord[] }>(`/admin/tenant-usage?${params}`)
+      return adminFetch<{ records: TenantUsageRecord[] }>(
+        `/admin/tenant-usage?${params}`,
+      )
     },
   })
 }
@@ -104,7 +130,8 @@ export function useTenantUsage(options?: { period_start?: string; period_end?: s
 export function useTenantInvoices() {
   return useQuery({
     queryKey: queryKeys.tenantAdmin.invoices(),
-    queryFn: () => adminFetch<{ invoices: TenantInvoice[] }>("/admin/tenant-invoices"),
+    queryFn: () =>
+      adminFetch<{ invoices: TenantInvoice[] }>("/admin/tenant-invoices"),
   })
 }
 
@@ -117,10 +144,15 @@ export function useAuditLogs(filters?: AuditLogFilters) {
       if (filters?.action) params.set("action", filters.action)
       if (filters?.entity_type) params.set("entity_type", filters.entity_type)
       if (filters?.entity_id) params.set("entity_id", filters.entity_id)
-      if (filters?.data_classification) params.set("data_classification", filters.data_classification)
-      if (filters?.created_after) params.set("created_after", filters.created_after)
-      if (filters?.created_before) params.set("created_before", filters.created_before)
-      return adminFetch<{ logs: AuditLog[]; count: number }>(`/admin/audit-logs?${params}`)
+      if (filters?.data_classification)
+        params.set("data_classification", filters.data_classification)
+      if (filters?.created_after)
+        params.set("created_after", filters.created_after)
+      if (filters?.created_before)
+        params.set("created_before", filters.created_before)
+      return adminFetch<{ logs: AuditLog[]; count: number }>(
+        `/admin/audit-logs?${params}`,
+      )
     },
   })
 }
@@ -133,9 +165,13 @@ export function useEventOutbox(filters?: EventOutboxFilters) {
       if (filters?.event_type) params.set("event_type", filters.event_type)
       if (filters?.entity_type) params.set("entity_type", filters.entity_type)
       if (filters?.status) params.set("status", filters.status)
-      if (filters?.created_after) params.set("created_after", filters.created_after)
-      if (filters?.created_before) params.set("created_before", filters.created_before)
-      return adminFetch<{ events: EventOutboxEntry[]; count: number }>(`/admin/event-outbox?${params}`)
+      if (filters?.created_after)
+        params.set("created_after", filters.created_after)
+      if (filters?.created_before)
+        params.set("created_before", filters.created_before)
+      return adminFetch<{ events: EventOutboxEntry[]; count: number }>(
+        `/admin/event-outbox?${params}`,
+      )
     },
   })
 }
@@ -143,7 +179,10 @@ export function useEventOutbox(filters?: EventOutboxFilters) {
 export function useSalesChannelMappings() {
   return useQuery({
     queryKey: queryKeys.channelMappings.all,
-    queryFn: () => adminFetch<{ mappings: SalesChannelMapping[] }>("/admin/channel-mappings"),
+    queryFn: () =>
+      adminFetch<{ mappings: SalesChannelMapping[] }>(
+        "/admin/channel-mappings",
+      ),
   })
 }
 
@@ -155,14 +194,20 @@ export function useCreateSalesChannelMapping() {
         method: "POST",
         body: JSON.stringify(data),
       }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.channelMappings.all }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.channelMappings.all,
+      }),
   })
 }
 
 export function useRegionZoneMappings() {
   return useQuery({
     queryKey: queryKeys.regionZones.all,
-    queryFn: () => adminFetch<{ mappings: RegionZoneMapping[] }>("/admin/region-zone-mappings"),
+    queryFn: () =>
+      adminFetch<{ mappings: RegionZoneMapping[] }>(
+        "/admin/region-zone-mappings",
+      ),
   })
 }
 
@@ -174,6 +219,7 @@ export function useCreateRegionZoneMapping() {
         method: "POST",
         body: JSON.stringify(data),
       }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.regionZones.all }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: queryKeys.regionZones.all }),
   })
 }

@@ -3,25 +3,25 @@ import { useQuery } from "@tanstack/react-query"
 import { normalizeItem } from "@/lib/utils/normalize-item"
 
 export interface RentalItem {
-  id: string;
-  title: string;
-  description?: string;
-  thumbnail?: string;
-  images?: string[];
-  pricePerDay: { amount: number; currencyCode: string };
-  pricePerWeek?: { amount: number; currencyCode: string };
-  pricePerMonth?: { amount: number; currencyCode: string };
-  deposit?: { amount: number; currencyCode: string };
-  insurance?: { amount: number; currencyCode: string };
-  condition?: "new" | "like-new" | "good" | "fair";
-  rating?: { average: number; count: number };
-  location?: string;
-  availableFrom?: string;
-  availableUntil?: string;
-  bookedDates?: string[];
-  rentalType?: string;
-  vendor?: { id: string; name: string };
-  terms?: string;
+  id: string
+  title: string
+  description?: string
+  thumbnail?: string
+  images?: string[]
+  pricePerDay: { amount: number; currencyCode: string }
+  pricePerWeek?: { amount: number; currencyCode: string }
+  pricePerMonth?: { amount: number; currencyCode: string }
+  deposit?: { amount: number; currencyCode: string }
+  insurance?: { amount: number; currencyCode: string }
+  condition?: "new" | "like-new" | "good" | "fair"
+  rating?: { average: number; count: number }
+  location?: string
+  availableFrom?: string
+  availableUntil?: string
+  bookedDates?: string[]
+  rentalType?: string
+  vendor?: { id: string; name: string }
+  terms?: string
 }
 
 async function fetchApi<T>(path: string): Promise<T> {

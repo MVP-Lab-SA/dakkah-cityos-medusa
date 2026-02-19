@@ -46,11 +46,15 @@ export const useSetCartAddresses = () => {
 
       const email = data.email as string
 
-      const { cart } = await sdk.store.cart.update(cartId, {
-        shipping_address: shippingAddress,
-        billing_address: billingAddress,
-        email,
-      }, { fields: DEFAULT_CART_FIELDS })
+      const { cart } = await sdk.store.cart.update(
+        cartId,
+        {
+          shipping_address: shippingAddress,
+          billing_address: billingAddress,
+          email,
+        },
+        { fields: DEFAULT_CART_FIELDS },
+      )
 
       return cart
     },
@@ -74,7 +78,7 @@ export const useShippingOptions = ({ cart_id }: { cart_id?: string } = {}) => {
       return shipping_options
     },
     enabled: !!cart_id || !!getStoredCart(),
-    staleTime: 0
+    staleTime: 0,
   })
 }
 
@@ -86,20 +90,22 @@ export const useSetCartShippingMethod = () => {
       shipping_option_id,
       data,
     }: {
-      shipping_option_id: string;
-      data?: Record<string, unknown>;
+      shipping_option_id: string
+      data?: Record<string, unknown>
     }) => {
       const cartId = getStoredCart()
       if (!cartId) throw new Error("No cart found")
-      const { cart } = await sdk.store.cart.addShippingMethod(
-        cartId,
-        { option_id: shipping_option_id, data }
-      )
+      const { cart } = await sdk.store.cart.addShippingMethod(cartId, {
+        option_id: shipping_option_id,
+        data,
+      })
       return cart
     },
     onSuccess: async (cart) => {
       queryClient.invalidateQueries({ predicate: queryKeys.cart.predicate })
-      queryClient.invalidateQueries({ queryKey: queryKeys.shipping.options(cart.id) })
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.shipping.options(cart.id),
+      })
     },
   })
 }
@@ -110,16 +116,17 @@ export const useCartPaymentMethods = ({
   region_id,
   fields,
 }: {
-  region_id?: string;
-  fields?: string;
+  region_id?: string
+  fields?: string
 } = {}) => {
   return useQuery({
     queryKey: queryKeys.payments.sessions(region_id),
     queryFn: async () => {
-      const { payment_providers } = await sdk.store.payment.listPaymentProviders({
-        region_id: region_id!,
-        fields
-      })
+      const { payment_providers } =
+        await sdk.store.payment.listPaymentProviders({
+          region_id: region_id!,
+          fields,
+        })
       return payment_providers
     },
     enabled: !!region_id,
@@ -135,8 +142,8 @@ export const useInitiateCartPaymentSession = () => {
       provider_id,
       data,
     }: {
-      provider_id: string;
-      data?: Record<string, any>;
+      provider_id: string
+      data?: Record<string, any>
     }) => {
       const cartId = getStoredCart()
       if (!cartId) throw new Error("No cart found")
@@ -146,10 +153,11 @@ export const useInitiateCartPaymentSession = () => {
       })
       if (!cart) throw new Error("Cart not found")
 
-      const { payment_collection } = await sdk.store.payment.initiatePaymentSession(
-        cart,
-        { provider_id, data }
-      )
+      const { payment_collection } =
+        await sdk.store.payment.initiatePaymentSession(cart, {
+          provider_id,
+          data,
+        })
       return payment_collection
     },
     onSuccess: () => {
@@ -179,9 +187,12 @@ export const useCompleteCartOrder = () => {
     },
     onSuccess: async (order) => {
       // Immediately set cart data to null to clear the UI
-      queryClient.setQueriesData({
-        predicate: queryKeys.cart.predicate,
-      }, null)
+      queryClient.setQueriesData(
+        {
+          predicate: queryKeys.cart.predicate,
+        },
+        null,
+      )
 
       // Clear payment methods cache
       queryClient.removeQueries({ predicate: queryKeys.payments.predicate })

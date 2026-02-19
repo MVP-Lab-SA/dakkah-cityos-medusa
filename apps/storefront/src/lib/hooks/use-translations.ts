@@ -44,7 +44,10 @@ export function useTranslations(locale: SupportedLocale, namespace?: string) {
   })
 }
 
-export function useTranslation(locale: SupportedLocale, namespace: string = "common") {
+export function useTranslation(
+  locale: SupportedLocale,
+  namespace: string = "common",
+) {
   const { data: translations } = useTranslations(locale, namespace)
 
   const t = (key: string, fallback?: string): string => {

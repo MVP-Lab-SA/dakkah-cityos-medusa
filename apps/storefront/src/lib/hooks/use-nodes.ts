@@ -9,7 +9,7 @@ export function useNodes(tenantId: string) {
     queryFn: async () => {
       const response = await sdk.client.fetch<{ nodes: Node[]; count: number }>(
         `/store/cityos/nodes?tenant_id=${tenantId}`,
-        { credentials: "include" }
+        { credentials: "include" },
       )
       return response.nodes || []
     },

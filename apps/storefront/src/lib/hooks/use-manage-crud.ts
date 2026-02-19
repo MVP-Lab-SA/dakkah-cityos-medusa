@@ -7,7 +7,11 @@ interface UseManageCrudOptions {
   queryKey?: string[]
 }
 
-export function useManageCrud({ moduleKey, apiEndpoint, queryKey }: UseManageCrudOptions) {
+export function useManageCrud({
+  moduleKey,
+  apiEndpoint,
+  queryKey,
+}: UseManageCrudOptions) {
   const queryClient = useQueryClient()
   const keys = queryKey || ["manage", moduleKey]
 
@@ -25,7 +29,10 @@ export function useManageCrud({ moduleKey, apiEndpoint, queryKey }: UseManageCru
   })
 
   const updateMutation = useMutation({
-    mutationFn: async ({ id, ...data }: { id: string } & Record<string, any>) => {
+    mutationFn: async ({
+      id,
+      ...data
+    }: { id: string } & Record<string, any>) => {
       const response = await sdk.client.fetch(`${apiEndpoint}/${id}`, {
         method: "PUT",
         body: data,

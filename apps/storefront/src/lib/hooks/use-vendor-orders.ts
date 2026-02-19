@@ -7,9 +7,12 @@ export function useVendorOrders() {
   return useQuery({
     queryKey: queryKeys.vendorOrders.all,
     queryFn: async () => {
-      const response = await sdk.client.fetch<{ orders: VendorOrder[] }>("/vendor/orders", {
-        credentials: "include",
-      })
+      const response = await sdk.client.fetch<{ orders: VendorOrder[] }>(
+        "/vendor/orders",
+        {
+          credentials: "include",
+        },
+      )
       return response.orders || []
     },
   })
@@ -21,7 +24,7 @@ export function useVendorOrder(orderId: string) {
     queryFn: async () => {
       const response = await sdk.client.fetch<{ order: VendorOrder }>(
         `/vendor/orders/${orderId}`,
-        { credentials: "include" }
+        { credentials: "include" },
       )
       return response.order
     },
@@ -49,7 +52,13 @@ export function useUpdateVendorOrderStatus() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async ({ orderId, status }: { orderId: string; status: string }) => {
+    mutationFn: async ({
+      orderId,
+      status,
+    }: {
+      orderId: string
+      status: string
+    }) => {
       return sdk.client.fetch(`/vendor/orders/${orderId}/status`, {
         method: "POST",
         credentials: "include",

@@ -86,10 +86,9 @@ export function usePurchaseOrders(companyId?: string) {
     queryKey: queryKeys.purchaseOrders.list(companyId),
     queryFn: async () => {
       const params = companyId ? `?company_id=${companyId}` : ""
-      const response = await sdk.client.fetch<{ purchase_orders: PurchaseOrder[] }>(
-        `/store/purchase-orders${params}`,
-        { credentials: "include" }
-      )
+      const response = await sdk.client.fetch<{
+        purchase_orders: PurchaseOrder[]
+      }>(`/store/purchase-orders${params}`, { credentials: "include" })
       return response.purchase_orders || []
     },
   })
@@ -99,10 +98,9 @@ export function usePurchaseOrder(poId: string) {
   return useQuery({
     queryKey: queryKeys.purchaseOrders.detail(poId),
     queryFn: async () => {
-      const response = await sdk.client.fetch<{ purchase_order: PurchaseOrder }>(
-        `/store/purchase-orders/${poId}`,
-        { credentials: "include" }
-      )
+      const response = await sdk.client.fetch<{
+        purchase_order: PurchaseOrder
+      }>(`/store/purchase-orders/${poId}`, { credentials: "include" })
       return response.purchase_order
     },
     enabled: !!poId,
@@ -114,20 +112,19 @@ export function useCreatePurchaseOrder() {
 
   return useMutation({
     mutationFn: async (data: Partial<PurchaseOrder>) => {
-      const response = await sdk.client.fetch<{ purchase_order: PurchaseOrder }>(
-        "/store/purchase-orders",
-        {
-          method: "POST",
-          credentials: "include",
-          body: {
-            company_id: data.company_id,
-            po_number: data.po_number,
-            items: data.items,
-            notes: data.notes,
-            shipping_address: data.shipping_address,
-          },
-        }
-      )
+      const response = await sdk.client.fetch<{
+        purchase_order: PurchaseOrder
+      }>("/store/purchase-orders", {
+        method: "POST",
+        credentials: "include",
+        body: {
+          company_id: data.company_id,
+          po_number: data.po_number,
+          items: data.items,
+          notes: data.notes,
+          shipping_address: data.shipping_address,
+        },
+      })
       return response.purchase_order
     },
     onSuccess: () => {
@@ -141,10 +138,12 @@ export function useSubmitPurchaseOrder() {
 
   return useMutation({
     mutationFn: async (poId: string) => {
-      const response = await sdk.client.fetch<{ purchase_order: PurchaseOrder }>(
-        `/store/purchase-orders/${poId}/submit`,
-        { method: "POST", credentials: "include" }
-      )
+      const response = await sdk.client.fetch<{
+        purchase_order: PurchaseOrder
+      }>(`/store/purchase-orders/${poId}/submit`, {
+        method: "POST",
+        credentials: "include",
+      })
       return response.purchase_order
     },
     onSuccess: () => {
@@ -174,15 +173,20 @@ export function useApprovePurchaseOrder() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async ({ poId, approverId }: { poId: string; approverId: string }) => {
-      const response = await sdk.client.fetch<{ purchase_order: PurchaseOrder }>(
-        `/admin/purchase-orders/${poId}/approve`,
-        {
-          method: "POST",
-          credentials: "include",
-          body: { approver_id: approverId },
-        }
-      )
+    mutationFn: async ({
+      poId,
+      approverId,
+    }: {
+      poId: string
+      approverId: string
+    }) => {
+      const response = await sdk.client.fetch<{
+        purchase_order: PurchaseOrder
+      }>(`/admin/purchase-orders/${poId}/approve`, {
+        method: "POST",
+        credentials: "include",
+        body: { approver_id: approverId },
+      })
       return response.purchase_order
     },
     onSuccess: () => {
@@ -196,14 +200,13 @@ export function useRejectPurchaseOrder() {
 
   return useMutation({
     mutationFn: async ({ poId, reason }: { poId: string; reason?: string }) => {
-      const response = await sdk.client.fetch<{ purchase_order: PurchaseOrder }>(
-        `/admin/purchase-orders/${poId}/reject`,
-        {
-          method: "POST",
-          credentials: "include",
-          body: { reason },
-        }
-      )
+      const response = await sdk.client.fetch<{
+        purchase_order: PurchaseOrder
+      }>(`/admin/purchase-orders/${poId}/reject`, {
+        method: "POST",
+        credentials: "include",
+        body: { reason },
+      })
       return response.purchase_order
     },
     onSuccess: () => {

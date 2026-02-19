@@ -7,7 +7,12 @@ export function useManageProducts(limit = 20, offset = 0) {
     queryFn: async () => {
       const response = await sdk.client.fetch("/store/products", {
         method: "GET",
-        query: { limit, offset, fields: "id,title,thumbnail,status,variants.prices.*,variants.inventory_quantity" },
+        query: {
+          limit,
+          offset,
+          fields:
+            "id,title,thumbnail,status,variants.prices.*,variants.inventory_quantity",
+        },
       })
       return response
     },

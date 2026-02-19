@@ -4,32 +4,32 @@ import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 const BACKEND_URL = getServerBaseUrl()
 
 interface Review {
-  id: string;
-  rating: number;
-  title?: string;
-  content: string;
-  customer_name?: string;
-  is_verified_purchase: boolean;
-  helpful_count: number;
-  images: string[];
-  created_at: string;
+  id: string
+  rating: number
+  title?: string
+  content: string
+  customer_name?: string
+  is_verified_purchase: boolean
+  helpful_count: number
+  images: string[]
+  created_at: string
 }
 
 interface ReviewSummary {
-  average_rating: number;
-  total_reviews: number;
-  rating_distribution: Record<number, number>;
+  average_rating: number
+  total_reviews: number
+  rating_distribution: Record<number, number>
 }
 
 interface ProductReviewsResponse {
-  reviews: Review[];
-  summary: ReviewSummary;
-  count: number;
+  reviews: Review[]
+  summary: ReviewSummary
+  count: number
 }
 
 interface VendorReviewsResponse {
-  reviews: Review[];
-  count: number;
+  reviews: Review[]
+  count: number
 }
 
 export function useProductReviews(
@@ -81,12 +81,12 @@ export function useCreateReview() {
 
   return useMutation({
     mutationFn: async (data: {
-      rating: number;
-      title?: string;
-      content: string;
-      product_id?: string;
-      vendor_id?: string;
-      order_id?: string;
+      rating: number
+      title?: string
+      content: string
+      product_id?: string
+      vendor_id?: string
+      order_id?: string
     }) => {
       const response = await fetchWithTimeout(`${BACKEND_URL}/store/reviews`, {
         method: "POST",

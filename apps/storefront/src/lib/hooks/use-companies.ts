@@ -83,9 +83,9 @@ export function useInviteTeamMember() {
 
   return useMutation({
     mutationFn: async (data: {
-      email: string;
-      role: CompanyMember["role"];
-      spending_limit?: number;
+      email: string
+      role: CompanyMember["role"]
+      spending_limit?: number
     }) => {
       const response = await fetchWithTimeout(
         `${backendUrl}/store/companies/me/team/invite`,
@@ -115,8 +115,8 @@ export function useUpdateTeamMember() {
       memberId,
       data,
     }: {
-      memberId: string;
-      data: Partial<CompanyMember>;
+      memberId: string
+      data: Partial<CompanyMember>
     }) => {
       const response = await fetchWithTimeout(
         `${backendUrl}/store/companies/me/team/${memberId}`,

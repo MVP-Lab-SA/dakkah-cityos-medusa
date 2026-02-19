@@ -1,7 +1,11 @@
 import { useQuery } from "@tanstack/react-query"
 import { sdk } from "@/lib/utils/sdk"
 import { queryKeys } from "@/lib/utils/query-keys"
-import type { CommissionRule, CommissionTransaction, CommissionSummary } from "@/lib/types/vendors"
+import type {
+  CommissionRule,
+  CommissionTransaction,
+  CommissionSummary,
+} from "@/lib/types/vendors"
 
 export function useCommissions(options?: { limit?: number; offset?: number }) {
   return useQuery({
@@ -29,7 +33,7 @@ export function useCommissionRules() {
     queryFn: async () => {
       const response = await sdk.client.fetch<{ rules: CommissionRule[] }>(
         "/vendor/commissions/rules",
-        { credentials: "include" }
+        { credentials: "include" },
       )
       return response.rules || []
     },
@@ -42,7 +46,7 @@ export function useCommissionSummary() {
     queryFn: async () => {
       const response = await sdk.client.fetch<{ summary: CommissionSummary }>(
         "/vendor/commissions/summary",
-        { credentials: "include" }
+        { credentials: "include" },
       )
       return response.summary
     },

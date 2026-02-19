@@ -61,16 +61,48 @@ export function useGiftCardDesigns() {
     queryKey: giftCardKeys.designs(),
     queryFn: async () => {
       try {
-        const response = await fetchApi<{ designs: GiftCardDesign[] }>("/store/gift-cards/designs")
+        const response = await fetchApi<{ designs: GiftCardDesign[] }>(
+          "/store/gift-cards/designs",
+        )
         return response.designs
       } catch {
         return [
-          { id: "birthday-1", name: "Birthday", category: "birthday", colors: { primary: "#FF6B6B", secondary: "#FFE66D" } },
-          { id: "holiday-1", name: "Holiday", category: "holiday", colors: { primary: "#2ECC71", secondary: "#E74C3C" } },
-          { id: "thanks-1", name: "Thank You", category: "thank-you", colors: { primary: "#3498DB", secondary: "#9B59B6" } },
-          { id: "celebrate-1", name: "Celebration", category: "celebration", colors: { primary: "#F39C12", secondary: "#E67E22" } },
-          { id: "general-1", name: "Classic", category: "general", colors: { primary: "#34495E", secondary: "#2C3E50" } },
-          { id: "general-2", name: "Minimal", category: "general", colors: { primary: "#1ABC9C", secondary: "#16A085" } },
+          {
+            id: "birthday-1",
+            name: "Birthday",
+            category: "birthday",
+            colors: { primary: "#FF6B6B", secondary: "#FFE66D" },
+          },
+          {
+            id: "holiday-1",
+            name: "Holiday",
+            category: "holiday",
+            colors: { primary: "#2ECC71", secondary: "#E74C3C" },
+          },
+          {
+            id: "thanks-1",
+            name: "Thank You",
+            category: "thank-you",
+            colors: { primary: "#3498DB", secondary: "#9B59B6" },
+          },
+          {
+            id: "celebrate-1",
+            name: "Celebration",
+            category: "celebration",
+            colors: { primary: "#F39C12", secondary: "#E67E22" },
+          },
+          {
+            id: "general-1",
+            name: "Classic",
+            category: "general",
+            colors: { primary: "#34495E", secondary: "#2C3E50" },
+          },
+          {
+            id: "general-2",
+            name: "Minimal",
+            category: "general",
+            colors: { primary: "#1ABC9C", secondary: "#16A085" },
+          },
         ] as GiftCardDesign[]
       }
     },
@@ -83,7 +115,9 @@ export function useGiftCardList() {
     queryKey: giftCardKeys.list(),
     queryFn: async () => {
       try {
-        const response = await fetchApi<{ giftCards: GiftCardInfo[] }>("/store/gift-cards")
+        const response = await fetchApi<{ giftCards: GiftCardInfo[] }>(
+          "/store/gift-cards",
+        )
         return response.giftCards
       } catch {
         return [] as GiftCardInfo[]
@@ -97,7 +131,9 @@ export function useGiftCardBalance(code: string) {
   return useQuery({
     queryKey: giftCardKeys.balance(code),
     queryFn: async () => {
-      const response = await fetchApi<{ giftCard: GiftCardInfo }>(`/store/gift-cards/${code}/balance`)
+      const response = await fetchApi<{ giftCard: GiftCardInfo }>(
+        `/store/gift-cards/${code}/balance`,
+      )
       return response.giftCard
     },
     enabled: !!code,

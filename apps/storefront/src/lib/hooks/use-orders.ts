@@ -16,8 +16,8 @@ export const useOrder = ({
   order_id,
   fields,
 }: {
-  order_id: string;
-  fields?: string;
+  order_id: string
+  fields?: string
 }) => {
   return useQuery({
     queryKey: queryKeys.orders.detail(order_id),

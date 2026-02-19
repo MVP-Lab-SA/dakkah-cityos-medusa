@@ -8,9 +8,9 @@ export const useCategories = ({
   queryParams,
   enabled = true,
 }: {
-  fields?: string;
-  queryParams?: HttpTypes.StoreProductCategoryListParams;
-  enabled?: boolean;
+  fields?: string
+  queryParams?: HttpTypes.StoreProductCategoryListParams
+  enabled?: boolean
 }) => {
   return useQuery({
     queryKey: queryKeys.categories.list(fields, queryParams),

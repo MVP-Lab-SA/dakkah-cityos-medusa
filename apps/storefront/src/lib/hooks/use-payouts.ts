@@ -29,7 +29,7 @@ export function usePayoutSummary() {
     queryFn: async () => {
       const response = await sdk.client.fetch<{ summary: PayoutSummary }>(
         "/vendor/payouts/summary",
-        { credentials: "include" }
+        { credentials: "include" },
       )
       return response.summary
     },

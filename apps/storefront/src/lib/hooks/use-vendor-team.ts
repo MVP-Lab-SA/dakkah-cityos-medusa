@@ -9,7 +9,7 @@ export function useVendorTeam() {
     queryFn: async () => {
       const response = await sdk.client.fetch<{ members: VendorUser[] }>(
         "/vendor/team",
-        { credentials: "include" }
+        { credentials: "include" },
       )
       return response.members || []
     },
@@ -20,7 +20,11 @@ export function useInviteVendorTeamMember() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (data: { email: string; role: VendorUser["role"]; permissions?: string[] }) => {
+    mutationFn: async (data: {
+      email: string
+      role: VendorUser["role"]
+      permissions?: string[]
+    }) => {
       return sdk.client.fetch("/vendor/team/invite", {
         method: "POST",
         credentials: "include",
@@ -37,7 +41,13 @@ export function useUpdateVendorTeamMember() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async ({ memberId, data }: { memberId: string; data: Partial<VendorUser> }) => {
+    mutationFn: async ({
+      memberId,
+      data,
+    }: {
+      memberId: string
+      data: Partial<VendorUser>
+    }) => {
       return sdk.client.fetch(`/vendor/team/${memberId}`, {
         method: "PUT",
         credentials: "include",

@@ -7,7 +7,9 @@ export function usePlatformContext(tenantSlug: string) {
   return useQuery({
     queryKey: queryKeys.platform.context(tenantSlug),
     queryFn: async () => {
-      const response = await fetchWithTimeout(`/platform/context?tenant=${tenantSlug}`)
+      const response = await fetchWithTimeout(
+        `/platform/context?tenant=${tenantSlug}`,
+      )
       if (!response.ok) throw new Error("Platform context fetch failed")
       const json: PlatformContextResponse = await response.json()
       return json.data

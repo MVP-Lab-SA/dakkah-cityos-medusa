@@ -44,9 +44,9 @@ export const useProduct = ({
   region_id,
   fields,
 }: {
-  handle: string;
-  region_id?: string;
-  fields?: string;
+  handle: string
+  region_id?: string
+  fields?: string
 }) => {
   return useQuery({
     queryKey: queryKeys.products.detail(handle, region_id),
@@ -73,10 +73,10 @@ export const useRelatedProducts = ({
   collection_id,
   tags,
 }: {
-  product_id: string;
-  region_id?: string;
-  collection_id?: string;
-  tags?: string[];
+  product_id: string
+  region_id?: string
+  collection_id?: string
+  tags?: string[]
 }) => {
   return useQuery({
     queryKey: queryKeys.products.related(product_id, region_id),
@@ -84,7 +84,7 @@ export const useRelatedProducts = ({
       const params: Record<string, any> = {
         fields: "title, handle, *thumbnail, *variants",
         is_giftcard: false,
-        limit: 4
+        limit: 4,
       }
 
       if (collection_id) {

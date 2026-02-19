@@ -3,37 +3,37 @@ import { useQuery } from "@tanstack/react-query"
 import { normalizeItem } from "@/lib/utils/normalize-item"
 
 export interface MembershipBenefit {
-  id: string;
-  title: string;
-  description?: string;
-  icon?: string;
-  included: boolean;
-  value?: string;
+  id: string
+  title: string
+  description?: string
+  icon?: string
+  included: boolean
+  value?: string
 }
 
 export interface MembershipTier {
-  id: string;
-  name: string;
-  description?: string;
-  price: { amount: number; currencyCode: string };
-  billingPeriod: "monthly" | "yearly" | "lifetime";
-  benefits: MembershipBenefit[];
-  isPopular?: boolean;
-  isCurrent?: boolean;
-  features?: Record<string, string | boolean>;
-  maxMembers?: number;
-  trialDays?: number;
+  id: string
+  name: string
+  description?: string
+  price: { amount: number; currencyCode: string }
+  billingPeriod: "monthly" | "yearly" | "lifetime"
+  benefits: MembershipBenefit[]
+  isPopular?: boolean
+  isCurrent?: boolean
+  features?: Record<string, string | boolean>
+  maxMembers?: number
+  trialDays?: number
 }
 
 export interface UserMembership {
-  id: string;
-  tierId: string;
-  tierName: string;
-  status: "active" | "expired" | "cancelled" | "paused";
-  startDate: string;
-  expiresAt?: string;
-  renewalDate?: string;
-  benefits: MembershipBenefit[];
+  id: string
+  tierId: string
+  tierName: string
+  status: "active" | "expired" | "cancelled" | "paused"
+  startDate: string
+  expiresAt?: string
+  renewalDate?: string
+  benefits: MembershipBenefit[]
 }
 
 async function fetchApi<T>(path: string): Promise<T> {
@@ -56,8 +56,8 @@ export function useMemberships() {
     queryKey: ["memberships"],
     queryFn: async () => {
       const response = await fetchApi<{
-        items: MembershipTier[];
-        count: number;
+        items: MembershipTier[]
+        count: number
       }>("/store/memberships")
       return response.items
     },
