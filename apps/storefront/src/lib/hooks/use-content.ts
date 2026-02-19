@@ -1,84 +1,84 @@
-import { getBackendUrl, fetchWithTimeout } from "@/lib/utils/env"
+import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { useQuery } from "@tanstack/react-query"
 import { normalizeItem } from "@/lib/utils/normalize-item"
 
 export interface BlogPost {
-  id: string
-  title: string
-  slug: string
-  excerpt?: string
-  content?: string
-  thumbnail?: string
-  author?: { name: string; avatar?: string; bio?: string }
-  publishedAt: string
-  updatedAt?: string
-  category?: string
-  tags?: string[]
-  readingTime?: string
+  id: string;
+  title: string;
+  slug: string;
+  excerpt?: string;
+  content?: string;
+  thumbnail?: string;
+  author?: { name: string; avatar?: string; bio?: string };
+  publishedAt: string;
+  updatedAt?: string;
+  category?: string;
+  tags?: string[];
+  readingTime?: string;
 }
 
 export interface HelpCategory {
-  id: string
-  title: string
-  description?: string
-  icon?: string
-  articleCount: number
-  slug: string
+  id: string;
+  title: string;
+  description?: string;
+  icon?: string;
+  articleCount: number;
+  slug: string;
 }
 
 export interface HelpArticle {
-  id: string
-  title: string
-  excerpt?: string
-  content?: string
-  category: string
-  slug: string
-  helpful?: { yes: number; no: number }
-  updatedAt?: string
-  relatedArticles?: HelpArticle[]
+  id: string;
+  title: string;
+  excerpt?: string;
+  content?: string;
+  category: string;
+  slug: string;
+  helpful?: { yes: number; no: number };
+  updatedAt?: string;
+  relatedArticles?: HelpArticle[];
 }
 
 export interface POI {
-  id: string
-  name: string
-  description?: string
-  thumbnail?: string
-  category?: string
-  address: string
-  lat: number
-  lng: number
-  rating?: { average: number; count: number }
-  phone?: string
-  hours?: string
-  distance?: string
+  id: string;
+  name: string;
+  description?: string;
+  thumbnail?: string;
+  category?: string;
+  address: string;
+  lat: number;
+  lng: number;
+  rating?: { average: number; count: number };
+  phone?: string;
+  hours?: string;
+  distance?: string;
 }
 
 export interface Announcement {
-  id: string
-  title: string
-  content: string
-  type: "info" | "warning" | "critical" | "promotion"
-  publishedAt: string
-  expiresAt?: string
-  pinned?: boolean
+  id: string;
+  title: string;
+  content: string;
+  type: "info" | "warning" | "critical" | "promotion";
+  publishedAt: string;
+  expiresAt?: string;
+  pinned?: boolean;
 }
 
 export interface BlogFilters {
-  category?: string
-  tag?: string
-  search?: string
-  page?: number
-  limit?: number
+  category?: string;
+  tag?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
 }
 
 export interface POIFilters {
-  category?: string
-  search?: string
-  page?: number
-  limit?: number
+  category?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
 }
 
-const baseUrl = getBackendUrl()
+const baseUrl = getServerBaseUrl()
 
 async function fetchApi<T>(path: string): Promise<T> {
   const response = await fetchWithTimeout(`${baseUrl}${path}`, {
@@ -93,11 +93,13 @@ async function fetchApi<T>(path: string): Promise<T> {
 
 export const contentKeys = {
   all: ["content"] as const,
-  blogPosts: (filters?: BlogFilters) => [...contentKeys.all, "blog", filters] as const,
+  blogPosts: (filters?: BlogFilters) =>
+    [...contentKeys.all, "blog", filters] as const,
   blogPost: (slug: string) => [...contentKeys.all, "blog", slug] as const,
   helpCategories: () => [...contentKeys.all, "help-categories"] as const,
   helpArticle: (slug: string) => [...contentKeys.all, "help", slug] as const,
-  pois: (filters?: POIFilters) => [...contentKeys.all, "pois", filters] as const,
+  pois: (filters?: POIFilters) =>
+    [...contentKeys.all, "pois", filters] as const,
   announcements: () => [...contentKeys.all, "announcements"] as const,
 }
 
@@ -113,7 +115,7 @@ export function useBlogPosts(filters?: BlogFilters) {
       if (filters?.limit) params.set("limit", String(filters.limit))
       const qs = params.toString()
       const response = await fetchApi<{ posts: BlogPost[] }>(
-        `/store/content/blog${qs ? `?${qs}` : ""}`
+        `/store/content/blog${qs ? `?${qs}` : ""}`,
       )
       return response.posts
     },
@@ -125,7 +127,9 @@ export function useBlogPost(slug: string) {
   return useQuery({
     queryKey: contentKeys.blogPost(slug),
     queryFn: async () => {
-      const response = await fetchApi<{ post: BlogPost }>(`/store/content/blog/${slug}`)
+      const response = await fetchApi<{ post: BlogPost }>(
+        `/store/content/blog/${slug}`,
+      )
       return response.post
     },
     enabled: !!slug,
@@ -137,9 +141,10 @@ export function useHelpCategories() {
   return useQuery({
     queryKey: contentKeys.helpCategories(),
     queryFn: async () => {
-      const response = await fetchApi<{ categories: HelpCategory[]; featuredArticles: HelpArticle[] }>(
-        "/store/content/help"
-      )
+      const response = await fetchApi<{
+        categories: HelpCategory[];
+        featuredArticles: HelpArticle[];
+      }>("/store/content/help")
       return response
     },
     staleTime: 10 * 60 * 1000,
@@ -150,7 +155,9 @@ export function useHelpArticle(slug: string) {
   return useQuery({
     queryKey: contentKeys.helpArticle(slug),
     queryFn: async () => {
-      const response = await fetchApi<{ article: HelpArticle }>(`/store/content/help/${slug}`)
+      const response = await fetchApi<{ article: HelpArticle }>(
+        `/store/content/help/${slug}`,
+      )
       return response.article
     },
     enabled: !!slug,
@@ -169,7 +176,7 @@ export function usePOIs(filters?: POIFilters) {
       if (filters?.limit) params.set("limit", String(filters.limit))
       const qs = params.toString()
       const response = await fetchApi<{ pois: POI[] }>(
-        `/store/content/pois${qs ? `?${qs}` : ""}`
+        `/store/content/pois${qs ? `?${qs}` : ""}`,
       )
       return response.pois
     },
@@ -181,7 +188,9 @@ export function usePOI(id: string) {
   return useQuery({
     queryKey: [...contentKeys.all, "poi", id],
     queryFn: async () => {
-      const response = await fetchApi<{ poi: POI }>(`/store/content/pois/${id}`)
+      const response = await fetchApi<{ poi: POI }>(
+        `/store/content/pois/${id}`,
+      )
       return normalizeItem(response.poi)
     },
     enabled: !!id,
@@ -194,7 +203,7 @@ export function useAnnouncements() {
     queryKey: contentKeys.announcements(),
     queryFn: async () => {
       const response = await fetchApi<{ announcements: Announcement[] }>(
-        "/store/content/announcements"
+        "/store/content/announcements",
       )
       return response.announcements
     },

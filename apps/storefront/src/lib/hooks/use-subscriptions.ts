@@ -1,11 +1,10 @@
-import { getBackendUrl, fetchWithTimeout } from "@/lib/utils/env"
+import { getServerBaseUrl, fetchWithTimeout } from "@/lib/utils/env"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { sdk } from "../utils/sdk"
 import type {
   SubscriptionPlan,
   Subscription,
   SubscriptionCheckoutData,
-} from "../types/subscriptions"
+} from "@/lib/types/subscriptions"
 
 // Query Keys
 export const subscriptionKeys = {
@@ -19,7 +18,7 @@ export const subscriptionKeys = {
 
 // API Fetch helper
 async function fetchApi<T>(path: string, options?: RequestInit): Promise<T> {
-  const baseUrl = getBackendUrl()
+  const baseUrl = getServerBaseUrl()
   const response = await fetchWithTimeout(`${baseUrl}${path}`, {
     ...options,
     headers: {
@@ -28,12 +27,14 @@ async function fetchApi<T>(path: string, options?: RequestInit): Promise<T> {
     },
     credentials: "include",
   })
-  
+
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: "Request failed" }))
+    const error = await response
+      .json()
+      .catch(() => ({ message: "Request failed" }))
     throw new Error(error.message || "Request failed")
   }
-  
+
   return response.json()
 }
 
@@ -42,7 +43,9 @@ export function useSubscriptionPlans() {
   return useQuery({
     queryKey: subscriptionKeys.plans(),
     queryFn: async () => {
-      const response = await fetchApi<{ plans: SubscriptionPlan[] }>("/store/subscription-plans")
+      const response = await fetchApi<{ plans: SubscriptionPlan[] }>(
+        "/store/subscription-plans",
+      )
       return response.plans || []
     },
     staleTime: 5 * 60 * 1000,
@@ -51,7 +54,7 @@ export function useSubscriptionPlans() {
 
 export function useSubscriptionPlan(planId: string) {
   const { data: plans } = useSubscriptionPlans()
-  
+
   return useQuery({
     queryKey: subscriptionKeys.plan(planId),
     queryFn: async () => {
@@ -65,7 +68,9 @@ export function useCustomerSubscriptions() {
   return useQuery({
     queryKey: subscriptionKeys.list(),
     queryFn: async () => {
-      const response = await fetchApi<{ subscriptions: Subscription[] }>("/store/subscriptions/me")
+      const response = await fetchApi<{ subscriptions: Subscription[] }>(
+        "/store/subscriptions/me",
+      )
       return response.subscriptions || []
     },
   })
@@ -75,7 +80,9 @@ export function useSubscription(subscriptionId: string) {
   return useQuery({
     queryKey: subscriptionKeys.detail(subscriptionId),
     queryFn: async () => {
-      const response = await fetchApi<{ subscription: Subscription }>(`/store/subscriptions/${subscriptionId}`)
+      const response = await fetchApi<{ subscription: Subscription }>(
+        `/store/subscriptions/${subscriptionId}`,
+      )
       return response.subscription
     },
     enabled: !!subscriptionId,
@@ -87,10 +94,13 @@ export function useCreateSubscription() {
 
   return useMutation({
     mutationFn: async (data: SubscriptionCheckoutData) => {
-      const response = await fetchApi<{ subscription: Subscription }>("/store/subscriptions", {
-        method: "POST",
-        body: JSON.stringify(data),
-      })
+      const response = await fetchApi<{ subscription: Subscription }>(
+        "/store/subscriptions",
+        {
+          method: "POST",
+          body: JSON.stringify(data),
+        },
+      )
       return response.subscription
     },
     onSuccess: () => {
@@ -115,7 +125,7 @@ export function usePauseSubscription() {
         {
           method: "POST",
           body: JSON.stringify({ resume_date: resumeDate }),
-        }
+        },
       )
       return response.subscription
     },
@@ -135,7 +145,7 @@ export function useResumeSubscription() {
     mutationFn: async (subscriptionId: string) => {
       const response = await fetchApi<{ subscription: Subscription }>(
         `/store/subscriptions/${subscriptionId}/resume`,
-        { method: "POST" }
+        { method: "POST" },
       )
       return response.subscription
     },
@@ -164,7 +174,7 @@ export function useCancelSubscription() {
         {
           method: "POST",
           body: JSON.stringify({ immediately }),
-        }
+        },
       )
       return response.subscription
     },
@@ -193,7 +203,7 @@ export function useChangePlan() {
         {
           method: "POST",
           body: JSON.stringify({ plan_id: newPlanId }),
-        }
+        },
       )
       return response.subscription
     },

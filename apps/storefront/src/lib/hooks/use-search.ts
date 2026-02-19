@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { sdk } from "@/lib/utils/sdk"
-import { useDebounce } from "./use-debounce"
+import { useDebounce } from "@/lib/hooks/use-debounce"
 
 interface SearchParams {
   q: string
@@ -21,7 +21,9 @@ export function useSearch(query: string, options?: Partial<SearchParams>) {
         limit: options?.limit || 20,
         offset: options?.offset || 0,
         ...(options?.category_id && { category_id: [options.category_id] }),
-        ...(options?.collection_id && { collection_id: [options.collection_id] }),
+        ...(options?.collection_id && {
+          collection_id: [options.collection_id],
+        }),
         fields: "*variants.calculated_price",
       })
       return response

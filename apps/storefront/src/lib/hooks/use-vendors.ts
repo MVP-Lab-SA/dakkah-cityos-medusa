@@ -22,10 +22,13 @@ export function useVendors() {
   return useQuery({
     queryKey: queryKeys.vendors.all,
     queryFn: async () => {
-      const response = await sdk.client.fetch<{ vendors: Vendor[] }>("/store/vendors", {
-        method: "GET",
-        credentials: "include",
-      })
+      const response = await sdk.client.fetch<{ vendors: Vendor[] }>(
+        "/store/vendors",
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      )
       return response.vendors || []
     },
   })
@@ -35,31 +38,37 @@ export function useVendor(handle: string) {
   return useQuery({
     queryKey: queryKeys.vendors.byHandle(handle),
     queryFn: async () => {
-      const response = await sdk.client.fetch<{ vendor: Vendor }>(`/store/vendors/${handle}`, {
-        method: "GET",
-        credentials: "include",
-      })
+      const response = await sdk.client.fetch<{ vendor: Vendor }>(
+        `/store/vendors/${handle}`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      )
       return response.vendor
     },
     enabled: !!handle,
   })
 }
 
-export function useVendorProducts(vendorId: string, options?: { limit?: number; offset?: number }) {
+export function useVendorProducts(
+  vendorId: string,
+  options?: { limit?: number; offset?: number },
+) {
   return useQuery({
     queryKey: [...queryKeys.vendors.byHandle(vendorId), "products", options],
     queryFn: async () => {
       const params = new URLSearchParams()
       if (options?.limit) params.set("limit", options.limit.toString())
       if (options?.offset) params.set("offset", options.offset.toString())
-      
-      const response = await sdk.client.fetch<{ products: any[]; count: number }>(
-        `/store/vendors/${vendorId}/products?${params.toString()}`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      )
+
+      const response = await sdk.client.fetch<{
+        products: Record<string, unknown>[]
+        count: number
+      }>(`/store/vendors/${vendorId}/products?${params.toString()}`, {
+        method: "GET",
+        credentials: "include",
+      })
       return response
     },
     enabled: !!vendorId,
