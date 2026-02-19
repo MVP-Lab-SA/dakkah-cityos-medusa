@@ -6,10 +6,15 @@ import ReviewModuleService from "../../../../../modules/review/service";
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const reviewService = req.scope.resolve("review") as ReviewModuleService;
 
+  console.log("Reviews Route Hit:");
+  console.log("req.params:", req.params);
+  console.log("req.url:", req.url);
+
   // Safely extract ID, handling potential undefined params
   const id = req.params?.id;
 
   if (!id) {
+    console.log("ID missing in req.params");
     // If route param failed, try context or throw validation error
     return res.status(400).json({
       message: "Product ID is missing or invalid URL parameters",

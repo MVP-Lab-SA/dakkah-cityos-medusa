@@ -1,54 +1,54 @@
-import { useQuery } from "@tanstack/react-query";
-import { sdk } from "@/lib/utils/sdk";
+import { useQuery } from "@tanstack/react-query"
+import { sdk } from "@/lib/utils/sdk"
 
 interface VolumePricingTier {
-  id: string;
-  min_quantity: number;
-  max_quantity?: number | null;
-  discount_percentage?: number;
-  fixed_price?: number;
-  discount_amount?: number;
+  id: string
+  min_quantity: number
+  max_quantity?: number | null
+  discount_percentage?: number
+  fixed_price?: number
+  discount_amount?: number
 }
 
 interface VolumePricingRule {
-  tiers: VolumePricingTier[];
+  tiers: VolumePricingTier[]
 }
 
 interface VolumePricingDisplayProps {
-  productId: string;
-  currentQuantity?: number;
+  productId: string
+  currentQuantity?: number
 }
 
-export function VolumePricingDisplay({ 
-  productId, 
-  currentQuantity = 1 
+export function VolumePricingDisplay({
+  productId,
+  currentQuantity = 1,
 }: VolumePricingDisplayProps) {
   const { data, isLoading } = useQuery({
     queryKey: ["volume-pricing", productId],
     queryFn: async () => {
       const response = await sdk.client.fetch<{ rules: VolumePricingRule[] }>(
-        `/store/volume-pricing/${productId}`
-      );
-      return response;
+        `/store/volume-pricing?product_id=${productId}`,
+      )
+      return response
     },
-  });
+  })
 
   if (isLoading || !data?.rules || data.rules.length === 0) {
-    return null;
+    return null
   }
 
-  const rule = data.rules[0]; // Use first matching rule
-  const tiers = rule.tiers || [];
+  const rule = data.rules[0] // Use first matching rule
+  const tiers = rule.tiers || []
 
-  if (tiers.length === 0) return null;
+  if (tiers.length === 0) return null
 
   // Find active tier based on current quantity
   const activeTier = tiers.find((tier) => {
-    const inRange = tier.min_quantity <= currentQuantity;
-    const noMax = tier.max_quantity === null || tier.max_quantity === undefined;
-    const belowMax = tier.max_quantity && currentQuantity <= tier.max_quantity;
-    return inRange && (noMax || belowMax);
-  });
+    const inRange = tier.min_quantity <= currentQuantity
+    const noMax = tier.max_quantity === null || tier.max_quantity === undefined
+    const belowMax = tier.max_quantity && currentQuantity <= tier.max_quantity
+    return inRange && (noMax || belowMax)
+  })
 
   return (
     <div className="border rounded-lg p-4 bg-muted/20">
@@ -72,38 +72,42 @@ export function VolumePricingDisplay({
 
       <div className="space-y-2">
         {tiers.map((tier, index) => {
-          const isActive = activeTier?.id === tier.id;
+          const isActive = activeTier?.id === tier.id
           const quantityText = tier.max_quantity
             ? `${tier.min_quantity}-${tier.max_quantity}`
-            : `${tier.min_quantity}+`;
+            : `${tier.min_quantity}+`
 
-          let discountText = "";
+          let discountText = ""
           if (tier.discount_percentage) {
-            discountText = `${tier.discount_percentage}% off`;
+            discountText = `${tier.discount_percentage}% off`
           } else if (tier.fixed_price) {
-            discountText = `$${Number(tier.fixed_price).toFixed(2)} each`;
+            discountText = `$${Number(tier.fixed_price).toFixed(2)} each`
           } else if (tier.discount_amount) {
-            discountText = `$${Number(tier.discount_amount).toFixed(2)} off`;
+            discountText = `$${Number(tier.discount_amount).toFixed(2)} off`
           }
 
           return (
             <div
               key={tier.id || `tier-${index}`}
               className={`flex justify-between items-center p-3 rounded ${
-                isActive ? "bg-ds-success border border-ds-success" : "bg-background"
+                isActive
+                  ? "bg-ds-success border border-ds-success"
+                  : "bg-background"
               }`}
             >
               <div className="flex items-center gap-3">
                 <span className="font-medium">{quantityText} units</span>
                 {isActive && (
-                  <span className="bg-ds-success text-ds-primary-foreground text-xs px-2 py-0.5 rounded">Current</span>
+                  <span className="bg-ds-success text-ds-primary-foreground text-xs px-2 py-0.5 rounded">
+                    Current
+                  </span>
                 )}
               </div>
               <span className="font-semibold text-ds-success">
                 {discountText}
               </span>
             </div>
-          );
+          )
         })}
       </div>
 
@@ -117,5 +121,5 @@ export function VolumePricingDisplay({
         </p>
       )}
     </div>
-  );
+  )
 }

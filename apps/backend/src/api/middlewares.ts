@@ -68,5 +68,13 @@ export default defineMiddlewares({
       matcher: "/store/reviews/**",
       middlewares: [storeCorsMiddleware],
     },
+    {
+      matcher: "/store/volume-pricing",
+      middlewares: [storeCorsMiddleware],
+    },
+    {
+      matcher: "/store/volume-pricing/**",
+      middlewares: [storeCorsMiddleware],
+    },
   ],
 });
