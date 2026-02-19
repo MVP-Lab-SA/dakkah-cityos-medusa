@@ -2,12 +2,15 @@ import medusaAiTags from "@medusajs-ai/tags";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import Terminal from "vite-plugin-terminal";
 import viteTsConfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), "");
   const isDev = mode === "development";
+  // Prioritize MEDUSA_BACKEND_URL from env, fallback to default
+  const backendUrl = env.MEDUSA_BACKEND_URL || "http://localhost:9000";
 
   return {
     plugins: [
@@ -35,7 +38,10 @@ export default defineConfig(({ mode }) => {
         configureServer(server) {
           server.middlewares.use((req, res, next) => {
             const urlPath = (req.url || "").split("?")[0];
-            if (urlPath === "/commerce/admin" || urlPath === "/commerce/admin/") {
+            if (
+              urlPath === "/commerce/admin" ||
+              urlPath === "/commerce/admin/"
+            ) {
               res.writeHead(302, { Location: "/commerce/admin/login" });
               res.end();
               return;
@@ -52,25 +58,30 @@ export default defineConfig(({ mode }) => {
       allowedHosts: true,
       proxy: {
         "/platform": {
-          target: "http://localhost:9000",
+          target: backendUrl,
           changeOrigin: true,
+          secure: false,
         },
         "/store": {
-          target: "http://localhost:9000",
+          target: backendUrl,
           changeOrigin: true,
+          secure: false,
         },
         "/admin": {
-          target: "http://localhost:9000",
+          target: backendUrl,
           changeOrigin: true,
+          secure: false,
         },
         "/commerce": {
-          target: "http://localhost:9000",
+          target: backendUrl,
           changeOrigin: true,
           ws: true,
+          secure: false,
         },
         "/auth": {
-          target: "http://localhost:9000",
+          target: backendUrl,
           changeOrigin: true,
+          secure: false,
         },
       },
     },
@@ -110,7 +121,14 @@ export default defineConfig(({ mode }) => {
     },
 
     resolve: {
-      dedupe: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime", "@tanstack/react-router", "@tanstack/react-query"],
+      dedupe: [
+        "react",
+        "react-dom",
+        "react/jsx-runtime",
+        "react/jsx-dev-runtime",
+        "@tanstack/react-router",
+        "@tanstack/react-query",
+      ],
     },
   };
 });
