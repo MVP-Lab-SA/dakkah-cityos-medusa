@@ -8,7 +8,11 @@
  * Uses VITE_BACKEND_URL environment variable with fallback
  */
 export function getBackendUrl(): string {
-  return import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_MEDUSA_BACKEND_URL || "http://localhost:9000"
+  return (
+    import.meta.env.VITE_BACKEND_URL ||
+    import.meta.env.VITE_MEDUSA_BACKEND_URL ||
+    "http://localhost:9000"
+  )
 }
 
 export function getServerBaseUrl(): string {
@@ -63,14 +67,30 @@ const DEFAULT_TIMEOUT_MS = 10000
 
 export function fetchWithTimeout(
   url: string,
-  options?: RequestInit & { timeoutMs?: number }
+  options?: RequestInit & { timeoutMs?: number },
 ): Promise<Response> {
   const { timeoutMs = DEFAULT_TIMEOUT_MS, ...fetchOptions } = options || {}
+
+  // Inject publishable key into headers
+  const publishableKey = import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY
+  const headers = new Headers(fetchOptions.headers)
+  if (publishableKey && !headers.has("x-publishable-api-key")) {
+    headers.set("x-publishable-api-key", publishableKey)
+  }
+  fetchOptions.headers = headers
+
   const controller = new AbortController()
   const existingSignal = fetchOptions.signal
   if (existingSignal) {
-    existingSignal.addEventListener("abort", () => controller.abort(existingSignal.reason))
+    existingSignal.addEventListener("abort", () =>
+      controller.abort(existingSignal.reason),
+    )
   }
-  const timeoutId = setTimeout(() => controller.abort("Request timeout"), timeoutMs)
-  return fetch(url, { ...fetchOptions, signal: controller.signal }).finally(() => clearTimeout(timeoutId))
+  const timeoutId = setTimeout(
+    () => controller.abort("Request timeout"),
+    timeoutMs,
+  )
+  return fetch(url, { ...fetchOptions, signal: controller.signal }).finally(
+    () => clearTimeout(timeoutId),
+  )
 }
