@@ -16,10 +16,10 @@ import { VolumePricingDisplay } from "@/components/products/volume-pricing-displ
 import { Minus, Plus } from "@medusajs/icons"
 
 type ProductActionsProps = {
-  product: HttpTypes.StoreProduct;
-  region: HttpTypes.StoreRegion;
-  disabled?: boolean;
-};
+  product: HttpTypes.StoreProduct
+  region: HttpTypes.StoreRegion
+  disabled?: boolean
+}
 
 const ProductActions = memo(function ProductActions({
   product,
@@ -28,102 +28,103 @@ const ProductActions = memo(function ProductActions({
 }: ProductActionsProps) {
   const [selectedOptions, setSelectedOptions] = useState<
     Record<string, string | undefined>
-  >({});
-  const [quantity, setQuantity] = useState(1);
-  const prefix = useTenantPrefix();
-  const toast = useToast();
+  >({})
+  const [quantity, setQuantity] = useState(1)
+  const prefix = useTenantPrefix()
+  const toast = useToast()
 
   const addToCartMutation = useAddToCart({
     fields: DEFAULT_CART_DROPDOWN_FIELDS,
-  });
-  const { openCart } = useCartDrawer();
+  })
+  const { openCart } = useCartDrawer()
 
-  const actionsRef = useRef<HTMLDivElement>(null);
+  const actionsRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    setSelectedOptions({});
-  }, [product?.handle]);
+    setSelectedOptions({})
+  }, [product?.handle])
 
   useEffect(() => {
     if (product?.variants?.length === 1) {
       const optionsKeymap = getVariantOptionsKeymap(
-        product?.variants?.[0]?.options ?? []
-      );
-      setSelectedOptions(optionsKeymap ?? {});
+        product?.variants?.[0]?.options ?? [],
+      )
+      setSelectedOptions(optionsKeymap ?? {})
     }
-  }, [product?.variants]);
+  }, [product?.variants])
 
   const selectedVariant = useMemo(() => {
     if (!product?.variants || product?.variants.length === 0) {
-      return;
+      return
     }
 
     if (
       product?.variants.length === 1 &&
       (!product?.options || product?.options.length === 0)
     ) {
-      return product?.variants[0];
+      return product?.variants[0]
     }
 
     const variant = product?.variants.find((v) => {
-      const optionsKeymap = getVariantOptionsKeymap(v?.options ?? []);
-      const matches = isEqual(optionsKeymap, selectedOptions);
+      const optionsKeymap = getVariantOptionsKeymap(v?.options ?? [])
+      const matches = isEqual(optionsKeymap, selectedOptions)
 
-      return matches;
-    });
+      return matches
+    })
 
-    return variant;
-  }, [product?.variants, product?.options, selectedOptions]);
+    return variant
+  }, [product?.variants, product?.options, selectedOptions])
 
   const setOptionValue = (optionId: string, value: string) => {
     setSelectedOptions((prev) => ({
       ...prev,
       [optionId]: value,
-    }));
-  };
+    }))
+  }
 
   const isValidVariant = useMemo(() => {
     return product?.variants?.some((v) => {
-      const optionsKeymap = getVariantOptionsKeymap(v?.options ?? []);
-      return isEqual(optionsKeymap, selectedOptions);
-    });
-  }, [product?.variants, selectedOptions]);
+      const optionsKeymap = getVariantOptionsKeymap(v?.options ?? [])
+      return isEqual(optionsKeymap, selectedOptions)
+    })
+  }, [product?.variants, selectedOptions])
 
   const inStock = useMemo(() => {
     if (!selectedVariant) {
-      return false;
+      return false
     }
 
-    return isVariantInStock(selectedVariant);
-  }, [selectedVariant]);
+    return isVariantInStock(selectedVariant)
+  }, [selectedVariant])
 
-  const incrementQuantity = () => setQuantity((q) => q + 1);
-  const decrementQuantity = () => setQuantity((q) => Math.max(1, q - 1));
+  const incrementQuantity = () => setQuantity((q) => q + 1)
+  const decrementQuantity = () => setQuantity((q) => Math.max(1, q - 1))
 
   const handleAddToCart = async () => {
-    if (!selectedVariant?.id) return null;
+    if (!selectedVariant?.id) return null
 
     addToCartMutation.mutateAsync(
       {
         variant_id: selectedVariant.id,
         quantity: quantity,
-        country_code: prefix.split("/")[1] || "dk",
+        country_code:
+          region?.countries?.[0]?.iso_2 || prefix.split("/")[1] || "us",
         product,
         variant: selectedVariant,
         region,
       },
       {
         onSuccess: () => {
-          toast.success("Item added to cart");
-          setQuantity(1);
-          openCart();
+          toast.success("Item added to cart")
+          setQuantity(1)
+          openCart()
         },
         onError: () => {
-          toast.error("Failed to add item to cart. Please try again.");
+          toast.error("Failed to add item to cart. Please try again.")
         },
-      }
-    );
-  };
+      },
+    )
+  }
 
   return (
     <div className="flex flex-col gap-y-4" ref={actionsRef}>
@@ -149,7 +150,7 @@ const ProductActions = memo(function ProductActions({
                   disabled={!!disabled || addToCartMutation.isPending}
                 />
               </div>
-            );
+            )
           })}
         </div>
       )}
@@ -171,7 +172,9 @@ const ProductActions = memo(function ProductActions({
             type="number"
             min={1}
             value={quantity}
-            onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+            onChange={(e) =>
+              setQuantity(Math.max(1, parseInt(e.target.value) || 1))
+            }
             className="w-20 text-center h-10"
             disabled={!!disabled}
           />
@@ -189,7 +192,10 @@ const ProductActions = memo(function ProductActions({
 
       {/* Volume Pricing Display */}
       {product.id && (
-        <VolumePricingDisplay productId={product.id} currentQuantity={quantity} />
+        <VolumePricingDisplay
+          productId={product.id}
+          currentQuantity={quantity}
+        />
       )}
 
       {/* B2B Quote Link */}
@@ -216,7 +222,7 @@ const ProductActions = memo(function ProductActions({
             : "Add to cart"}
       </Button>
     </div>
-  );
-});
+  )
+})
 
-export default ProductActions;
+export default ProductActions

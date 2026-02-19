@@ -44,6 +44,12 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       offset: parseInt(offset),
     });
   } catch (error: any) {
-    handleApiError(res, error, "STORE-REVIEWS-PRODUCTS-ID");
+    // Detailed error for debugging
+    return res.status(400).json({
+      message: error.message,
+      code: "REVIEW_FETCH_ERROR",
+      details: error.stack,
+    });
+    // handleApiError(res, error, "STORE-REVIEWS-PRODUCTS-ID");
   }
 }
