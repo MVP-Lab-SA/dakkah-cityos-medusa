@@ -45,6 +45,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     });
   } catch (error: any) {
     // Detailed error for debugging
+    console.error("Failed to fetch reviews:", error);
     return res.status(400).json({
       message: error.message,
       code: "REVIEW_FETCH_ERROR",

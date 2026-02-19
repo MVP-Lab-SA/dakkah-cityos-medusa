@@ -32,6 +32,18 @@ interface VendorReviewsResponse {
   count: number
 }
 
+// Helper to get headers
+const getHeaders = () => {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  }
+  const publishableKey = import.meta.env.VITE_MEDUSA_PUBLISHABLE_KEY
+  if (publishableKey) {
+    headers["x-publishable-api-key"] = publishableKey
+  }
+  return headers
+}
+
 export function useProductReviews(
   productId: string,
   options?: { limit?: number; offset?: number },
@@ -45,7 +57,10 @@ export function useProductReviews(
 
       const response = await fetchWithTimeout(
         `${BACKEND_URL}/store/reviews/products/${productId}?${params}`,
-        { credentials: "include" },
+        {
+          headers: getHeaders(),
+          credentials: "include",
+        },
       )
       if (!response.ok) throw new Error("Failed to fetch reviews")
       return response.json()
@@ -67,7 +82,10 @@ export function useVendorReviews(
 
       const response = await fetchWithTimeout(
         `${BACKEND_URL}/store/reviews/vendors/${vendorId}?${params}`,
-        { credentials: "include" },
+        {
+          headers: getHeaders(),
+          credentials: "include",
+        },
       )
       if (!response.ok) throw new Error("Failed to fetch reviews")
       return response.json()
@@ -90,7 +108,7 @@ export function useCreateReview() {
     }) => {
       const response = await fetchWithTimeout(`${BACKEND_URL}/store/reviews`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: getHeaders(),
         credentials: "include",
         body: JSON.stringify(data),
       })
@@ -124,6 +142,7 @@ export function useMarkReviewHelpful() {
         `${BACKEND_URL}/store/reviews/${reviewId}/helpful`,
         {
           method: "POST",
+          headers: getHeaders(),
           credentials: "include",
         },
       )
