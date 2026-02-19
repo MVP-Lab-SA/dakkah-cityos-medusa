@@ -6,7 +6,10 @@ loadEnv(process.env.NODE_ENV || "development", process.cwd());
 
 validateEnvironment();
 
-const iconsPath = path.resolve(__dirname, "node_modules/@medusajs/icons/dist/esm/index.js");
+const iconsPath = path.resolve(
+  __dirname,
+  "node_modules/@medusajs/icons/dist/esm/index.js",
+);
 
 module.exports = defineConfig({
   admin: {
@@ -22,7 +25,9 @@ module.exports = defineConfig({
 
       let allowedHosts: string[] | true = true;
       if (process.env.__MEDUSA_ADDITIONAL_ALLOWED_HOSTS) {
-        allowedHosts = process.env.__MEDUSA_ADDITIONAL_ALLOWED_HOSTS.split(",").map(h => h.trim());
+        allowedHosts = process.env.__MEDUSA_ADDITIONAL_ALLOWED_HOSTS
+          .split(",")
+          .map((h) => h.trim());
       }
 
       return {
@@ -74,15 +79,17 @@ module.exports = defineConfig({
             },
           },
           ...(process.env.SENDGRID_API_KEY
-            ? [{
-                resolve: "@medusajs/medusa/notification-sendgrid",
-                id: "sendgrid",
-                options: {
-                  channels: ["email"],
-                  api_key: process.env.SENDGRID_API_KEY,
-                  from: process.env.SENDGRID_FROM,
+            ? [
+                {
+                  resolve: "@medusajs/medusa/notification-sendgrid",
+                  id: "sendgrid",
+                  options: {
+                    channels: ["email"],
+                    api_key: process.env.SENDGRID_API_KEY,
+                    from: process.env.SENDGRID_FROM,
+                  },
                 },
-              }]
+              ]
             : []),
         ],
       },
@@ -115,7 +122,8 @@ module.exports = defineConfig({
             options: {
               host: process.env.MEILISEARCH_HOST,
               apiKey: process.env.MEILISEARCH_API_KEY || "masterKey",
-              productIndexName: process.env.MEILISEARCH_PRODUCT_INDEX_NAME || "products",
+              productIndexName:
+                process.env.MEILISEARCH_PRODUCT_INDEX_NAME || "products",
             },
           },
         ]
@@ -125,512 +133,520 @@ module.exports = defineConfig({
       key: "tenant",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/node",
       key: "node",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/governance",
       key: "governance",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/persona",
       key: "persona",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/store",
       key: "cityosStore",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/vendor",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/commission",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/payout",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/subscription",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/company",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/quote",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/volume-pricing",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/booking",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/review",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/invoice",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/events",
       key: "eventOutbox",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/audit",
       key: "audit",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/i18n",
       key: "i18n",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/channel",
       key: "channel",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/region-zone",
       key: "regionZone",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/promotion-ext",
       key: "promotionExt",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/digital-product",
       key: "digitalProduct",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/auction",
       key: "auction",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/rental",
       key: "rental",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/restaurant",
       key: "restaurant",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/event-ticketing",
       key: "eventTicketing",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/classified",
       key: "classified",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/affiliate",
       key: "affiliate",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/warranty",
       key: "warranty",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/freelance",
       key: "freelance",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/travel",
       key: "travel",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/real-estate",
       key: "realEstate",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/membership",
       key: "membership",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/crowdfunding",
       key: "crowdfunding",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/social-commerce",
       key: "socialCommerce",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/grocery",
       key: "grocery",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/automotive",
       key: "automotive",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/healthcare",
       key: "healthcare",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/education",
       key: "education",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/charity",
       key: "charity",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/financial-product",
       key: "financialProduct",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/advertising",
       key: "advertising",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/parking",
       key: "parking",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/utilities",
       key: "utilities",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/government",
       key: "government",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/pet-service",
       key: "petService",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/fitness",
       key: "fitness",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/legal",
       key: "legal",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/analytics",
       key: "analytics",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/cart-extension",
       key: "cartExtension",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/cms-content",
       key: "cmsContent",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/dispute",
       key: "dispute",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/inventory-extension",
       key: "inventoryExtension",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/loyalty",
       key: "loyalty",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/notification-preferences",
       key: "notificationPreferences",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/shipping-extension",
       key: "shippingExtension",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/tax-config",
       key: "taxConfig",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
     },
     {
       resolve: "./src/modules/wishlist",
       key: "wishlist",
       options: {
         definition: {
-          isQueryable: true
-        }
-      }
+          isQueryable: true,
+        },
+      },
+    },
+    {
+      resolve: "./src/modules/file-replit",
+      key: "file",
+      options: {
+        bucket_id: "replit-objstore-d0367ca5-bb93-42b5-b2e7-53122f51e3cb",
+        backend_url: process.env.MEDUSA_BACKEND_URL,
+      },
     },
     {
       resolve: "./src/modules/wallet",

@@ -3,12 +3,6 @@ import { getServerBaseUrl } from "@/lib/utils/env"
 
 const MEDUSA_BACKEND_URL = getServerBaseUrl()
 
-console.log("[SDK Debug] Initializing Medusa SDK", {
-  backendUrl: MEDUSA_BACKEND_URL,
-  isServer: typeof window === "undefined",
-  rawEnvEndpoint: import.meta.env.VITE_MEDUSA_BACKEND_URL,
-})
-
 export const sdk = new Medusa({
   baseUrl: MEDUSA_BACKEND_URL,
   debug: false,
