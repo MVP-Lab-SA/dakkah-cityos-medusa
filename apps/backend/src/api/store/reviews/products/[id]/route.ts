@@ -1,9 +1,10 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
 import { handleApiError } from "../../../../../lib/api-error-handler";
+import ReviewModuleService from "../../../../../modules/review/service";
 
 // GET /store/reviews/products/:id - Get reviews for a product
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const reviewService = req.scope.resolve("review");
+  const reviewService = req.scope.resolve("review") as ReviewModuleService;
 
   // Safely extract ID, handling potential undefined params
   const id = req.params?.id;
