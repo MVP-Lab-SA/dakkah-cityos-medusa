@@ -1,18 +1,17 @@
 <#
 .SYNOPSIS
-    Establishes an SSH tunnel to the Replit database.
+    Establishes a persistent SSH tunnel to the Replit database.
 
 .DESCRIPTION
-    This script helps create a local port forwarding tunnel to a Replit container's database.
-    It requires the SSH command provided by the Replit UI (Tools > SSH).
-    
-    It forwards local port 5433 to the remote 'helium' host on port 5432.
+    Forwards local port 5433 to the remote 'helium' host on port 5432.
+    Uses ServerAliveInterval and auto-restart to keep the tunnel alive.
 
 .PARAMETER ReplitSshCommand
-    The full SSH command string copied from Replit, e.g., "ssh -i id_rsa user@host.replit.dev"
+    The full SSH command string from Replit (Tools > SSH).
 
 .EXAMPLE
-    .\scripts\connect-replit-db.ps1 -ReplitSshCommand "ssh -i .ssh/replit_key user@host.replit.dev"
+    .\scripts\connect-replit-db.ps1
+    .\scripts\connect-replit-db.ps1 -ReplitSshCommand "ssh -i C:/Users/you/.ssh/id_ed25519 user@host.replit.dev"
 #>
 
 param(
@@ -50,20 +49,37 @@ if (-not $ReplitSshCommand) {
     }
 }
 
-Write-Host "Setting up SSH tunnel to Replit DB..." -ForegroundColor Cyan
+Write-Host "Setting up persistent SSH tunnel to Replit DB..." -ForegroundColor Cyan
 Write-Host "Target: helium:5432" -ForegroundColor Gray
 Write-Host "Local:  localhost:5433" -ForegroundColor Gray
+Write-Host "Press Ctrl+C to stop the tunnel." -ForegroundColor Yellow
 
-# Construct the tunnel command
-# -L 5433:helium:5432  -> Forward local 5433 to remote helium:5432
-# -N                   -> Do not execute a remote command (just forward ports)
-# -v                   -> Verbose (optional, good for debugging connection)
+# Add keepalive options and the tunnel forward to the base SSH command
+# -o ServerAliveInterval=30  -> send keepalive every 30s
+# -o ServerAliveCountMax=3   -> fail after 3 missed keepalives
+# -o ExitOnForwardFailure=yes -> exit if port forwarding fails
+# -o StrictHostKeyChecking=no -> avoid prompt on first connect
+# -L 5433:helium:5432        -> forward local 5433 to remote helium:5432
+# -N                         -> no remote command, just tunnel
+$TunnelOptions = "-o ServerAliveInterval=30 -o ServerAliveCountMax=3 -o StrictHostKeyChecking=no -L 5433:helium:5432 -N"
+$FullCommand = "$ReplitSshCommand $TunnelOptions"
 
-$TunnelArgs = "-L 5433:helium:5432 -N"
-$FullCommand = "$ReplitSshCommand $TunnelArgs"
+Write-Host "`nCommand: $FullCommand`n" -ForegroundColor DarkGray
 
-Write-Host "Executing: $FullCommand" -ForegroundColor Yellow
+# Auto-restart loop — if the tunnel drops, reconnect
+$attempt = 0
+while ($true) {
+    $attempt++
+    if ($attempt -gt 1) {
+        Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Reconnecting (attempt $attempt)..." -ForegroundColor Yellow
+        Start-Sleep -Seconds 3
+    }
+    else {
+        Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Tunnel connecting..." -ForegroundColor Cyan
+    }
 
-# Execute the command
-# We use cmd /c to ensure the SSH command string is parsed correctly by the shell if it contains spaces/quotes
-Invoke-Expression $FullCommand
+    Invoke-Expression $FullCommand
+
+    $exitCode = $LASTEXITCODE
+    Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Tunnel exited (code $exitCode). Restarting..." -ForegroundColor Red
+}
