@@ -1,39 +1,73 @@
-import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { z } from "zod"
-import { handleApiError } from "../../../lib/api-error-handler"
+import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
+import { z } from "zod";
+import { handleApiError } from "../../../lib/api-error-handler";
 
 const createSchema = z.object({
-  name: z.string(),
-  description: z.string().optional(),
-  type: z.enum(["product", "shipping", "warranty-ext"]),
-  coverage_amount: z.number(),
-  premium: z.number(),
-  deductible: z.number().optional(),
-  duration_days: z.number(),
-  status: z.enum(["active", "inactive"]).optional(),
-  tenant_id: z.string(),
+  customer_id: z.string(),
+  product_id: z.string().optional(),
+  type: z
+    .enum(["product", "travel", "health", "vehicle", "home", "life", "other"])
+    .default("product"),
+  coverage_amount: z.number().positive(),
+  premium_amount: z.number().positive(),
+  currency: z.string().default("usd"),
+  starts_at: z.string(),
+  expires_at: z.string(),
+  coverage_details: z.record(z.string(), z.unknown()).optional(),
   metadata: z.record(z.string(), z.unknown()).optional(),
-})
+});
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   try {
-    const mod = req.scope.resolve("insurance") as any
-    const { limit = "20", offset = "0" } = req.query as Record<string, string | undefined>
-    const items = await mod.listInsurancePlans({}, { skip: Number(offset), take: Number(limit) })
-    return res.json({ items, count: Array.isArray(items) ? items.length : 0, limit: Number(limit), offset: Number(offset) })
-
+    const mod = req.scope.resolve("insurance") as any;
+    const {
+      limit = "20",
+      offset = "0",
+      status,
+    } = req.query as Record<string, string | undefined>;
+    const filters: any = {};
+    if (status) filters.status = status;
+    const items = await mod.listInsurancePolicies(filters, {
+      skip: Number(offset),
+      take: Number(limit),
+      order: { created_at: "DESC" },
+    });
+    const count = await mod.countInsurancePolicies(filters);
+    return res.json({
+      items: Array.isArray(items) ? items : [],
+      count,
+      limit: Number(limit),
+      offset: Number(offset),
+    });
   } catch (error: any) {
-    handleApiError(res, error, "GET admin insurance")}
+    handleApiError(res, error, "GET admin insurance");
+  }
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
   try {
-    const mod = req.scope.resolve("insurance") as any
-    const validation = createSchema.safeParse(req.body)
-    if (!validation.success) return res.status(400).json({ message: "Validation failed", errors: validation.error.issues })
-    const item = await mod.createInsurancePlans(validation.data)
-    return res.status(201).json({ item })
-
+    const mod = req.scope.resolve("insurance") as any;
+    const validation = createSchema.safeParse(req.body);
+    if (!validation.success) {
+      return res
+        .status(400)
+        .json({
+          message: "Validation failed",
+          errors: validation.error.issues,
+        });
+    }
+    const data = validation.data;
+    const item = await mod.createPolicy({
+      customerId: data.customer_id,
+      productId: data.product_id,
+      planType: data.type,
+      coverageAmount: data.coverage_amount,
+      premium: data.premium_amount,
+      startDate: new Date(data.starts_at),
+      metadata: data.metadata,
+    });
+    return res.status(201).json({ item });
   } catch (error: any) {
-    handleApiError(res, error, "POST admin insurance")}
+    handleApiError(res, error, "POST admin insurance");
+  }
 }
