@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { model } from "@medusajs/framework/utils"
+import { model } from "@medusajs/framework/utils";
 
 const TaxRule = model.define("tax_rule", {
   id: model.id().primaryKey(),
@@ -19,6 +18,6 @@ const TaxRule = model.define("tax_rule", {
   valid_from: model.dateTime().nullable(),
   valid_to: model.dateTime().nullable(),
   metadata: model.json().nullable(),
-})
+});
 
-export default TaxRule
+export default TaxRule;

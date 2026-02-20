@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { model } from "@medusajs/framework/utils"
+import { model } from "@medusajs/framework/utils";
 
 const CartMetadata = model.define("cart_metadata", {
   id: model.id().primaryKey(),
@@ -12,6 +11,6 @@ const CartMetadata = model.define("cart_metadata", {
   special_handling: model.text().nullable(),
   source_channel: model.text().nullable(),
   metadata: model.json().nullable(),
-})
+});
 
-export default CartMetadata
+export default CartMetadata;

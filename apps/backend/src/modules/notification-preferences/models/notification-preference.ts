@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { model } from "@medusajs/framework/utils"
+import { model } from "@medusajs/framework/utils";
 
 const NotificationPreference = model.define("notification_preference", {
   id: model.id().primaryKey(),
@@ -10,6 +9,6 @@ const NotificationPreference = model.define("notification_preference", {
   enabled: model.boolean().default(true),
   frequency: model.text().default("immediate"),
   metadata: model.json().nullable(),
-})
+});
 
-export default NotificationPreference
+export default NotificationPreference;

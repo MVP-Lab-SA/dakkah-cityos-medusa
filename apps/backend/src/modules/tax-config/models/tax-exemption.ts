@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { model } from "@medusajs/framework/utils"
+import { model } from "@medusajs/framework/utils";
 
 const TaxExemption = model.define("tax_config_exemption", {
   id: model.id().primaryKey(),
@@ -14,6 +13,6 @@ const TaxExemption = model.define("tax_config_exemption", {
   valid_to: model.dateTime().nullable(),
   status: model.text().default("active"),
   metadata: model.json().nullable(),
-})
+});
 
-export default TaxExemption
+export default TaxExemption;

@@ -1,41 +1,160 @@
-import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { handleApiError } from "../../../lib/api-error-handler"
+import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http";
+import { handleApiError } from "../../../lib/api-error-handler";
 
+// GET /store/trade-ins — list trade-ins (public: show program info; authenticated: list own trade-ins)
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  try {
-    const automotiveService = req.scope.resolve("automotive") as any
-    const {
-      limit = "20",
-      offset = "0",
-      tenant_id,
-      category,
-      condition,
-      status,
-      search,
-    } = req.query as Record<string, string | undefined>
+  const customerId = req.auth_context?.actor_id;
 
-    const filters: Record<string, any> = {}
-    if (tenant_id) filters.tenant_id = tenant_id
-    if (category) filters.category = category
-    if (condition) filters.condition = condition
-    if (status) filters.status = status
-    if (search) filters.name = { $like: `%${search}%` }
+  if (!customerId) {
+    return res.json({
+      trade_ins: [],
+      count: 0,
+      limit: 20,
+      offset: 0,
+      public_info: {
+        eligible_categories: [
+          {
+            name: "Electronics",
+            description: "Smartphones, laptops, tablets and more",
+            estimated_value_range: "$50 - $800",
+          },
+          {
+            name: "Automotive",
+            description: "Vehicles, parts, and accessories",
+            estimated_value_range: "$100 - $25000",
+          },
+          {
+            name: "Furniture",
+            description: "Home and office furniture",
+            estimated_value_range: "$25 - $500",
+          },
+          {
+            name: "Appliances",
+            description: "Home appliances in working condition",
+            estimated_value_range: "$30 - $400",
+          },
+        ],
+        how_it_works: [
+          "Submit your item details and photos",
+          "Receive a trade-in value estimate",
+          "Ship your item or drop it off",
+          "Get credit applied to your account",
+        ],
+      },
+    });
+  }
+
+  const {
+    limit = "20",
+    offset = "0",
+    tenant_id,
+    status,
+    category,
+    condition,
+    search,
+  } = req.query as Record<string, string | undefined>;
+
+  try {
+    const automotiveService = req.scope.resolve("automotive") as any;
+
+    const filters: Record<string, any> = { customer_id: customerId };
+    if (tenant_id) filters.tenant_id = tenant_id;
+    if (status) filters.status = status;
+    if (category) filters.category = category;
+    if (condition) filters.condition = condition;
+    if (search) filters.name = { $like: `%${search}%` };
 
     const items = await automotiveService.listTradeIns(filters, {
       skip: Number(offset),
       take: Number(limit),
       order: { created_at: "DESC" },
-    })
+    });
 
-    const itemList = Array.isArray(items) ? items : []
+    const tradeIns = Array.isArray(items) ? items : [];
 
     return res.json({
-      items: itemList,
-      count: itemList.length,
+      trade_ins: tradeIns,
+      count: tradeIns.length,
       limit: Number(limit),
       offset: Number(offset),
-    })
+    });
   } catch (error: any) {
-    return handleApiError(res, error, "STORE-TRADE-INS")}
+    return handleApiError(res, error, "STORE-TRADE-INS");
+  }
 }
 
+// POST /store/trade-ins — submit a new trade-in (migrated from /store/trade-in)
+export async function POST(req: MedusaRequest, res: MedusaResponse) {
+  const customerId = req.auth_context?.actor_id;
+
+  if (!customerId) {
+    return res.status(401).json({ message: "Authentication required" });
+  }
+
+  const {
+    tenant_id,
+    listing_id,
+    make,
+    model_name,
+    year,
+    mileage_km,
+    condition,
+    vin,
+    description,
+    photos,
+    currency_code = "usd",
+    metadata,
+  } = req.body as {
+    tenant_id: string;
+    listing_id?: string;
+    make: string;
+    model_name: string;
+    year: number;
+    mileage_km: number;
+    condition: string;
+    vin?: string;
+    description?: string;
+    photos?: string[];
+    currency_code?: string;
+    metadata?: Record<string, unknown>;
+  };
+
+  if (
+    !tenant_id ||
+    !make ||
+    !model_name ||
+    !year ||
+    !mileage_km ||
+    !condition
+  ) {
+    return res.status(400).json({
+      message:
+        "tenant_id, make, model_name, year, mileage_km, and condition are required",
+    });
+  }
+
+  try {
+    const automotiveService = req.scope.resolve("automotive") as any;
+
+    const tradeIn = await automotiveService.createTradeIns({
+      tenant_id,
+      customer_id: customerId,
+      listing_id: listing_id ?? null,
+      make,
+      model_name,
+      year,
+      mileage_km,
+      condition,
+      vin: vin ?? null,
+      description: description ?? null,
+      photos: photos ?? null,
+      currency_code,
+      status: "submitted",
+      metadata: metadata ?? null,
+    });
+
+    res.status(201).json({ trade_in: tradeIn });
+  } catch (error: any) {
+    handleApiError(res, error, "STORE-TRADE-INS");
+  }
+}
