@@ -1,25 +1,31 @@
 import { Container, Heading, Table, StatusBadge, Button } from "@medusajs/ui";
 import { useQuery } from "@tanstack/react-query";
-import { sdk } from "../../lib/sdk"; // Assuming sdk is initialized somewhere or we use fetch
-import { useState } from "react";
 import { defineRouteConfig } from "@medusajs/admin-sdk";
 import { ChatBubbleLeftRight } from "@medusajs/icons";
+import { client } from "../../lib/client";
 
-// We need a way to fetch from our custom API
-// Since we are in the admin, we can use the injected sdk or standard fetch with credentials
-// Standard Medusa Admin extensions (Vite) often use the JS SDK or a custom fetch wrapper.
+type Workflow = {
+  workflowId: string;
+  runId: string;
+  type: string;
+  status: string;
+  startTime: string;
+};
 
-const fetchWorkflows = async () => {
-  // Using relative path, should be proxied by Vite or hit the backend directly
-  const response = await fetch("/commerce/admin/temporal/workflows", {
-    headers: {
-      // Auth headers are usually handled by the session cookie in Medusa Admin
-    },
-  });
-  if (!response.ok) {
-    throw new Error("Failed to fetch workflows");
-  }
-  return response.json();
+type WorkflowsResponse = { workflows: Workflow[] };
+
+const fetchWorkflows = async (): Promise<WorkflowsResponse> => {
+  const { data } = await client.get<WorkflowsResponse>(
+    "/admin/temporal/workflows",
+  );
+  return data;
+};
+
+const statusColor = (status: string): "green" | "blue" | "red" | "grey" => {
+  if (status === "COMPLETED") return "green";
+  if (status === "RUNNING") return "blue";
+  if (status === "FAILED") return "red";
+  return "grey";
 };
 
 const WorkflowsPage = () => {
@@ -58,38 +64,28 @@ const WorkflowsPage = () => {
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {data?.workflows?.map((wf: any) => (
+            {data?.workflows?.map((wf) => (
               <Table.Row key={wf.runId}>
                 <Table.Cell>{wf.workflowId}</Table.Cell>
                 <Table.Cell>{wf.type}</Table.Cell>
                 <Table.Cell>
-                  <StatusBadge
-                    color={
-                      wf.status === "COMPLETED"
-                        ? "green"
-                        : wf.status === "RUNNING"
-                          ? "blue"
-                          : wf.status === "FAILED"
-                            ? "red"
-                            : "grey"
-                    }
-                  >
+                  <StatusBadge color={statusColor(wf.status)}>
                     {wf.status}
                   </StatusBadge>
                 </Table.Cell>
                 <Table.Cell>
                   {new Date(wf.startTime).toLocaleString()}
                 </Table.Cell>
-                <Table.Cell className="text-ui-fg-subtle">
+                <Table.Cell className="text-ui-fg-subtle text-xs">
                   {wf.runId}
                 </Table.Cell>
               </Table.Row>
             ))}
             {(!data?.workflows || data.workflows.length === 0) && (
               <Table.Row>
-                <Table.Cell colSpan={5} className="text-center py-4">
+                <td colSpan={5} className="text-center py-8 text-ui-fg-subtle">
                   No workflows found
-                </Table.Cell>
+                </td>
               </Table.Row>
             )}
           </Table.Body>

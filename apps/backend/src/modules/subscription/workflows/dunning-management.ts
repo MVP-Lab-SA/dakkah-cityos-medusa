@@ -68,6 +68,7 @@ const cancelSubscriptionOnDunningExhausted = createStep(
 
 export const dunningManagementWorkflow = createWorkflow(
   "dunning-management",
+  // @ts-ignore: workflow builder type
   (input: {
     billingCycleId: string;
     subscriptionId: string;
@@ -90,3 +91,6 @@ export const dunningManagementWorkflow = createWorkflow(
     return { retryResult };
   },
 );
+
+
+

@@ -1,7 +1,5 @@
 import { AbstractFileProviderService } from "@medusajs/framework/utils";
 import {
-  FileProviderMethod,
-  FileProviderUploadResponse,
   ProviderDeleteFileDTO,
   ProviderGetFileDTO,
   ProviderUploadFileDTO,
@@ -22,8 +20,7 @@ export class ReplitFileService extends AbstractFileProviderService {
   protected backendUrl_: string;
 
   constructor(container: any, options: ReplitFileServiceOptions) {
-    super(container, options); // No options passed to super in v2 abstract? Checking signatures logic.
-    // In Medusa v2, options are 2nd arg.
+    super();
     this.bucketId_ = options.bucket_id || process.env.REPLIT_BUCKET_ID || "";
     this.backendUrl_ =
       options.backend_url ||
@@ -34,29 +31,23 @@ export class ReplitFileService extends AbstractFileProviderService {
 
   async upload(
     file: ProviderUploadFileDTO,
-  ): Promise<FileProviderUploadResponse> {
+  ): Promise<{ url: string; key: string }> {
     if (!file) {
       throw new MedusaError(MedusaError.Types.INVALID_DATA, "No file provided");
     }
 
-    // Read file content
     let content: Buffer;
     if (Buffer.isBuffer(file.content)) {
       content = file.content;
     } else {
-      // Assume path if string (Medusa usually passes path for uploads from form-data)
-      // Check if we need to read from path
-      // In v2, file.content is Buffer.
-      // Wait, checking types.
       content = Buffer.from(file.content as any);
     }
 
     const key = file.filename;
-    // Replit Object Storage doesn't support folders natively but keys can contain slashes?
-    // Docs: "file.json". We can try "path/to/file.jpg".
 
-    // Upload
-    const { ok, error } = await this.client_.uploadFromBytes(key, content);
+    const result = await this.client_.uploadFromBytes(key, content) as any;
+    const ok = result?.ok;
+    const error = result?.error;
 
     if (!ok) {
       throw new MedusaError(
@@ -65,9 +56,6 @@ export class ReplitFileService extends AbstractFileProviderService {
       );
     }
 
-    // Construct "public" URL (Proxied via backend)
-    // URL Format: <backend_url>/store/file-replit/<key>
-    // Should encode key components?
     const url = `${this.backendUrl_}/store/file-replit/${key}`;
 
     return {
@@ -77,17 +65,15 @@ export class ReplitFileService extends AbstractFileProviderService {
   }
 
   async delete(file: ProviderDeleteFileDTO): Promise<void> {
-    const { ok, error } = await this.client_.delete(file.fileKey);
-    if (!ok) {
-      // Log but don't crash? Or throw?
+    const result = await this.client_.delete(file.fileKey) as any;
+    if (!result?.ok) {
       console.error(
-        `Failed to delete file ${file.fileKey} from Replit Storage: ${error}`,
+        `Failed to delete file ${file.fileKey} from Replit Storage: ${result?.error}`,
       );
     }
   }
 
   async getPresignedDownloadUrl(fileData: ProviderGetFileDTO): Promise<string> {
-    // Replit doesn't provide signed URLs. Return our proxy URL.
     return `${this.backendUrl_}/store/file-replit/${fileData.fileKey}`;
   }
 }

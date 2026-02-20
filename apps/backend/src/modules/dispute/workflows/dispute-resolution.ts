@@ -6,7 +6,6 @@ import {
 
 /**
  * Dispute Resolution Workflow
- * Orchestrates the full dispute lifecycle: open → auto-assign → escalate → resolve.
  */
 const autoAssignMediatorStep = createStep(
   "auto-assign-mediator",
@@ -49,20 +48,21 @@ const resolveDisputeStep = createStep(
       resolutionAmount: refundAmount,
       resolvedBy,
     });
-    return new StepResponse({ dispute: resolved });
+    return new StepResponse({ dispute: resolved }, { dispute: resolved });
   },
-  // Compensation: reopen the dispute if resolution fails downstream
-  async ({ disputeId }: { disputeId: string }, { container }) => {
+  async ({ dispute }: { dispute: any }, { container }) => {
     const disputeService = container.resolve("dispute") as any;
-    await (disputeService as any).updateDisputes({
-      id: disputeId,
+    await disputeService.updateDisputes({
+      id: dispute?.id,
       status: "escalated",
     });
   },
 );
 
+// @ts-ignore: workflow return type
 export const disputeResolutionWorkflow = createWorkflow(
   "dispute-resolution",
+  // @ts-ignore: workflow builder type
   (input: {
     disputeId: string;
     autoAssign?: boolean;
@@ -83,9 +83,10 @@ export const disputeResolutionWorkflow = createWorkflow(
         refundAmount: compensation.compensationAmount as any,
         resolvedBy: input.resolvedBy,
       });
-      return { mediatorResult, compensation, resolved };
+        return { mediatorResult, compensation, resolved };
     }
 
     return { mediatorResult, compensation };
   },
 );
+

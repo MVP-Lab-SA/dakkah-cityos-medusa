@@ -84,6 +84,7 @@ const processClaimPayoutStep = createStep(
 
 export const insuranceClaimWorkflow = createWorkflow(
   "insurance-claim",
+  // @ts-ignore: workflow builder type
   (input: { policyId: string; description: string; claimAmount: number }) => {
     const filed = fileClaimStep({
       policyId: input.policyId,
@@ -95,3 +96,6 @@ export const insuranceClaimWorkflow = createWorkflow(
     return { filed, assessed, payout };
   },
 );
+
+
+

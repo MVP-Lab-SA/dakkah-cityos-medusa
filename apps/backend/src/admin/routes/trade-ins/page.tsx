@@ -1,12 +1,38 @@
 import { Container, Heading, Table, StatusBadge, Button } from "@medusajs/ui";
 import { useQuery } from "@tanstack/react-query";
 import { defineRouteConfig } from "@medusajs/admin-sdk";
+import { client } from "../../lib/client";
 
-const fetchTradeIns = async () => {
-  const res = await fetch("/commerce/admin/trade-ins?limit=50");
-  if (!res.ok) throw new Error("Failed to fetch trade-ins");
-  return res.json();
+type TradeIn = {
+  id: string;
+  customer_id: string;
+  product_id?: string;
+  product_title?: string;
+  condition: string;
+  status: string;
+  customer_expected_value?: number | null;
+  created_at: string;
 };
+
+type TradeInsResponse = { trade_ins: TradeIn[]; count: number };
+
+const fetchTradeIns = async (): Promise<TradeInsResponse> => {
+  const { data } = await client.get<TradeInsResponse>(
+    "/admin/trade-ins?limit=50",
+  );
+  return data;
+};
+
+const tradeColor = (s: string): "green" | "blue" | "red" | "orange" | "grey" =>
+  s === "completed"
+    ? "green"
+    : s === "accepted"
+      ? "blue"
+      : s === "rejected"
+        ? "red"
+        : s === "offer_ready"
+          ? "orange"
+          : "grey";
 
 const TradeInsPage = () => {
   const { data, isLoading, isError, error, refetch } = useQuery({
@@ -39,12 +65,12 @@ const TradeInsPage = () => {
               <Table.HeaderCell>Product</Table.HeaderCell>
               <Table.HeaderCell>Condition</Table.HeaderCell>
               <Table.HeaderCell>Status</Table.HeaderCell>
-              <Table.HeaderCell>Customer Estimate</Table.HeaderCell>
+              <Table.HeaderCell>Estimate</Table.HeaderCell>
               <Table.HeaderCell>Submitted</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {data?.trade_ins?.map((t: any) => (
+            {data?.trade_ins?.map((t) => (
               <Table.Row key={t.id}>
                 <Table.Cell className="font-mono text-xs">
                   {t.customer_id}
@@ -54,25 +80,13 @@ const TradeInsPage = () => {
                 </Table.Cell>
                 <Table.Cell className="capitalize">{t.condition}</Table.Cell>
                 <Table.Cell>
-                  <StatusBadge
-                    color={
-                      t.status === "completed"
-                        ? "green"
-                        : t.status === "accepted"
-                          ? "blue"
-                          : t.status === "rejected"
-                            ? "red"
-                            : t.status === "offer_ready"
-                              ? "orange"
-                              : "grey"
-                    }
-                  >
+                  <StatusBadge color={tradeColor(t.status)}>
                     {t.status}
                   </StatusBadge>
                 </Table.Cell>
                 <Table.Cell>
                   {t.customer_expected_value
-                    ? `${Number(t.customer_expected_value).toFixed(2)}`
+                    ? Number(t.customer_expected_value).toFixed(2)
                     : "—"}
                 </Table.Cell>
                 <Table.Cell>
@@ -82,12 +96,9 @@ const TradeInsPage = () => {
             ))}
             {(!data?.trade_ins || data.trade_ins.length === 0) && (
               <Table.Row>
-                <Table.Cell
-                  colSpan={6}
-                  className="text-center py-4 text-ui-fg-subtle"
-                >
+                <td colSpan={6} className="text-center py-8 text-ui-fg-subtle">
                   No trade-in requests found
-                </Table.Cell>
+                </td>
               </Table.Row>
             )}
           </Table.Body>
@@ -97,8 +108,5 @@ const TradeInsPage = () => {
   );
 };
 
-export const config = defineRouteConfig({
-  label: "Trade-Ins",
-});
-
+export const config = defineRouteConfig({ label: "Trade-Ins" });
 export default TradeInsPage;

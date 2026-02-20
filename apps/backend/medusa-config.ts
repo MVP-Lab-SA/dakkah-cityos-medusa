@@ -654,11 +654,6 @@ module.exports = defineConfig({
       options: {},
     },
     {
-      resolve: "./src/modules/trade-in",
-      key: "tradeIn",
-      options: {},
-    },
-    {
       resolve: "./src/modules/insurance",
       key: "insurance",
       options: {},

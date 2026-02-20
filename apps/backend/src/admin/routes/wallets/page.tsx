@@ -8,12 +8,26 @@ import {
 } from "@medusajs/ui";
 import { useQuery } from "@tanstack/react-query";
 import { defineRouteConfig } from "@medusajs/admin-sdk";
+import { client } from "../../lib/client";
 
-const fetchWallets = async () => {
-  const res = await fetch("/commerce/admin/wallets?limit=50");
-  if (!res.ok) throw new Error("Failed to fetch wallets");
-  return res.json();
+type Wallet = {
+  id: string;
+  customer_id: string;
+  currency: string;
+  balance: number | string;
+  status: string;
+  created_at: string;
 };
+
+type WalletsResponse = { wallets: Wallet[]; count: number };
+
+const fetchWallets = async (): Promise<WalletsResponse> => {
+  const { data } = await client.get<WalletsResponse>("/admin/wallets?limit=50");
+  return data;
+};
+
+const walletColor = (s: string): "green" | "orange" | "red" =>
+  s === "active" ? "green" : s === "frozen" ? "orange" : "red";
 
 const WalletsPage = () => {
   const { data, isLoading, isError, error, refetch } = useQuery({
@@ -50,25 +64,19 @@ const WalletsPage = () => {
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {data?.wallets?.map((w: any) => (
+            {data?.wallets?.map((w) => (
               <Table.Row key={w.id}>
                 <Table.Cell className="font-mono text-xs">
                   {w.customer_id}
                 </Table.Cell>
-                <Table.Cell>{w.currency?.toUpperCase()}</Table.Cell>
+                <Table.Cell>
+                  <Badge>{w.currency?.toUpperCase()}</Badge>
+                </Table.Cell>
                 <Table.Cell className="font-semibold">
                   {Number(w.balance || 0).toFixed(2)}
                 </Table.Cell>
                 <Table.Cell>
-                  <StatusBadge
-                    color={
-                      w.status === "active"
-                        ? "green"
-                        : w.status === "frozen"
-                          ? "orange"
-                          : "red"
-                    }
-                  >
+                  <StatusBadge color={walletColor(w.status)}>
                     {w.status}
                   </StatusBadge>
                 </Table.Cell>
@@ -79,12 +87,9 @@ const WalletsPage = () => {
             ))}
             {(!data?.wallets || data.wallets.length === 0) && (
               <Table.Row>
-                <Table.Cell
-                  colSpan={5}
-                  className="text-center py-4 text-ui-fg-subtle"
-                >
+                <td colSpan={5} className="text-center py-8 text-ui-fg-subtle">
                   No wallets found
-                </Table.Cell>
+                </td>
               </Table.Row>
             )}
           </Table.Body>
@@ -94,8 +99,5 @@ const WalletsPage = () => {
   );
 };
 
-export const config = defineRouteConfig({
-  label: "Wallets",
-});
-
+export const config = defineRouteConfig({ label: "Wallets" });
 export default WalletsPage;

@@ -12,58 +12,52 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { defineRouteConfig } from "@medusajs/admin-sdk";
 import { Key } from "@medusajs/icons";
-import { sdk } from "../../lib/sdk"; // We need to check if this sdk exists or use standard one
+import { client } from "../../lib/client";
 
-// NOTE: standard Medusa SDK usage
-// In Admin Extensions, we might need to rely on the globally available request methods or import the sdk
-// If 'src/lib/sdk' doesn't exist, we'll need to assume standard fetch or create a simple wrapper.
-
-const fetchApiKeys = async () => {
-  // Medusa v2 API for api-keys
-  // GET /admin/api-keys
-  // Note: in Medusa v2 "api-keys" usually refers to Publishable Keys.
-  // Secret keys are service accounts or user tokens.
-
-  // We try fetching publishable keys
-  const response = await fetch("/commerce/admin/api-keys?limit=20", {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  if (!response.ok) {
-    throw new Error("Failed to fetch API keys");
-  }
-  return response.json();
+type ApiKey = {
+  id: string;
+  title: string;
+  token: string;
+  type: string;
+  created_at: string;
 };
+type ApiKeysResponse = { api_keys: ApiKey[] };
 
-const createApiKey = async (title: string) => {
-  const response = await fetch("/commerce/admin/api-keys", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ title, type: "publishable" }),
+const fetchApiKeys = async (): Promise<ApiKeysResponse> => {
+  const { data } = await client.get<ApiKeysResponse>(
+    "/admin/api-keys?limit=20",
+  );
+  return data;
+};
+const createApiKey = async (title: string): Promise<{ api_key: ApiKey }> => {
+  const { data } = await client.post<{ api_key: ApiKey }>("/admin/api-keys", {
+    title,
+    type: "publishable",
   });
-  if (!response.ok) {
-    throw new Error("Failed to create API key");
-  }
-  return response.json();
+  return data;
+};
+const revokeApiKey = async (id: string): Promise<void> => {
+  await client.delete(`/admin/api-keys/${id}`);
 };
 
 const ApiKeysPage = () => {
   const queryClient = useQueryClient();
   const [newKeyTitle, setNewKeyTitle] = useState("");
-
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["api-keys"],
     queryFn: fetchApiKeys,
   });
-
   const createMutation = useMutation({
     mutationFn: createApiKey,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["api-keys"] });
       setNewKeyTitle("");
+    },
+  });
+  const revokeMutation = useMutation({
+    mutationFn: revokeApiKey,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["api-keys"] });
     },
   });
 
@@ -74,7 +68,6 @@ const ApiKeysPage = () => {
         <p className="text-ui-fg-subtle">
           Manage Publishable API Keys for your storefronts.
         </p>
-
         <div className="flex gap-2 items-end max-w-md">
           <div className="w-full">
             <Label size="small" weight="plus">
@@ -97,14 +90,11 @@ const ApiKeysPage = () => {
           <p className="text-red-500 text-sm">Failed to create key</p>
         )}
       </div>
-
       {isError && (
         <div className="text-red-500 mb-4">
-          Error loading keys:{" "}
-          {error instanceof Error ? error.message : "Unknown error"}
+          Error: {error instanceof Error ? error.message : "Unknown"}
         </div>
       )}
-
       {isLoading ? (
         <div>Loading...</div>
       ) : (
@@ -112,14 +102,14 @@ const ApiKeysPage = () => {
           <Table.Header>
             <Table.Row>
               <Table.HeaderCell>Title</Table.HeaderCell>
-              <Table.HeaderCell>Token (Redacted)</Table.HeaderCell>
+              <Table.HeaderCell>Token</Table.HeaderCell>
               <Table.HeaderCell>Type</Table.HeaderCell>
               <Table.HeaderCell>Created At</Table.HeaderCell>
-              <Table.HeaderCell>ID</Table.HeaderCell>
+              <Table.HeaderCell>Actions</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {data?.api_keys?.map((key: any) => (
+            {data?.api_keys?.map((key) => (
               <Table.Row key={key.id}>
                 <Table.Cell>{key.title}</Table.Cell>
                 <Table.Cell className="font-mono text-xs">
@@ -132,16 +122,23 @@ const ApiKeysPage = () => {
                 <Table.Cell>
                   {new Date(key.created_at).toLocaleDateString()}
                 </Table.Cell>
-                <Table.Cell className="text-ui-fg-subtle text-xs">
-                  {key.id}
+                <Table.Cell>
+                  <Button
+                    variant="danger"
+                    size="small"
+                    onClick={() => revokeMutation.mutate(key.id)}
+                    disabled={revokeMutation.isPending}
+                  >
+                    Revoke
+                  </Button>
                 </Table.Cell>
               </Table.Row>
             ))}
             {(!data?.api_keys || data.api_keys.length === 0) && (
               <Table.Row>
-                <Table.Cell colSpan={5} className="text-center py-4">
-                  No API Keys found
-                </Table.Cell>
+                <td colSpan={5} className="text-center py-8 text-ui-fg-subtle">
+                  No API Keys found. Create one above.
+                </td>
               </Table.Row>
             )}
           </Table.Body>
@@ -151,9 +148,5 @@ const ApiKeysPage = () => {
   );
 };
 
-export const config = defineRouteConfig({
-  label: "API Keys",
-  icon: Key,
-});
-
+export const config = defineRouteConfig({ label: "API Keys", icon: Key });
 export default ApiKeysPage;

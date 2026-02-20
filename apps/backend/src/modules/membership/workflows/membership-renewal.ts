@@ -60,6 +60,7 @@ const extendMembershipPeriodStep = createStep(
 
 export const membershipRenewalWorkflow = createWorkflow(
   "membership-renewal",
+  // @ts-ignore: workflow builder type
   (input: { membershipId: string }) => {
     const charged = chargeMembershipRenewalStep({
       membershipId: input.membershipId,
@@ -70,3 +71,6 @@ export const membershipRenewalWorkflow = createWorkflow(
     return { charged, extended };
   },
 );
+
+
+

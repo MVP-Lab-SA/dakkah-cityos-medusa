@@ -90,6 +90,7 @@ const releaseDepositStep = createStep(
 
 export const rentalReturnWorkflow = createWorkflow(
   "rental-return",
+  // @ts-ignore: workflow builder type
   (input: { rentalId: string; condition?: string; notes?: string }) => {
     const returned = processRentalReturnStep({
       rentalId: input.rentalId,
@@ -107,3 +108,6 @@ export const rentalReturnWorkflow = createWorkflow(
     return { returned, damages, deposit };
   },
 );
+
+
+

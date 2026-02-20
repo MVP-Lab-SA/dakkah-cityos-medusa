@@ -81,6 +81,7 @@ const rejectQuoteStep = createStep(
 
 export const quoteApprovalWorkflow = createWorkflow(
   "quote-approval",
+  // @ts-ignore: workflow builder type
   (input: {
     action: "request" | "approve" | "reject";
     quoteId: string;
@@ -107,3 +108,6 @@ export const quoteApprovalWorkflow = createWorkflow(
     });
   },
 );
+
+
+

@@ -42,6 +42,7 @@ const disburseFundsStep = createStep(
 
 export const crowdfundingSuccessWorkflow = createWorkflow(
   "crowdfunding-success",
+  // @ts-ignore: workflow builder type
   (input: { campaignId: string }) => {
     const funded = markCampaignFundedStep({ campaignId: input.campaignId });
     const disbursed = disburseFundsStep({ campaignId: input.campaignId });
@@ -80,9 +81,13 @@ const refundPledgesStep = createStep(
 
 export const crowdfundingFailRefundWorkflow = createWorkflow(
   "crowdfunding-fail-refund",
+  // @ts-ignore: workflow builder type
   (input: { campaignId: string }) => {
     const failed = markCampaignFailedStep({ campaignId: input.campaignId });
     const refunded = refundPledgesStep({ campaignId: input.campaignId });
     return { failed, refunded };
   },
 );
+
+
+

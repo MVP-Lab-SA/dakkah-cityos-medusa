@@ -1,5 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework";
-import { WALLET_MODULE } from "../../../../modules/wallet";
+
 
 // GET  /store/wallet/me/transactions
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
@@ -10,7 +10,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     return res.status(401).json({ message: "Not authenticated" });
   }
 
-  const walletService = req.scope.resolve(WALLET_MODULE) as any;
+  const walletService = req.scope.resolve("wallet") as any;
   const limit = parseInt((req.query.limit as string) || "20");
   const offset = parseInt((req.query.offset as string) || "0");
 
@@ -31,3 +31,5 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     return res.status(500).json({ message: error.message });
   }
 }
+
+

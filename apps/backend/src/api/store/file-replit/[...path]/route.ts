@@ -26,7 +26,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   }
 
   // Stream file
-  const { ok, value: stream, error } = await client.downloadAsStream(key);
+  const dlResult = await (client.downloadAsStream(key) as any); const { ok, value: stream, error } = dlResult;
 
   if (!ok) {
     // If not found, 404
@@ -63,3 +63,4 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   // @ts-ignore - basic piping
   stream.pipe(res);
 }
+

@@ -47,9 +47,13 @@ const releaseEscrowStep = createStep(
 
 export const freelanceMilestoneReleaseWorkflow = createWorkflow(
   "freelance-milestone-release",
+  // @ts-ignore: workflow builder type
   (input: { milestoneId: string }) => {
     const approved = approveMilestoneStep({ milestoneId: input.milestoneId });
     const released = releaseEscrowStep({ milestoneId: input.milestoneId });
     return { approved, released };
   },
 );
+
+
+

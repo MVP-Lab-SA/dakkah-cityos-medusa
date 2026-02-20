@@ -51,9 +51,13 @@ const chargeBillingCycleStep = createStep(
 
 export const subscriptionRenewalWorkflow = createWorkflow(
   "subscription-renewal",
+  // @ts-ignore: workflow builder type
   (input: { subscriptionId: string }) => {
     const renewResult = renewPeriodStep(input);
     const chargeResult = chargeBillingCycleStep(input);
     return { renewResult, chargeResult };
   },
 );
+
+
+

@@ -1,11 +1,9 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework";
-import { WALLET_MODULE } from "../../../../../modules/wallet";
-
 // GET  /admin/wallets/:id   — wallet detail + transactions
 // POST /admin/wallets/:id/adjust — admin credit/debit
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  const walletService = req.scope.resolve(WALLET_MODULE) as any;
+  const walletService = req.scope.resolve("wallet") as any;
   const { id } = req.params;
 
   try {
@@ -20,7 +18,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 }
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  const walletService = req.scope.resolve(WALLET_MODULE) as any;
+  const walletService = req.scope.resolve("wallet") as any;
   const { id } = req.params;
   const { type, amount, description, reference_id } = req.body as any;
 
@@ -55,3 +53,4 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     return res.status(400).json({ message: error.message });
   }
 }
+

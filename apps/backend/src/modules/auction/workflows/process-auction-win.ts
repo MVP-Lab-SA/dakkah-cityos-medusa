@@ -62,9 +62,13 @@ const createAuctionOrder = createStep(
 
 export const processAuctionWinWorkflow = createWorkflow(
   "process-auction-win",
+  // @ts-ignore: workflow builder type
   (input: { auctionId: string; winnerId: string; finalPrice: number }) => {
     const notifyResult = notifyAuctionWinner(input);
     const orderResult = createAuctionOrder(input);
     return { notifyResult, orderResult };
   },
 );
+
+
+

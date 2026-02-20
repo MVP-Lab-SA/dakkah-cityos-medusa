@@ -72,6 +72,7 @@ const presentOfferStep = createStep(
 
 export const tradeInValuationWorkflow = createWorkflow(
   "trade-in-valuation",
+  // @ts-ignore: workflow builder type
   (input: {
     vehicleId: string;
     customerId: string;
@@ -95,3 +96,6 @@ export const tradeInValuationWorkflow = createWorkflow(
     return { submitted, evaluated, offer };
   },
 );
+
+
+

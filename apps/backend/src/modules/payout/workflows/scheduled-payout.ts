@@ -66,6 +66,7 @@ const processPayoutBatchStep = createStep(
 
 export const scheduledPayoutWorkflow = createWorkflow(
   "scheduled-payout",
+  // @ts-ignore: workflow builder type
   (input: { tenantId: string; vendorId?: string }) => {
     const aggregated = aggregatePendingPayoutsStep(input);
     const processed = processPayoutBatchStep({
@@ -74,3 +75,6 @@ export const scheduledPayoutWorkflow = createWorkflow(
     return { aggregated, processed };
   },
 );
+
+
+

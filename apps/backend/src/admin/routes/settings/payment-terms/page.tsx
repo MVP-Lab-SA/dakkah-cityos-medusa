@@ -1,120 +1,123 @@
-import { defineRouteConfig } from "@medusajs/admin-sdk"
-import { Container, Heading, Text, Button, Badge, Input, Label, Toaster } from "@medusajs/ui"
-import { CurrencyDollar, Plus, Trash, PencilSquare } from "@medusajs/icons"
-import { useState, useEffect } from "react"
+import { defineRouteConfig } from "@medusajs/admin-sdk";
+import {
+  Container,
+  Heading,
+  Text,
+  Button,
+  Badge,
+  Input,
+  Label,
+  Toaster,
+} from "@medusajs/ui";
+import { CurrencyDollar, Plus, Trash, PencilSquare } from "@medusajs/icons";
+import { useState, useEffect } from "react";
+import { client } from "../../../lib/client";
 
 interface PaymentTerm {
-  id: string
-  name: string
-  code: string
-  net_days: number
-  discount_percent: number
-  discount_days: number
-  is_default: boolean
-  is_active: boolean
+  id: string;
+  name: string;
+  code: string;
+  net_days: number;
+  discount_percent: number;
+  discount_days: number;
+  is_default: boolean;
+  is_active: boolean;
 }
 
 const PaymentTermsPage = () => {
-  const [terms, setTerms] = useState<PaymentTerm[]>([])
-  const [loading, setLoading] = useState(true)
-  const [showForm, setShowForm] = useState(false)
-  const [editingTerm, setEditingTerm] = useState<PaymentTerm | null>(null)
-  
+  const [terms, setTerms] = useState<PaymentTerm[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editingTerm, setEditingTerm] = useState<PaymentTerm | null>(null);
+
   // Form state
   const [formData, setFormData] = useState({
     name: "",
     net_days: 30,
     discount_percent: 0,
     discount_days: 0,
-    is_default: false
-  })
+    is_default: false,
+  });
 
   useEffect(() => {
-    fetchTerms()
-  }, [])
+    fetchTerms();
+  }, []);
 
   const fetchTerms = async () => {
     try {
-      const response = await fetch("/admin/payment-terms", {
-        credentials: "include"
-      })
-      const data = await response.json()
-      setTerms(data.payment_terms || [])
+      const { data } = await client.get<{ payment_terms: PaymentTerm[] }>(
+        "/admin/payment-terms",
+      );
+      setTerms(data.payment_terms || []);
     } catch (error) {
-      console.error("Failed to fetch payment terms:", error)
+      console.error("Failed to fetch payment terms:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    try {
-      const url = editingTerm 
-        ? `/admin/payment-terms/${editingTerm.id}`
-        : "/admin/payment-terms"
-      
-      const response = await fetch(url, {
-        method: editingTerm ? "PUT" : "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
-      })
+    e.preventDefault();
 
-      if (response.ok) {
-        fetchTerms()
-        resetForm()
+    try {
+      const url = editingTerm
+        ? `/admin/payment-terms/${editingTerm.id}`
+        : "/admin/payment-terms";
+
+      if (editingTerm) {
+        await client.put(url, formData);
+      } else {
+        await client.post(url, formData);
       }
+
+      fetchTerms();
+      resetForm();
     } catch (error) {
-      console.error("Failed to save payment term:", error)
+      console.error("Failed to save payment term:", error);
     }
-  }
+  };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this payment term?")) return
-    
+    if (!confirm("Are you sure you want to delete this payment term?")) return;
+
     try {
-      await fetch(`/admin/payment-terms/${id}`, {
-        method: "DELETE",
-        credentials: "include"
-      })
-      fetchTerms()
+      await client.delete(`/admin/payment-terms/${id}`);
+      fetchTerms();
     } catch (error) {
-      console.error("Failed to delete payment term:", error)
+      console.error("Failed to delete payment term:", error);
     }
-  }
+  };
 
   const handleEdit = (term: PaymentTerm) => {
-    setEditingTerm(term)
+    setEditingTerm(term);
     setFormData({
       name: term.name,
       net_days: term.net_days,
       discount_percent: term.discount_percent,
       discount_days: term.discount_days,
-      is_default: term.is_default
-    })
-    setShowForm(true)
-  }
+      is_default: term.is_default,
+    });
+    setShowForm(true);
+  };
 
   const resetForm = () => {
-    setShowForm(false)
-    setEditingTerm(null)
+    setShowForm(false);
+    setEditingTerm(null);
     setFormData({
       name: "",
       net_days: 30,
       discount_percent: 0,
       discount_days: 0,
-      is_default: false
-    })
-  }
+      is_default: false,
+    });
+  };
 
   const generatePreviewCode = () => {
     if (formData.discount_percent > 0 && formData.discount_days > 0) {
-      return `${formData.discount_percent}/${formData.discount_days} Net ${formData.net_days}`
+      return `${formData.discount_percent}/${formData.discount_days} Net ${formData.net_days}`;
     }
-    return `Net ${formData.net_days}`
-  }
+    return `Net ${formData.net_days}`;
+  };
 
   if (loading) {
     return (
@@ -124,13 +127,13 @@ const PaymentTermsPage = () => {
           <div className="h-32 bg-ui-bg-subtle rounded"></div>
         </div>
       </Container>
-    )
+    );
   }
 
   return (
     <Container className="p-8">
       <Toaster />
-      
+
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <div>
@@ -138,11 +141,12 @@ const PaymentTermsPage = () => {
             Payment Terms
           </Heading>
           <Text className="text-ui-fg-subtle">
-            Configure payment terms with early payment discounts for B2B customers
+            Configure payment terms with early payment discounts for B2B
+            customers
           </Text>
         </div>
-        <Button 
-          variant="primary" 
+        <Button
+          variant="primary"
           onClick={() => setShowForm(true)}
           disabled={showForm}
         >
@@ -160,9 +164,9 @@ const PaymentTermsPage = () => {
           <div>
             <Text className="font-medium mb-1">Early Payment Discounts</Text>
             <Text className="text-ui-fg-subtle text-sm">
-              Payment terms like "2/10 Net 30" mean customers get a 2% discount 
-              if they pay within 10 days, otherwise the full amount is due in 30 days.
-              This encourages faster payment and improves cash flow.
+              Payment terms like "2/10 Net 30" mean customers get a 2% discount
+              if they pay within 10 days, otherwise the full amount is due in 30
+              days. This encourages faster payment and improves cash flow.
             </Text>
           </div>
         </div>
@@ -174,7 +178,7 @@ const PaymentTermsPage = () => {
           <Heading level="h2" className="text-lg font-semibold mb-6">
             {editingTerm ? "Edit Payment Term" : "Create Payment Term"}
           </Heading>
-          
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-2 gap-6">
               {/* Name */}
@@ -183,7 +187,9 @@ const PaymentTermsPage = () => {
                 <Input
                   id="name"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
                   placeholder="e.g., Standard Net 30"
                   required
                 />
@@ -198,7 +204,12 @@ const PaymentTermsPage = () => {
                   min={1}
                   max={365}
                   value={formData.net_days}
-                  onChange={(e) => setFormData({ ...formData, net_days: parseInt(e.target.value) || 30 })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      net_days: parseInt(e.target.value) || 30,
+                    })
+                  }
                   required
                 />
                 <Text className="text-xs text-ui-fg-subtle mt-1">
@@ -208,7 +219,9 @@ const PaymentTermsPage = () => {
 
               {/* Discount Percent */}
               <div>
-                <Label htmlFor="discount_percent">Early Payment Discount (%)</Label>
+                <Label htmlFor="discount_percent">
+                  Early Payment Discount (%)
+                </Label>
                 <Input
                   id="discount_percent"
                   type="number"
@@ -216,7 +229,12 @@ const PaymentTermsPage = () => {
                   max={100}
                   step={0.5}
                   value={formData.discount_percent}
-                  onChange={(e) => setFormData({ ...formData, discount_percent: parseFloat(e.target.value) || 0 })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      discount_percent: parseFloat(e.target.value) || 0,
+                    })
+                  }
                 />
                 <Text className="text-xs text-ui-fg-subtle mt-1">
                   Set to 0 for no early payment discount
@@ -232,7 +250,12 @@ const PaymentTermsPage = () => {
                   min={0}
                   max={formData.net_days}
                   value={formData.discount_days}
-                  onChange={(e) => setFormData({ ...formData, discount_days: parseInt(e.target.value) || 0 })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      discount_days: parseInt(e.target.value) || 0,
+                    })
+                  }
                   disabled={formData.discount_percent === 0}
                 />
                 <Text className="text-xs text-ui-fg-subtle mt-1">
@@ -243,11 +266,16 @@ const PaymentTermsPage = () => {
 
             {/* Preview */}
             <div className="bg-ui-bg-subtle rounded-lg p-4">
-              <Text className="text-sm text-ui-fg-subtle mb-2">Preview Code:</Text>
-              <Text className="text-xl font-mono font-bold">{generatePreviewCode()}</Text>
+              <Text className="text-sm text-ui-fg-subtle mb-2">
+                Preview Code:
+              </Text>
+              <Text className="text-xl font-mono font-bold">
+                {generatePreviewCode()}
+              </Text>
               {formData.discount_percent > 0 && (
                 <Text className="text-sm text-ui-fg-subtle mt-2">
-                  Customers paying within {formData.discount_days} days save {formData.discount_percent}%
+                  Customers paying within {formData.discount_days} days save{" "}
+                  {formData.discount_percent}%
                 </Text>
               )}
             </div>
@@ -258,10 +286,14 @@ const PaymentTermsPage = () => {
                 type="checkbox"
                 id="is_default"
                 checked={formData.is_default}
-                onChange={(e) => setFormData({ ...formData, is_default: e.target.checked })}
+                onChange={(e) =>
+                  setFormData({ ...formData, is_default: e.target.checked })
+                }
                 className="rounded border-ui-border-base"
               />
-              <Label htmlFor="is_default">Set as default for new B2B customers</Label>
+              <Label htmlFor="is_default">
+                Set as default for new B2B customers
+              </Label>
             </div>
 
             {/* Actions */}
@@ -282,29 +314,47 @@ const PaymentTermsPage = () => {
         <table className="w-full">
           <thead className="bg-ui-bg-subtle border-b border-ui-border-base">
             <tr>
-              <th className="text-left p-4 font-medium text-ui-fg-subtle">Name</th>
-              <th className="text-left p-4 font-medium text-ui-fg-subtle">Code</th>
-              <th className="text-left p-4 font-medium text-ui-fg-subtle">Net Days</th>
-              <th className="text-left p-4 font-medium text-ui-fg-subtle">Early Discount</th>
-              <th className="text-left p-4 font-medium text-ui-fg-subtle">Status</th>
-              <th className="text-right p-4 font-medium text-ui-fg-subtle">Actions</th>
+              <th className="text-left p-4 font-medium text-ui-fg-subtle">
+                Name
+              </th>
+              <th className="text-left p-4 font-medium text-ui-fg-subtle">
+                Code
+              </th>
+              <th className="text-left p-4 font-medium text-ui-fg-subtle">
+                Net Days
+              </th>
+              <th className="text-left p-4 font-medium text-ui-fg-subtle">
+                Early Discount
+              </th>
+              <th className="text-left p-4 font-medium text-ui-fg-subtle">
+                Status
+              </th>
+              <th className="text-right p-4 font-medium text-ui-fg-subtle">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
             {terms.length === 0 ? (
               <tr>
                 <td colSpan={6} className="p-8 text-center text-ui-fg-subtle">
-                  No payment terms configured. Create your first payment term above.
+                  No payment terms configured. Create your first payment term
+                  above.
                 </td>
               </tr>
             ) : (
               terms.map((term) => (
-                <tr key={term.id} className="border-b border-ui-border-base last:border-0">
+                <tr
+                  key={term.id}
+                  className="border-b border-ui-border-base last:border-0"
+                >
                   <td className="p-4">
                     <div className="flex items-center gap-2">
                       <Text className="font-medium">{term.name}</Text>
                       {term.is_default && (
-                        <Badge color="green" size="small">Default</Badge>
+                        <Badge color="green" size="small">
+                          Default
+                        </Badge>
                       )}
                     </div>
                   </td>
@@ -387,12 +437,12 @@ const PaymentTermsPage = () => {
         </div>
       </div>
     </Container>
-  )
-}
+  );
+};
 
 export const config = defineRouteConfig({
   label: "Payment Terms",
   icon: CurrencyDollar,
-})
+});
 
-export default PaymentTermsPage
+export default PaymentTermsPage;

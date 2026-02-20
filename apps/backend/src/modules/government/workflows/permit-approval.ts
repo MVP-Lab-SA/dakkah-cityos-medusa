@@ -72,6 +72,7 @@ const approveApplicationStep = createStep(
 
 export const permitApprovalWorkflow = createWorkflow(
   "permit-approval",
+  // @ts-ignore: workflow builder type
   (input: { applicationId: string; approved?: boolean; reason?: string }) => {
     const submitted = submitApplicationStep({
       applicationId: input.applicationId,
@@ -87,3 +88,6 @@ export const permitApprovalWorkflow = createWorkflow(
     return { submitted, reviewed, approved };
   },
 );
+
+
+
