@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { model } from "@medusajs/framework/utils"
+import { model } from "@medusajs/framework/utils";
 
 const LoyaltyProgram = model.define("loyalty_program", {
   id: model.id().primaryKey(),
@@ -12,6 +11,6 @@ const LoyaltyProgram = model.define("loyalty_program", {
   tiers: model.json().nullable(),
   earn_rules: model.json().nullable(),
   metadata: model.json().nullable(),
-})
+});
 
-export default LoyaltyProgram
+export default LoyaltyProgram;

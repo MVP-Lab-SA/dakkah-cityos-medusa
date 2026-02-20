@@ -663,5 +663,15 @@ module.exports = defineConfig({
       key: "insurance",
       options: {},
     },
+    {
+      resolve: "./src/modules/print-on-demand",
+      key: "printOnDemand",
+      options: {},
+    },
+    {
+      resolve: "./src/modules/white-label",
+      key: "whiteLabel",
+      options: {},
+    },
   ],
 });

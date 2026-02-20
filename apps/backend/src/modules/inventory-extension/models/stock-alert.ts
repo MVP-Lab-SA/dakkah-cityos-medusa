@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { model } from "@medusajs/framework/utils"
+import { model } from "@medusajs/framework/utils";
 
 const StockAlert = model.define("stock_alert", {
   id: model.id().primaryKey(),
@@ -13,6 +12,6 @@ const StockAlert = model.define("stock_alert", {
   notified_at: model.dateTime().nullable(),
   resolved_at: model.dateTime().nullable(),
   metadata: model.json().nullable(),
-})
+});
 
-export default StockAlert
+export default StockAlert;

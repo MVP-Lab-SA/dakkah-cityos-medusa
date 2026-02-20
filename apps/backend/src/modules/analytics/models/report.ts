@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { model } from "@medusajs/framework/utils"
+import { model } from "@medusajs/framework/utils";
 
 const Report = model.define("report", {
   id: model.id().primaryKey(),
@@ -13,6 +12,6 @@ const Report = model.define("report", {
   last_generated: model.dateTime().nullable(),
   is_public: model.boolean().default(false),
   metadata: model.json().nullable(),
-})
+});
 
-export default Report
+export default Report;

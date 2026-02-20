@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { model } from "@medusajs/framework/utils"
+import { model } from "@medusajs/framework/utils";
 
 const ReservationHold = model.define("reservation_hold", {
   id: model.id().primaryKey(),
@@ -11,6 +10,6 @@ const ReservationHold = model.define("reservation_hold", {
   expires_at: model.dateTime().nullable(),
   status: model.text().default("active"),
   metadata: model.json().nullable(),
-})
+});
 
-export default ReservationHold
+export default ReservationHold;

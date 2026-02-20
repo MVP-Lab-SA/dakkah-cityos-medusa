@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { model } from "@medusajs/framework/utils"
+import { model } from "@medusajs/framework/utils";
 
 const AnalyticsEvent = model.define("analytics_event", {
   id: model.id().primaryKey(),
@@ -12,6 +11,6 @@ const AnalyticsEvent = model.define("analytics_event", {
   properties: model.json().nullable(),
   revenue: model.bigNumber().nullable(),
   currency: model.text().nullable(),
-})
+});
 
-export default AnalyticsEvent
+export default AnalyticsEvent;

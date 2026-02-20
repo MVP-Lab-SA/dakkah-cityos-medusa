@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { model } from "@medusajs/framework/utils"
+import { model } from "@medusajs/framework/utils";
 
 const PointTransaction = model.define("point_transaction", {
   id: model.id().primaryKey(),
@@ -13,6 +12,6 @@ const PointTransaction = model.define("point_transaction", {
   description: model.text().nullable(),
   expires_at: model.dateTime().nullable(),
   metadata: model.json().nullable(),
-})
+});
 
-export default PointTransaction
+export default PointTransaction;

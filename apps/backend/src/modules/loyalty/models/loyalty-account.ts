@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { model } from "@medusajs/framework/utils"
+import { model } from "@medusajs/framework/utils";
 
 const LoyaltyAccount = model.define("loyalty_account", {
   id: model.id().primaryKey(),
@@ -12,6 +11,6 @@ const LoyaltyAccount = model.define("loyalty_account", {
   tier_expires_at: model.dateTime().nullable(),
   status: model.text().default("active"),
   metadata: model.json().nullable(),
-})
+});
 
-export default LoyaltyAccount
+export default LoyaltyAccount;
