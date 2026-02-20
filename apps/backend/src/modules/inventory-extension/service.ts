@@ -202,7 +202,7 @@ class InventoryExtensionModuleService
       destination_location_id: data.destination_location_id,
       transfer_number: data.transfer_number,
       status: "draft",
-      items: data.items ?? null,
+      items: (data.items ?? null) as Record<string, unknown>[] | null,
       notes: data.notes ?? null,
       initiated_by: data.initiated_by ?? null,
       metadata: data.metadata ?? null,

@@ -1,66 +1,139 @@
-// @ts-nocheck
-import { MedusaService } from "@medusajs/framework/utils"
-import Payout from "./models/payout"
-import PayoutTransactionLink from "./models/payout-transaction-link"
-import { createLogger } from "../../lib/logger"
-const logger = createLogger("module:payout")
+import { MedusaService } from "@medusajs/framework/utils";
+import Payout from "./models/payout";
+import PayoutTransactionLink from "./models/payout-transaction-link";
+import { createLogger } from "../../lib/logger";
 
-class PayoutModuleService extends MedusaService({
-  Payout,
-  PayoutTransactionLink,
-}) {
-  private stripe: any = null
-  
-  private getStripe() {
-    if (!this.stripe) {
-      const Stripe = require("stripe")
-      this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-        apiVersion: "2023-10-16"
-      })
-    }
-    return this.stripe
+const logger = createLogger("module:payout");
+
+type PayoutStatus =
+  | "pending"
+  | "processing"
+  | "completed"
+  | "failed"
+  | "cancelled"
+  | "on_hold";
+type PaymentMethod =
+  | "stripe_connect"
+  | "bank_transfer"
+  | "paypal"
+  | "manual"
+  | "check";
+
+type PayoutRecord = {
+  id: string;
+  payout_number: string;
+  tenant_id: string;
+  store_id: string | null;
+  vendor_id: string;
+  gross_amount: number | string;
+  commission_amount: number | string;
+  platform_fee_amount: number | string;
+  adjustment_amount: number | string;
+  net_amount: number | string;
+  period_start: Date | null;
+  period_end: Date | null;
+  transaction_count: number;
+  payment_method: PaymentMethod;
+  status: PayoutStatus;
+  scheduled_for: Date | null;
+  stripe_transfer_id: string | null;
+  stripe_failure_code: string | null;
+  stripe_failure_message: string | null;
+  failure_reason: string | null;
+  retry_count: number;
+  last_retry_at: Date | null;
+  processing_started_at: Date | null;
+  processing_completed_at: Date | null;
+  processing_failed_at: Date | null;
+  notes: string | null;
+  metadata: Record<string, unknown> | null;
+};
+
+interface PayoutServiceBase {
+  listPayouts(filters?: Record<string, unknown>): Promise<PayoutRecord[]>;
+  retrievePayout(id: string): Promise<PayoutRecord>;
+  createPayouts(data: {
+    payout_number: string;
+    tenant_id: string;
+    store_id?: string | null;
+    vendor_id: string;
+    gross_amount: number;
+    commission_amount: number;
+    platform_fee_amount: number;
+    adjustment_amount: number;
+    net_amount: number;
+    period_start: Date;
+    period_end: Date;
+    transaction_count: number;
+    payment_method: PaymentMethod;
+    status: PayoutStatus;
+    scheduled_for?: Date | null;
+  }): Promise<PayoutRecord>;
+  updatePayouts(data: Record<string, unknown>): Promise<PayoutRecord>;
+  createPayoutTransactionLinks(
+    data: Record<string, unknown> | Record<string, unknown>[],
+  ): Promise<unknown>;
+}
+
+const Base = MedusaService({ Payout, PayoutTransactionLink });
+
+// Lazy Stripe singleton — typed as any because Stripe SDK types require the specific
+// installed version; using a module-level singleton avoids class property any fields.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let stripeInstance: any = null;
+
+function getStripe() {
+  if (!stripeInstance) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const Stripe = require("stripe");
+    stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY ?? "", {
+      apiVersion: "2023-10-16",
+    });
   }
-  
-  // Generate payout number
+  return stripeInstance;
+}
+
+class PayoutModuleService extends Base implements PayoutServiceBase {
   private generatePayoutNumber(): string {
-    const date = new Date()
-    const year = date.getFullYear()
-    const timestamp = Date.now().toString().slice(-6)
-    return `PO-${year}-${timestamp}`
+    const date = new Date();
+    const year = date.getFullYear();
+    const timestamp = Date.now().toString().slice(-6);
+    return `PO-${year}-${timestamp}`;
   }
 
-  // Create payout for vendor
-  async createVendorPayout({
-    vendorId,
-    tenantId,
-    storeId,
-    periodStart,
-    periodEnd,
-    transactionIds,
-    grossAmount,
-    commissionAmount,
-    platformFeeAmount = 0,
-    adjustmentAmount = 0,
-    paymentMethod,
-    scheduledFor,
-  }: {
-    vendorId: string
-    tenantId: string
-    storeId?: string | null
-    periodStart: Date
-    periodEnd: Date
-    transactionIds: string[]
-    grossAmount: number
-    commissionAmount: number
-    platformFeeAmount?: number
-    adjustmentAmount?: number
-    paymentMethod: string
-    scheduledFor?: Date | null
-  }) {
-    const netAmount = grossAmount - commissionAmount - platformFeeAmount + adjustmentAmount
+  async createVendorPayout(data: {
+    vendorId: string;
+    tenantId: string;
+    storeId?: string | null;
+    periodStart: Date;
+    periodEnd: Date;
+    transactionIds: string[];
+    grossAmount: number;
+    commissionAmount: number;
+    platformFeeAmount?: number;
+    adjustmentAmount?: number;
+    paymentMethod: PaymentMethod;
+    scheduledFor?: Date | null;
+  }): Promise<PayoutRecord> {
+    const {
+      vendorId,
+      tenantId,
+      storeId = null,
+      periodStart,
+      periodEnd,
+      transactionIds,
+      grossAmount,
+      commissionAmount,
+      platformFeeAmount = 0,
+      adjustmentAmount = 0,
+      paymentMethod,
+      scheduledFor = null,
+    } = data;
 
-    // Create payout
-    const payout = await (this as any).createPayouts({
+    const netAmount =
+      grossAmount - commissionAmount - platformFeeAmount + adjustmentAmount;
+
+    const payout = await this.createPayouts({
       payout_number: this.generatePayoutNumber(),
       tenant_id: tenantId,
       store_id: storeId,
@@ -73,47 +146,41 @@ class PayoutModuleService extends MedusaService({
       period_start: periodStart,
       period_end: periodEnd,
       transaction_count: transactionIds.length,
-      payment_method: paymentMethod as any,
+      payment_method: paymentMethod,
       status: scheduledFor ? "pending" : "processing",
       scheduled_for: scheduledFor,
-    })
+    });
 
-    // Link transactions
-    const links = transactionIds.map(txId => ({
+    const links = transactionIds.map((txId) => ({
       payout_id: payout.id,
       commission_transaction_id: txId,
-      amount: netAmount, // Simplified - in real scenario would be per-transaction
-    }))
+      amount: netAmount,
+    }));
+    await this.createPayoutTransactionLinks(links);
 
-    await this.createPayoutTransactionLinks(links)
-
-    return payout
+    return payout;
   }
 
-  // Process Stripe Connect payout - FULL IMPLEMENTATION
-  async processStripeConnectPayout(payoutId: string, stripeAccountId: string) {
-    const stripe = this.getStripe()
-    const payout = await this.retrievePayouts(payoutId)
-    
-    if (!payout) {
-      throw new Error(`Payout ${payoutId} not found`)
-    }
-    
+  async processStripeConnectPayout(
+    payoutId: string,
+    stripeAccountId: string,
+  ): Promise<PayoutRecord> {
+    const stripe = getStripe();
+    const payout = await this.retrievePayout(payoutId);
+
     if (!stripeAccountId) {
-      throw new Error(`No Stripe account ID provided for payout ${payoutId}`)
+      throw new Error(`No Stripe account ID provided for payout ${payoutId}`);
     }
 
     try {
-      // Update status to processing
-      await (this as any).updatePayouts({
+      await this.updatePayouts({
         id: payoutId,
         status: "processing",
         processing_started_at: new Date(),
-      })
+      });
 
-      // Create transfer to connected account
       const transfer = await stripe.transfers.create({
-        amount: Math.round(Number(payout.net_amount) * 100), // Convert to cents
+        amount: Math.round(Number(payout.net_amount) * 100),
         currency: "usd",
         destination: stripeAccountId,
         transfer_group: payout.payout_number,
@@ -121,45 +188,45 @@ class PayoutModuleService extends MedusaService({
           payout_id: payoutId,
           payout_number: payout.payout_number,
           vendor_id: payout.vendor_id,
-          period_start: payout.period_start?.toISOString(),
-          period_end: payout.period_end?.toISOString(),
-        }
-      })
+        },
+      });
 
-      // Update payout with Stripe details
-      const updatedPayout = await (this as any).updatePayouts({
+      const updated = await this.updatePayouts({
         id: payoutId,
         status: "completed",
         stripe_transfer_id: transfer.id,
         processing_completed_at: new Date(),
-      })
+      });
 
-      logger.info(`[Payout] Completed transfer ${transfer.id} for payout ${payoutId}`)
-      
-      return updatedPayout
-    } catch (error: any) {
-      logger.error(`[Payout] Failed for ${payoutId}:`, error)
-      
-      // Update payout with failure details
-      await (this as any).updatePayouts({
+      logger.info(
+        `[Payout] Completed transfer ${transfer.id} for payout ${payoutId}`,
+      );
+      return updated;
+    } catch (error: unknown) {
+      const e = error as { code?: string; message?: string };
+      logger.error(`[Payout] Failed for ${payoutId}:`, error);
+
+      await this.updatePayouts({
         id: payoutId,
         status: "failed",
-        stripe_failure_code: error.code || "unknown",
-        stripe_failure_message: error.message,
+        stripe_failure_code: e.code ?? "unknown",
+        stripe_failure_message: e.message ?? null,
         processing_failed_at: new Date(),
-        failure_reason: error.message,
-        retry_count: (payout.retry_count || 0) + 1,
+        failure_reason: e.message ?? null,
+        retry_count: (payout.retry_count ?? 0) + 1,
         last_retry_at: new Date(),
-      })
+      });
 
-      throw error
+      throw error;
     }
   }
 
-  // Create Stripe Connect account for vendor
-  async createStripeConnectAccount(vendorId: string, email: string, country: string = "US") {
-    const stripe = this.getStripe()
-    
+  async createStripeConnectAccount(
+    vendorId: string,
+    email: string,
+    country = "US",
+  ): Promise<unknown> {
+    const stripe = getStripe();
     try {
       const account = await stripe.accounts.create({
         type: "express",
@@ -170,59 +237,65 @@ class PayoutModuleService extends MedusaService({
           transfers: { requested: true },
         },
         business_type: "individual",
-        metadata: {
-          vendor_id: vendorId
-        }
-      })
-
-      logger.info(`[Stripe Connect] Created account ${account.id} for vendor ${vendorId}`)
-      
-      return account
-    } catch (error: any) {
-      logger.error(`[Stripe Connect] Failed to create account for vendor ${vendorId}:`, error)
-      throw error
+        metadata: { vendor_id: vendorId },
+      });
+      logger.info(
+        `[Stripe Connect] Created account ${account.id} for vendor ${vendorId}`,
+      );
+      return account;
+    } catch (error: unknown) {
+      logger.error(
+        `[Stripe Connect] Failed to create account for vendor ${vendorId}:`,
+        error,
+      );
+      throw error;
     }
   }
 
-  // Get Stripe Connect onboarding link
-  async getStripeConnectOnboardingLink(stripeAccountId: string, returnUrl: string, refreshUrl: string) {
-    const stripe = this.getStripe()
-    
+  async getStripeConnectOnboardingLink(
+    stripeAccountId: string,
+    returnUrl: string,
+    refreshUrl: string,
+  ): Promise<string> {
+    const stripe = getStripe();
     try {
       const accountLink = await stripe.accountLinks.create({
         account: stripeAccountId,
         refresh_url: refreshUrl,
         return_url: returnUrl,
         type: "account_onboarding",
-      })
-
-      return accountLink.url
-    } catch (error: any) {
-      logger.error(`[Stripe Connect] Failed to create onboarding link:`, error)
-      throw error
+      });
+      return accountLink.url;
+    } catch (error: unknown) {
+      logger.error("[Stripe Connect] Failed to create onboarding link:", error);
+      throw error;
     }
   }
 
-  // Get Stripe Connect dashboard link
-  async getStripeConnectDashboardLink(stripeAccountId: string) {
-    const stripe = this.getStripe()
-    
+  async getStripeConnectDashboardLink(
+    stripeAccountId: string,
+  ): Promise<string> {
+    const stripe = getStripe();
     try {
-      const loginLink = await stripe.accounts.createLoginLink(stripeAccountId)
-      return loginLink.url
-    } catch (error: any) {
-      logger.error(`[Stripe Connect] Failed to create dashboard link:`, error)
-      throw error
+      const loginLink = await stripe.accounts.createLoginLink(stripeAccountId);
+      return loginLink.url;
+    } catch (error: unknown) {
+      logger.error("[Stripe Connect] Failed to create dashboard link:", error);
+      throw error;
     }
   }
 
-  // Check Stripe account status
-  async checkStripeAccountStatus(stripeAccountId: string) {
-    const stripe = this.getStripe()
-    
+  async checkStripeAccountStatus(stripeAccountId: string): Promise<{
+    id: string;
+    charges_enabled: boolean;
+    payouts_enabled: boolean;
+    details_submitted: boolean;
+    requirements: unknown;
+    capabilities: unknown;
+  }> {
+    const stripe = getStripe();
     try {
-      const account = await stripe.accounts.retrieve(stripeAccountId)
-      
+      const account = await stripe.accounts.retrieve(stripeAccountId);
       return {
         id: account.id,
         charges_enabled: account.charges_enabled,
@@ -230,108 +303,84 @@ class PayoutModuleService extends MedusaService({
         details_submitted: account.details_submitted,
         requirements: account.requirements,
         capabilities: account.capabilities,
-      }
-    } catch (error: any) {
-      logger.error(`[Stripe Connect] Failed to check account status:`, error)
-      throw error
+      };
+    } catch (error: unknown) {
+      logger.error("[Stripe Connect] Failed to check account status:", error);
+      throw error;
     }
   }
 
-  // Get vendor balance
-  async getVendorBalance(vendorId: string) {
-    // Get all completed payouts for vendor
-    const { data: payouts } = await (this as any).listPayouts({
-      filters: {
-        vendor_id: vendorId,
-        status: "completed"
-      }
-    })
+  async getVendorBalance(vendorId: string): Promise<{
+    total_paid_out: number;
+    pending_amount: number;
+    last_payout: PayoutRecord | null;
+  }> {
+    const all = await this.listPayouts({ vendor_id: vendorId });
+    const completed = all.filter((p) => p.status === "completed");
+    const pending = all.filter(
+      (p) => p.status === "pending" || p.status === "processing",
+    );
 
-    const totalPaidOut = payouts.reduce((sum: number, p: any) => sum + Number(p.net_amount), 0)
-
-    // Get pending payouts
-    const { data: pendingPayouts } = await (this as any).listPayouts({
-      filters: {
-        vendor_id: vendorId,
-        status: { $in: ["pending", "processing"] }
-      }
-    })
-
-    const pendingAmount = pendingPayouts.reduce((sum: number, p: any) => sum + Number(p.net_amount), 0)
+    const totalPaidOut = completed.reduce(
+      (sum, p) => sum + Number(p.net_amount),
+      0,
+    );
+    const pendingAmount = pending.reduce(
+      (sum, p) => sum + Number(p.net_amount),
+      0,
+    );
 
     return {
       total_paid_out: totalPaidOut,
       pending_amount: pendingAmount,
-      last_payout: payouts[0] || null,
-    }
+      last_payout: completed[0] ?? null,
+    };
   }
 
-  // Retry failed payout
-  async retryFailedPayout(payoutId: string, stripeAccountId: string) {
-    const payout = await this.retrievePayouts(payoutId)
-    
-    if (!payout) {
-      throw new Error(`Payout ${payoutId} not found`)
-    }
+  async retryFailedPayout(
+    payoutId: string,
+    stripeAccountId: string,
+  ): Promise<PayoutRecord> {
+    const payout = await this.retrievePayout(payoutId);
+    if (payout.status !== "failed")
+      throw new Error(`Payout ${payoutId} is not in failed status`);
+    if ((payout.retry_count ?? 0) >= 3)
+      throw new Error(`Payout ${payoutId} has exceeded maximum retry attempts`);
 
-    if (payout.status !== "failed") {
-      throw new Error(`Payout ${payoutId} is not in failed status`)
-    }
-
-    if ((payout.retry_count || 0) >= 3) {
-      throw new Error(`Payout ${payoutId} has exceeded maximum retry attempts`)
-    }
-
-    // Reset status and retry
-    await (this as any).updatePayouts({
+    await this.updatePayouts({
       id: payoutId,
       status: "pending",
       stripe_failure_code: null,
       stripe_failure_message: null,
       failure_reason: null,
-    })
+    });
 
-    return this.processStripeConnectPayout(payoutId, stripeAccountId)
+    return this.processStripeConnectPayout(payoutId, stripeAccountId);
   }
 
-  // Cancel pending payout
-  async cancelPayout(payoutId: string, reason: string) {
-    const payout = await this.retrievePayouts(payoutId)
-    
-    if (!payout) {
-      throw new Error(`Payout ${payoutId} not found`)
-    }
-
+  async cancelPayout(payoutId: string, reason: string): Promise<PayoutRecord> {
+    const payout = await this.retrievePayout(payoutId);
     if (!["pending", "on_hold"].includes(payout.status)) {
-      throw new Error(`Cannot cancel payout in ${payout.status} status`)
+      throw new Error(`Cannot cancel payout in ${payout.status} status`);
     }
-
-    return (this as any).updatePayouts({
+    return this.updatePayouts({
       id: payoutId,
       status: "cancelled",
       failure_reason: reason,
       notes: `Cancelled: ${reason}`,
-    })
+    });
   }
 
-  // Put payout on hold
-  async holdPayout(payoutId: string, reason: string) {
-    const payout = await this.retrievePayouts(payoutId)
-    
-    if (!payout) {
-      throw new Error(`Payout ${payoutId} not found`)
-    }
-
-    if (payout.status !== "pending") {
-      throw new Error(`Can only hold pending payouts`)
-    }
-
-    return (this as any).updatePayouts({
+  async holdPayout(payoutId: string, reason: string): Promise<PayoutRecord> {
+    const payout = await this.retrievePayout(payoutId);
+    if (payout.status !== "pending")
+      throw new Error("Can only hold pending payouts");
+    return this.updatePayouts({
       id: payoutId,
       status: "on_hold",
       notes: `On hold: ${reason}`,
-    })
+    });
   }
 }
 
-export default PayoutModuleService
+export default PayoutModuleService;
