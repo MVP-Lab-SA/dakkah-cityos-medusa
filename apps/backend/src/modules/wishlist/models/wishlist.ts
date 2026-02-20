@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { model } from "@medusajs/framework/utils"
+import { model } from "@medusajs/framework/utils";
 
 const Wishlist = model.define("wishlist", {
   id: model.id().primaryKey(),
@@ -10,6 +9,6 @@ const Wishlist = model.define("wishlist", {
   visibility: model.enum(["private", "shared", "public"]).default("private"),
   share_token: model.text().nullable(),
   metadata: model.json().nullable(),
-})
+});
 
-export default Wishlist
+export default Wishlist;

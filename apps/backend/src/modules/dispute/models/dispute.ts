@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { model } from "@medusajs/framework/utils"
+import { model } from "@medusajs/framework/utils";
 
 const Dispute = model.define("dispute", {
   id: model.id().primaryKey(),
@@ -16,6 +15,6 @@ const Dispute = model.define("dispute", {
   resolved_at: model.dateTime().nullable(),
   escalated_at: model.dateTime().nullable(),
   metadata: model.json().nullable(),
-})
+});
 
-export default Dispute
+export default Dispute;

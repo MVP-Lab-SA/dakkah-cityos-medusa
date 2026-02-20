@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { model } from "@medusajs/framework/utils"
+import { model } from "@medusajs/framework/utils";
 
 const WishlistItem = model.define("wishlist_item", {
   id: model.id().primaryKey(),
@@ -10,6 +9,6 @@ const WishlistItem = model.define("wishlist_item", {
   priority: model.text().default("medium"),
   notes: model.text().nullable(),
   metadata: model.json().nullable(),
-})
+});
 
-export default WishlistItem
+export default WishlistItem;

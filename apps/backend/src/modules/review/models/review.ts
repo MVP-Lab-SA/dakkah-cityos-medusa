@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { model } from "@medusajs/framework/utils"
+import { model } from "@medusajs/framework/utils";
 
 export const Review = model.define("review", {
   id: model.id().primaryKey(),
@@ -15,6 +14,6 @@ export const Review = model.define("review", {
   is_verified_purchase: model.boolean().default(false),
   is_approved: model.boolean().default(false),
   helpful_count: model.number().default(0),
-  images: model.json().default([]),
+  images: model.json().nullable(),
   metadata: model.json().nullable(),
-})
+});

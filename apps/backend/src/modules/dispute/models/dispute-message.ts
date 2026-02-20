@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { model } from "@medusajs/framework/utils"
+import { model } from "@medusajs/framework/utils";
 
 const DisputeMessage = model.define("dispute_message", {
   id: model.id().primaryKey(),
@@ -10,6 +9,6 @@ const DisputeMessage = model.define("dispute_message", {
   attachments: model.json().nullable(),
   is_internal: model.boolean().default(false),
   metadata: model.json().nullable(),
-})
+});
 
-export default DisputeMessage
+export default DisputeMessage;

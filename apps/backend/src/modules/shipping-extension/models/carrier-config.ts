@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { model } from "@medusajs/framework/utils"
+import { model } from "@medusajs/framework/utils";
 
 const CarrierConfig = model.define("carrier_config", {
   id: model.id().primaryKey(),
@@ -13,6 +12,6 @@ const CarrierConfig = model.define("carrier_config", {
   max_weight: model.number().nullable(),
   max_dimensions: model.json().nullable(),
   metadata: model.json().nullable(),
-})
+});
 
-export default CarrierConfig
+export default CarrierConfig;

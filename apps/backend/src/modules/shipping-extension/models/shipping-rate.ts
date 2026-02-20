@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { model } from "@medusajs/framework/utils"
+import { model } from "@medusajs/framework/utils";
 
 const ShippingRate = model.define("shipping_rate", {
   id: model.id().primaryKey(),
@@ -17,6 +16,6 @@ const ShippingRate = model.define("shipping_rate", {
   estimated_days_max: model.number(),
   is_active: model.boolean().default(true),
   metadata: model.json().nullable(),
-})
+});
 
-export default ShippingRate
+export default ShippingRate;
