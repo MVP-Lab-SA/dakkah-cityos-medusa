@@ -1,0 +1,91 @@
+import {
+  createWorkflow,
+  createStep,
+  StepResponse,
+} from "@medusajs/framework/workflows-sdk";
+
+/**
+ * Dispute Resolution Workflow
+ * Orchestrates the full dispute lifecycle: open → auto-assign → escalate → resolve.
+ */
+const autoAssignMediatorStep = createStep(
+  "auto-assign-mediator",
+  async ({ disputeId }: { disputeId: string }, { container }) => {
+    const disputeService = container.resolve("dispute") as any;
+    const assignment = await disputeService.autoAssignMediator(disputeId);
+    return new StepResponse(assignment);
+  },
+);
+
+const calculateCompensationStep = createStep(
+  "calculate-compensation",
+  async ({ disputeId }: { disputeId: string }, { container }) => {
+    const disputeService = container.resolve("dispute") as any;
+    const compensation = await disputeService.calculateCompensation(disputeId);
+    return new StepResponse(compensation);
+  },
+);
+
+const resolveDisputeStep = createStep(
+  "resolve-dispute",
+  async (
+    {
+      disputeId,
+      resolution,
+      refundAmount,
+      resolvedBy,
+    }: {
+      disputeId: string;
+      resolution: string;
+      refundAmount?: number;
+      resolvedBy: string;
+    },
+    { container },
+  ) => {
+    const disputeService = container.resolve("dispute") as any;
+    const resolved = await disputeService.resolve({
+      disputeId,
+      resolution,
+      resolutionAmount: refundAmount,
+      resolvedBy,
+    });
+    return new StepResponse({ dispute: resolved });
+  },
+  // Compensation: reopen the dispute if resolution fails downstream
+  async ({ disputeId }: { disputeId: string }, { container }) => {
+    const disputeService = container.resolve("dispute") as any;
+    await (disputeService as any).updateDisputes({
+      id: disputeId,
+      status: "escalated",
+    });
+  },
+);
+
+export const disputeResolutionWorkflow = createWorkflow(
+  "dispute-resolution",
+  (input: {
+    disputeId: string;
+    autoAssign?: boolean;
+    resolution?: string;
+    resolvedBy?: string;
+  }) => {
+    const mediatorResult = autoAssignMediatorStep({
+      disputeId: input.disputeId,
+    });
+    const compensation = calculateCompensationStep({
+      disputeId: input.disputeId,
+    });
+
+    if (input.resolution && input.resolvedBy) {
+      const resolved = resolveDisputeStep({
+        disputeId: input.disputeId,
+        resolution: input.resolution,
+        refundAmount: compensation.compensationAmount as any,
+        resolvedBy: input.resolvedBy,
+      });
+      return { mediatorResult, compensation, resolved };
+    }
+
+    return { mediatorResult, compensation };
+  },
+);
