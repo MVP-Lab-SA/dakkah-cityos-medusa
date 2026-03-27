@@ -14,7 +14,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 60
-    continue-on-error: true
 
     steps:
       - name: Checkout repository
@@ -34,9 +33,11 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Test backend
+        continue-on-error: true
         run: pnpm --filter=backend test:unit
 
       - name: Test storefront
+        continue-on-error: true
         run: pnpm --filter=storefront test
 
   build-and-push:
@@ -49,6 +50,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Set GHCR owner (lowercase)
+        run: echo "GHCR_OWNER=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -67,8 +71,8 @@ jobs:
           file: ./apps/backend/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/dakkah-cityos-medusa-backend:latest
-            ghcr.io/${{ github.repository_owner }}/dakkah-cityos-medusa-backend:${{ github.sha }}
+            ghcr.io/${{ env.GHCR_OWNER }}/dakkah-cityos-medusa-backend:latest
+            ghcr.io/${{ env.GHCR_OWNER }}/dakkah-cityos-medusa-backend:${{ github.sha }}
 
       - name: Build and push storefront image
         uses: docker/build-push-action@v6
@@ -77,8 +81,8 @@ jobs:
           file: ./apps/storefront/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/dakkah-cityos-medusa-storefront:latest
-            ghcr.io/${{ github.repository_owner }}/dakkah-cityos-medusa-storefront:${{ github.sha }}
+            ghcr.io/${{ env.GHCR_OWNER }}/dakkah-cityos-medusa-storefront:latest
+            ghcr.io/${{ env.GHCR_OWNER }}/dakkah-cityos-medusa-storefront:${{ github.sha }}
 
   deploy:
     runs-on: ubuntu-latest
@@ -88,8 +92,8 @@ jobs:
       packages: read
     env:
       IMAGE_TAG: ${{ github.sha }}
-      BACKEND_IMAGE: ghcr.io/${{ github.repository_owner }}/dakkah-cityos-medusa-backend
-      STOREFRONT_IMAGE: ghcr.io/${{ github.repository_owner }}/dakkah-cityos-medusa-storefront
+      BACKEND_IMAGE: ghcr.io/mvp-lab-sa/dakkah-cityos-medusa-backend
+      STOREFRONT_IMAGE: ghcr.io/mvp-lab-sa/dakkah-cityos-medusa-storefront
 
     steps:
       - name: Configure SSH key
