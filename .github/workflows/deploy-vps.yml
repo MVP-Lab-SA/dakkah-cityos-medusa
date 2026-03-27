@@ -65,9 +65,20 @@ jobs:
           docker push "${BACKEND_IMAGE}:${GITHUB_SHA}"
 
       - name: Build and push storefront image
+        env:
+          VITE_MEDUSA_BACKEND_URL: ${{ secrets.VPS_MEDUSA_BACKEND_URL }}
+          VITE_MEDUSA_PUBLISHABLE_KEY: ${{ secrets.VPS_MEDUSA_PUBLISHABLE_KEY }}
+          VITE_STOREFRONT_URL: ${{ secrets.VPS_STOREFRONT_URL }}
         run: |
+          : "${VITE_MEDUSA_BACKEND_URL:?Add repo secret VPS_MEDUSA_BACKEND_URL (e.g. http://YOUR_IP:9000)}"
+          : "${VITE_MEDUSA_PUBLISHABLE_KEY:?Add repo secret VPS_MEDUSA_PUBLISHABLE_KEY (Medusa publishable API key)}"
+          : "${VITE_STOREFRONT_URL:?Add repo secret VPS_STOREFRONT_URL (e.g. http://YOUR_IP:8000)}"
           STOREFRONT_IMAGE="ghcr.io/${GHCR_OWNER}/dakkah-cityos-medusa-storefront"
-          docker build -f ./apps/storefront/Dockerfile -t "${STOREFRONT_IMAGE}:latest" -t "${STOREFRONT_IMAGE}:${GITHUB_SHA}" .
+          docker build -f ./apps/storefront/Dockerfile \
+            --build-arg "VITE_MEDUSA_BACKEND_URL=${VITE_MEDUSA_BACKEND_URL}" \
+            --build-arg "VITE_MEDUSA_PUBLISHABLE_KEY=${VITE_MEDUSA_PUBLISHABLE_KEY}" \
+            --build-arg "VITE_STOREFRONT_URL=${VITE_STOREFRONT_URL}" \
+            -t "${STOREFRONT_IMAGE}:latest" -t "${STOREFRONT_IMAGE}:${GITHUB_SHA}" .
           docker push "${STOREFRONT_IMAGE}:latest"
           docker push "${STOREFRONT_IMAGE}:${GITHUB_SHA}"
 
@@ -81,8 +92,21 @@ jobs:
       IMAGE_TAG: ${{ github.sha }}
       BACKEND_IMAGE: ghcr.io/mvp-lab-sa/dakkah-cityos-medusa-backend
       STOREFRONT_IMAGE: ghcr.io/mvp-lab-sa/dakkah-cityos-medusa-storefront
+      DEPLOY_DIR: /srv/apps/marketplace/kashif-medusa
+      VPS_HOST: ${{ secrets.VPS_HOST }}
+      VPS_USER: ${{ secrets.VPS_USER }}
+      VPS_POSTGRES_PASSWORD: ${{ secrets.VPS_POSTGRES_PASSWORD }}
+      VPS_MEILI_MASTER_KEY: ${{ secrets.VPS_MEILI_MASTER_KEY }}
+      VPS_MEDUSA_JWT_SECRET: ${{ secrets.VPS_MEDUSA_JWT_SECRET }}
+      VPS_MEDUSA_COOKIE_SECRET: ${{ secrets.VPS_MEDUSA_COOKIE_SECRET }}
+      VPS_MEDUSA_PUBLISHABLE_KEY: ${{ secrets.VPS_MEDUSA_PUBLISHABLE_KEY }}
+      VPS_MEDUSA_BACKEND_URL: ${{ secrets.VPS_MEDUSA_BACKEND_URL }}
+      VPS_STOREFRONT_URL: ${{ secrets.VPS_STOREFRONT_URL }}
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Configure SSH key
         run: |
           mkdir -p ~/.ssh
@@ -92,46 +116,111 @@ jobs:
           ssh-add ~/.ssh/id_rsa
 
       - name: Add VPS to known hosts
-        run: ssh-keyscan -H "${{ secrets.VPS_HOST }}" >> ~/.ssh/known_hosts
+        run: ssh-keyscan -H "${VPS_HOST}" >> ~/.ssh/known_hosts
 
-      - name: Deploy containers on VPS
+      - name: Require VPS stack secrets
         run: |
-          ssh "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
+          : "${VPS_POSTGRES_PASSWORD:?Set VPS_POSTGRES_PASSWORD (Postgres password; avoid @ # : / in password or URL-encode manually)}"
+          : "${VPS_MEILI_MASTER_KEY:?Set VPS_MEILI_MASTER_KEY (long random string for Meilisearch)}"
+          : "${VPS_MEDUSA_JWT_SECRET:?Set VPS_MEDUSA_JWT_SECRET}"
+          : "${VPS_MEDUSA_COOKIE_SECRET:?Set VPS_MEDUSA_COOKIE_SECRET}"
+          : "${VPS_MEDUSA_PUBLISHABLE_KEY:?Set VPS_MEDUSA_PUBLISHABLE_KEY}"
+          : "${VPS_MEDUSA_BACKEND_URL:?Set VPS_MEDUSA_BACKEND_URL}"
+          : "${VPS_STOREFRONT_URL:?Set VPS_STOREFRONT_URL}"
+
+      - name: Write local deploy files
+        run: |
+          python3 <<'PY'
+          import os
+          import urllib.parse
+
+          def req(k):
+            v = os.environ.get(k, "").strip()
+            if not v:
+              raise SystemExit(f"missing {k}")
+            return v
+
+          def dotenv_value(v: str) -> str:
+            if any(c in v for c in "\n\"\\$`#"):
+              return '"' + v.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n") + '"'
+            return v
+
+          pg_pass = req("VPS_POSTGRES_PASSWORD")
+          db_url = "postgresql://medusa:" + urllib.parse.quote_plus(pg_pass) + "@postgres:5432/medusa"
+          meili = req("VPS_MEILI_MASTER_KEY")
+          back = req("VPS_MEDUSA_BACKEND_URL")
+          front = req("VPS_STOREFRONT_URL")
+          pub = req("VPS_MEDUSA_PUBLISHABLE_KEY")
+
+          backend_lines = [
+              "NODE_ENV=production",
+              f"DATABASE_URL={dotenv_value(db_url)}",
+              "REDIS_URL=redis://redis:6379",
+              f"JWT_SECRET={dotenv_value(req('VPS_MEDUSA_JWT_SECRET'))}",
+              f"COOKIE_SECRET={dotenv_value(req('VPS_MEDUSA_COOKIE_SECRET'))}",
+              f"VITE_MEDUSA_PUBLISHABLE_KEY={dotenv_value(pub)}",
+              "MEILISEARCH_HOST=http://meilisearch:7700",
+              f"MEILISEARCH_API_KEY={dotenv_value(meili)}",
+              "MEILISEARCH_PRODUCT_INDEX_NAME=products",
+              f"MEDUSA_BACKEND_URL={dotenv_value(back)}",
+              f"STORE_CORS={dotenv_value(f'{front},{back}')}",
+              f"ADMIN_CORS={dotenv_value(back)}",
+              f"AUTH_CORS={dotenv_value(f'{front},{back}')}",
+              "PORT=9000",
+          ]
+          with open("/tmp/backend.env", "w") as f:
+              f.write("\n".join(backend_lines) + "\n")
+
+          stack_lines = [
+              f"POSTGRES_PASSWORD={dotenv_value(pg_pass)}",
+              f"MEILI_MASTER_KEY={dotenv_value(meili)}",
+              f"BACKEND_IMAGE={req('BACKEND_IMAGE')}",
+              f"STOREFRONT_IMAGE={req('STOREFRONT_IMAGE')}",
+              f"IMAGE_TAG={req('IMAGE_TAG')}",
+          ]
+          with open("/tmp/stack.env", "w") as f:
+              f.write("\n".join(stack_lines) + "\n")
+
+          with open("/tmp/storefront.env", "w") as f:
+              f.write("NODE_ENV=production\n")
+          PY
+        env:
+          BACKEND_IMAGE: ${{ env.BACKEND_IMAGE }}
+          STOREFRONT_IMAGE: ${{ env.STOREFRONT_IMAGE }}
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
+
+      - name: Stop old stack and sync files
+        run: |
+          ssh "${VPS_USER}@${VPS_HOST}" bash -s <<REMOTE
+          set -e
+          DEPLOY_DIR="${DEPLOY_DIR}"
+          mkdir -p "\$DEPLOY_DIR"
+          for c in kashif-medusa-backend kashif-medusa-storefront kashif-medusa-postgres kashif-medusa-redis kashif-medusa-meilisearch; do
+            docker rm -f "\$c" 2>/dev/null || true
+          done
+          for port in 9000 8000; do
+            ids=\$(docker ps -q --filter "publish=\${port}" 2>/dev/null || true)
+            if [ -n "\$ids" ]; then
+              docker stop \$ids || true
+              docker rm -f \$ids || true
+            fi
+          done
+          REMOTE
+          scp /tmp/stack.env "${VPS_USER}@${VPS_HOST}:${DEPLOY_DIR}/.env"
+          scp /tmp/backend.env "${VPS_USER}@${VPS_HOST}:${DEPLOY_DIR}/backend.env"
+          scp /tmp/storefront.env "${VPS_USER}@${VPS_HOST}:${DEPLOY_DIR}/storefront.env"
+          scp deploy/docker-compose.vps.yml "${VPS_USER}@${VPS_HOST}:${DEPLOY_DIR}/docker-compose.yml"
+
+      - name: Pull images and start stack
+        run: |
+          ssh "${VPS_USER}@${VPS_HOST}" \
             "GHCR_USERNAME='${{ secrets.GHCR_USERNAME }}' \
              GHCR_TOKEN='${{ secrets.GHCR_TOKEN }}' \
-             BACKEND_IMAGE='${BACKEND_IMAGE}' \
-             STOREFRONT_IMAGE='${STOREFRONT_IMAGE}' \
-             IMAGE_TAG='${IMAGE_TAG}' \
+             DEPLOY_DIR='${DEPLOY_DIR}' \
              bash -s" <<'REMOTE'
           set -e
-
-          mkdir -p /srv/apps/marketplace/kashif-medusa
-
-          cat > /srv/apps/marketplace/kashif-medusa/docker-compose.yml <<COMPOSE
-          services:
-            backend:
-              image: ${BACKEND_IMAGE}:${IMAGE_TAG}
-              container_name: kashif-medusa-backend
-              restart: unless-stopped
-              env_file:
-                - ./backend.env
-              ports:
-                - "9000:9000"
-
-            storefront:
-              image: ${STOREFRONT_IMAGE}:${IMAGE_TAG}
-              container_name: kashif-medusa-storefront
-              restart: unless-stopped
-              env_file:
-                - ./storefront.env
-              ports:
-                - "8000:8000"
-              depends_on:
-                - backend
-          COMPOSE
-
+          cd "$DEPLOY_DIR"
           echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
-          cd /srv/apps/marketplace/kashif-medusa
           docker compose pull
           docker compose up -d --remove-orphans
           docker image prune -f
