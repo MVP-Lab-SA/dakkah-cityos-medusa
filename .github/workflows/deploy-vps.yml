@@ -66,13 +66,13 @@ jobs:
 
       - name: Build and push storefront image
         env:
-          VITE_MEDUSA_BACKEND_URL: ${{ secrets.VPS_MEDUSA_BACKEND_URL }}
-          VITE_MEDUSA_PUBLISHABLE_KEY: ${{ secrets.VPS_MEDUSA_PUBLISHABLE_KEY }}
-          VITE_STOREFRONT_URL: ${{ secrets.VPS_STOREFRONT_URL }}
+          VITE_MEDUSA_BACKEND_URL: ${{ secrets.VPS_MEDUSA_BACKEND_URL || vars.VPS_MEDUSA_BACKEND_URL }}
+          VITE_MEDUSA_PUBLISHABLE_KEY: ${{ secrets.VPS_MEDUSA_PUBLISHABLE_KEY || vars.VPS_MEDUSA_PUBLISHABLE_KEY }}
+          VITE_STOREFRONT_URL: ${{ secrets.VPS_STOREFRONT_URL || vars.VPS_STOREFRONT_URL }}
         run: |
-          : "${VITE_MEDUSA_BACKEND_URL:?Add repo secret VPS_MEDUSA_BACKEND_URL (e.g. http://YOUR_IP:9000)}"
-          : "${VITE_MEDUSA_PUBLISHABLE_KEY:?Add repo secret VPS_MEDUSA_PUBLISHABLE_KEY (Medusa publishable API key)}"
-          : "${VITE_STOREFRONT_URL:?Add repo secret VPS_STOREFRONT_URL (e.g. http://YOUR_IP:8000)}"
+          : "${VITE_MEDUSA_BACKEND_URL:?Set secret or Actions variable VPS_MEDUSA_BACKEND_URL (e.g. http://YOUR_IP:9000)}"
+          : "${VITE_MEDUSA_PUBLISHABLE_KEY:?Set secret or variable VPS_MEDUSA_PUBLISHABLE_KEY (Medusa publishable API key)}"
+          : "${VITE_STOREFRONT_URL:?Set secret or variable VPS_STOREFRONT_URL (e.g. http://YOUR_IP:8000)}"
           STOREFRONT_IMAGE="ghcr.io/${GHCR_OWNER}/dakkah-cityos-medusa-storefront"
           docker build -f ./apps/storefront/Dockerfile \
             --build-arg "VITE_MEDUSA_BACKEND_URL=${VITE_MEDUSA_BACKEND_URL}" \
@@ -99,9 +99,9 @@ jobs:
       VPS_MEILI_MASTER_KEY: ${{ secrets.VPS_MEILI_MASTER_KEY }}
       VPS_MEDUSA_JWT_SECRET: ${{ secrets.VPS_MEDUSA_JWT_SECRET }}
       VPS_MEDUSA_COOKIE_SECRET: ${{ secrets.VPS_MEDUSA_COOKIE_SECRET }}
-      VPS_MEDUSA_PUBLISHABLE_KEY: ${{ secrets.VPS_MEDUSA_PUBLISHABLE_KEY }}
-      VPS_MEDUSA_BACKEND_URL: ${{ secrets.VPS_MEDUSA_BACKEND_URL }}
-      VPS_STOREFRONT_URL: ${{ secrets.VPS_STOREFRONT_URL }}
+      VPS_MEDUSA_PUBLISHABLE_KEY: ${{ secrets.VPS_MEDUSA_PUBLISHABLE_KEY || vars.VPS_MEDUSA_PUBLISHABLE_KEY }}
+      VPS_MEDUSA_BACKEND_URL: ${{ secrets.VPS_MEDUSA_BACKEND_URL || vars.VPS_MEDUSA_BACKEND_URL }}
+      VPS_STOREFRONT_URL: ${{ secrets.VPS_STOREFRONT_URL || vars.VPS_STOREFRONT_URL }}
 
     steps:
       - name: Checkout repository
@@ -124,9 +124,9 @@ jobs:
           : "${VPS_MEILI_MASTER_KEY:?Set VPS_MEILI_MASTER_KEY (long random string for Meilisearch)}"
           : "${VPS_MEDUSA_JWT_SECRET:?Set VPS_MEDUSA_JWT_SECRET}"
           : "${VPS_MEDUSA_COOKIE_SECRET:?Set VPS_MEDUSA_COOKIE_SECRET}"
-          : "${VPS_MEDUSA_PUBLISHABLE_KEY:?Set VPS_MEDUSA_PUBLISHABLE_KEY}"
-          : "${VPS_MEDUSA_BACKEND_URL:?Set VPS_MEDUSA_BACKEND_URL}"
-          : "${VPS_STOREFRONT_URL:?Set VPS_STOREFRONT_URL}"
+          : "${VPS_MEDUSA_PUBLISHABLE_KEY:?Set secret or variable VPS_MEDUSA_PUBLISHABLE_KEY}"
+          : "${VPS_MEDUSA_BACKEND_URL:?Set secret or variable VPS_MEDUSA_BACKEND_URL}"
+          : "${VPS_STOREFRONT_URL:?Set secret or variable VPS_STOREFRONT_URL}"
 
       - name: Write local deploy files
         run: |
