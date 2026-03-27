@@ -511,6 +511,67 @@ export default async function seedCore({ container }: ExecArgs): Promise<SeedCon
   }
 
   // ============================================================
+  // STEP 9.5: Dakkah tenant + CityOS store on default sales channel (storefront /store/* middleware)
+  // ============================================================
+  logger.info("\nStep 9.5: Ensuring Dakkah tenant and CityOS default store...")
+  try {
+    const tenantModule = container.resolve("tenant") as any
+    const cityosStoreService = container.resolve("cityosStoreService") as any
+
+    let dakkahTenant =
+      (await tenantModule.retrieveTenantByHandle?.("dakkah")) ??
+      (await tenantModule.retrieveTenantBySlug?.("dakkah"))
+
+    if (!dakkahTenant) {
+      const created = await tenantModule.createTenants({
+        name: "Dakkah",
+        slug: "dakkah",
+        handle: "dakkah",
+        domain: "dakkah.sa",
+        country_id: "sa",
+        status: "active",
+        residency_zone: "MENA",
+        default_locale: "en",
+        supported_locales: ["en", "ar", "fr"],
+        default_currency: "sar",
+        timezone: "Asia/Riyadh",
+        settings: { currency_code: "sar" },
+        metadata: { seeded_by: "seed-core" },
+      })
+      dakkahTenant = Array.isArray(created) ? created[0] : created
+      logger.info(`  Created tenant dakkah (${dakkahTenant?.id})`)
+    } else {
+      logger.info(`  Tenant dakkah exists (${dakkahTenant.id})`)
+    }
+
+    const defaultChannelId = ctx.salesChannelIds[0]
+    if (dakkahTenant?.id && defaultChannelId) {
+      const existingList = await cityosStoreService.listStores({
+        sales_channel_id: defaultChannelId,
+      })
+      const existingArr = Array.isArray(existingList)
+        ? existingList
+        : [existingList].filter(Boolean)
+      if (!existingArr.length) {
+        await cityosStoreService.createStores({
+          tenant_id: dakkahTenant.id,
+          handle: "main",
+          name: "Dakkah Main Store",
+          sales_channel_id: defaultChannelId,
+          status: "active",
+          store_type: "retail",
+          metadata: { seeded_by: "seed-core" },
+        })
+        logger.info("  Created CityOS store linked to default sales channel")
+      } else {
+        logger.info("  CityOS store for default sales channel already exists")
+      }
+    }
+  } catch (error: any) {
+    logger.error(`  Step 9.5 failed: ${error.message}`)
+  }
+
+  // ============================================================
   // STEP 10: Return SeedContext
   // ============================================================
   logger.info("\n========================================")

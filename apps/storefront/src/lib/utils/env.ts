@@ -15,9 +15,13 @@ export function getBackendUrl(): string {
   )
 }
 
+/**
+ * Base URL for Medusa Store / Admin API calls.
+ * Must resolve on both server (SSR) and browser so `/store/*` requests hit the backend
+ * (e.g. storefront :8000 vs API :9000 on VPS).
+ */
 export function getServerBaseUrl(): string {
-  const isServer = typeof window === "undefined"
-  return isServer ? getBackendUrl() : ""
+  return getBackendUrl()
 }
 
 /**

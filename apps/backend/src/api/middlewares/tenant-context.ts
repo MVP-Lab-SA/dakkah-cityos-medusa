@@ -1,5 +1,5 @@
 import type { MedusaNextFunction, MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { Modules } from "@medusajs/framework/utils"
+import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
 import { createLogger } from "../../lib/logger"
 const logger = createLogger("middlewares-tenant-context")
 
@@ -44,8 +44,7 @@ export async function detectTenantMiddleware(
 ) {
   try {
     const tenantModuleService: any = req.scope.resolve("tenantModuleService")
-    const storeModuleService: any = req.scope.resolve("storeModuleService")
-    const salesChannelService: any = req.scope.resolve(Modules.SALES_CHANNEL)
+    const cityosStoreService: any = req.scope.resolve("cityosStoreService")
 
     // Get hostname from request
     const hostname = req.get("host") || ""
@@ -53,13 +52,14 @@ export async function detectTenantMiddleware(
     
     let tenant: any = null
     let store: any = null
+    /** Sales channel from publishable API key (when CityOS store row is missing) */
+    let publishableSalesChannelId: string | undefined
 
     // Strategy 1: Try custom domain first (exact match)
     if (hostname && !hostname.includes("localhost")) {
       tenant = await tenantModuleService.retrieveTenantByDomain(hostname)
       if (tenant) {
-        // Check if store also has this domain
-        store = await storeModuleService.retrieveStoreByDomain(hostname)
+        store = await cityosStoreService.retrieveStoreByDomain(hostname)
       }
     }
 
@@ -68,7 +68,7 @@ export async function detectTenantMiddleware(
       const subdomain = parts[0]
       
       // First check if it's a store subdomain
-      store = await storeModuleService.retrieveStoreBySubdomain(subdomain)
+      store = await cityosStoreService.retrieveStoreBySubdomain(subdomain)
       if (store) {
         tenant = await tenantModuleService.retrieveTenants(store.tenant_id)
       } else {
@@ -77,26 +77,34 @@ export async function detectTenantMiddleware(
       }
     }
 
-    // Strategy 3: Try publishable API key
+    // Strategy 3: Publishable API key → linked sales channel → CityOS store → tenant
     if (!tenant) {
-      const publishableKey = req.get("x-publishable-api-key")
+      const publishableKey = req.get("x-publishable-api-key")?.trim()
       if (publishableKey) {
         try {
-          // Get sales channel from publishable key
-          const result: any = await salesChannelService.listSalesChannels({})
-          const sales_channels = result
-          
-          if (sales_channels && sales_channels.length > 0) {
-            const salesChannel = sales_channels[0]
-            
-            // Get store by sales channel
-            store = await storeModuleService.retrieveStoreBySalesChannel(salesChannel.id)
-            if (store) {
+          const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
+          const { data: keyRows } = await query.graph({
+            entity: "api_key",
+            fields: ["id", "sales_channels.id"],
+            filters: { token: publishableKey, type: "publishable" },
+          })
+          const keyRow = keyRows?.[0] as { sales_channels?: { id: string }[] } | undefined
+          const salesChannelId = keyRow?.sales_channels?.[0]?.id
+          publishableSalesChannelId = salesChannelId
+
+          if (salesChannelId) {
+            store = await cityosStoreService.retrieveStoreBySalesChannel(salesChannelId)
+            if (store?.tenant_id) {
               tenant = await tenantModuleService.retrieveTenants(store.tenant_id)
             }
           }
+
+          if (!tenant) {
+            tenant =
+              (await tenantModuleService.retrieveTenantByHandle("dakkah")) ||
+              (await tenantModuleService.retrieveTenantBySlug?.("dakkah"))
+          }
         } catch (error) {
-          // Log but don't fail - will handle missing tenant below
           logger.error("Error resolving tenant from publishable key:", error)
         }
       }
@@ -123,14 +131,15 @@ export async function detectTenantMiddleware(
       })
     }
 
-    // Build tenant context
+    const countryId = tenant.country_id || "sa"
+    // Build tenant context (tenant model may omit hierarchy fields used in older drafts)
     const tenantContext: TenantContext = {
       tenant_id: tenant.id,
-      tenant_handle: tenant.handle,
-      country_id: tenant.country_id,
-      scope_type: tenant.scope_type,
-      scope_id: tenant.scope_id,
-      category_id: tenant.category_id,
+      tenant_handle: tenant.handle || tenant.slug,
+      country_id: countryId,
+      scope_type: (tenant.scope_type as TenantContext["scope_type"]) || "city",
+      scope_id: tenant.scope_id || countryId,
+      category_id: tenant.category_id || countryId,
       subcategory_id: tenant.subcategory_id,
     }
 
@@ -139,6 +148,8 @@ export async function detectTenantMiddleware(
       tenantContext.store_id = store.id
       tenantContext.store_handle = store.handle
       tenantContext.sales_channel_id = store.sales_channel_id
+    } else if (publishableSalesChannelId) {
+      tenantContext.sales_channel_id = publishableSalesChannelId
     }
 
     // Check for vendor context (from user session or JWT)

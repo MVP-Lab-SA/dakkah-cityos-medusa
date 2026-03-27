@@ -641,11 +641,35 @@ module.exports = defineConfig({
       },
     },
     {
-      resolve: "./src/modules/file-replit",
-      key: "file",
+      resolve: "@medusajs/medusa/file",
       options: {
-        bucket_id: "replit-objstore-d0367ca5-bb93-42b5-b2e7-53122f51e3cb",
-        backend_url: process.env.MEDUSA_BACKEND_URL,
+        providers: [
+          ...(process.env.REPLIT_BUCKET_ID ||
+          process.env.USE_REPLIT_FILE === "true"
+            ? [
+                {
+                  resolve: "./src/modules/file-replit",
+                  id: "replit-file",
+                  options: {
+                    bucket_id:
+                      process.env.REPLIT_BUCKET_ID ||
+                      "replit-objstore-d0367ca5-bb93-42b5-b2e7-53122f51e3cb",
+                    backend_url: process.env.MEDUSA_BACKEND_URL,
+                  },
+                },
+              ]
+            : [
+                {
+                  resolve: "@medusajs/medusa/file-local",
+                  id: "local",
+                  options: {
+                    backend_url:
+                      process.env.MEDUSA_BACKEND_URL ||
+                      "http://localhost:9000/static",
+                  },
+                },
+              ]),
+        ],
       },
     },
     {

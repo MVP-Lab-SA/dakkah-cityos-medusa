@@ -3,6 +3,7 @@ import { TenantProvider } from "@/lib/context/tenant-context"
 import type { TenantConfig } from "@/lib/context/tenant-context"
 import { PlatformContextProvider } from "@/lib/context/platform-context"
 import { sdk } from "@/lib/utils/sdk"
+import { getBackendUrl, fetchWithTimeout } from "@/lib/utils/env"
 
 const SUPPORTED_LOCALES = ["en", "fr", "ar"]
 
@@ -51,8 +52,26 @@ export const Route = createFileRoute("/$tenant/$locale")({
     }
 
     if (typeof window === "undefined") {
+      let tenantConfig: TenantConfig | null = null
+      try {
+        const base = getBackendUrl()
+        const res = await fetchWithTimeout(
+          `${base}/store/cityos/tenant?slug=${encodeURIComponent(tenant)}`,
+        )
+        if (res.ok) {
+          const body = await res.json()
+          if (body.tenant) {
+            tenantConfig = mapApiTenantToConfig(body.tenant)
+          }
+        }
+      } catch {
+        // Backend unreachable during SSR — fall back below
+      }
+      if (!tenantConfig && tenant === "dakkah") {
+        tenantConfig = DEFAULT_TENANT
+      }
       return {
-        tenant: tenant === "dakkah" ? DEFAULT_TENANT : null,
+        tenant: tenantConfig,
         tenantSlug: tenant,
         locale,
         direction: locale === "ar" ? "rtl" : "ltr",

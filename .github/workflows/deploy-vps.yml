@@ -220,3 +220,14 @@ jobs:
           docker compose up -d --remove-orphans
           docker image prune -f
           REMOTE
+
+      - name: Migrate and seed storefront demo products on VPS
+        run: |
+          ssh "${VPS_USER}@${VPS_HOST}" bash -s <<REMOTE
+          set -e
+          cd ${DEPLOY_DIR}
+          echo "Waiting for Medusa backend..."
+          sleep 25
+          docker exec kashif-medusa-backend sh -lc \
+            'cd /app/apps/backend && pnpm exec medusa db:migrate && pnpm exec medusa exec ./src/scripts/seed-core.ts && pnpm exec medusa exec ./src/scripts/seed-storefront-test-products.ts'
+          REMOTE
