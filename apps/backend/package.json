@@ -22,7 +22,8 @@
     "test:integration:http": "TEST_TYPE=integration:http NODE_OPTIONS=--experimental-vm-modules jest --silent=false --runInBand --forceExit",
     "test:integration:modules": "TEST_TYPE=integration:modules NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit",
     "test:unit": "TEST_TYPE=unit NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit",
-    "seed:master": "medusa exec ./src/scripts/seed-master.ts"
+    "seed:master": "medusa exec ./src/scripts/seed-master.ts",
+    "seed:storefront-demo": "medusa exec ./src/scripts/seed-storefront-test-products.ts"
   },
   "dependencies": {
     "@google-cloud/storage": "^7.19.0",
