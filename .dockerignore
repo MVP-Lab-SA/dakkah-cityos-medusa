@@ -1,0 +1,11 @@
+.git
+.github
+node_modules
+**/node_modules
+.turbo
+**/.next
+**/.output
+dist
+coverage
+*.log
+.DS_Store
