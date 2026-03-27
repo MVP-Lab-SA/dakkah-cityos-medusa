@@ -96,35 +96,43 @@ jobs:
 
       - name: Deploy containers on VPS
         run: |
-          ssh "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" "
-            set -e
-            mkdir -p /srv/apps/marketplace/kashif-medusa
-            cat > /srv/apps/marketplace/kashif-medusa/docker-compose.yml <<'EOF'
-            services:
-              backend:
-                image: ${BACKEND_IMAGE}:${IMAGE_TAG}
-                container_name: kashif-medusa-backend
-                restart: unless-stopped
-                env_file:
-                  - ./backend.env
-                ports:
-                  - \"9000:9000\"
+          ssh "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
+            "GHCR_USERNAME='${{ secrets.GHCR_USERNAME }}' \
+             GHCR_TOKEN='${{ secrets.GHCR_TOKEN }}' \
+             BACKEND_IMAGE='${BACKEND_IMAGE}' \
+             STOREFRONT_IMAGE='${STOREFRONT_IMAGE}' \
+             IMAGE_TAG='${IMAGE_TAG}' \
+             bash -s" <<'REMOTE'
+          set -e
 
-              storefront:
-                image: ${STOREFRONT_IMAGE}:${IMAGE_TAG}
-                container_name: kashif-medusa-storefront
-                restart: unless-stopped
-                env_file:
-                  - ./storefront.env
-                ports:
-                  - \"8000:8000\"
-                depends_on:
-                  - backend
-            EOF
+          mkdir -p /srv/apps/marketplace/kashif-medusa
 
-            echo '${{ secrets.GHCR_TOKEN }}' | docker login ghcr.io -u '${{ secrets.GHCR_USERNAME }}' --password-stdin
-            cd /srv/apps/marketplace/kashif-medusa
-            docker compose pull
-            docker compose up -d --remove-orphans
-            docker image prune -f
-          "
+          cat > /srv/apps/marketplace/kashif-medusa/docker-compose.yml <<COMPOSE
+          services:
+            backend:
+              image: ${BACKEND_IMAGE}:${IMAGE_TAG}
+              container_name: kashif-medusa-backend
+              restart: unless-stopped
+              env_file:
+                - ./backend.env
+              ports:
+                - "9000:9000"
+
+            storefront:
+              image: ${STOREFRONT_IMAGE}:${IMAGE_TAG}
+              container_name: kashif-medusa-storefront
+              restart: unless-stopped
+              env_file:
+                - ./storefront.env
+              ports:
+                - "8000:8000"
+              depends_on:
+                - backend
+          COMPOSE
+
+          echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
+          cd /srv/apps/marketplace/kashif-medusa
+          docker compose pull
+          docker compose up -d --remove-orphans
+          docker image prune -f
+REMOTE
