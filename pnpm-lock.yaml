@@ -35,7 +35,7 @@ overrides:
   '@payloadcms/richtext-lexical': ^3.75.0
   '@payloadcms/storage-s3': ^3.75.0
   '@payloadcms/ui': ^3.75.0
-  '@remix-run/router': 1.23.2
+  '@remix-run/router': ^1.23.2
 
 importers:
 
