@@ -128,6 +128,35 @@ jobs:
           : "${VPS_MEDUSA_BACKEND_URL:?Set secret or variable VPS_MEDUSA_BACKEND_URL}"
           : "${VPS_STOREFRONT_URL:?Set secret or variable VPS_STOREFRONT_URL}"
 
+      # db:migrate + medusa exec load the full app (hundreds of MB). Small VPS OOM-kills
+      # docker exec (exit 137). Run against Neon on the runner instead.
+      - name: Use Node.js 22 (migrate / seed)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install monorepo dependencies (migrate / seed)
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.12.3 --activate
+          pnpm install --frozen-lockfile
+
+      - name: Migrate and seed Neon database on CI runner
+        run: |
+          export DATABASE_URL="$VPS_NEON_DATABASE_URL"
+          export VITE_MEDUSA_PUBLISHABLE_KEY="$VPS_MEDUSA_PUBLISHABLE_KEY"
+          export JWT_SECRET="$VPS_MEDUSA_JWT_SECRET"
+          export COOKIE_SECRET="$VPS_MEDUSA_COOKIE_SECRET"
+          export MEDUSA_BACKEND_URL="$VPS_MEDUSA_BACKEND_URL"
+          export STORE_CORS="${VPS_STOREFRONT_URL},${VPS_MEDUSA_BACKEND_URL}"
+          export ADMIN_CORS="${VPS_MEDUSA_BACKEND_URL}"
+          export AUTH_CORS="${VPS_STOREFRONT_URL},${VPS_MEDUSA_BACKEND_URL}"
+          export NODE_ENV=development
+          cd apps/backend
+          NODE_OPTIONS="--max-old-space-size=3072" pnpm exec medusa db:migrate
+          NODE_OPTIONS="--max-old-space-size=3072" pnpm exec medusa exec ./src/scripts/seed-core.ts
+          NODE_OPTIONS="--max-old-space-size=3072" pnpm exec medusa exec ./src/scripts/seed-storefront-test-products.ts
+
       - name: Write local deploy files
         run: |
           python3 <<'PY'
@@ -221,13 +250,20 @@ jobs:
           docker image prune -f
           REMOTE
 
-      - name: Migrate and seed storefront demo products on VPS
+      - name: Wait for backend on VPS (migrations already applied on Neon via CI)
         run: |
           ssh "${VPS_USER}@${VPS_HOST}" bash -s <<REMOTE
           set -e
           cd ${DEPLOY_DIR}
-          echo "Waiting for Medusa backend..."
-          sleep 25
-          docker exec kashif-medusa-backend sh -lc \
-            'cd /app/apps/backend && pnpm exec medusa db:migrate && pnpm exec medusa exec ./src/scripts/seed-core.ts && pnpm exec medusa exec ./src/scripts/seed-storefront-test-products.ts'
+          echo "Waiting for Medusa backend to listen..."
+          for i in \$(seq 1 36); do
+            if curl -sf --max-time 8 "http://127.0.0.1:9000/health" >/dev/null 2>&1; then
+              echo "Backend healthy."
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Health check timed out; capturing logs."
+          docker logs --tail 80 kashif-medusa-backend || true
+          exit 1
           REMOTE
