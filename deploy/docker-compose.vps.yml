@@ -1,24 +1,8 @@
-# Full Medusa stack for VPS. Compose reads `.env` in the same directory for
-# POSTGRES_PASSWORD, MEILI_MASTER_KEY, BACKEND_IMAGE, STOREFRONT_IMAGE, IMAGE_TAG.
+# VPS stack: Redis + Meilisearch + Medusa + storefront. PostgreSQL is external (Neon).
+# Compose reads `.env` for MEILI_MASTER_KEY, BACKEND_IMAGE, STOREFRONT_IMAGE, IMAGE_TAG.
 name: kashif-medusa
 
 services:
-  postgres:
-    image: public.ecr.aws/docker/library/postgres:16-alpine
-    container_name: kashif-medusa-postgres
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: medusa
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: medusa
-    volumes:
-      - medusa_pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U medusa -d medusa"]
-      interval: 5s
-      timeout: 5s
-      retries: 12
-
   redis:
     image: public.ecr.aws/docker/library/redis:7-alpine
     container_name: kashif-medusa-redis
@@ -45,8 +29,6 @@ services:
     ports:
       - "9000:9000"
     depends_on:
-      postgres:
-        condition: service_healthy
       redis:
         condition: service_started
       meilisearch:
@@ -64,5 +46,4 @@ services:
       - backend
 
 volumes:
-  medusa_pgdata:
   medusa_redisdata:

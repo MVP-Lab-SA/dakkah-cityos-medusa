@@ -95,7 +95,7 @@ jobs:
       DEPLOY_DIR: /srv/apps/marketplace/kashif-medusa
       VPS_HOST: ${{ secrets.VPS_HOST }}
       VPS_USER: ${{ secrets.VPS_USER }}
-      VPS_POSTGRES_PASSWORD: ${{ secrets.VPS_POSTGRES_PASSWORD }}
+      VPS_NEON_DATABASE_URL: ${{ secrets.VPS_NEON_DATABASE_URL || secrets.NEON_DATABASE_URL || secrets.DATABASE_URL }}
       VPS_MEILI_MASTER_KEY: ${{ secrets.VPS_MEILI_MASTER_KEY }}
       VPS_MEDUSA_JWT_SECRET: ${{ secrets.VPS_MEDUSA_JWT_SECRET }}
       VPS_MEDUSA_COOKIE_SECRET: ${{ secrets.VPS_MEDUSA_COOKIE_SECRET }}
@@ -120,7 +120,7 @@ jobs:
 
       - name: Require VPS stack secrets
         run: |
-          : "${VPS_POSTGRES_PASSWORD:?Set VPS_POSTGRES_PASSWORD (Postgres password; avoid @ # : / in password or URL-encode manually)}"
+          : "${VPS_NEON_DATABASE_URL:?Set secret VPS_NEON_DATABASE_URL (Neon pooler URL, sslmode=require)}"
           : "${VPS_MEILI_MASTER_KEY:?Set VPS_MEILI_MASTER_KEY (long random string for Meilisearch)}"
           : "${VPS_MEDUSA_JWT_SECRET:?Set VPS_MEDUSA_JWT_SECRET}"
           : "${VPS_MEDUSA_COOKIE_SECRET:?Set VPS_MEDUSA_COOKIE_SECRET}"
@@ -132,7 +132,6 @@ jobs:
         run: |
           python3 <<'PY'
           import os
-          import urllib.parse
 
           def req(k):
             v = os.environ.get(k, "").strip()
@@ -141,12 +140,11 @@ jobs:
             return v
 
           def dotenv_value(v: str) -> str:
-            if any(c in v for c in "\n\"\\$`#"):
+            if any(c in v for c in "\n\"\\$`#&"):
               return '"' + v.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n") + '"'
             return v
 
-          pg_pass = req("VPS_POSTGRES_PASSWORD")
-          db_url = "postgresql://medusa:" + urllib.parse.quote_plus(pg_pass) + "@postgres:5432/medusa"
+          db_url = req("VPS_NEON_DATABASE_URL")
           meili = req("VPS_MEILI_MASTER_KEY")
           back = req("VPS_MEDUSA_BACKEND_URL")
           front = req("VPS_STOREFRONT_URL")
@@ -155,6 +153,8 @@ jobs:
           backend_lines = [
               "NODE_ENV=production",
               f"DATABASE_URL={dotenv_value(db_url)}",
+              f"NEON_DATABASE_URL={dotenv_value(db_url)}",
+              "DB_NAME=neondb",
               "REDIS_URL=redis://redis:6379",
               f"JWT_SECRET={dotenv_value(req('VPS_MEDUSA_JWT_SECRET'))}",
               f"COOKIE_SECRET={dotenv_value(req('VPS_MEDUSA_COOKIE_SECRET'))}",
@@ -172,7 +172,6 @@ jobs:
               f.write("\n".join(backend_lines) + "\n")
 
           stack_lines = [
-              f"POSTGRES_PASSWORD={dotenv_value(pg_pass)}",
               f"MEILI_MASTER_KEY={dotenv_value(meili)}",
               f"BACKEND_IMAGE={req('BACKEND_IMAGE')}",
               f"STOREFRONT_IMAGE={req('STOREFRONT_IMAGE')}",
@@ -184,10 +183,6 @@ jobs:
           with open("/tmp/storefront.env", "w") as f:
               f.write("NODE_ENV=production\n")
           PY
-        env:
-          BACKEND_IMAGE: ${{ env.BACKEND_IMAGE }}
-          STOREFRONT_IMAGE: ${{ env.STOREFRONT_IMAGE }}
-          IMAGE_TAG: ${{ env.IMAGE_TAG }}
 
       - name: Stop old stack and sync files
         run: |
