@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { detectStoreFromHostname } from '@/lib/store-detector'
+import { getBackendUrl } from '@/lib/utils/env'
 
 vi.mock('@medusajs/js-sdk', () => {
   return {
@@ -8,11 +9,14 @@ vi.mock('@medusajs/js-sdk', () => {
       debug: boolean
       publishableKey: string | undefined
       auth: { type: string }
+      client: { fetch: (..._args: unknown[]) => Promise<unknown> }
       constructor(config: any) {
         this.baseUrl = config.baseUrl
         this.debug = config.debug
         this.publishableKey = config.publishableKey
         this.auth = config.auth
+        const mockFetch = vi.fn().mockResolvedValue({})
+        this.client = { fetch: mockFetch }
       }
     }
   }
@@ -34,9 +38,9 @@ describe('SDK Configuration', () => {
     expect((sdk as any).debug).toBe(false)
   })
 
-  it('sdk sets baseUrl to empty string in browser environment', async () => {
+  it('sdk sets baseUrl to getBackendUrl() in all environments (browser + SSR)', async () => {
     const { sdk } = await import('@/lib/utils/sdk')
-    expect((sdk as any).baseUrl).toBe('')
+    expect((sdk as any).baseUrl).toBe(getBackendUrl())
   })
 })
 
