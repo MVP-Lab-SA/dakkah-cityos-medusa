@@ -1,5 +1,7 @@
-# VPS stack: Redis + Meilisearch + Medusa + storefront. PostgreSQL is external (Neon).
-# Compose reads `.env` for MEILI_MASTER_KEY, BACKEND_IMAGE, STOREFRONT_IMAGE, IMAGE_TAG.
+# VPS stack: Redis + Medusa + storefront. PostgreSQL is external (Neon).
+# Compose `.env`: BACKEND_IMAGE, STOREFRONT_IMAGE, IMAGE_TAG.
+# Meilisearch is omitted: medusa-config enables ./src/modules/meilisearch only when
+# MEILISEARCH_HOST is set, but that module is not present in this repo (would crash).
 name: kashif-medusa
 
 services:
@@ -11,15 +13,6 @@ services:
     volumes:
       - medusa_redisdata:/data
 
-  meilisearch:
-    image: getmeili/meilisearch:v1.11
-    container_name: kashif-medusa-meilisearch
-    restart: unless-stopped
-    environment:
-      MEILI_ENV: production
-      MEILI_NO_ANALYTICS: "true"
-      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY}
-
   backend:
     image: ${BACKEND_IMAGE}:${IMAGE_TAG}
     container_name: kashif-medusa-backend
@@ -30,8 +23,6 @@ services:
       - "9000:9000"
     depends_on:
       redis:
-        condition: service_started
-      meilisearch:
         condition: service_started
 
   storefront:

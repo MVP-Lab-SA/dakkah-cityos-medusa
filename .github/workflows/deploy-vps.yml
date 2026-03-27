@@ -96,7 +96,6 @@ jobs:
       VPS_HOST: ${{ secrets.VPS_HOST }}
       VPS_USER: ${{ secrets.VPS_USER }}
       VPS_NEON_DATABASE_URL: ${{ secrets.VPS_NEON_DATABASE_URL || secrets.NEON_DATABASE_URL || secrets.DATABASE_URL }}
-      VPS_MEILI_MASTER_KEY: ${{ secrets.VPS_MEILI_MASTER_KEY }}
       VPS_MEDUSA_JWT_SECRET: ${{ secrets.VPS_MEDUSA_JWT_SECRET }}
       VPS_MEDUSA_COOKIE_SECRET: ${{ secrets.VPS_MEDUSA_COOKIE_SECRET }}
       VPS_MEDUSA_PUBLISHABLE_KEY: ${{ secrets.VPS_MEDUSA_PUBLISHABLE_KEY || vars.VPS_MEDUSA_PUBLISHABLE_KEY }}
@@ -121,7 +120,6 @@ jobs:
       - name: Require VPS stack secrets
         run: |
           : "${VPS_NEON_DATABASE_URL:?Set secret VPS_NEON_DATABASE_URL (Neon pooler URL, sslmode=require)}"
-          : "${VPS_MEILI_MASTER_KEY:?Set VPS_MEILI_MASTER_KEY (long random string for Meilisearch)}"
           : "${VPS_MEDUSA_JWT_SECRET:?Set VPS_MEDUSA_JWT_SECRET}"
           : "${VPS_MEDUSA_COOKIE_SECRET:?Set VPS_MEDUSA_COOKIE_SECRET}"
           : "${VPS_MEDUSA_PUBLISHABLE_KEY:?Set secret or variable VPS_MEDUSA_PUBLISHABLE_KEY}"
@@ -145,7 +143,6 @@ jobs:
             return v
 
           db_url = req("VPS_NEON_DATABASE_URL")
-          meili = req("VPS_MEILI_MASTER_KEY")
           back = req("VPS_MEDUSA_BACKEND_URL")
           front = req("VPS_STOREFRONT_URL")
           pub = req("VPS_MEDUSA_PUBLISHABLE_KEY")
@@ -159,9 +156,6 @@ jobs:
               f"JWT_SECRET={dotenv_value(req('VPS_MEDUSA_JWT_SECRET'))}",
               f"COOKIE_SECRET={dotenv_value(req('VPS_MEDUSA_COOKIE_SECRET'))}",
               f"VITE_MEDUSA_PUBLISHABLE_KEY={dotenv_value(pub)}",
-              "MEILISEARCH_HOST=http://meilisearch:7700",
-              f"MEILISEARCH_API_KEY={dotenv_value(meili)}",
-              "MEILISEARCH_PRODUCT_INDEX_NAME=products",
               f"MEDUSA_BACKEND_URL={dotenv_value(back)}",
               f"STORE_CORS={dotenv_value(f'{front},{back}')}",
               f"ADMIN_CORS={dotenv_value(back)}",
@@ -172,7 +166,6 @@ jobs:
               f.write("\n".join(backend_lines) + "\n")
 
           stack_lines = [
-              f"MEILI_MASTER_KEY={dotenv_value(meili)}",
               f"BACKEND_IMAGE={req('BACKEND_IMAGE')}",
               f"STOREFRONT_IMAGE={req('STOREFRONT_IMAGE')}",
               f"IMAGE_TAG={req('IMAGE_TAG')}",
