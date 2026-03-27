@@ -37,7 +37,13 @@ export default async function seedStorefrontTestProducts({ container }: ExecArgs
     entity: "region",
     fields: ["id", "currency_code"],
   })
-  const currency = (regions?.[0] as { currency_code?: string })?.currency_code || "usd"
+
+  if (!regions?.length) {
+    logger.error("No region found. Run seed-core (or Medusa onboarding) to create a region first.")
+    return
+  }
+
+  const currency = (regions[0] as { currency_code?: string }).currency_code || "usd"
 
   logger.info(`Sales channel: ${channel.name} (${channel.id})`)
   logger.info(`Pricing currency: ${currency}`)
