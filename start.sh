@@ -42,7 +42,7 @@ TABLE_COUNT=$(psql -h localhost -p 5433 -U postgres -d medusadb -tAc "SELECT cou
 if [ "$TABLE_COUNT" -lt "10" ]; then
   echo "Database needs migrations (found $TABLE_COUNT tables). Running Medusa db:migrate..."
   cd /home/runner/workspace/apps/backend
-  NODE_OPTIONS="--max-old-space-size=768" npx medusa db:migrate 2>&1 | tail -20
+  NODE_OPTIONS="--max-old-space-size=768" npx medusa db:migrate --execute-safe-links 2>&1 | tail -20
   echo "Migrations complete."
   cd /home/runner/workspace
 fi

@@ -11,7 +11,7 @@ pnpm build
 echo "  ✓ Backend built"
 
 echo "[2/3] Running database migrations..."
-npx medusa db:migrate
+npx medusa db:migrate --execute-safe-links
 echo "  ✓ Database migrations complete"
 
 echo "[3/3] Building storefront..."
